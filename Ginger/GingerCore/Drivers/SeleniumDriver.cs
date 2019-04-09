@@ -3359,59 +3359,67 @@ namespace GingerCore.Drivers
         {
             IReadOnlyCollection<IWebElement> elem = null; //TODO: Not found
             //TODO: switch case By.. - order by most common first
-            if (LocatorType == eLocateBy.ByID)
+            switch (LocatorType)
             {
-                elem = Driver.FindElements(By.Id(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByName)
-            {
-                elem = Driver.FindElements(By.Name(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByHref)
-            {
-                string sel = "a[href='@']";
-                sel = sel.Replace("@", LocValue);
-                elem = Driver.FindElements(By.CssSelector(sel));
+                case eLocateBy.ByID:
 
-            }
-            if (LocatorType == eLocateBy.ByClassName)
-            {
-                elem = Driver.FindElements(By.ClassName(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByLinkText)
-            {
-                LocValue = LocValue.Trim();
-                try
-                {
-                    elem = Driver.FindElements(By.LinkText(LocValue));
-                }
-                catch (Exception ex)
-                {
+                    elem = Driver.FindElements(By.Id(LocValue));
+                    break;
+
+                case eLocateBy.ByName:
+
+                    elem = Driver.FindElements(By.Name(LocValue));
+                    break;
+
+                case eLocateBy.ByHref:
+
+                    string sel = "a[href='@']";
+                    sel = sel.Replace("@", LocValue);
+                    elem = Driver.FindElements(By.CssSelector(sel));
+                    break;
+
+                case eLocateBy.ByClassName:
+
+                    elem = Driver.FindElements(By.ClassName(LocValue));
+                    break;
+
+                case eLocateBy.ByLinkText:
+
+                    LocValue = LocValue.Trim();
                     try
                     {
-                        if (ex.GetType() == typeof(NoSuchElementException))
-                        {
-                            elem = Driver.FindElements(By.XPath("//*[text()='" + LocValue + "']"));
-
-                        }
+                        elem = Driver.FindElements(By.LinkText(LocValue));
                     }
-                    catch { }
-                }
-            }
-            if (LocatorType == eLocateBy.ByXPath || LocatorType == eLocateBy.ByRelXPath)
-            {
-                elem = Driver.FindElements(By.XPath(LocValue));
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            if (ex.GetType() == typeof(NoSuchElementException))
+                            {
+                                elem = Driver.FindElements(By.XPath("//*[text()='" + LocValue + "']"));
+                            }
+                        }
+                        catch { }
+                    }
+                    break;
+
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+
+                    elem = Driver.FindElements(By.XPath(LocValue));
+                    break;
+
+                case eLocateBy.ByValue:
+
+                    elem = Driver.FindElements(By.XPath("//*[@value=\"" + LocValue + "\"]"));
+                    break;
+
+                case eLocateBy.ByCSS:
+
+                    elem = Driver.FindElements(By.CssSelector(LocValue));
+                    break;
             }
 
-            if (LocatorType == eLocateBy.ByValue)
-            {
-                elem = Driver.FindElements(By.XPath("//*[@value=\"" + LocValue + "\"]"));
-            }
-
-            if (LocatorType == eLocateBy.ByCSS)
-            {
-                elem = Driver.FindElements(By.CssSelector(LocValue));
-            }
 
             if (elem != null)
             {
@@ -3453,7 +3461,7 @@ namespace GingerCore.Drivers
             {
                 foreach (IWebElement e in elements)
                 {
-                    ElementInfo elementInfo = GetElementInfoWithIWebElement(e, null, string.Empty);
+                    //ElementInfo elementInfo = GetElementInfoWithIWebElement(e, null, string.Empty);
 
                     //string highlightJavascript = string.Empty;
                     //if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
@@ -3462,7 +3470,12 @@ namespace GingerCore.Drivers
                     //    highlightJavascript = "arguments[0].style.border='3px dashed red'";
                     //((IJavaScriptExecutor)Driver).ExecuteScript(highlightJavascript, new object[] { e });
                     //LastHighLightedElementInfo = elementInfo;
+                    //elementInfo.ElementObject = e;
+
+                    HTMLElementInfo elementInfo = new HTMLElementInfo();
                     elementInfo.ElementObject = e;
+                    ((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
+
                     HighlightElement(elementInfo);
                 }
             }
@@ -3626,7 +3639,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnOnlyMappedElements = false)
         {
             mIsDriverBusy = true;
 
@@ -3638,7 +3651,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
                 allReadElem.Clear();
-                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails));
+                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, learnOnlyMappedElements));
                 allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3653,7 +3666,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnPartialElementInfoDetails = false)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnOnlyMappedElements = false)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3700,21 +3713,7 @@ namespace GingerCore.Drivers
 
                         HTMLElementInfo foundElemntInfo;
 
-                        if (learnPartialElementInfoDetails)
-                        {
-                            foundElemntInfo = new HTMLElementInfo();
-                            foundElemntInfo.ElementType = elementTypeEnum.Item1;
-                            foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
-                            foundElemntInfo.ElementObject = el;
-                            foundElemntInfo.Path = path;
-                            foundElemntInfo.XPath = htmlElemNode.XPath;
-                            foundElemntInfo.HTMLElementObject = htmlElemNode;
-                            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
-                        }
-                        else
-                        {
-                            foundElemntInfo = GetElementInfoWithIWebElement(el, htmlElemNode, path, learnPartialElementInfoDetails);
-                        }
+                        foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
 
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
@@ -3732,7 +3731,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnPartialElementInfoDetails);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnOnlyMappedElements);
                             Driver.SwitchTo().ParentFrame();
                         }
 
@@ -3745,6 +3744,19 @@ namespace GingerCore.Drivers
             }
 
             return foundElementsList;
+        }
+
+        private HTMLElementInfo GetElementInfo(string path, HtmlNode htmlElemNode, Tuple<string, eElementType> elementTypeEnum, IWebElement elemObject)
+        {
+            HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+            foundElemntInfo.ElementType = elementTypeEnum.Item1;
+            foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
+            foundElemntInfo.ElementObject = elemObject;
+            foundElemntInfo.Path = path;
+            foundElemntInfo.XPath = htmlElemNode.XPath;
+            foundElemntInfo.HTMLElementObject = htmlElemNode;
+            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+            return foundElemntInfo;
         }
 
         public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null)
@@ -4417,21 +4429,24 @@ namespace GingerCore.Drivers
                 SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
 
                 //Find element 
-                if (locateElementByItLocators)
+                if ((IWebElement)ElementInfo.ElementObject == null)
                 {
-                    ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    if (locateElementByItLocators)
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
                     }
-                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                    else
                     {
-                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                        if (string.IsNullOrEmpty(ElementInfo.XPath))
+                        {
+                            ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        }
+                        if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                        {
+                            ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                        }
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                     }
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
 
                 if ((IWebElement)ElementInfo.ElementObject == null)
@@ -6740,7 +6755,12 @@ namespace GingerCore.Drivers
                 return parentEI;
             }
 
-            parentEI = GetElementInfoFromIWebElement(parentElementIWebElement, parentElementHtmlNode, ElementInfo);
+            Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: parentElementHtmlNode);
+            IWebElement parentElementObject = Driver.FindElement(By.XPath(parentElementHtmlNode.XPath));
+
+            //parentEI = GetElementInfoFromIWebElement(parentElementIWebElement, parentElementHtmlNode, ElementInfo);
+            parentEI = GetElementInfo("", parentElementHtmlNode, elementTypeEnum, parentElementObject);
+
             return parentEI;
         }
 
