@@ -47,12 +47,12 @@ namespace Amdocs.Ginger
 
         public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("ShowUpgradeGinger - " + solutionFolder);
         }
 
         public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("ShowUpgradeSolutionItems - " + solutionFolder);
         }
 
         public void SolutionClosed()
