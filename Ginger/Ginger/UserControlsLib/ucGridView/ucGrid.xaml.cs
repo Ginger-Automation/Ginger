@@ -724,10 +724,14 @@ namespace Ginger
 
             List<object> SelectedItemsList = grdMain.SelectedItems.Cast<object>().ToList();
 
+            Mouse.OverrideCursor = Cursors.Wait;
+
             foreach (object o in SelectedItemsList)
             {
                 mObjList.Remove(o);
             }
+
+            Mouse.OverrideCursor = null;
         }
         private void btnClearSearchText_Click(object sender, RoutedEventArgs e)
         {
