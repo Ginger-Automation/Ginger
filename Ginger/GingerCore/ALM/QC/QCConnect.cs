@@ -321,5 +321,17 @@ namespace GingerCore.ALM.QC
             }
             return TSItem;
         }
+        public static Boolean CreateFolder(String parentFolderPath, String newFolderName)
+        {
+            TDAPIOLELib.SysTreeNode OSysTreeNode = GetNodeObject(parentFolderPath);
+            OSysTreeNode.AddNode(newFolderName);
+            return true;
+        }
+
+        public static TDAPIOLELib.SysTreeNode GetNodeObject(String folderPath)
+        {
+            TDAPIOLELib.TreeManager OTManager = mTDConn.TreeManager;
+            return OTManager.NodeByPath[folderPath];
+        }
     }
 }
