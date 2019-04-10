@@ -3674,7 +3674,7 @@ namespace GingerCore.Drivers
             string documentContents = Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x=>!x.Name.StartsWith("#"));
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
             if (htmlElements.Count() != 0)
             {
@@ -3689,11 +3689,20 @@ namespace GingerCore.Drivers
 
                         //get Element Type
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
+                        bool isFrameElement = elementTypeEnum.Item2 == eElementType.Iframe;
+                        bool learningFrame = false;
 
-                        //filter element if needed                        
-                        if (filteredElementType != null && filteredElementType.Count > 0)
+                        //filter element if needed
+                        if (filteredElementType != null)                    //     && filteredElementType.Count > 0)
                         {
-                            if (!filteredElementType.Contains(elementTypeEnum.Item2))
+                            if (isFrameElement)
+                            {
+                                if (filteredElementType.Contains(elementTypeEnum.Item2))
+                                    learningFrame = true;
+                                else
+                                    learningFrame = false;
+                            }
+                            else if (!filteredElementType.Contains(elementTypeEnum.Item2))
                             {
                                 continue;
                             }
@@ -3711,13 +3720,18 @@ namespace GingerCore.Drivers
                             continue;
                         }
 
-                        HTMLElementInfo foundElemntInfo;
+                        if (!isFrameElement || (isFrameElement && learningFrame))
+                        {
+                            HTMLElementInfo foundElemntInfo;
 
-                        foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
+                            foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
 
-                        foundElemntInfo.IsAutoLearned = true;
-                        foundElementsList.Add(foundElemntInfo);
-                        allReadElem.Add(foundElemntInfo);
+                            foundElemntInfo.IsAutoLearned = true;
+                            foundElementsList.Add(foundElemntInfo);
+
+                            allReadElem.Add(foundElemntInfo);
+                        }
+
                         if (el.TagName == "iframe" || el.TagName == "frame")
                         {
                             string xpath = htmlElemNode.XPath;
@@ -3734,7 +3748,6 @@ namespace GingerCore.Drivers
                             GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
                             Driver.SwitchTo().ParentFrame();
                         }
-
                     }
                     catch (Exception ex)
                     {
