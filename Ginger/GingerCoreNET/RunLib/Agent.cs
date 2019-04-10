@@ -726,7 +726,10 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
                 driverTypes.Add(Agent.eDriverType.SeleniumIE);
                 driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
-                driverTypes.Add(Agent.eDriverType.SeleniumEdge);               
+                driverTypes.Add(Agent.eDriverType.SeleniumEdge);      
+                
+
+
             }
             else if (platformType == ePlatformType.Java.ToString())
             {

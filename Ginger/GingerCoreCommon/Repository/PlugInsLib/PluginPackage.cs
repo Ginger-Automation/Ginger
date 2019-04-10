@@ -48,13 +48,14 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        PluginPackageInfo PluginPackageInfo
+        public PluginPackageInfo PluginPackageInfo
         {
             get
             {
-                if (mPluginPackageInfo == null)
+                if (mPluginPackageInfo == null|| mPluginPackageInfo.Id==null)
                 {
-                    mPluginPackageInfo = new PluginPackageInfo();
+
+                    LoadInfoFromJSON();
                 }
                 return mPluginPackageInfo; 
             }
