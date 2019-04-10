@@ -313,6 +313,11 @@ namespace Ginger
 
                             UpdateCurrentActivityActionsExpanders();
 
+                            if (mActionsPage != null)
+                            {
+                                mActionsPage.UpdateParentBusinessFlow(mBusinessFlow);
+                            }
+
                             if (mReposiotryPage != null)
                             {
                                 mReposiotryPage.UpdateBusinessFlow(mBusinessFlow);
@@ -425,11 +430,7 @@ namespace Ginger
                     label = string.Format("{0}- Actions", GingerDicser.GetTermResValue(eTermResKey.Activity));
                     ActivityActionsExpanderLabel.Content = label;
                     ActivityActionsExpander2Label.Content = label;
-                }
-                if (mActionsPage != null)
-                {
-                    mActionsPage.UpdateParentBusinessFlow(mBusinessFlow);
-                }
+                }             
             }
         }
 
@@ -996,9 +997,16 @@ namespace Ginger
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity) && mActivityVariablesPage != null)
+            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))                
             {
-                mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                if (mActivityVariablesPage != null)
+                {
+                    mActivityVariablesPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                }
+                if (mActionsPage != null)
+                {
+                    mActionsPage.UpdateActionGrid();
+                }
             }
         }
 
@@ -1649,7 +1657,7 @@ namespace Ginger
             mEnvironment = env;
             mContext.Environment = mEnvironment;
             mRunner.ProjEnvironment = mEnvironment;
-            mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
+            //mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
             if (mEnvironment != null)
             {
                 WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;

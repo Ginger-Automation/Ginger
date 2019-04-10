@@ -405,9 +405,18 @@ namespace Ginger.AnalyzerLib
             {
                 try
                 {
-                    string[] pOMandElementGUIDs = ((ActUIElement)a).ElementLocateValue.Split('_');
+                    string[] pOMandElementGUIDs;
+                    if (a is ActUIElement)
+                    {
+                        pOMandElementGUIDs = ((ActUIElement)a).ElementLocateValue.Split('_');
+                    }
+                    else
+                    {
+                        pOMandElementGUIDs = a.LocateValue.Split('_');
+                    }
                     Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
                     ApplicationPOMModel POM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                    
                     if (POM == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
