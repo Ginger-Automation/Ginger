@@ -216,6 +216,7 @@ namespace Amdocs.Ginger.Common.Enums
         GitHub,
         Ping,
         Database,
+        Output,
         #endregion
 
         #region Source control Images     

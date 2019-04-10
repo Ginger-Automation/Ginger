@@ -661,6 +661,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Database:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
                     break;
+                case eImageType.Output:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
+                    break;
 
                 case eImageType.Spy:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);

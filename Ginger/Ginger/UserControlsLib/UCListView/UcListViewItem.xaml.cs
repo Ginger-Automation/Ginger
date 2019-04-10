@@ -1,6 +1,8 @@
 ﻿using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,17 +36,49 @@ namespace Ginger.UserControlsLib.UCListView
             xExtraDetailsRow.Height = new GridLength(0);
         }
 
-        public void ConfigItem(string itemNameField, string itemDescriptionField, string itemIconField, string itemExecutionStatusField)
+        public void ConfigItem(object item, string itemNameField, string itemDescriptionField, string itemIconField, string itemExecutionStatusField="", List<ListItemNotification> notifications = null)
         {
+            mItem = item;
+
             ItemNameField = itemNameField;
             ItemDescriptionField = itemDescriptionField;
             ItemIconField = itemIconField;
             ItemExecutionStatusField = itemExecutionStatusField;
-        }
 
-        public void SetItem(object item)
-        {
-            mItem = item;
+            if (notifications != null)
+            {
+                foreach(ListItemNotification notification in notifications)
+                {
+                    ImageMakerControl itemInd = new ImageMakerControl();
+                    itemInd.ImageType = notification.ImageType;
+                    itemInd.ToolTip = notification.ToolTip;
+                    itemInd.Margin = new Thickness(3, 0, 3, 0);
+                    itemInd.Height = 16;
+                    itemInd.Width = 16;                    
+                    itemInd.SetAsFontImageWithSize = notification.ImageSize;                    
+                    
+                    if (notification.ImageForeground == null)
+                    {
+                        itemInd.ImageForeground = System.Windows.Media.Brushes.DarkGray;
+                    }
+                    else
+                    {
+                        itemInd.ImageForeground = notification.ImageForeground;
+                    }
+
+                    if (notification.BindingConverter == null)
+                    {
+                        BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
+                    }
+                    else
+                    {
+                        BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                    }
+                    
+                    xItemNotificationsPnl.Children.Add(itemInd);
+                }
+            }
+
             SetItemBindings();
         }
 
