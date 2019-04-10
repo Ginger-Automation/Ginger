@@ -54,11 +54,10 @@ namespace Ginger.BusinessFlowWindows
             {
                 if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
                 {
-                    if (mNewAutomatePage == null)
-                    {
+                    //if (mNewAutomatePage == null)//TODO: bring back the check for null after dev ends for new automate tab
+                    //{
                         mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
-                        //mNewAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
-                    }
+                    //}
                     xContentFrame.Content = mNewAutomatePage;
                 }
                 else

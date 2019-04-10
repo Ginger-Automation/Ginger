@@ -72,7 +72,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             else
             {
-                BindingHandler.ObjFieldBinding(xItemStatusImage, UCITemExecutionStatus.StatusProperty, mItem, ItemExecutionStatusField);
+                BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, mItem, ItemExecutionStatusField);
             }
         }
 

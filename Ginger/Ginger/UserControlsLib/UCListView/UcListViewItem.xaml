@@ -35,7 +35,7 @@
 
         <DockPanel x:Name="xDetailsPnl" Grid.Row="0" Grid.Column="3" >
             <TextBlock x:Name="xItemNameTxtBlock" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Title" FontSize="15" MaxWidth="250" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
-            <uclistview:UCITemExecutionStatus x:Name="xItemStatusImage" DockPanel.Dock="Right"/>
+            <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" DockPanel.Dock="Right"/>
         </DockPanel>
         
         <DockPanel x:Name="xExtraDetailsPnl" Grid.Row="1" Grid.Column="3" >

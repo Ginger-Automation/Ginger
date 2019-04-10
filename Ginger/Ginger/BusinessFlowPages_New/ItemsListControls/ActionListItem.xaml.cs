@@ -19,7 +19,7 @@ namespace Ginger.BusinessFlowPages_New.ItemsListControls
             }
             set
             {
-                SetValue(ActionProperty, value);
+                SetValue(ActionProperty, value);                
                 xActionListItem.SetItem(value);
             }
         }
