@@ -107,7 +107,7 @@ namespace Ginger.Run
                 if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
                 {                   
                     mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-
+                    
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
                     foreach (string runSetFile in runSetsfiles)

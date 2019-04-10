@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         static void RunFlow(BusinessFlow businessFlow)
         {
             GingerRunner gingerRunner = new GingerRunner();
-            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            ExecutionLoggerManager ex = (ExecutionLoggerManager)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
             ex.ExecutionLogfolder = @"c:\temp\jj";   // !!!!!!!!!!!!!!!!!
             ex.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             //ex.exec

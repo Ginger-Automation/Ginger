@@ -187,7 +187,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                runSetFolder = ExecutionLogger.GetRunSetLastExecutionLogFolderOffline();
+                runSetFolder = ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                 AutoLogProxy.UserOperationStart("Offline Report");
             }
 

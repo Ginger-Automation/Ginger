@@ -497,7 +497,7 @@ namespace Ginger
         private void SetAutomateRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
             // Add Listener so we can do GiveUserFeedback            
             AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
@@ -514,8 +514,8 @@ namespace Ginger
             mRunner.SolutionAgents = new ObservableList<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
         }
 
         private void DoCleanUp()
@@ -1070,7 +1070,7 @@ namespace Ginger
             try
             {
                 AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
@@ -1165,7 +1165,7 @@ namespace Ginger
 
                 SetAutomateTabRunnerForExecution();
 
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
                 
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
@@ -1311,7 +1311,7 @@ namespace Ginger
             //execute preparations
             SetAutomateTabRunnerForExecution();
             mRunner.ResetRunnerExecutionDetails();
-            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
             
         }
 
@@ -1394,7 +1394,7 @@ namespace Ginger
                 mRunner.SetCurrentActivityAgent(); 
             }
 
-            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
             if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
@@ -1440,7 +1440,7 @@ namespace Ginger
                 EnableDisableAutomateTabGrids(false);
 
                 AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
@@ -1523,7 +1523,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
+            string exec_folder = Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
@@ -1555,7 +1555,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabOfflineLogName);
+            string exec_folder = Ginger.Run.ExecutionLoggerManager.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
 
             if (Directory.Exists(exec_folder))
             {
@@ -1565,8 +1565,8 @@ namespace Ginger
             {
                 Directory.CreateDirectory(exec_folder);
             }
-            
-            if (((ExecutionLogger)mRunner.ExecutionLogger).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            GingerRunner Gr = new GingerRunner();
+            if (Gr.SetBFOfflineData(mBusinessFlow, (ExecutionLoggerManager)mRunner.ExecutionLoggerManager, exec_folder))
             {
                 //create the HTML report
                 try
@@ -1649,7 +1649,7 @@ namespace Ginger
             mEnvironment = env;
             mContext.Environment = mEnvironment;
             mRunner.ProjEnvironment = mEnvironment;
-            mRunner.ExecutionLogger.ExecutionEnvironment = mEnvironment;
+            mRunner.ExecutionLoggerManager.ExecutionEnvironment = mEnvironment;
             if (mEnvironment != null)
             {
                 WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;

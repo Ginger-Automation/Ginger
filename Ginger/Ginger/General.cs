@@ -246,6 +246,7 @@ namespace Ginger
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());          
             TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0)};
+            txt.Text = count;
            // if(typ==0)
            // {
            //     App.RunsetBFTextbox = txt;
