@@ -129,7 +129,7 @@ namespace Ginger.BusinessFlowWindows
 
             SingleItemTreeViewSelectionPage selectPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Elements", eImageType.BusinessFlow, bFsRoot,
                                                                                 SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
-                                                                                new Tuple<string, string>(nameof(BusinessFlow.Applications), TargetApplication));
+                                                                                new Tuple<string, string>(nameof(BusinessFlow.Applications), TargetApplication), UCTreeView.eFilteroperationType.Contains);
           
             List<object> selectedBF = selectPage.ShowAsWindow();
             if (selectedBF != null && selectedBF.Count > 0)
