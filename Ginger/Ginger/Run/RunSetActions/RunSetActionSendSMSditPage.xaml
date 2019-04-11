@@ -39,7 +39,7 @@
             </TabItem>
            
             <TabItem Header="Delivery Method">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="0,10,0,10" >E-mail Method:</Label>
@@ -59,7 +59,10 @@
                             <TextBox x:Name="SMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="200" HorizontalAlignment="Left"/>
                     </StackPanel>
                 </StackPanel>
-                </Grid>
+                </Grid>-->
+
+                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
+                
             </TabItem>
         </TabControl>
     </Grid>
