@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Amdocs.Ginger.Plugin.Core
@@ -20,6 +21,7 @@ namespace Amdocs.Ginger.Plugin.Core
             }
         }
 
+        Dictionary<string, Type> mAttrTypeDictionary = null;
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // we currently support only writing of JSON
@@ -39,31 +41,22 @@ namespace Amdocs.Ginger.Plugin.Core
                     if (p.Name == "Property")
                     {
                         string value = (string)p.Value;
-
-                        // TODO: user reflection to create the class !!!!!!!!!!!!!!!!!!
-                        switch (value)
+                        if(mAttrTypeDictionary == null)
                         {
-                            case "Max":
-                                attr = new MaxAttribute();
-                                break;
-                            case "Min":
-                                attr = new MinAttribute();
-                                break;
-                            case "Mandatory":
-                                attr = new MandatoryAttribute();
-                                break;
-                            case "InvalidValue":
-                                attr = new InvalidValueAttribute();
-                                break;
-                            case "Label":
-                                attr = new LabelAttribute();
-                                break;
-                            case "Tooltip":
-                                attr = new TooltipAttribute();
-                                break;
-                            default:
-                                throw new Exception("ReadJson Cannot convert attr: " + attr);                        
+                            CreateAttrTypeDictionary();    
                         }
+                        Type attrType = null;
+                        bool found = mAttrTypeDictionary.TryGetValue(value, out attrType);
+                        
+                        if (found)
+                        {
+                            attr = (Attribute)Activator.CreateInstance(attrType);
+                        }
+                        else
+                        {
+                            throw new Exception("Cannot create attribute: " + value);
+                        }
+                       
                         attrs.Add(attr);
                     }
                     else
@@ -100,6 +93,21 @@ namespace Amdocs.Ginger.Plugin.Core
             }
             
             return attrs;
+        }
+
+        private void CreateAttrTypeDictionary()
+        {
+            mAttrTypeDictionary = new Dictionary<string, Type>();
+            Assembly assembly = typeof(IActionParamProperty).Assembly;
+            var actionParamPropertyAttributeTypes = from type in assembly.GetTypes()
+                                                    where typeof(IActionParamProperty).IsAssignableFrom(type) && type.IsInterface == false
+                                                    select type;
+
+            foreach (Type t in actionParamPropertyAttributeTypes)
+            {                
+                IActionParamProperty attr = (IActionParamProperty)Activator.CreateInstance(t);
+                mAttrTypeDictionary.Add(attr.PropertyName, t);                
+            }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
