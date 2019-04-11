@@ -34,9 +34,12 @@ namespace GingerPluginCoreTest
         [GingerAction(Id: "Divide", description: "Divide two numbers")]
         public void Divide(IGingerAction GA,
                             [Mandatory] // user must fill a value
+                            [Label("Numerator")]                                                        
                             int a,
                             [InvalidValue(0)] // 0 is not allowed
                             [InvalidValue(new int[] {-1,101,200})] // not allowed
+                            [Label("Denominator")]
+                            [Tooltip("Enter the Denominator value")]
                             int b)
         {
             Console.WriteLine(DateTime.Now + "> Divide: " + a + "/" + b);

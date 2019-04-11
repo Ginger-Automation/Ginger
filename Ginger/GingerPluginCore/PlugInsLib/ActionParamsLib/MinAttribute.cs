@@ -10,11 +10,11 @@ namespace Amdocs.Ginger.Plugin.Core
         // when saved to services json the attr property name will be:
         public string PropertyName => "Min";
 
-        public int MinValue { get; set; }
+        public int mMin { get; set; }
 
         public MinAttribute(int min)
         {
-            MinValue = min; 
+            mMin = min; 
         }
 
         public MinAttribute()
