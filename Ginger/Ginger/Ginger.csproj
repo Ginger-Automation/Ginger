@@ -613,9 +613,10 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml.cs">
       <DependentUpon>ActionListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -670,6 +671,7 @@
     <Compile Include="UserControlsLib\UcItemExecutionStatus.xaml.cs">
       <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
       <DependentUpon>UcListViewItem.xaml</DependentUpon>
@@ -2881,7 +2883,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml">
+    <Page Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

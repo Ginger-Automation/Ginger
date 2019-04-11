@@ -23,7 +23,7 @@ namespace Ginger.BusinessFlowPages_New.ItemsListControls
             set
             {
                 SetValue(ActionProperty, value);                
-                xActionListItem.ConfigItem(item: value, itemNameField: nameof(Act.Description), itemDescriptionField: nameof(Act.ActionType), itemIconField: null, itemExecutionStatusField: nameof(Act.Status), notifications: GetActionNotifications());
+                //xActionListItem.ConfigItem(item: value, itemNameField: nameof(Act.Description), itemDescriptionField: nameof(Act.ActionType), itemIconField: null, itemExecutionStatusField: nameof(Act.Status), notifications: GetActionNotifications());
             }
         }
         private static void OnActionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

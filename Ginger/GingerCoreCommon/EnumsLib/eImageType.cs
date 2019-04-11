@@ -158,6 +158,7 @@ namespace Amdocs.Ginger.Common.Enums
         Recover,
         Approve,
         Reject,
+        Retry,
         Warn,
         EditWindow,
         UserDefined,

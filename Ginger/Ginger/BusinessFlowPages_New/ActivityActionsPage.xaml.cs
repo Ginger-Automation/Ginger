@@ -18,6 +18,7 @@ limitations under the License.
 
 using Ginger;
 using Ginger.BusinessFlowPages_New.ItemsListControls;
+using Ginger.BusinessFlowPages_New.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -46,41 +47,28 @@ namespace GingerWPF.BusinessFlowsLib
             xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
         }
 
-        private void SetListView()
+        //private void SetListView() //working
+        //{
+        //    DataTemplate dataTemp = new DataTemplate();
+
+        //    FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(ActionListItem));
+        //    listItemFac.SetBinding(ActionListItem.ActionProperty, new Binding());
+
+        //    dataTemp.VisualTree = listItemFac;
+        //    xActionsListView.List.ItemTemplate = dataTemp; 
+        //}
+
+        private void SetListView() 
         {
             DataTemplate dataTemp = new DataTemplate();
 
-            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(ActionListItem));
-            listItemFac.SetBinding(ActionListItem.ActionProperty, new Binding());
+            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo());
 
             dataTemp.VisualTree = listItemFac;
-            xActionsListView.List.ItemTemplate = dataTemp; 
+            xActionsListView.List.ItemTemplate = dataTemp;
         }
-
-        //private void SetListView()
-        //{
-        //    GridView GV = new GridView();
-        //    //TODO: add row num
-
-        //    GridViewColumn GVC1 = new GridViewColumn() { Header = "Description", Width = 250, DisplayMemberBinding = new Binding(nameof(Act.Description)) };
-        //    GV.Columns.Add(GVC1);
-
-        //    GridViewColumn GVC2 = new GridViewColumn() { Header = "Status", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Status)) };
-        //    GV.Columns.Add(GVC2);
-
-        //    GridViewColumn GVC3 = new GridViewColumn() { Header = "Elapsed", Width = 50, DisplayMemberBinding = new Binding(nameof(Act.Elapsed)) };
-        //    GV.Columns.Add(GVC3);
-
-        //    GridViewColumn GVC4 = new GridViewColumn() { Header = "Error", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Error)) };
-        //    GV.Columns.Add(GVC4);
-
-        //    //Hide the List View header
-        //    System.Windows.Style style = new System.Windows.Style();
-        //    style.Setters.Add(new Setter() { Property = VisibilityProperty, Value = Visibility.Collapsed });
-        //    GV.ColumnHeaderContainerStyle = style;
-
-        //    ActionsListBox.View = GV;
-        //}
 
         private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
