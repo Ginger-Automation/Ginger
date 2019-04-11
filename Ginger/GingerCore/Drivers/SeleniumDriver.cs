@@ -3474,7 +3474,6 @@ namespace GingerCore.Drivers
 
                     HTMLElementInfo elementInfo = new HTMLElementInfo();
                     elementInfo.ElementObject = e;
-                    ((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
 
                     HighlightElement(elementInfo);
                 }
@@ -3721,16 +3720,14 @@ namespace GingerCore.Drivers
                                 continue;
                             }
 
-                            HTMLElementInfo foundElemntInfo;
-
-                            foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
+                            HTMLElementInfo foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
 
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
 
                             allReadElem.Add(foundElemntInfo);
 
-                            if (el.TagName == "iframe" || el.TagName == "frame")
+                            if (eElementType.Iframe.ToString().ToUpper() == el.TagName.ToUpper())
                             {
                                 string xpath = htmlElemNode.XPath;
                                 Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
@@ -3864,7 +3861,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME")
+            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME")
             {
                 elementType = eElementType.Iframe;
             }
@@ -3922,39 +3919,39 @@ namespace GingerCore.Drivers
             return EI;
         }
 
-        private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
-        {
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.WindowExplorer = this;
-            EI.ElementTitle = GenerateElementTitle(el);
-            EI.ID = GenerateElementID(el);
-            EI.Value = GenerateElementValue(el);
-            EI.Name = GenerateElementName(el);
-            EI.ElementType = GenerateElementType(el);
-            EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
-            EI.Path = path;
-            if (elNode != null)
-            {
-                EI.XPath = elNode.XPath;
-            }
-            else
-            {
-                EI.XPath = string.Empty;
-            }
-            EI.ElementObject = el;
-            EI.HTMLElementObject = elNode;
+        //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
+        //{
+        //    HTMLElementInfo EI = new HTMLElementInfo();
+        //    EI.WindowExplorer = this;
+        //    EI.ElementTitle = GenerateElementTitle(el);
+        //    EI.ID = GenerateElementID(el);
+        //    EI.Value = GenerateElementValue(el);
+        //    EI.Name = GenerateElementName(el);
+        //    EI.ElementType = GenerateElementType(el);
+        //    EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
+        //    EI.Path = path;
+        //    if (elNode != null)
+        //    {
+        //        EI.XPath = elNode.XPath;
+        //    }
+        //    else
+        //    {
+        //        EI.XPath = string.Empty;
+        //    }
+        //    EI.ElementObject = el;
+        //    EI.HTMLElementObject = elNode;
 
-            if (setFullElementInfoDetails)
-            {
-                EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-                EI.ElementName = GetElementName(EI);
-                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
-                ((IWindowExplorer)this).UpdateElementInfoFields(EI);
-                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
-            }
+        //    if (setFullElementInfoDetails)
+        //    {
+        //        EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
+        //        EI.ElementName = GetElementName(EI);
+        //        EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+        //        ((IWindowExplorer)this).UpdateElementInfoFields(EI);
+        //        EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+        //    }
 
-            return EI;
-        }
+        //    return EI;
+        //}
 
         string GetElementName(HTMLElementInfo EI)
         {

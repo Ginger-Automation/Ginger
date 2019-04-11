@@ -167,11 +167,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             if (LearnOnlyMappedElements)
             {
                 if (SelectedElementTypesList.Count > 0)
-                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList, true);
+                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList);
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList, false);
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
             }
         }
 
