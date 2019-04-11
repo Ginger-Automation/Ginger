@@ -20,12 +20,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.ValidationRules;
 using Ginger.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -54,29 +54,42 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             mLabel = mActInputValue.Param;
 
-            SetParamProperties();
-            SetControlToInputValue();            
+            SetParamLayout();
+            SetControlToInputValue();
+            SetParamValidations();
         }
 
-        private void SetParamProperties()
+        private void SetParamValidations()
         {
-            // TODO: create validation like in wizard !!!!!!!!!!!!!!!!!!!
+            if (mActionParamProperties == null)
+            {
+                return;
+            }
 
-            // Each Param can have properties like: Mandatory, Min, Max, ToolTip
-            // read and process param attrs
+            foreach (Attribute attr in mActionParamProperties)
+            {             
+                if (attr.GetType() == typeof(MandatoryAttribute))
+                {
+                    xTextBoxInputPnl.Background = Brushes.Orange;
+                    //TODO: add AddValidationRule in the UC - but there are 3 UCs !? !!!!!!!!!!!!!!!                  
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());
+                }
+
+                // TODO: !!!!!!!!!! Add check for all Attrs like Min/Max
+            }
+        }
+
+        private void SetParamLayout()
+        {                     
+            // read and process param attrs like Label, Tooltip, Location
             if (mActionParamProperties == null)
             {
                 return;
             }
             
             foreach (Attribute attr in mActionParamProperties)
-            {
-                // !!!!!!!!!! Add check for all Attrs
-                if (attr.GetType() == typeof(MandatoryAttribute))
-                {
-                    xTextBoxInputPnl.Background = Brushes.Orange; 
-                }
-                else if (attr.GetType() == typeof(LabelAttribute))
+            {                
+                if (attr.GetType() == typeof(LabelAttribute))
                 {
                     mLabel = ((LabelAttribute)attr).Label;
                 }
@@ -85,11 +98,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                     xTextBoxInputPnl.ToolTip = ((TooltipAttribute)attr).Tooltip;
                 }
 
-
-
-                // else if...
+                //TODO: handle layout here like Grid.Col/Row
             }
-            
+
         }
 
         private void ResetControls()
