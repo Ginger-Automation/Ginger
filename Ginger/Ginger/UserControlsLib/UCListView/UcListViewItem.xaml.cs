@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -46,7 +47,7 @@ namespace Ginger.UserControlsLib.UCListView
             set
             {
                 SetValue(ItemInfoProperty, value);          
-                ItemInfo.SetItem(Item);
+                //ItemInfo.SetItem(Item);
                 ConfigItem();
             }
         }
@@ -95,7 +96,15 @@ namespace Ginger.UserControlsLib.UCListView
             ItemDescriptionField = ItemInfo.GetItemDescriptionField();
             ItemIconField = ItemInfo.GetItemIconField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
-            List<ListItemNotification> notifications = ItemInfo.GetNotificationsList();
+            SetItemNotifications();
+            SetItemOperations();
+
+            SetItemBindings();
+        }
+
+        private void SetItemNotifications()
+        {
+            List<ListItemNotification> notifications = ItemInfo.GetNotificationsList(Item);
             if (notifications != null)
             {
                 foreach (ListItemNotification notification in notifications)
@@ -129,8 +138,56 @@ namespace Ginger.UserControlsLib.UCListView
                     xItemNotificationsPnl.Children.Add(itemInd);
                 }
             }
+        }
 
-            SetItemBindings();
+        private void SetItemOperations()
+        {
+            List<ListItemOperation> operations = ItemInfo.GetOperationsList(Item);
+            if (operations != null && operations.Count > 0)
+            {
+                xItemOperationsPnl.Visibility = Visibility.Visible;
+                foreach (ListItemOperation operation in operations)
+                {
+                    ucButton operationBtn = new ucButton();
+                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                    operationBtn.ButtonImageType = operation.ImageType;
+                    operationBtn.ToolTip = operation.ToolTip;
+                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                    operationBtn.ButtonImageHeight = 16;
+                    operationBtn.ButtonImageWidth = 18;
+                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        operationBtn.ButtonImageForground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    operationBtn.Click += operation.OperationHandler;
+                    operationBtn.Tag = Item;
+
+                    xItemOperationsPnl.Children.Add(operationBtn);
+                }
+            }
+            else
+            {
+                xItemOperationsPnl.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void SetItemBindings()

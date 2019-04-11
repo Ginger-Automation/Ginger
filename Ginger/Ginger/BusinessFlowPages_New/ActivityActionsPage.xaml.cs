@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowPages_New.ItemsListControls;
 using Ginger.BusinessFlowPages_New.ListViewItems;
@@ -34,6 +35,8 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class ActivityActionsPage : Page
     {
         Activity mActivity;
+        Context mContext;
+        
         public ActivityActionsPage(Activity Activity)
         {
             InitializeComponent();
@@ -64,7 +67,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
             listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo());
+            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
 
             dataTemp.VisualTree = listItemFac;
             xActionsListView.List.ItemTemplate = dataTemp;

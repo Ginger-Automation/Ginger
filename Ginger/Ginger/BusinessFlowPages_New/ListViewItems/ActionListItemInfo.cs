@@ -1,4 +1,8 @@
-﻿using Ginger.UserControlsLib.UCListView;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.UserControls;
+using Ginger.Actions;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using System;
@@ -16,10 +20,23 @@ namespace Ginger.BusinessFlowPages_New.ListViewItems
     public class ActionListItemInfo : IListViewItemInfo
     {
         Act mAction;
+        Context mContext;
+
+        public ActionListItemInfo(Context context)
+        {
+            mContext = context;
+        }
 
         public void SetItem(object item)
         {
-            mAction = (Act)item;
+            if (item is Act)
+            {
+                mAction = (Act)item;
+            }
+            else if(item is ucButton)
+            {
+                mAction = (Act)(((ucButton)item).Tag);
+            }
         }
 
         public string GetItemNameField()
@@ -42,8 +59,9 @@ namespace Ginger.BusinessFlowPages_New.ListViewItems
             return null;
         }
 
-        public List<ListItemNotification> GetNotificationsList()
+        public List<ListItemNotification> GetNotificationsList(object item)
         {
+            SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
             ListItemNotification flowControlInd = new ListItemNotification();
@@ -102,7 +120,49 @@ namespace Ginger.BusinessFlowPages_New.ListViewItems
             return notificationsList;
         }
 
+        public List<ListItemOperation> GetOperationsList(object item)
+        {
+            SetItem(item);
+            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+
+            ListItemOperation edit = new ListItemOperation();
+            edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+            edit.ToolTip = "Edit Action";
+            edit.OperationHandler = EditHandler;
+            operationsList.Add(edit);
+
+
+            ListItemOperation active = new ListItemOperation();
+            active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            active.ImageBindingObject = mAction;
+            active.ImageBindingFieldName = nameof(Act.Active);
+            active.ImageBindingConverter = new ActiveImageTypeConverter();
+            active.ToolTip = "Activate/Un-Activate Action";
+            //active.ImageSize = 15;
+            active.OperationHandler = ActiveHandler;
+            operationsList.Add(active);
+
+            return operationsList;
+        }
+
+        private void EditHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mAction.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAction.Context = mContext;
+            ActionEditPage actedit = new ActionEditPage(mAction, General.RepositoryItemPageViewMode.Automation);//TODO: check if need diifrent mode
+            //actedit.ap = this;
+            actedit.ShowAsWindow();
+        }
+
+        private void ActiveHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mAction.Active = !mAction.Active;
+        }
     }
+
+
 
     public class WaitVisibilityConverter : IValueConverter
     {
@@ -115,6 +175,26 @@ namespace Ginger.BusinessFlowPages_New.ListViewItems
             else
             {
                 return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ActiveImageTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((bool)value == false)
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.InActive;
+            }
+            else
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.Active;
             }
         }
 

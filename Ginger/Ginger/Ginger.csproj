@@ -673,6 +673,7 @@
     </Compile>
     <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
       <DependentUpon>UcListViewItem.xaml</DependentUpon>
     </Compile>

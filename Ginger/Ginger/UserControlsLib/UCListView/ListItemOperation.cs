@@ -1,19 +1,23 @@
 ﻿using Amdocs.Ginger.Common.Enums;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.UCListView
 {
-    public class ListItemNotification
+    public class ListItemOperation
     {
         public eImageType ImageType;
         public SolidColorBrush ImageForeground;
         public double ImageSize = 16;
+        public object ImageBindingObject;
+        public string ImageBindingFieldName;
+        public IValueConverter ImageBindingConverter;
 
         public string ToolTip;
 
-        public object BindingObject;
-        public string BindingFieldName;
-        public IValueConverter BindingConverter;
+        public RoutedEventHandler OperationHandler;
+
+
     }
 }

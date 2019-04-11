@@ -18,6 +18,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemExecutionStatusField();
 
-        List<ListItemNotification> GetNotificationsList();
+        List<ListItemNotification> GetNotificationsList(object item);
+
+        List<ListItemOperation> GetOperationsList(object item);
     }
 }
