@@ -52,7 +52,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             ResetControls();
 
-            mLabel = mActInputValue.Param;
+            mLabel = char.ToUpper(mActInputValue.Param[0]) +  mActInputValue.Param.Substring(1);   // capitilize first letter only of the param name
 
             SetParamLayout();
             SetControlToInputValue();
@@ -91,7 +91,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {                
                 if (attr.GetType() == typeof(LabelAttribute))
                 {
-                    mLabel = ((LabelAttribute)attr).Label;
+                    mLabel = ((LabelAttribute)attr).Label;   // We keep the label as is defined on the param - do not capitilize or change
                 }
                 else if (attr.GetType() == typeof(TooltipAttribute))
                 {
@@ -117,12 +117,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
-                xTextBoxInputLabel.Content = string.Format("{0}:", mLabel);
+                xTextBoxInputLabel.Content = mLabel;
                 xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value));
                 return;
-            }
-
-           
+            }           
 
             if (mActInputValue.ParamType == typeof(bool))
             {
