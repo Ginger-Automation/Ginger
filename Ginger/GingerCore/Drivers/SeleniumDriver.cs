@@ -3111,7 +3111,7 @@ namespace GingerCore.Drivers
 
             foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
             {
-                if(!locator.IsAutoLearned)
+                if (!locator.IsAutoLearned)
                 {
                     ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
                     ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
@@ -3533,7 +3533,7 @@ namespace GingerCore.Drivers
                     };
                     result = action.BeginInvoke(null, null);
 
-                    if (result.AsyncWaitHandle.WaitOne(10000,true))
+                    if (result.AsyncWaitHandle.WaitOne(10000, true))
                     {
                         if (count == 0)
                             return false;
@@ -3689,39 +3689,38 @@ namespace GingerCore.Drivers
 
                         //get Element Type
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
-                        bool isFrameElement = elementTypeEnum.Item2 == eElementType.Iframe;
-                        bool learningFrame = false;
 
-                        //filter element if needed
-                        if (filteredElementType != null)                    //     && filteredElementType.Count > 0)
+                        //tracking the element type is frame or not
+                        bool isFrameElement = false;
+
+                        if (eElementType.Iframe == elementTypeEnum.Item2)
+                            isFrameElement = true;
+
+                        // set the Flag in case you wish to learn the element or not
+                        bool learnElement = true;
+
+                        //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
+                        if (filteredElementType != null)
                         {
-                            if (isFrameElement)
-                            {
-                                if (filteredElementType.Contains(elementTypeEnum.Item2))
-                                    learningFrame = true;
-                                else
-                                    learningFrame = false;
-                            }
-                            else if (!filteredElementType.Contains(elementTypeEnum.Item2))
+                            //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
+                            if (!isFrameElement && !filteredElementType.Contains(elementTypeEnum.Item2))
+                                learnElement = false;
+                        }
+
+                        if (learnElement)
+                        {
+                            IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
+                            if (el == null)
                             {
                                 continue;
                             }
-                        }
 
-                        IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
-                        if (el == null)
-                        {
-                            continue;
-                        }
+                            //filter none visible elements
+                            if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                            {
+                                continue;
+                            }
 
-                        //filter none visible elements
-                        if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
-                        {
-                            continue;
-                        }
-
-                        if (!isFrameElement || (isFrameElement && learningFrame))
-                        {
                             HTMLElementInfo foundElemntInfo;
 
                             foundElemntInfo = GetElementInfo(path, htmlElemNode, elementTypeEnum, el);
@@ -3730,23 +3729,23 @@ namespace GingerCore.Drivers
                             foundElementsList.Add(foundElemntInfo);
 
                             allReadElem.Add(foundElemntInfo);
-                        }
 
-                        if (el.TagName == "iframe" || el.TagName == "frame")
-                        {
-                            string xpath = htmlElemNode.XPath;
-                            Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
-                            string newPath = string.Empty;
-                            if (path == string.Empty)
+                            if (el.TagName == "iframe" || el.TagName == "frame")
                             {
-                                newPath = xpath;
+                                string xpath = htmlElemNode.XPath;
+                                Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
+                                string newPath = string.Empty;
+                                if (path == string.Empty)
+                                {
+                                    newPath = xpath;
+                                }
+                                else
+                                {
+                                    newPath = path + "," + xpath;
+                                }
+                                GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
+                                Driver.SwitchTo().ParentFrame();
                             }
-                            else
-                            {
-                                newPath = path + "," + xpath;
-                            }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
-                            Driver.SwitchTo().ParentFrame();
                         }
                     }
                     catch (Exception ex)
@@ -4974,7 +4973,7 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
-                return "/" + IWE.TagName +"[1]" + current;
+                return "/" + IWE.TagName + "[1]" + current;
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
@@ -7107,7 +7106,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                foreach (ElementLocator el in EI.Locators.Where(x=>x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                foreach (ElementLocator el in EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
                 {
                     el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 }

@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void LearnScreenShot()
         {
             IWindowExplorerDriver.UnHighLightElements();
-            ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot();      // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
         }
 
         public void Learn()
@@ -189,6 +189,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     if (SelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
                     {
                         POM.MappedUIElements.Add(learnedElement);
+                    }
+                    else if (learnedElement.ElementTypeEnum == eElementType.Iframe && LearnOnlyMappedElements)
+                    {
+                        //if we're learning only Mapped Elements and Element Type 'Frame' is unchecked in SelectedElementTypesList then we'll skip adding the same.
+                        return;
                     }
                     else
                     {
