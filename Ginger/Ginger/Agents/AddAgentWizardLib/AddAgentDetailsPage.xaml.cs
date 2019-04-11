@@ -66,7 +66,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
-                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
+                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverInfo));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
@@ -121,7 +121,7 @@ namespace Ginger.Agents.AddAgentWizardLib
 
             DriverInfo DI= xDriverTypeComboBox.SelectedItem as DriverInfo;
 
-            foreach(var service in DI.services)
+            foreach(var service in mWizard.Agent.DriverInfo.services)
             {
                 xDriverSubTypeComboBox.Items.Add(service);
             }

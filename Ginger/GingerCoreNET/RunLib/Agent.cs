@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -60,6 +61,7 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public string ServiceId { get; set; }   // only for AgentType plugin
 
+        public DriverInfo DriverInfo { get; set; }
         public enum eDriverType
         {
             //Web
@@ -157,6 +159,7 @@ namespace GingerCore
             public static string Notes = "Notes";
             public static string Platform = "Platform";
             public static string IsWindowExplorerSupportReady = "IsWindowExplorerSupportReady";
+            public static string DriverInfo = "DriverInfo";
         }
 
         public bool IsWindowExplorerSupportReady
@@ -290,6 +293,8 @@ namespace GingerCore
         public string SolutionFolder { get; set; }
 
         public ObservableList<DataSourceBase> DSList { get; set; }
+
+
         
         private BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
