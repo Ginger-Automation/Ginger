@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.Plugin.Core
                     else
                     {
                         PropertyInfo propertyInfo = attr.GetType().GetProperty(name);
-
+                        // TODO: try to make it generic !!!!!
                         if (propertyInfo.PropertyType == typeof(int))
                         {
                             propertyInfo.SetValue(attr, p.Value.Value<int>());
@@ -77,6 +77,16 @@ namespace Amdocs.Ginger.Plugin.Core
                         else if (propertyInfo.PropertyType == typeof(string))
                         {
                             propertyInfo.SetValue(attr, p.Value.Value<string>());
+                        }
+                        else if (propertyInfo.PropertyType == typeof(List<int>))
+                        {
+                            List<int> list = new List<int>();                            
+                            JArray jarr = (JArray)p.Value;
+                            foreach (int val in jarr.Children())
+                            {
+                                list.Add(val); 
+                            }
+                            propertyInfo.SetValue(attr, list);
                         }
                         else
                         {
