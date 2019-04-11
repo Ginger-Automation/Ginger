@@ -190,11 +190,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     {
                         POM.MappedUIElements.Add(learnedElement);
                     }
-                    else if (learnedElement.ElementTypeEnum == eElementType.Iframe && LearnOnlyMappedElements)
-                    {
-                        //if we're learning only Mapped Elements and Element Type 'Frame' is unchecked in SelectedElementTypesList then we'll skip adding the same.
-                        return;
-                    }
                     else
                     {
                         POM.UnMappedUIElements.Add(learnedElement);
