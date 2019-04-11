@@ -316,7 +316,7 @@ namespace Ginger.Variables
                 //design checkbox cells
                 if (grdDependencies.grdMain.Columns.Count >= 2)
                 {
-                    for (int i = 0; i <= grdDependencies.grdMain.Columns.Count; i++)
+                    for (int i = 0; i < grdDependencies.grdMain.Columns.Count; i++)
                         if (grdDependencies.grdMain.Columns[i].Visibility == System.Windows.Visibility.Visible && i > 1)
                             ((DataGridCheckBoxColumn)grdDependencies.grdMain.Columns[i]).ElementStyle = (Style)FindResource("@CheckBoxGridCellElemntStyle");
                 }

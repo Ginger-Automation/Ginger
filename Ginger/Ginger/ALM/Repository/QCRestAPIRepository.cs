@@ -239,7 +239,13 @@ namespace Ginger.ALM.Repository
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
-            
+            //if it is called from shared repository need to select path
+            if (uploadPath == null)
+            {
+                QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
+                win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
+                uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
+            }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
@@ -336,18 +342,7 @@ namespace Ginger.ALM.Repository
                     //create upload path if checked to create separete folder
                     if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
                     {
-                        bool flag = false;
                         try
-                        {
-                            string isFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath + "\\" + businessFlow.Name).ToString();
-                            testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
-                            flag = true;
-                        }
-                        catch (Exception ex)
-                        {
-                            flag = false;
-                        }
-                        if (flag == false)
                         {
                             string newFolderId = QCRestAPIConnect.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
                             QCItem newFolder = new QCItem();
@@ -356,6 +351,10 @@ namespace Ginger.ALM.Repository
                             ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_FOLDERS, newFolder);
                             newFolderId = responseData.IdCreated;
                             testPlanUploadPath = testPlanUploadPath + "\\" + businessFlow.Name;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Plan with REST API", ex);
                         }
                     }
                 }
