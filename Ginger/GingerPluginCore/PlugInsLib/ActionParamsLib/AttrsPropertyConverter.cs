@@ -55,15 +55,19 @@ namespace Amdocs.Ginger.Plugin.Core
                             case "InvalidValue":
                                 attr = new InvalidValueAttribute();
                                 break;
-                            default:
-                                // ERRR
+                            case "Label":
+                                attr = new LabelAttribute();
                                 break;
+                            case "Tooltip":
+                                attr = new TooltipAttribute();
+                                break;
+                            default:
+                                throw new Exception("ReadJson Cannot convert attr: " + attr);                        
                         }
                         attrs.Add(attr);
                     }
                     else
                     {
-                        // string value = (string)p.Value;
                         PropertyInfo propertyInfo = attr.GetType().GetProperty(name);
 
                         if (propertyInfo.PropertyType == typeof(int))
@@ -76,9 +80,7 @@ namespace Amdocs.Ginger.Plugin.Core
                         }
                         else
                         {
-                            
-
-                            // ERR !!!!!!!!!!!!!!!
+                            throw new Exception("ReadJson Cannot convert attr: " + attr);
                         }
                         //TODO:  Else List<int>  etc... err
 

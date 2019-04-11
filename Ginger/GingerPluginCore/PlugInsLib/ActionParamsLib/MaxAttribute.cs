@@ -11,11 +11,11 @@ namespace Amdocs.Ginger.Plugin.Core
         // when saved to services json the attr property name will be:
         public string PropertyName => "Max";
 
-        public int mMax { get; set; }
+        public int Max { get; set; }
 
         public MaxAttribute(int max)
         {
-            mMax = max;
+            Max = max;
         }
 
         public MaxAttribute()

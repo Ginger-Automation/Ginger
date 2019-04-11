@@ -40,6 +40,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         ActInputValue mActInputValue;
         Context mContext;
         List<Attribute> mActionParamProperties;
+        string mLabel;
 
         public ActionInputValueUserControl(Context context, ActInputValue actInputValue, List<Attribute> actionParamProperties)
         {
@@ -51,9 +52,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             ResetControls();
 
-            SetControlToInputValue();
+            mLabel = mActInputValue.Param;
 
             SetParamProperties();
+            SetControlToInputValue();            
         }
 
         private void SetParamProperties()
@@ -72,8 +74,19 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 // !!!!!!!!!! Add check for all Attrs
                 if (attr.GetType() == typeof(MandatoryAttribute))
                 {
-                    xTextBoxInputPnl.Background = Brushes.Orange;
+                    xTextBoxInputPnl.Background = Brushes.Orange; 
                 }
+                else if (attr.GetType() == typeof(LabelAttribute))
+                {
+                    mLabel = ((LabelAttribute)attr).Label;
+                }
+                else if (attr.GetType() == typeof(TooltipAttribute))
+                {
+                    xTextBoxInputPnl.ToolTip = ((TooltipAttribute)attr).Tooltip;
+                }
+
+
+
                 // else if...
             }
             
@@ -93,7 +106,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
-                xTextBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
+                xTextBoxInputLabel.Content = string.Format("{0}:", mLabel);
                 xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
@@ -103,7 +116,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(bool))
             {
                 xCheckBoxInput.Visibility = Visibility.Visible;
-                xCheckBoxInput.Content = GetInputFieldformatedName();
+                xCheckBoxInput.Content = mLabel;
                 xCheckBoxInput.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
@@ -111,7 +124,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(DynamicListWrapper))
             {
                 xListInputGrid.Visibility = Visibility.Visible;
-                xListInputGrid.Title = GetInputFieldformatedName();
+                xListInputGrid.Title = mLabel;
 
                 //set data
                 ObservableList<dynamic> DynList = mActInputValue.ListDynamicValue;
@@ -129,8 +142,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(EnumParamWrapper))
             {
                 xComboBoxInputPnl.Visibility = Visibility.Visible;
-                xComboBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
+                xComboBoxInputLabel.Content = string.Format("{0}:", mLabel);
                 
+
                 string enumValues = mActInputValue.ParamTypeEX.Replace("enum{", "");
                 enumValues = enumValues.Replace("}", "");
 
@@ -148,21 +162,22 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         }
 
-        private string GetInputFieldformatedName()
-        {
-            // Make first letter upper case
-            string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1);
+        //private string GetInputFieldformatedName()
+        //{
+            
+            //// Make first letter upper case
+            //string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1);
 
-            //split by Uper case
-            string[] split = Regex.Split(formatedName, @"(?<!^)(?=[A-Z])");
-            formatedName = string.Empty;
-            foreach (string str in split)
-            {
-                formatedName += str + " ";
-            }
+            ////split by Uper case
+            //string[] split = Regex.Split(formatedName, @"(?<!^)(?=[A-Z])");
+            //formatedName = string.Empty;
+            //foreach (string str in split)
+            //{
+            //    formatedName += str + " ";
+            //}
 
-            return (formatedName.Trim());
-        }
+            //return (formatedName.Trim());
+        //}
 
         #region List Grid Handlers
 
