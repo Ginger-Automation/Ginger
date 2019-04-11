@@ -22,12 +22,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
-using Amdocs.Ginger.Common.Repository.PlugInsLib;
-using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -231,6 +231,7 @@ namespace Amdocs.Ginger.Repository
                                  continue;                                
                             }
                             
+
                             PluginServiceActionInfo action = new PluginServiceActionInfo();
 
                             if (gingerActionAttr != null)
@@ -282,11 +283,29 @@ namespace Amdocs.Ginger.Repository
 
                             foreach (ParameterInfo PI in MI.GetParameters())
                             {
-                                if (PI.ParameterType.Name != nameof(IGingerAction))
+                                if (PI.ParameterType.Name == nameof(IGingerAction))
                                 {
-                                    action.InputValues.Add(new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType });
+                                    continue;
                                 }
+
+                                ActionInputValueInfo actionInputValueInfo = new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType };
+                                actionInputValueInfo.ParamAttrs = new List<Attribute>();
+                                action.InputValues.Add(actionInputValueInfo);
+
+                                // Add Ginger param properties
+                                
+                                Attribute[] attrs = Attribute.GetCustomAttributes(PI, typeof(Attribute), false);
+
+                                
+                                // var v = PI.CustomAttributes; - not good
+                                foreach (Attribute attribute in attrs)
+                                {
+                                    actionInputValueInfo.ParamAttrs.Add(attribute);
+                                }
+
                             }
+                            
+
                             pluginServiceInfo.Actions.Add(action);
                         }
                         mServices.Add(pluginServiceInfo);

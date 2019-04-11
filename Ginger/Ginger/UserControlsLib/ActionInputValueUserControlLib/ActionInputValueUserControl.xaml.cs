@@ -18,14 +18,17 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 {
@@ -36,17 +39,44 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
     {
         ActInputValue mActInputValue;
         Context mContext;
+        List<Attribute> mActionParamProperties;
 
-        public ActionInputValueUserControl(Context context, ActInputValue actInputValue)
+        public ActionInputValueUserControl(Context context, ActInputValue actInputValue, List<Attribute> actionParamProperties)
         {
             InitializeComponent();
 
             mActInputValue = actInputValue;
             mContext = context;
+            mActionParamProperties = actionParamProperties;
 
             ResetControls();
 
             SetControlToInputValue();
+
+            SetParamProperties();
+        }
+
+        private void SetParamProperties()
+        {
+            // TODO: create validation like in wizard !!!!!!!!!!!!!!!!!!!
+
+            // Each Param can have properties like: Mandatory, Min, Max, ToolTip
+            // read and process param attrs
+            if (mActionParamProperties == null)
+            {
+                return;
+            }
+            
+            foreach (Attribute attr in mActionParamProperties)
+            {
+                // !!!!!!!!!! Add check for all Attrs
+                if (attr.GetType() == typeof(MandatoryAttribute))
+                {
+                    xTextBoxInputPnl.Background = Brushes.Orange;
+                }
+                // else if...
+            }
+            
         }
 
         private void ResetControls()

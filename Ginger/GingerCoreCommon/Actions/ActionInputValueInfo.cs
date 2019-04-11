@@ -26,7 +26,9 @@ using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Actions
 {
-    [JsonObject(MemberSerialization.OptIn)]
+
+    //TODO:  NullValueHandling.Ignore Not working !!!!!!!!!!!!!!!!!!!
+    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]   
     public class ActionInputValueInfo
     {
         public Type ParamType { get; set; }
@@ -37,6 +39,14 @@ namespace Amdocs.Ginger.Common.Actions
 
         [JsonProperty]
         public string Param { get; set; }
+
+
+        [JsonProperty]
+        
+        // We use our own json serializer for param attrs
+        [JsonConverter(typeof(AttrsPropertyConverter))]        
+        public List<Attribute> ParamAttrs { get; set; }
+
 
         [JsonProperty]
         public string ParamTypeName
