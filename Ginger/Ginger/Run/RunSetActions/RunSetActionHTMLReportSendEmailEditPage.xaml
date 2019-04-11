@@ -76,7 +76,7 @@
 
 
             <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>
@@ -97,7 +97,9 @@
                             <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" LostFocus="xSMTPPassTextBox_LostFocus"/>
                         </StackPanel>
                     </StackPanel>
-                </Grid>
+                </Grid>-->
+
+                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>
     </Grid>
