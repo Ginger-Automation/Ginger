@@ -26,6 +26,7 @@ using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -859,6 +860,12 @@ namespace Ginger.Repository
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
+        }
+
+        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        {
+            RecoverPage recoverPage = new SolutionAutoSaveAndRecover.RecoverPage(recovredItems);
+            recoverPage.ShowAsWindow(eWindowShowStyle.Dialog);
         }
     }
     
