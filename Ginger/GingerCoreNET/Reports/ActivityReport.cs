@@ -369,7 +369,7 @@ namespace Ginger.Reports
                     foreach (IAct a in mActivity.Acts)
                     {
                         i++;
-                        ActionReport ar = new ActionReport(a);
+                        ActionReport ar = new ActionReport(a, null);//need to provide valid Context
                         ar.Seq = i;
                         list.Add(ar);
                     }
