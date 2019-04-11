@@ -3689,12 +3689,6 @@ namespace GingerCore.Drivers
                         //get Element Type
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
 
-                        //tracking the element type is frame or not
-                        bool isFrameElement = false;
-
-                        if (eElementType.Iframe == elementTypeEnum.Item2)
-                            isFrameElement = true;
-
                         // set the Flag in case you wish to learn the element or not
                         bool learnElement = true;
 
@@ -3702,7 +3696,7 @@ namespace GingerCore.Drivers
                         if (filteredElementType != null)
                         {
                             //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
-                            if (!isFrameElement && !filteredElementType.Contains(elementTypeEnum.Item2))
+                            if (!filteredElementType.Contains(elementTypeEnum.Item2))
                                 learnElement = false;
                         }
 
@@ -3726,8 +3720,8 @@ namespace GingerCore.Drivers
                             foundElementsList.Add(foundElemntInfo);
 
                             allReadElem.Add(foundElemntInfo);
-
-                            if (eElementType.Iframe.ToString().ToUpper() == el.TagName.ToUpper())
+                        }
+                            if (eElementType.Iframe == elementTypeEnum.Item2)
                             {
                                 string xpath = htmlElemNode.XPath;
                                 Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
@@ -3743,7 +3737,7 @@ namespace GingerCore.Drivers
                                 GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
                                 Driver.SwitchTo().ParentFrame();
                             }
-                        }
+                        
                     }
                     catch (Exception ex)
                     {
