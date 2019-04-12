@@ -428,6 +428,7 @@ namespace Ginger
                 InitClassTypesDictionary();
             }
 
+
             MainWindow = new MainWindow();
             MainWindow.Show();
             GingerCore.General.DoEvents();
@@ -436,6 +437,11 @@ namespace Ginger
 
             MainWindow.Init();
             MainWindow.HideSplash();
+
+            if (WorkSpace.Instance.UserProfile != null)
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.Instance.UserProfile.TerminologyDictionaryType);
+            else
+                LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
         }
 
        
