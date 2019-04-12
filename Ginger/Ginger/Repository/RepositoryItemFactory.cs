@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
@@ -26,6 +27,7 @@ using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -45,6 +47,7 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
+using GingerCore.SourceControl;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
@@ -62,6 +65,7 @@ using System.Threading.Tasks;
 using System.Web.UI.DataVisualization.Charting;
 using System.Windows.Threading;
 using static GingerCore.Agent;
+using static System.Net.Mime.MediaTypeNames;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace Ginger.Repository
@@ -376,10 +380,57 @@ namespace Ginger.Repository
             return 0;
         }
 
-        public void RunRunSetFromCommandLine()
-        {                     
-            AutoRunWindow RP = new AutoRunWindow();
-            RP.Show();            
+
+        AutoRunWindow RP;
+        public void ShowAutoRunWindow()
+        {
+            // do on disp !!!
+            //App.MainWindow.Dispatcher.Invoke(() => 
+            //{                
+            RP = new AutoRunWindow();
+            RP.Show();
+            Task.Factory.StartNew(() => 
+            {
+                RP.Dispatcher.Invoke(() => {                    
+                    GingerCore.General.DoEvents();
+                    Thread.Sleep(100);
+                });                
+            });
+            
+
+            //WorkSpace.Instance.RunsetExecutor.InitRunners();
+            //WorkSpace.Instance.RunsetExecutor.RunRunset();
+
+            //RP.Show();
+            //GingerCore.General.DoEvents();
+            ////});
+
+            //Dispatcher main = Dispatcher.CurrentDispatcher;
+
+            //Thread mGingerThread = new Thread(() =>
+            //{
+            //    SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+
+            //    // we need sample class - Dummy
+            //    Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
+            //    Assembly asm1 = d.GetType().Assembly;
+            //    // Set the app resources to Ginger so image an other will be locally to Ginger
+
+            //    main.Invoke(() => { 
+
+            //    });
+
+
+            //    // Makes the thread support message pumping                 
+            //    System.Windows.Threading.Dispatcher.Run();
+            //});
+
+
+            ////// Configure the thread            
+            //mGingerThread.SetApartmentState(ApartmentState.STA);
+            //mGingerThread.IsBackground = true;
+            //mGingerThread.Start();
+
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
@@ -607,151 +658,7 @@ namespace Ginger.Repository
             return ReportTemplate.GenerateReport(templatename, reportInfo);
         }
 
-        // Move to CLI !!!!!!!!!!!!!!!!! 0 usage??
-        public bool ProcessCommandLineArgs(string[] lines)
-        {
-            string scURL = null;
-            string scUser = null;
-            string scPswd = null;
-
-            foreach (string arg in lines)
-            {
-                int i = arg.IndexOf('=');
-                string param = arg.Substring(0, i).Trim();
-                string value = arg.Substring(i + 1).Trim();
-
-                switch (param)
-                {
-                    case "SourceControlType":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
-                        if (value.Equals("GIT"))
-                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
-                        else if (value.Equals("SVN"))
-                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
-                        else
-                             WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
-                        break;
-
-                    case "SourceControlUrl":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-                        {
-                            if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
-                                value = value + "svn/";
-                            if (!value.ToUpper().EndsWith("/"))
-                                value = value + "/";
-                        }
-                         WorkSpace.Instance.UserProfile.SourceControlURL = value;
-                        scURL = value;
-                        break;
-
-                    case "SourceControlUser":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
-                            value = "Test";
-                         WorkSpace.Instance.UserProfile.SourceControlUser = value;
-                        scUser = value;
-                        break;
-
-                    case "SourceControlPassword":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                         WorkSpace.Instance.UserProfile.SourceControlPass = value;
-                        scPswd = value;
-                        break;
-
-                    case "PasswordEncrypted":
-                        Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                        string pswd =  WorkSpace.Instance.UserProfile.SourceControlPass;
-                        if (value == "Y")
-                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.Instance.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                        if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-                            pswd = "Test";
-                         WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
-                        break;
-
-                    case "SourceControlProxyServer":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
-                        if (value == "")
-                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
-                        else
-                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-                            value = "http://" + value;
-                         WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
-                        break;
-
-                    case "SourceControlProxyPort":
-                        if (value == "")
-                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
-                        else
-                             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                         WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
-                        break;
-
-                    case "Solution":
-                        if (scURL != null && scUser != "" && scPswd != null)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                            if (value.IndexOf(".git") != -1)
-                                App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                            else
-                                App.DownloadSolution(value);
-                        }
-                        Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
-                        try
-                        {
-                            if (WorkSpace.Instance.OpenSolution(value) == false)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                return false;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                            return false;
-                        }
-                        break;
-
-                    case "Env":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
-                        ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                        if (env != null)
-                        {
-                           WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = env;
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                            return false;
-                        }
-                        break;
-
-                    case "RunSet":
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
-                        ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                        RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                        if (runSetConfig != null)
-                        {
-                            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                            return false;
-                        }
-                        break;
-
-                    default:
-                        Reporter.ToLog(eLogLevel.ERROR, "Un Known argument: '" + param + "'");
-                        return false;
-                }
-               
-            }
-            return true;
-        }
+       
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
@@ -859,6 +766,100 @@ namespace Ginger.Repository
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
+        }
+        
+
+        
+        public void DownloadSolution(string SolutionFolder)
+        {
+            SourceControlBase mSourceControl;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                mSourceControl = new GITSourceControl();
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = new SVNSourceControl();
+            }
+            else
+            {
+                mSourceControl = new SVNSourceControl();
+            }
+
+            if (mSourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                mSourceControl.SolutionFolder = SolutionFolder;
+
+                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.supressMessage = true;
+            }
+
+            if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
+            }
+            if (SolutionFolder.EndsWith("\\"))
+            {
+                SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
+            }
+
+            SolutionInfo sol = new SolutionInfo();
+            sol.LocalFolder = SolutionFolder;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else
+            {
+                sol.ExistInLocaly = false;
+            }
+
+            sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf("\\") + 1);
+
+            if (sol == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
+                return;
+            }
+
+            string ProjectURI = string.Empty;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+            }
+            else
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+            }
+            bool getProjectResult = true;
+            getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
+            if (getProjectResult != true)
+            {
+                return;
+            }
+
+            if (sol.ExistInLocaly == true)
+            {
+                mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+                SourceControlIntegration.GetLatest(sol.LocalFolder, mSourceControl);
+            }
+            else
+            {
+                getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+            }
         }
     }
     

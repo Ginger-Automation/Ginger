@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
@@ -29,7 +28,6 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,7 +79,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
         public ObservableList<GingerRunner> Runners
         {
             get
@@ -92,7 +90,7 @@ namespace Ginger.Run
 
         private ProjEnvironment mRunsetExecutionEnvironment = null;
 
-        
+
 
         public ProjEnvironment RunsetExecutionEnvironment
         {
@@ -133,7 +131,7 @@ namespace Ginger.Run
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
             runner.CurrentSolution = WorkSpace.Instance.Solution;
-            runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>(); 
+            runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
@@ -175,7 +173,7 @@ namespace Ginger.Run
                     businessFlow = (from x in businessFlows where x.Name == businessFlowRun.BusinessFlowName select x).FirstOrDefault();
                 }
                 if (businessFlow == null)
-                {                    
+                {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Can not find the '{0}' {1} for the '{2}' {3}", businessFlowRun.BusinessFlowName, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     continue;
                 }
@@ -219,7 +217,7 @@ namespace Ginger.Run
                     runner.BusinessFlows.Add(BFCopy);
                 }
             }
-        }     
+        }
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
         {
@@ -243,7 +241,7 @@ namespace Ginger.Run
                     }
                 }
             }
-            
+
             if (RunsetExecutionEnvironment != null)
             {
                 RunsetExecutionEnvironment.CloseEnvironment();
@@ -259,7 +257,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
         public void SetRunnersExecutionLoggerConfigs()
         {
             mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
@@ -295,16 +293,16 @@ namespace Ginger.Run
             });
             return result;
         }
-        
-        public void RunRunset(bool doContinueRun=false)
+
+        public void RunRunset(bool doContinueRun = false)
         {
             List<Task> runnersTasks = new List<Task>();
-            
+
             //reset run       
             if (doContinueRun == false)
             {
                 RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mStopwatch.Reset();
                 ResetRunnersExecutionDetails();
             }
@@ -317,12 +315,12 @@ namespace Ginger.Run
             //configure Runners for run
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             ConfigureAllRunnersForExecution();
-           
+
             //Process all pre execution Run Set Operations
             if (doContinueRun == false)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
-                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });                
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
             }
 
             //Start Run 
@@ -342,20 +340,23 @@ namespace Ginger.Run
 
                 foreach (GingerRunner GR in Runners)
                 {
-                    if (mStopRun) return;
+                    if (mStopRun)
+                    {
+                        return;
+                    }
 
                     Task t = new Task(() =>
                     {
-                    if (doContinueRun == false)
-                    {
-                        GR.RunRunner();
-                    }
-                    else
-                        if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                    {
-                        GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                        GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                    }
+                        if (doContinueRun == false)
+                        {
+                            GR.RunRunner();
+                        }
+                        else
+                            if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                        {
+                            GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                            GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                        }
                     }, TaskCreationOptions.LongRunning);
                     runnersTasks.Add(t);
                     t.Start();
@@ -371,20 +372,25 @@ namespace Ginger.Run
                 {
                     foreach (GingerRunner GR in Runners)
                     {
-                        if (mStopRun) return;
+                        if (mStopRun)
+                        {
+                            return;
+                        }
 
                         if (doContinueRun == false)
+                        {
                             GR.RunRunner();
+                        }
                         else
                             if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                            {
-                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                            }
-                            else if(GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
-                            {
-                                GR.RunRunner();
-                            }
+                        {
+                            GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                            GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                        }
+                        else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
+                        {
+                            GR.RunRunner();
+                        }
                         // Wait one second before starting another runner
                         Thread.Sleep(1000);
                     }
@@ -393,7 +399,7 @@ namespace Ginger.Run
                 t.Start();
             }
 
-            Task.WaitAll(runnersTasks.ToArray());            
+            Task.WaitAll(runnersTasks.ToArray());
             mStopwatch.Stop();
 
             //Do post execution items
@@ -402,11 +408,11 @@ namespace Ginger.Run
             if (mStopRun == false)
             {
                 // Process all post execution RunSet Operations
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                
-                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });                
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
             }
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            
+
             CreateGingerExecutionReportAutomaticly();
             CloseAllEnvironments();
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -429,7 +435,7 @@ namespace Ginger.Run
                     {
                         runSetReportName = ExecutionLogger.defaultRunTabLogName;
                     }
-                    string exec_folder = ExecutionLogger.GetLoggerDirectory(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));                    
+                    string exec_folder = ExecutionLogger.GetLoggerDirectory(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLogger.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
                 }
             }
         }
@@ -438,7 +444,7 @@ namespace Ginger.Run
         {
             foreach (GingerRunner runner in Runners)
             {
-                runner.ResetRunnerExecutionDetails();                
+                runner.ResetRunnerExecutionDetails();
                 runner.CloseAgents();
             }
         }
@@ -449,10 +455,12 @@ namespace Ginger.Run
             foreach (GingerRunner runner in Runners)
             {
                 if (runner.IsRunning)
+                {
                     runner.StopRun();
+                }
             }
         }
-        
+
 
         internal void ProcessRunSetActions(List<RunSetActionBase.eRunAt> runAtList)
         {
@@ -515,135 +523,34 @@ namespace Ginger.Run
             }
         }
 
-        // Move to CLI !!!!!!!!!
-        public async Task<int> RunRunSetFromCommandLine()
+
+
+
+
+        public async Task<int> RunRunsetAnalyzerBeforeRun(bool runInSilentMode = false)
         {
-            //0- success
-            //1- failure
-
-            try
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Processing Command Line Arguments");
-                if (ProcessCommandLineArgs() == false)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Processing Command Line Arguments failed");
-                    return 1;
-                }
-
-                AutoLogProxy.UserOperationStart("AutoRunWindow", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name);
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                try
-                {
-                    RepositoryItemHelper.RepositoryItemFactory.RunRunSetFromCommandLine();
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed loading {0} execution UI elements, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                    return 1;
-                }
-
-                //Running Runset Analyzer to look for issues
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                try
-                {
-                    //run analyzer
-                    int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun(true).ConfigureAwait(false);
-                    if (analyzeRes == 1)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                        return 1;//cancel run because issues found
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                    //return 1;
-                }
-
-                //Execute
-                try
-                {
-                    await RunRunsetAsync();
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during the {0} execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                    return 1;
-                }
-
-                if (RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
-                    return 0;
-                else
-                    return 1;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Un expected error occured during the execution", ex);
-                return 1;
-            }
-            finally
-            {
-                AutoLogProxy.UserOperationEnd();
-            }
-        }
-      
-        private bool ProcessCommandLineArgs()
-        {
-            // New option with one arg to config file
-            // resole spaces and quotes mess in commnd arg + more user friednly to edit
-            // We expect only AutoRun --> File location
-            try
-            {
-                string[] Args = Environment.GetCommandLineArgs();
-
-                // We expect Autorun as arg[1]
-                string[] arg1 = Args[1].Split('=');
-
-                if (arg1[0] != "ConfigFile")
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "'ConfigFile' argument was not found.");
-                    return false;
-                }
-
-                string AutoRunFileName = arg1[1];
-
-                Reporter.ToLog(eLogLevel.DEBUG, "Reading all arguments from the Config file placed at: '" + AutoRunFileName + "'");
-                string[] lines = System.IO.File.ReadAllLines(AutoRunFileName);
-                //TODO:  Move to CLIProcc !!!!
-                RepositoryItemHelper.RepositoryItemFactory.ProcessCommandLineArgs(lines);
-
-                
-
-                if (RunSetConfig != null && RunsetExecutionEnvironment != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Missing key arguments which required for execution");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred during command line arguments processing", ex);
-                return false;
-            }
-        }
-
-        public async Task<int> RunRunsetAnalyzerBeforeRun(bool runInSilentMode=false)
-        {
-            int x= 0;
+            int x = 0;
             if (mRunSetConfig.RunWithAnalyzer)
             {
                 //check if not including any High or Critical issues before execution
-                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));              
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
-                
+
             }
             return x;
+        }
+
+        public int RunRunsetAnalyzerBeforeRun22222(bool runInSilentMode = false)
+        {
+            
+            if (mRunSetConfig.RunWithAnalyzer)
+            {
+                //check if not including any High or Critical issues before execution
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
+            }
+
+            return 0;   // temp if issues found need to return 1 !!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
         /// <summary>
@@ -682,7 +589,7 @@ namespace Ginger.Run
         {
             ExecutionSummary executionSummary = new ExecutionSummary();
             string json = executionSummary.Create(this);
-            return json;            
+            return json;
         }
 
 

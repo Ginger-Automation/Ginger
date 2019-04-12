@@ -103,7 +103,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public void RunRunSetFromCommandLine()
+        public void ShowAutoRunWindow()
         {
             throw new NotImplementedException();
         }

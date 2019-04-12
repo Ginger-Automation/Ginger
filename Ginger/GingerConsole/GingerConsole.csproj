@@ -30,4 +30,8 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ReporterLib\" />
+  </ItemGroup>
+
 </Project>
