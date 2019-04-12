@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
 using System;
+using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -29,7 +31,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-       
+        public void SetSolutionSourceControl(Solution solution)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ShowBusinessFlows()
         {
             throw new NotImplementedException();
@@ -40,6 +46,15 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SolutionClosed()
         {

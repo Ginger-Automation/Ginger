@@ -20,12 +20,25 @@ using amdocs.ginger.GingerCoreNET;
 using System;
 // using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
+using System.Collections.Generic;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.GingerConsole
 {
+    // GingerConsole Workspace Event Handler
+
     public class GingerConsoleWorkSpace : IWorkSpaceEventHandler
     {
+        public GingerConsoleWorkSpace()
+        {
+        }
+
         public void OpenAddAPIModelWizard()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetSolutionSourceControl(Solution solution)
         {
             throw new NotImplementedException();
         }
@@ -40,6 +53,15 @@ namespace Amdocs.Ginger.GingerConsole
             throw new NotImplementedException();
         }
 
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SolutionClosed()
         {

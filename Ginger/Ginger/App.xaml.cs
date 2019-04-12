@@ -35,9 +35,11 @@ using GingerCoreNET.SourceControl;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -224,7 +226,7 @@ namespace Ginger
                 getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
         }
 
-
+       
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
@@ -436,6 +438,6 @@ namespace Ginger
             MainWindow.HideSplash();
         }
 
-
+       
     }
 }

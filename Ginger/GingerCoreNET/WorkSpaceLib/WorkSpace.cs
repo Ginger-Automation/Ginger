@@ -32,8 +32,10 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -269,110 +271,55 @@ namespace amdocs.ginger.GingerCoreNET
                     Reporter.ToConsole(eLogLevel.DEBUG, "Solution File Not Found");
                 }
                 Reporter.ToConsole(eLogLevel.DEBUG, "Loading Solution File: " + solutionFile);
-                if (File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
-                {
-
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                    //get Solution files
-                    //IEnumerable<string> solutionFiles = Solution.SolutionFiles(SolutionFolder);
-                    //ConcurrentBag<Tuple<SolutionUpgrade.eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
-
-
-                    
-                    //check if Ginger Upgrade is needed for loading this Solution
-                    //try
-                    //{
-                    //    Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
-                    //    if (solutionFilesWithVersion == null)
-                    //    {
-                    //        solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                    //    }
-                    //    ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.HigherVersion);
-                    //    if (higherVersionFiles.Count > 0)
-                    //    {
-                    //        if (WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
-                    //        {
-                    //            // MainWindow.HideSplash(); !!!!
-                    //            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, SolutionFolder, string.Empty, higherVersionFiles.ToList());
-                    //            gingerUpgradePage.ShowAsWindow();
-                    //        }
-                    //        Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
-                    //        return false;
-                    //    }
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
-                    //}
-
-                    Solution sol = Solution.LoadSolution(solutionFile);
-
-                    if (sol != null)
-                    {
-                        SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                        SolutionRepository.Open(solutionFolder);
-
-                        PlugInsManager.SolutionChanged(SolutionRepository);
-
-                        HandleSolutionLoadSourceControl(sol);
-
-                        //ValueExpression.SolutionFolder = SolutionFolder;   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //BusinessFlow.SolutionVariables = sol.Variables;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        sol.SetReportsConfigurations();
-
-                        Solution = sol;
-
-                        UserProfile.LoadRecentAppAgentMapping();
-                        AutoLogProxy.SetAccount(sol.Account);
-
-                        //SetDefaultBusinessFlow();
-
-                        if (!RunningInExecutionMode)
-                        {
-                            AppSolutionRecover.DoSolutionAutoSaveAndRecover();   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        }
-
-                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        //Offer to upgrade Solution items to current version
-                        //try
-                        //{
-                        //    if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && RunningFromUnitTest == false)
-                        //    {
-                        //        if (solutionFilesWithVersion == null)
-                        //        {
-                        //            solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                        //        }
-                        //        ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
-                        //        if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
-                        //        {
-                        //            UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
-                        //            solutionUpgradePage.ShowAsWindow();
-                        //        }
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution files should be Upgraded", ex);
-                        //}
-
-                        // No need to add solution to recent if running from CLI
-                        if (!RunningInExecutionMode)   // && !RunningFromUnitTest)     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        {
-                            UserProfile.AddSolutionToRecent(sol);
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
-                        return false;
-                    }
-                }
-                else
+                if (!File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
                 {
                     Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                     return false;
                 }
+
+                //get Solution files
+                IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
+
+                SolutionUpgrade.CheckGingerUpgrade(solutionFolder, solutionFiles);                     
+
+                Solution solution = Solution.LoadSolution(solutionFile);
+                if (solution == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
+                    return false;
+                }
+
+
+                SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                SolutionRepository.Open(solutionFolder);
+
+                PlugInsManager.SolutionChanged(SolutionRepository);
+
+                HandleSolutionLoadSourceControl(solution);
+
+                ValueExpression.SolutionFolder = solutionFolder;
+                BusinessFlow.SolutionVariables = solution.Variables; 
+                solution.SetReportsConfigurations();
+
+                Solution = solution;
+
+                UserProfile.LoadRecentAppAgentMapping();
+                AutoLogProxy.SetAccount(solution.Account);
+    
+
+                if (!RunningInExecutionMode)
+                {
+                    AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
+                }
+
+                SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+                
+
+                // No need to add solution to recent if running from CLI
+                if (!RunningInExecutionMode)  
+                {
+                    UserProfile.AddSolutionToRecent(solution);
+                }                    
 
                 return true;
             }
@@ -389,52 +336,48 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        
+
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
-            //string RepositoryRootFolder = string.Empty;
-            //SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
-            //if (type == SourceControlBase.eSourceControlType.GIT)
-            //{
-            //    solution.SourceControl = new GITSourceControl();
-            //}
-            //else if (type == SourceControlBase.eSourceControlType.SVN)
-            //{
-            //    solution.SourceControl = new SVNSourceControl();
-            //}
+            string RepositoryRootFolder = string.Empty;
 
-            //if (solution.SourceControl != null)
-            //{
-            //    if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
-            //    {
-            //        if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
-            //        {
-            //            solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-            //            solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-            //            solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-            //            solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
-            //        solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
-            //        solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-            //        solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-            //    }
+            WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution);
+            
 
-            //    string error = string.Empty;
-            //    solution.SourceControl.SolutionFolder = solution.Folder;
-            //    solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
-            //    solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
-            //    solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-            //    solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-            //    solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-            //    solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+            if (solution.SourceControl != null)
+            {
+                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+                {
+                    if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
+                    {
+                        solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                        solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                        solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+                        solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                    }
+                }
+                else
+                {
+                    solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
+                    solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
+                    solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+                    solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+                }
 
-            //    WorkSpace.Instance.SourceControl = solution.SourceControl;
-            //    RepositoryItemBase.SetSourceControl(solution.SourceControl);
-            //    RepositoryFolderBase.SetSourceControl(solution.SourceControl);
-            //}
+                string error = string.Empty;
+                solution.SourceControl.SolutionFolder = solution.Folder;
+                solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
+                solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
+                solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+
+                WorkSpace.Instance.SourceControl = solution.SourceControl;
+                RepositoryItemBase.SetSourceControl(solution.SourceControl);
+                RepositoryFolderBase.SetSourceControl(solution.SourceControl);
+            }
         }
 
         private static void SolutionCleanup()

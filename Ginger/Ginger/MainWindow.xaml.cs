@@ -33,7 +33,7 @@ using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
-using GingerCore.Repository.UpgradeLib;
+using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
 using System;
@@ -614,7 +614,7 @@ namespace Ginger
             if ( WorkSpace.Instance.Solution != null)
             {
                 Solution sol =  WorkSpace.Instance.Solution;
-                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), SolutionUpgrade.eGingerVersionComparisonResult.LowerVersion);
+                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {
                     UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, sol.Folder, sol.Name, lowerVersionFiles.ToList());
@@ -993,18 +993,18 @@ namespace Ginger
         }
 
         internal void HideSplash()
-        {
-            if (xSplashGrid.Visibility == Visibility.Collapsed)
-            {
-                return;
-            }
+        {            
             // Hide the splash after one second
             Task.Factory.StartNew(() => {
                 this.Dispatcher.Invoke(() => {
+                    if (xSplashGrid.Visibility == Visibility.Collapsed)
+                    {
+                        return;
+                    }
                     Thread.Sleep(1000);
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
-            });            
+            });
         }
     }
 }

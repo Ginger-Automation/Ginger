@@ -2846,7 +2846,7 @@ namespace Ginger.Reports.GingerExecutionReport
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
-                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(environment, BF);
+                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(new Context() { Environment = environment, BusinessFlow = BF});
                 if (string.IsNullOrEmpty(exec_folder))
                 {
                     return string.Empty;

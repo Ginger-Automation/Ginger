@@ -18,9 +18,17 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
+using Ginger.SolutionGeneral;
+using Ginger.SolutionWindows;
+using Ginger.SourceControl;
+using GingerCore.SourceControl;
+using GingerCoreNET.SourceControl;
+using System.Collections.Generic;
 
 namespace GingerWPF.WorkSpaceLib
 {
+    // Ginger.exe Workspace Event Handler
+
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
     {        
         public void AddApplication()
@@ -29,6 +37,20 @@ namespace GingerWPF.WorkSpaceLib
 
         public void OpenAddAPIModelWizard()
         {
+        }
+
+        public void SetSolutionSourceControl(Solution solution)
+        {
+            string RepositoryRootFolder = string.Empty;
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
+            if (type == SourceControlBase.eSourceControlType.GIT)
+            {
+                solution.SourceControl = new GITSourceControl();
+            }
+            else if (type == SourceControlBase.eSourceControlType.SVN)
+            {
+                solution.SourceControl = new SVNSourceControl();
+            }
         }
 
         public void ShowBusinessFlows()
@@ -64,6 +86,18 @@ namespace GingerWPF.WorkSpaceLib
             App.ShowConsoleWindow();
         }
 
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, solutionFolder, string.Empty, higherVersionFiles);
+            gingerUpgradePage.ShowAsWindow();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, list);
+            solutionUpgradePage.ShowAsWindow();
+        }
 
         public void SolutionClosed()
         {

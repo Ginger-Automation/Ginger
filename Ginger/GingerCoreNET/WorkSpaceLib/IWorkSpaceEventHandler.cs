@@ -18,6 +18,9 @@ limitations under the License.
 
 
 
+using System.Collections.Generic;
+using Ginger.SolutionGeneral;
+
 namespace amdocs.ginger.GingerCoreNET
 {
     public interface IWorkSpaceEventHandler
@@ -32,5 +35,8 @@ namespace amdocs.ginger.GingerCoreNET
 
         // occur when useprofile contains show debug window
         void ShowDebugConsole(bool visible = true);
+        void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles); // when openning solution we check if the solution is older or newer, and popup an upgrade question for ginger or for the solution
+        void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list);
+        void SetSolutionSourceControl(Solution solution);
     }
 }
