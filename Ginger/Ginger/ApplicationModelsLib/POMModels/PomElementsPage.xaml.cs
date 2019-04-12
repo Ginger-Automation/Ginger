@@ -234,6 +234,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
         internal void SetAgent(Agent agent)
         {
             mAgent = agent;
+            foreach (ElementInfo elemInfo in mElements)
+            {
+                elemInfo.ElementObject = null;
+            }
         }
 
         public enum eGridView
