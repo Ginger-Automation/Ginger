@@ -4426,26 +4426,22 @@ namespace GingerCore.Drivers
                 SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
 
                 //Find element 
-                if ((IWebElement)ElementInfo.ElementObject == null)
+                if (locateElementByItLocators)
                 {
-                    if (locateElementByItLocators)
-                    {
-                        ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(ElementInfo.XPath))
-                        {
-                            ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-                        }
-                        if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
-                        {
-                            ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
-                        }
-                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
-                    }
+                    ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
                 }
-
+                else
+                {
+                    if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    {
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                    }
+                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                    {
+                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                    }
+                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
                     return;
