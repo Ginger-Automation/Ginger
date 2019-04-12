@@ -120,6 +120,10 @@ namespace Ginger
                 Reporter.ToUser(eUserMsgKey.ApplicationInitError, ex.Message);
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Init Main Window", ex);                
             }
+            finally
+            {
+                HideSplash();
+            }
         }
 
       private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
@@ -992,7 +996,7 @@ namespace Ginger
             GingerCore.General.DoEvents();
         }
 
-        internal void HideSplash()
+        void HideSplash()
         {            
             // Hide the splash after one second
             Task.Factory.StartNew(() => {

@@ -1,7 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.RosLynLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -9,6 +8,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -262,17 +262,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 //Execute
                 try
                 {
-                    //Task t = Task.Factory.StartNew(() =>
-                    //{
-                        
-                    // WorkSpace.Instance.RunsetExecutor.RunRunset();
-                    RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+                    // Task t = Task.Factory.StartNew(() =>
+                    // {
+                        RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+                    // });
+
+                    //WorkSpace.Instance.RunsetExecutor.RunRunset();
 
                     WorkSpace.Instance.RunsetExecutor.InitRunners();
-                    WorkSpace.Instance.RunsetExecutor.RunRunset();
-
-                    //Task<int>  t= WorkSpace.Instance.RunsetExecutor.RunRunsetAsync();                    
-                    //t.Wait();
+                    Task t = Task.Factory.StartNew(() =>
+                     {
+                            Thread.Sleep(5000);
+                            
+                            WorkSpace.Instance.RunsetExecutor.RunRunset();
+                     });
+                    Thread.Sleep(50000);
+                    // Task<int>  t=  WorkSpace.Instance.RunsetExecutor.RunRunsetAsync();
+                    // t.Start();
+                    // t.Wait();
 
                     //close Autorunwindow
 

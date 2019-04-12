@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
@@ -119,6 +120,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public Dictionary<string, string> TakeDesktopScreenShot(bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DownloadSolution(string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
             throw new NotImplementedException();
         }

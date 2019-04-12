@@ -23,7 +23,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.GingerConsole.ReporterLib
 {
-    class GingerConsoleWorkspaceReporter : WorkSpaceReporterBase
+    public class GingerConsoleWorkspaceReporter : WorkSpaceReporterBase
     {        
         public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {

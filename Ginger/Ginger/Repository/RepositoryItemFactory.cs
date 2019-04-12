@@ -31,7 +31,6 @@ using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -49,7 +48,6 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.SourceControl;
-using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -58,7 +56,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
@@ -66,7 +63,6 @@ using System.Threading.Tasks;
 using System.Web.UI.DataVisualization.Charting;
 using System.Windows.Threading;
 using static GingerCore.Agent;
-using static System.Net.Mime.MediaTypeNames;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace Ginger.Repository
@@ -380,23 +376,19 @@ namespace Ginger.Repository
             }
             return 0;
         }
-
-
+        
         AutoRunWindow RP;
         public void ShowAutoRunWindow()
         {
             // do on disp !!!
             //App.MainWindow.Dispatcher.Invoke(() => 
-            //{                
+            //{              
             RP = new AutoRunWindow();
             RP.Show();
-            Task.Factory.StartNew(() => 
-            {
-                RP.Dispatcher.Invoke(() => {                    
-                    GingerCore.General.DoEvents();
-                    Thread.Sleep(100);
-                });                
-            });
+            
+            GingerCore.General.DoEvents();
+            Thread.Sleep(100);
+            
             
 
             //WorkSpace.Instance.RunsetExecutor.InitRunners();
@@ -861,6 +853,11 @@ namespace Ginger.Repository
             {
                 getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
             }
+        }
+
+        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        {
+            throw new NotImplementedException();
         }
     }
     
