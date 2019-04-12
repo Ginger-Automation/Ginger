@@ -380,50 +380,23 @@ namespace Ginger.Repository
         AutoRunWindow RP;
         public void ShowAutoRunWindow()
         {
-            // do on disp !!!
-            //App.MainWindow.Dispatcher.Invoke(() => 
-            //{              
-            RP = new AutoRunWindow();
-            RP.Show();
-            
-            GingerCore.General.DoEvents();
-            Thread.Sleep(100);
-            
-            
+            // Run the AutoRunWindow on its own thread 
+            Thread mGingerThread = new Thread(() =>
+            {
+                RP = new AutoRunWindow();
+                RP.Show();
 
-            //WorkSpace.Instance.RunsetExecutor.InitRunners();
-            //WorkSpace.Instance.RunsetExecutor.RunRunset();
+                GingerCore.General.DoEvents();
+                // Thread.Sleep(100);
+                SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+                Dispatcher.Run();
+            });
 
-            //RP.Show();
-            //GingerCore.General.DoEvents();
-            ////});
-
-            //Dispatcher main = Dispatcher.CurrentDispatcher;
-
-            //Thread mGingerThread = new Thread(() =>
-            //{
-            //    SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
-
-            //    // we need sample class - Dummy
-            //    Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-            //    Assembly asm1 = d.GetType().Assembly;
-            //    // Set the app resources to Ginger so image an other will be locally to Ginger
-
-            //    main.Invoke(() => { 
-
-            //    });
-
-
-            //    // Makes the thread support message pumping                 
-            //    System.Windows.Threading.Dispatcher.Run();
-            //});
-
-
-            ////// Configure the thread            
-            //mGingerThread.SetApartmentState(ApartmentState.STA);
-            //mGingerThread.IsBackground = true;
-            //mGingerThread.Start();
-
+            // Makes the thread support message pumping 
+            // Configure the thread            
+            mGingerThread.SetApartmentState(ApartmentState.STA);
+            mGingerThread.IsBackground = true;
+            mGingerThread.Start();
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)

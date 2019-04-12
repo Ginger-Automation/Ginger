@@ -219,20 +219,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 try
                 {
-                    // if we show AutoRunWindow
+                   
 
-                    // will open AutoRunWindow
-                    //Task.Factory.StartNew(() => {
-                        
-                        // RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
-                    //});
-                       
 
-                    // Else use GingerScript
-                    // GingerScriptGlobals gingerScriptGlobals = new GingerScriptGlobals();
-                    // gingerScriptGlobals.OpenRunSet()
 
-                    // WorkSpace.Instance.RunsetExecutor.RunRunset();
 
                 }
                 catch (Exception ex)
@@ -262,29 +252,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 //Execute
                 try
                 {
-                    // Task t = Task.Factory.StartNew(() =>
-                    // {
-                        RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
-                    // });
-
-                    //WorkSpace.Instance.RunsetExecutor.RunRunset();
+                    
+                    RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();                    
 
                     WorkSpace.Instance.RunsetExecutor.InitRunners();
                     Task t = Task.Factory.StartNew(() =>
                      {
-                            Thread.Sleep(5000);
                             
-                            WorkSpace.Instance.RunsetExecutor.RunRunset();
+
+                          WorkSpace.Instance.RunsetExecutor.RunRunset();
+                         
                      });
-                    Thread.Sleep(50000);
-                    // Task<int>  t=  WorkSpace.Instance.RunsetExecutor.RunRunsetAsync();
-                    // t.Start();
-                    // t.Wait();
-
-                    //close Autorunwindow
-
-                    //});
-                    //t.Wait();
+                    t.Wait();  
+                    
                 }
                 catch (Exception ex)
                 {
