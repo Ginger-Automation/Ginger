@@ -264,6 +264,7 @@ namespace Ginger.Actions.WebServices
             {
                 mAct.TempProperties.ClearAll();
                 mAct.AllProperties.ClearAll();
+                RefreshAllPropertiesGrid();
                 FillSuiteComboBox();
                 return;
             }
@@ -661,16 +662,6 @@ namespace Ginger.Actions.WebServices
                 mAct.AllProperties.Where(l => l.Type == propertyType.ToString()).ToList().All(i => mAct.AllProperties.Remove(i));
             }
 
-        }
-        private void XMLFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            mContext.Runner.ProcessInputValueForDriver(mAct);
-            if (!mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile).Contains(XMLFilePathTextBox.ValueTextBox.Text.Substring(1)))
-            {
-                mAct.TempProperties.ClearAll();
-                mAct.AllProperties.ClearAll();
-                RefreshAllPropertiesGrid();
-            }
         }
     }
 }
