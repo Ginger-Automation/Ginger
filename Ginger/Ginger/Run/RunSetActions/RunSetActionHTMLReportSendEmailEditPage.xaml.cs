@@ -54,16 +54,17 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
+
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail);
+
             MailFromTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
             MailToTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
             MailCCTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
             SubjectTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
-
             BodyTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
             CommentTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
-            BodyTextBox.AdjustHight(100);
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail);
+            BodyTextBox.AdjustHight(100);
 
             //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPort));
             //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPass));
