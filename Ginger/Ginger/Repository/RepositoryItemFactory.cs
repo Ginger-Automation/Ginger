@@ -27,6 +27,7 @@ using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;

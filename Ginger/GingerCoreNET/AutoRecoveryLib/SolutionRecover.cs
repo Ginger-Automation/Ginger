@@ -112,12 +112,15 @@ namespace Ginger.Functionalties
                 }
             }
 
-            //show recover page !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //if (recovredItems.Count > 0 || showRecoverPageAnyway)
-            //{
-            //    RecoverPage recoverPage = new SolutionAutoSaveAndRecover.RecoverPage(recovredItems);
-            //    recoverPage.ShowAsWindow(eWindowShowStyle.Dialog);
-            //}
+  //          show recover page!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (recovredItems.Count > 0 || showRecoverPageAnyway)
+
+                
+            {
+                RepositoryItemHelper.RepositoryItemFactory.ShowRecoveryItemPage(recovredItems);
+
+               
+            }
         }
         public void CleanUp()
         {

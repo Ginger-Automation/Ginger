@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using GingerCore.ALM;
 using GingerCore.Activities;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionAutoSaveAndRecover;
 
 namespace Amdocs.Ginger.Common
 {
@@ -56,7 +57,7 @@ namespace Amdocs.Ginger.Common
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
 
-       
+
 
         Task<int> AnalyzeRunset(Object a, bool b);
 
@@ -87,5 +88,7 @@ namespace Amdocs.Ginger.Common
         void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
         bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);
         void DownloadSolution(string v);
+
+        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
     }
 }
