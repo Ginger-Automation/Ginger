@@ -175,6 +175,7 @@ namespace Ginger.Run
         }
 
 
+        // Names !!!
         public enum eEditMode
         {
             ExecutionFlow = 0,
@@ -187,14 +188,15 @@ namespace Ginger.Run
             InitializeComponent();
 
             if ( WorkSpace.Instance.Solution != null)
-            {
-                //Init
+            {                
                 Init();
 
                 //load Run Set
                 RunSetConfig defualtRunSet = GetDefualtRunSetConfig();
                 if (defualtRunSet != null)
+                {
                     LoadRunSetConfig(defualtRunSet);
+                }
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -221,9 +223,11 @@ namespace Ginger.Run
                 xRunSetOperationsPanel.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
             }
-        //load Run Set
-        if (runSetConfig != null)
+            //load Run Set
+            if (runSetConfig != null)
+            {
                 LoadRunSetConfig(runSetConfig, false);
+            }
             else
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));

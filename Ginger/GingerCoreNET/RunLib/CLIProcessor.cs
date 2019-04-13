@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.RosLynLib;
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -12,30 +13,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
 
-            if (args[0].StartsWith("ConfigFile"))  // Old
+            string[] arg1 = args[0].Split('=');
+            string param = arg1[0].Trim();
+            string fileName = arg1[1].Trim();
+            if (param.StartsWith("ConfigFile"))  // Old key=value runset config file
             {
-                // This Ginger is running with run set config will do the run and close GingerInitApp();                                
-                ConfigFileProcessor configFileProcessor = new ConfigFileProcessor();
-                configFileProcessor.ExecuteRunSetConfigFile();
+                ExecuteConfig(fileName);                
             }
-            else if (args[0].StartsWith("ScriptFile")) // New
+            else if (param.StartsWith("ScriptFile")) // New C# Roslyn code
             {
-                ExecutScript(args[0]);
+                ExecutScript(fileName);
             }
+        }
+
+        private static void ExecuteConfig(string configFile)
+        {        
+            string config = ReadFile(configFile);
+            ConfigFileProcessor configFileProcessor = new ConfigFileProcessor();
+            configFileProcessor.RunConfig(config);
         }
 
         private static void ExecutScript(string scriptFile)
         {
-            if (!System.IO.File.Exists(scriptFile))
-            {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "File not found");
-                return;
-            }
-            string script = System.IO.File.ReadAllText(scriptFile);
+            string script = ReadFile(scriptFile);
             var rc = CodeProcessor.ExecuteNew(script);
         }
 
-
-
+        private static string ReadFile(string fileName)
+        {
+            if (!File.Exists(fileName))
+            {
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "File not found: " + fileName);
+                throw new FileNotFoundException("Cannot find file", fileName);
+            }
+            string txt = File.ReadAllText(fileName);
+            return txt;
+        }
     }
 }

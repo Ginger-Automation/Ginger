@@ -303,7 +303,10 @@ namespace Ginger
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
-            
+
+            // Is needed?
+            // LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
+
             CLIProcessor.ExecuteArgs(args);
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown();
@@ -324,12 +327,16 @@ namespace Ginger
 
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
 
-            MainWindow.Init();            
+            MainWindow.Init();
 
             if (WorkSpace.Instance.UserProfile != null)
+            {
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.Instance.UserProfile.TerminologyDictionaryType);
+            }
             else
+            {
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
+            }
         }
 
 

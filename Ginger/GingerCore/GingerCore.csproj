@@ -854,7 +854,7 @@
     <Compile Include="XPathParser\XPathTreeBuilder.cs" />
     <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQMSettings.xml">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\Export_Settings.xml" />
     <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\QM\fa1qm1\executionRecord.xml" />

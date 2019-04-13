@@ -386,8 +386,7 @@ namespace Ginger.Repository
                 RP = new AutoRunWindow();
                 RP.Show();
 
-                GingerCore.General.DoEvents();
-                // Thread.Sleep(100);
+                GingerCore.General.DoEvents();                
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
                 Dispatcher.Run();
             });
