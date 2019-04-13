@@ -85,13 +85,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null)
+        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null, UCTreeView.eFilteroperationType filterType = UCTreeView.eFilteroperationType.Equals)
         {
             InitializeComponent();
 
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
             xTreeView.Tree.TreeNodesFilterByField = propertyValueFilter;
+            xTreeView.Tree.FilterType = filterType;
             xTreeView.AllowTreeTools = allowTreeTools;
             if(itemSelectionType == eItemSelectionType.Folder)
             {
