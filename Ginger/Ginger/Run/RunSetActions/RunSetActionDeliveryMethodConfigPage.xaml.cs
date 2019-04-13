@@ -14,9 +14,7 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             
             xSMTPMailHostTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPMailHost));
-            //BindingHandler.ObjFieldBinding(xSMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPMailHost));
             BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPort));
-            //BindingHandler.ObjFieldBinding(xSMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPUser));
             xSMTPUserTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPUser));
             BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPass));
             GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionSendSMS.SMSEmail.EmailMethod);
