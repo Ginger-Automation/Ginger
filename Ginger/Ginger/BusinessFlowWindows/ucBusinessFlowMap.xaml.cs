@@ -39,6 +39,8 @@ namespace Ginger.BusinessFlowWindows
         Object mObjectElementType;
         string mElementTypeFieldName;
 
+        public bool GoToAutomateButtonVisible { get; set; }
+
         BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
@@ -50,7 +52,10 @@ namespace Ginger.BusinessFlowWindows
             {
                 mBusinessFlow = value;                                
                 xBFTextBox.Text = GetBusinessFlowDisplayPath();
-                xGoToAutomateBtn.Visibility = Visibility.Visible;
+                if (GoToAutomateButtonVisible)
+                {
+                    xGoToAutomateBtn.Visibility = Visibility.Visible; 
+                }
                 mBusinessFlowRepositoryKey = new RepositoryItemKey();
                 mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
                 mBusinessFlowRepositoryKey.ItemName = mBusinessFlow.Name;
@@ -107,12 +112,13 @@ namespace Ginger.BusinessFlowWindows
             }
         }
 
-        public ucBusinessFlowMap(Object objectElementType, string elementTypeFieldName)
+        public ucBusinessFlowMap(Object objectElementType, string elementTypeFieldName, bool gotoAutomateButtonVisible = true)
         {
             InitializeComponent();
 
             mObjectElementType = objectElementType;
             mElementTypeFieldName = elementTypeFieldName;
+            GoToAutomateButtonVisible = gotoAutomateButtonVisible;
             object key = mObjectElementType.GetType().GetProperty(mElementTypeFieldName).GetValue(mObjectElementType);
             if (key != null && key.GetType() == typeof(RepositoryItemKey))
             {
