@@ -1037,7 +1037,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
         {
             DataTable dtTemplate = new DataTable(ParameterType.ToString());
-            dtTemplate.Columns.Add("Parameter_Name", typeof(string));
+            dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
             dtTemplate.Columns.Add("Value_1", typeof(string));
             dtTemplate.Columns.Add("Value_2", typeof(string));
             foreach (AppModelParameter prm in Parameters)
@@ -1649,7 +1649,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     ParameterValuesByNameDic.Add(new ParameterValues() { ParamName = ParamNameList.ElementAt(i), ParameterValuesByNameDic = values });
                     DataRow row = dtDB.NewRow();
-                    row["Parameter Name"] = ParamNameList[i].ToString();
+                    row[PARAMETER_NAME] = ParamNameList[i].ToString();
                     dtDB.Rows.Add(row);
                 }      
                 else//different columns with the same alias name
