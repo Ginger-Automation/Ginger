@@ -7,7 +7,7 @@
              xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
              xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="600">
+             d:DesignHeight="50" d:DesignWidth="600" Loaded="UcListViewItem_Loaded">
 
     <UserControl.Resources>
         <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />

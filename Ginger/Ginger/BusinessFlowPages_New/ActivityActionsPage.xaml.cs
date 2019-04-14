@@ -44,10 +44,10 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity = Activity;
 
             SetListView();
-            xActionsListView.List.ItemsSource = mActivity.Acts;
+            //xActionsListView.List.ItemsSource = mActivity.Acts;
             
-            Activity.Acts.PropertyChanged += Acts_PropertyChanged;
-            xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
+            //Activity.Acts.PropertyChanged += Acts_PropertyChanged;
+            //xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
         }
 
         //private void SetListView() //working
@@ -63,14 +63,21 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetListView() 
         {
-            DataTemplate dataTemp = new DataTemplate();
+            xActionsListView.Title = "Actions";
+            xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
+            //TODO: move DataTemplate into ListView
+            DataTemplate dataTemp = new DataTemplate();
             FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            //listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
             listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
             listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
-
             dataTemp.VisualTree = listItemFac;
             xActionsListView.List.ItemTemplate = dataTemp;
+
+            xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
+
+            xActionsListView.DataSourceList = mActivity.Acts;
         }
 
         private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -13,8 +13,19 @@
     </Page.Resources>
 
     <Grid>
+        <userControlsLib1:UcListView x:Name="xActionsListView"/>
         
-
+        <!--<userControlsLib1:UcListView x:Name="xActionsListView" >
+            --><!--<xlis>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Description}" Foreground="Black"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </xlis>--><!--
+        </userControlsLib1:UcListView>-->
+        
+        
         <!--<ListView x:Name="ActionsListBox">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -96,15 +107,7 @@
             </ListBox.ItemTemplate>
             
         </ListView>-->
-        <userControlsLib1:UcListView x:Name="xActionsListView" >
-            <!--<xlis>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Description}" Foreground="Black"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </xlis>-->
-        </userControlsLib1:UcListView>
+
         <!--<DataTemplate x:Name="xActionListItemTemplate">-->
             <!--<userControlsLib1:ListViewItem1 x:Name="xActionListItem" />-->
         <!--</DataTemplate>-->

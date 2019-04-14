@@ -16,6 +16,28 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcListViewItem : UserControl
     {
+        //public static readonly DependencyProperty ParentListProperty = DependencyProperty.Register(nameof(ParentList), typeof(UcListView), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnParentListPropertyChanged)));
+        //public UcListView ParentList
+        //{
+        //    get
+        //    {
+        //        return (UcListView)GetValue(ParentListProperty);
+        //    }
+        //    set
+        //    {
+        //        SetValue(ParentListProperty, value);                                    
+        //    }
+        //}
+        //private static void OnParentListPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    var control = d as UcListViewItem;
+        //    if (control != null && e.NewValue != null)
+        //    {
+        //        control.ParentList = ((UcListView)e.NewValue);
+        //    }
+        //}
+        public UcListView ParentList { get; set; }
+
         public static readonly DependencyProperty ItemProperty = DependencyProperty.Register(nameof(Item), typeof(object), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnItemPropertyChanged)));
         public object Item
         {
@@ -82,6 +104,20 @@ namespace Ginger.UserControlsLib.UCListView
             xExtraDetailsRow.Height = new GridLength(0);
         }
 
+        private void ParentList_UcListViewEvent(UcListViewEventArgs EventArgs)
+        {
+            switch (EventArgs.EventType)
+            {
+                case UcListViewEventArgs.eEventType.ExpandAllItems:
+                    ExpandItem();
+                    break;
+
+                case UcListViewEventArgs.eEventType.CollapseAllItems:
+                    CollapseItem();
+                    break;
+            }
+        }
+
         //public void ConfigItem(object item, string itemNameField, string itemDescriptionField, string itemIconField, string itemExecutionStatusField="", List<ListItemNotification> notifications = null)
         //{
         //    mItem = item;
@@ -119,7 +155,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     if (notification.ImageForeground == null)
                     {
-                        itemInd.ImageForeground = System.Windows.Media.Brushes.DarkGray;
+                        itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
                     }
                     else
                     {
@@ -224,22 +260,42 @@ namespace Ginger.UserControlsLib.UCListView
             if (xExtraDetailsRow.ActualHeight == 0)
             {
                 //expand
-                xExtraDetailsRow.Height = new GridLength(25);
-                xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
-                xDetailViewBtn.ToolTip = "Collapse";
+                ExpandItem();
             }
             else
             {
                 //collapse
-                xExtraDetailsRow.Height = new GridLength(0);
-                xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
-                xDetailViewBtn.ToolTip = "Expand";
+                CollapseItem();
             }
+        }
+
+        public void ExpandItem()
+        {
+            xExtraDetailsRow.Height = new GridLength(25);
+            xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
+            xDetailViewBtn.ToolTip = "Collapse";
+        }
+
+        public void CollapseItem()
+        {
+            xExtraDetailsRow.Height = new GridLength(0);
+            xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
+            xDetailViewBtn.ToolTip = "Expand";
         }
 
         private void xRunnerItemContinue_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void UcListViewItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            var parent = GingerCore.General.TryFindParent<UcListView>(this);
+            if (parent != null)
+            {
+                ParentList = (UcListView)parent;
+                ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+            }
         }
     }
 }
