@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -17,11 +18,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
 
-        bool mShowAutoRunWindow = true; 
+        bool mShowAutoRunWindow = true;
 
+        RunsetExecutor mRunsetExecutor;
+        UserProfile mUserProfile;
 
-        public void RunConfig(string config)
+        public void RunConfig(string config, RunsetExecutor runsetExecutor)
         {
+            mRunsetExecutor = runsetExecutor;
 
             bool processed = ProcessConfig(config);
 
@@ -63,7 +67,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             try
             {
                 //run analyzer
-                int analyzeRes = WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun22222(true);
+                int analyzeRes = mRunsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
                 if (analyzeRes == 1)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -122,68 +126,68 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "SourceControlType":
                             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
                             if (value.Equals("GIT"))
-                                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
                             else if (value.Equals("SVN"))
-                                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
                             else
-                                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
                             break;
 
                         case "SourceControlUrl":
                             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                             {
                                 if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                                     value = value + "svn/";
                                 if (!value.ToUpper().EndsWith("/"))
                                     value = value + "/";
                             }
-                            WorkSpace.Instance.UserProfile.SourceControlURL = value;
+                            mUserProfile.SourceControlURL = value;
                             scURL = value;
                             break;
 
                         case "SourceControlUser":
                             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
                                 value = "Test";
-                            WorkSpace.Instance.UserProfile.SourceControlUser = value;
+                            mUserProfile.SourceControlUser = value;
                             scUser = value;
                             break;
 
                         case "SourceControlPassword":
                             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                            WorkSpace.Instance.UserProfile.SourceControlPass = value;
+                            mUserProfile.SourceControlPass = value;
                             scPswd = value;
                             break;
 
                         case "PasswordEncrypted":
                             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                            string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
+                            string pswd = mUserProfile.SourceControlPass;
                             if (value == "Y")
-                                pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, ENCRYPTION_KEY);
-                            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+                                pswd = EncryptionHandler.DecryptwithKey(mUserProfile.SourceControlPass, ENCRYPTION_KEY);
+                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
                                 pswd = "Test";
-                            WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
+                            mUserProfile.SourceControlPass = pswd;
                             break;
 
                         case "SourceControlProxyServer":
                             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
                             if (value == "")
-                                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
+                                mUserProfile.SolutionSourceControlConfigureProxy = false;
                             else
-                                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
+                                mUserProfile.SolutionSourceControlConfigureProxy = true;
                             if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
                                 value = "http://" + value;
-                            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
+                            mUserProfile.SolutionSourceControlProxyAddress = value;
                             break;
 
                         case "SourceControlProxyPort":
                             if (value == "")
-                                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
+                                mUserProfile.SolutionSourceControlConfigureProxy = false;
                             else
-                                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
+                                mUserProfile.SolutionSourceControlConfigureProxy = true;
                             Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
+                            mUserProfile.SolutionSourceControlProxyPort = value;
                             break;
 
                         case "Solution":
@@ -223,7 +227,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                             if (env != null)
                             {
-                                WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = env;
+                                mRunsetExecutor.RunsetExecutionEnvironment = env;
                             }
                             else
                             {
@@ -238,7 +242,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                             if (runSetConfig != null)
                             {
-                                WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+                                mRunsetExecutor.RunSetConfig = runSetConfig;
                             }
                             else
                             {
@@ -271,7 +275,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             try
             {                
-                AutoLogProxy.UserOperationStart("AutoRunWindow", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name);
+                AutoLogProxy.UserOperationStart("AutoRunWindow", mRunsetExecutor.RunSetConfig.Name, mRunsetExecutor.RunsetExecutionEnvironment.Name);
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -299,10 +303,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
                     }
 
-                    WorkSpace.Instance.RunsetExecutor.InitRunners();
+                    mRunsetExecutor.InitRunners();
                     //Task t = Task.Factory.StartNew(() =>
                      //{                            
-                          WorkSpace.Instance.RunsetExecutor.RunRunset();                         
+                          mRunsetExecutor.RunRunset();                         
                      //});
                     //t.Wait();  
                     
@@ -313,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return 1;
                 }
 
-                if (WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
+                if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
                     return 0;
                 else
                     return 1;

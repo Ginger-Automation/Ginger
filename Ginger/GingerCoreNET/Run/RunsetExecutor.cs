@@ -540,7 +540,7 @@ namespace Ginger.Run
             return x;
         }
         
-        public int RunRunsetAnalyzerBeforeRun22222(bool runInSilentMode = false)
+        public int RunRunsetAnalyzerBeforeRunSync(bool runInSilentMode = false)
         {
             
             if (mRunSetConfig.RunWithAnalyzer)
@@ -549,7 +549,7 @@ namespace Ginger.Run
                 Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
             }
-
+            // ?? !!!
             return 0;   // temp if issues found need to return 1 !!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
