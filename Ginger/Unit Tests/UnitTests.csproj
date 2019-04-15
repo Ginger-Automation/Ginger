@@ -419,6 +419,9 @@
     <Content Include="TestResources\APlusB.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\ScreenShot\Temp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -921,7 +924,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestResources\AutoPilot\ImportOptionalValue\" />
-    <Folder Include="TestResources\ScreenShot\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestResources\UIA Form\FormEmbeddedBrowser.resx">
