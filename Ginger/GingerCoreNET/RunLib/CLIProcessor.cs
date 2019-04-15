@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {        
             string config = ReadFile(configFile);
             ConfigFileProcessor configFileProcessor = new ConfigFileProcessor();
-            configFileProcessor.RunConfig(config);
+            configFileProcessor.RunConfig(config, WorkSpace.Instance.RunsetExecutor);
         }
 
         private static void ExecutScript(string scriptFile)
