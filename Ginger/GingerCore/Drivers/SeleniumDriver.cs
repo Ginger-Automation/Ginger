@@ -462,7 +462,7 @@ namespace GingerCore.Drivers
                         break;
                     #endregion
 
-                  
+
 
                     #region Safari - To be Added
                     //TODO: add Safari
@@ -3715,7 +3715,7 @@ namespace GingerCore.Drivers
                         {
                             foundElemntInfo = GetElementInfoWithIWebElement(el, htmlElemNode, path, learnPartialElementInfoDetails);
                         }
-                            
+
                         foundElemntInfo.IsAutoLearned = true;
                         foundElementsList.Add(foundElemntInfo);
                         allReadElem.Add(foundElemntInfo);
@@ -3924,9 +3924,9 @@ namespace GingerCore.Drivers
             {
                 EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
                 EI.ElementName = GetElementName(EI);
-                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); 
-                ((IWindowExplorer)this).UpdateElementInfoFields(EI); 
-                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); 
+                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+                ((IWindowExplorer)this).UpdateElementInfoFields(EI);
+                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
             }
 
             return EI;
@@ -3998,7 +3998,7 @@ namespace GingerCore.Drivers
                     {
                         return null;
                     }
-                   
+
                 }
             }
 
@@ -4417,26 +4417,21 @@ namespace GingerCore.Drivers
                 SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
 
                 //Find element 
-
-                if ((IWebElement)ElementInfo.ElementObject == null)
+                if (locateElementByItLocators)
                 {
-
-                    if (locateElementByItLocators)
+                    ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
                     }
-                    else
+                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
                     {
-                        if (string.IsNullOrEmpty(ElementInfo.XPath))
-                        {
-                            ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-                        }
-                        if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
-                        {
-                            ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
-                        }
-                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
+                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
@@ -4634,7 +4629,7 @@ namespace GingerCore.Drivers
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
-           
+
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -6548,7 +6543,7 @@ namespace GingerCore.Drivers
         public Bitmap GetScreenShot()
         {
             try
-            {                
+            {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
                 using (var ms = new MemoryStream(ss.AsByteArray))
                 {
@@ -6812,7 +6807,7 @@ namespace GingerCore.Drivers
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
         {
             string elementProperty = null;
-            
+
             if (ElementInfo.ElementObject == null)
             {
                 ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
@@ -7115,7 +7110,7 @@ namespace GingerCore.Drivers
                             EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                         }
                         else
-                        {                            
+                        {
                             EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                         }
                     }

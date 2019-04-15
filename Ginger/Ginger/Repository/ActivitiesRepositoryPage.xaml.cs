@@ -128,6 +128,7 @@ namespace Ginger.Repository
                             instance.Active = true;
                             mBusinessFlow.SetActivityTargetApplication(instance);
                             mBusinessFlow.AddActivity(instance);
+                            mBusinessFlow.Activities.CurrentItem = instance;
                         }
                     }
                 }

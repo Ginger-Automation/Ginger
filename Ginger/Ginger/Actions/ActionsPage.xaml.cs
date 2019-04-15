@@ -233,6 +233,8 @@ namespace Ginger.Actions
                mCurrentActivity.Acts.Remove(a1);
             }
             mBusinessFlow.AddActivity(activity);
+            mBusinessFlow.Activities.CurrentItem = activity;
+
         }
 
         private void AddAction(object sender, RoutedEventArgs e)

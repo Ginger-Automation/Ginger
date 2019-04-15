@@ -1,9 +1,8 @@
 ﻿<UserControl x:Class="Ginger.UserControlsLib.UCListView.UcListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Ginger.UserControlsLib.UCListView"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -13,23 +12,42 @@
             <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
         
-        <DockPanel Grid.Row="0" Margin="35,0,40,0" HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal">
-                <usercontrols:ImageMakerControl x:Name="xListTitleImage" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <Label x:Name="xListTitleLbl" Margin="10,10,0,0" Content="Title" Height="40" HorizontalAlignment="Left"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" VerticalAlignment="Center" />
-            </StackPanel>
-            <DockPanel x:Name="xListToolsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
+        <DockPanel Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+            <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click" />
+            <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+            
+            <DockPanel x:Name="xListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
                 <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
-                <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="XDeleteAllBtn_Click"/>
-                <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="XMoveUpBtn_Click" />
-                <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="XMoveDownBtn_Click" />
-                <usercontrols:ucButton x:Name="xExpandCollapseBtn" ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="CollapseAll" Click="XExpandCollapseBtn_Click" Visibility="Visible" />
+                <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="xDeleteAllBtn_Click"/>
+                <StackPanel x:Name="xMoveBtns" Orientation="Horizontal">
+                    <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="xMoveUpBtn_Click" />
+                    <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="xMoveDownBtn_Click" />
+                </StackPanel>
+                <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
+                    <MenuItem>
+                        <MenuItem.Icon>
+                            <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                        </MenuItem.Icon>
+                        <!--<MenuItem x:Name="xDuplicateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xDuplicateBusinessflow_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Duplicate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Duplicate [BusinessFlow]"/>
+                                </MenuItem.Header>
+                            </MenuItem>-->
+                    </MenuItem>
+                </Menu>
             </DockPanel>
         </DockPanel>
         
-        <usercontrols:ImageMakerControl x:Name="xLoadingListImage" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
+        <!--<usercontrols:ImageMakerControl x:Name="xLoadingListImage" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />-->
 
-        <ListView x:Name="xListView" Grid.Row="1" Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" >
+        <ListView x:Name="xListView" Grid.Row="1" 
+                  Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  
+                  VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
+                  SelectionChanged="xListView_SelectionChanged" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"></StackPanel>

@@ -1711,23 +1711,28 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 		
 		TreePath matchingNodePath=null;
+		TreePath parentNodePath=null;
 		int row =0;
 		int i=0;
 		String node;
 		while(i<nodes.size())
 		{
 			node=nodes.get(i);
-			tree.expandRow(row);		
+			tree.expandRow(row);	
 			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
-			
+
 			if(matchingNodePath==null)
 			{
 				searchResult.append("Node: "+ node +" was not found");
 				break;
 			}
-			else if(tree.getRowForPath(matchingNodePath)<row)
-			{	
-				searchResult.append("Node: "+ node +" was not found");
+			else if(parentNodePath!=null && !matchingNodePath.getParentPath().equals(parentNodePath))
+			{
+				/* 
+				  	if current node parent is not matched with previous node 
+				  	for example: us/Ontario where Ontario is not child of us node.
+				 */
+				searchResult.append("Node: "+ node +" was not found under: " + parentNodePath);
 				return null;
 			}
 			
@@ -1746,13 +1751,15 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
-				row= tree.getRowForPath(matchingNodePath);				
+				row= tree.getRowForPath(matchingNodePath);		
+				parentNodePath= matchingNodePath;
 				i++;
 			}
 			else
 			{
 				row= tree.getRowForPath(matchingNodePath)+1;				
 			}
+			
 		}	
 
 		return matchingNodePath;
@@ -2650,7 +2657,6 @@ private PayLoad GetComponentState(Component c)
 			GingerAgent.WriteLog("c instanceof JTree");
 			
 			StringBuilder searchResultMessage=new  StringBuilder();
-			
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
 			{

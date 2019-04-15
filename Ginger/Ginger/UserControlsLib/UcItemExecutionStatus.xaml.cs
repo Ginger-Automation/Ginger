@@ -9,14 +9,14 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UCITemExecutionStatus.xaml
     /// </summary>
-    public partial class UCITemExecutionStatus : UserControl
+    public partial class UcItemExecutionStatus : UserControl
     {
-        public UCITemExecutionStatus()
+        public UcItemExecutionStatus()
         {
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty StatusProperty = DependencyProperty.Register(nameof(Status), typeof(eRunStatus), typeof(UCITemExecutionStatus), new FrameworkPropertyMetadata(eRunStatus.Pending, OnStatusPropertyChanged));
+        public static readonly DependencyProperty StatusProperty = DependencyProperty.Register(nameof(Status), typeof(eRunStatus), typeof(UcItemExecutionStatus), new FrameworkPropertyMetadata(eRunStatus.Pending, OnStatusPropertyChanged));
         public eRunStatus Status
         {
             get
@@ -31,7 +31,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
         private static void OnStatusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            UCITemExecutionStatus itemExecutionStatus = (UCITemExecutionStatus)d;
+            UcItemExecutionStatus itemExecutionStatus = (UcItemExecutionStatus)d;
             itemExecutionStatus.Status = (eRunStatus)e.NewValue;
         }
 
@@ -40,38 +40,40 @@ namespace Ginger.UserControlsLib.UCListView
             switch (Status)
             {
                 case eRunStatus.Passed:
-                    xStatusIcon.Foreground = FindResource("$PassedStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$PassedStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Passed;
                     break;
                 case eRunStatus.Failed:
-                    xStatusIcon.Foreground = FindResource("$FailedStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$FailedStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Failed;
                     break;
                 case eRunStatus.Pending:
-                    xStatusIcon.Foreground = FindResource("$PendingStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$PendingStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Pending;
                     break;
                 case eRunStatus.Running:
-                    xStatusIcon.Foreground = FindResource("$RunningStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$RunningStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Running;
                     break;
                 case eRunStatus.Stopped:
-                    xStatusIcon.Foreground = FindResource("$StoppedStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$StoppedStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Stop;
                     break;
                 case eRunStatus.Blocked:
-                    xStatusIcon.Foreground = FindResource("$BlockedStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$BlockedStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Blocked;
                     break;
                 case eRunStatus.Skipped:
-                    xStatusIcon.Foreground = FindResource("$SkippedStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$SkippedStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Skipped;
                     break;
                 default:
-                    xStatusIcon.Foreground = FindResource("$PendingStatusColor") as Brush;
+                    xPolygon.Fill = FindResource("$PendingStatusColor") as Brush;
                     xStatusIcon.ImageType = eImageType.Pending;
                     break;
             }
+
+            xStatusIcon.ImageForeground = Brushes.White;
         }
     }
 }

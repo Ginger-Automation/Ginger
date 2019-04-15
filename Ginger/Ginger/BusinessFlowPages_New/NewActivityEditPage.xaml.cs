@@ -49,7 +49,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             ActivityNameLabel.Content = mActivity.ActivityName; // TODO: use binding !!!!!!!!!!!!!!!!!!!!!!!
            
-            mContext.Runner.CurrentBusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
+            mContext.BusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
 
             ShowActionsList();
 
@@ -62,7 +62,7 @@ namespace GingerWPF.BusinessFlowsLib
             MainFrame.Dispatcher.Invoke(() =>
             {
                 //Since we might get event from Ginger runner which is running on another thread we need dispatcher
-                MainFrame.Content = new ActivityActionsPage((Activity)mContext.Runner.CurrentBusinessFlow.CurrentActivity);
+                MainFrame.Content = new ActivityActionsPage((Activity)mContext.BusinessFlow.CurrentActivity);
             });
         }
 
@@ -86,7 +86,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             // MainFrame.Content = new BusinessFlowDiagramPage(WorkSpace.Instance.GingerRunner.CurrentBusinessFlow); // TODO: show only the current activity
 
-            MainFrame.Content = new BusinessFlowDiagramPage(mContext.Runner.CurrentBusinessFlow); // TODO: show only the current activity
+            MainFrame.Content = new BusinessFlowDiagramPage(mContext.BusinessFlow); // TODO: show only the current activity
         }
 
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
@@ -108,7 +108,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void AddEmptyAction()
         {
             NewAddActionPage p = new NewAddActionPage();
-            p.ShowAsWindow(mContext.Runner.CurrentBusinessFlow.CurrentActivity.Acts);
+            p.ShowAsWindow(mContext.BusinessFlow.CurrentActivity.Acts);
         }
 
         private void RecordAction()

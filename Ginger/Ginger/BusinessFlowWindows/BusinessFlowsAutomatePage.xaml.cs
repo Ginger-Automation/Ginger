@@ -57,7 +57,6 @@ namespace Ginger.BusinessFlowWindows
                     if (mNewAutomatePage == null)
                     {
                         mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
-                        //mNewAutomatePage.GoToBusFlowsListHandler(GoToBusinessFlowsList);
                     }
                     xContentFrame.Content = mNewAutomatePage;
                 }

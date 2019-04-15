@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowPages_New.ItemsListControls;
+using Ginger.BusinessFlowPages_New.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -33,6 +35,8 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class ActivityActionsPage : Page
     {
         Activity mActivity;
+        Context mContext;
+        
         public ActivityActionsPage(Activity Activity)
         {
             InitializeComponent();
@@ -40,47 +44,41 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity = Activity;
 
             SetListView();
-            xActionsListView.List.ItemsSource = mActivity.Acts;
+            //xActionsListView.List.ItemsSource = mActivity.Acts;
             
-            Activity.Acts.PropertyChanged += Acts_PropertyChanged;
-            xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
+            //Activity.Acts.PropertyChanged += Acts_PropertyChanged;
+            //xActionsListView.List.SelectionChanged += ActionsListBox_SelectionChanged;
         }
 
-        private void SetListView()
-        {
-            DataTemplate dataTemp = new DataTemplate();
-
-            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(ActionListItem));
-            listItemFac.SetBinding(ActionListItem.ActionProperty, new Binding());
-
-            dataTemp.VisualTree = listItemFac;
-            xActionsListView.List.ItemTemplate = dataTemp; 
-        }
-
-        //private void SetListView()
+        //private void SetListView() //working
         //{
-        //    GridView GV = new GridView();
-        //    //TODO: add row num
+        //    DataTemplate dataTemp = new DataTemplate();
 
-        //    GridViewColumn GVC1 = new GridViewColumn() { Header = "Description", Width = 250, DisplayMemberBinding = new Binding(nameof(Act.Description)) };
-        //    GV.Columns.Add(GVC1);
+        //    FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(ActionListItem));
+        //    listItemFac.SetBinding(ActionListItem.ActionProperty, new Binding());
 
-        //    GridViewColumn GVC2 = new GridViewColumn() { Header = "Status", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Status)) };
-        //    GV.Columns.Add(GVC2);
-
-        //    GridViewColumn GVC3 = new GridViewColumn() { Header = "Elapsed", Width = 50, DisplayMemberBinding = new Binding(nameof(Act.Elapsed)) };
-        //    GV.Columns.Add(GVC3);
-
-        //    GridViewColumn GVC4 = new GridViewColumn() { Header = "Error", Width = 100, DisplayMemberBinding = new Binding(nameof(Act.Error)) };
-        //    GV.Columns.Add(GVC4);
-
-        //    //Hide the List View header
-        //    System.Windows.Style style = new System.Windows.Style();
-        //    style.Setters.Add(new Setter() { Property = VisibilityProperty, Value = Visibility.Collapsed });
-        //    GV.ColumnHeaderContainerStyle = style;
-
-        //    ActionsListBox.View = GV;
+        //    dataTemp.VisualTree = listItemFac;
+        //    xActionsListView.List.ItemTemplate = dataTemp; 
         //}
+
+        private void SetListView() 
+        {
+            xActionsListView.Title = "Actions";
+            xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+
+            //TODO: move DataTemplate into ListView
+            DataTemplate dataTemp = new DataTemplate();
+            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            //listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
+            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
+            dataTemp.VisualTree = listItemFac;
+            xActionsListView.List.ItemTemplate = dataTemp;
+
+            xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
+
+            xActionsListView.DataSourceList = mActivity.Acts;
+        }
 
         private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

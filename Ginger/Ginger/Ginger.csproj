@@ -613,12 +613,16 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml.cs">
       <DependentUpon>ActionListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowWindows\ucBusinessFlowMap.xaml.cs">
+      <DependentUpon>ucBusinessFlowMap.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataSource\DataSourceTablesListPage.xaml.cs">
       <DependentUpon>DataSourceTablesListPage.xaml</DependentUpon>
@@ -664,9 +668,12 @@
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\UCListView\UCITemExecutionStatus.xaml.cs">
-      <DependentUpon>UCITemExecutionStatus.xaml</DependentUpon>
+    <Compile Include="UserControlsLib\UcItemExecutionStatus.xaml.cs">
+      <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
       <DependentUpon>UcListViewItem.xaml</DependentUpon>
     </Compile>
@@ -2877,7 +2884,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ItemsListControls\ActionListItem.xaml">
+    <Page Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2944,6 +2951,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowWindows\ucBusinessFlowMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="DataSource\DataSourceTablesListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3161,7 +3172,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControlsLib\UCListView\UCITemExecutionStatus.xaml">
+    <Page Include="UserControlsLib\UcItemExecutionStatus.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

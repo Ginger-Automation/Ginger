@@ -483,6 +483,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Reject:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineDown);
                     break;
+                case eImageType.Retry:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Repeat);
+                    break;
                 case eImageType.Warn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
                     break;
@@ -660,6 +663,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Database:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    break;
+                case eImageType.Output:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
 
                 case eImageType.Spy:

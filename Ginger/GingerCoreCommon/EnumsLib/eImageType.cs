@@ -158,6 +158,7 @@ namespace Amdocs.Ginger.Common.Enums
         Recover,
         Approve,
         Reject,
+        Retry,
         Warn,
         EditWindow,
         UserDefined,
@@ -216,6 +217,7 @@ namespace Amdocs.Ginger.Common.Enums
         GitHub,
         Ping,
         Database,
+        Output,
         #endregion
 
         #region Source control Images     
