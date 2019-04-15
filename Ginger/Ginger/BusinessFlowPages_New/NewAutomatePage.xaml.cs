@@ -18,10 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Run;
 using Ginger;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Run;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
@@ -30,6 +32,7 @@ using GingerWPF.RunLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 namespace GingerWPF.BusinessFlowsLib
@@ -49,11 +52,15 @@ namespace GingerWPF.BusinessFlowsLib
         {
             InitializeComponent();
 
-            mRunner = new GingerRunner(eExecutedFrom.Automation);
-            mRunner.CurrentBusinessFlow = businessFlow;
-            mContext.Runner = mRunner;
+            SetAutomateRunner();
+            UpdateAutomateRunner();
+
+            //mRunner = new GingerRunner(eExecutedFrom.Automation);
+            //mRunner.CurrentBusinessFlow = businessFlow;
+            //mContext.Runner = mRunner;
             mBusinessFlow = businessFlow;
             mContext.BusinessFlow = mBusinessFlow;
+            mContext.Runner.CurrentBusinessFlow = mBusinessFlow;
 
             //Binding
             BusinessFlowNameLabel.BindControl(mBusinessFlow, nameof(BusinessFlow.Name));
@@ -187,6 +194,44 @@ namespace GingerWPF.BusinessFlowsLib
         {
             xStepBack.Click += clickHandler;
         }
+
+        private void SetAutomateRunner()
+        {
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+            // Add Listener so we can do GiveUserFeedback            
+            AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
+            automatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
+            mRunner.RunListeners.Add(automatePageRunnerListener);
+
+            mContext.Runner = mRunner;
+        }
+
+        public void GiveUserFeedback(object sender, EventArgs e)
+        {
+            // Run Do events on sepertate task so will not impact performance
+            Task.Factory.StartNew(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    GingerCore.General.DoEvents();
+                });
+            });
+
+        }
+
+        private void UpdateAutomateRunner()
+        {
+            mRunner.CurrentSolution = WorkSpace.Instance.Solution;
+            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            mRunner.SolutionAgents = new ObservableList<Agent>();
+            mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
+            mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        }
+
 
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
