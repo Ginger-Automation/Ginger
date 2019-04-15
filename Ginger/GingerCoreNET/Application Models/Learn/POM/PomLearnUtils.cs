@@ -166,11 +166,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             mElementsList.Clear();
             if (LearnOnlyMappedElements)
             {
-                IWindowExplorerDriver.GetVisibleControls(AutoMapElementTypesList.Where(x=>x.Selected).ToList().Select(y=>y.ElementType).ToList(), mElementsList, true);
+                if (SelectedElementTypesList.Count > 0)
+                {
+                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList);
+                }
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList, true);
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
             }
         }
 
