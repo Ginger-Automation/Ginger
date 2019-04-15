@@ -61,7 +61,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
                     xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
 
-                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow));
+                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
                     xFrameBusinessFlowControl.Content = mBusinessFlowControl;
                     SetDefaultPage();
                     break;
