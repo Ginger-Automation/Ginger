@@ -43,11 +43,11 @@ namespace UnitTests.UITests
     {
         static BusinessFlow mBF;
         static GingerRunner mGR = null;
-        static SeleniumDriver mDriver = null;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            SeleniumDriver mDriver = null;
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
