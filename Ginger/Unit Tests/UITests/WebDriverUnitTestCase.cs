@@ -32,6 +32,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -118,7 +119,10 @@ namespace UnitTests.UITests
                     file.Attributes = FileAttributes.Normal;
                     File.Delete(file.FullName);
                 }
-                catch { }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
         }
 
