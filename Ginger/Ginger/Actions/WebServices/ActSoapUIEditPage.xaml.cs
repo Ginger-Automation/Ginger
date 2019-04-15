@@ -65,6 +65,8 @@ namespace Ginger.Actions.WebServices
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(TestSuiteComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestSuite));
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(TestCaseComboBox, ComboBox.TextProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestCase));
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(UIrelatedCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(TestCasePropertiesRequieredCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.TestCasePropertiesRequiered));
+
             PropertiesOrPlaceHoldersInit();
             MergeAndClearList();
             InitPropertiesGrid(mAct.AllProperties, "Properties", "Property Type", "Property Name", "Property Value", "Property Calculated Value");
@@ -198,10 +200,7 @@ namespace Ginger.Actions.WebServices
             mContext.Runner.ProcessInputValueForDriver(mAct);
             mAct.AllProperties.Clear();
             mAct.TempProperties.Clear();
-            PopulateProjectPropertiesList();
-            PopulateTestCasePropertiesList();
-            PopulateTestSuitePropertiesList();
-            PopulateTestStepPropertiesList();
+            RefreshAllPropertiesGrid();
         }
 
         public void PropertiesOrPlaceHoldersInit()
@@ -255,15 +254,17 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseButtonXML_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text))
+            if (string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text) || XMLFilePathTextBox.ValueTextBox.Text.Substring(0, 1) == "~")
+            {
                 return;
-
-            if (XMLFilePathTextBox.ValueTextBox.Text.Substring(0, 1) == "~")
-                return;
+            }
 
             mContext.Runner.ProcessInputValueForDriver(mAct);
             if (!Boolean.Parse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile))))
             {
+                mAct.TempProperties.ClearAll();
+                mAct.AllProperties.ClearAll();
+                RefreshAllPropertiesGrid();
                 FillSuiteComboBox();
                 return;
             }
