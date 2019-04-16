@@ -263,6 +263,7 @@ namespace Amdocs.Ginger.Common.Enums
         ListItem,
         Window,
         Text,
+        CLI,
         #endregion
     }
 }

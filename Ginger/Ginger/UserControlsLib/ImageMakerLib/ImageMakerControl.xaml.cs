@@ -489,6 +489,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.EditWindow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
                     break;
+                case eImageType.CLI:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
+                    break;
                 #endregion
 
 

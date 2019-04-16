@@ -636,6 +636,16 @@
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml.cs">
+      <DependentUpon>CreateCLIChooseTypePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml.cs">
+      <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIInfoPage.xaml.cs">
+      <DependentUpon>CreateCLIInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIWizard.cs" />
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -2936,6 +2946,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLIInfoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4444,6 +4466,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <Resource Include="RunSetLib\CreateCLIWizardLib\CreateCLI.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>

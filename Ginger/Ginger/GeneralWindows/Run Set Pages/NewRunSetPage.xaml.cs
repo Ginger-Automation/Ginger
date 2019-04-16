@@ -28,6 +28,7 @@ using Ginger.BusinessFlowFolder;
 using Ginger.Functionalities;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
+using Ginger.RunSetLib.CreateCLIWizardLib;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
@@ -35,6 +36,7 @@ using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
@@ -1256,52 +1258,9 @@ namespace Ginger.Run
             }
         }
         
-        private void CreateRunSetShortCut(string RunSet, string Env)
-        {
-            object shDesktop = (object)"Desktop";
-            WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + RunSet + " " + Env + ".lnk";
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "Ginger Solution=" +  WorkSpace.Instance.Solution.Name + ", RunSet=" + RunSet + ", Env=" + Env;
-            string GingerPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string SolFolder =  WorkSpace.Instance.Solution.Folder;
-            if (SolFolder.EndsWith(@"\"))
-            {
-                SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
-            }
-            shortcut.TargetPath = GingerPath; 
-            string sConfig = "Solution=" + SolFolder + Environment.NewLine;
-            sConfig += "Env=" + Env + Environment.NewLine;
-            sConfig += "RunSet=" + RunSet + Environment.NewLine;
-            string sConfigFile = SolFolder + @"\Documents\RunSetShortCuts\" + RunSet + "_" + Env + ".Ginger.Config";
+        
 
-            if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\")) { System.IO.Directory.CreateDirectory(SolFolder + @"\Documents\RunSetShortCuts\"); }
-            System.IO.File.WriteAllText(sConfigFile, sConfig);
-
-            shortcut.Arguments = "ConfigFile=\"" + sConfigFile + "\"";
-            shortcut.Save();
-            Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
-        }
-
-        private void createShortcutRunset_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("CreateShortcutButton_Click");
-
-            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
-
-            if (mRunSetConfig.Name.IndexOfAny(invalidChars) >= 0 )
-            {
-                foreach (char value in invalidChars)
-                {
-                    if(mRunSetConfig.Name.Contains(value))
-                        mRunSetConfig.Name = mRunSetConfig.Name.Replace(value, '_');
-                }
-            }
-
-            CreateRunSetShortCut(mRunSetConfig.Name, xRunsetEnvironmentCombo.Text);
-
-            AutoLogProxy.UserOperationEnd();
-        }
+        
 
         private void analyzerRunset_Click(object sender, RoutedEventArgs e)
         {
@@ -2257,6 +2216,13 @@ namespace Ginger.Run
         private void XRunsetEnvironmentCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mContext.Environment = (ProjEnvironment)xRunsetEnvironmentCombo.SelectedItem;
+        }
+
+        private void XCLIButton_Click(object sender, RoutedEventArgs e)
+        {
+            // pass mRunSetConfig + env !!!!!!!!!!!
+            WizardWindow.ShowWizard(new CreateCLIWizard());
+            
         }
     }
 }

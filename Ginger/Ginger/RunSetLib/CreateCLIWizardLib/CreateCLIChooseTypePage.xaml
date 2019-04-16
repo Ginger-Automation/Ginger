@@ -1,0 +1,45 @@
+﻿<Page x:Class="Ginger.RunSetLib.CreateCLIWizardLib.CreateCLIChooseTypePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.RunSetLib.CreateCLIWizardLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CreateCLIChooseTypePage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="152*"/>
+            <RowDefinition Height="73*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="10,10,10,0" Grid.RowSpan="2" >
+
+            <StackPanel Margin="0,10,0,0">
+                <Label Content="CLI Type" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center"/>
+                <StackPanel  Margin="10" VerticalAlignment="Center">
+                    <RadioButton x:Name="xDriverRadioButton" Margin="5" Checked="XDriverRadioButton_Checked">ConfigFile</RadioButton>
+                    <Label>Simple XML file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
+                    <Label>Example: Ginger.exe ConfigFile=C:\Ginger\Regression1.txt</Label>
+                    <Label>When you need to execute fixed predefined run set which include Solution, RunSetName and Env</Label>
+                    <Label>Script file (C#) which contain the code, executed using Ginger ConfigFile=%filename%</Label>
+                    <Label>enable to create run set with loops and much more complex execution...</Label>
+                    <RadioButton  Margin="5">Dynamic</RadioButton>
+                    <RadioButton x:Name="xPluginRadioButton" Margin="5" >ScriptFile</RadioButton>
+                    <RadioButton  Margin="5">Parameters ///</RadioButton>
+                    <RadioButton  Margin="5">Dynamic Excel with Data</RadioButton>
+                </StackPanel>
+            </StackPanel>
+
+            
+            <StackPanel Grid.Row="1">
+                <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Content</Label>
+                <TextBlock x:Name="xCLIContentTextBox"  Margin="15" Background="White">Content</TextBlock>
+            </StackPanel>
+
+
+
+        </StackPanel>
+    </Grid>
+</Page>

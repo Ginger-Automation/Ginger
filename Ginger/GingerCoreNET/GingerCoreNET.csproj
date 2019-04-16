@@ -109,4 +109,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="RunLib\NewFolder\" />
+  </ItemGroup>
+
 </Project>
