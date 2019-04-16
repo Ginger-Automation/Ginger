@@ -339,7 +339,7 @@ namespace GingerCore
         {            
             /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MyDriver
             // Find the first service which match
-            mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == "SeleniumChromeDriver" select x).FirstOrDefault();  // Keep First!!!
+            mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId select x).FirstOrDefault();  // Keep First!!!
 
             // Service not found start new one
             // Add plugin config start if not exist and more depeneds on the config 
@@ -650,19 +650,36 @@ namespace GingerCore
             Driver.HighlightActElement(act);
         }
 
-        public ePlatformType Platform 
-        { 
-            get 
+        private ePlatformType? mPlatform;
+
+        [IsSerializedForLocalRepository]
+        public ePlatformType Platform
+        {
+            get
             {
-                if (AgentType == eAgentType.Service)
+                if (mPlatform != null)
                 {
-                    return ePlatformType.NA;
+                    return mPlatform.Value;
+
+
                 }
                 else
                 {
-                    return GetDriverPlatformType(DriverType);
-                }                
-            } 
+                    if (AgentType == eAgentType.Service)
+                    {
+                        return ePlatformType.NA;
+                    }
+                    else
+                    {
+                        return GetDriverPlatformType(DriverType);
+                    }
+                }
+            }
+            set
+            {
+
+                mPlatform = value;
+            }
         }
 
         public static ePlatformType GetDriverPlatformType(eDriverType driver)

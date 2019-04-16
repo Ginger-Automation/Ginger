@@ -44,6 +44,15 @@ namespace Ginger.Agents.AddAgentWizardLib
 
         public override void Finish()
         {
+            if(Agent.DriverInfo.isDriverPlugin)
+            {
+                Agent.AgentType = Agent.eAgentType.Service;
+            }
+            else
+            {
+                Agent.AgentType = Agent.eAgentType.Driver;
+            }
+
             AgentsFolder.AddRepositoryItem(Agent);
         }
 

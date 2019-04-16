@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.Drivers
 {
-  public  interface IPluginDriver
+    public interface IActUIElementAction
     {
 
-        void StartDriver();
-        void CloseDriver();
+
+        void RunActUi(IGingerAction gingerAction, string message, int sleep);
     }
 }

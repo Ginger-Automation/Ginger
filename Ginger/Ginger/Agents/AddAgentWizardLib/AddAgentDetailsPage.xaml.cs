@@ -82,14 +82,15 @@ namespace Ginger.Agents.AddAgentWizardLib
         {
             xDriverTypeComboBox.SelectedItem = null;
             xDriverTypeComboBox.Items.Clear();
-       
+
             //List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
 
 
             //GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
 
-
-            DriversforPlatform= DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
+            // mWizard.Agent.Platform = xPlatformTypeComboBox.SelectedValue as GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType;
+            mWizard.Agent.Platform=(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType) Enum.Parse(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType), xPlatformTypeComboBox.SelectedValue.ToString());
+             DriversforPlatform = DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
 
             foreach (DriverInfo  Di in DriversforPlatform)
             {
@@ -120,13 +121,13 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
 
             DriverInfo DI= xDriverTypeComboBox.SelectedItem as DriverInfo;
-
-            foreach(var service in mWizard.Agent.DriverInfo.services)
+            mWizard.Agent.DriverInfo = DI;
+            foreach (var service in mWizard.Agent.DriverInfo.services)
             {
                 xDriverSubTypeComboBox.Items.Add(service);
             }
           
-
+//TODO: Fix me asap
          //   mWizard.Agent.InitDriverConfigs();
         }
 

@@ -28,6 +28,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Plugin.Core.PlugInsLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -289,6 +290,18 @@ namespace Amdocs.Ginger.Repository
                                 }
                             }
                             pluginServiceInfo.Actions.Add(action);
+                        }
+
+
+                        foreach (Type PluginInterface in interfaces)
+                        {
+
+                            ServiceFeatureAttribute gingerInterfaceAttr = (ServiceFeatureAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(ServiceFeatureAttribute), true);
+
+                            if (gingerInterfaceAttr!=null)
+                            {
+                                pluginServiceInfo.Interfaces.Add(PluginInterface.FullName);
+                            }
                         }
                         mServices.Add(pluginServiceInfo);
                     }                    

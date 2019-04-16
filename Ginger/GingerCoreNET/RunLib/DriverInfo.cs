@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Drivers;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -64,12 +65,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (platformType == ePlatformType.Web.ToString())
             {
-                foreach (PluginPackage plugin in Plugins.Where(x => x.PluginPackageInfo.Implementations!=null && x.PluginPackageInfo.Implementations.Contains("IWebPlugin")))
+                foreach (PluginPackage plugin in Plugins.Where(x => x.Services!=null && x.Services.Any(a=>a.Interfaces.Contains(typeof(IWebPlatform).FullName))))
                 {
 
                     DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
 
-                    foreach (PluginServiceInfo PI in plugin.Services)
+                    foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains(typeof(IWebPlatform).FullName)))
                     {
                         DI.services.Add(PI.ServiceId);
                     }
