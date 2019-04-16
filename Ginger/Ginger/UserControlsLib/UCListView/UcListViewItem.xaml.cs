@@ -115,6 +115,10 @@ namespace Ginger.UserControlsLib.UCListView
                 case UcListViewEventArgs.eEventType.CollapseAllItems:
                     CollapseItem();
                     break;
+
+                case UcListViewEventArgs.eEventType.UpdateIndex:
+                    SetItemIndex();
+                    break;
             }
         }
 
@@ -295,7 +299,14 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 ParentList = (UcListView)parent;
                 ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+                 
             }
+        }
+
+        private void SetItemIndex()
+        {
+            //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
+            xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
         }
     }
 }

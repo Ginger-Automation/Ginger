@@ -28,7 +28,7 @@
         <usercontrols:ucButton x:Name="xDetailViewBtn" Grid.Row="0" Grid.Column="0" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Expand" Click="xDetailViewBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Visible" ToolTip="Expand" />
 
         <Border Grid.RowSpan="2" Grid.Column="1"  Background="{DynamicResource $amdocsLogoLinarGradientBrush}" >
-            <TextBlock x:Name="xItemIndexTxt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Converter={StaticResource ListItemIndexConverter}}"/>
+            <TextBlock x:Name="xItemIndexTxt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="12" FontWeight="Bold" Text="1"/>
         </Border>
 
         <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="2" ImageType="Unknown" ImageForeground="DarkGray" SetAsFontImageWithSize="20" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>

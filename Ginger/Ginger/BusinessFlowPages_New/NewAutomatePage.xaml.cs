@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Run;
 using Ginger;
 using Ginger.Agents;
+using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Extensions;
@@ -60,6 +61,9 @@ namespace GingerWPF.BusinessFlowsLib
         ProjEnvironment mEnvironment = null;
         Context mContext = new Context();
 
+        ActivitiesListViewPage mActivitiesPage;
+        NewActivityEditPage mActivityEditPage;
+
         GridLength mLastAddActionsColumnWidth = new GridLength(270);
 
         public NewAutomatePage(BusinessFlow businessFlow)
@@ -73,7 +77,7 @@ namespace GingerWPF.BusinessFlowsLib
             UpdateAutomatePageRunner();
             LoadBusinessFlowToAutomate(businessFlow);
 
-            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
+            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);            
             xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
             BindEnvsCombo();
         }
@@ -104,17 +108,17 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void CurrentBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
-            {
-                ActivitiesList.Dispatcher.Invoke(() =>
-                {
-                    ActivitiesList.SelectedItem = mBusinessFlow.CurrentActivity;
-                });
+        //private void CurrentBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+        //    {
+        //        ActivitiesList.Dispatcher.Invoke(() =>
+        //        {
+        //            ActivitiesList.SelectedItem = mBusinessFlow.CurrentActivity;
+        //        });
 
-            }
-        }
+        //    }
+        //}
 
         private void AddActivityButton_Click(object sender, RoutedEventArgs e)
         {
@@ -137,17 +141,17 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
-            mBusinessFlow.CurrentActivity = SelectedActivity;
+        //private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
+        //    mBusinessFlow.CurrentActivity = SelectedActivity;
 
-            if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
-            {
-                SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
-            }
-            xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
-        }
+        //    if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
+        //    {
+        //        SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
+        //    }
+        //    xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
+        //}
 
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -207,8 +211,18 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
                     xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
 
-                    ActivitiesList.ItemsSource = mBusinessFlow.Activities;
+                    //ActivitiesList.ItemsSource = mBusinessFlow.Activities;
                     //SetGherkinOptions();
+                    if (mActivitiesPage == null)
+                    {
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+                        xActivitiesListFrame.Content = mActivitiesPage;
+                    }
+                    else
+                    {
+                        mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
+                    SetActivityEditPage();
 
                     if (mBusinessFlow.Activities.Count > 0)
                     {
@@ -239,11 +253,42 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        private void SetActivityEditPage()
+        {
+            if (mBusinessFlow.CurrentActivity != null)
+            {
+                //mBusinessFlow.Activities.CurrentItem = mBusinessFlow.Activities[0];
+                //mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
+
+                if (mActivityEditPage == null)
+                {
+                    mActivityEditPage = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);
+                    xCurrentActivityFrame.Content = mActivityEditPage;
+                }
+                else
+                {
+                    mActivityEditPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                }
+            }
+            else
+            {
+                xCurrentActivityFrame.Content = null;
+            }           
+        }
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
             {
-                
+                //if (mBusinessFlow.CurrentActivity != null)
+                //{
+                //    if (mBusinessFlow.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
+                //    {
+                //        SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
+                //    }
+                //    xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
+                //}
+                SetActivityEditPage();
+
             }
         }
 

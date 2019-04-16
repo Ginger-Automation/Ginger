@@ -617,6 +617,11 @@
       <DependentUpon>ActionListItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivitiesGroupListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivityListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
+      <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -844,8 +849,8 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivityActionsPage.xaml.cs">
-      <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowPages_New\ActionsListViewPage.xaml.cs">
+      <DependentUpon>ActionsListViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\NewActivityEditPage.xaml.cs">
       <DependentUpon>NewActivityEditPage.xaml</DependentUpon>
@@ -2880,11 +2885,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivityActionsPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActionsListViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

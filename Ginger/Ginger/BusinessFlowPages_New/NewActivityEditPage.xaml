@@ -29,9 +29,9 @@
 
         <Frame x:Name="MainFrame" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Background="White" Margin="5"/>
         <Label x:Name="ActivityNameLabel" FontSize="14" FontWeight="Bold" Content="Activity Name" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
-        <Button usercontrols:ImageMaker.Content="Edit" Grid.Column="3" HorizontalAlignment="Left" Height="32" Margin="160,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32"/>
+        <!--<Button usercontrols:ImageMaker.Content="Edit" Grid.Column="3" HorizontalAlignment="Left" Height="32" Margin="160,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32"/>-->
         <StackPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Orientation="Horizontal" Width="259" Grid.ColumnSpan="2">
-            <Button x:Name="ActionsButton" Click="ActionsButton_Click"  BorderThickness="0" Background="Transparent" Opacity="100" Width="100">
+            <Button x:Name="ActionsButton" BorderThickness="0" Background="Transparent" Opacity="100" Width="100">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <Label>Actions</Label>
@@ -40,7 +40,7 @@
                 </Button.Content>
             </Button>
             <Label>|</Label>
-            <Button x:Name="VariablesButton" Click="VariablesButton_Click" BorderThickness="0" Background="Transparent" Opacity="100" Width="100">
+            <Button x:Name="VariablesButton"  BorderThickness="0" Background="Transparent" Opacity="100" Width="100">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <Label>
@@ -54,11 +54,11 @@
             <Label>Configuration</Label>
 
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
+        <!--<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3">
             <Button x:Name="ListViewButton" Click="ListViewButton_Click" usercontrols:ImageMaker.Content="List" Height="32" Margin="3.5,12,3.5,0" Width="32"/>
             <Button x:Name="FlowViewButton" Click="FlowViewButton_Click" usercontrols:ImageMaker.Content="FlowDiagram"  Height="32" Margin="3.5,12,3.5,0" Width="32"/>
             <Button x:Name="AddActionButton" Click="AddActionButton_Click"  usercontrols:ImageMaker.Content="Add"  Height="32" Margin="3.5,12,3.5,0" Width="32"/>
-        </StackPanel>
-   
+        </StackPanel>-->
+
     </Grid>
 </Page>

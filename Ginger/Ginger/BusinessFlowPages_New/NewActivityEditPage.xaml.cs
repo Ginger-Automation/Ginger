@@ -39,92 +39,99 @@ namespace GingerWPF.BusinessFlowsLib
         Activity mActivity;
         Context mContext;
 
+        ActionsListViewPage mActionsPage;
+
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public NewActivityEditPage(Activity Activity, Context context)
+        public NewActivityEditPage(Activity activity, Context context)
         {
             InitializeComponent();
 
-            mActivity = Activity;
+            mActivity = activity;
             mContext = context;
 
             ActivityNameLabel.Content = mActivity.ActivityName; // TODO: use binding !!!!!!!!!!!!!!!!!!!!!!!
-           
-            mContext.BusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
-
-            ShowActionsList();
-
             ActionsCountLabel.BindControl(mActivity.Acts, nameof(IObservableList.Count));
+            //mContext.BusinessFlow.Activities.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
+
+            ShowActionsList();                       
         }
 
         private void ShowActionsList()
         {
-            // TODO: cache the page
-            MainFrame.Dispatcher.Invoke(() =>
+            if (mActionsPage == null)
             {
-                //Since we might get event from Ginger runner which is running on another thread we need dispatcher
-                MainFrame.Content = new ActivityActionsPage((Activity)mContext.BusinessFlow.CurrentActivity);
-            });
-        }
-
-        private void CurrentBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(IObservableList.CurrentItem))
-            {
-                ShowActionsList();
+                mActionsPage = new ActionsListViewPage(mActivity, mContext);
             }
+            MainFrame.Content = mActionsPage;
         }
 
-        private void ListViewButton_Click(object sender, RoutedEventArgs e)
+        public void UpdateActivity(Activity activity)
         {
-            ShowActionsList();
+            mActivity = activity;
+            mActionsPage.UpdateActivity(mActivity);
         }
 
-        private void FlowViewButton_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO: cache the page
-            // !!!!!!!!!!!!!!!!!!!!!! use only activity diagram flow
 
-            // MainFrame.Content = new BusinessFlowDiagramPage(WorkSpace.Instance.GingerRunner.CurrentBusinessFlow); // TODO: show only the current activity
 
-            MainFrame.Content = new BusinessFlowDiagramPage(mContext.BusinessFlow); // TODO: show only the current activity
-        }
+        //private void CurrentBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(IObservableList.CurrentItem))
+        //    {
+        //        ShowActionsList();
+        //    }
+        //}
 
-        private void AddActionButton_Click(object sender, RoutedEventArgs e)
-        {
-            List<ActionSelectorItem> actions = new List<ActionSelectorItem>();
-            actions.Add(new ActionSelectorItem() { Name = "Record", Action = RecordAction });
-            actions.Add(new ActionSelectorItem() { Name = "New Empty Action", Action = AddEmptyAction });
-            actions.Add(new ActionSelectorItem() { Name = "Add Action from shared repository", Action = AddActionFromSharedRepository });
+        //private void ListViewButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ShowActionsList();
+        //}
 
-            ActionSelectorWindow w = new ActionSelectorWindow("Add Action, please select method", actions);
-            w.Show();
-        }
+        //private void FlowViewButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // TODO: cache the page
+        //    // !!!!!!!!!!!!!!!!!!!!!! use only activity diagram flow
 
-        private void AddActionFromSharedRepository()
-        {
-            throw new NotImplementedException();
-        }
+        //    // MainFrame.Content = new BusinessFlowDiagramPage(WorkSpace.Instance.GingerRunner.CurrentBusinessFlow); // TODO: show only the current activity
 
-        private void AddEmptyAction()
-        {
-            NewAddActionPage p = new NewAddActionPage();
-            p.ShowAsWindow(mContext.BusinessFlow.CurrentActivity.Acts);
-        }
+        //    MainFrame.Content = new BusinessFlowDiagramPage(mContext.BusinessFlow); // TODO: show only the current activity
+        //}
 
-        private void RecordAction()
-        {
-            throw new NotImplementedException();
-        }
+        //private void AddActionButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    List<ActionSelectorItem> actions = new List<ActionSelectorItem>();
+        //    actions.Add(new ActionSelectorItem() { Name = "Record", Action = RecordAction });
+        //    actions.Add(new ActionSelectorItem() { Name = "New Empty Action", Action = AddEmptyAction });
+        //    actions.Add(new ActionSelectorItem() { Name = "Add Action from shared repository", Action = AddActionFromSharedRepository });
 
-        private void VariablesButton_Click(object sender, RoutedEventArgs e)
-        {
-            ActivityVariablesPage p = new ActivityVariablesPage(mActivity.Variables);
-            MainFrame.Content = p;
-        }
+        //    ActionSelectorWindow w = new ActionSelectorWindow("Add Action, please select method", actions);
+        //    w.Show();
+        //}
 
-        private void ActionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowActionsList();
-        }
+        //private void AddActionFromSharedRepository()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //private void AddEmptyAction()
+        //{
+        //    NewAddActionPage p = new NewAddActionPage();
+        //    p.ShowAsWindow(mContext.BusinessFlow.CurrentActivity.Acts);
+        //}
+
+        //private void RecordAction()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //private void VariablesButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ActivityVariablesPage p = new ActivityVariablesPage(mActivity.Variables);
+        //    MainFrame.Content = p;
+        //}
+
+        //private void ActionsButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ShowActionsList();
+        //}
     }
 }

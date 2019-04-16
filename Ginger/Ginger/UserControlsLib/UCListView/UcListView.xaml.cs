@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using System;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -50,11 +51,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        mObjList.PropertyChanged -= ObjListPropertyChanged;                        
                     }
-                    mObjList = value;
-                    BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
 
+                    mObjList = value;                    
                     //mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
                     //if (mCollectionView != null)
@@ -78,7 +78,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
-                        {
+                        {                            
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
@@ -94,7 +94,8 @@ namespace Ginger.UserControlsLib.UCListView
                 if (mObjList != null)
                 {
                     mObjList.PropertyChanged += ObjListPropertyChanged;
-                    //mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
+                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
                 }
             }
 
@@ -119,6 +120,21 @@ namespace Ginger.UserControlsLib.UCListView
                     }
                 });
             }
+        }
+
+        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                //different kind of changes that may have occurred in collection
+                if (e.Action == NotifyCollectionChangedAction.Add ||
+                e.Action == NotifyCollectionChangedAction.Replace ||
+                e.Action == NotifyCollectionChangedAction.Remove ||
+                e.Action == NotifyCollectionChangedAction.Move)
+                {
+                    OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
+                }
+            });
         }
 
         public object CurrentItem
@@ -325,6 +341,16 @@ namespace Ginger.UserControlsLib.UCListView
                 xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
             }
         }
+
+        public void SetDefaultListDataTemplate(object listItemInfo)
+        {
+            DataTemplate dataTemp = new DataTemplate();
+            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
+            dataTemp.VisualTree = listItemFac;
+            xListView.ItemTemplate = dataTemp;
+        }
     }
 
     public class UcListViewEventArgs
@@ -333,6 +359,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             ExpandAllItems,
             CollapseAllItems,
+            UpdateIndex,
         }
 
         public eEventType EventType;

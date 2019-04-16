@@ -18,8 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
-using Ginger.BusinessFlowPages_New.ItemsListControls;
-using Ginger.BusinessFlowPages_New.ListViewItems;
+using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -32,17 +31,17 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for ActivityActionsPage.xaml
     /// </summary>
-    public partial class ActivityActionsPage : Page
+    public partial class ActionsListViewPage : Page
     {
         Activity mActivity;
         Context mContext;
         
-        public ActivityActionsPage(Activity Activity)
+        public ActionsListViewPage(Activity Activity, Context context)
         {
             InitializeComponent();
 
             mActivity = Activity;
-
+            mContext = context;
             SetListView();
             //xActionsListView.List.ItemsSource = mActivity.Acts;
             
@@ -66,18 +65,35 @@ namespace GingerWPF.BusinessFlowsLib
             xActionsListView.Title = "Actions";
             xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            //TODO: move DataTemplate into ListView
-            DataTemplate dataTemp = new DataTemplate();
-            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            //listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
-            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
-            dataTemp.VisualTree = listItemFac;
-            xActionsListView.List.ItemTemplate = dataTemp;
+            ////TODO: move DataTemplate into ListView
+            //DataTemplate dataTemp = new DataTemplate();
+            //FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            ////listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
+            //listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+            //listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
+            //dataTemp.VisualTree = listItemFac;
+            //xActionsListView.List.ItemTemplate = dataTemp;
+
+            xActionsListView.SetDefaultListDataTemplate(new ActionListItemInfo(mContext));
 
             xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
 
             xActionsListView.DataSourceList = mActivity.Acts;
+        }
+
+        public void UpdateActivity(Activity activity)
+        {
+            mActivity = activity;
+            if (mActivity != null)
+            {
+                xActionsListView.DataSourceList = null;
+                xActionsListView.DataSourceList = mActivity.Acts;
+            }
+            else
+            {
+                xActionsListView.DataSourceList = null;
+            }
+            xActionsListView.List.Items.Refresh();
         }
 
         private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
