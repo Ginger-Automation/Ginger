@@ -1,7 +1,10 @@
-﻿using Amdocs.Ginger.Common.Enums;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Help;
+using Ginger.UserControls;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -17,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Ginger.ApplicationModelsLib.POMModels.PomElementsPage;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -54,6 +58,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
+            SetElementsGridView();
+
             //if (treeItemDoubleClickHandler != null)
             //{
             //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
@@ -62,6 +68,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
         {
+            GridLength POMDetailsRegionHeight = new GridLength(400, GridUnitType.Star);
+            GridLength unloadedPOMDetailsHeight = new GridLength(0);
+
             TreeViewItem TVI = (TreeViewItem)sender;
             object tvItem = TVI.Tag;
             ITreeViewItem mPOMObj = tvItem as ITreeViewItem;
@@ -71,9 +80,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if(mPOM is ApplicationPOMModel)
                 {
-                    mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
-                    xPOMLDetailsFrame.Content = mappedUIElementsPage;
+                    if(xPOMDetails.Height.Value < POMDetailsRegionHeight.Value)
+                        xPOMDetails.Height = POMDetailsRegionHeight;
+
+                    xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                 }
+                else
+                    xPOMDetails.Height = unloadedPOMDetailsHeight;
+
                 //ApplicationPOMModel appPOM = tvItem as ApplicationPOMModel
                 //mPomAllElementsPage = new PomAllElementsPage(appPOM, this);
                 //xPOMLDetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
@@ -84,5 +98,22 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
+        private void SetElementsGridView()
+        {
+            xMainElementsGrid.SetTitleLightStyle = true;
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
+
+            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+            xMainElementsGrid.SetAllColumnsDefaultView(view);
+            xMainElementsGrid.InitViewItems();
+            xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
+        }
     }
 }

@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
+      xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="600"
       Title="POMNavAction">
@@ -12,13 +13,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
-            <RowDefinition Height="275*"/>
+            <RowDefinition x:Name="xPOMDetails"/>
         </Grid.RowDefinitions>
 
-        <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Grid.Row="0">
+        <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Background="White" Grid.Row="0">
         </UCTreeView:TreeView1>
 
         <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="Black" IsEnabled="True" />
-        <Frame x:Name="xPOMLDetailsFrame" Grid.Row="1" Margin="0,5,0,0" />
+        <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="1" Title="Mapped Elements" ShowTitle="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" Margin="0,5,0,0" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowSearch="Collapsed" />
+
     </Grid>
 </Page>

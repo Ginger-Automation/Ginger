@@ -3080,12 +3080,12 @@
     </Style>-->
 
     <Style TargetType="Button" x:Key="@PanelButtonStyle">
-        <Setter Property="Background" Value="DeepSkyBlue" />
+        <Setter Property="Background" Value="#2AB5E9" />
         <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontFamily" Value="Open Sans" />
-        <Setter Property="Height" Value="20" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily" Value="Seoge UI" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Padding" Value="5,0,5,0"/>
         <Setter Property="Width" Value="200" />
@@ -3093,7 +3093,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="DeepSkyBlue" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="#2AB5E9" BorderThickness="3" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="White" 
                                 Margin="{TemplateBinding Padding}"
