@@ -636,6 +636,9 @@
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml.cs">
+      <DependentUpon>CLIOptionsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml.cs">
       <DependentUpon>CreateCLIChooseTypePage.xaml</DependentUpon>
     </Compile>
@@ -2940,6 +2943,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ReporterLib\ReporterTestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

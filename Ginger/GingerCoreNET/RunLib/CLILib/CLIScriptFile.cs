@@ -11,6 +11,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         string mScriptFile;
 
+        public string Identifier()
+        {
+            return "ScriptFile";
+        }
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             string txt = string.Format("OpenSolution({0})", WorkSpace.Instance.Solution.Folder) + Environment.NewLine;

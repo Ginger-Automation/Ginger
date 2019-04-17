@@ -8,7 +8,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicXML : ICLI
     {
-        
+        public string Identifier()
+        {
+            return "DynamicXML";
+        }
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             string xml = DynamicRunSetManager.CreateRunSet(runsetExecutor);

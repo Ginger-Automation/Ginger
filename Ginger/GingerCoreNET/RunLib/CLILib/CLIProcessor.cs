@@ -1,13 +1,14 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using System;
 using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIProcessor
     {
-        ICLI CLIProc;
+        ICLI mCLIHandler;
         public void ExecuteArgs(string[] args)
         {
             WorkSpace.Instance.RunningInExecutionMode = true;
@@ -17,12 +18,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             string[] arg1 = args[0].Split('=');
             string param = arg1[0].Trim();
             string fileName = arg1[1].Trim();
+
+            SetCLIHandler(param, fileName);
+            mCLIHandler.Execute();
+
+        }
+
+        private void SetCLIHandler(string param, string fileName)
+        {
+            // TODO: get all classes impl ICLI and check Identifier then set
+
             if (param.StartsWith("ConfigFile"))  // Old key=value runset config file
-            {                                
-                CLIProc = new CLIConfigFile();
+            {
+                mCLIHandler = new CLIConfigFile();
                 string config = ReadFile(fileName);
-                CLIProc.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
-                CLIProc.Execute();
+                mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
+                mCLIHandler.Execute();
             }
             else if (param.StartsWith("ScriptFile")) // New C# Roslyn code
             {
@@ -30,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 string script = ReadFile(fileName);
                 cLIScriptFile.LoadContent(script, null);
                 cLIScriptFile.Execute();
-                
+
             }
             else if (param.StartsWith("DynamicFile")) // xml with dynamic runset creation
             {
@@ -40,13 +51,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 CLIDynamicXML.Execute();
 
             }
-            
+
             // TODO: add ///
             // TODO: Excel 
         }
-
-        
-      
 
         private static string ReadFile(string fileName)
         {

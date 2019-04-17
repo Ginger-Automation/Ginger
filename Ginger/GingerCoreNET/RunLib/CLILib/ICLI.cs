@@ -7,6 +7,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public interface ICLI
     {
+        string Identifier();
+
         // Cretae CLI content from runsetExecutor
         string CreateContent(RunsetExecutor runsetExecutor);
 
