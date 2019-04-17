@@ -19,6 +19,8 @@ limitations under the License.
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 
 namespace Ginger.Run.RunSetActions
@@ -39,10 +41,10 @@ namespace Ginger.Run.RunSetActions
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);
 
-            MailFromTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
-            MailToTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
-            SubjectTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
-            BodyTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
+            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
+            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
+            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
+            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
             BodyTextBox.AdjustHight(100);
 
         }

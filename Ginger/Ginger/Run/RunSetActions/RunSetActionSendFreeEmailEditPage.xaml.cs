@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore;
 using GingerCore.GeneralLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -39,11 +40,11 @@ namespace Ginger.Run.RunSetActions
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail.Email);
 
-            MailFromTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
-            MailToTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
-            MailCCTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
-            SubjectTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
-            BodyTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
+            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {

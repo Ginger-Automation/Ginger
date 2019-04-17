@@ -2,6 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
+using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
+
 namespace Ginger.Run.RunSetActions
 {
     /// <summary>
@@ -13,9 +16,9 @@ namespace Ginger.Run.RunSetActions
         {
             InitializeComponent();
             
-            xSMTPMailHostTextBox.Init(null, runSetAction, nameof(Email.SMTPMailHost));
+            xSMTPMailHostTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetAction, nameof(Email.SMTPMailHost));
             BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPort));
-            xSMTPUserTextBox.Init(null, runSetAction, nameof(Email.SMTPUser));
+            xSMTPUserTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetAction, nameof(Email.SMTPUser));
             BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPass));
             GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetAction.EmailMethod);
             BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetAction, nameof(Email.EmailMethod));

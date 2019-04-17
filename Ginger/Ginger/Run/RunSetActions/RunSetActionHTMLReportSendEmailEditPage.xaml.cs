@@ -57,12 +57,12 @@ namespace Ginger.Run.RunSetActions
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email);
 
-            MailFromTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
-            MailToTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
-            MailCCTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
-            SubjectTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
-            BodyTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
-            CommentTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
+            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
+            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
+            MailCCTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
+            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
+            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
+            CommentTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
 
             BodyTextBox.AdjustHight(100);
 
