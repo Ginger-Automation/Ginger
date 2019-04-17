@@ -642,9 +642,6 @@
     <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml.cs">
       <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIInfoPage.xaml.cs">
-      <DependentUpon>CreateCLIInfoPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIWizard.cs" />
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
@@ -2951,10 +2948,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLIInfoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

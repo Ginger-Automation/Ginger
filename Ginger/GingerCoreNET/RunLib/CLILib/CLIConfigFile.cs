@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-    class ConfigFileProcessor
+    public class CLIConfigFile
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
 
@@ -333,6 +333,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
+        public static string CreateConfig(RunsetExecutor runsetExecutor)
+        {
+
+            string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
+            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
+
+            // TODO: add source control and all other options !!!!!!!!!!!
+
+            return sConfig;
+        }
+
+
+
         // config file
         //private bool ProcessCommandLineArgs(string config)
         //{
@@ -349,7 +363,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         //        //TODO:  Move to CLIProcc !!!!
         //        // ProcessCommandLineArgs(lines);
 
-                
+
         //    }
         //    catch (Exception ex)
         //    {

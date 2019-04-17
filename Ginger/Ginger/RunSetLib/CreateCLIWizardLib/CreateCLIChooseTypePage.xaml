@@ -19,23 +19,23 @@
             <StackPanel Margin="0,10,0,0">
                 <Label Content="CLI Type" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center"/>
                 <StackPanel  Margin="10" VerticalAlignment="Center">
-                    <RadioButton x:Name="xDriverRadioButton" Margin="5" Checked="XDriverRadioButton_Checked">ConfigFile</RadioButton>
-                    <Label>Simple XML file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
+                    <RadioButton x:Name="xConfigRadioButton" Margin="5" Checked="xConfigRadioButton_Checked">ConfigFile</RadioButton>
+                    <Label>Simple text file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
                     <Label>Example: Ginger.exe ConfigFile=C:\Ginger\Regression1.txt</Label>
                     <Label>When you need to execute fixed predefined run set which include Solution, RunSetName and Env</Label>
                     <Label>Script file (C#) which contain the code, executed using Ginger ConfigFile=%filename%</Label>
                     <Label>enable to create run set with loops and much more complex execution...</Label>
-                    <RadioButton  Margin="5">Dynamic</RadioButton>
-                    <RadioButton x:Name="xPluginRadioButton" Margin="5" >ScriptFile</RadioButton>
-                    <RadioButton  Margin="5">Parameters ///</RadioButton>
-                    <RadioButton  Margin="5">Dynamic Excel with Data</RadioButton>
+                    <RadioButton x:Name="xDynamicRadioButton" Checked="XDynamicRadioButton_Checked" Margin="5">Dynamic</RadioButton>
+                    <RadioButton x:Name="xScriptRadioButton" Checked="XScriptRadioButton_Checked" Margin="5" >ScriptFile</RadioButton>
+                    <RadioButton x:Name="xParametersRadioButton" Checked="XParametersRadioButton_Checked" Margin="5">Parameters ///</RadioButton>
+                    <RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>
                 </StackPanel>
             </StackPanel>
 
             
             <StackPanel Grid.Row="1">
                 <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Content</Label>
-                <TextBlock x:Name="xCLIContentTextBox"  Margin="15" Background="White">Content</TextBlock>
+                <TextBox x:Name="xCLIContentTextBox"  Margin="15" IsReadOnly="True">Content</TextBox>
             </StackPanel>
 
 

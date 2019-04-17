@@ -32,10 +32,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public CLIType cLIType { get; set; }
 
+        public string FileContent { get; set; }  // st raise event
+
+
         public CreateCLIWizard()
         {            
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
-            AddPage(Name: "General Details", Title: "Run Set Info", SubTitle: "Info page", Page: new CreateCLIInfoPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));            
             AddPage(Name: "CLI Type", Title: "CLI Type", SubTitle: "CLI Type", Page: new CreateCLIChooseTypePage());
             AddPage(Name: "CLI Location", Title: "CLI Location", SubTitle: "CLI Location", Page: new CreateCLILocationPage());
             

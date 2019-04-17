@@ -77,5 +77,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }
+
+        public static string CreateRunSet(RunsetExecutor runsetExecutor)
+        {
+            return "xml 123";
+        }
     }
 }

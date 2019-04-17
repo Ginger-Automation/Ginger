@@ -1,19 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -25,8 +16,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         CreateCLIWizard mCreateCLIWizard;
         public CreateCLIChooseTypePage()
         {
-            InitializeComponent();
-            
+            InitializeComponent();            
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -34,7 +24,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;                    
                     break;
                 case EventType.Active:
                     
@@ -44,22 +34,37 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         }
 
-        private void XDriverRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            CalculateCLIContent();
+        private void xConfigRadioButton_Checked(object sender, RoutedEventArgs e)
+        {            
+            SetContent(CLIConfigFile.CreateConfig(WorkSpace.Instance.RunsetExecutor));            
         }
 
-        private void CalculateCLIContent()
+        private void SetContent(string v)
         {
-            // TOOD: switch case...
+            mCreateCLIWizard.FileContent = v;
+            xCLIContentTextBox.Text = v;
+        }
 
-            string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
-            sConfig += "Env=Env 1"  + Environment.NewLine;
-            sConfig += "RunSet=" + "Deafulat Run Set" + Environment.NewLine;
-            //sConfig += "Env=" + mCreateCLIWizard.ProjEnvironment.Name + Environment.NewLine;
-            //sConfig += "RunSet=" + mCreateCLIWizard.RunSetConfig.Name + Environment.NewLine;
+        private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            SetContent(DynamicRunSetManager.CreateRunSet(WorkSpace.Instance.RunsetExecutor));
+        }
 
-            xCLIContentTextBox.Text = sConfig;
+        private void XScriptRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            SetContent("Script aaaa");
+        }
+
+        private void XParametersRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.FileContent = "";
+            SetContent("/Sol=111 / / / ");
+        }
+
+        private void XExcelRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.FileContent = "Excel view ";
+            SetContent("Excel view");
         }
     }
 }

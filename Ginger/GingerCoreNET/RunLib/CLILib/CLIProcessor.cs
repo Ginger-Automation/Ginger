@@ -24,12 +24,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 ExecutScript(fileName);
             }
+            // TODO: dynamic
+            // TODO: add ///
+            // TODO: Excel 
         }
 
         private static void ExecuteConfig(string configFile)
         {        
             string config = ReadFile(configFile);
-            ConfigFileProcessor configFileProcessor = new ConfigFileProcessor();
+            CLIConfigFile configFileProcessor = new CLIConfigFile();
             configFileProcessor.RunConfig(config, WorkSpace.Instance.RunsetExecutor);
         }
 
