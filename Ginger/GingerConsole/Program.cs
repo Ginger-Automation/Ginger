@@ -137,8 +137,9 @@ namespace Amdocs.Ginger.GingerConsole
         private static void ProcessArgs(string[] args)
         {                       
             InitWorkSpace();                              
-            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), null);         
-            CLIProcessor.ExecuteArgs(args);
+            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), null);
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(args);
         }
 
         private static Module A_ModuleResolve1(object sender, ResolveEventArgs e)
