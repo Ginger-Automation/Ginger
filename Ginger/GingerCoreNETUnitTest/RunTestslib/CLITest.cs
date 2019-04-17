@@ -77,7 +77,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             string arg = "ScriptFile=" + scriptFile;
 
             // Act
-            CLIProcessor.ExecuteArgs(new string[] { arg });
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { arg });
 
             // Assert
             // Assert.AreEqual("1")
@@ -127,7 +128,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             string arg = "ScriptFile=" + scriptFile;
 
             // Act
-            CLIProcessor.ExecuteArgs(new string[] { arg });
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { arg });
 
             // Assert
             // Assert.AreEqual("1")
@@ -172,7 +174,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             string arg = "ScriptFile=" + scriptFile;
 
             // Act
-            CLIProcessor.ExecuteArgs(new string[] { arg });
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { arg });
 
             // Assert
             // Assert.AreEqual("1")

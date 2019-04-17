@@ -37,10 +37,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (param.StartsWith("ScriptFile")) // New C# Roslyn code
             {
-                CLIScriptFile cLIScriptFile = new CLIScriptFile();
+                mCLIHandler = new CLIScriptFile();
                 string script = ReadFile(fileName);
-                cLIScriptFile.LoadContent(script, null);
-                cLIScriptFile.Execute();
+                mCLIHandler.LoadContent(script, null);
+                mCLIHandler.Execute();
 
             }
             else if (param.StartsWith("DynamicFile")) // xml with dynamic runset creation
