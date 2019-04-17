@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         bool mShowAutoRunWindow = true;
 
-        RunsetExecutor mRunsetExecutor;
+        
         UserProfile mUserProfile;
 
         public string Identifier
@@ -30,13 +30,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public bool Execute()
+        public bool Execute(RunsetExecutor runsetExecutor)
         {
+            runsetExecutor.RunRunset();
+            return true;
             // mRunsetExecutor = runsetExecutor;
 
             // bool processed = ProcessConfig(config);
 
-            bool analyzerIssues = RunAnalyzer();
+            // bool analyzerIssues = RunAnalyzer();
             //if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment != null)
             //{
             //    return true;
@@ -47,49 +49,49 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             //    return false;
             //}
 
-            var result = RunRunSetFromCommandLine();
+            //var result = RunRunSetFromCommandLine();
 
-            Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
+            //Reporter.ToLog(eLogLevel.INFO, "Closing Ginger automatically...");
 
 
-            //setting the exit code based on execution status
-            if (result == 0)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
-                Environment.ExitCode = 0;//success                    
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
-                Environment.ExitCode = 1;//failure
-            }
+            ////setting the exit code based on execution status
+            //if (result == 0)
+            //{
+            //    Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
+            //    Environment.ExitCode = 0;//success                    
+            //}
+            //else
+            //{
+            //    Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
+            //    Environment.ExitCode = 1;//failure
+            //}
 
-            return true;
+            //return true;
         }
 
 
-        // Return true if there are analyzer issues
-        private bool RunAnalyzer()
-        {
-            //Running Runset Analyzer to look for issues
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            try
-            {
-                //run analyzer
-                int analyzeRes = mRunsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
-                if (analyzeRes == 1)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    return true;//cancel run because issues found
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                return true;
-            }
-            return false;
-        }
+        //// Return true if there are analyzer issues
+        //private bool RunAnalyzer()
+        //{
+        //    //Running Runset Analyzer to look for issues
+        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+        //    try
+        //    {
+        //        //run analyzer
+        //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
+        //        if (analyzeRes == 1)
+        //        {
+        //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+        //            return true;//cancel run because issues found
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         //public void ExecuteRunSetConfig(string config)
         //{
@@ -124,70 +126,70 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
 
-        int RunRunSetFromCommandLine()
-        {
-            //0- success
-            //1- failure
+        //int RunRunSetFromCommandLine()
+        //{
+        //    //0- success
+        //    //1- failure
 
-            try
-            {                
-                AutoLogProxy.UserOperationStart("AutoRunWindow", mRunsetExecutor.RunSetConfig.Name, mRunsetExecutor.RunsetExecutionEnvironment.Name);
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+        //    try
+        //    {                
+        //        AutoLogProxy.UserOperationStart("AutoRunWindow", mRunsetExecutor.RunSetConfig.Name, mRunsetExecutor.RunsetExecutionEnvironment.Name);
+        //        Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //try
-                //{
+        //        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+        //        //try
+        //        //{
                    
 
 
 
 
-                //}
-                //catch (Exception ex)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed loading {0} execution UI elements, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                //    return 1;
-                //}
+        //        //}
+        //        //catch (Exception ex)
+        //        //{
+        //        //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed loading {0} execution UI elements, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+        //        //    return 1;
+        //        //}
 
                 
 
-                //Execute
-                try
-                {                    
-                    if (mShowAutoRunWindow)
-                    {
-                        RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
-                    }
+        //        //Execute
+        //        try
+        //        {                    
+        //            if (mShowAutoRunWindow)
+        //            {
+        //                RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+        //            }
 
-                    mRunsetExecutor.InitRunners();
-                    //Task t = Task.Factory.StartNew(() =>
-                     //{                            
-                          mRunsetExecutor.RunRunset();                         
-                     //});
-                    //t.Wait();  
+        //            mRunsetExecutor.InitRunners();
+        //            //Task t = Task.Factory.StartNew(() =>
+        //             //{                            
+        //                  mRunsetExecutor.RunRunset();                         
+        //             //});
+        //            //t.Wait();  
                     
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during the {0} execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                    return 1;
-                }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during the {0} execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+        //            return 1;
+        //        }
 
-                if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
-                    return 0;
-                else
-                    return 1;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Un expected error occured during the execution", ex);
-                return 1;
-            }
-            finally
-            {
-                AutoLogProxy.UserOperationEnd();
-            }
-        }
+        //        if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
+        //            return 0;
+        //        else
+        //            return 1;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, "Un expected error occured during the execution", ex);
+        //        return 1;
+        //    }
+        //    finally
+        //    {
+        //        AutoLogProxy.UserOperationEnd();
+        //    }
+        //}
 
        
         public string CreateContent(RunsetExecutor runsetExecutor)
@@ -324,7 +326,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                             if (env != null)
                             {
-                                mRunsetExecutor.RunsetExecutionEnvironment = env;
+                                runsetExecutor.RunsetExecutionEnvironment = env;
                             }
                             else
                             {
@@ -340,7 +342,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
                             if (runSetConfig != null)
                             {
-                                mRunsetExecutor.RunSetConfig = runSetConfig;
+                                runsetExecutor.RunSetConfig = runSetConfig;
                             }
                             else
                             {

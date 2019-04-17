@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return xml;            
         }
 
-        public bool Execute()
+        public bool Execute(RunsetExecutor runsetExecutor)
         {
             return true;
         }

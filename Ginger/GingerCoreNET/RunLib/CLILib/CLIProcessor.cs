@@ -17,42 +17,43 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             string[] arg1 = args[0].Split('=');
             string param = arg1[0].Trim();
-            string fileName = arg1[1].Trim();
+            string value = arg1[1].Trim();
 
-            SetCLIHandler(param, fileName);
-            mCLIHandler.Execute();
+            SetCLIHandler(param, value);
+
+            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
 
         }
 
-        private void SetCLIHandler(string param, string fileName)
+        private void SetCLIHandler(string param, string value)
         {
             // TODO: get all classes impl ICLI and check Identifier then set
 
-            if (param.StartsWith("ConfigFile"))  // Old key=value runset config file
+            switch (param)
             {
-                mCLIHandler = new CLIConfigFile();
-                string config = ReadFile(fileName);
-                mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
-                mCLIHandler.Execute();
-            }
-            else if (param.StartsWith("ScriptFile")) // New C# Roslyn code
-            {
-                mCLIHandler = new CLIScriptFile();
-                string script = ReadFile(fileName);
-                mCLIHandler.LoadContent(script, null);
-                mCLIHandler.Execute();
+                case "ConfigFile":
+                    mCLIHandler = new CLIConfigFile();
+                    string config = ReadFile(value);
+                    mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
+                    break;
+                case "ScriptFile":
+                    mCLIHandler = new CLIScriptFile();
+                    string script = ReadFile(value);
+                    mCLIHandler.LoadContent(script, null);
+                    break;
+                case "DynamicFile":
+                    CLIDynamicXML CLIDynamicXML = new CLIDynamicXML();
+                    string dynamicXML = ReadFile(value);
+                    CLIDynamicXML.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
+                    break;
+                case "Args":
+                    CLIArgs CLIArgs = new CLIArgs();                    
+                    CLIArgs.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
+                    break;
 
             }
-            else if (param.StartsWith("DynamicFile")) // xml with dynamic runset creation
-            {
-                CLIDynamicXML CLIDynamicXML = new CLIDynamicXML();
-                string script = ReadFile(fileName);
-                CLIDynamicXML.LoadContent(script, WorkSpace.Instance.RunsetExecutor);
-                CLIDynamicXML.Execute();
-
-            }
-
-            // TODO: add ///
+          
             // TODO: Excel 
         }
 

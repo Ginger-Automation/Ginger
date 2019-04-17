@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         [TestMethod]
-        public void RunRunSet()
+        public void ScriptFile()
         {
             // Arrange
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
@@ -85,6 +85,40 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
 
         }
+
+        [TestMethod]
+        public void ConfigFile()
+        {
+            // Arrange
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.RunningFromUnitTest = true;
+
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+
+            // Create config file
+
+
+            string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
+            string scriptFile = TestResources.GetTempFile("runset1.ginger.config");
+                        
+            string txt = string.Format("Solution={0}", CLISolutionFolder) + Environment.NewLine;
+            txt += string.Format("Env={0}", "Default") + Environment.NewLine;
+            txt += string.Format("RunSet={0}", "Default Run Set") + Environment.NewLine;
+            System.IO.File.WriteAllText(scriptFile, txt);
+
+
+            string arg = "ConfigFile=" + scriptFile;
+
+            // Act
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { arg });
+
+            // Assert            
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
+
+        }
+
 
         [TestMethod]
         public void ResultsJSON()

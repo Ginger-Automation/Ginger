@@ -20,7 +20,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return "/Solution=s1 /RunSet:def aold 1 /Env:koko 1";
         }
 
-        public bool Execute()
+        public bool Execute(RunsetExecutor runsetExecutor)
         {
             return true;
         }

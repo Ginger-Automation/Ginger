@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return txt;
         }
 
-        public bool Execute()
+        public bool Execute(RunsetExecutor runsetExecutor)
         {                                    
             var rc = CodeProcessor.ExecuteNew(mScriptFile);
             return true;
