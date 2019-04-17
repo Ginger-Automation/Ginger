@@ -714,19 +714,27 @@ namespace Ginger
         }
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (grdMain.SelectedItems.Count == 0)
+            try
             {
-                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
-                return;
+                if (grdMain.SelectedItems.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                    return;
+                }
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                mObjList.SaveUndoData();
+
+                List<object> SelectedItemsList = grdMain.SelectedItems.Cast<object>().ToList();
+
+                foreach (object o in SelectedItemsList)
+                {
+                    mObjList.Remove(o);
+                }
             }
-
-            mObjList.SaveUndoData();
-
-            List<object> SelectedItemsList = grdMain.SelectedItems.Cast<object>().ToList();
-
-            foreach (object o in SelectedItemsList)
+            finally
             {
-                mObjList.Remove(o);
+                Mouse.OverrideCursor = null;
             }
         }
         private void btnClearSearchText_Click(object sender, RoutedEventArgs e)
