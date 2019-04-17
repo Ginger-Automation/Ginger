@@ -294,19 +294,26 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void UcListViewItem_Loaded(object sender, RoutedEventArgs e)
         {
-            var parent = GingerCore.General.TryFindParent<UcListView>(this);
-            if (parent != null)
+            if (ParentList == null)
             {
-                ParentList = (UcListView)parent;
-                ParentList.UcListViewEvent += ParentList_UcListViewEvent;
-                 
+                var parent = GingerCore.General.TryFindParent<UcListView>(this);
+                if (parent != null)
+                {
+                    ParentList = (UcListView)parent;
+                    ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
+                    ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+                }
             }
+            SetItemIndex();
         }
 
         private void SetItemIndex()
         {
-            //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
-            xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
+            if (ParentList != null)
+            {
+                //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
+                xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
+            }
         }
     }
 }

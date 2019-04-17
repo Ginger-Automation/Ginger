@@ -19,14 +19,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
-using Ginger.ActionLib;
-using Ginger.BusinessFlowLib;
-using Ginger.Run;
 using GingerCore;
-using GingerWPF.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -67,8 +60,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         public void UpdateActivity(Activity activity)
         {
-            mActivity = activity;
-            mActionsPage.UpdateActivity(mActivity);
+            if (mActivity != activity)
+            {
+                mActivity = activity;
+                mActionsPage.UpdateActivity(mActivity);
+            }
         }
 
 

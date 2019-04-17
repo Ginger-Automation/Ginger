@@ -79,29 +79,36 @@ namespace GingerWPF.BusinessFlowsLib
             xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
 
             xActionsListView.DataSourceList = mActivity.Acts;
+            //xActionsListView.List.ItemsSource = mActivity.Acts;
         }
 
         public void UpdateActivity(Activity activity)
         {
-            mActivity = activity;
-            if (mActivity != null)
+            if (mActivity != activity)
             {
-                xActionsListView.DataSourceList = null;
-                xActionsListView.DataSourceList = mActivity.Acts;
+                mActivity = activity;
+                if (mActivity != null)
+                {
+                    //xActionsListView.DataSourceList = null;
+                    xActionsListView.DataSourceList = mActivity.Acts;
+                    //xActionsListView.List.ItemsSource = null;
+                    //xActionsListView.List.ItemsSource = mActivity.Acts;
+                }
+                else
+                {
+                    xActionsListView.DataSourceList = null;
+                    //xActionsListView.List.ItemsSource = null;
+                }
+                //xActionsListView.List.Items.Refresh();
             }
-            else
-            {
-                xActionsListView.DataSourceList = null;
-            }
-            xActionsListView.List.Items.Refresh();
         }
 
-        private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Make the list synced with the Activity Acts, so if user change action the activity current act is the same
-            mActivity.Acts.CurrentItem = xActionsListView.List.SelectedItem;
-            //UpdateFloatingButtons();
-        }
+        //private void ActionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    // Make the list synced with the Activity Acts, so if user change action the activity current act is the same
+        //    mActivity.Acts.CurrentItem = xActionsListView.List.SelectedItem;
+        //    //UpdateFloatingButtons();
+        //}
 
         //private void UpdateFloatingButtons()
         //{
@@ -121,44 +128,44 @@ namespace GingerWPF.BusinessFlowsLib
         //    }
         //}
 
-        private void Acts_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "CurrentItem")
-            {
-                // since we can get event while GingerRunner is on another thread we need dispatcher
-                xActionsListView.List.Dispatcher.Invoke(() => {
-                    xActionsListView.List.SelectedItem = mActivity.Acts.CurrentItem;
-                    xActionsListView.List.Refresh();
-                });
-            }
-        }
+        //private void Acts_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == "CurrentItem")
+        //    {
+        //        // since we can get event while GingerRunner is on another thread we need dispatcher
+        //        xActionsListView.List.Dispatcher.Invoke(() => {
+        //            xActionsListView.List.SelectedItem = mActivity.Acts.CurrentItem;
+        //            xActionsListView.List.Refresh();
+        //        });
+        //    }
+        //}
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
-        {
-            Act act = (Act)mActivity.Acts.CurrentItem;
-            GingerActionEditPage GAEP = new GingerActionEditPage(act);
-            GAEP.ShowAsWindow();
-        }
+        //private void EditButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Act act = (Act)mActivity.Acts.CurrentItem;
+        //    GingerActionEditPage GAEP = new GingerActionEditPage(act);
+        //    GAEP.ShowAsWindow();
+        //}
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            Act act = (Act)mActivity.Acts.CurrentItem;
-            int index = mActivity.Acts.IndexOf(act);
-            Act newSelectedAct = null;
-            if (mActivity.Acts.Count-1 > index)
-            {
-                newSelectedAct = (Act)mActivity.Acts[index + 1];
-            }
-            else
-            {
-                if (index != 0)
-                {
-                    newSelectedAct = (Act)mActivity.Acts[index - 1];
-                }                
-            }
-            mActivity.Acts.Remove(act);
-            mActivity.Acts.CurrentItem = newSelectedAct;
-            //UpdateFloatingButtons();
-        }
+        //private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Act act = (Act)mActivity.Acts.CurrentItem;
+        //    int index = mActivity.Acts.IndexOf(act);
+        //    Act newSelectedAct = null;
+        //    if (mActivity.Acts.Count-1 > index)
+        //    {
+        //        newSelectedAct = (Act)mActivity.Acts[index + 1];
+        //    }
+        //    else
+        //    {
+        //        if (index != 0)
+        //        {
+        //            newSelectedAct = (Act)mActivity.Acts[index - 1];
+        //        }                
+        //    }
+        //    mActivity.Acts.Remove(act);
+        //    mActivity.Acts.CurrentItem = newSelectedAct;
+        //    //UpdateFloatingButtons();
+        //}
     }
 }
