@@ -4,23 +4,19 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SharedRepositoryNavAction">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="White">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.ColumnSpan="2" Background="{StaticResource $Color_DarkBlue}"></StackPanel>
-        <Image Source="{StaticResource @Star_24x24}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"  Width="24" Height="24"/>
-        <Label Grid.Row="0" Grid.Column="1" Style="{DynamicResource @ucTitleStyle_2}" HorizontalAlignment="Center" VerticalAlignment="Center" >Shared Repository</Label>
         <TabControl x:Name="tabRepository" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" SelectionChanged="TabControl_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">

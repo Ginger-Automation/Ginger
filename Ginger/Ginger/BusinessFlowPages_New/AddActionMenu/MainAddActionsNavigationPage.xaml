@@ -16,11 +16,17 @@
         </Grid.RowDefinitions>
 
         <Grid Name="navigationBar" Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <UserControls:ucButton ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="GoBack" Click="UcButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" />
+            <UserControls:ImageMakerControl x:Name="xTitleImage" SetAsFontImageWithSize="{Binding ButtonFontImageSize}" ImageType="Empty" HorizontalAlignment="Right" SetBorder="False" VerticalAlignment="Center" Grid.Column="1" />
+            <Label x:Name="xTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Grid.Column="2" />
         </Grid>
 
         <Grid Grid.Row="1">
-            <WrapPanel>
                 <StackPanel Name="navHomeStackPnl">
                     <UserControls:ucButton ButtonText="Shared Repository"  ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="SharedRepositoryItem" Click="XNavSharedRepo_Click"   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Page Objects Model" ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="ApplicationPOMModel"  Click="XNavPOM_Click"          HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
@@ -29,7 +35,6 @@
                     <UserControls:ucButton ButtonText="Live Spy"           ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Spy"                  Click="XNavSpy_Click"          HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                     <UserControls:ucButton ButtonText="Windows Explorer"   ButtonType="PanelButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Search"               Click="XNavWinExp_Click"       HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10" />
                 </StackPanel>
-            </WrapPanel>
             <Frame Name="navPnlActionFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
 

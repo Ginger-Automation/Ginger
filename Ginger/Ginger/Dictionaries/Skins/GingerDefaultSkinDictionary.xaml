@@ -3106,6 +3106,7 @@
                             <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
+                            <Setter Property="BorderThickness" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
