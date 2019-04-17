@@ -19,7 +19,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public RunSetConfig RunSetConfig { get; set; }
 
-        public string FileContent { get; set; }  // st raise event
+        public string FileContent { get; set; }  
+        public bool DownloadSolutionFromSourceControl { get; set; }
 
         public ICLI SelectedCLI;
 

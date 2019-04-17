@@ -10,17 +10,25 @@
 
     <Grid>
         <StackPanel Margin="10">
-            <Label FontSize="14" FontWeight="Bold" >Additional Options</Label>
-            <CheckBox Margin="5">Download solution from source control</CheckBox>
+            <Label FontSize="14" FontWeight="Bold">Additional Options</Label>
+            <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
             <CheckBox Margin="5">Run analyzer before execution</CheckBox>
-            <CheckBox Margin="5">Show Run set execution window while running</CheckBox>
             <Label>Execute using</Label>
             <StackPanel>
                 <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Executer</Label>
                 <RadioButton>Ginger.exe</RadioButton>
+                <CheckBox Margin="25,5,0,0">Show Run set execution window while running</CheckBox>
                 <Label HorizontalAlignment="Left">Run on Windows only</Label>
                 <RadioButton>dotnet GingerConsole.dll</RadioButton>
                 <Label HorizontalAlignment="Left">Run on Windows/Linux/Mac but only if Linux compatible - Plugins</Label>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left">
+                <Label>Debug Level</Label>
+                <ComboBox Width="100">
+                    <ComboBoxItem>Full</ComboBoxItem>
+                    <ComboBoxItem>Minimal</ComboBoxItem>
+                    <ComboBoxItem>Errors Only</ComboBoxItem>
+                </ComboBox>
             </StackPanel>
         </StackPanel>
         

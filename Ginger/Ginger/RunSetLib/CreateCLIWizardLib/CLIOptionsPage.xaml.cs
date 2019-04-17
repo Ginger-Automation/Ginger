@@ -21,6 +21,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// </summary>
     public partial class CLIOptionsPage : Page, IWizardPage
     {
+        CreateCLIWizard mCreateCLIWizard;
         public CLIOptionsPage()
         {
             InitializeComponent();
@@ -28,7 +29,28 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+            switch (WizardEventArgs.EventType)
+            {
+                case EventType.Init:
+                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    break;
+                case EventType.Active:
+                    //
+                    break;
+            }
+
+        }
+
+        
+
+        private void XDownloadsolutionFromSourceControlcheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.DownloadSolutionFromSourceControl = true;
+        }
+
+        private void XDownloadsolutionFromSourceControlcheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.DownloadSolutionFromSourceControl = false;
         }
     }
 }
