@@ -37,7 +37,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionSendSMS.SMSEmail = new Email();                
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS);
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);
 
             MailFromTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
             MailToTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));

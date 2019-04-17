@@ -37,7 +37,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionSendFreeEmail.Email = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail);
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail.Email);
 
             MailFromTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
             MailToTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));

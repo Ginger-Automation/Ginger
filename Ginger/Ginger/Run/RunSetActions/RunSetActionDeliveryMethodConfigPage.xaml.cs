@@ -9,38 +9,16 @@ namespace Ginger.Run.RunSetActions
     /// </summary>
     public partial class RunSetActionDeliveryMethodConfigPage : Page
     {
-        public RunSetActionDeliveryMethodConfigPage(RunSetActionSendSMS runSetActionSendSMS)
+        public RunSetActionDeliveryMethodConfigPage(Email runSetAction)
         {
             InitializeComponent();
             
-            xSMTPMailHostTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPMailHost));
-            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPort));
-            xSMTPUserTextBox.Init(null, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPUser));
-            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionSendSMS.SMSEmail.EmailMethod);
-            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendSMS.SMSEmail, nameof(Email.EmailMethod));
-        }
-        public RunSetActionDeliveryMethodConfigPage(RunSetActionHTMLReportSendEmail runSetActionHTMlReportSendEmail)
-        {
-            InitializeComponent();
-
-            xSMTPMailHostTextBox.Init(null, runSetActionHTMlReportSendEmail.Email, nameof(Email.SMTPMailHost));
-            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMlReportSendEmail.Email, nameof(Email.SMTPPort));
-            xSMTPUserTextBox.Init(null, runSetActionHTMlReportSendEmail.Email, nameof(Email.SMTPUser));
-            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMlReportSendEmail.Email, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionHTMlReportSendEmail.Email.EmailMethod);
-            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMlReportSendEmail.Email, nameof(Email.EmailMethod));
-        }
-        public RunSetActionDeliveryMethodConfigPage(RunSetActionSendFreeEmail runSetActionSendFreeEmail)
-        {
-            InitializeComponent();
-
-            xSMTPMailHostTextBox.Init(null, runSetActionSendFreeEmail.Email, nameof(Email.SMTPMailHost));
-            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPort));
-            xSMTPUserTextBox.Init(null, runSetActionSendFreeEmail.Email, nameof(Email.SMTPUser));
-            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
-            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, nameof(Email.EmailMethod));
+            xSMTPMailHostTextBox.Init(null, runSetAction, nameof(Email.SMTPMailHost));
+            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPort));
+            xSMTPUserTextBox.Init(null, runSetAction, nameof(Email.SMTPUser));
+            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPass));
+            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetAction.EmailMethod);
+            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetAction, nameof(Email.EmailMethod));
         }
         private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

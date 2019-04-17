@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
+using Ginger.Run.RunSetActions;
 
 namespace GingerCore.GeneralLib
 {
@@ -210,6 +211,7 @@ namespace GingerCore.GeneralLib
                 return mValueExpression;
             }
         }
+        public RunSetActionHTMLReportSendEmail.eHTMLReportTemplate mHTMLReportTemplate;
         public Email()
         {
             Attachments = new List<string>();
@@ -267,11 +269,6 @@ namespace GingerCore.GeneralLib
                 if (string.IsNullOrEmpty(SMTPMailHost))
                 {
                     Event = "Failed: Please provide Mail Host";
-                    return false;
-                }
-                if (string.IsNullOrEmpty(Body))
-                {
-                    Event = "Failed: Please provide SMS Body";
                     return false;
                 }
                 mVE.Value = MailFrom;
@@ -332,6 +329,12 @@ namespace GingerCore.GeneralLib
 
                 myMail.From = fromAddress;
                 myMail.IsBodyHtml = false;
+
+                if (mHTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                {
+                    myMail.IsBodyHtml = true;
+                }
+
                 myMail.Subject = subject.Replace('\r', ' ').Replace('\n', ' ');
                 myMail.Body = body;
 

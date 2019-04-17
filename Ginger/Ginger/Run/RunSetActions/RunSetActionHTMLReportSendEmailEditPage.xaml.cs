@@ -55,7 +55,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail);
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email);
 
             MailFromTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
             MailToTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
