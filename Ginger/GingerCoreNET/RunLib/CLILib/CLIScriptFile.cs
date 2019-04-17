@@ -11,9 +11,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         string mScriptFile;
 
-        public string Identifier()
+        public string Identifier
         {
-            return "ScriptFile";
+            get
+            {
+                return "ScriptFile";
+            }
         }
 
         public string CreateContent(RunsetExecutor runsetExecutor)

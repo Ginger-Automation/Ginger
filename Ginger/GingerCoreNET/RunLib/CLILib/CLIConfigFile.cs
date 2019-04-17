@@ -22,9 +22,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         RunsetExecutor mRunsetExecutor;
         UserProfile mUserProfile;
 
-        public string Identifier()
+        public string Identifier
         {
-            return "ConfigFile";
+            get
+            {
+                return "ConfigFile";
+            }
         }
 
         public bool Execute()
@@ -361,9 +364,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             // return true;
         }
 
-        
+        //public void CreateCLI()
+        //{
+        //    CreateRunSetShortCut();
+        //}
 
 
+       
 
 
 

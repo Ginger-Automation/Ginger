@@ -39,13 +39,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mCLIConfigFile = new CLIConfigFile();
             }
-            mCreateCLIWizard.iCLI = mCLIConfigFile;        
+            mCreateCLIWizard.SelectedCLI = mCLIConfigFile;        
             ShowContent();            
         }
 
         private void ShowContent()
         {
-            string content = mCreateCLIWizard.iCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
+            string content = mCreateCLIWizard.SelectedCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
             mCreateCLIWizard.FileContent = content;
             xCLIContentTextBox.Text = content;
         }
@@ -57,7 +57,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mCLIDynamicXML = new CLIDynamicXML();
             }
-            mCreateCLIWizard.iCLI = mCLIDynamicXML;
+            mCreateCLIWizard.SelectedCLI = mCLIDynamicXML;
             ShowContent();
         }
 
@@ -68,13 +68,18 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mCLIScriptFile = new CLIScriptFile();
             }
-            mCreateCLIWizard.iCLI = mCLIScriptFile;
+            mCreateCLIWizard.SelectedCLI = mCLIScriptFile;
             ShowContent();
         }
 
+        CLIArgs mCLIArgs;
         private void XParametersRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.FileContent = "";
+            if (mCLIArgs == null)
+            {
+                mCLIArgs = new CLIArgs();
+            }
+            mCreateCLIWizard.SelectedCLI = mCLIArgs;
             ShowContent();
         }
 

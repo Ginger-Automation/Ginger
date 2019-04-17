@@ -14,25 +14,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public class CreateCLIWizard : WizardBase
     {
         
-        public enum CLIType
-        {
-            ConfigFile,
-            ScriptFile,
-            Dynamic,
-            Params
-        }
-
+       
         public override string Title { get { return "Create CLI"; } }
 
         public RunSetConfig RunSetConfig { get; set; }
 
-        public ProjEnvironment ProjEnvironment { get; set; }
-
-        public CLIType cLIType { get; set; }
-
         public string FileContent { get; set; }  // st raise event
 
-        public ICLI iCLI;
+        public ICLI SelectedCLI;
 
         public CreateCLIWizard()
         {            
@@ -45,31 +34,33 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public override void Finish()
         {
-            switch (cLIType)
-            {
-                case CLIType.ConfigFile:
-                    CreateRunSetShortCut();
-                    break;
-            }
+            // SelectedCLIType.CreateCLI();            
+            string gingerStarter = "ginger.exe";  // or GingerConsole
+            string fileName = @"c:\1234";
+            string Args = string.Format("ConfigFile={0}", fileName);
+            string content = FileContent;
+
+            // System.IO.File.WriteAllText(fileName, content);
+            CreateRunSetShortCut();
         }
 
         private void CreateRunSetShortCut()
         {
-            string Env = ProjEnvironment.Name;
+            string Env = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
 
-            char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+            //char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
 
-            if (RunSetConfig.Name.IndexOfAny(invalidChars) >= 0)
-            {
-                foreach (char value in invalidChars)
-                {
-                    // We should not change the Name !!!!!!!!!!!!!!!!
-                    if (RunSetConfig.Name.Contains(value))
-                    {
-                        RunSetConfig.Name = RunSetConfig.Name.Replace(value, '_');
-                    }
-                }
-            }
+            //if (RunSetConfig.Name.IndexOfAny(invalidChars) >= 0)
+            //{
+            //    foreach (char value in invalidChars)
+            //    {
+            //        // We should not change the Name !!!!!!!!!!!!!!!!
+            //        if (RunSetConfig.Name.Contains(value))
+            //        {
+            //            RunSetConfig.Name = RunSetConfig.Name.Replace(value, '_');
+            //        }
+            //    }
+            //}
 
 
 
@@ -85,18 +76,26 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
             }
             shortcut.TargetPath = GingerPath;
-            string sConfig = "Solution=" + SolFolder + Environment.NewLine;
-            sConfig += "Env=" + Env + Environment.NewLine;
-            sConfig += "RunSet=" + RunSetConfig + Environment.NewLine;
-            string sConfigFile = SolFolder + @"\Documents\RunSetShortCuts\" + RunSetConfig + "_" + Env + ".Ginger.Config";
+            //string sConfig = "Solution=" + SolFolder + Environment.NewLine;
+            //sConfig += "Env=" + Env + Environment.NewLine;
+            //sConfig += "RunSet=" + RunSetConfig + Environment.NewLine;
 
-            if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\")) { System.IO.Directory.CreateDirectory(SolFolder + @"\Documents\RunSetShortCuts\"); }
-            System.IO.File.WriteAllText(sConfigFile, sConfig);
+            // TODO: create extension per type !!!!!!!!!!!!!!!!!!
 
-            shortcut.Arguments = "ConfigFile=\"" + sConfigFile + "\"";
+            string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + Env + ".Ginger.Config";
+
+            if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\"))
+            {
+                System.IO.Directory.CreateDirectory(SolFolder + @"\Documents\RunSetShortCuts\");
+            }
+            System.IO.File.WriteAllText(fileName, FileContent);
+
+            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + fileName + "\"";
             shortcut.Save();
             Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
         }
+
+
 
     }
 }

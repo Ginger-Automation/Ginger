@@ -7,6 +7,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
     {
+        string ICLI.Identifier
+        {
+            get
+            {
+                return "Args";
+            }
+        }
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             return "/Solution=s1 /RunSet:def aold 1 /Env:koko 1";
