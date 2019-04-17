@@ -25,6 +25,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             return dynamicRunSet;
         }
 
+        public static DynamicRunSet LoadContent(string content)
+        {
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(DynamicRunSet));
+            System.IO.StringReader stringReader = new System.IO.StringReader(content);
+            DynamicRunSet dynamicRunSet = (DynamicRunSet)reader.Deserialize(stringReader);
+            stringReader.Close();
+            return dynamicRunSet;
+        }
+
+        public static string GetContent(DynamicRunSet dynamicRunSet)
+        {
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DynamicRunSet));
+            System.IO.StringWriter stringWriter = new System.IO.StringWriter();
+            writer.Serialize(stringWriter, dynamicRunSet);
+            stringWriter.Close();
+            return stringWriter.GetStringBuilder().ToString();
+                
+        }
+
         public static void LoadRunSet(RunsetExecutor runsetExecutor, DynamicRunSet dynamicRunSet)
         {
             RunSetConfig runSetConfig = new RunSetConfig();
@@ -80,7 +99,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 
         public static string CreateRunSet(RunsetExecutor runsetExecutor)
         {
-            return "xml 123";
+            DynamicRunSet dynamicRunSet = new DynamicRunSet();
+            dynamicRunSet.Name = runsetExecutor.RunSetConfig.Name;
+            foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
+            {
+                dynamicRunSet.Runners.Add(new AddRunner() { Name = "zzz" });
+            }
+            string content = GetContent(dynamicRunSet);
+            return content;
         }
     }
 }

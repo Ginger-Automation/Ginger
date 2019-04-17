@@ -1,13 +1,14 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCoreNET.RosLynLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIProcessor
     {
-        public static void ExecuteArgs(string[] args)
+        ICLI CLIProc;
+        public void ExecuteArgs(string[] args)
         {
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
@@ -17,30 +18,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             string param = arg1[0].Trim();
             string fileName = arg1[1].Trim();
             if (param.StartsWith("ConfigFile"))  // Old key=value runset config file
-            {
-                ExecuteConfig(fileName);                
+            {                                
+                CLIProc = new CLIConfigFile();
+                string config = ReadFile(fileName);
+                CLIProc.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
+                CLIProc.Execute();
             }
             else if (param.StartsWith("ScriptFile")) // New C# Roslyn code
             {
-                ExecutScript(fileName);
+                CLIScriptFile cLIScriptFile = new CLIScriptFile();
+                string script = ReadFile(fileName);
+                cLIScriptFile.LoadContent(script, null);
+                cLIScriptFile.Execute();
+                
             }
-            // TODO: dynamic
+            else if (param.StartsWith("DynamicFile")) // xml with dynamic runset creation
+            {
+                CLIDynamicXML CLIDynamicXML = new CLIDynamicXML();
+                string script = ReadFile(fileName);
+                CLIDynamicXML.LoadContent(script, WorkSpace.Instance.RunsetExecutor);
+                CLIDynamicXML.Execute();
+
+            }
+            
             // TODO: add ///
             // TODO: Excel 
         }
 
-        private static void ExecuteConfig(string configFile)
-        {        
-            string config = ReadFile(configFile);
-            CLIConfigFile configFileProcessor = new CLIConfigFile();
-            configFileProcessor.RunConfig(config, WorkSpace.Instance.RunsetExecutor);
-        }
-
-        private static void ExecutScript(string scriptFile)
-        {
-            string script = ReadFile(scriptFile);
-            var rc = CodeProcessor.ExecuteNew(script);
-        }
+        
+      
 
         private static string ReadFile(string fileName)
         {

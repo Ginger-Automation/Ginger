@@ -5,41 +5,55 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.RunSetLib.CreateCLIWizardLib"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="CreateCLIChooseTypePage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="300*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="152*"/>
+            <RowDefinition Height="330"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="73*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Margin="10,10,10,0" Grid.RowSpan="2" >
+        <StackPanel Grid.Column="1">
+            <Label>Simple text file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
+            <Label>Example: Ginger.exe ConfigFile=C:\Ginger\Regression1.txt</Label>
+            <Label>When you need to execute fixed predefined run set which include Solution, RunSetName and Env</Label>
+            <Label>Script file (C#) which contain the code, executed using Ginger ConfigFile=%filename%</Label>
+            <Label>enable to create run set with loops and much more complex execution...</Label>
+        </StackPanel>
+        
+        <StackPanel Margin="10,10,10,0" Grid.ColumnSpan="2" >
 
             <StackPanel Margin="0,10,0,0">
                 <Label Content="CLI Type" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center"/>
                 <StackPanel  Margin="10" VerticalAlignment="Center">
                     <RadioButton x:Name="xConfigRadioButton" Margin="5" Checked="xConfigRadioButton_Checked">ConfigFile</RadioButton>
-                    <Label>Simple text file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
-                    <Label>Example: Ginger.exe ConfigFile=C:\Ginger\Regression1.txt</Label>
-                    <Label>When you need to execute fixed predefined run set which include Solution, RunSetName and Env</Label>
-                    <Label>Script file (C#) which contain the code, executed using Ginger ConfigFile=%filename%</Label>
-                    <Label>enable to create run set with loops and much more complex execution...</Label>
                     <RadioButton x:Name="xDynamicRadioButton" Checked="XDynamicRadioButton_Checked" Margin="5">Dynamic</RadioButton>
                     <RadioButton x:Name="xScriptRadioButton" Checked="XScriptRadioButton_Checked" Margin="5" >ScriptFile</RadioButton>
                     <RadioButton x:Name="xParametersRadioButton" Checked="XParametersRadioButton_Checked" Margin="5">Parameters ///</RadioButton>
                     <RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>
                 </StackPanel>
             </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Command</Label>
+            <TextBox x:Name="xCLICommandTextBox"  Margin="15" IsReadOnly="True">Content</TextBox>
+        </StackPanel>
 
-            
-            <StackPanel Grid.Row="1">
-                <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Content</Label>
-                <TextBox x:Name="xCLIContentTextBox"  Margin="15" IsReadOnly="True">Content</TextBox>
-            </StackPanel>
-
-
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Content</Label>
 
         </StackPanel>
+
+        <TextBox x:Name="xCLIContentTextBox" Grid.Row="3" Margin="15" IsReadOnly="True" Grid.ColumnSpan="2">Content</TextBox>
+
+
+
     </Grid>
 </Page>

@@ -1,8 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerWPF.WizardLib;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -27,44 +26,62 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;                    
                     break;
                 case EventType.Active:
-                    
+                    //
                     break;
-
             }
 
         }
 
+        CLIConfigFile mCLIConfigFile;
         private void xConfigRadioButton_Checked(object sender, RoutedEventArgs e)
-        {            
-            SetContent(CLIConfigFile.CreateConfig(WorkSpace.Instance.RunsetExecutor));            
-        }
-
-        private void SetContent(string v)
         {
-            mCreateCLIWizard.FileContent = v;
-            xCLIContentTextBox.Text = v;
+            if (mCLIConfigFile == null)
+            {
+                mCLIConfigFile = new CLIConfigFile();
+            }
+            mCreateCLIWizard.iCLI = mCLIConfigFile;        
+            ShowContent();            
         }
 
+        private void ShowContent()
+        {
+            string content = mCreateCLIWizard.iCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
+            mCreateCLIWizard.FileContent = content;
+            xCLIContentTextBox.Text = content;
+        }
+
+        CLIDynamicXML mCLIDynamicXML;
         private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            SetContent(DynamicRunSetManager.CreateRunSet(WorkSpace.Instance.RunsetExecutor));
+            if (mCLIDynamicXML == null)
+            {
+                mCLIDynamicXML = new CLIDynamicXML();
+            }
+            mCreateCLIWizard.iCLI = mCLIDynamicXML;
+            ShowContent();
         }
 
+        CLIScriptFile mCLIScriptFile;
         private void XScriptRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            SetContent("Script aaaa");
+            if (mCLIScriptFile == null)
+            {
+                mCLIScriptFile = new CLIScriptFile();
+            }
+            mCreateCLIWizard.iCLI = mCLIScriptFile;
+            ShowContent();
         }
 
         private void XParametersRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mCreateCLIWizard.FileContent = "";
-            SetContent("/Sol=111 / / / ");
+            ShowContent();
         }
 
         private void XExcelRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mCreateCLIWizard.FileContent = "Excel view ";
-            SetContent("Excel view");
+            ShowContent();
         }
     }
 }

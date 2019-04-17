@@ -306,8 +306,8 @@ namespace Ginger
 
             // Is needed?
             // LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
-
-            CLIProcessor.ExecuteArgs(args);
+            CLIProcessor cLIProcessor = new CLIProcessor();
+            cLIProcessor.ExecuteArgs(args);
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown();
         }

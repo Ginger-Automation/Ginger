@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger;
 using Ginger.Run;
 using GingerCore;
@@ -9,12 +10,10 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-    public class CLIConfigFile
+    public class CLIConfigFile : ICLI
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
 
@@ -23,11 +22,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         RunsetExecutor mRunsetExecutor;
         UserProfile mUserProfile;
 
-        public void RunConfig(string config, RunsetExecutor runsetExecutor)
+        public bool Execute()
         {
-            mRunsetExecutor = runsetExecutor;
+            // mRunsetExecutor = runsetExecutor;
 
-            bool processed = ProcessConfig(config);
+            // bool processed = ProcessConfig(config);
 
             bool analyzerIssues = RunAnalyzer();
             //if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment != null)
@@ -56,6 +55,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
                 Environment.ExitCode = 1;//failure
             }
+
+            return true;
         }
 
 
@@ -108,15 +109,101 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         bool ProcessConfig(string config)
         {
+            return true;
+        }
+
+        
+
+
+
+        int RunRunSetFromCommandLine()
+        {
+            //0- success
+            //1- failure
+
+            try
+            {                
+                AutoLogProxy.UserOperationStart("AutoRunWindow", mRunsetExecutor.RunSetConfig.Name, mRunsetExecutor.RunsetExecutionEnvironment.Name);
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                //try
+                //{
+                   
+
+
+
+
+                //}
+                //catch (Exception ex)
+                //{
+                //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed loading {0} execution UI elements, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+                //    return 1;
+                //}
+
+                
+
+                //Execute
+                try
+                {                    
+                    if (mShowAutoRunWindow)
+                    {
+                        RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+                    }
+
+                    mRunsetExecutor.InitRunners();
+                    //Task t = Task.Factory.StartNew(() =>
+                     //{                            
+                          mRunsetExecutor.RunRunset();                         
+                     //});
+                    //t.Wait();  
+                    
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during the {0} execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+                    return 1;
+                }
+
+                if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
+                    return 0;
+                else
+                    return 1;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Un expected error occured during the execution", ex);
+                return 1;
+            }
+            finally
+            {
+                AutoLogProxy.UserOperationEnd();
+            }
+        }
+
+       
+        public string CreateContent(RunsetExecutor runsetExecutor)
+        {
+            string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
+            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
+
+            // TODO: add source control and all other options !!!!!!!!!!!
+
+            return sConfig;
+        }
+
+        public void LoadContent(string content, RunsetExecutor runsetExecutor)
+        {
             string scURL = null;
             string scUser = null;
             string scPswd = null;
 
-            using (System.IO.StringReader reader = new System.IO.StringReader(config))
+            using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
                 while ((arg = reader.ReadLine()) != null)
-                    {
+                {
                     int i = arg.IndexOf('=');
                     string param = arg.Substring(0, i).Trim();
                     string value = arg.Substring(i + 1).Trim();
@@ -211,14 +298,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                                 if (WorkSpace.Instance.OpenSolution(value) == false)
                                 {
                                     Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                    return false;
+                                    // TODO: throw
+                                    return;
                                 }
                             }
                             catch (Exception ex)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                return false;
+                                // TODO: throw
+                                return;
                             }
                             break;
 
@@ -232,7 +321,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             else
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                                return false;
+                                // TODO: throw
+                                // return false;
                             }
                             break;
 
@@ -247,7 +337,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             else
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                                return false;
+                                // TODO: throw
+                                // return false;
                             }
                             break;
                         case "ShowAutoRunWindow":
@@ -256,94 +347,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             break;
 
                         default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Un Known argument: '" + param + "'");
-                            return false;
+                            Reporter.ToLog(eLogLevel.ERROR, "UnKnown argument: '" + param + "'");
+                            // TODO: throw
+                             return;
                     }
                 }
             }
-            return true;
+            // return true;
         }
 
-        
 
-
-
-        int RunRunSetFromCommandLine()
-        {
-            //0- success
-            //1- failure
-
-            try
-            {                
-                AutoLogProxy.UserOperationStart("AutoRunWindow", mRunsetExecutor.RunSetConfig.Name, mRunsetExecutor.RunsetExecutionEnvironment.Name);
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //try
-                //{
-                   
-
-
-
-
-                //}
-                //catch (Exception ex)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed loading {0} execution UI elements, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                //    return 1;
-                //}
-
-                
-
-                //Execute
-                try
-                {                    
-                    if (mShowAutoRunWindow)
-                    {
-                        RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
-                    }
-
-                    mRunsetExecutor.InitRunners();
-                    //Task t = Task.Factory.StartNew(() =>
-                     //{                            
-                          mRunsetExecutor.RunRunset();                         
-                     //});
-                    //t.Wait();  
-                    
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during the {0} execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                    return 1;
-                }
-
-                if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
-                    return 0;
-                else
-                    return 1;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Un expected error occured during the execution", ex);
-                return 1;
-            }
-            finally
-            {
-                AutoLogProxy.UserOperationEnd();
-            }
-        }
-
-        public static string CreateConfig(RunsetExecutor runsetExecutor)
-        {
-
-            string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
-            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
-            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-
-            // TODO: add source control and all other options !!!!!!!!!!!
-
-            return sConfig;
-        }
 
 
 

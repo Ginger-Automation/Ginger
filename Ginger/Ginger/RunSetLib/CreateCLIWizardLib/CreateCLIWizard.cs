@@ -1,15 +1,13 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.WizardLib;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -34,6 +32,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public string FileContent { get; set; }  // st raise event
 
+        public ICLI iCLI;
 
         public CreateCLIWizard()
         {            
