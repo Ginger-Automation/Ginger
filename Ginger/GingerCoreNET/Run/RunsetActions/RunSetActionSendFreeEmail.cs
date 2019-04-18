@@ -132,7 +132,6 @@ namespace Ginger.Run.RunSetActions
             Email.SMTPMailHost = mVE.ValueCalculated;
             mVE.Value = MailUser;
             Email.SMTPUser = mVE.ValueCalculated;
-            //Email.mHTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText;
             bool isSuccess;
             isSuccess = Email.Send();
             if (isSuccess == false)
