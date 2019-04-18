@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -17,18 +18,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
-            return "/Solution=s1 /RunSet:def aold 1 /Env:koko 1";
+            string Args = string.Format("/Soluion:{0}", WorkSpace.Instance.Solution.Folder);
+            Args += string.Format("/Runset:{0}", runsetExecutor.RunSetConfig.Name);
+            Args += string.Format("/Env:{0}", runsetExecutor.RunsetExecutionEnvironment.Name);
+            return Args;
         }
 
         public bool Execute(RunsetExecutor runsetExecutor)
         {
             return true;
         }
-
-        public string Identifier()
-        {
-            return "RunsetArgs";
-        }
+        
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
         {

@@ -22,8 +22,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             string txt = string.Format("OpenSolution({0})", WorkSpace.Instance.Solution.Folder) + Environment.NewLine;
-            txt += string.Format("RunRunSet({0})", runsetExecutor.RunSetConfig.Name) + Environment.NewLine;
-            txt += "CreateHTMLReport(rep 1)" + Environment.NewLine;
+            txt += string.Format("OpenRunSet(\"{0}\",\"{1}\")", runsetExecutor.RunSetConfig.Name, runsetExecutor.RunsetExecutionEnvironment.Name) + Environment.NewLine;
+            txt += "CreateExecutionSummaryJSON(\"FILENAME\")" + Environment.NewLine;
+            txt += "if (Pass)" + Environment.NewLine;
+            txt += "{" + Environment.NewLine;
+            txt += "SendEmail()" + Environment.NewLine;
+            txt += "}" + Environment.NewLine;
             return txt;
         }
 

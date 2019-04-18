@@ -3,11 +3,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.WizardLib;
-using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
-using System;
-using System.Linq;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -36,10 +33,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public override void Finish()
         {
             // SelectedCLIType.CreateCLI();            
-            string gingerStarter = "ginger.exe";  // or GingerConsole
-            string fileName = @"c:\1234";
-            string Args = string.Format("ConfigFile={0}", fileName);
-            string content = FileContent;
+            //string gingerStarter = "ginger.exe";  // or GingerConsole
+            //string fileName = @"c:\1234";
+            //string Args = string.Format("ConfigFile={0}", fileName);
+            //string content = FileContent;
 
             // System.IO.File.WriteAllText(fileName, content);
             CreateRunSetShortCut();
