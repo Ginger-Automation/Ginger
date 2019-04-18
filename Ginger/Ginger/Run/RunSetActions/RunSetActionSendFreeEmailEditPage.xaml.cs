@@ -39,12 +39,12 @@ namespace Ginger.Run.RunSetActions
             }
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail.Email);
-
-            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
-            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
-            MailCCTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
-            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
-            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            MailToTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {

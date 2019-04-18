@@ -211,7 +211,7 @@ namespace GingerCore.GeneralLib
                 return mValueExpression;
             }
         }
-        public RunSetActionHTMLReportSendEmail.eHTMLReportTemplate mHTMLReportTemplate;
+        public bool IsBodyHTML { get; set; } = false;
         public Email()
         {
             Attachments = new List<string>();
@@ -328,12 +328,7 @@ namespace GingerCore.GeneralLib
                 string body = mVE.ValueCalculated;
 
                 myMail.From = fromAddress;
-                myMail.IsBodyHtml = false;
-
-                if (mHTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
-                {
-                    myMail.IsBodyHtml = true;
-                }
+                myMail.IsBodyHtml = IsBodyHTML;
 
                 myMail.Subject = subject.Replace('\r', ' ').Replace('\n', ' ');
                 myMail.Body = body;

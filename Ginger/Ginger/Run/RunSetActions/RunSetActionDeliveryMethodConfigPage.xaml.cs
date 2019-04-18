@@ -12,16 +12,16 @@ namespace Ginger.Run.RunSetActions
     /// </summary>
     public partial class RunSetActionDeliveryMethodConfigPage : Page
     {
-        public RunSetActionDeliveryMethodConfigPage(Email runSetAction)
+        public RunSetActionDeliveryMethodConfigPage(Email email)
         {
             InitializeComponent();
-            
-            xSMTPMailHostTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetAction, nameof(Email.SMTPMailHost));
-            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPort));
-            xSMTPUserTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetAction, nameof(Email.SMTPUser));
-            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetAction, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetAction.EmailMethod);
-            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetAction, nameof(Email.EmailMethod));
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            xSMTPMailHostTextBox.Init(context, email, nameof(Email.SMTPMailHost));
+            BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, email, nameof(Email.SMTPPort));
+            xSMTPUserTextBox.Init(context, email, nameof(Email.SMTPUser));
+            BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, email, nameof(Email.SMTPPass));
+            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, email.EmailMethod);
+            BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, email, nameof(Email.EmailMethod));
         }
         private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

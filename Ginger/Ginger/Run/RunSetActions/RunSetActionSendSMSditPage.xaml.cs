@@ -40,11 +40,11 @@ namespace Ginger.Run.RunSetActions
             }
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);
-
-            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
-            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
-            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
-            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
+            MailToTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
+            SubjectTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
+            BodyTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
             BodyTextBox.AdjustHight(100);
 
         }

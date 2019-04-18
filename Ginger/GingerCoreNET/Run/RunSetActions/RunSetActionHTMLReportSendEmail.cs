@@ -395,7 +395,6 @@ namespace Ginger.Run.RunSetActions
             Email.SMTPUser = mVE.ValueCalculated;
             Email.Body = emailReadyHtml;
             emailReadyHtml = string.Empty;
-            Email.mHTMLReportTemplate = HTMLReportTemplate;
             bool isSuccess;
             isSuccess = Email.Send();
             if (isSuccess == false)

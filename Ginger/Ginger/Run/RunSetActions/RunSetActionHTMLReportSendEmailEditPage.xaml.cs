@@ -56,13 +56,13 @@ namespace Ginger.Run.RunSetActions
             }
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email);
-
-            MailFromTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
-            MailToTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
-            MailCCTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
-            SubjectTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
-            BodyTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
-            CommentTextBox.Init(new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment }, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
+            MailToTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
+            MailCCTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
+            SubjectTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
+            BodyTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
+            CommentTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
 
             BodyTextBox.AdjustHight(100);
 
@@ -176,6 +176,7 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Collapsed;
                 BodyTextBox.Visibility = Visibility.Visible;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText;
+                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = false;
             }
             catch (Exception ex)
             {
@@ -189,6 +190,7 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Visible;
                 BodyTextBox.Visibility = Visibility.Collapsed;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = true;
             }
             catch (Exception ex)
             {
