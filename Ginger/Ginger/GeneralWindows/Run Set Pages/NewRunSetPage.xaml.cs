@@ -1290,6 +1290,8 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '"+mCurrentSelectedRunner.Name+"' to start run.");
                 return;
             }
+            //do it in executor!!!!!!!!!!!!!! !!!
+
             //run analyzer
             int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found

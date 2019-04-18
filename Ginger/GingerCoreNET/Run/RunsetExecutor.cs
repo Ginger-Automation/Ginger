@@ -540,18 +540,19 @@ namespace Ginger.Run
             return x;
         }
         
-        public int RunRunsetAnalyzerBeforeRunSync(bool runInSilentMode = false)
-        {
+        
+        //public int RunRunsetAnalyzerBeforeRunSync(bool runInSilentMode = false)
+        //{
             
-            if (mRunSetConfig.RunWithAnalyzer)
-            {
-                //check if not including any High or Critical issues before execution
-                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
-            }
-            // ?? !!!
-            return 0;   // temp if issues found need to return 1 !!!!!!!!!!!!!!!!!!!!!!!!!
-        }
+        //    if (mRunSetConfig.RunWithAnalyzer)
+        //    {
+        //        //check if not including any High or Critical issues before execution
+        //        Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+        //        RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
+        //    }
+        //    // ?? !!!
+        //    return 0;   // temp if issues found need to return 1 !!!!!!!!!!!!!!!!!!!!!!!!!
+        //}
 
         /// <summary>
         /// Create a summary json of the execution 
