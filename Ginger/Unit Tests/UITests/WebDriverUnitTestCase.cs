@@ -204,7 +204,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
 
         }
-
+        [Ignore]
         [TestMethod]
         public void CloseAll()
         {
@@ -519,7 +519,7 @@ namespace UnitTests.UITests
         }
 
         [TestMethod]
-        public void SwitchWindow()
+        public void SwitchWindowUsingGoToURL()
         {
             //Arrange
             ActBrowserElement actBrowser = new ActBrowserElement();
@@ -547,6 +547,34 @@ namespace UnitTests.UITests
             Assert.AreEqual("Google", actBrowser2.ReturnValues[0].Actual);
         }
 
+
+        [TestMethod]
+        public void SwitchWindowAction()
+        {
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "https://www.google.co.in/?gws_rd=ssl");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+            ActSwitchWindow actSwitchWindow = new ActSwitchWindow();
+            actSwitchWindow.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
+            actSwitchWindow.LocateValue = "Google";
+            actSwitchWindow.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime,"10");
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
+            actBrowser1.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actSwitchWindow, false);
+            mGR.RunAction(actBrowser1, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actSwitchWindow.Status, "Action Status");
+            Assert.AreEqual("Google", actBrowser1.ReturnValues[0].Actual);
+        }
 
         [TestMethod]
         public void SwitchFrame()
@@ -663,7 +691,102 @@ namespace UnitTests.UITests
             Assert.AreEqual("Frame B", actUIElement.ReturnValues[0].Actual);
         }
 
+        public void SmartSyncAction()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value",TestResources.GetTestResourcesFile(@"TestForm.htm"));
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
+            ActUIElement actUIElement = new ActUIElement();
+            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actUIElement.ElementLocateValue = "hyperLinkHover";
+            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
+            actUIElement.ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.Click;
+
+            ActSmartSync actSmartSync = new ActSmartSync();
+            actSmartSync.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actSmartSync.LocateValue = "txtBox_Google";
+            actSmartSync.SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisapear;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actUIElement, false);
+            try
+            {
+                mGR.RunAction(actSmartSync, false);
+
+            }
+            catch(Exception e)
+            {
+
+            }
+
+                //Assert
+                Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void SmartSyncAction_WaitUntilDisapear()
+        {
+            SmartSyncAction();
+        }
+
+        [TestMethod]
+        public void SmartSyncAction_WaitUntilDisplay()
+        {
+            SmartSyncAction();
+
+            ActGenElement actGenElement = new ActGenElement();
+            actGenElement.GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.Back;
+
+            ActSmartSync actSmartSync1 = new ActSmartSync();
+            actSmartSync1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actSmartSync1.LocateValue = "txtBox_Google";
+            actSmartSync1.SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
+            actSmartSync1.WaitTime = 2;
+
+            //Act
+            mGR.RunAction(actGenElement, false);
+            mGR.RunAction(actSmartSync1, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actSmartSync1.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void TwoWebElementsDistances()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "file:///C:\\GingerSourceControl\\Solutions\\Ginger_Regression_Testing\\Documents\\Web\\WebPages\\TestForm.htm");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+            ActPWL actPWL = new ActPWL();
+            actPWL.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actPWL.LocateValue = "Btn_Click";
+            actPWL.PWLAction = GingerCore.Actions.ActPWL.ePWLAction.GetHDistanceRight2Left;
+            actPWL.OLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actPWL.OLocateValue = "ddLst";
+
+            ActGenElement actGenElement = new ActGenElement();
+            actGenElement.GenElementAction = GingerCore.Actions.ActGenElement.eGenElementAction.RunJavaScript;
+            actGenElement.GetOrCreateInputParam("Value", "document.getElementById('Btn_Click').getBoundingClientRect().top");
+            actGenElement.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actPWL, false);
+            mGR.RunAction(actGenElement, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actGenElement.Status, "Action Status");
+            Assert.AreEqual("8", actGenElement.ReturnValues[0].Actual);
+        }
 
         [Ignore]
         [TestMethod]

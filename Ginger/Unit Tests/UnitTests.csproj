@@ -422,6 +422,9 @@
     <Content Include="TestResources\ScreenShot\Temp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Web\TestForm.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
