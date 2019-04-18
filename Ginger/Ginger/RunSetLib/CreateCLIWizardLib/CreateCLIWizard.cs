@@ -9,26 +9,37 @@ using IWshRuntimeLibrary;
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
     public class CreateCLIWizard : WizardBase
-    {
-        
-       
+    {       
         public override string Title { get { return "Create CLI"; } }
 
         public RunSetConfig RunSetConfig { get; set; }
-
         public string FileContent { get; set; }  
         public bool DownloadSolutionFromSourceControl { get; set; }
+        public bool RunAnalyzer { get; set; }
 
         public ICLI SelectedCLI;
+
+        public string CLIExecutor;  // Ginger.exe or GingerConsole.dll
 
         public CreateCLIWizard()
         {            
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));            
             AddPage(Name: "CLI Type", Title: "CLI Type", SubTitle: "CLI Type", Page: new CreateCLIChooseTypePage());
             AddPage(Name: "CLI Location", Title: "CLI Location", SubTitle: "CLI Location", Page: new CreateCLILocationPage());
-            AddPage(Name: "CLI Options", Title: "CLI Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());
-            
+            AddPage(Name: "CLI Options", Title: "CLI Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());            
         }
+
+
+        public void SetGingerExecutor()
+        {
+            CLIExecutor = "Ginger.exe";
+        }
+
+        public void SetGingerConsoleExecutor()
+        {
+            CLIExecutor = "dotnet GingerConsole.dll";
+        }
+
 
         public override void Finish()
         {
@@ -45,6 +56,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void CreateRunSetShortCut()
         {
             string Env = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
+
+
+            //TODO: verify file name chars ok !!!!!!!!!!!
 
             //char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
 
@@ -73,14 +87,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
             }
-            shortcut.TargetPath = GingerPath;
-            //string sConfig = "Solution=" + SolFolder + Environment.NewLine;
-            //sConfig += "Env=" + Env + Environment.NewLine;
-            //sConfig += "RunSet=" + RunSetConfig + Environment.NewLine;
+            shortcut.TargetPath = GingerPath;            
+            
 
-            // TODO: create extension per type !!!!!!!!!!!!!!!!!!
-
-            string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + Env + ".Ginger.Config";
+            string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + Env + ".Ginger." + SelectedCLI.FileExtension;
 
             if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\"))
             {

@@ -16,6 +16,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        string ICLI.FileExtension
+        {
+            get
+            {
+                return "xml";
+            }
+        }
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             string xml = DynamicRunSetManager.CreateRunSet(runsetExecutor);

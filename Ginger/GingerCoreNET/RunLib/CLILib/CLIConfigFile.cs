@@ -30,6 +30,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
+        string ICLI.FileExtension
+        {
+            get
+            {
+                return "Config";
+            }
+        }
+
         public bool Execute(RunsetExecutor runsetExecutor)
         {
             runsetExecutor.RunRunset();
@@ -198,9 +206,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
 
+            sConfig += "RunAnalyzer=" + runsetExecutor.RunSetConfig.RunWithAnalyzer + Environment.NewLine;
+
             // TODO: add source control and all other options !!!!!!!!!!!
 
-            return sConfig;
+             return sConfig;
         }
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
@@ -355,7 +365,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("NoAutoRunWindow {0}", value));
                             mShowAutoRunWindow = bool.Parse(value);
                             break;
-
+                        case "RunAnalyzer":
+                            runsetExecutor.RunSetConfig.RunWithAnalyzer = bool.Parse(value); 
+                            break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "UnKnown argument: '" + param + "'");
                             // TODO: throw

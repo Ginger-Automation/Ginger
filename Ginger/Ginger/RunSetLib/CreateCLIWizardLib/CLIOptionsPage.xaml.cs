@@ -1,18 +1,6 @@
 ﻿using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -40,7 +28,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
 
         }
-
         
 
         private void XDownloadsolutionFromSourceControlcheckBox_Checked(object sender, RoutedEventArgs e)
@@ -51,6 +38,26 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void XDownloadsolutionFromSourceControlcheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             mCreateCLIWizard.DownloadSolutionFromSourceControl = false;
+        }
+
+        private void XGingerEXERadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.SetGingerExecutor();
+        }
+
+        private void XGingerConsoleRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.SetGingerConsoleExecutor();
+        }
+
+        private void RunAnalyzerCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.RunAnalyzer = true;
+        }
+
+        private void RunAnalyzerCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.RunAnalyzer = false;
         }
     }
 }

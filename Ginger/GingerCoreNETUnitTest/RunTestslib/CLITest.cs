@@ -11,7 +11,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [TestClass]
     public class CLITest
     {
-        
+        // TODO: run one by one as it used same run exc
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)

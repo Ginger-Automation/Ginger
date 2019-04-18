@@ -20,6 +20,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             string value = arg1[1].Trim();
 
             SetCLIHandler(param, value);
+            
 
             WorkSpace.Instance.RunsetExecutor.InitRunners();
             mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);

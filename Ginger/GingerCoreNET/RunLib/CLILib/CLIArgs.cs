@@ -16,6 +16,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        string ICLI.FileExtension
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
             string Args = string.Format("/Soluion:{0}", WorkSpace.Instance.Solution.Folder);
