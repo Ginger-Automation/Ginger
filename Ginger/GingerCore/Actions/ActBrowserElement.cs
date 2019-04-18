@@ -24,9 +24,12 @@ using GingerCore.Properties;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCoreNET.Drivers.CommunicationProtocol;
+
 namespace GingerCore.Actions
 {
-    public class ActBrowserElement : Act
+    public class ActBrowserElement : Act, IActPluginExecution
     {
         public new static partial class Fields
         {
@@ -175,6 +178,11 @@ namespace GingerCore.Actions
         public override String ToString()
         {
             return "BrowserControl - " + ControlAction;
+        }
+
+        public NewPayLoad GetActionPayload()
+        {
+            throw new NotImplementedException();
         }
 
         public override String ActionType

@@ -28,9 +28,12 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCoreNET.Drivers.CommunicationProtocol;
+
 namespace GingerCore.Actions.Common
 {
-    public class ActUIElement : Act
+    public class ActUIElement : Act, IActPluginExecution
     {
         // --------------------------------------------------------------------------------------------
         // TODO: remove after we take LocateBy, LocateValue from Act.cs
@@ -854,6 +857,11 @@ namespace GingerCore.Actions.Common
             PL.ClosePackage();
 
             return PL;
+        }
+
+        public NewPayLoad GetActionPayload()
+        {
+            throw new NotImplementedException();
         }
 
         public override ActionDetails Details

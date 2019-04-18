@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using GingerCore;
@@ -1697,35 +1698,61 @@ namespace Ginger.Run
                     {
                         case eActionExecutorType.RunOnDriver:
                             {
-
-                                
                                 if (currentAgent == null)
                                 {
                                     if (string.IsNullOrEmpty(act.Error))
                                         act.Error = "No Agent was found for the" + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
                                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 }
-                                else if (currentAgent.Status != Agent.eStatus.Running)
-                                {
-                                    if (string.IsNullOrEmpty(act.Error))
+                                else {
+                                    if (((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentType == Agent.eAgentType.Driver)
                                     {
-                                        if (currentAgent.Driver != null && !string.IsNullOrEmpty(currentAgent.Driver.ErrorMessageFromDriver))
+
+
+
+                                        if (currentAgent.Status != Agent.eStatus.Running)
                                         {
-                                            act.Error = currentAgent.Driver.ErrorMessageFromDriver;
+                                            if (string.IsNullOrEmpty(act.Error))
+                                            {
+                                                if (currentAgent.Driver != null && !string.IsNullOrEmpty(currentAgent.Driver.ErrorMessageFromDriver))
+                                                {
+                                                    act.Error = currentAgent.Driver.ErrorMessageFromDriver;
+                                                }
+                                                else
+                                                {
+                                                    act.Error = "Agent failed to start for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
+                                                }
+                                            }
+
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                         }
                                         else
                                         {
-                                            act.Error = "Agent failed to start for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
+                                            ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).RunAction(act);
                                         }
                                     }
+                                    else
+                                    {
+                                        IActPluginExecution PluginAction = act as IActPluginExecution;
 
-                                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                }
-                                else
-                                {
-                                 ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).RunAction(act);
+                                        if(act==null)
+                                        {
+                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                        }
+                                        else
+                                        {
+                                          NewPayLoad ActionPayload=  PluginAction.GetActionPayload();
+
+                                        }
+
+
+                                    }
+
                                 }
                             }
+
+                          
                             break;
 
                         case eActionExecutorType.RunWithoutDriver:
