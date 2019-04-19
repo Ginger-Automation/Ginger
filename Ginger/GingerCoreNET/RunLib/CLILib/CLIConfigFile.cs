@@ -1,6 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger;
 using Ginger.Run;
