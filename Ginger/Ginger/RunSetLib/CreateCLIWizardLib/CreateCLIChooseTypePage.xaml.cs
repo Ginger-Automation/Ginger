@@ -16,8 +16,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public CreateCLIChooseTypePage()
         {
             InitializeComponent();
-
-            xConfigRadioButton.IsChecked = true;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -25,7 +23,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;                    
+                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    xConfigRadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
                     //

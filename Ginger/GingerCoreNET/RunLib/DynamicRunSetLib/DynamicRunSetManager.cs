@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using System.Linq;
 
@@ -68,30 +69,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                     BusinessFlowRun businessFlowRun = new BusinessFlowRun();
                     businessFlowRun.BusinessFlowName = abf.Name;
                     // TODO: if null !!!
-                    gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
-                    // GingerRunner.bus
+                    gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);                    
 
                     // set BF Variables
                     foreach (SetBusinessFlowVariable sv in abf.Variables)
                     {
-                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { Name = sv.Name, Value = sv.Value });
-                        // VariableBase v = (from x in businessFlow.Variables where x.Name == sv.Name select x).SingleOrDefault();
-                        // TODO: if null !!!
-                        // Based on variable type we check and set value !!!!!!!!!!!!! TODO: validations
-                        // For now setting value of a string
-                        //if (v.GetType() == typeof(VariableString))
-                        //{
-                        //    ((VariableString)v).Value = sv.Value;
-                        //}
-                        //else
-                        //{
-                        //    // temp !!!!!!!!!!!!
-                        //    throw new Exception("Cannot set variable which is not a string: " + v.Name + " var type is: " + v.GetType().Name);
-                        //}
+                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { Name = sv.Name, Value = sv.Value });                        
                     }
                 }
-            }
-            // do init runners
+            }            
 
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
@@ -101,9 +87,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
         {
             DynamicRunSet dynamicRunSet = new DynamicRunSet();
             dynamicRunSet.Name = runsetExecutor.RunSetConfig.Name;
+            dynamicRunSet.Environemnt = runsetExecutor.RunsetExecutionEnvironment.Name;
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
             {
-                dynamicRunSet.Runners.Add(new AddRunner() { Name = "zzz" });
+                AddRunner addRunner = new AddRunner() { Name = gingerRunner.Name };
+                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
+                {
+                    addRunner.Agents.Add(new SetAgent() { Agent = applicationAgent.AgentName, TargetApplication = applicationAgent.AppName });
+                }
+                
+                dynamicRunSet.Runners.Add(addRunner);
+                foreach(BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
+                {
+                    AddBusinessFlow addBusinessFlow = new AddBusinessFlow() { Name = businessFlowRun.BusinessFlowName };
+                    // TODO: add vars override
+                    addRunner.BusinessFlows.Add(addBusinessFlow);
+                }                
             }
             string content = GetContent(dynamicRunSet);
             return content;
