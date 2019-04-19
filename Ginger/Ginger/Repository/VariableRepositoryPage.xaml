@@ -18,7 +18,7 @@
             </DataTemplate>
         </Grid.Resources>
         
-        <Ginger:ucGrid x:Name="xVariablesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True">
+        <Ginger:ucGrid x:Name="xVariablesGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" IsReadOnly="True">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[Variables] Repository"/>
             </Ginger:ucGrid.Title>
