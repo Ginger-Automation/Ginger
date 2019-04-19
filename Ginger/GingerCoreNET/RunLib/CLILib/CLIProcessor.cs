@@ -54,6 +54,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             switch (param)
             {
+                case "--version":
+                    Console.WriteLine("Ginger Version " + "???"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    break;
+                case "--help":
+                    ShowCLIHelp();
+                    break;
                 case "ConfigFile":
                     mCLIHandler = new CLIConfigFile();
                     string config = ReadFile(value);
@@ -65,18 +71,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler.LoadContent(script, null);
                     break;
                 case "DynamicFile":
-                    CLIDynamicXML CLIDynamicXML = new CLIDynamicXML();
+                    mCLIHandler = new CLIDynamicXML();
                     string dynamicXML = ReadFile(value);
-                    CLIDynamicXML.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
+                    mCLIHandler.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
                     break;
                 case "Args":
-                    CLIArgs CLIArgs = new CLIArgs();                    
-                    CLIArgs.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
+                    mCLIHandler = new CLIArgs();
+                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
                     break;
 
             }
           
             // TODO: Excel 
+        }
+
+        private void ShowCLIHelp()
+        {
+            // TODO:
+            Console.WriteLine("ConfigFile");
+            Console.WriteLine("ScriptFile");
+            // ....
         }
 
         //// Return true if there are analyzer issues

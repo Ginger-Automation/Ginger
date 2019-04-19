@@ -114,6 +114,34 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
 
         [TestMethod]
+        public void CLIArgs()
+        {
+            // Arrange
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.RunningFromUnitTest = true;
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+
+            // Create config file
+            string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
+            
+
+            // TODO: use also CLIArgs creator
+            string args = string.Format("--Solution {0}", CLISolutionFolder) ;
+            args += string.Format("--Env {0}", "Default");
+            args += string.Format("--RunSet {0}", "Default Run Set");            
+
+            // Act
+            string arg = "Args=" + args;
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { arg });
+
+            // Assert            
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
+        }
+
+
+        [TestMethod]
         public void ResultsJSON()
         {
 
