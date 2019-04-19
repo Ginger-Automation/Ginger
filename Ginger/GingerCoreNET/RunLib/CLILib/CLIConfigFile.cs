@@ -39,6 +39,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public bool Execute(RunsetExecutor runsetExecutor)
         {
+            WorkSpace.Instance.RunsetExecutor.InitRunners();
             runsetExecutor.RunRunset();
             return true;           
         }

@@ -27,8 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
             // RunAnalyzer()  - if selected
-
-            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            
             mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
 
             // Wrap all with try catch 
