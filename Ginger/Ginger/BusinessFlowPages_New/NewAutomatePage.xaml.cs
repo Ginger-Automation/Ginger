@@ -222,13 +222,13 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
                     }
-                    SetActivityEditPage();
 
                     if (mBusinessFlow.Activities.Count > 0)
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
-                        xCurrentActivityFrame.Content = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);  // TODO: use binding? or keep each activity page
+                        //xCurrentActivityFrame.Content = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);  // TODO: use binding? or keep each activity page                        
                     }
+                    SetActivityEditPage();
 
                     mRunner.BusinessFlows.Add(mBusinessFlow);
                     mRunner.CurrentBusinessFlow = mBusinessFlow;
