@@ -422,6 +422,36 @@
     <Content Include="TestResources\ScreenShot\Temp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\bootstrap.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\bootstrap.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\browserLink.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\jquery-1.10.2.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\modernizr-2.6.2.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\MsAjaxJs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\respond.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\Site.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Web\Home Page - My ASP_NET Application_files\WebFormsJs.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Web\TestForm.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

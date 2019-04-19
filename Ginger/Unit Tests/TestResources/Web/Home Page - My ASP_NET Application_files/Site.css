@@ -1,0 +1,33 @@
+body {
+	padding-top: 50px; padding-bottom: 20px;
+}
+.body-content {
+	padding-right: 15px; padding-left: 15px;
+}
+.dl-horizontal dt {
+	white-space: normal;
+}
+input[type='text'] {
+	max-width: 280px;
+}
+input[type='password'] {
+	max-width: 280px;
+}
+input[type='email'] {
+	max-width: 280px;
+}
+input[type='tel'] {
+	max-width: 280px;
+}
+input[type='select'] {
+	max-width: 280px;
+}
+@media screen and (min-width:768px)
+{
+.jumbotron {
+	margin-top: 20px;
+}
+.body-content {
+	padding: 0px;
+}
+}

@@ -697,13 +697,13 @@ namespace UnitTests.UITests
             ActBrowserElement actBrowser = new ActBrowserElement();
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
-            actBrowser.GetOrCreateInputParam("Value",TestResources.GetTestResourcesFile(@"TestForm.htm"));
+            actBrowser.GetOrCreateInputParam("Value",TestResources.GetTestResourcesFile("TestForm.htm"));
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
             ActUIElement actUIElement = new ActUIElement();
             actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
             actUIElement.ElementLocateValue = "hyperLinkHover";
-            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
+            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.HyperLink;
             actUIElement.ElementAction = GingerCore.Actions.Common.ActUIElement.eElementAction.Click;
 
             ActSmartSync actSmartSync = new ActSmartSync();
@@ -763,7 +763,7 @@ namespace UnitTests.UITests
             ActBrowserElement actBrowser = new ActBrowserElement();
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
-            actBrowser.GetOrCreateInputParam("Value", "file:///C:\\GingerSourceControl\\Solutions\\Ginger_Regression_Testing\\Documents\\Web\\WebPages\\TestForm.htm");
+            actBrowser.GetOrCreateInputParam("Value", TestResources.GetTestResourcesFile("TestForm.htm"));
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
             ActPWL actPWL = new ActPWL();
