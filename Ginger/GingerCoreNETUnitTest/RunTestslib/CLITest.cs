@@ -127,9 +127,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             
 
             // TODO: use also CLIArgs creator
-            string args = string.Format("--Solution {0}", CLISolutionFolder) ;
-            args += string.Format("--Env {0}", "Default");
-            args += string.Format("--RunSet {0}", "Default Run Set");            
+            string args = string.Format("--solution {0}", CLISolutionFolder) ;
+            args += string.Format("--environment {0}", "Default");
+            args += string.Format("--runset {0}", "Default Run Set");            
 
             // Act
             string arg = "Args=" + args;

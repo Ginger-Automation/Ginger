@@ -14,11 +14,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
     {
-        static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
-
-        bool mShowAutoRunWindow = true;
         
-        UserProfile mUserProfile;
+
+        CLIHelper mCLIHelper = new CLIHelper();                
 
         public string Identifier
         {
@@ -43,13 +41,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return true;           
         }
 
-
-
         bool ProcessConfig(string config)
         {
             return true;
         }
-
        
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
@@ -66,10 +61,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
         {
-            string scURL = null;
-            string scUser = null;
-            string scPswd = null;
-
+            
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
@@ -82,139 +74,65 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     switch (param)
                     {
                         case "SourceControlType":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
-                            if (value.Equals("GIT"))
-                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
-                            else if (value.Equals("SVN"))
-                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
-                            else
-                                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                            mCLIHelper.SetSourceControlType(value);
                             break;
-
                         case "SourceControlUrl":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-                            {
-                                if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
-                                    value = value + "svn/";
-                                if (!value.ToUpper().EndsWith("/"))
-                                    value = value + "/";
-                            }
-                            mUserProfile.SourceControlURL = value;
-                            scURL = value;
+                            mCLIHelper.SetSourceControlURL(value);                            
                             break;
-
                         case "SourceControlUser":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
-                                value = "Test";
-                            mUserProfile.SourceControlUser = value;
-                            scUser = value;
+                            mCLIHelper.SetSourceControlUser(value);                            
                             break;
-
                         case "SourceControlPassword":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                            mUserProfile.SourceControlPass = value;
-                            scPswd = value;
+                            mCLIHelper.SetSourceControlPassword(value);                            
                             break;
-
                         case "PasswordEncrypted":
-                            Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                            string pswd = mUserProfile.SourceControlPass;
-                            if (value == "Y")
-                                pswd = EncryptionHandler.DecryptwithKey(mUserProfile.SourceControlPass, ENCRYPTION_KEY);
-                            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-                                pswd = "Test";
-                            mUserProfile.SourceControlPass = pswd;
+                            mCLIHelper.PasswordEncrypted(value);                            
                             break;
-
                         case "SourceControlProxyServer":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
-                            if (value == "")
-                                mUserProfile.SolutionSourceControlConfigureProxy = false;
-                            else
-                                mUserProfile.SolutionSourceControlConfigureProxy = true;
-                            if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-                                value = "http://" + value;
-                            mUserProfile.SolutionSourceControlProxyAddress = value;
+                            mCLIHelper.SourceControlProxyServer(value);                            
                             break;
-
                         case "SourceControlProxyPort":
-                            if (value == "")
-                                mUserProfile.SolutionSourceControlConfigureProxy = false;
-                            else
-                                mUserProfile.SolutionSourceControlConfigureProxy = true;
-                            Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                            mUserProfile.SolutionSourceControlProxyPort = value;
+                            mCLIHelper.SourceControlProxyPort(value);                            
                             break;
-
                         case "Solution":
-                            if (scURL != null && scUser != "" && scPswd != null)
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                                if (value.IndexOf(".git") != -1)
-                                {
-                                    // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                                }
-                                else
-                                {
-                                    // App.DownloadSolution(value);
-                                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(value);
-                                }
-                            }
-                            Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
-                            try
-                            {
-                                if (WorkSpace.Instance.OpenSolution(value) == false)
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                    // TODO: throw
-                                    return;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                // TODO: throw
-                                return;
-                            }
+                            mCLIHelper.Solution = value;                            
                             break;
 
                         case "Env":
-                            Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
-                            ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                            if (env != null)
-                            {
-                                runsetExecutor.RunsetExecutionEnvironment = env;
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                                // TODO: throw
-                                // return false;
-                            }
+                            mCLIHelper.Env = value;
+                            //Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
+                            //ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
+                            //if (env != null)
+                            //{
+                            //    runsetExecutor.RunsetExecutionEnvironment = env;
+                            //}
+                            //else
+                            //{
+                            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
+                            //    // TODO: throw
+                            //    // return false;
+                            //}
                             break;
 
                         case "RunSet":
-                            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
-                            ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                            RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                            if (runSetConfig != null)
-                            {
-                                runsetExecutor.RunSetConfig = runSetConfig;
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                                // TODO: throw
-                                // return false;
-                            }
+                            mCLIHelper.Runset = value;
+                            //Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
+                            //ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                            //RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
+                            //if (runSetConfig != null)
+                            //{
+                            //    runsetExecutor.RunSetConfig = runSetConfig;
+                            //}
+                            //else
+                            //{
+                            //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                            //    // TODO: throw
+                            //    // return false;
+                            //}
                             break;
                         case "ShowAutoRunWindow":
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("NoAutoRunWindow {0}", value));
-                            mShowAutoRunWindow = bool.Parse(value);
+                            mCLIHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
                             runsetExecutor.RunSetConfig.RunWithAnalyzer = bool.Parse(value); 
@@ -225,6 +143,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                              return;
                     }
                 }
+
+
+                mCLIHelper.ProcessArgs(runsetExecutor);
             }            
         }
 

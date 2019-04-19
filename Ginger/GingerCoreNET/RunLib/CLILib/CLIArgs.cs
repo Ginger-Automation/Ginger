@@ -11,10 +11,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     public class CLIArgs : ICLI
     {
 
-        string mSolution;
-        string mEnv;
-        string mRunset;
-
+        CLIHelper mCLIHelper = new CLIHelper();
         string ICLI.Identifier
         {
             get
@@ -66,70 +63,32 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 switch (arg)
                 {
                     case "solution":
-                    case "s":                    
-                        mSolution = value;                    
+                    case "s":
+                        mCLIHelper.Solution = value;                    
                         break;
                     case "environment":
                     case "env":
-                    case "e":                    
-                        mEnv = value;                        
+                    case "e":
+                        mCLIHelper.Env = value;                        
                         break;
                     case "runset":                    
-                    case "r":                    
-                        mRunset = value;                        
+                    case "r":
+                        mCLIHelper.Runset = value;                        
                         break;
+
+                    // TODO: add all the rest !!!!!!!!!!!!!
+
                     default:
                         Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + argval + "'");
                         break;
                 }
             }
 
-            ProcessArgs(runsetExecutor);
+            mCLIHelper.ProcessArgs(runsetExecutor);
 
 
         }
 
-        private void ProcessArgs(RunsetExecutor runsetExecutor)
-        {
-            // TODO: create CLIHelper with generic functions !!!!!!!!!!!!!!!!!!!!!!!
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            if (WorkSpace.Instance.OpenSolution(mSolution) == false)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                // TODO: throw
-                return;
-            }
-
-            // Dup with config externlize !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + mEnv + "'");
-            ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == mEnv.ToLower().Trim()).FirstOrDefault();
-            if (env != null)
-            {
-                runsetExecutor.RunsetExecutionEnvironment = env;
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                // TODO: throw
-                // return false;
-            }
-
-            // Dup with config externlize !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), mRunset));
-            ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == mRunset.ToLower().Trim()).FirstOrDefault();
-            if (runSetConfig != null)
-            {
-                runsetExecutor.RunSetConfig = runSetConfig;
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                // TODO: throw
-                // return false;
-            }
-
-        }
+        
     }
 }
