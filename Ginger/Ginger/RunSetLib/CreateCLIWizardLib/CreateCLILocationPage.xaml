@@ -10,10 +10,22 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="70*"/>
+            <RowDefinition Height="86"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Save File Location</Label>
-        <TextBox x:Name="xCLIContentTextBox" Grid.Row="1" Margin="15">Desktop, C:\...</TextBox>
+        <StackPanel Grid.ColumnSpan="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut description</Label>
+            <TextBox x:Name="xShortcutDescriptionTextBox" Margin="15"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="1">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
+            <RadioButton IsChecked="True" Margin="5">Desktop</RadioButton>
+            <RadioButton Margin="5">Folder</RadioButton>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="xCLIContentTextBox" Width="300"  Margin="15">C:\...</TextBox>
+                <Button Width="40" Grid.Row="2">...</Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>

@@ -27,7 +27,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     xConfigRadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
-                    //
+                    xCLIContentTextBox.Text = mCreateCLIWizard.CLIExecutor;
                     break;
             }
 

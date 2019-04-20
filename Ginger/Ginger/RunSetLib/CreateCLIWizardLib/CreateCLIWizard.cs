@@ -1,7 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger.Run;
 using Ginger.WizardLib;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
@@ -12,27 +11,29 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     {       
         public override string Title { get { return "Create CLI"; } }
 
-        public RunSetConfig RunSetConfig { get; set; }
+        //public RunSetConfig RunSetConfig { get; set; }
         public string FileContent { get; set; }  
         public bool DownloadSolutionFromSourceControl { get; set; }
         public bool RunAnalyzer { get; set; }
 
         public ICLI SelectedCLI;
 
-        public string CLIExecutor;  // Ginger.exe or GingerConsole.dll
+        public string CLIExecutor { get; set; }  // Ginger.exe or dotnet GingerConsole.dll
+
+        public string ShortcutDescription { get; set; }
 
         public CreateCLIWizard()
         {            
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));            
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
+            AddPage(Name: "CLI Options", Title: "CLI Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());                        
             AddPage(Name: "CLI Type", Title: "CLI Type", SubTitle: "CLI Type", Page: new CreateCLIChooseTypePage());
             AddPage(Name: "CLI Location", Title: "CLI Location", SubTitle: "CLI Location", Page: new CreateCLILocationPage());
-            AddPage(Name: "CLI Options", Title: "CLI Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());            
         }
 
 
         public void SetGingerExecutor()
         {
-            CLIExecutor = "Ginger.exe";
+            CLIExecutor = System.Reflection.Assembly.GetExecutingAssembly().Location;
         }
 
         public void SetGingerConsoleExecutor()
@@ -42,18 +43,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
 
         public override void Finish()
-        {
-            // SelectedCLIType.CreateCLI();            
-            //string gingerStarter = "ginger.exe";  // or GingerConsole
-            //string fileName = @"c:\1234";
-            //string Args = string.Format("ConfigFile={0}", fileName);
-            //string content = FileContent;
-
-            // System.IO.File.WriteAllText(fileName, content);
-            CreateRunSetShortCut();
-        }
-
-        private void CreateRunSetShortCut()
         {
             string Env = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
 
@@ -74,21 +63,21 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             //    }
             //}
 
-
+            string runsetName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
 
             object shDesktop = (object)"Desktop";
             WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + RunSetConfig + " " + Env + ".lnk";
+            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + runsetName + " " + Env + ".lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = "Ginger Solution=" + WorkSpace.Instance.Solution.Name + ", RunSet=" + RunSetConfig + ", Env=" + Env;
-            string GingerPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            shortcut.Description = ShortcutDescription; //"Ginger Solution=" + WorkSpace.Instance.Solution.Name + ", RunSet=" + runsetName + ", Env=" + Env;
+            string GingerPath = CLIExecutor; // System.Reflection.Assembly.GetExecutingAssembly().Location;
             string SolFolder = WorkSpace.Instance.Solution.Folder;
             if (SolFolder.EndsWith(@"\"))
             {
                 SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
             }
-            shortcut.TargetPath = GingerPath;            
-            
+            shortcut.TargetPath = GingerPath;
+
 
             string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + Env + ".Ginger." + SelectedCLI.FileExtension;
 
@@ -103,6 +92,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
         }
 
+        
 
 
     }

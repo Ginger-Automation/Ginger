@@ -37,9 +37,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(CreateCLIWizard.ShortcutDescription));
                     break;
                 case EventType.Active:
-             
+                    if (string.IsNullOrEmpty(xShortcutDescriptionTextBox.Text))
+                    {
+                        string description = "Ginger Solution=" + WorkSpace.Instance.Solution.Name + ", RunSet=" + "!!!!," + " Env=" + "!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+                        xShortcutDescriptionTextBox.Text = description;                        
+                    }
                     break;
             }
 
