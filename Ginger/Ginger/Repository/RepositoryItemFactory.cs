@@ -829,7 +829,9 @@ namespace Ginger.Repository
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
-            throw new NotImplementedException();
+            RecoverPage recoverPage = new RecoverPage(recovredItems);
+            recoverPage.ShowAsWindow();
+
         }
     }
     
