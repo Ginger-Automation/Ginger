@@ -17,13 +17,16 @@
             <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             
-            <DockPanel x:Name="xListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
-                <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
-                <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="xDeleteAllBtn_Click"/>
-                <StackPanel x:Name="xMoveBtns" Orientation="Horizontal">
-                    <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="xMoveUpBtn_Click" />
-                    <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="xMoveDownBtn_Click" />
+            <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
+                <StackPanel x:Name="xListCommonOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                    <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
+                    <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="xDeleteAllBtn_Click"/>
+                    <StackPanel x:Name="xMoveBtns" Orientation="Horizontal">
+                        <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="xMoveUpBtn_Click" />
+                        <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="xMoveDownBtn_Click" />
+                    </StackPanel>
                 </StackPanel>
+
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
                     <MenuItem>
                         <MenuItem.Icon>
@@ -46,7 +49,7 @@
 
         <ListView x:Name="xListView" Grid.Row="1" 
                   Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  
-                  VerticalContentAlignment="Top" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
+                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
                   SelectionChanged="xListView_SelectionChanged" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

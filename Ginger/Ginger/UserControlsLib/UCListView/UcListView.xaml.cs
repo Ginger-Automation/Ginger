@@ -1,6 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
+using GingerCore.GeneralLib;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -181,11 +184,11 @@ namespace Ginger.UserControlsLib.UCListView
         {
             get
             {
-                return xListOperationsBarPnl.Visibility;
+                return xAllListOperationsBarPnl.Visibility;
             }
             set
             {
-                xListOperationsBarPnl.Visibility = value;
+                xAllListOperationsBarPnl.Visibility = value;
             }
         }
 
@@ -350,6 +353,50 @@ namespace Ginger.UserControlsLib.UCListView
             listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
             dataTemp.VisualTree = listItemFac;
             xListView.ItemTemplate = dataTemp;
+        }
+
+        public void AddListOperations(List<ListItemOperation> operations)
+        {
+            if (operations != null && operations.Count > 0)
+            {
+                foreach (ListItemOperation operation in operations)
+                {
+                    ucButton operationBtn = new ucButton();
+                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                    operationBtn.ButtonImageType = operation.ImageType;
+                    operationBtn.ToolTip = operation.ToolTip;
+                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                    operationBtn.ButtonImageHeight = 18;
+                    operationBtn.ButtonImageWidth = 18;
+                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        operationBtn.ButtonImageForground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    operationBtn.Click += operation.OperationHandler;
+                    operationBtn.Tag = xListView.ItemsSource;
+
+                    xListCommonOperationsPnl.Children.Add(operationBtn);
+                }
+            }
         }
     }
 

@@ -41,6 +41,16 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Act.Description);
         }
 
+        public string GetItemGroupField()
+        {
+            return null;
+        }
+
+        public string GetItemTagsField()
+        {
+            return nameof(Act.Tags);
+        }
+
         public string GetItemDescriptionField()
         {
             return nameof(Act.ActionType);
@@ -157,6 +167,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(sender);
             mAction.Active = !mAction.Active;
         }
+
     }
 
 

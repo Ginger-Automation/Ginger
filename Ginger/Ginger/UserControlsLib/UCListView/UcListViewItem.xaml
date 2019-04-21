@@ -22,7 +22,7 @@
             <ColumnDefinition x:Name="xExpanderCol" Width="25"/>
             <ColumnDefinition x:Name="xIndexCol" Width="25"/>
             <ColumnDefinition x:Name="xIconCol" Width="70"/>
-            <ColumnDefinition x:Name="xDetailsCol" Width="200*"/>
+            <ColumnDefinition x:Name="xDetailsCol" Width="100*"/>
         </Grid.ColumnDefinitions>
 
         <usercontrols:ucButton x:Name="xDetailViewBtn" Grid.Row="0" Grid.Column="0" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Expand" Click="xDetailViewBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Visible" ToolTip="Expand" />
@@ -33,16 +33,26 @@
 
         <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="2" ImageType="Unknown" ImageForeground="DarkGray" SetAsFontImageWithSize="20" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
 
-        <DockPanel x:Name="xDetailsPnl" Grid.Row="0" Grid.Column="3" >
-            <TextBlock x:Name="xItemNameTxtBlock" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Title" FontSize="15" MaxWidth="250" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
-            <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" DockPanel.Dock="Right"/>
-            <StackPanel x:Name="xItemNotificationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="10,0,0,0" />
-        </DockPanel>
+        <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="3" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="25"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Title" FontSize="15" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
+            <StackPanel x:Name="xItemNotificationsPnl" Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,0,0" />
+            <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" Grid.Column="2"/>
+        </Grid>
 
-        <DockPanel x:Name="xExtraDetailsPnl" Grid.Row="1" Grid.Column="3" >
-            <TextBlock x:Name="xItemDescriptionTxtBlock" DockPanel.Dock="Left" Text="Description" MaxWidth="250" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Grid x:Name="xExtraDetailsGrid" Grid.Row="1" Grid.Column="3" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="175"/>
+            </Grid.ColumnDefinitions>
 
-            <DockPanel x:Name="xItemOperationsMainPnl" DockPanel.Dock="Right" HorizontalAlignment="Right">
+            <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+            <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right">
                 <StackPanel x:Name="xItemExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right">
                     <usercontrols:ucButton x:Name="xItemContinue" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xRunnerItemContinue_Click" VerticalAlignment="Bottom" Visibility="Visible" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"/>
                 </StackPanel>
@@ -119,6 +129,6 @@
                     <GingerCore:ucTextDicResource Text="Active / Inactive [BusinessFlow]"/>
                 </usercontrols:ucButton.ToolTip>
             </usercontrols:ucButton>-->
-        </DockPanel>
+        </Grid>
     </Grid>
 </UserControl>
