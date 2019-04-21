@@ -106,7 +106,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public void ShowAutoRunWindow()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("UnitTestRepositoryItemFactory: Show auto run window");
         }
 
         public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
