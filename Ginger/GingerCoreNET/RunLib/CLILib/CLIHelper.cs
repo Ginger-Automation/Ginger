@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string scURL;
         public string scUser;
         public string scPswd;
-        public bool ShowAutoRunWindow = true;
+        public bool ShowAutoRunWindow = false; // default is false except in ConfigFile which is true to keep backword compatibility
         public bool RunAnalyzer { get; internal set; }
 
         RunsetExecutor mRunsetExecutor;
@@ -35,6 +35,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             SelectEnv();
             SelectRunset();
             SetRunAnalyzer();
+            HandleAutoRunWindow();
+        }
+
+        private void HandleAutoRunWindow()
+        {
+            if(ShowAutoRunWindow)
+            {
+                RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+            }
         }
 
         private void SetRunAnalyzer()

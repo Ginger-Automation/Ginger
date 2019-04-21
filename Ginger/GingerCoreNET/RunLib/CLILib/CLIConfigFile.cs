@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
         {
-            
+            mCLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
