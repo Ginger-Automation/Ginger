@@ -67,7 +67,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             object shDesktop = (object)"Desktop";
             WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\Ginger " + runsetName + " " + Env + ".lnk";
+            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\" + ShortcutDescription + ".lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
             shortcut.Description = ShortcutDescription; //"Ginger Solution=" + WorkSpace.Instance.Solution.Name + ", RunSet=" + runsetName + ", Env=" + Env;
             string GingerPath = CLIExecutor; // System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -79,7 +79,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             shortcut.TargetPath = GingerPath;
 
 
-            string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + Env + ".Ginger." + SelectedCLI.FileExtension;
+            string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + ShortcutDescription + ".Ginger." + SelectedCLI.FileExtension;
 
             if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\"))
             {

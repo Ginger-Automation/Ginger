@@ -21,6 +21,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    xGingerEXERadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
                     //

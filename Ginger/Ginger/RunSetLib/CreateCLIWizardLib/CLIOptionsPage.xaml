@@ -16,7 +16,7 @@
             <Label>Execute using</Label>
             <StackPanel>
                 <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Executer</Label>
-                <RadioButton x:Name="xGingerEXERadioButton" Checked="XGingerEXERadioButton_Checked" IsChecked="True">Ginger.exe</RadioButton>
+                <RadioButton x:Name="xGingerEXERadioButton" Checked="XGingerEXERadioButton_Checked">Ginger.exe</RadioButton>
                 <CheckBox Margin="25,5,0,0">Show Run set execution window while running</CheckBox>
                 <Label HorizontalAlignment="Left">Run on Windows only</Label>
                 <RadioButton x:Name="xGingerConsoleRadioButton"  Checked="XGingerConsoleRadioButton_Checked">dotnet GingerConsole.dll</RadioButton>

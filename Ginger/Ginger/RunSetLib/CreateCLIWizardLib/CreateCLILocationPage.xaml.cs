@@ -42,12 +42,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Active:
                     if (string.IsNullOrEmpty(xShortcutDescriptionTextBox.Text))
                     {
-                        string description = "Ginger Solution=" + WorkSpace.Instance.Solution.Name + ", RunSet=" + "!!!!," + " Env=" + "!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+                        string description = WorkSpace.Instance.Solution.Name + " " + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + " " + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
                         xShortcutDescriptionTextBox.Text = description;                        
                     }
                     break;
             }
-
         }
 
        
