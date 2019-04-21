@@ -20,7 +20,7 @@
             <RowDefinition Height="73*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="xCLITypeHelpTextBlock" Grid.Column="1" Margin="45">CLI type explanation</TextBlock>
+        <TextBlock x:Name="xCLITypeHelpTextBlock" TextWrapping="Wrap" Grid.Column="1" Margin="45">CLI type explanation</TextBlock>
         
         
         <StackPanel Margin="10,10,10,0" Grid.ColumnSpan="2" >
@@ -41,10 +41,12 @@
             <TextBox x:Name="xCLICommandTextBox"  Margin="15" IsReadOnly="True">Content</TextBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
-            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI Content</Label>
-
+        <StackPanel Grid.Row="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">CLI File Content</Label>
         </StackPanel>
+
+        
+        
 
         <TextBox x:Name="xCLIContentTextBox" Grid.Row="3" Margin="15" IsReadOnly="True" Grid.ColumnSpan="2">Content</TextBox>
 

@@ -45,6 +45,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         string description = WorkSpace.Instance.Solution.Name + " " + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + " " + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
                         xShortcutDescriptionTextBox.Text = description;                        
                     }
+                    xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
                     break;
             }
         }

@@ -11,14 +11,15 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="86"/>
-            <RowDefinition/>
+            <RowDefinition Height="129*"/>
+            <RowDefinition Height="235*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.ColumnSpan="2">
+        <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut description</Label>
             <TextBox x:Name="xShortcutDescriptionTextBox" Margin="15"></TextBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="1">
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="2">
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
             <RadioButton IsChecked="True" Margin="5">Desktop</RadioButton>
             <RadioButton Margin="5">Folder</RadioButton>
@@ -27,5 +28,10 @@
                 <Button Width="40" Grid.Row="2">...</Button>
             </StackPanel>
         </StackPanel>
+        <StackPanel Grid.Row="2" Margin="5">
+            <Label HorizontalAlignment="Left">CLI file name</Label>
+            <TextBox x:Name="xCLIFileName"  Height="20"></TextBox>
+        </StackPanel>
+        
     </Grid>
 </Page>

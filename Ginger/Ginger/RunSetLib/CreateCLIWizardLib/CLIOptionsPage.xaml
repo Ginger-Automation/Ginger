@@ -14,13 +14,17 @@
             <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
             <CheckBox x:Name="RunAnalyzerCheckBox" Checked="RunAnalyzerCheckBox_Checked" Unchecked="RunAnalyzerCheckBox_Unchecked" Margin="5">Run analyzer before execution</CheckBox>
             <Label>Execute using</Label>
+            <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Executer</Label>
             <StackPanel>
-                <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Executer</Label>
                 <RadioButton x:Name="xGingerEXERadioButton" Checked="XGingerEXERadioButton_Checked">Ginger.exe</RadioButton>
+                <Label HorizontalAlignment="Left" Margin="25,0,0,0">Run on Windows only</Label>
                 <CheckBox Margin="25,5,0,0">Show Run set execution window while running</CheckBox>
-                <Label HorizontalAlignment="Left">Run on Windows only</Label>
+
+                <Label>---</Label>
+                
                 <RadioButton x:Name="xGingerConsoleRadioButton"  Checked="XGingerConsoleRadioButton_Checked">dotnet GingerConsole.dll</RadioButton>
-                <Label HorizontalAlignment="Left">Run on Windows/Linux/Mac but only if Linux compatible - Plugins</Label>
+                <Label HorizontalAlignment="Left" Margin="25,0,0,0">Run on Windows/Linux/Mac if solution is compatible</Label>
+                
             </StackPanel>
             <StackPanel HorizontalAlignment="Left">
                 <Label>Debug Level</Label>

@@ -30,6 +30,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     break;
                 case EventType.Active:
                     xCLICommandTextBox.Text = mCreateCLIWizard.CLIExecutor;
+                    ShowContent();
                     break;
             }
 
@@ -42,7 +43,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             string content = mCreateCLIWizard.SelectedCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
             mCreateCLIWizard.FileContent = content;
             xCLIContentTextBox.Text = content;
-            xCLITypeHelpTextBlock.Text = CLITXT;
+            xCLITypeHelpTextBlock.Text = CLITXT;            
         }
 
         CLIConfigFile mCLIConfigFile;
