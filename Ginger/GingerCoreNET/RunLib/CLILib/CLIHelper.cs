@@ -22,10 +22,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string scUser;
         public string scPswd;
         public bool ShowAutoRunWindow = true;
+        public bool RunAnalyzer { get; internal set; }
 
         RunsetExecutor mRunsetExecutor;
 
         UserProfile mUserProfile;
+
+        
 
         public void ProcessArgs(RunsetExecutor runsetExecutor)
         {
@@ -34,6 +37,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             OpenSolution();
             SelectEnv();
             SelectRunset();
+            SetRunAnalyzer();
+        }
+
+        private void SetRunAnalyzer()
+        {
+            mRunsetExecutor.RunSetConfig.RunWithAnalyzer = RunAnalyzer;
         }
 
         private void SelectRunset()

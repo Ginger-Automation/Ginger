@@ -130,12 +130,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             //    // return false;
                             //}
                             break;
-                        case "ShowAutoRunWindow":
+                        case "ShowAutoRunWindow":                            
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("NoAutoRunWindow {0}", value));
                             mCLIHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
-                            runsetExecutor.RunSetConfig.RunWithAnalyzer = bool.Parse(value); 
+                            mCLIHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "UnKnown argument: '" + param + "'");
