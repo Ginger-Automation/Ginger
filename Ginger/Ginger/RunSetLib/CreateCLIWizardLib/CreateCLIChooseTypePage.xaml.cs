@@ -2,6 +2,7 @@
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerWPF.WizardLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,6 +14,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class CreateCLIChooseTypePage : Page, IWizardPage
     {
         CreateCLIWizard mCreateCLIWizard;
+        string CLITXT;
         public CreateCLIChooseTypePage()
         {
             InitializeComponent();
@@ -33,6 +35,16 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         }
 
+        
+
+        private void ShowContent()
+        {
+            string content = mCreateCLIWizard.SelectedCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
+            mCreateCLIWizard.FileContent = content;
+            xCLIContentTextBox.Text = content;
+            xCLITypeHelpTextBlock.Text = CLITXT;
+        }
+
         CLIConfigFile mCLIConfigFile;
         private void xConfigRadioButton_Checked(object sender, RoutedEventArgs e)
         {
@@ -40,16 +52,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mCLIConfigFile = new CLIConfigFile();
             }
-            mCreateCLIWizard.SelectedCLI = mCLIConfigFile;        
+            mCreateCLIWizard.SelectedCLI = mCLIConfigFile;
+            CLITXT = "Simple text file which contain the configuration, executed using Ginger ConfigFile=%filename%" + Environment.NewLine;
+            CLITXT += @"Example: Ginger.exe ConfigFile = C:\Ginger\Regression1.txt" + Environment.NewLine;
+            CLITXT += "When you need to execute fixed predefined run set which include Solution, RunSetName and Env" + Environment.NewLine;            
             ShowContent();            
         }
 
-        private void ShowContent()
-        {
-            string content = mCreateCLIWizard.SelectedCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
-            mCreateCLIWizard.FileContent = content;
-            xCLIContentTextBox.Text = content;
-        }
+        
 
         CLIDynamicXML mCLIDynamicXML;
         private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -59,6 +69,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mCLIDynamicXML = new CLIDynamicXML();
             }
             mCreateCLIWizard.SelectedCLI = mCLIDynamicXML;
+            CLITXT = "Dynamic xml file which contain the runset details, executed using Ginger DynamicFile=%filename%" + Environment.NewLine;
+            CLITXT += "Enable to create dynamic run set by changing the xml content" + Environment.NewLine;
             ShowContent();
         }
 
@@ -70,6 +82,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mCLIScriptFile = new CLIScriptFile();
             }
             mCreateCLIWizard.SelectedCLI = mCLIScriptFile;
+            CLITXT = "Script file(C#) which contain the code, executed using Ginger ConfigFile=%filename%" + Environment.NewLine;
+            CLITXT += "enable to create run set with loops and much more complex execution..." + Environment.NewLine;
             ShowContent();
         }
 
@@ -81,6 +95,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mCLIArgs = new CLIArgs();
             }
             mCreateCLIWizard.SelectedCLI = mCLIArgs;
+            CLITXT = @"Using CLI only without file, contains all run set arguments in the command line itself using switches like --solution executed using Ginger --solution c:\ginger\solution\sol1" + Environment.NewLine;
+            CLITXT += "Enable to run different runset on different env using only command line arguments" + Environment.NewLine;
             ShowContent();
         }
 

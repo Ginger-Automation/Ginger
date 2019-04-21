@@ -1,14 +1,8 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Environments;
-using GingerCoreNET.SourceControl;
 using System;
-using System.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -51,7 +45,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-
             sConfig += "RunAnalyzer=" + runsetExecutor.RunSetConfig.RunWithAnalyzer + Environment.NewLine;
 
             // TODO: add source control and all other options !!!!!!!!!!!
@@ -99,36 +92,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             break;
 
                         case "Env":
-                            mCLIHelper.Env = value;
-                            //Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
-                            //ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                            //if (env != null)
-                            //{
-                            //    runsetExecutor.RunsetExecutionEnvironment = env;
-                            //}
-                            //else
-                            //{
-                            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                            //    // TODO: throw
-                            //    // return false;
-                            //}
+                            mCLIHelper.Env = value;                        
                             break;
-
                         case "RunSet":
-                            mCLIHelper.Runset = value;
-                            //Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
-                            //ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                            //RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                            //if (runSetConfig != null)
-                            //{
-                            //    runsetExecutor.RunSetConfig = runSetConfig;
-                            //}
-                            //else
-                            //{
-                            //    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                            //    // TODO: throw
-                            //    // return false;
-                            //}
+                            mCLIHelper.Runset = value;                            
                             break;
                         case "ShowAutoRunWindow":                            
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("NoAutoRunWindow {0}", value));

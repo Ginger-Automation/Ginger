@@ -20,13 +20,8 @@
             <RowDefinition Height="73*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="1">
-            <Label>Simple text file which contain the configuration, executed using Ginger ConfigFile=%filename%</Label>
-            <Label>Example: Ginger.exe ConfigFile=C:\Ginger\Regression1.txt</Label>
-            <Label>When you need to execute fixed predefined run set which include Solution, RunSetName and Env</Label>
-            <Label>Script file (C#) which contain the code, executed using Ginger ConfigFile=%filename%</Label>
-            <Label>enable to create run set with loops and much more complex execution...</Label>
-        </StackPanel>
+        <TextBlock x:Name="xCLITypeHelpTextBlock" Grid.Column="1" Margin="45">CLI type explanation</TextBlock>
+        
         
         <StackPanel Margin="10,10,10,0" Grid.ColumnSpan="2" >
 

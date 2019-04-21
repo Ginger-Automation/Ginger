@@ -25,10 +25,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool RunAnalyzer { get; internal set; }
 
         RunsetExecutor mRunsetExecutor;
-
-        UserProfile mUserProfile;
-
-        
+        UserProfile mUserProfile;        
 
         public void ProcessArgs(RunsetExecutor runsetExecutor)
         {
@@ -46,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SelectRunset()
-        {
+        {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
@@ -63,7 +60,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SelectEnv()
-        {
+        {           
             Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + Env + "'");
             ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
             if (env != null)
