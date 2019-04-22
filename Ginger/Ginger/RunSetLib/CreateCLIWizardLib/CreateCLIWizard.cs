@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -56,37 +57,48 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public void SetGingerExecutor()
         {
-            CLIExecutor = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            WorkingDirectory = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "");
+            CLIExecutor = "Ginger.exe";
         }
 
         public void SetGingerConsoleExecutor()
         {
+            WorkingDirectory = ""; // TODO: find GingerConsole !!!!
             CLIExecutor = "dotnet GingerConsole.dll";
         }
 
         string CLIFolder;
-        public override void Finish()
-        {            
-            WshShell shell = new WshShell();
-            if (string.IsNullOrEmpty(CLIFolder))
-            {
-                object shDesktop = (object)"Desktop";
-                CLIFolder = (string)shell.SpecialFolders.Item(ref shDesktop);
-            }            
-
-            string shortcutAddress = CLIFolder + @"\" + ShortcutDescription + ".lnk";
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = ShortcutDescription;             
-            shortcut.TargetPath = CLIExecutor;
-            System.IO.File.WriteAllText(CLIFileName, FileContent);
-            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   
-            shortcut.Save();
-            Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
-        }
         internal void SetCLIFolder(string text = null)
         {
-            CLIFolder = text;
+            if (string.IsNullOrEmpty(text))
+            {
+                CLIFolder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            }
+            else
+            {
+                CLIFolder = text;
+            }
         }
+
+        
+        string WorkingDirectory;
+        public override void Finish()
+        {
+            // Write the content file with runset data
+            System.IO.File.WriteAllText(CLIFileName, FileContent);
+
+            // Create windows shortcut
+            WshShell shell = new WshShell();            
+            string shortcutAddress = Path.Combine(CLIFolder, ShortcutDescription + ".lnk");            
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            shortcut.Description = ShortcutDescription;
+            shortcut.WorkingDirectory = WorkingDirectory;            
+            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   
+            shortcut.Save();
+
+            Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
+        }
+        
 
 
 
