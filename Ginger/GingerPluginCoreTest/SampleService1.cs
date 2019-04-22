@@ -11,6 +11,7 @@ namespace GingerPluginCoreTest
         public void Concat(IGingerAction GA,                             
                             [Max(10)] // define s1 Max 10
                             [Mandatory] // user must fill a value
+                            [Default("Default Value")]
                             string s1,
 
                             //[GingerParamProperty(GingerParamProperty.Mandatory)]   // define s2 is Mandatory

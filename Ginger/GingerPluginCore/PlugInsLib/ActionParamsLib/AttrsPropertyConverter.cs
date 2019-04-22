@@ -143,7 +143,8 @@ namespace Amdocs.Ginger.Plugin.Core
                         continue;
                     }
                     // write property name
-                    writer.WritePropertyName(property.Name);                    
+                    writer.WritePropertyName(property.Name);
+                    serializer.NullValueHandling = NullValueHandling.Ignore;
                     serializer.Serialize(writer, property.GetValue(attr, null));
                 }
 
