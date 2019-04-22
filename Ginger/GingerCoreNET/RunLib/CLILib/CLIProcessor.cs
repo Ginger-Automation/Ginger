@@ -19,13 +19,71 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
+            string param;
+            string value = null;
+            if (args[0].StartsWith("ConfigFile="))
+            {
+                string[] arg1 = args[0].Split('=');
+                param = arg1[0].Trim();
+                value = arg1[1].Trim();                
+            }
+            else
+            {                
+                param = args[0].Trim();
+                if (args.Length > 1)
+                {
+                    value = args[1].Trim();
+                }                
+            }
+            HandleArg(param, value);
+           
+        }
 
-            string[] arg1 = args[0].Split('=');
-            string param = arg1[0].Trim();
-            string value = arg1[1].Trim();
+        private void HandleArg(string param, string value)
+        {
+            // TODO: get all classes impl ICLI and check Identifier then set
 
-            SetCLIHandler(param, value);
+            switch (param)
+            {
+                case "--version":
+                    Console.WriteLine("Ginger Version " + "???"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    break;
+                case "--help":
+                case "-h":
+                    ShowCLIHelp();
+                    break;                                    
+                case "ConfigFile":
+                case "--configfile":
+                    mCLIHandler = new CLIConfigFile();
+                    string config = ReadFile(value);
+                    mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
+                    Execute();
+                    break;
+                case "--scriptfile":
+                    mCLIHandler = new CLIScriptFile();
+                    string script = ReadFile(value);
+                    mCLIHandler.LoadContent(script, null);
+                    Execute();
+                    break;
+                case "--dynamicfile":
+                    mCLIHandler = new CLIDynamicXML();
+                    string dynamicXML = ReadFile(value);
+                    mCLIHandler.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
+                    Execute();
+                    break;
+                case "--args":
+                    mCLIHandler = new CLIArgs();
+                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
+                    Execute();
+                    break;
+                    // TODO: Excel 
+            }
 
+
+        }
+
+        void Execute()
+        {
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
@@ -48,49 +106,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             catch (Exception ex)
             {
                 Reporter.ToConsole(eLogLevel.ERROR, "Execution Failed with exception: " + ex.Message);
-                Reporter.ToLog(eLogLevel.DEBUG,"Exception occured during execution", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception occured during execution", ex);
                 Environment.ExitCode = 1; //failure
             }
-
-        }
-
-        private void SetCLIHandler(string param, string value)
-        {
-            // TODO: get all classes impl ICLI and check Identifier then set
-
-            switch (param)
-            {
-                case "--version":
-                    Console.WriteLine("Ginger Version " + "???"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    break;
-                case "--help":
-                case "-h":
-                    ShowCLIHelp();
-                    break;                                    
-                case "ConfigFile":
-                case "--configfile":
-                    mCLIHandler = new CLIConfigFile();
-                    string config = ReadFile(value);
-                    mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
-                    break;
-                case "--scriptfile":
-                    mCLIHandler = new CLIScriptFile();
-                    string script = ReadFile(value);
-                    mCLIHandler.LoadContent(script, null);
-                    break;
-                case "--dynamicfile":
-                    mCLIHandler = new CLIDynamicXML();
-                    string dynamicXML = ReadFile(value);
-                    mCLIHandler.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
-                    break;
-                case "--args":
-                    mCLIHandler = new CLIArgs();
-                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
-                    break;
-
-            }
-          
-            // TODO: Excel 
         }
 
         private void ShowCLIHelp()
