@@ -40,8 +40,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     System.IO.Directory.CreateDirectory(SolFolder + @"\Documents\RunSetShortCuts\");
                 }
 
-                
-
                 return fileName;
             }
         }
@@ -68,16 +66,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         string CLIFolder;
         public override void Finish()
-        {
-            // string Env = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
-
-            // string runsetName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
-
-            object shDesktop = (object)"Desktop";
+        {            
             WshShell shell = new WshShell();
-
             if (string.IsNullOrEmpty(CLIFolder))
             {
+                object shDesktop = (object)"Desktop";
                 CLIFolder = (string)shell.SpecialFolders.Item(ref shDesktop);
             }            
 
@@ -86,7 +79,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             shortcut.Description = ShortcutDescription;             
             shortcut.TargetPath = CLIExecutor;
             System.IO.File.WriteAllText(CLIFileName, FileContent);
-            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   //!!!!!!!!!
+            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   
             shortcut.Save();
             Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
         }
@@ -95,9 +88,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             CLIFolder = text;
         }
 
-        
-        
-        
 
 
     }

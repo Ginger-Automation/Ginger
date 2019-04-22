@@ -10,11 +10,10 @@
 
     <Grid>
         <StackPanel Margin="10">
-            <Label FontSize="14" FontWeight="Bold">Additional Options</Label>
+            
             <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
             <CheckBox x:Name="RunAnalyzerCheckBox" Checked="RunAnalyzerCheckBox_Checked" Unchecked="RunAnalyzerCheckBox_Unchecked" Margin="5">Run analyzer before execution</CheckBox>
-            <Label>Execute using</Label>
-            <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Executer</Label>
+            <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Runset Executer</Label>
             <StackPanel>
                 <RadioButton x:Name="xGingerEXERadioButton" Checked="XGingerEXERadioButton_Checked">Ginger.exe</RadioButton>
                 <Label HorizontalAlignment="Left" Margin="25,0,0,0">Run on Windows only</Label>
@@ -26,7 +25,11 @@
                 <Label HorizontalAlignment="Left" Margin="25,0,0,0">Run on Windows/Linux/Mac if solution is compatible</Label>
                 
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left">
+
+            <Label HorizontalAlignment="Left" FontWeight="Bold">Console output options</Label>
+            <CheckBox Margin="5">Show console window</CheckBox>
+
+            <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal">
                 <Label>Debug Level</Label>
                 <ComboBox Width="100">
                     <ComboBoxItem>Full</ComboBoxItem>

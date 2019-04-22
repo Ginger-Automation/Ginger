@@ -11,7 +11,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="86"/>
-            <RowDefinition Height="129*"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="235*"/>
         </Grid.RowDefinitions>
         <StackPanel>
@@ -22,9 +22,10 @@
         <StackPanel Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="2">
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
             <RadioButton x:Name="xDesktopRadioButton" Checked="XDesktopRadioButton_Checked" Margin="5">Desktop</RadioButton>
-            <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
+                        
             <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="xCLIFolderTextBox" Width="300"  Margin="15">C:\...</TextBox>
+                <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
+                <TextBox x:Name="xCLIFolderTextBox" Width="300"  Margin="15,0,0,0" Height="20"></TextBox>
                 <Button Width="40" Grid.Row="2">...</Button>
             </StackPanel>
         </StackPanel>
