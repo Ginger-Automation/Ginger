@@ -75,13 +75,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             txt += "i" + Environment.NewLine;  // script rc
             System.IO.File.WriteAllText(scriptFile, txt);
-
-
-            string arg = "ScriptFile=" + scriptFile;
-
+            
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { arg });
+            CLI.ExecuteArgs(new string[] { "scriptfile", scriptFile });
 
             // Assert
             // Assert.AreEqual("1")
@@ -106,10 +103,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             txt += string.Format("RunSet={0}", "Default Run Set") + Environment.NewLine;
             System.IO.File.WriteAllText(scriptFile, txt);
 
-            // Act
-            string arg = "ConfigFile=" + scriptFile;
+            // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { arg });
+            CLI.ExecuteArgs(new string[] { "ConfigFile=" , scriptFile });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
