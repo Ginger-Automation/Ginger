@@ -1,10 +1,9 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
-using GingerCore;
-using GingerCore.Environments;
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -45,49 +44,95 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadContent(string args, RunsetExecutor runsetExecutor)
         {
-            //TODO: parse all args then process
-
             //TODO: make -s --solution  work  but not -solution or -Solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            string[] argsList = args.Split('-');
-            foreach(string argval in argsList)
-            {
-                if (string.IsNullOrEmpty(argval.Trim()))
+            List<Arg> argsList = SplitArgs(args);
+            
+            foreach(Arg arg in argsList)
+            {             
+                if(arg.prefix == "-") // short param name - one letter for most common
                 {
-                    continue;
+                    switch (arg.param)
+                    {                        
+                        case "s":
+                            mCLIHelper.Solution = arg.value;
+                            break;                     
+                        case "e":                        
+                            mCLIHelper.Env = arg.value;
+                            break;                        
+                        case "r":
+                            mCLIHelper.Runset = arg.value;
+                            break;
+
+                        // TODO: add all the rest !!!!!!!!!!!!!
+                        default:
+                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '-' prefix: '" + arg + "'");
+                            throw new ArgumentException("Unknown argument: ", arg.param);
+                    }
                 }
-                string[] aargval = argval.Split(new[] {' '}, 2);  // split on the first space
-                string arg = aargval[0];
-                string value =aargval[1];
-                switch (arg)
+                else if(arg.prefix == "--") // Long param name
                 {
-                    case "solution":
-                    case "s":
-                        mCLIHelper.Solution = value;                    
-                        break;
-                    case "environment":
-                    case "env":
-                    case "e":
-                        mCLIHelper.Env = value;                        
-                        break;
-                    case "runset":                    
-                    case "r":
-                        mCLIHelper.Runset = value;                        
-                        break;
+                    switch (arg.param)
+                    {
+                        case "solution":                        
+                            mCLIHelper.Solution = arg.value;
+                            break;
+                        case "environment":
+                        case "env":                        
+                            mCLIHelper.Env = arg.value;
+                            break;
+                        case "runset":                        
+                            mCLIHelper.Runset = arg.value;
+                            break;
 
-                    // TODO: add all the rest !!!!!!!!!!!!!
+                        // TODO: add all the rest !!!!!!!!!!!!!
 
-                    default:
-                        Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + argval + "'");
-                        break;
+                        default:
+                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '--' prefix: '" + arg + "'");
+                            throw new ArgumentException("Unknown argument: ", arg.param);
+                    }
                 }
+                else
+                {
+                    throw new ArgumentException("Unknown prefix: ", arg.prefix);
+                }
+                
             }
 
             mCLIHelper.ProcessArgs(runsetExecutor);
-
-
         }
 
-        
+        public struct Arg
+        {
+            public string prefix;
+            public string param;
+            public string value;
+        }
+
+
+        // Handle args which are passed as -- (long) or - (short)
+        public List<Arg> SplitArgs(string sArgs)
+        {
+            List<Arg> args = new List<Arg>();            
+            string[] argsList = sArgs.Split('-');
+
+            string parampref = "";
+            foreach (string argval in argsList)
+            {                
+                if (string.IsNullOrEmpty(argval.Trim()))
+                {
+                    parampref += "-";
+                    continue;
+                }
+                string[] aargval = argval.Split(new[] { ' ' }, 2);  // split on the first space
+                string arg = aargval[0].Trim();
+                string value = aargval[1].Trim();
+
+                args.Add(new Arg() { prefix = parampref, param = arg, value = value  });
+                parampref = "-";
+            }
+
+            return args;
+        }
     }
 }

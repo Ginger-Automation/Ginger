@@ -1,9 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -237,6 +240,76 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
 
         }
+
+        
+        [TestMethod]
+        public void ArgSplit1()
+        {
+            // Arrange
+            CLIArgs CLIArgs = new CLIArgs();
+
+            // Act
+            List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1");
+
+            Assert.AreEqual(args[0].prefix, "--");
+            Assert.AreEqual(args[0].param, "solution");
+            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
+        }
+
+        [TestMethod]
+        public void ArgSplit2()
+        {
+            // Arrange
+            CLIArgs CLIArgs = new CLIArgs();
+
+            // Act
+            List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1 --environment Env1");
+
+            Assert.AreEqual(args[0].prefix, "--");
+            Assert.AreEqual(args[0].param, "solution");
+            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
+
+            Assert.AreEqual(args[1].prefix, "--");
+            Assert.AreEqual(args[1].param, "environment");
+            Assert.AreEqual(args[1].value, "Env1");
+        }
+
+        [TestMethod]
+        public void ArgSplit2WithSpaces()
+        {
+            // Arrange
+            CLIArgs CLIArgs = new CLIArgs();
+
+            // Act
+            List<Arg> args = CLIArgs.SplitArgs(@"  --solution  c:\abc\def\sol1    --environment  Env1");
+
+            Assert.AreEqual(args[0].prefix, "--");
+            Assert.AreEqual(args[0].param, "solution");
+            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
+
+            Assert.AreEqual(args[1].prefix, "--");
+            Assert.AreEqual(args[1].param, "environment");
+            Assert.AreEqual(args[1].value, "Env1");
+        }
+
+        [TestMethod]
+        public void ArgsMixStyle()
+        {
+            // Arrange
+            CLIArgs CLIArgs = new CLIArgs();
+
+            // Act
+            List<Arg> args = CLIArgs.SplitArgs(@"-s c:\abc\def\sol1 --environment Env1");
+
+            Assert.AreEqual(args[0].prefix, "-");
+            Assert.AreEqual(args[0].param, "s");
+            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
+
+            Assert.AreEqual(args[1].prefix, "--");
+            Assert.AreEqual(args[1].param, "environment");
+            Assert.AreEqual(args[1].value, "Env1");
+        }
+
 
     }
 }

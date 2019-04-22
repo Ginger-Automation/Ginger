@@ -7,9 +7,7 @@ using System;
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
-    {
-        
-
+    {        
         CLIHelper mCLIHelper = new CLIHelper();                
 
         public string Identifier
@@ -99,9 +97,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             mCLIHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:
-                            Reporter.ToLog(eLogLevel.ERROR, "UnKnown argument: '" + param + "'");
-                            // TODO: throw
-                             return;
+                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                            throw new ArgumentException("Unknown argument", param);
                     }
                 }
 
