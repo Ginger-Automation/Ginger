@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -64,6 +65,18 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void XShortcutDescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+        }
+
+        private void XBrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                DialogResult result = folderBrowserDialog.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    xCLIFolderTextBox.Text = folderBrowserDialog.SelectedPath;                    
+                }
+            }
         }
     }
 }

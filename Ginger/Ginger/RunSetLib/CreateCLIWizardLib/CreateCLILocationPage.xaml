@@ -22,11 +22,10 @@
         <StackPanel Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="2">
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
             <RadioButton x:Name="xDesktopRadioButton" Checked="XDesktopRadioButton_Checked" Margin="5">Desktop</RadioButton>
-                        
-            <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
+            <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
+            <StackPanel Orientation="Horizontal" Margin="60,-25,0,0">
                 <TextBox x:Name="xCLIFolderTextBox" Width="300"  Margin="15,0,0,0" Height="20"></TextBox>
-                <Button Width="40" Grid.Row="2">...</Button>
+                <Button x:Name="xBrowseButton" Click="XBrowseButton_Click" Width="40" Grid.Row="2">...</Button>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="2" Margin="5">
