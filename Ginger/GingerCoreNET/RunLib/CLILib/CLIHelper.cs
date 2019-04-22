@@ -62,7 +62,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void SetRunAnalyzer()
         {
+            // TODO: once analyzer moved to GingerCoreNET we can run it here 
             mRunsetExecutor.RunSetConfig.RunWithAnalyzer = RunAnalyzer;
+
+            //// Return true if there are analyzer issues
+            //private bool RunAnalyzer()
+            //{
+            //    //Running Runset Analyzer to look for issues
+            //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            //    try
+            //    {
+            //        //run analyzer
+            //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
+            //        if (analyzeRes == 1)
+            //        {
+            //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            //            return true;//cancel run because issues found
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+            //        return true;
+            //    }
+            //    return false;
+            //}
         }
 
         private void SelectRunset()

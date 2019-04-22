@@ -64,24 +64,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     Console.WriteLine("Ginger Version " + "???"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     break;
                 case "--help":
+                case "-h":
                     ShowCLIHelp();
-                    break;
+                    break;                                    
                 case "ConfigFile":
+                case "--configfile":
                     mCLIHandler = new CLIConfigFile();
                     string config = ReadFile(value);
                     mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
                     break;
-                case "ScriptFile":
+                case "--scriptfile":
                     mCLIHandler = new CLIScriptFile();
                     string script = ReadFile(value);
                     mCLIHandler.LoadContent(script, null);
                     break;
-                case "DynamicFile":
+                case "--dynamicfile":
                     mCLIHandler = new CLIDynamicXML();
                     string dynamicXML = ReadFile(value);
                     mCLIHandler.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
                     break;
-                case "Args":
+                case "--args":
                     mCLIHandler = new CLIArgs();
                     mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
                     break;
@@ -94,33 +96,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private void ShowCLIHelp()
         {
             // TODO:
-            Console.WriteLine("ConfigFile");
-            Console.WriteLine("ScriptFile");
-            // ....
+            Console.WriteLine("Ginger CLI options");
+            Console.WriteLine("Use -- for full argument name or - for short name");
+            Console.WriteLine(@"Use space to seperate arguments and value for example Ginger.exe --solution c:\ginger\solution1 --environment UAT");
+            Console.WriteLine(@"List of available arguments");
+            Console.WriteLine("--version Display ginger version");
+            Console.WriteLine("--help -h Display Ginger help");
+            Console.WriteLine("--configfile %filename% or ConfigFile=%filename% auto run as per detailed in %filename%");
+            Console.WriteLine("--scriptfile %scriptfilename% run GingerScript file");
+            Console.WriteLine("--args GingerScript with args");            
+
+            // TODO: add more details....
         }
 
-        //// Return true if there are analyzer issues
-        //private bool RunAnalyzer()
-        //{
-        //    //Running Runset Analyzer to look for issues
-        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-        //    try
-        //    {
-        //        //run analyzer
-        //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
-        //        if (analyzeRes == 1)
-        //        {
-        //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-        //            return true;//cancel run because issues found
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        
 
         private static string ReadFile(string fileName)
         {
