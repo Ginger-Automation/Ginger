@@ -92,7 +92,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             string shortcutAddress = Path.Combine(CLIFolder, ShortcutDescription + ".lnk");            
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
             shortcut.Description = ShortcutDescription;
-            shortcut.WorkingDirectory = WorkingDirectory;            
+            shortcut.WorkingDirectory = WorkingDirectory;
+            shortcut.TargetPath = Path.Combine(WorkingDirectory, CLIExecutor);
             shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   
             shortcut.Save();
 

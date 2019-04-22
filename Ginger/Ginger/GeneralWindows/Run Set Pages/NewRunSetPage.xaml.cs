@@ -741,6 +741,10 @@ namespace Ginger.Run
             {
                 if (sender is BusinessFlow)
                 {
+                    if (mCurrentBusinessFlowRunnerItem==null)
+                    {
+                        return;
+                    }
                     BusinessFlow changedBusinessflow = (BusinessFlow)sender;
                     if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                     {

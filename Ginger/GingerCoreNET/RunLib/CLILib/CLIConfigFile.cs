@@ -32,13 +32,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             WorkSpace.Instance.RunsetExecutor.InitRunners();
             runsetExecutor.RunRunset();
-            return true;           
+            return true;       //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-        bool ProcessConfig(string config)
-        {
-            return true;
-        }
        
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
@@ -46,10 +42,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
             sConfig += "RunAnalyzer=" + runsetExecutor.RunSetConfig.RunWithAnalyzer + Environment.NewLine;
+            sConfig += "ShowAutoRunWindow=" + mCLIHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             // TODO: add source control and all other options !!!!!!!!!!!
 
-             return sConfig;
+            return sConfig;
         }
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
@@ -90,15 +87,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "Solution":
                             mCLIHelper.Solution = value;                            
                             break;
-
                         case "Env":
                             mCLIHelper.Env = value;                        
                             break;
                         case "RunSet":
                             mCLIHelper.Runset = value;                            
                             break;
-                        case "ShowAutoRunWindow":                            
-                            Reporter.ToLog(eLogLevel.DEBUG, string.Format("NoAutoRunWindow {0}", value));
+                        case "ShowAutoRunWindow":                                                        
                             mCLIHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":

@@ -51,6 +51,7 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -377,18 +378,18 @@ namespace Ginger.Repository
             return 0;
         }
         
-        AutoRunWindow RP;
+        AutoRunWindow mAutoRunWindow;
         public void ShowAutoRunWindow()
-        {
+        {            
             // Run the AutoRunWindow on its own thread 
             Thread mGingerThread = new Thread(() =>
             {
-                RP = new AutoRunWindow();
-                RP.Show();
+                mAutoRunWindow = new AutoRunWindow();
+                mAutoRunWindow.Show();
 
                 GingerCore.General.DoEvents();                
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
-                Dispatcher.Run();
+                Dispatcher.Run();                                
             });
 
             // Makes the thread support message pumping 
@@ -396,6 +397,17 @@ namespace Ginger.Repository
             mGingerThread.SetApartmentState(ApartmentState.STA);
             mGingerThread.IsBackground = true;
             mGingerThread.Start();
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (mAutoRunWindow == null && stopwatch.ElapsedMilliseconds < 5000) // max 5 seconds
+            {
+                Thread.Sleep(100);
+            }
+
+            mAutoRunWindow.Dispatcher.Invoke(() => 
+            {
+                Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
+            });
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)

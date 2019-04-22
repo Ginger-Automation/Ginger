@@ -21,7 +21,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string scURL;
         public string scUser;
         public string scPswd;
-        public bool ShowAutoRunWindow = false; // default is false except in ConfigFile which is true to keep backword compatibility
+        
+
+        bool mShowAutoRunWindow = false; // default is false except in ConfigFile which is true to keep backword compatibility
+        public bool ShowAutoRunWindow
+        {
+            get
+            {
+                return mShowAutoRunWindow;
+            }
+            set
+            {
+                mShowAutoRunWindow = value;
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+            }  
+        }
         public bool RunAnalyzer { get; internal set; }
 
         RunsetExecutor mRunsetExecutor;
