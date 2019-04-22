@@ -138,7 +138,7 @@ namespace Ginger.SourceControl
                          else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
                          else if (SCFI.Path.ToUpper().Contains("ACTIVITIES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                          else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                         else if (SCFI.Path.ToUpper().Contains("REPORTTEMPLATE")) SCFI.FileType = "Report Template";
+                         
                          else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
                          else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
                      });
@@ -416,12 +416,7 @@ namespace Ginger.SourceControl
                 {
                     ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                     obj = variables.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }
-                else if (SCFI.FileType == "Report Template")
-                {
-                    ObservableList<ReportTemplate>  reports = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>();
-                    obj = reports.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }                
+                }               
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
