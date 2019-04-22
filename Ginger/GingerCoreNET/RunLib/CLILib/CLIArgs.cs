@@ -36,11 +36,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return Args;
         }
 
-        public bool Execute(RunsetExecutor runsetExecutor)
+        public void Execute(RunsetExecutor runsetExecutor)
         {
             WorkSpace.Instance.RunsetExecutor.InitRunners();
             runsetExecutor.RunRunset();
-            return true;
         }
         
 

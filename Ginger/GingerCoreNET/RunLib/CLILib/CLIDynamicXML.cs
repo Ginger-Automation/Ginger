@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
 using Ginger.Run;
 
@@ -30,9 +31,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return xml;            
         }
 
-        public bool Execute(RunsetExecutor runsetExecutor)
+        public void Execute(RunsetExecutor runsetExecutor)
         {
-            return true;
+            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            runsetExecutor.RunRunset();
         }
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)

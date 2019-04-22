@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -25,26 +26,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             SetCLIHandler(param, value);
 
+            try
+            {
+                Stopwatch stopwatch = Stopwatch.StartNew();
 
-            // RunAnalyzer()  - if selected
-            
-            mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
+                mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
+                stopwatch.Stop();
+                Reporter.ToLog(eLogLevel.DEBUG, "Execution Elapsed time: " + stopwatch.Elapsed);
 
-            // Wrap all with try catch 
-
-            //        if (mRunsetExecutor.RunSetExecutionStatus == eRunStatus.Passed)//TODO: improve
-
-            ////setting the exit code based on execution status
-            //if (result == 0)
-            //{
-            //    Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
-            //    Environment.ExitCode = 0;//success                    
-            //}
-            //else
-            //{
-            //    Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
-            //    Environment.ExitCode = 1;//failure
-            //}
+                if (WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus == Execution.eRunStatus.Passed)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
+                    Environment.ExitCode = 0; //success                    
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
+                    Environment.ExitCode = 1; //failure
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "Execution Failed with exception: " + ex.Message);
+                Reporter.ToLog(eLogLevel.DEBUG,"Exception occured during execution", ex);
+                Environment.ExitCode = 1; //failure
+            }
 
         }
 

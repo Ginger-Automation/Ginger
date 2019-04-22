@@ -39,10 +39,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return txt;
         }
 
-        public bool Execute(RunsetExecutor runsetExecutor)
+        public void Execute(RunsetExecutor runsetExecutor)
         {                                    
-            var rc = CodeProcessor.ExecuteNew(mScriptFile);
-            return true;
+            var rc = CodeProcessor.ExecuteNew(mScriptFile);            
         }
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
