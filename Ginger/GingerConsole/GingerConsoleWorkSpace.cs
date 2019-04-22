@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void SetSolutionSourceControl(Solution solution)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("SetSolutionSourceControl " + solution + " NOT IMPL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         public void ShowBusinessFlows()
