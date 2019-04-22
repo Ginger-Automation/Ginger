@@ -14,10 +14,10 @@
             <ColumnDefinition Width="300*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="330"/>
+            <RowDefinition Height="200"/>
             <RowDefinition Height="70"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="73*"/>
+            <RowDefinition Height="273*"/>
         </Grid.RowDefinitions>
 
         <TextBlock x:Name="xCLITypeHelpTextBlock" TextWrapping="Wrap" Grid.Column="1" Margin="45">CLI type explanation</TextBlock>
