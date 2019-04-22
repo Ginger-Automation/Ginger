@@ -40,6 +40,7 @@ namespace Ginger.BusinessFlowPages
             List<ListItemOperation> operationsListToAdd = new List<ListItemOperation>();
             ListItemOperation groupsManager = new ListItemOperation();
             groupsManager.ImageType = Amdocs.Ginger.Common.Enums.eImageType.ActivitiesGroup;
+            groupsManager.ImageSize = 17;
             groupsManager.ToolTip = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, prefixString: "Open", suffixString: "Manager");
             groupsManager.OperationHandler = OpenGroupsManagerHandler;
             operationsListToAdd.Add(groupsManager);

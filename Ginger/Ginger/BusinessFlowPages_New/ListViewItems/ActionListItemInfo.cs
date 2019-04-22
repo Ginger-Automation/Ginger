@@ -61,6 +61,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Act.Status);
         }
 
+        public string GetItemActiveField()
+        {
+            return nameof(Act.Active);
+        }
+
         public string GetItemIconField()
         {
             return null;

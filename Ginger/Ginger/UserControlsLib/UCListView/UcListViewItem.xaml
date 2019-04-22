@@ -13,7 +13,7 @@
         <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />
     </UserControl.Resources>
 
-    <Grid >
+    <Grid x:Name="xListItemGrid" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition x:Name="xExtraDetailsRow" Height="25"/>

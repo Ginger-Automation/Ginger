@@ -362,7 +362,7 @@ namespace Ginger.UserControlsLib.UCListView
                 foreach (ListItemOperation operation in operations)
                 {
                     ucButton operationBtn = new ucButton();
-                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
                     operationBtn.Margin = new Thickness(-5, 0, -5, 0);

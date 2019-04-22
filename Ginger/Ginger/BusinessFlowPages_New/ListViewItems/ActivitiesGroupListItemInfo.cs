@@ -53,6 +53,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(ActivitiesGroup.RunStatus);
         }
 
+        public string GetItemActiveField()
+        {
+            return null;
+        }
+
         public string GetItemIconField()
         {
             return null;//TODO: return ActivitiesGroup image type

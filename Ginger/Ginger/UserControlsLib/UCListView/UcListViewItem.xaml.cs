@@ -6,6 +6,7 @@ using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -94,7 +95,7 @@ namespace Ginger.UserControlsLib.UCListView
         public string ItemTagsField { get; set; }
         public string ItemIconField { get; set; }
         public string ItemExecutionStatusField { get; set; }
-
+        public string ItemActiveField { get; set; }
 
         public UcListViewItem()
         {
@@ -143,6 +144,7 @@ namespace Ginger.UserControlsLib.UCListView
             ItemTagsField = ItemInfo.GetItemTagsField();
             ItemIconField = ItemInfo.GetItemIconField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
+            ItemActiveField = ItemInfo.GetItemActiveField();
             SetItemNotifications();
             SetItemOperations();
 
@@ -259,6 +261,17 @@ namespace Ginger.UserControlsLib.UCListView
             if (!string.IsNullOrEmpty(ItemIconField))
             {
                 BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField);
+            }
+
+            if (!string.IsNullOrEmpty(ItemActiveField))
+            {
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                b.Source = Item;
+                b.Path = new PropertyPath(ItemActiveField);
+                b.Mode = BindingMode.OneWay;
+                b.Converter = new ActiveBackgroundColorConverter();
+                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
             }
 
             if (string.IsNullOrEmpty(ItemExecutionStatusField))
@@ -427,6 +440,26 @@ namespace Ginger.UserControlsLib.UCListView
                 xItemDescriptionTxtBlock.Text = "Failed to set description!;";
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Description", ex);
             }
+        }
+    }
+
+    public class ActiveBackgroundColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || ((bool)value) == false)
+            {
+                return System.Windows.Media.Brushes.LightGray;
+            }
+            else
+            {
+                return System.Windows.Media.Brushes.Transparent;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
