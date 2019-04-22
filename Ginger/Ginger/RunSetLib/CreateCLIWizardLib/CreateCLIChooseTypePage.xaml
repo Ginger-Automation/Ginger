@@ -48,7 +48,7 @@
         
         
 
-        <TextBox x:Name="xCLIContentTextBox" Grid.Row="3" Margin="15" IsReadOnly="True" Grid.ColumnSpan="2">Content</TextBox>
+        <TextBox x:Name="xCLIContentTextBox" Grid.Row="3" Margin="15" IsReadOnly="True" Grid.ColumnSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">Content</TextBox>
 
 
 
