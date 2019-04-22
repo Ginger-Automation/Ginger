@@ -38,6 +38,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
                     xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(CreateCLIWizard.ShortcutDescription));
+                    xDesktopRadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
                     if (string.IsNullOrEmpty(xShortcutDescriptionTextBox.Text))
@@ -50,6 +51,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
         }
 
-       
+        private void XDesktopRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.SetCLIFolder();
+        }
+
+        private void XFolderRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mCreateCLIWizard.SetCLIFolder(xCLIFolderTextBox.Text);
+        }
+
+        private void XShortcutDescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+        }
     }
 }

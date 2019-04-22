@@ -1,7 +1,9 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿using System;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.WizardLib;
+using GingerUtils;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 
@@ -30,33 +32,20 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 {
                     SolFolder = SolFolder.Substring(0, SolFolder.Length - 1);
                 }
-
-                //TODO: verify file name chars ok !!!!!!!!!!!
-
-                //char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
-
-                //if (RunSetConfig.Name.IndexOfAny(invalidChars) >= 0)
-                //{
-                //    foreach (char value in invalidChars)
-                //    {
-                //        // We should not change the Name !!!!!!!!!!!!!!!!
-                //        if (RunSetConfig.Name.Contains(value))
-                //        {
-                //            RunSetConfig.Name = RunSetConfig.Name.Replace(value, '_');
-                //        }
-                //    }
-                //}
-
-
-                string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + ShortcutDescription + ".Ginger." + SelectedCLI.FileExtension;
+                
+                string fileName = SolFolder + @"\Documents\RunSetShortCuts\" + FileUtils.RemoveInvalidChars(ShortcutDescription) + ".Ginger." + SelectedCLI.FileExtension;
 
                 if (!System.IO.Directory.Exists(SolFolder + @"\Documents\RunSetShortCuts\"))
                 {
                     System.IO.Directory.CreateDirectory(SolFolder + @"\Documents\RunSetShortCuts\");
                 }
+
+                
+
                 return fileName;
             }
         }
+        
 
         public CreateCLIWizard()
         {            
@@ -77,7 +66,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             CLIExecutor = "dotnet GingerConsole.dll";
         }
 
-
+        string CLIFolder;
         public override void Finish()
         {
             // string Env = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
@@ -86,7 +75,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             object shDesktop = (object)"Desktop";
             WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\" + ShortcutDescription + ".lnk";
+
+            if (string.IsNullOrEmpty(CLIFolder))
+            {
+                CLIFolder = (string)shell.SpecialFolders.Item(ref shDesktop);
+            }            
+
+            string shortcutAddress = CLIFolder + @"\" + ShortcutDescription + ".lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
             shortcut.Description = ShortcutDescription;             
             shortcut.TargetPath = CLIExecutor;
@@ -95,7 +90,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             shortcut.Save();
             Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
         }
+        internal void SetCLIFolder(string text = null)
+        {
+            CLIFolder = text;
+        }
 
+        
+        
+        
 
 
     }

@@ -16,21 +16,21 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut description</Label>
-            <TextBox x:Name="xShortcutDescriptionTextBox" Margin="15"></TextBox>
+            <TextBox x:Name="xShortcutDescriptionTextBox" TextChanged="XShortcutDescriptionTextBox_TextChanged" Margin="15"></TextBox>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="2">
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
-            <RadioButton IsChecked="True" Margin="5">Desktop</RadioButton>
-            <RadioButton Margin="5">Folder</RadioButton>
+            <RadioButton x:Name="xDesktopRadioButton" Checked="XDesktopRadioButton_Checked" Margin="5">Desktop</RadioButton>
+            <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
             <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="xCLIContentTextBox" Width="300"  Margin="15">C:\...</TextBox>
+                <TextBox x:Name="xCLIFolderTextBox" Width="300"  Margin="15">C:\...</TextBox>
                 <Button Width="40" Grid.Row="2">...</Button>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="2" Margin="5">
             <Label HorizontalAlignment="Left">CLI file name</Label>
-            <TextBox x:Name="xCLIFileName"  Height="20"></TextBox>
+            <TextBox x:Name="xCLIFileName" TextWrapping="Wrap" Height="50" ></TextBox>
         </StackPanel>
         
     </Grid>
