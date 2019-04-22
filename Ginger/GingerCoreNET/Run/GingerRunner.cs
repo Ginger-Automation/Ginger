@@ -1416,10 +1416,14 @@ namespace Ginger.Run
 
         private void executeErrorAndPopUpHandler(ObservableList<ErrorHandler> errorHandlerActivity)
         {
-            
+            Activity originalActivity = CurrentBusinessFlow.CurrentActivity;
+            Act orginalAction = (Act) CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+
             eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
             foreach (ErrorHandler errActivity in errorHandlerActivity)
             {
+                CurrentBusinessFlow.CurrentActivity = errActivity;
+                SetCurrentActivityAgent();
                 Stopwatch stE = new Stopwatch();
                 stE.Start();                
                 foreach (Act act in errActivity.Acts)
@@ -1441,6 +1445,9 @@ namespace Ginger.Run
                 stE.Stop();
                 errActivity.Elapsed = stE.ElapsedMilliseconds;
             }
+            CurrentBusinessFlow.CurrentActivity = originalActivity;
+            SetCurrentActivityAgent();
+            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginalAction;
         }
 
         private void PrepAction(Act action, ref eActionExecutorType ActExecutorType, Stopwatch st)
