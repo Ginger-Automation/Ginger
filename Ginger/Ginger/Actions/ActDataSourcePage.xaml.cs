@@ -1086,13 +1086,17 @@ namespace Ginger.Actions
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header=colHeader, Order = 0, WidthWeight = 10, BindingMode = BindingMode.OneWay });
                 }
-                else if (colName == "GINGER_LAST_UPDATE_DATETIME" || colName == "GINGER_LAST_UPDATED_BY")
+                else if (colName == "GINGER_LAST_UPDATE_DATETIME" )
                 {
-                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, BindingMode = BindingMode.OneWay });
+                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, Order = 2, WidthWeight = 20, BindingMode = BindingMode.OneWay  });
+                }
+                else if ( colName == "GINGER_LAST_UPDATED_BY")
+                {
+                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, Order = 3, WidthWeight = 20, BindingMode = BindingMode.OneWay });
                 }
                 else if (colName == "GINGER_USED")
                 {
-                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, ReadOnly =true, WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox});
+                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, Order = 1, ReadOnly =true, WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox});
                 }
                 else
                 {

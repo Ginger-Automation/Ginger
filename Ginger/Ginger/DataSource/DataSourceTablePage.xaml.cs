@@ -28,6 +28,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using System;
 
 namespace Ginger.DataSource
 {
@@ -43,7 +44,8 @@ namespace Ginger.DataSource
         Setter SetterError = new Setter(Border.BorderBrushProperty, Brushes.Red);
         Setter SetterBorderBold = new Setter(Border.BorderThicknessProperty, new Thickness(2, 2, 2, 2));
         Setter SetterBorder = new Setter(Border.BorderThicknessProperty, new Thickness(1, 1, 1, 1));
-       
+        int i = 1;
+        int count = 1;
         public DataSourceTablePage(DataSourceTable dsTableDetails)
         {
             InitializeComponent();
@@ -171,6 +173,7 @@ namespace Ginger.DataSource
             grdTableData.Title = "'" + mDSTableDetails.Name + "' Table Data";
             grdTableData.ShowViewCombo = Visibility.Collapsed;
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            
             int iColIndex = mColumnNames.Count - 1;
             
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -217,25 +220,54 @@ namespace Ginger.DataSource
                 }
                 if (sCol.Header.ToString() == "GINGER__USED")
                 {
-                    sCol.DisplayIndex = 1;                   
+                    try
+                    {
+                        sCol.DisplayIndex = i;
+                        i ++;
+                    }
+                    catch(Exception ex)
+                    {
+                        
+                        sCol.DisplayIndex = i++;
+                    }
                 }
                 if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
-                {                    
-                    sCol.DisplayIndex = iColIndex;
-                    iColIndex--;
+                {
+                    if (!(sCol.DisplayIndex == -1)&& sCol.DisplayIndex== null)
+                    {
+                        sCol.DisplayIndex = iColIndex;
+                        iColIndex--;
+                    }
+                    else
+                    {
+                        sCol.DisplayIndex = iColIndex;
+                        iColIndex--;
+                    }
                 }                    
             }          
         }
 
         private void SetGridData()
         {
-            mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput("Select * from " + mDSTableDetails.Name);
-            
-            grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
+            if ((mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase))
             {
-                Source = mDSTableDetails.DataTable
-            });
-            grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable,false);           
+                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput(mDSTableDetails.Name);
+
+                grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
+                {
+                    Source = mDSTableDetails.DataTable
+                });
+                grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
+            }
+            else
+            {
+                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput("Select * from " + mDSTableDetails.Name);
+                grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
+                {
+                    Source = mDSTableDetails.DataTable
+                });
+                grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
+            }
         }
         public void RefreshGrid()
         {
@@ -256,7 +288,18 @@ namespace Ginger.DataSource
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     dr[sColName] = "";
                 else if (sColName == "GINGER_ID")
-                    dr[sColName] = System.DBNull.Value;                        
+                {
+                    if (mDSTableDetails.DSC.DSType== DataSourceBase.eDSType.MSAccess)
+                    {
+                        dr[sColName] = System.DBNull.Value;
+                    }
+                    else
+                    {
+                        int count = mDSTableDetails.DataTable.Rows.Count;
+                        dr[sColName] = count + 1;
+                    }
+                    
+                }
             mDSTableDetails.DataTable.Rows.Add(dr);             
         }
 

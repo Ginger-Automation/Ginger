@@ -34,6 +34,8 @@ namespace GingerCore.DataSource
             // Access
             [EnumValueDescription("MS Access")]
             MSAccess,
+            [EnumValueDescription("LiteDataBase")]
+            LiteDataBase,
         }
 
         public  static class Fields
@@ -131,7 +133,7 @@ namespace GingerCore.DataSource
         public abstract void RemoveColumn(string tableName, string columnName);
 
         public abstract void DeleteTable(string tableName);
-
+        
         public abstract void RenameTable(string tableName, string newTableName);
 
         public abstract string CopyTable(string tableName);

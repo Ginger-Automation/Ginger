@@ -340,7 +340,17 @@ namespace GingerCore
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 DataSource.Init(DataSource.FileFullPath);
             }
-
+            else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
+            {
+                //if (DataSource.FileFullPath.StartsWith("~"))
+                //{
+                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
+                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
+                //}
+                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                DataSource.Init(DataSource.FileFullPath);
+                DataSource.DSC = DataSource;
+            }
             string Query = "";
             string updateQuery = "";
             List<string> mColList = null;
@@ -614,7 +624,7 @@ namespace GingerCore
                 else
                     mValueCalculated = "The Export Excel can be *.xlsx only";
             }
-            DataSource.Close();
+            //DataSource.Close();
         }
 
 

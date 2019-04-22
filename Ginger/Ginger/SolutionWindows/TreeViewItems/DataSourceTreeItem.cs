@@ -32,6 +32,7 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerWPF.WizardLib;
 using Ginger.DataSource.ImportExcelWizardLib;
+using GingerCoreNET.DataSource;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -180,7 +181,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+                    if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+                    {
+                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+                    }
+                    else
+                    {
+                        CreateTable(name, "GINGER_ID, GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME", DataSourceTable.eDSTableType.Customized);
+                    }
                 }
             }
             catch (Exception ex)
@@ -205,7 +213,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text",DataSourceTable.eDSTableType.GingerKeyValue);
+                    if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+                    {
+                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.GingerKeyValue);
+                    }
+                    else
+                    {
+                        CreateTable(name, "GINGER_ID, GINGER_KEY_NAME, GINGER_KEY_VALUE, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME", DataSourceTable.eDSTableType.GingerKeyValue);
+                    }
                 }
             }
             catch (Exception ex)
@@ -329,22 +344,43 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }        
         
         private void Duplicate(object sender, RoutedEventArgs e)
-        {   
-            AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
-            if (dsDetailsCopy == null)
-            { 
-                return;
+        {
+            if (DSDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                if (dsDetailsCopy == null)
+                {
+                    return;
+                }
+                //TODO: use Path.Combine instead of string concat
+                dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
+                dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
+
+                if (File.Exists(dsDetailsCopy.FileFullPath))
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
+
+                File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
+
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
             }
-            //TODO: use Path.Combine instead of string concat
-            dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
-            dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
+            else
+            {
+                GingerLiteDB dsDetailsCopy = (GingerLiteDB)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                if (dsDetailsCopy == null)
+                {
+                    return;
+                }
+                //TODO: use Path.Combine instead of string concat
+                dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
+                dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
 
-            if (File.Exists(dsDetailsCopy.FileFullPath))
-            { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
+                if (File.Exists(dsDetailsCopy.FileFullPath))
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
 
-            File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);            
+                File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
 
-            (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+            }
 
         }
         private void Rename(object sender, RoutedEventArgs e)
@@ -362,6 +398,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
                 //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, DSDetails.FileFullPath);
                 //}
+                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
+
+                ADC.Init(DSDetails.FileFullPath);
+                DSDetails.DSC = ADC;
+            }
+
+            if (DSDetails.DSType == DataSourceBase.eDSType.LiteDataBase)
+            {
+                DataSourceBase ADC;
+                ADC = new GingerLiteDB();
+                ADC.DSType = DataSourceBase.eDSType.LiteDataBase;
+              
                 DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
 
                 ADC.Init(DSDetails.FileFullPath);
