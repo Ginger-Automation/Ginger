@@ -1,4 +1,5 @@
-﻿using GingerWPF.WizardLib;
+﻿using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,6 +23,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
                     xGingerEXERadioButton.IsChecked = true;
+                    xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));   
                     break;
                 case EventType.Active:
                     //

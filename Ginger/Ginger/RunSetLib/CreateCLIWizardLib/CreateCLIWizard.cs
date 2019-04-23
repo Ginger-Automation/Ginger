@@ -16,14 +16,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         //public RunSetConfig RunSetConfig { get; set; }
         public string FileContent { get; set; }  
-        public bool DownloadSolutionFromSourceControl { get; set; }
-        public bool RunAnalyzer { get; set; }
+        public bool DownloadSolutionFromSourceControl { get; set; }        
 
         public ICLI SelectedCLI;
 
         public string CLIExecutor { get; set; }  // Ginger.exe or dotnet GingerConsole.dll
 
+        
         public string ShortcutDescription { get; set; }
+
+        public eAppReporterLoggingLevel AppLoggingLevel { get; set; } =  eAppReporterLoggingLevel.Debug;
+
+        public bool RunAnalyzer { get; internal set; }
+
         public string CLIFileName
         {
             get
@@ -44,6 +49,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 return fileName;
             }
         }
+
         
 
         public CreateCLIWizard()

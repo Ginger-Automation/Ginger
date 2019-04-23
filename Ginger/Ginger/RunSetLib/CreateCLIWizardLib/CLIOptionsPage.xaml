@@ -31,11 +31,7 @@
 
             <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal">
                 <Label>Debug Level</Label>
-                <ComboBox Width="100">
-                    <ComboBoxItem>Full</ComboBoxItem>
-                    <ComboBoxItem>Minimal</ComboBoxItem>
-                    <ComboBoxItem>Errors Only</ComboBoxItem>
-                </ComboBox>
+                <ComboBox x:Name="xAppLoggingLevelComboBox" Width="100"></ComboBox>
             </StackPanel>
         </StackPanel>
         

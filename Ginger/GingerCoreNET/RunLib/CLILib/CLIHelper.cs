@@ -18,10 +18,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string Solution;
         public string Env;
         public string Runset;
-        public string scURL;
-        public string scUser;
-        public string scPswd;
-        
+        public string SourceControlURL;
+        public string SourcecontrolUser;
+        public string sourceControlPass;
+        public eAppReporterLoggingLevel AppLoggingLevel;
+
 
         bool mShowAutoRunWindow = false; // default is false except in ConfigFile which is true to keep backword compatibility
         public bool ShowAutoRunWindow
@@ -36,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
             }  
         }
-        public bool RunAnalyzer { get; internal set; }
+        public bool RunAnalyzer { get; set; }
 
         RunsetExecutor mRunsetExecutor;
         UserProfile mUserProfile;        
@@ -44,12 +45,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public void ProcessArgs(RunsetExecutor runsetExecutor)
         {
             mRunsetExecutor = runsetExecutor;
+            SetDebugLevel();
             DownloadSolutionFromSourceControl();
             OpenSolution();
             SelectEnv();
             SelectRunset();
             SetRunAnalyzer();
             HandleAutoRunWindow();
+        }
+
+        private void SetDebugLevel()
+        {            
+            Reporter.AppLoggingLevel = AppLoggingLevel;
         }
 
         private void HandleAutoRunWindow()
@@ -124,18 +131,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void DownloadSolutionFromSourceControl()
         {
-            if (scURL != null && scUser != "" && scPswd != null)
+            if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                if (scURL.IndexOf(".git") != -1)
+                if (SourceControlURL.IndexOf(".git") != -1)
                 {
                     // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(scURL.Substring(0, scURL.IndexOf(".git") + 4));
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL.Substring(0, SourceControlURL.IndexOf(".git") + 4));
                 }
                 else
                 {
                     // App.DownloadSolution(value);
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(scURL);
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
                 }
             }
         }
@@ -144,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
             mUserProfile.SourceControlPass = value;
-            scPswd = value;
+            sourceControlPass = value;
         }
 
         internal void PasswordEncrypted(string value)
@@ -208,7 +215,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
 
             mUserProfile.SourceControlUser = value;
-            scUser = value;
+            SourcecontrolUser = value;
         }
 
         internal void SetSourceControlURL(string value)
@@ -226,7 +233,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
             }
             mUserProfile.SourceControlURL = value;
-            scURL = value;
+            SourceControlURL = value;
         }
 
         internal void SetSourceControlType(string value)
