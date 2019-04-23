@@ -66,6 +66,12 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Act.Active);
         }
 
+        public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
+        {
+            SetItem(item);
+            return null;
+        }
+
         public string GetItemIconField()
         {
             return null;
@@ -172,7 +178,6 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(sender);
             mAction.Active = !mAction.Active;
         }
-
     }
 
 

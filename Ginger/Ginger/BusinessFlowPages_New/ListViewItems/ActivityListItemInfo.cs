@@ -62,6 +62,23 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Activity.Active);
         }
 
+        public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
+        {
+            SetItem(item);
+            if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+            {
+                return new ListItemUniqueIdentifier() { Color = mActivity.GroupColor, Tooltip = mActivity.ActivitiesGroupID };
+            }
+            else if (mActivity.AddDynamicly)
+            {
+                return new ListItemUniqueIdentifier() { Color = "Plum", Tooltip = "Added Dynamically from Shared Repository" };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public string GetItemIconField()
         {
             return null;//TODO: return Activity image type

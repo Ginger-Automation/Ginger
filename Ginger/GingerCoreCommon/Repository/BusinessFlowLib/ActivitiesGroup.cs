@@ -364,5 +364,25 @@ namespace GingerCore.Activities
                 return nameof(this.Name);
             }
         }
+
+        private string mGroupColor;
+        [IsSerializedForLocalRepository]
+        public string GroupColor
+        {
+            get { return mGroupColor; }
+            set
+            {
+                if (mGroupColor != value)
+                {
+                    mGroupColor = value;
+
+                    foreach (ActivityIdentifiers aIdent in ActivitiesIdentifiers)
+                        if (aIdent.IdentifiedActivity != null)
+                            aIdent.IdentifiedActivity.GroupColor = mGroupColor;
+
+                    OnPropertyChanged(nameof(GroupColor));
+                }
+            }
+        }
     }
 }

@@ -69,6 +69,7 @@ namespace Ginger.Activities
 
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header="Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.GroupColor), Header = "Group Color", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["xGroupColorDataTemp"] });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
                 defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.TestSuiteTitle, Header = "Test Suite Name", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.AutomationPrecentage, Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly=true });

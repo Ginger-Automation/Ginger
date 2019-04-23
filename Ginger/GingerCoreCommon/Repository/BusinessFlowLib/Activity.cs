@@ -342,6 +342,17 @@ namespace GingerCore
             set { mActivitiesGroupID = value; OnPropertyChanged(Fields.ActivitiesGroupID); } 
         }
 
+        private String mGroupColor;
+        /// <summary>
+        /// Used to store the Activities Group color which this Activity is belong to in the Business Flow
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public String GroupColor
+        {
+            get { return mGroupColor; }
+            set { mGroupColor = value; OnPropertyChanged(nameof(GroupColor)); }
+        }
+
 
         private string mTargetApplication;
         [IsSerializedForLocalRepository]        
