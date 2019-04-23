@@ -10,6 +10,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
         [XmlAttribute]
         public string Name { get; set; }
 
-        public List<SetBusinessFlowVariable> Variables { get; set; }
+        public List<SetBusinessFlowVariable> Variables { get; set; } = new List<SetBusinessFlowVariable>();
     }
 }

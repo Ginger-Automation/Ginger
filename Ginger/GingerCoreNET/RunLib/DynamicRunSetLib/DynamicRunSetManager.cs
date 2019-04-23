@@ -62,19 +62,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                 gingerRunner.Name = r.Name;
                 runSetConfig.GingerRunners.Add(gingerRunner);
                 // Add BFs
-                foreach (AddBusinessFlow abf in r.BusinessFlows)
+                foreach (AddBusinessFlow addBusinessFlow in r.BusinessFlows)
                 {
                     // find the BF
                     // BusinessFlow businessFlow = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == abf.Name select x).SingleOrDefault();
                     BusinessFlowRun businessFlowRun = new BusinessFlowRun();
-                    businessFlowRun.BusinessFlowName = abf.Name;
+                    businessFlowRun.BusinessFlowName = addBusinessFlow.Name;
                     // TODO: if null !!!
                     gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);                    
 
                     // set BF Variables
-                    foreach (SetBusinessFlowVariable sv in abf.Variables)
+                    foreach (SetBusinessFlowVariable setBusinessFlowVariable in addBusinessFlow.Variables)
                     {
-                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { Name = sv.Name, Value = sv.Value });                        
+                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { Name = setBusinessFlowVariable.Name, Value = setBusinessFlowVariable.Value });                        
                     }
                 }
             }            
@@ -102,6 +102,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                     AddBusinessFlow addBusinessFlow = new AddBusinessFlow() { Name = businessFlowRun.BusinessFlowName };
                     // TODO: add vars override
                     addRunner.BusinessFlows.Add(addBusinessFlow);
+
+                    foreach(VariableBase variableBase in businessFlowRun.BusinessFlowCustomizedRunVariables)
+                    {
+                        SetBusinessFlowVariable setBusinessFlowVariable = new SetBusinessFlowVariable() { Name = variableBase.Name, Value = variableBase.Value };
+                        addBusinessFlow.Variables.Add(setBusinessFlowVariable);
+                    }
                 }                
             }
             string content = GetContent(dynamicRunSet);
