@@ -27,12 +27,12 @@
             </Expander.Header>
             <Expander.Content>
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="127*"/>
-                        <ColumnDefinition Width="322*"/>
-                    </Grid.ColumnDefinitions>
-                    <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="127*"/>
+                        <RowDefinition Height="322*"/>
+                    </Grid.RowDefinitions>
+                    <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
+                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Grid.Row="1" />
                 </Grid>
             </Expander.Content>
         </Expander>

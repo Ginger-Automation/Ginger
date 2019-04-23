@@ -230,19 +230,19 @@ namespace Ginger.UserControlsLib
                 WindowsComboBox.ItemsSource = list;
                 WindowsComboBox.DisplayMemberPath = "WinInfo";
 
-                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+                //AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
 
-                if (ActiveWindow != null)
-                {
-                    foreach (AppWindow w in list)
-                    {
-                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
-                        {
-                            WindowsComboBox.SelectedValue = w;
-                            return;
-                        }
-                    }
-                }
+                //if (ActiveWindow != null)
+                //{
+                //    foreach (AppWindow w in list)
+                //    {
+                //        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                //        {
+                //            WindowsComboBox.SelectedValue = w;
+                //            return;
+                //        }
+                //    }
+                //}
 
                 //TODO: If no selection then select the first if only one window exist in list
                 if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!

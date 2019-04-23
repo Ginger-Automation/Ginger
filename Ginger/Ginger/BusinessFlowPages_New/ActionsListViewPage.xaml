@@ -13,7 +13,7 @@
     </Page.Resources>
 
     <Grid>
-        <userControlsLib1:UcListView x:Name="xActionsListView"/>
+        <userControlsLib1:UcListView x:Name="xActionsListView" />
         
         <!--<userControlsLib1:UcListView x:Name="xActionsListView" >
             --><!--<xlis>

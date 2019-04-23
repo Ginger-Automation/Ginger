@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Specialized;
 using System.Windows;
@@ -11,12 +12,20 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl
+    public partial class UcListView : UserControl, IDragDrop
     {
         IObservableList mObjList;
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
+
+        // DragDrop event handler
+        public event EventHandler ItemDropped;
+        public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
+
+        public event EventHandler PreviewDragItem;
+        public delegate void PreviewDragItemEventHandler(DragInfo DragInfo);
+
         private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
@@ -350,6 +359,64 @@ namespace Ginger.UserControlsLib.UCListView
             listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
             dataTemp.VisualTree = listItemFac;
             xListView.ItemTemplate = dataTemp;
+        }
+
+        public void StartDrag(DragInfo Info)
+        {
+            // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
+            var row = (DataGridRow)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
+
+            if (row != null)
+            {
+                //no drag if we are in the middle of Edit
+                if (row.IsEditing) return;
+
+                // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
+                if (Info.OriginalSource.GetType() != typeof(TextBlock))
+                {
+                    return;
+                }
+
+                Info.DragSource = this;
+                Info.Data = row.Item;
+                //TODO: Do not use REpo since it will move to UserControls2
+                // Each object dragged should override ToString to return nice text for header                
+                Info.Header = row.Item.ToString();
+            }
+        }
+
+        void IDragDrop.DragOver(DragInfo Info)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDragDrop.DragEnter(DragInfo Info)
+        {
+            Info.DragTarget = this;
+
+            EventHandler handler = PreviewDragItem;
+            if (handler != null)
+            {
+                handler(Info, new EventArgs());
+            }
+        }
+
+        void IDragDrop.Drop(DragInfo Info)
+        {
+            // first check if we did drag and drop in the same grid then it is a move - reorder
+            if (Info.DragSource == this)
+            {
+                if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+                return;
+            }
+
+            // OK this is a dropped from external
+            EventHandler handler = ItemDropped;
+            if (handler != null)
+            {
+                handler(Info, new EventArgs());
+            }
+            // TODO: if in same grid then do move, 
         }
     }
 

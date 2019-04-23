@@ -17,11 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
+using GingerWPF.DragDropLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -80,6 +83,9 @@ namespace GingerWPF.BusinessFlowsLib
 
             xActionsListView.DataSourceList = mActivity.Acts;
             //xActionsListView.List.ItemsSource = mActivity.Acts;
+
+            xActionsListView.ItemDropped += grdActions_ItemDropped;
+            xActionsListView.PreviewDragItem += grdActions_PreviewDragItem;
         }
 
         public void UpdateActivity(Activity activity)
@@ -100,6 +106,34 @@ namespace GingerWPF.BusinessFlowsLib
                     //xActionsListView.List.ItemsSource = null;
                 }
                 //xActionsListView.List.Items.Refresh();
+            }
+        }
+
+        // Drag Drop handlers
+        private void grdActions_PreviewDragItem(object sender, EventArgs e)
+        {
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
+            {
+                // OK to drop                         
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+            }
+        }
+
+        private void grdActions_ItemDropped(object sender, EventArgs e)
+        {
+            Act a = (Act)((DragInfo)sender).Data;
+            Act instance = (Act)a.CreateInstance(true);
+            mActivity.Acts.Add(instance);
+
+            int selectedActIndex = -1;
+            ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
+            if (actsList.CurrentItem != null)
+            {
+                selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
+            }
+            if (selectedActIndex >= 0)
+            {
+                actsList.Move(actsList.Count - 1, selectedActIndex + 1);
             }
         }
 

@@ -23,12 +23,15 @@ using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -54,16 +57,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public ActionsLibraryNavPage(Context context)
         {
             InitializeComponent();
-            SetActionsGridsView();
             mContext = context;
+            mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
+            SetActionsGridsView();
             LoadGridData();
             LoadPluginsActions();
 
-            mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
+
+
         }
 
         private void LoadPluginsActions()
@@ -132,6 +137,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
+            //xPlatformActionsListView.DataSourceList = platformActions;
             PlatformActionsGrid.DataSourceList = platformActions;
             GeneralActionsGrid.DataSourceList = generalActions;
             LegacyActionsGrid.DataSourceList = LegacyActions;
@@ -198,11 +204,65 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetActionsGridsView()
         {
+            //SetActionsListView(xPlatformActionsListView);
             SetActionsGridView(PlatformActionsGrid);
             SetActionsGridView(GeneralActionsGrid);
             SetActionsGridView(LegacyActionsGrid);
             SetActionsGridView(PlugInsActionsGrid);
         }
+
+        private void SetActionsListView(UcListView xActionsListView)
+        {
+            xActionsListView.Title = "Actions";
+            xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+
+            ////TODO: move DataTemplate into ListView
+            //DataTemplate dataTemp = new DataTemplate();
+            //FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+            ////listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
+            //listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+            //listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
+            //dataTemp.VisualTree = listItemFac;
+            //xActionsListView.List.ItemTemplate = dataTemp;
+
+            xActionsListView.SetDefaultListDataTemplate(new ActionListItemInfo(mContext));
+
+            xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
+
+            xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
+            //xActionsListView.List.ItemsSource = mActivity.Acts;
+
+            //xActionsListView.ItemDropped += grdActions_ItemDropped;
+            //xActionsListView.PreviewDragItem += grdActions_PreviewDragItem;
+        }
+        // Drag Drop handlers
+        private void grdActions_PreviewDragItem(object sender, EventArgs e)
+        {
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
+            {
+                // OK to drop                         
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+            }
+        }
+
+        private void grdActions_ItemDropped(object sender, EventArgs e)
+        {
+            Act a = (Act)((DragInfo)sender).Data;
+            Act instance = (Act)a.CreateInstance(true);
+            mContext.Activity.Acts.Add(instance);
+
+            int selectedActIndex = -1;
+            ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
+            if (actsList.CurrentItem != null)
+            {
+                selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
+            }
+            if (selectedActIndex >= 0)
+            {
+                actsList.Move(actsList.Count - 1, selectedActIndex + 1);
+            }
+        }
+
 
         private void SetActionsGridView(ucGrid actionsGrid)
         {
@@ -376,12 +436,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ActDescriptionFrm.Content = null;
             if (ActionsTabs.SelectedContent != null)
             {
-                if (((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
+                if (ActionsTabs.SelectedContent.GetType() == typeof(UcListView))
                 {
-                    Act a = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
+                    if (((UcListView)ActionsTabs.SelectedContent).CurrentItem != null)
+                    {
+                        Act a = (Act)(((UcListView)ActionsTabs.SelectedContent).CurrentItem);
 
-                    ActDescriptionPage desPage = new ActDescriptionPage(a);
-                    ActDescriptionFrm.Content = desPage;
+                        ActDescriptionPage desPage = new ActDescriptionPage(a);
+                        ActDescriptionFrm.Content = desPage;
+                    }
+                }
+                else
+                {
+                    if (((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
+                    {
+                        Act a = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
+
+                        ActDescriptionPage desPage = new ActDescriptionPage(a);
+                        ActDescriptionFrm.Content = desPage;
+                    }
                 }
             }
         }

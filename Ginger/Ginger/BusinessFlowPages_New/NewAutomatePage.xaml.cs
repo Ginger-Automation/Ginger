@@ -78,7 +78,6 @@ namespace GingerWPF.BusinessFlowsLib
             LoadBusinessFlowToAutomate(businessFlow);
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);            
-            xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
             BindEnvsCombo();
         }
 
@@ -226,9 +225,13 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mBusinessFlow.Activities.Count > 0)
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
+                        if (mContext.Activity == null)
+                        {
+                            mContext.Activity = mBusinessFlow.CurrentActivity;
+                        }
                         //xCurrentActivityFrame.Content = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);  // TODO: use binding? or keep each activity page                        
                     }
-                    SetActivityEditPage();
+                        SetActivityEditPage();
 
                     mRunner.BusinessFlows.Add(mBusinessFlow);
                     mRunner.CurrentBusinessFlow = mBusinessFlow;
@@ -238,6 +241,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();
+                    xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
                 }
             }
         }
