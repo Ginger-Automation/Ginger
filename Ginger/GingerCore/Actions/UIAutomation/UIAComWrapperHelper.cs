@@ -2521,7 +2521,7 @@ namespace GingerCore.Drivers
         {
             AutomationElement element = (AutomationElement)obj;
 
-            if (true)
+            if (element.Current.IsEnabled)
             {
 
                //TODO: Instead of using flags, use Autoresetevent
