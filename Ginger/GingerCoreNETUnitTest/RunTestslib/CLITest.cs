@@ -87,7 +87,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         [TestMethod]
-        public void ConfigFile()
+        public void CLIConfigFile()
         {
             // Arrange
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
@@ -105,7 +105,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" , scriptFile });
+            CLI.ExecuteArgs(new string[] { "ConfigFile=" + scriptFile });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
