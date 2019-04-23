@@ -191,7 +191,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.ActivitiesGroup:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListAlt);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Group);
                     break;
                 case eImageType.Activity:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ListUl);

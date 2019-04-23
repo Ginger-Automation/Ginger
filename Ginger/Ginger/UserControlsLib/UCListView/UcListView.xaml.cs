@@ -1,7 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using GingerWPF.DragDropLib;
+using Amdocs.Ginger.UserControls;
+using GingerCore.GeneralLib;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -190,11 +192,11 @@ namespace Ginger.UserControlsLib.UCListView
         {
             get
             {
-                return xListOperationsBarPnl.Visibility;
+                return xAllListOperationsBarPnl.Visibility;
             }
             set
             {
-                xListOperationsBarPnl.Visibility = value;
+                xAllListOperationsBarPnl.Visibility = value;
             }
         }
 
@@ -361,62 +363,48 @@ namespace Ginger.UserControlsLib.UCListView
             xListView.ItemTemplate = dataTemp;
         }
 
-        public void StartDrag(DragInfo Info)
+        public void AddListOperations(List<ListItemOperation> operations)
         {
-            // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
-            var row = (DataGridRow)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
-
-            if (row != null)
+            if (operations != null && operations.Count > 0)
             {
-                //no drag if we are in the middle of Edit
-                if (row.IsEditing) return;
-
-                // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
-                if (Info.OriginalSource.GetType() != typeof(TextBlock))
+                foreach (ListItemOperation operation in operations)
                 {
-                    return;
+                    ucButton operationBtn = new ucButton();
+                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
+                    operationBtn.ButtonImageType = operation.ImageType;
+                    operationBtn.ToolTip = operation.ToolTip;
+                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                    operationBtn.ButtonImageHeight = 18;
+                    operationBtn.ButtonImageWidth = 18;
+                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        operationBtn.ButtonImageForground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    operationBtn.Click += operation.OperationHandler;
+                    operationBtn.Tag = xListView.ItemsSource;
+
+                    xListCommonOperationsPnl.Children.Add(operationBtn);
                 }
-
-                Info.DragSource = this;
-                Info.Data = row.Item;
-                //TODO: Do not use REpo since it will move to UserControls2
-                // Each object dragged should override ToString to return nice text for header                
-                Info.Header = row.Item.ToString();
             }
-        }
-
-        void IDragDrop.DragOver(DragInfo Info)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDragDrop.DragEnter(DragInfo Info)
-        {
-            Info.DragTarget = this;
-
-            EventHandler handler = PreviewDragItem;
-            if (handler != null)
-            {
-                handler(Info, new EventArgs());
-            }
-        }
-
-        void IDragDrop.Drop(DragInfo Info)
-        {
-            // first check if we did drag and drop in the same grid then it is a move - reorder
-            if (Info.DragSource == this)
-            {
-                if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
-                return;
-            }
-
-            // OK this is a dropped from external
-            EventHandler handler = ItemDropped;
-            if (handler != null)
-            {
-                handler(Info, new EventArgs());
-            }
-            // TODO: if in same grid then do move, 
         }
     }
 

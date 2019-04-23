@@ -14,9 +14,15 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemDescriptionField();
 
+        string GetItemGroupField();
+
+        string GetItemTagsField();
+
         string GetItemIconField();
 
         string GetItemExecutionStatusField();
+
+        string GetItemActiveField();
 
         List<ListItemNotification> GetNotificationsList(object item);
 

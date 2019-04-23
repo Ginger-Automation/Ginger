@@ -1,7 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
+using Ginger.Activities;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -31,38 +33,32 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
-            ////TODO: move DataTemplate into ListView
-            //DataTemplate dataTemp = new DataTemplate();
-
-            //FrameworkElementFactory stackPnlFac = new FrameworkElementFactory(typeof(StackPanel));
-
-            //FrameworkElementFactory activitiesGroupListItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            //activitiesGroupListItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            //activitiesGroupListItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActivitiesGroupListItemInfo(mContext));
-            //stackPnlFac.AppendChild(activitiesGroupListItemFac);
-
-            //FrameworkElementFactory activitiesListViewFac = new FrameworkElementFactory(typeof(UcListView));
-            //activitiesListViewFac.SetValue(MarginProperty, new Padding(10, 0, 0, 0));
-            //activitiesGroupListItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            //activitiesGroupListItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActivitiesGroupListItemInfo(mContext));
-            //stackPnlFac.AppendChild(activitiesListViewFac);
-
-
-            //dataTemp.VisualTree = stackPnlFac;
-            //xActivitiesListView.List.ItemTemplate = dataTemp;
-            //xActivitiesListView.DataSourceList = mBusinessFlow.ActivitiesGroups;
-
-
             xActivitiesListView.SetDefaultListDataTemplate(new ActivityListItemInfo(mContext));
 
             xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;
 
+            List<ListItemOperation> operationsListToAdd = new List<ListItemOperation>();
+            ListItemOperation groupsManager = new ListItemOperation();
+            groupsManager.ImageType = Amdocs.Ginger.Common.Enums.eImageType.ActivitiesGroup;
+            groupsManager.ImageSize = 17;
+            groupsManager.ToolTip = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, prefixString: "Open", suffixString: "Manager");
+            groupsManager.OperationHandler = OpenGroupsManagerHandler;
+            operationsListToAdd.Add(groupsManager);
+            xActivitiesListView.AddListOperations(operationsListToAdd);
+
             xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+        }
+
+        private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroupsManagerPage activitiesGroupsManagerPage = new ActivitiesGroupsManagerPage(mBusinessFlow);
+            activitiesGroupsManagerPage.ShowAsWindow();
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
             mBusinessFlow = updateBusinessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             if (mBusinessFlow != null)
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;

@@ -1,9 +1,13 @@
-﻿using Amdocs.Ginger.Common.Enums;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
-using GingerWPF.UserControlsLib.UCTreeView;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -68,7 +72,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             set
             {
-                SetValue(ItemInfoProperty, value);          
+                SetValue(ItemInfoProperty, value);
                 //ItemInfo.SetItem(Item);
                 ConfigItem();
             }
@@ -87,9 +91,11 @@ namespace Ginger.UserControlsLib.UCListView
 
         public string ItemNameField { get; set; }
         public string ItemDescriptionField { get; set; }
+        public string ItemGroupField { get; set; }
+        public string ItemTagsField { get; set; }
         public string ItemIconField { get; set; }
         public string ItemExecutionStatusField { get; set; }
-
+        public string ItemActiveField { get; set; }
 
         public UcListViewItem()
         {
@@ -134,8 +140,11 @@ namespace Ginger.UserControlsLib.UCListView
         {
             ItemNameField = ItemInfo.GetItemNameField();
             ItemDescriptionField = ItemInfo.GetItemDescriptionField();
+            ItemGroupField = ItemInfo.GetItemGroupField();
+            ItemTagsField = ItemInfo.GetItemTagsField();
             ItemIconField = ItemInfo.GetItemIconField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
+            ItemActiveField = ItemInfo.GetItemActiveField();
             SetItemNotifications();
             SetItemOperations();
 
@@ -232,20 +241,37 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetItemBindings()
         {
-            BindingHandler.ObjFieldBinding(xItemNameTxtBlock, TextBlock.TextProperty, Item, ItemNameField);
+            if (Item is RepositoryItemBase)
+            {
+                ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+            }
+            //BindingHandler.ObjFieldBinding(xItemNameTxtBlock, TextBlock.TextProperty, Item, ItemNameField);
+            SetItemFullName();
 
-            if (string.IsNullOrEmpty(ItemDescriptionField))
-            {
-                xItemDescriptionTxtBlock.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                BindingHandler.ObjFieldBinding(xItemDescriptionTxtBlock, TextBlock.TextProperty, Item, ItemDescriptionField, BindingMode.OneWay);
-            }
+            //if (string.IsNullOrEmpty(ItemDescriptionField))
+            //{
+            //    xItemDescriptionTxtBlock.Visibility = Visibility.Collapsed;
+            //}
+            //else
+            //{
+            //    BindingHandler.ObjFieldBinding(xItemDescriptionTxtBlock, TextBlock.TextProperty, Item, ItemDescriptionField, BindingMode.OneWay);
+            //}
+            SetItemDescription();
 
             if (!string.IsNullOrEmpty(ItemIconField))
             {
                 BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField);
+            }
+
+            if (!string.IsNullOrEmpty(ItemActiveField))
+            {
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                b.Source = Item;
+                b.Path = new PropertyPath(ItemActiveField);
+                b.Mode = BindingMode.OneWay;
+                b.Converter = new ActiveBackgroundColorConverter();
+                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
             }
 
             if (string.IsNullOrEmpty(ItemExecutionStatusField))
@@ -256,8 +282,19 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, ItemExecutionStatusField);
             }
-        }        
-        
+        }
+
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == ItemNameField || e.PropertyName == ItemGroupField)
+            {
+                SetItemFullName();
+            }
+            else if (e.PropertyName == ItemDescriptionField || e.PropertyName == ItemTagsField)
+            {
+                SetItemDescription();
+            }
+        }
 
         private void xDetailViewBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -314,6 +351,115 @@ namespace Ginger.UserControlsLib.UCListView
                 //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
                 xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
             }
+        }
+
+        private void SetItemFullName()
+        {
+            try
+            {
+                xItemNameTxtBlock.Text = string.Empty;
+                string fullname = string.Empty;
+                if (!string.IsNullOrEmpty(ItemNameField))
+                {
+                    Object name = Item.GetType().GetProperty(ItemNameField).GetValue(Item);
+                    if (name != null)
+                    {                        
+                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                        {
+                            FontSize = 15,
+                            Text = name.ToString() + " "
+                        });
+
+                        fullname += name;
+                    }
+                }
+                if (!string.IsNullOrEmpty(ItemGroupField))
+                {
+                    Object group = Item.GetType().GetProperty(ItemGroupField).GetValue(Item);
+                    if (group != null)
+                    {
+                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                        {
+                            FontSize = 10,
+                            Text = string.Format("[{0}]", group.ToString())
+                    });
+
+                        fullname += string.Format("[{0}]", group.ToString());
+                    }
+                }
+
+                xItemNameTxtBlock.ToolTip = fullname;
+            }
+            catch (Exception ex)
+            {
+                xItemDescriptionTxtBlock.Text = "Failed to set Name!;";
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Name", ex);
+            }
+        }
+
+        private void SetItemDescription()
+        {
+            try
+            {
+                string fullDesc = string.Empty;
+                if (!string.IsNullOrEmpty(ItemDescriptionField))
+                {
+                    Object desc = Item.GetType().GetProperty(ItemDescriptionField).GetValue(Item);
+                    if (desc != null)
+                    {
+                        fullDesc += desc.ToString() + " ";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(ItemTagsField))
+                {
+                    Object tags = Item.GetType().GetField(ItemTagsField).GetValue(Item);
+                    if (tags != null)
+                    {                        
+                        if (((ObservableList<Guid>)tags).Count > 0)
+                        {
+                            string tagsDesc = string.Empty;
+                            foreach (Guid tagID in ((ObservableList<Guid>)tags))
+                            {
+                                RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
+                                if (tag != null)
+                                {
+                                    tagsDesc += "#" + tag.Name;
+                                }
+                            }
+                            fullDesc += tagsDesc + " ";
+                        }
+                    }
+                }
+
+                xItemDescriptionTxtBlock.Text = fullDesc;
+                xItemDescriptionTxtBlock.ToolTip = fullDesc;
+            }
+            catch(Exception ex)
+            {
+                xItemDescriptionTxtBlock.Text = "Failed to set description!;";
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Description", ex);
+            }
+        }
+    }
+
+    public class ActiveBackgroundColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || ((bool)value) == false)
+            {
+                return System.Windows.Media.Brushes.LightGray;
+            }
+            else
+            {
+                return System.Windows.Media.Brushes.Transparent;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

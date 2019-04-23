@@ -42,9 +42,24 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Activity.Description);
         }
 
+        public string GetItemGroupField()
+        {
+            return nameof(Activity.ActivitiesGroupID);
+        }
+
+        public string GetItemTagsField()
+        {
+            return nameof(Activity.Tags);
+        }
+
         public string GetItemExecutionStatusField()
         {
             return nameof(Activity.Status);
+        }
+
+        public string GetItemActiveField()
+        {
+            return nameof(Activity.Active);
         }
 
         public string GetItemIconField()

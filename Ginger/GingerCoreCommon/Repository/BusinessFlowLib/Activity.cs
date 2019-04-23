@@ -366,7 +366,7 @@ namespace GingerCore
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags { get; set; } = new ObservableList<Guid>();
+        public ObservableList<Guid> Tags = new ObservableList<Guid>();
 
         public override bool FilterBy(eFilterBy filterType, object obj)
         {
@@ -870,5 +870,7 @@ namespace GingerCore
                 return nameof(this.ActivityName);
             }
         }
+
+       
     }
 }
