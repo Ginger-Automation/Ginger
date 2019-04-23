@@ -424,6 +424,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.Iframe,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActBrowserElement),
                     ElementOperationsList = new List<Enum>() {  ActBrowserElement.eControlAction.SwitchFrame,
                                                                 ActBrowserElement.eControlAction.SwitchToDefaultFrame,
