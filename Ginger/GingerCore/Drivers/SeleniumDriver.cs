@@ -52,10 +52,11 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM
+    public class SeleniumDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
         public enum eBrowserType
         {
@@ -3471,9 +3472,9 @@ namespace GingerCore.Drivers
         public override ePlatformType Platform
         {
             get { return ePlatformType.Web; }
-        }
+        }        
         private int exceptioncount = 0;
-
+               
 
 
         public override bool IsRunning()
@@ -3874,8 +3875,13 @@ namespace GingerCore.Drivers
 
             return returnTuple;
         }
-
+        
         ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
+        {
+            return AddLearnedElementInfoDetails(EI);
+        }
+
+        private ElementInfo AddLearnedElementInfoDetails(ElementInfo EI)
         {
             if (string.IsNullOrEmpty(EI.ElementType) || EI.ElementTypeEnum == eElementType.Unknown)
             {
@@ -4845,6 +4851,11 @@ namespace GingerCore.Drivers
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
+            return SpyControlAndGetElement();
+        }
+
+        private ElementInfo SpyControlAndGetElement()
+        {
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             try
             {
@@ -5145,7 +5156,7 @@ namespace GingerCore.Drivers
             return script3;
         }
 
-        public override void StartRecording()
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
@@ -5293,54 +5304,132 @@ namespace GingerCore.Drivers
                 IframeClicked = false;
                 while (IsRecording)
                 {
-                    InjectRecordingIfNotInjected();
-                    HandleIframeClicked();
-                    HandleRedirectClick();
-                    Thread.Sleep(500);
-                    // TODO: call JS to get the recording
-
-                    PayLoad PLgerRC = new PayLoad("GetRecording");
-                    PLgerRC.ClosePackage();
-                    PayLoad plrcRec = ExceuteJavaScriptPayLoad(PLgerRC);
-
-                    if (!PLgerRC.IsErrorPayLoad())
+                    try
                     {
-                        List<PayLoad> PLs = plrcRec.GetListPayLoad();
+                        InjectRecordingIfNotInjected();
+                        HandleIframeClicked();
+                        HandleRedirectClick();
+                        Thread.Sleep(1000);
+                        // TODO: call JS to get the recording
 
-                        // Each Payload is one recording...
-                        foreach (PayLoad PLR in PLs)
+                        PayLoad PLgerRC = new PayLoad("GetRecording");
+                        PLgerRC.ClosePackage();
+                        PayLoad plrcRec = ExceuteJavaScriptPayLoad(PLgerRC);
+
+                        if (!PLgerRC.IsErrorPayLoad())
                         {
-                            string LocateBy = PLR.GetValueString();
-                            string LocateValue = PLR.GetValueString();
-                            string ElemValue = PLR.GetValueString();
-                            string ControlAction = PLR.GetValueString();
-                            string Type = PLR.GetValueString();
+                            List<PayLoad> PLs = plrcRec.GetListPayLoad();
 
-                            if (ControlAction.ToLower() == "click" && (Type.ToLower() == "a" || Type.ToLower() == "submit"))
-                                Thread.Sleep(2000);
-
-                            ActUIElement actUI = new ActUIElement();
-                            actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
-                            actUI.ElementLocateBy = GetLocateBy(LocateBy);
-                            actUI.ElementLocateValue = LocateValue;
-                            actUI.ElementType = GetElementTypeEnum(null, Type).Item2;
-                            if (Enum.IsDefined(typeof(ActUIElement.eElementAction), ControlAction))
-                                actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), ControlAction);
-                            else
-                                continue;
-                            actUI.Value = ElemValue;
-                            this.BusinessFlow.AddAct(actUI);
-                            if (mActionRecorded != null)
+                            // Each Payload is one recording...
+                            foreach (PayLoad PLR in PLs)
                             {
-                                mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
+                                ElementActionCongifuration args = new ElementActionCongifuration();
+                                string locateBy = PLR.GetValueString();
+                                args.LocateBy = GetLocateBy(locateBy);
+                                args.LocateValue = PLR.GetValueString();
+                                args.ElementValue = PLR.GetValueString();
+                                args.Operation = PLR.GetValueString();
+                                string type = PLR.GetValueString();
+                                args.Type = GetElementTypeEnum(null, type).Item2;
+                                args.Description = GetDescription(args.Operation, args.LocateValue, args.ElementValue, type);
+
+                                if (LearnAdditionalDetails)
+                                {
+                                    string xCordinate = PLR.GetValueString();
+                                    string yCordinate = PLR.GetValueString();
+                                    ElementInfo eInfo = ReadElementDetails(xCordinate, yCordinate);
+
+                                    if (eInfo != null)
+                                    {
+                                        args.LearnedElementInfo = eInfo;
+                                    }
+                                }
+                                OnLearnedElement(args);
                             }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
                     }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
+            }
+        }
+
+        public bool LearnAdditionalDetails { get; set; }
+        public event ElementRecordedEventHandler ElementRecorded;
+        public event PageChangedHandler PageChanged;
+        private List<string> lstURL = new List<string>();
+        private string CurrentPageURL = string.Empty;
+
+        protected void OnLearnedElement(ElementActionCongifuration e)
+        {
+            ElementRecorded?.Invoke(this, e);
+        }
+
+        protected void OnPageChanged(PageChangedEventArgs e)
+        {
+            PageChanged?.Invoke(this, e);
+        }
+
+        ElementInfo ReadElementDetails(string xCordinate, string yCordinate)
+        {
+            ElementInfo eInfo = null;
+            if (!string.IsNullOrEmpty(xCordinate) && !string.IsNullOrEmpty(yCordinate))
+            {
+                try
+                {
+                    string url = Driver.Url;
+                    string title = Driver.Title;
+                    if (!lstURL.Contains(url) && CurrentPageURL != url)
+                    {
+                        CurrentPageURL = url;
+                        PageChangedEventArgs args = new PageChangedEventArgs()
+                        {
+                            PageURL = url,
+                            PageTitle = title,          
+                            ScreenShot = BitmapToBase64(GetScreenShot())
+                        };
+                        OnPageChanged(args);
+                    }
+
+                    double xCord = 0;
+                    double yCord = 0;
+                    double.TryParse(xCordinate, out xCord);
+                    double.TryParse(yCordinate, out yCord);
+
+                    IWebElement el = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(" + xCord + ", " + yCord + ");");
+                    if (el != null)
+                    {
+                        string elementName = GenerateElementTitle(el);
+                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo
+                        {
+                            ElementObject = el                            
+                        };
+                        eInfo = AddLearnedElementInfoDetails(foundElemntInfo);
+                        eInfo.ElementName = elementName;
+                    }                    
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording - while reading element", ex);
+                }
+            }
+
+            return eInfo;
+        }
+
+        private string BitmapToBase64(Bitmap bitmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] byteImage = ms.ToArray();
+                return Convert.ToBase64String(byteImage); //Get Base64
             }
         }
 
@@ -5428,8 +5517,8 @@ namespace GingerCore.Drivers
             }
             return eLocateBy.NA;
         }
-
-        public override void StopRecording()
+        
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
@@ -7023,7 +7112,7 @@ namespace GingerCore.Drivers
         }
 
 
-        POMEventHandler mActionRecorded;
+        POMEventHandler mActionRecorded;        
 
 
         public void ActionRecordedCallback(POMEventHandler ActionRecorded)

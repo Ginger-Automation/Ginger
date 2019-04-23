@@ -288,6 +288,8 @@
     <Compile Include="NonUITests\NonDriverActionTest.cs" />
     <Compile Include="NonUITests\AnalyzerTests.cs" />
     <Compile Include="NonUITests\UsedVariablesTest.cs" />
+    <Compile Include="RecordingLibTest\RecordingManagerTest.cs" />
+    <Compile Include="RecordingLibTest\TestDriver.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
       <DependentUpon>IEBrowserWindow.xaml</DependentUpon>

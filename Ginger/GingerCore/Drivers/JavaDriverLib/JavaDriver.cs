@@ -43,7 +43,7 @@ using System.Windows.Threading;
 
 namespace GingerCore.Drivers.JavaDriverLib
 {
-    public class JavaDriver :  DriverBase, IWindowExplorer, IVisualTestingDriver
+    public class JavaDriver :  DriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
         [UserConfigured]
         [UserConfiguredDefault("127.0.0.1")]  // Local host 
@@ -2402,7 +2402,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-        public override void StartRecording()
+        public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
+        public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
+        public bool LearnAdditionalDetails { get; set; }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
 
             PayLoad plJE = new PayLoad("CheckJExplorerExists");
@@ -2439,7 +2443,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             StartGetRecordingTimer();
         }
 
-        public override void StopRecording()
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
         {
             if (mGetRecordingTimer != null)
             {

@@ -56,6 +56,9 @@ using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
+using GingerCore.Actions.Common;
 
 namespace Ginger.WindowExplorer
 {
@@ -811,19 +814,30 @@ namespace Ginger.WindowExplorer
         {
             UpdateWindowsList();
         }
-        
+
+        RecordingManager RecordingMngr = null;
+        public List<ApplicationPOMModel> ListAppPom = null;
         private void StartRecording()
         {
             SetPageFunctionalityEnableDisable(false,false,false,false,false,false,false,false,false,false,false);
+
             mWindowExplorerDriver.SwitchWindow(((AppWindow)WindowsComboBox.SelectedValue).Title);
-            ((DriverBase)mWindowExplorerDriver).StartRecording();
+
+            IPlatformInfo pInfo = mPlatform;
+            RecordingMngr = new RecordingManager(ListAppPom, mContext, (IRecord)mWindowExplorerDriver, pInfo);
+            RecordingMngr.StartRecording();
+
             SetPageFunctionalityEnableDisable(true, false, false, false, false, false, false, false, false, false, false);
         }
         
         private void StopRecording()
         {
             SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
-            ((DriverBase)mWindowExplorerDriver).StopRecording();
+
+            if (RecordingMngr != null)
+            {
+                RecordingMngr.StopRecording(); 
+            }
             SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
         }
         

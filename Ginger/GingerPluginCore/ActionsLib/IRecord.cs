@@ -19,9 +19,17 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    [GingerInterface("IBrowser", "Record user actions")]
+    public delegate void ElementRecordedEventHandler(object sender, ElementActionCongifuration e);
+    public delegate void PageChangedHandler(object sender, PageChangedEventArgs e);
+
+    [GingerInterface("IRecord", "Record user actions")]
     public interface IRecord
     {
+        event ElementRecordedEventHandler ElementRecorded;
+        event PageChangedHandler PageChanged;
+
+        bool LearnAdditionalDetails { get; set; }
+
         void StartRecording();
         void StopRecording();
     }

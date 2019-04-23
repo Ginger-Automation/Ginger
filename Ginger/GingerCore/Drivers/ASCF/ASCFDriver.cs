@@ -37,7 +37,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Drivers.ASCF
 {
     // 10 Aug 2014 - This class is for ASCF connector actions
-    public class ASCFDriver : DriverBase, IWindowExplorer
+    public class ASCFDriver : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {
         // remove do events !!!
         [UserConfigured]
@@ -1053,12 +1053,16 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        public override void StartRecording()
+        public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
+        public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
+        public bool LearnAdditionalDetails { get; set; }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
  	        StartRecord();
         }
 
-        public override void StopRecording()
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
         {
             GetRecording();
             Send("StopRecording", NA, NA, NA, NA, false);

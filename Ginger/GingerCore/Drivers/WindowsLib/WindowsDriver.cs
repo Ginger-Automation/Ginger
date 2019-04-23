@@ -34,7 +34,7 @@ using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver
+    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
         int mActionTimeout = 10;
 
@@ -941,11 +941,17 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return mUIAutomationHelper.IsWindowValid(obj);
         }
-        public override void StartRecording()
+
+        public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
+        public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
+        public bool LearnAdditionalDetails { get; set; }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
-        public override void StopRecording()
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
         {
 
         }
