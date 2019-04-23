@@ -26,5 +26,6 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
         public eLocateBy ValidationElementLocateby { get; set; }
         public string ValidationElementLocatorValue { get; set; }
         public bool LoopThroughClicks { get; set; }
+        public string Value { get; set; }
     }
 }
