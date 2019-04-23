@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
-            string Args = string.Format("--soluion {0}", WorkSpace.Instance.Solution.Folder);
+            string Args = string.Format("--solution {0}", WorkSpace.Instance.Solution.Folder);
             Args += string.Format(" --runset {0}", runsetExecutor.RunSetConfig.Name);
             Args += string.Format(" --environemnt:{0}", runsetExecutor.RunsetExecutionEnvironment.Name);
             return Args;
@@ -48,65 +48,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             List<Arg> argsList = SplitArgs(args);
             
+
+            // - SeekOrigin -- split keep -
+
             foreach(Arg arg in argsList)
             {             
-                if(arg.prefix == "-") // short param name - one letter for most common
-                {
-                    switch (arg.param)
-                    {                        
-                        case "s":
-                            mCLIHelper.Solution = arg.value;
-                            break;                     
-                        case "e":                        
-                            mCLIHelper.Env = arg.value;
-                            break;                        
-                        case "r":
-                            mCLIHelper.Runset = arg.value;
-                            break;
-
-                        // TODO: add all the rest !!!!!!!!!!!!!
-                        default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '-' prefix: '" + arg + "'");
-                            throw new ArgumentException("Unknown argument: ", arg.param);
-                    }
-                }
-                else if(arg.prefix == "--") // Long param name
-                {
-                    switch (arg.param)
-                    {
-                        case "solution":                        
-                            mCLIHelper.Solution = arg.value;
-                            break;
-                        case "environment":
-                        case "env":                        
-                            mCLIHelper.Env = arg.value;
-                            break;
-                        case "runset":                        
-                            mCLIHelper.Runset = arg.value;
-                            break;
-
-                        // TODO: add all the rest !!!!!!!!!!!!!
-
-                        default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '--' prefix: '" + arg + "'");
-                            throw new ArgumentException("Unknown argument: ", arg.param);
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException("Unknown prefix: ", arg.prefix);
-                }
                 
-            }
+                switch (arg.ArgName)
+                {                        
+                    case "-s":
+                    case "--solution":
+                        mCLIHelper.Solution = arg.ArgValue;
+                        break;                     
+                    case "-e":
+                    case "--env":
+                    case "--environment":
+                        mCLIHelper.Env = arg.ArgValue;
+                        break;                        
+                    case "-r":
+                    case "--runset":
+                        mCLIHelper.Runset = arg.ArgValue;
+                        break;
 
+                    // TODO: add all the rest !!!!!!!!!!!!!
+                    default:
+                        Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '-' prefix: '" + arg + "'");
+                        throw new ArgumentException("Unknown argument: ", arg.ArgName);
+                }
+            }                
             mCLIHelper.ProcessArgs(runsetExecutor);
         }
 
         public struct Arg
-        {
-            public string prefix;
-            public string param;
-            public string value;
+        {            
+            public string ArgName;
+            public string ArgValue;
         }
 
 
@@ -125,10 +101,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     continue;
                 }
                 string[] aargval = argval.Split(new[] { ' ' }, 2);  // split on the first space
-                string arg = aargval[0].Trim();
+                string arg = parampref + aargval[0].Trim();
                 string value = aargval[1].Trim();
 
-                args.Add(new Arg() { prefix = parampref, param = arg, value = value  });
+                args.Add(new Arg() { ArgName = arg, ArgValue = value  });
                 parampref = "-";
             }
 

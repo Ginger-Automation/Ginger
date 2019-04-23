@@ -246,10 +246,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act
             List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1");
-
-            Assert.AreEqual(args[0].prefix, "--");
-            Assert.AreEqual(args[0].param, "solution");
-            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
+            
+            Assert.AreEqual(args[0].ArgName, "--solution");
+            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
         }
 
         [TestMethod]
@@ -260,14 +259,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act
             List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1 --environment Env1");
-
-            Assert.AreEqual(args[0].prefix, "--");
-            Assert.AreEqual(args[0].param, "solution");
-            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
-
-            Assert.AreEqual(args[1].prefix, "--");
-            Assert.AreEqual(args[1].param, "environment");
-            Assert.AreEqual(args[1].value, "Env1");
+            
+            Assert.AreEqual(args[0].ArgName, "--solution");
+            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+            
+            Assert.AreEqual(args[1].ArgName, "--environment");
+            Assert.AreEqual(args[1].ArgValue, "Env1");
         }
 
         [TestMethod]
@@ -278,14 +275,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act
             List<Arg> args = CLIArgs.SplitArgs(@"  --solution  c:\abc\def\sol1    --environment  Env1");
-
-            Assert.AreEqual(args[0].prefix, "--");
-            Assert.AreEqual(args[0].param, "solution");
-            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
-
-            Assert.AreEqual(args[1].prefix, "--");
-            Assert.AreEqual(args[1].param, "environment");
-            Assert.AreEqual(args[1].value, "Env1");
+            
+            Assert.AreEqual(args[0].ArgName, "--solution");
+            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+            
+            Assert.AreEqual(args[1].ArgName, "--environment");
+            Assert.AreEqual(args[1].ArgValue, "Env1");
         }
 
         [TestMethod]
@@ -296,14 +291,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act
             List<Arg> args = CLIArgs.SplitArgs(@"-s c:\abc\def\sol1 --environment Env1");
+            
+            Assert.AreEqual(args[0].ArgName, "-s");
+            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
 
-            Assert.AreEqual(args[0].prefix, "-");
-            Assert.AreEqual(args[0].param, "s");
-            Assert.AreEqual(args[0].value, @"c:\abc\def\sol1");
-
-            Assert.AreEqual(args[1].prefix, "--");
-            Assert.AreEqual(args[1].param, "environment");
-            Assert.AreEqual(args[1].value, "Env1");
+            Assert.AreEqual(args[1].ArgName, "--environment");
+            Assert.AreEqual(args[1].ArgValue, "Env1");
         }
 
 
