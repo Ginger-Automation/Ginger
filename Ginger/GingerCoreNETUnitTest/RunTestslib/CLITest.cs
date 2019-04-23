@@ -78,7 +78,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "scriptfile", scriptFile });
+            CLI.ExecuteArgs(new string[] { "--scriptfile", scriptFile });
 
             // Assert
             // Assert.AreEqual("1")
@@ -130,10 +130,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             args += string.Format("--environment {0}", "Default");
             args += string.Format("--runset {0}", "Default Run Set");            
 
-            // Act
-            string arg = "Args=" + args;
+            // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { arg });
+            CLI.ExecuteArgs(new string[] { "--args ", args });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
@@ -179,11 +178,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             System.IO.File.WriteAllText(scriptFile, txt);
 
 
-            string arg = "ScriptFile=" + scriptFile;
-
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { arg });
+            CLI.ExecuteArgs(new string[] { "--scriptfile=" , scriptFile });
 
             // Assert
             // Assert.AreEqual("1")
@@ -223,13 +220,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             txt += "i" + Environment.NewLine;  // script rc
             System.IO.File.WriteAllText(scriptFile, txt);
-
-
-            string arg = "ScriptFile=" + scriptFile;
-
+            
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { arg });
+            CLI.ExecuteArgs(new string[] { "--scriptfile=", scriptFile });
 
             // Assert
             // Assert.AreEqual("1")

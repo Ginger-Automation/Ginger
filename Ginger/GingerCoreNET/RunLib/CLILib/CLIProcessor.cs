@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
-            if (args[0].StartsWith("ConfigFile="))
+            if (args[0].StartsWith("ConfigFile="))  // special case to support backword compatibility of old style ConfigFile=%filename%
             {
                 string[] arg1 = args[0].Split('=');
                 param = arg1[0].Trim();
