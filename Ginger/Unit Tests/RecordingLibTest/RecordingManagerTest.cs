@@ -70,7 +70,7 @@ namespace UnitTests.RecordingLibTest
             if (mngr != null)
             {
                 mngr.StartRecording();
-                Thread.Sleep(2000);
+                Thread.Sleep(3000);
                 mngr.StopRecording();
             }
             if (Context.BusinessFlow.Activities[0].Acts.Count > 0)
@@ -79,6 +79,33 @@ namespace UnitTests.RecordingLibTest
                 Assert.IsTrue(actUI.ElementLocateBy == Amdocs.Ginger.Common.UIElement.eLocateBy.POMElement);
                 Assert.IsTrue(actUI.ElementAction == ActUIElement.eElementAction.Click);
                 Assert.IsTrue(actUI.ElementType == Amdocs.Ginger.Common.UIElement.eElementType.Button);
+                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.MappedUIElements.Count == Context.BusinessFlow.Activities[0].Acts.Count);
+                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.MappedUIElements[0].ElementTypeEnum == Amdocs.Ginger.Common.UIElement.eElementType.Button);
+            }
+            else
+            {
+                Assert.IsTrue(false);
+            }
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DoRecordingWithMultiplePageHandledTest()
+        {
+            List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
+            ApplicationPOMModel currentPOM = new ApplicationPOMModel();
+            lstPOM.Add(currentPOM);
+            RecordingManager mngr = new RecordingManager(lstPOM, Context, mDriver, PlatformInfo);
+            if (mngr != null)
+            {
+                mngr.StartRecording();
+                Thread.Sleep(3000);
+                mngr.StopRecording();
+            }
+            if (mngr.ListPOMObjectHelper != null && mngr.ListPOMObjectHelper.Count > 0)
+            {
+                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.PageURL == "www.google.com");
+                Assert.IsTrue(mngr.ListPOMObjectHelper.Count == 2);
             }
             else
             {
