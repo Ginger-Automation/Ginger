@@ -66,6 +66,7 @@ namespace UnitTests.UITests
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
             mBF.CurrentActivity.TargetApplication = "WebApp";
             mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
+            mDriver.AutoDetect = true;
             mDriver.StartDriver();
 
             Agent a = new Agent();
@@ -381,6 +382,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
         }
         
+        [Ignore]
         [TestMethod]
         public void NevigateBack()
         {
