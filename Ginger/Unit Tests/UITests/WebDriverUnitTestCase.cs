@@ -205,6 +205,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
 
         }
+
         [Ignore]
         [TestMethod]
         public void CloseAll()
@@ -730,12 +731,14 @@ namespace UnitTests.UITests
                 Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
         }
 
+        [Ignore]
         [TestMethod]
         public void SmartSyncAction_WaitUntilDisapear()
         {
             SmartSyncAction();
         }
 
+        [Ignore]
         [TestMethod]
         public void SmartSyncAction_WaitUntilDisplay()
         {
@@ -758,6 +761,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actSmartSync1.Status, "Action Status");
         }
 
+        [Ignore]
         [TestMethod]
         public void TwoWebElementsDistances()
         {
