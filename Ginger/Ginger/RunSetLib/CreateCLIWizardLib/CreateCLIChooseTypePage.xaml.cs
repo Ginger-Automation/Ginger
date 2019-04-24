@@ -101,9 +101,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             ShowContent();
         }
 
+        CLIExcel mCLIExcel;
         private void XExcelRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.FileContent = "Excel view ";
+            if (mCLIExcel == null)
+            {
+                mCLIExcel = new CLIExcel();
+            }
+            mCreateCLIWizard.SelectedCLI = mCLIExcel;
+            CLITXT = @"Using excel to create and control a runset with data and store information" + Environment.NewLine;                        
             ShowContent();
         }
     }

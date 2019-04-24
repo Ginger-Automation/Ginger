@@ -76,7 +76,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
                     Execute();
                     break;
-                    // TODO: Excel 
+                case "--excel":
+                    mCLIHandler = new CLIExcel();
+                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
+                    Execute();
+                    break;                    
             }
 
 
