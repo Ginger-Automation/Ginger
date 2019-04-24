@@ -145,10 +145,27 @@ namespace Ginger.UserControlsLib.UCListView
             ItemIconField = ItemInfo.GetItemIconField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
             ItemActiveField = ItemInfo.GetItemActiveField();
+            SetItemUniqueIdentifier();
             SetItemNotifications();
             SetItemOperations();
 
             SetItemBindings();
+        }
+
+        private void SetItemUniqueIdentifier()
+        {
+            ListItemUniqueIdentifier identifier = ItemInfo.GetItemUniqueIdentifier(Item);
+            if (identifier != null)
+            {
+                BrushConverter conv = new BrushConverter();
+                xExpandCollapseBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush; 
+                xExpandCollapseBorder.ToolTip = identifier.Tooltip;
+            }
+            else
+            {
+                xExpandCollapseBorder.Background = System.Windows.Media.Brushes.Transparent;
+                xExpandCollapseBorder.ToolTip = string.Empty;
+            }
         }
 
         private void SetItemNotifications()
@@ -294,9 +311,10 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemDescription();
             }
+            SetItemUniqueIdentifier();
         }
 
-        private void xDetailViewBtn_Click(object sender, RoutedEventArgs e)
+        private void xExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
         {
             if (xExtraDetailsRow.ActualHeight == 0)
             {
@@ -313,15 +331,15 @@ namespace Ginger.UserControlsLib.UCListView
         public void ExpandItem()
         {
             xExtraDetailsRow.Height = new GridLength(25);
-            xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
-            xDetailViewBtn.ToolTip = "Collapse";
+            xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
+            xExpandCollapseBtn.ToolTip = "Collapse";
         }
 
         public void CollapseItem()
         {
             xExtraDetailsRow.Height = new GridLength(0);
-            xDetailViewBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
-            xDetailViewBtn.ToolTip = "Expand";
+            xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
+            xExpandCollapseBtn.ToolTip = "Expand";
         }
 
         private void xRunnerItemContinue_Click(object sender, RoutedEventArgs e)

@@ -670,6 +670,9 @@
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UcColorPickerList.xaml.cs">
+      <DependentUpon>UcColorPickerList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
     </Compile>
@@ -679,6 +682,7 @@
     <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemUniqueIdentifier.cs" />
     <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
       <DependentUpon>UcListViewItem.xaml</DependentUpon>
     </Compile>
@@ -3045,6 +3049,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TimeLineLib\TimeLinePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UcColorPickerList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
