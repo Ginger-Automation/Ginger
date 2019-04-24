@@ -3895,11 +3895,6 @@ namespace GingerCore.Drivers
         
         ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
         {
-            return AddLearnedElementInfoDetails(EI);
-        }
-
-        private ElementInfo AddLearnedElementInfoDetails(ElementInfo EI)
-        {
             if (string.IsNullOrEmpty(EI.ElementType) || EI.ElementTypeEnum == eElementType.Unknown)
             {
                 Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(EI.ElementObject as IWebElement);
@@ -3920,7 +3915,7 @@ namespace GingerCore.Drivers
 
             return EI;
         }
-
+        
         //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
         //{
         //    HTMLElementInfo EI = new HTMLElementInfo();
@@ -5165,7 +5160,17 @@ namespace GingerCore.Drivers
             return script3;
         }
 
-        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
+        public override void StartRecording()
+        {
+            DoRecording();
+        }
+
+        void IRecord.StartRecording()
+        {
+            DoRecording();
+        }
+
+        private void DoRecording()
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
@@ -5346,14 +5351,37 @@ namespace GingerCore.Drivers
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
-                                    ElementInfo eInfo = ReadElementDetails(xCordinate, yCordinate);
+                                    ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
 
                                     if (eInfo != null)
                                     {
                                         args.LearnedElementInfo = eInfo;
                                     }
                                 }
-                                OnLearnedElement(args);
+                                if (ElementRecorded != null)
+                                {
+                                    //New implementation supporting POM
+                                    OnLearnedElement(args);
+                                }
+                                else
+                                {  
+                                    //Temp existing implementation
+                                    ActUIElement actUI = new ActUIElement();
+                                    actUI.Description = GetDescription(args.Operation, args.LocateValue, args.ElementValue, Convert.ToString(args.Type));
+                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(args.LocateBy));
+                                    actUI.ElementLocateValue = args.LocateValue;
+                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(args.Type)).Item2;
+                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), args.Operation))
+                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), args.Operation);
+                                    else
+                                        continue;
+                                    actUI.Value = args.ElementValue;
+                                    this.BusinessFlow.AddAct(actUI);
+                                    if (mActionRecorded != null)
+                                    {
+                                        mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
+                                    }
+                                }                                
                             }
                         }
                     }
@@ -5380,12 +5408,12 @@ namespace GingerCore.Drivers
             ElementRecorded?.Invoke(this, e);
         }
 
-        protected void OnPageChanged(PageChangedEventArgs e)
+        protected void OnPageChanged(RecordedPageChangedEventArgs e)
         {
             PageChanged?.Invoke(this, e);
         }
 
-        ElementInfo ReadElementDetails(string xCordinate, string yCordinate)
+        ElementInfo LearnRecorededElementFullDetails(string xCordinate, string yCordinate)
         {
             ElementInfo eInfo = null;
             if (!string.IsNullOrEmpty(xCordinate) && !string.IsNullOrEmpty(yCordinate))
@@ -5397,7 +5425,7 @@ namespace GingerCore.Drivers
                     if (!lstURL.Contains(url) && CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
-                        PageChangedEventArgs args = new PageChangedEventArgs()
+                        RecordedPageChangedEventArgs args = new RecordedPageChangedEventArgs()
                         {
                             PageURL = url,
                             PageTitle = title,          
@@ -5419,7 +5447,7 @@ namespace GingerCore.Drivers
                         {
                             ElementObject = el                            
                         };
-                        eInfo = AddLearnedElementInfoDetails(foundElemntInfo);
+                        eInfo = ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
                         eInfo.ElementName = elementName;
                     }                    
                 }
@@ -5526,8 +5554,18 @@ namespace GingerCore.Drivers
             }
             return eLocateBy.NA;
         }
-        
-        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+
+        public override void StopRecording()
+        {
+            EndRecordings();
+        }
+
+        void IRecord.StopRecording()
+        {
+            EndRecordings();
+        }
+
+        private void EndRecordings()
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();

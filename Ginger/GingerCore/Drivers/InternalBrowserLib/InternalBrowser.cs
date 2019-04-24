@@ -1314,6 +1314,16 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
         {
+
+        }
+
+        public override void StartRecording()
+        {
+
+        }
+
+        public override void StopRecording()
+        {
             
         }
 

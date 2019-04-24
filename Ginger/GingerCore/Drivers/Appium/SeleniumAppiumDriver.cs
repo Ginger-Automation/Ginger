@@ -1466,10 +1466,26 @@ namespace GingerCore.Drivers.Appium
             Dispatcher.Invoke(() =>
             {
                 DriverWindow.StartRecording();
-            });            
+            });
         }
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StopRecording();
+            });
+        }
+
+        public override void StartRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StartRecording();
+            });            
+        }
+
+        public override void StopRecording()
         {
             Dispatcher.Invoke(() =>
             {

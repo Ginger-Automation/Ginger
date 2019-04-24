@@ -1069,14 +1069,24 @@ namespace GingerCore.Drivers.PBDriver
         public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
         public bool LearnAdditionalDetails { get; set; }
 
+        public override void StartRecording()
+        {
+            mUIAutomationHelper.StartRecording();
+        }
+
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
 
-        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        public override void StopRecording()
         {
             
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+
         }
 
         void IWindowExplorer.UnHighLightElements()

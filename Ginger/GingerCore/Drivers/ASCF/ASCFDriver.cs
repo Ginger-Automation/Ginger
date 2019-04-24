@@ -1059,10 +1059,22 @@ namespace GingerCore.Drivers.ASCF
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
- 	        StartRecord();
+            StartRecord();
         }
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            GetRecording();
+            Send("StopRecording", NA, NA, NA, NA, false);
+            //TODO: check RC            
+        }
+
+        public override void StartRecording()
+        {
+ 	        StartRecord();
+        }
+
+        public override void StopRecording()
         {
             GetRecording();
             Send("StopRecording", NA, NA, NA, NA, false);

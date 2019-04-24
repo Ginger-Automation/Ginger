@@ -2406,9 +2406,18 @@ namespace GingerCore.Drivers.JavaDriverLib
         public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
         public bool LearnAdditionalDetails { get; set; }
 
+        public override void StartRecording()
+        {
+            DoRecordings();
+        }
+
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
         {
+            DoRecordings();
+        }
 
+        private void DoRecordings()
+        {
             PayLoad plJE = new PayLoad("CheckJExplorerExists");
             plJE.ClosePackage();
 
@@ -2443,18 +2452,28 @@ namespace GingerCore.Drivers.JavaDriverLib
             StartGetRecordingTimer();
         }
 
+        public override void StopRecording()
+        {
+            EndRecordings();
+        }
+
         void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            EndRecordings();
+        }
+
+        private void EndRecordings()
         {
             if (mGetRecordingTimer != null)
             {
                 mGetRecordingTimer.Tick += dispatcherTimerElapsedTick;
                 mGetRecordingTimer.Stop();
             }
-                
+
 
             PayLoad plAC = new PayLoad("StopRecording");
             plAC.ClosePackage();
-            Send(plAC);            
+            Send(plAC);
         }
 
         private void StartGetRecordingTimer()

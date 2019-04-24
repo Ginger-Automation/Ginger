@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private POMObjectRecordingHelper GetRecordingHelperObject(string pageTitle, string pageURL, string screenShot)
+        private POMObjectRecordingHelper GetNewPOM(string pageTitle, string pageURL, string screenShot)
         {
             POMObjectRecordingHelper recordingHelper = new POMObjectRecordingHelper();
             try
@@ -91,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET
             return recordingHelper;
         }
 
-        private void PlatformDriver_PageChanged(object sender, PageChangedEventArgs e)
+        private void PlatformDriver_PageChanged(object sender, RecordedPageChangedEventArgs e)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET
                     var obj = ListPOMObjectHelper.FirstOrDefault(s => s.PageTitle == e.PageTitle && s.PageURL == e.PageURL);
                     if (obj == null && !string.IsNullOrEmpty(e.PageTitle) && !string.IsNullOrEmpty(e.PageURL))
                     {
-                        ListPOMObjectHelper.Add(GetRecordingHelperObject(e.PageTitle, e.PageURL, e.ScreenShot));
+                        ListPOMObjectHelper.Add(GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot));
                     }
                     else if (!(CurrentPOM.PageURL == obj.PageURL && CurrentPOM.Name == obj.PageTitle))
                     {
@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    ListPOMObjectHelper.Add(GetRecordingHelperObject(e.PageTitle, e.PageURL, e.ScreenShot));
+                    ListPOMObjectHelper.Add(GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot));
                 }
             }
             catch (Exception ex)

@@ -60,7 +60,7 @@ namespace UnitTests.RecordingLibTest
                 eleArgs.LearnedElementInfo = eInfo;
             }
 
-            PageChangedEventArgs pageArgs = new PageChangedEventArgs();
+            RecordedPageChangedEventArgs pageArgs = new RecordedPageChangedEventArgs();
             if (i != 2)
             {
                 pageArgs.PageURL = "www.google.com";
@@ -92,7 +92,7 @@ namespace UnitTests.RecordingLibTest
             ElementRecorded?.Invoke(this, e);
         }
 
-        protected void OnPageChanged(PageChangedEventArgs e)
+        protected void OnPageChanged(RecordedPageChangedEventArgs e)
         {
             PageChanged?.Invoke(this, e);
         }

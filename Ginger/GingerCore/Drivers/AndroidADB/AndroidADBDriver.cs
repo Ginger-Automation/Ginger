@@ -1071,6 +1071,14 @@ namespace GingerCore.Drivers.AndroidADB
         public bool LearnAdditionalDetails { get; set; }
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StartRecording();
+            });
+        }
+
+        public override void StartRecording()
         {            
             Dispatcher.Invoke(() =>
             {
@@ -1078,12 +1086,20 @@ namespace GingerCore.Drivers.AndroidADB
             });            
         }
 
-        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        public override void StopRecording()
         {         
             Dispatcher.Invoke(() =>
             {
                 DriverWindow.StopRecording();
             });   
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StopRecording();
+            });
         }
 
 

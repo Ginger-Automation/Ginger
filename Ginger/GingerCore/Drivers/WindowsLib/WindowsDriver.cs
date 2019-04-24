@@ -956,6 +956,16 @@ namespace GingerCore.Drivers.WindowsLib
 
         }
 
+        public override void StartRecording()
+        {
+            mUIAutomationHelper.StartRecording();
+        }
+
+        public override void StopRecording()
+        {
+
+        }
+
         void IWindowExplorer.UnHighLightElements()
         {
             throw new NotImplementedException();
