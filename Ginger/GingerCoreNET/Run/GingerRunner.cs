@@ -603,7 +603,7 @@ namespace Ginger.Run
 
         private void PrepareVariables()
         {
-            if (ExecutedFrom == eExecutedFrom.Run)
+                        if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //We need to set variable mapped values only when running run set
                 SetVariableMappedValues();
@@ -644,7 +644,7 @@ namespace Ginger.Run
                 {
                     mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
                 }
-                else
+                else if(inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))
                 {
                     //if input variable value mapped to none, and value is differt from origin                   
                     if (inputVar.DiffrentFromOrigin)
