@@ -95,10 +95,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 lblRecording.Content = "Stop Spying";
                 xSpyingButton.BorderThickness = new Thickness(2);
                 xSpyingButton.BorderBrush = Brushes.DeepSkyBlue;
+                StatusTextBlock.Text = "Spying...";
                 //                xSpyingButton.Background = Brushes.White;
             }
             else
             {
+                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
+                StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
                 xSpyingButton.Background = Brushes.DeepSkyBlue;
                 lblRecording.Foreground = Brushes.White;

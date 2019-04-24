@@ -20,11 +20,11 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="165" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="xSpyingButton" Click="SpyingButton_Click" IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Column="0">
+            <Button x:Name="xSpyingButton" Click="SpyingButton_Click" IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10,10,0,0" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Column="0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40" />
@@ -39,7 +39,7 @@
             <TextBlock Name="StatusTextBlock" Grid.Column="1" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center" Width="Auto" Foreground="Red" />
         </Grid>
         <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
+        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,1,0,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
             <Expander.Header>
                 <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
             </Expander.Header>

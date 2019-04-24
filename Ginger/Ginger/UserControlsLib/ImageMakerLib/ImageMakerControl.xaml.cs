@@ -231,6 +231,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.NonSharedRepositoryItem:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Gray);
                     break;
+                case eImageType.SharedRepositoryItemDark:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star);
+                    break;
                 case eImageType.Tag:
                 case eImageType.Ticket:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);

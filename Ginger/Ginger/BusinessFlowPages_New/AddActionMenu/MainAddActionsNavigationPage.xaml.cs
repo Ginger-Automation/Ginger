@@ -60,11 +60,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 //navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
             }
         }
-//ApplicationPOMModel
-//Action
-//Camera
-//Spy
-//Search
+
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
             //LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));

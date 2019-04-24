@@ -3080,7 +3080,7 @@
     </Style>-->
 
     <Style TargetType="Button" x:Key="@PanelButtonStyle">
-        <Setter Property="Background" Value="#2AB5E9" />
+        <Setter Property="Background" Value="{StaticResource $SelectionColor_LightBlue}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Seoge UI" />
         <Setter Property="Height" Value="30" />
@@ -3093,7 +3093,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="#2AB5E9" BorderThickness="3" CornerRadius="15">
+                                BorderBrush="{StaticResource $SelectionColor_LightBlue}" BorderThickness="3" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="White" 
                                 Margin="{TemplateBinding Padding}"
@@ -3103,7 +3103,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
+                            <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                             <Setter Property="BorderThickness" Value="0" />
