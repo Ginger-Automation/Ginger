@@ -178,12 +178,11 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             try
                             {
-                                PomLearnUtils utils = new PomLearnUtils(cPom.ApplicationPOM);
-                                utils.SaveLearnedPOM();
-                            }
-                            catch (Exception)
-                            {
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
+                            }
+                            catch (Exception e)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Error while saving the POM", e);
                             }                            
                         }
                     }
