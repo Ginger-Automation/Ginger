@@ -31,7 +31,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             string Args = string.Format("--solution {0}", WorkSpace.Instance.Solution.Folder);
             Args += string.Format(" --runset {0}", runsetExecutor.RunSetConfig.Name);
-            Args += string.Format(" --environemnt:{0}", runsetExecutor.RunsetExecutionEnvironment.Name);
+            Args += string.Format(" --environemnt {0}", runsetExecutor.RunsetExecutionEnvironment.Name);
+
+            // TODO: add all the rest source control, run analyzer...
+
             return Args;
         }
 

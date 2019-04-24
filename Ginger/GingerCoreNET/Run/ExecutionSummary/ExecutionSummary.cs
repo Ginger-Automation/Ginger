@@ -4,6 +4,7 @@ using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -24,6 +25,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
         RunsetExecutor mRunsetExecutor;
         public string Create(RunsetExecutor runsetExecutor)
         {
+            Elapsed = runsetExecutor.Elapsed;            
             mRunsetExecutor = runsetExecutor;
             AddRunners();
 

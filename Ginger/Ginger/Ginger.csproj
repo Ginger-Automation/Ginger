@@ -646,6 +646,9 @@
       <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIWizard.cs" />
+    <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
+      <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -2955,6 +2958,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
