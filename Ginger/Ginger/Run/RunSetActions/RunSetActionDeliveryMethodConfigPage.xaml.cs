@@ -22,6 +22,8 @@ namespace Ginger.Run.RunSetActions
             BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, email, nameof(Email.SMTPPass));
             GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, email.EmailMethod);
             BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, email, nameof(Email.EmailMethod));
+            BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, email, nameof(Email.EnableSSL));
+            BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, email, nameof(Email.ConfigureCredential));
         }
         private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
