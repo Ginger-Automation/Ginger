@@ -203,7 +203,8 @@ namespace Ginger.Run.RunSetActions
                     return;
                 }
                 mVE.Value = Bodytext;
-                emailReadyHtml += mVE.ValueCalculated; //report path =>reportsResultFolder + "\\GingerExecutionReport.html"
+                emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
+                emailReadyHtml += mVE.ValueCalculated;
             }
             else
             {
