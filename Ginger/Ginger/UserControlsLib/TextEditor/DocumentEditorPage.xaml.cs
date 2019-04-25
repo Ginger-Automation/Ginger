@@ -204,7 +204,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
                 foreach (Type t in list)
                 {
-                    if (t == typeof(PlugInTextEditorWrapper)) continue;
+                    if (t == typeof(PlugInTextEditorWrapper) || t == typeof(ValueExpression.ValueExpressionEditor)) continue;
                     if (t != typeof(ITextEditor))
                     {
                         TextEditorBase TE = (TextEditorBase)Activator.CreateInstance(t);
