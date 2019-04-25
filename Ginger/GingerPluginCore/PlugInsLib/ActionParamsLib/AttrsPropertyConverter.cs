@@ -81,6 +81,10 @@ namespace Amdocs.Ginger.Plugin.Core
                             }
                             propertyInfo.SetValue(attr, list);
                         }
+                        else if(propertyInfo.PropertyType == typeof(object))
+                        {
+                            propertyInfo.SetValue(attr, p.Value.Value<object>());
+                        }
                         else
                         {
                             throw new Exception("ReadJson Cannot convert attr: " + attr);
@@ -120,7 +124,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
             List<Attribute> attrs = (List<Attribute>)value;
             if(attrs.Count == 0)
-            {
+            {                
                 serializer.Serialize(writer, null);
                 return;
             }
@@ -143,8 +147,7 @@ namespace Amdocs.Ginger.Plugin.Core
                         continue;
                     }
                     // write property name
-                    writer.WritePropertyName(property.Name);
-                    serializer.NullValueHandling = NullValueHandling.Ignore;
+                    writer.WritePropertyName(property.Name);                    
                     serializer.Serialize(writer, property.GetValue(attr, null));
                 }
 

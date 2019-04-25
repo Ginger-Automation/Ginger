@@ -41,7 +41,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         Context mContext;
         List<Attribute> mActionParamProperties;
         string mLabel;
-
+        object mDefaultValue;
         public ActionInputValueUserControl(Context context, ActInputValue actInputValue, List<Attribute> actionParamProperties)
         {
             InitializeComponent();
@@ -74,8 +74,14 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                     //TODO: add AddValidationRule in the UC - but there are 3 UCs !? !!!!!!!!!!!!!!!                  
                     xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());
                 }
-
-                // TODO: !!!!!!!!!! Add check for all Attrs like Min/Max
+                else if(attr.GetType() == typeof(MaxAttribute))
+                {                   
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaximumValidationRule(((MaxAttribute)attr).Max));
+                }
+                else if(attr.GetType() == typeof(MinAttribute))
+                {                   
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinimumValidationRule(((MinAttribute)attr).Min));
+                }              
             }
         }
 
@@ -97,7 +103,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 {
                     xTextBoxInputPnl.ToolTip = ((TooltipAttribute)attr).Tooltip;
                 }
-
+                else if(attr.GetType() == typeof(DefaultAttribute))
+                {
+                    mDefaultValue = ((DefaultAttribute)attr).DefaultValue;
+                }
                 //TODO: handle layout here like Grid.Col/Row
             }
 
@@ -113,11 +122,15 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         private void SetControlToInputValue()
         {
+            if (string.IsNullOrEmpty(mActInputValue.Value) && mDefaultValue != null)
+            {
+                mActInputValue.Value = mDefaultValue.ToString();
+            }
             // simple string or number or unknown type show text box
             if (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
-                xTextBoxInputLabel.Content = mLabel;
+                xTextBoxInputLabel.Content = mLabel;                                
                 xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value));
                 return;
             }           
@@ -125,13 +138,17 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(bool))
             {
                 xCheckBoxInput.Visibility = Visibility.Visible;
-                xCheckBoxInput.Content = mLabel;
+                xCheckBoxInput.Content = mLabel;               
                 xCheckBoxInput.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
             if (mActInputValue.ParamType == typeof(DynamicListWrapper))
             {
+                if(mActInputValue.ListDynamicValue == null && mDefaultValue!=null)
+                {
+                    mActInputValue.ListDynamicValue = (dynamic)mDefaultValue;
+                }
                 xListInputGrid.Visibility = Visibility.Visible;
                 xListInputGrid.Title = mLabel;
 
@@ -142,7 +159,6 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 //data changes catch
                 DynList.CollectionChanged += ListCollectionChanged;
                 xListInputGrid.Grid.CellEditEnding += Grid_CellEditEnding;
-
                 xListInputGrid.btnAdd.Click += AddItem;
                 SetListGridView();
                 return;

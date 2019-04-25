@@ -10,9 +10,9 @@ namespace Amdocs.Ginger.Plugin.Core
         // when saved to services json the attr property name will be:
         public string PropertyName => "Default";
 
-        public string DefaultValue { get; set; }
+        public object DefaultValue { get; set; }
 
-        public DefaultAttribute(string defaultValue)
+        public DefaultAttribute(object defaultValue)
         {
             DefaultValue = defaultValue;
         }

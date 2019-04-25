@@ -37,9 +37,11 @@ namespace GingerPluginCoreTest
                             [Mandatory] // user must fill a value
                             [Label("Numerator")]                                                        
                             int a,
+                            [Max(10)]
                             [InvalidValue(0)] // 0 is not allowed
                             [InvalidValue(new int[] {-1,101,200})] // not allowed
                             [Label("Denominator")]
+                            [Default()]
                             [Tooltip("Enter the Denominator value")]
                             int b)
         {
