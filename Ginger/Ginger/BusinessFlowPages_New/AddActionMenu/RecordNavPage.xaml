@@ -18,7 +18,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" />
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="False" />
 
         <Button x:Name="RecordingButton" Click="RecordingButton_Click"  IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Row="1">
             <Grid>

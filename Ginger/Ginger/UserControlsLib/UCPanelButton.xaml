@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="120" d:DesignWidth="250">
 
-    <Button x:Name="xPanelButton" Click="XPanelButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Margin="10,10,0,0" UseLayoutRounding="True" Background="{StaticResource $SelectionColor_LightBlue}" Grid.Column="0" Cursor="Hand">
+    <Button x:Name="xPanelButton" Click="XPanelButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Margin="10,10,0,0" UseLayoutRounding="True" Background="{StaticResource $amdocsLogoLinarGradientBrush}" Grid.Column="0" Cursor="Hand">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40" />

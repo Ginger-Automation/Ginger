@@ -18,7 +18,7 @@
             <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35"/>
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" />
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="True" />
 
         <!--Controls Views Area-->
         <Expander x:Name="ControlsViewsExpander" Grid.Row="1" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >

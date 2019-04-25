@@ -60,38 +60,36 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //    if (dispatcherTimer != null)
             //        dispatcherTimer.IsEnabled = false;
 
-            //if (WindowsComboBox.SelectedValue != null)
-            //{
-            //    //if (RecordingButton.IsChecked == true)
-            //    if (isRecording)
-            //    {
-            //        StartRecording();
-            //    }
-            //    else
-            //    {
-            //        StopRecording();
-            //    }
-            //}
-            //else
-            //{
-            //    //isRecording = false;
-            //    Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
-            //}
+            if (xWinGridUC.comboBoxSelectedValue != null)
+            {
+                if (mWindowExplorerDriver == null)
+                    mWindowExplorerDriver = xWinGridUC.mWindowExplorerDriver;
+                //if (RecordingButton.IsChecked == true)
+                if (isRecording)
+                {
+                    StartRecording();
+                }
+                else
+                {
+                    StopRecording();
+                }
+            }
+            else
+            {
+                //isRecording = false;
+                Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
+            }
         }
 
         private void StartRecording()
         {
-            //SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
-            //mWindowExplorerDriver.SwitchWindow(((AppWindow)WindowsComboBox.SelectedValue).Title);
+            mWindowExplorerDriver.SwitchWindow(((AppWindow)xWinGridUC.comboBoxSelectedValue).Title);
             ((DriverBase)mWindowExplorerDriver).StartRecording();
-            //SetPageFunctionalityEnableDisable(true, false, false, false, false, false, false, false, false, false, false);
         }
 
         private void StopRecording()
         {
-            //SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
             ((DriverBase)mWindowExplorerDriver).StopRecording();
-            //SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
         }
 
         private void UpdateUI()
