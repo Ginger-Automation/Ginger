@@ -392,7 +392,7 @@ namespace GingerCore.Actions
 
         private string GetConnectionString()
         {
-            string s = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + GetExcelFileNameForDriver() + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"";
+            string s = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + GetExcelFileNameForDriver() + "';Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1;\"";
             return s;
         }
 

@@ -41,7 +41,6 @@ namespace GingerCore.NoSqlBase
         public override List<eNoSqlOperations> GetSupportedActions()
         {
             List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
-            mongoClient.GetServer();
             SupportedActions.Add(eNoSqlOperations.freesql);
             return SupportedActions;
         }
@@ -50,8 +49,51 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                mongoClient = new MongoClient();
-                var db = mongoClient.GetDatabase("inventory");//database name 
+                //way 1
+                if (Db.ConnectionString != null)
+                {
+                    var connectionString = Db.ConnectionStringCalculated.ToString();
+                    mongoClient = new MongoClient(connectionString);
+                }
+                else
+                {
+                    string[] HostKeySpace = Db.TNSCalculated.Split('/');
+                    string[] HostPort = HostKeySpace[0].Split(':');
+                    //need to get db name
+                    MongoCredential mongoCredential = null;
+                    bool res = false;
+                    String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
+                    if (res == true)
+                    {
+                        mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, deCryptValue);
+                    }
+                    else
+                    {
+                        mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, Db.PassCalculated.ToString());
+                    }
+
+                    //var mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, deCryptValue);
+                    var settings = new MongoClientSettings
+                    {
+                        Server = new MongoServerAddress("localhost", 27017),
+                        UseSsl = false,
+                        Credentials = new[] { mongoCredential }
+                    };
+                    mongoClient = new MongoClient(settings);
+                }
+
+                GetTableList("inventory");
+
+                
+                //var settings1 = MongoClientSettings.FromUrl(MongoUrl.Create("mongodb://localhost:27017"));  //"mongodb://localhost:27017/DbName"
+
+                //MongoClientSettings setting = MongoClientSettings.FromUrl(MongoUrl.Create(Db.TNSCalculated));
+                //setting.Credential= MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, Db.PassCalculated);
+                //mongoClient = new MongoClient(settings);
+
+                //way 2
+                //var connectionString = Db.ConnectionStringCalculated.ToString(); //"mongodb://user1:password1@localhost/test";
+                //mongoClient = new MongoClient(connectionString);
 
                 return true;
             }
@@ -80,11 +122,11 @@ namespace GingerCore.NoSqlBase
             return null;
         }
 
-        public override List<string> GetTableList(string keyspace)
+        public override List<string> GetTableList(string dbName)
         {
-            Connect();
+            //Connect();
             List<string> table = new List<string>();
-            var db = mongoClient.GetDatabase("inventory"); //database name 
+            var db = mongoClient.GetDatabase(dbName); 
             foreach (var item in db.ListCollectionsAsync().Result.ToListAsync<BsonDocument>().Result)
             {
                 table.Add(item.ToString());
