@@ -120,9 +120,9 @@ namespace UnitTests.UITests
                     file.Attributes = FileAttributes.Normal;
                     File.Delete(file.FullName);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-
+                    Console.Write(e.Message);
                 }
             }
         }
@@ -274,7 +274,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
 
-        
+
         [TestMethod]
         public void CloseTabExceptByTitle()
         {
@@ -357,7 +357,7 @@ namespace UnitTests.UITests
             //Act
             mGR.RunAction(actBrowser, false);
             mGR.RunAction(actBrowser1, false);
-            
+
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
             Assert.AreEqual("OrangeHRM", actBrowser1.ReturnValues[0].Actual);
@@ -382,7 +382,7 @@ namespace UnitTests.UITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
         }
-        
+
         [Ignore]
         [TestMethod]
         public void NevigateBack()
@@ -429,7 +429,7 @@ namespace UnitTests.UITests
             ActBrowserElement actGetPageURL = ValidatePageURL();
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
-       
+
         [TestMethod]
         public void Refresh()
         {
@@ -694,6 +694,7 @@ namespace UnitTests.UITests
             Assert.AreEqual("Frame B", actUIElement.ReturnValues[0].Actual);
         }
 
+        [Ignore]
         public void SmartSyncAction()
         {
             //Arrange
@@ -717,18 +718,10 @@ namespace UnitTests.UITests
             //Act
             mGR.RunAction(actBrowser, false);
             mGR.RunAction(actUIElement, false);
-            try
-            {
-                mGR.RunAction(actSmartSync, false);
-
-            }
-            catch(Exception e)
-            {
-
-            }
-
-                //Assert
-                Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
+            mGR.RunAction(actSmartSync, false);
+                
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
         }
 
         [Ignore]
