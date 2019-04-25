@@ -122,7 +122,6 @@ namespace UnitTests.UITests
                 }
                 catch (Exception e)
                 {
-                    Console.Write(e.Message);
                 }
             }
         }
