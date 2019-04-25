@@ -1,18 +1,14 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Text;
-
-using GingerCore.Platforms.PlatformsInfo;
 using System.Threading;
-using GingerCore.Actions.Common;
 
-namespace UnitTests.RecordingLibTest
+namespace GingerCoreNETUnitTest.RecordingLibTest
 {
     [TestClass]
     public class RecordingManagerTest
@@ -26,9 +22,9 @@ namespace UnitTests.RecordingLibTest
         public void TestInitialize()
         {
             Context = new Context();
-            WebPlatform webPlatformInfo = new WebPlatform();
+            TestPlatform webPlatformInfo = new TestPlatform();
             mDriver = new TestDriver();
-            PlatformInfo = new WebPlatform();
+            PlatformInfo = new TestPlatform();
             mBF = new BusinessFlow() { Name = "TestRecordingBF", Active = true };
             Activity activity = new Activity();
             mBF.AddActivity(activity);
@@ -53,10 +49,10 @@ namespace UnitTests.RecordingLibTest
                 Thread.Sleep(2000);
                 mngr.StopRecording();
             }
-            ActUIElement actUI = (ActUIElement)Context.BusinessFlow.Activities[0].Acts[0];
-            Assert.IsTrue(actUI.ElementLocateBy == Amdocs.Ginger.Common.UIElement.eLocateBy.ByID);
-            Assert.IsTrue(actUI.ElementAction == ActUIElement.eElementAction.Click);
-            Assert.IsTrue(actUI.ElementType == Amdocs.Ginger.Common.UIElement.eElementType.Button);
+            TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
+            Assert.IsTrue(actUI.ElementLocateBy == eLocateBy.ByID);
+            Assert.IsTrue(actUI.ElementAction == "Click");
+            Assert.IsTrue(actUI.ElementType == "Button");
         }
 
         [TestMethod]
@@ -73,14 +69,15 @@ namespace UnitTests.RecordingLibTest
                 Thread.Sleep(3000);
                 mngr.StopRecording();
             }
-            if (Context.BusinessFlow.Activities[0].Acts.Count > 0)
+            if (mBF.Activities[0].Acts.Count > 0)
             {
-                ActUIElement actUI = (ActUIElement)Context.BusinessFlow.Activities[0].Acts[0];
-                Assert.IsTrue(actUI.ElementLocateBy == Amdocs.Ginger.Common.UIElement.eLocateBy.POMElement);
-                Assert.IsTrue(actUI.ElementAction == ActUIElement.eElementAction.Click);
-                Assert.IsTrue(actUI.ElementType == Amdocs.Ginger.Common.UIElement.eElementType.Button);
-                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.MappedUIElements.Count == Context.BusinessFlow.Activities[0].Acts.Count);
-                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.MappedUIElements[0].ElementTypeEnum == Amdocs.Ginger.Common.UIElement.eElementType.Button);
+                ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
+                TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
+                Assert.IsTrue(actUI.ElementLocateBy == eLocateBy.POMElement);
+                Assert.IsTrue(actUI.ElementAction == "Click");
+                Assert.IsTrue(actUI.ElementType == "Button");
+                Assert.IsTrue(cPOM.MappedUIElements[0].ElementTypeEnum.ToString() == eElementType.Button.ToString());
+                Assert.IsTrue(cPOM.MappedUIElements.Count == mBF.Activities[0].Acts.Count);
             }
             else
             {
@@ -104,7 +101,8 @@ namespace UnitTests.RecordingLibTest
             }
             if (mngr.ListPOMObjectHelper != null && mngr.ListPOMObjectHelper.Count > 0)
             {
-                Assert.IsTrue(mngr.ListPOMObjectHelper[1].ApplicationPOM.PageURL == "www.google.com");
+                ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
+                Assert.IsTrue(cPOM.PageURL == "www.google.com");
                 Assert.IsTrue(mngr.ListPOMObjectHelper.Count == 2);
             }
             else

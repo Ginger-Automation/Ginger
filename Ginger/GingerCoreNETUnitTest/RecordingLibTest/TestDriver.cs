@@ -3,7 +3,7 @@ using Amdocs.Ginger.Plugin.Core;
 using System;
 using System.Timers;
 
-namespace UnitTests.RecordingLibTest
+namespace GingerCoreNETUnitTest.RecordingLibTest
 {
     public class TestDriver : IRecord
     {
@@ -19,6 +19,7 @@ namespace UnitTests.RecordingLibTest
             mGetRecordingTimer = new Timer(1000);
             mGetRecordingTimer.Elapsed += MGetRecordingTimer_Elapsed;
             mGetRecordingTimer.Start();
+            //DoRecording();
         }
 
         private void MGetRecordingTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -73,7 +74,6 @@ namespace UnitTests.RecordingLibTest
             }
 
             OnPageChanged(pageArgs);
-
             OnLearnedElement(eleArgs);
             i++;
         }
