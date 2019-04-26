@@ -349,6 +349,7 @@ namespace Ginger
             if (WorkSpace.Instance.SolutionRepository != null)
             {
                 App.CloseAllRunningAgents();
+                App.StopAllFileWatchers();
                 WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
             }
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);

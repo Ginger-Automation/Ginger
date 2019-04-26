@@ -603,6 +603,7 @@ namespace Ginger
             WorkSpace.UserProfile.Solution = null;
             App.AutomateTabGingerRunner.ClearAgents();
             CloseAllRunningAgents();
+            StopAllFileWatchers();
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
             AutoLogProxy.SetAccount("");
             WorkSpace.Instance.SolutionRepository = null;
@@ -635,8 +636,16 @@ namespace Ginger
             }
         }
 
+        public static void StopAllFileWatchers()
+        {
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                WorkSpace.Instance.SolutionRepository.StopAllRepositoryFolderWatchers();
+              
+            }
+        }
         public static bool SetSolution(string SolutionFolder)
-        {            
+    {            
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", SolutionFolder));
