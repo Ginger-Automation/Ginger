@@ -26,9 +26,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
-            App.FillComboFromEnumVal(ActCheckboxComboBox, Act.CheckboxAction);
+            GingerCore.General.FillComboFromEnumObj(ActCheckboxComboBox, Act.CheckboxAction);
             //TODO: fix hard coded ButtonAction use Fields
-            App.ObjFieldBinding(ActCheckboxComboBox, ComboBox.TextProperty, Act, "CheckboxAction");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActCheckboxComboBox, ComboBox.TextProperty, Act, "CheckboxAction");
         }
     }
 }

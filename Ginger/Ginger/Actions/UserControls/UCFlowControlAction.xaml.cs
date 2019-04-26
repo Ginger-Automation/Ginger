@@ -96,26 +96,26 @@ namespace Ginger.Actions.UserControls
 
             if (mBfParentRunner != null)
             {
-                App.FillComboFromEnumVal(ActionComboBox, FC.BusinessFlowControlAction);
-                App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.BusinessFlowControlAction);
+                GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.BusinessFlowControlAction);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.BusinessFlowControlAction);
             }
             else
             {
-                if (mActParentActivity.GetType() == typeof(ErrorHandler))
+                if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
                 {
                     List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
 
-                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
-                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.FlowControlAction, ErrorFlowControlActions.Cast<object>().ToList());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
                 }
                 else
                 {
-                    App.FillComboFromEnumVal(ActionComboBox, FC.FlowControlAction);
-                    App.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
+                    GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.FlowControlAction);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
                 }
             }                               
 
-            App.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
             ActionValueTextBox.Init(new Context() { BusinessFlow = mActParentBusinessFlow }, FC, FlowControl.Fields.Value);
             ActionValueTextBox.ValueTextBox.Text = FC.Value;
 
@@ -203,41 +203,43 @@ namespace Ginger.Actions.UserControls
             {
                 switch (FC.FlowControlAction)
                 {
-
                     case eFlowControlAction.GoToAction:
                         {
-                            foreach (Act a in mActParentActivity.Acts)
+                            if (mActParentActivity != null)
                             {
-                                //avoid current Action
-                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                foreach (Act a in mActParentActivity.Acts)
                                 {
-                                    continue;
+                                    //avoid current Action
+                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                    {
+                                        continue;
+                                    }
+
+                                    GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                                    CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description;//adding also name as second option search to be used when pulling the actions from Shared Repository
+                                    CEI.text = a.Description;
+                                    ActionValueComboBox.Items.Add(CEI);
+
+                                    if (ActionValueComboBox.SelectedItem == null ||
+                                        ((ActionValueComboBox.SelectedItem != null && a.Active)))
+                                    {
+                                        if (FC.GetGuidFromValue(true) == a.Guid)//we letting it run each time because in Conversion mechanism we have 2 actions with same GUID
+                                        {
+                                            ActionValueComboBox.SelectedItem = CEI;
+                                        }
+                                        else if (FC.GetGuidFromValue(true) == Guid.Empty && FC.GetNameFromValue(true) == a.Description)
+                                        {
+                                            ActionValueComboBox.SelectedItem = CEI;
+                                        }
+                                    }
                                 }
+                                ActionValueComboBox.Visibility = System.Windows.Visibility.Visible;
+                                ActionValueTextBox.Visibility = System.Windows.Visibility.Hidden;
 
-                                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
-                                CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description;//adding also name as second option search to be used when pulling the actions from Shared Repository
-                                CEI.text = a.Description;
-                                ActionValueComboBox.Items.Add(CEI);
-
-                                if (ActionValueComboBox.SelectedItem == null ||
-                                    ((ActionValueComboBox.SelectedItem != null && a.Active)))
+                                if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                                 {
-                                    if (FC.GetGuidFromValue(true) == a.Guid)//we letting it run each time because in Conversion mechanism we have 2 actions with same GUID
-                                    {
-                                        ActionValueComboBox.SelectedItem = CEI;
-                                    }
-                                    else if (FC.GetGuidFromValue(true) == Guid.Empty && FC.GetNameFromValue(true) == a.Description)
-                                    {
-                                        ActionValueComboBox.SelectedItem = CEI;
-                                    }
+                                    Reporter.ToUser(eUserMsgKey.ActionIDNotFound, FC.Value);
                                 }
-                            }
-                            ActionValueComboBox.Visibility = System.Windows.Visibility.Visible;
-                            ActionValueTextBox.Visibility = System.Windows.Visibility.Hidden;
-
-                            if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
-                            {
-                                Reporter.ToUser(eUserMsgKey.ActionIDNotFound, FC.Value);
                             }
                         }
                         break;

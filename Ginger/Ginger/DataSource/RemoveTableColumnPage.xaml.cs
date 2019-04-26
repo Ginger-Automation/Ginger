@@ -41,7 +41,7 @@ namespace Ginger.DataSource
             if(mColNameList.Contains("GINGER_USED"))
                 mColNameList.Remove("GINGER_USED");           
 
-            App.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
             DSColNameComboBox.ItemsSource = mColNameList;
         }
 

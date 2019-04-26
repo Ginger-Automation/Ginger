@@ -73,21 +73,21 @@ namespace Ginger.Actions
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
 
             //Import SQL file in to solution folder
-            GingerCore.General.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
 
             //OLD binding and UI 
-            App.FillComboFromEnumVal(ValidationCfgComboBox, act.DBValidationType);
+            GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
             //TODO: fix hard coded
-            App.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, act,  "DBValidationType");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, act,  "DBValidationType");
 
-            App.ObjFieldBinding(AppNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.AppName);
-            App.ObjFieldBinding(DBNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.DBName);
-            App.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Table);
-            App.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Keyspace);
-            App.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
-            App.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
-            GingerCore.General.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AppNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.AppName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DBNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.DBName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Table);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Keyspace);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
 
             KeySpaceComboBox.Items.Add(mAct.Keyspace);
             ComboAutoSelectIfOneItemOnly(KeySpaceComboBox);
@@ -101,7 +101,7 @@ namespace Ginger.Actions
                 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             bool ImportFileFlag = false;
             string FileName = QueryFile.ValueTextBox.Text;
             Boolean.TryParse(mAct.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
@@ -507,7 +507,7 @@ namespace Ginger.Actions
 
         public void BrowseQueryFile_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (!String.IsNullOrEmpty(QueryFile.ValueTextBox.Text))
             {
                 if(!System.IO.File.Exists(QueryFile.ValueTextBox.Text))

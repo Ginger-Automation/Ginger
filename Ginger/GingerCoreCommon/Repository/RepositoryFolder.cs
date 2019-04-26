@@ -502,6 +502,7 @@ namespace Amdocs.Ginger.Repository
                         // add item to cache and list
                         T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
                         AddItemtoCache(e.FullPath, newItem);
+                        mSolutionRepositoryItemInfo.AddItemToCache((T)(object)newItem);
                         mFolderItemsList.Add(newItem);
                         break;
                 }

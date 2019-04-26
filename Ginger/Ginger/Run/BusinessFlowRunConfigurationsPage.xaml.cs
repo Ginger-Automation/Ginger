@@ -68,7 +68,7 @@ namespace Ginger.Run
             
             mBusinessFlow.SaveBackup();
 
-			App.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
+			GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
 
 			RunDescritpion.Init(mContext, businessFlow, BusinessFlow.Fields.RunDescription);
 
@@ -181,7 +181,7 @@ namespace Ginger.Run
                     int countMatchingBfs = 0;
                     
                     List<VariableBase> selectedVars = grdVariables.Grid.SelectedItems.Cast<VariableBase>().ToList();
-                    foreach (GingerRunner runner in WorkSpace.RunsetExecutor.Runners)
+                    foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
                     {
                         List<BusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
                         countMatchingBfs += matchingBfs.Count;

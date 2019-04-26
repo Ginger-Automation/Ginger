@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
 using System.Windows;
@@ -41,7 +42,7 @@ namespace Ginger.Actions
         {
             this.obj = obj;
             this.AttrName = AttrName;
-            App.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
            MakePathsRelative= mMakePathsRelative;
         }
 
@@ -51,7 +52,7 @@ namespace Ginger.Actions
             MakePathsRelative = mMakePathsRelative;
             this.obj = AIV;
             this.AttrName = ActInputValue.Fields.Value;
-            App.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
         }
 
         private void BrowseFileButton_Click(object sender, RoutedEventArgs e)
@@ -69,9 +70,9 @@ namespace Ginger.Actions
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                if (MakePathsRelative &&dlg.FileName.StartsWith(App.AutomateTabGingerRunner.CurrentSolution.Folder))
+                if (MakePathsRelative &&dlg.FileName.StartsWith(WorkSpace.Instance.Solution.Folder))
                 {
-                    FilePathTextBox.Text= dlg.FileName.Replace(App.AutomateTabGingerRunner.CurrentSolution.Folder, @"~\");
+                    FilePathTextBox.Text= dlg.FileName.Replace(WorkSpace.Instance.Solution.Folder, @"~\");
                 }
                 else
                 {

@@ -16,16 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-
 using Ginger.Reports;
-using Ginger.Run;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;

@@ -36,8 +36,8 @@ namespace Ginger.Actions
             InitializeComponent();
 
             currentAct = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.GridAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GridAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction"); 
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -416,8 +416,8 @@ namespace Ginger.Actions
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(cmbDataSourceName, mDSNames);
             
-            GingerCore.General.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSName);
-            GingerCore.General.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
 
             if(mActDSTblElem == null || (mActDSTblElem.DSName ==null && mActDSTblElem.DSTableName == null) || (mActDSTblElem.DSName == "" && mActDSTblElem.DSTableName == "" ))
             {
@@ -431,7 +431,7 @@ namespace Ginger.Actions
             
             GetTableDetails();
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
-            GingerCore.General.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
             ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
             ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
@@ -1257,7 +1257,7 @@ namespace Ginger.Actions
                     //if (ds.FilePath.StartsWith("~"))
                     //{
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 

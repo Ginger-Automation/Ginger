@@ -34,8 +34,8 @@ namespace Ginger.Actions.Windows
 
             mAct = Act;
 
-            App.FillComboFromEnumVal(ActionNameComboBox, mAct.ControlAction);            
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

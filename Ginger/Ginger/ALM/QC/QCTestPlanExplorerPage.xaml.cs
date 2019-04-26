@@ -79,5 +79,17 @@ namespace Ginger.ALM.QC
             SelectedPath = null;
             genWin.Close();
         }
+        private void xCreateBusinessFlowFolder_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xCreateBusinessFlowFolder.IsChecked == true)
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = true;
+            }
+            else
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = false;
+            }
+        }
+        
     }
 }

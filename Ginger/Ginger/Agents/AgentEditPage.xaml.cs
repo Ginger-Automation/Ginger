@@ -46,9 +46,9 @@ namespace Ginger.Agents
             {
                 mAgent = agent;
 
-                App.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
-                App.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
-                App.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 TagsViewer.Init(mAgent.Tags);
 
                 if (mAgent.AgentType == eAgentType.Driver)
@@ -58,7 +58,7 @@ namespace Ginger.Agents
 
                     xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
                     SetDriverTypeCombo();
-                    App.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
                 }
                 else//Plugin
@@ -104,7 +104,7 @@ namespace Ginger.Agents
                 }
             }
             
-            App.FillComboFromEnumVal(xDriverTypeComboBox, mAgent.DriverType, lst);           
+            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);           
         }
 
 

@@ -104,9 +104,9 @@ namespace Ginger.Run
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
             await Task.Run(() => {
-                if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+                if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
                 {                   
-                    mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+                    mRunSetExecsRootFolder = ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
 
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
@@ -211,9 +211,9 @@ namespace Ginger.Run
 
         private void GetExecutionResultsFolder(object sender, RoutedEventArgs e)
         {
-            if ( WorkSpace.UserProfile.Solution != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
+            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Count > 0)
             {
-                Process.Start(Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.UserProfile.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
+                Process.Start(Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList[0].ExecutionLoggerConfigurationExecResultsFolder));
             }
             else
                 return;
@@ -252,7 +252,7 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

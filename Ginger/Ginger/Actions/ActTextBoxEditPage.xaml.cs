@@ -29,9 +29,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.TextBoxAction);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.TextBoxAction);
             //TODO: fix hard coded
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "TextBoxAction");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "TextBoxAction");
         }
     }
 }

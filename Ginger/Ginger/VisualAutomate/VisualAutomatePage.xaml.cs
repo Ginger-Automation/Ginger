@@ -45,7 +45,7 @@ namespace Ginger.VisualAutomate
             InitializeComponent();
 
             // Bind the title label to the BF Name
-            App.ObjFieldBinding(lblTitle, ContentProperty, BF, BusinessFlow.Fields.Name, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTitle, ContentProperty, BF, BusinessFlow.Fields.Name, BindingMode.OneWay);
 
             //TODO: if big flow takes time to load then show loading message
             if (mBusinessFlow.CurrentActivity ==null && mBusinessFlow.Activities.Count>0)

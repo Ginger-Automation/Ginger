@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (mValueExpression == null)
                 {
-                    mValueExpression = new ValueExpression(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 }
                 return mValueExpression;
             }
@@ -175,14 +175,14 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
-            if (!System.IO.Directory.Exists(WorkSpace.TempFolder))
-                System.IO.Directory.CreateDirectory(WorkSpace.TempFolder);
-            tempFolder = WorkSpace.TempFolder;
+            if (!System.IO.Directory.Exists(WorkSpace.EmailReportTempFolder))
+                System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
+            tempFolder = WorkSpace.EmailReportTempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
-            if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                 AutoLogProxy.UserOperationStart("Online Report");
             }
             else
@@ -195,7 +195,7 @@ namespace Ginger.Run.RunSetActions
 
             if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText)
             {
-                if (ReportItem != null && !WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
                     Errors = "In order to get HTML report, please, perform executions before";
                     Reporter.HideStatusMessage();
@@ -203,16 +203,23 @@ namespace Ginger.Run.RunSetActions
                     return;
                 }
                 mVE.Value = Bodytext;
-                emailReadyHtml = @"<p><!--FULLREPORTLINK--><p>";
+                emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
                 emailReadyHtml += mVE.ValueCalculated;
             }
             else
             {
-                if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                 {
-                    if (selectedHTMLReportTemplateID > 0)
+                    if (selectedHTMLReportTemplateID > -1)
                     {
                         CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                    }
+                    else
+                    {
+                        Errors = "Default Template is not available, add Report Template in Configuration.";
+                        Reporter.HideStatusMessage();
+                        Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                        return;
                     }
                 }
                 else
@@ -1006,7 +1013,7 @@ namespace Ginger.Run.RunSetActions
                                     fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityRunStatusValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport).ToString());
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.NumberOfActions)
                             {

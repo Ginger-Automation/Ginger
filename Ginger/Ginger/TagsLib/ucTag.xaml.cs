@@ -39,8 +39,8 @@ namespace Ginger
         {
             InitializeComponent();
             mTag = tag;
-            App.ObjFieldBinding(lblTagName, Label.ContentProperty, mTag, RepositoryItemTag.Fields.Name);
-            App.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ContentProperty, mTag, RepositoryItemTag.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
             tagStack.Background = (Brush)bc.ConvertFrom("#cde0f2");
             closeImage.Visibility = Visibility.Hidden;
 

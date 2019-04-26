@@ -29,6 +29,7 @@ namespace Ginger.ALM.QC.TreeViewItems
     {
         public string Folder { get; set; }
         public string Path { get; set; }
+        public static bool IsCreateBusinessFlowFolder { get; set; }
 
         private new ContextMenu mContextMenu = new ContextMenu();
 

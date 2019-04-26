@@ -278,7 +278,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(Solution.Variables) && mVariablesLevel == eVariablesLevel.Solution)
             {
-                if ((Solution)mVariablesParentObj ==  WorkSpace.UserProfile.Solution)
+                if ((Solution)mVariablesParentObj ==  WorkSpace.Instance.Solution)
                 {
                     LoadGridData();
                 }

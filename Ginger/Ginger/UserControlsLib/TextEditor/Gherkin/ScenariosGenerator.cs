@@ -42,7 +42,7 @@ namespace Ginger.GherkinLib
             string FileName = string.Empty;
             
             if (BF.ExternalID != null)
-                    FileName = BF.ExternalID.Replace(@"~",  WorkSpace.UserProfile.Solution.Folder);
+                    FileName = BF.ExternalID.Replace(@"~",  WorkSpace.Instance.Solution.Folder);
 
             if (!System.IO.File.Exists(FileName))
             {
@@ -323,13 +323,13 @@ namespace Ginger.GherkinLib
         private Guid GetOrCreateTagInSolution(string TagName)
         {
             if (TagName.StartsWith("@")) TagName = TagName.Substring(1);
-            Guid TagGuid = (from x in  WorkSpace.UserProfile.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
+            Guid TagGuid = (from x in  WorkSpace.Instance.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
             if (TagGuid == Guid.Empty)
             {
                 //TODO: notify the user that tags are added to solution and he needs to save it                    
                 RepositoryItemTag RIT = new RepositoryItemTag() { Name = TagName };
                 TagGuid = RIT.Guid;
-                 WorkSpace.UserProfile.Solution.Tags.Add(RIT);
+                 WorkSpace.Instance.Solution.Tags.Add(RIT);
             }
             return TagGuid;
         }

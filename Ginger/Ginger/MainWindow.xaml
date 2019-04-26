@@ -6,7 +6,7 @@
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
-        Height="600" Width="1000" WindowState="Normal" 
+        Height="600" Width="1000" WindowState="Maximized"         
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -266,6 +266,10 @@
 
         <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1"/>
         <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid x:Name="xSplashGrid" Width="650" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
+            <usercontrols:ImageMakerControl ImageType="GingerSplash"/>
+            <Label x:Name="lblAppVersion" Content="Version x.x.x.x" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Center" Margin="180,200,0,0" Grid.Row="1" Width="200" Height="50"/>
+        </Grid>
 
         <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" >
             <DockPanel VerticalAlignment="Center">
