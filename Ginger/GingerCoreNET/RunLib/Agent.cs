@@ -42,10 +42,10 @@ using System.Threading.Tasks;
 
 namespace GingerCore
 {
-   
+
     public class Agent : RepositoryItemBase, IAgent
     {
-        
+
         public enum eAgentType
         {
             Driver,  // old legacy drivers - default
@@ -166,7 +166,7 @@ namespace GingerCore
         {
             get
             {
-                if (Driver != null) return  Driver.IsWindowExplorerSupportReady();
+                if (Driver != null) return Driver.IsWindowExplorerSupportReady();
 
                 else return false;
             }
@@ -181,7 +181,7 @@ namespace GingerCore
                 else return false;
             }
         }
-        
+
         [IsSerializedForLocalRepository]
         public bool Active { get; set; }
 
@@ -189,7 +189,7 @@ namespace GingerCore
         public ObservableList<DriverConfigParam> AdvanceAgentConfigurations = new ObservableList<DriverConfigParam>();
 
         public bool mIsStarting = false;
-        
+
         private string mName;
         [IsSerializedForLocalRepository]
         public string Name
@@ -241,11 +241,11 @@ namespace GingerCore
 
         public bool IsFailedToStart = false;
         private static Object thisLock = new Object();
-        
+
         public eStatus Status
         {
             get
-            {                
+            {
                 if (IsFailedToStart) return eStatus.FailedToStart;
 
                 if (mIsStarting) return eStatus.Starting;
@@ -261,31 +261,31 @@ namespace GingerCore
                         return eStatus.NotStarted;
                     }
                 }
-                
+
 
                 if (Driver == null) return eStatus.NotStarted;
                 //TODO: fixme  running called too many - and get stuck
                 bool DriverIsRunning = false;
                 lock (thisLock)
-                        {
-                            DriverIsRunning = Driver.IsRunning();
-                            //Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}"); //TODO: if needed so need to be more informative icluding Agent type & name and to be writed only in Debug mode of Log
-                        }
+                {
+                    DriverIsRunning = Driver.IsRunning();
+                    //Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}"); //TODO: if needed so need to be more informative icluding Agent type & name and to be writed only in Debug mode of Log
+                }
                 if (DriverIsRunning) return eStatus.Running;
-                              
+
                 return eStatus.NotStarted;
             }
         }
 
         private eDriverType mDriverType;
-        [IsSerializedForLocalRepository]                
-        public eDriverType DriverType {get { return mDriverType; } set {if (mDriverType != value) {mDriverType = value; OnPropertyChanged(nameof(DriverType));}}}
+        [IsSerializedForLocalRepository]
+        public eDriverType DriverType { get { return mDriverType; } set { if (mDriverType != value) { mDriverType = value; OnPropertyChanged(nameof(DriverType)); } } }
 
         private string mNotes;
         [IsSerializedForLocalRepository]
         public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
 
-        [IsSerializedForLocalRepository]        
+        [IsSerializedForLocalRepository]
         public ObservableList<DriverConfigParam> DriverConfiguration;
 
         public ProjEnvironment ProjEnvironment { get; set; }
@@ -295,7 +295,7 @@ namespace GingerCore
         public ObservableList<DataSourceBase> DSList { get; set; }
 
 
-        
+
         private BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
@@ -326,7 +326,7 @@ namespace GingerCore
         public CancellationTokenSource CTS = null;
         BackgroundWorker CancelTask;
 
-        
+
 
         public void StartDriver()
         {
@@ -346,7 +346,7 @@ namespace GingerCore
 
         System.Diagnostics.Process mProcess;
         public void StartPluginService()
-        {            
+        {
             /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MyDriver
             // Find the first service which match
             mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId select x).FirstOrDefault();  // Keep First!!!
@@ -356,7 +356,7 @@ namespace GingerCore
             if (mGingerNodeInfo == null)
             {
                 // Dup with GR consolidate with timeout
-                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);       
+                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);
             }
 
             Stopwatch st = Stopwatch.StartNew();
@@ -380,9 +380,9 @@ namespace GingerCore
             // TODO: add by which agent to GNI
 
             // Keep GNP on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(mGingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-            GNP.StartDriver();
+            GingerNodeProxy = new GingerNodeProxy(mGingerNodeInfo);
+            GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+            GingerNodeProxy.StartDriver();
         }
 
         public void driverMessageEventHandler(object sender, DriverMessageEventArgs e)
@@ -442,7 +442,7 @@ namespace GingerCore
                         case "eType":
                             //TODO: Handle enums later...
                             throw new Exception("Driver Config - Enum not supported yet");
-                        default:                            
+                        default:
                             Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                             break;
                     }
@@ -468,7 +468,7 @@ namespace GingerCore
 
             Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
             SetDriverDefualtParams(driverType);
-          
+
         }
 
 
@@ -511,7 +511,7 @@ namespace GingerCore
                 {
                     DriverConfiguration.Add(configParam);
                 }
-                  
+
             }
         }
 
@@ -530,22 +530,12 @@ namespace GingerCore
             return DCP;
         }
 
-        // keep GingerNodeProxy here
+
+        // We cache the GingerNodeProxy
+        public GingerNodeProxy GingerNodeProxy { get; set; }
 
         // We keep the GingerNodeInfo for Plugin driver
         private GingerNodeInfo mGingerNodeInfo;
-        public GingerNodeInfo GingerNodeInfo
-        {
-            get
-            {
-                return mGingerNodeInfo;
-            }
-            set
-            {
-                mGingerNodeInfo = value;
-            }
-        }
-
 
         public void RunAction(Act act)
         {          
@@ -584,9 +574,9 @@ namespace GingerCore
                     if (mGingerNodeInfo != null)
                     {
                         // this is plugin driver
-                        GingerNodeProxy GNP = new GingerNodeProxy(mGingerNodeInfo);
-                        GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-                        GNP.CloseDriver();
+
+                        GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                        GingerNodeProxy.CloseDriver();
                         if (mProcess != null)
                         {
                             // mProcess.Kill();
