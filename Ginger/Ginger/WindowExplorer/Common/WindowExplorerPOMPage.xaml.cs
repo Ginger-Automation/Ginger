@@ -143,7 +143,7 @@ namespace Ginger.WindowExplorer.Common
         private void FillPOMS()
         {
             //List<ApplicationPOM> list = new List<ApplicationPOM>();
-            //string folder = Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Applications\" + mApplicationAgent.AppName + @"\Page Objects Models\" );  // TODO: use const or POM helper
+            //string folder = Path.Combine( WorkSpace.Instance.Solution.Folder, @"Applications\" + mApplicationAgent.AppName + @"\Page Objects Models\" );  // TODO: use const or POM helper
             //string[] POMFolders = Directory.GetDirectories(folder);
 
 

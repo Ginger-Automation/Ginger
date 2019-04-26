@@ -62,7 +62,7 @@ namespace Ginger.BusinessFlowWindows
              AppsGrid.SetAllColumnsDefaultView(view);
              AppsGrid.InitViewItems();
 
-             foreach (ApplicationPlatform AP in  WorkSpace.UserProfile.Solution.ApplicationPlatforms)
+             foreach (ApplicationPlatform AP in  WorkSpace.Instance.Solution.ApplicationPlatforms)
              {
                  ApplicationPlatform AP1 = new ApplicationPlatform();
                  AP1.AppName = AP.AppName;

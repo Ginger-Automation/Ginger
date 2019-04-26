@@ -19,6 +19,8 @@ limitations under the License.
 using System.Diagnostics;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 
 namespace Ginger.Run.RunSetActions
@@ -35,25 +37,17 @@ namespace Ginger.Run.RunSetActions
             if (runSetActionSendSMS.SMSEmail == null)
             {
                 runSetActionSendSMS.SMSEmail = new Email();                
-            }/*
+            }
 
-            App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPMailHost);
-            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPUser);
-            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPass);
-            App.ObjFieldBinding(MailFromTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.MailFrom);
-            App.ObjFieldBinding(MailToTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.MailTo);
-            App.ObjFieldBinding(SubjectTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.Subject);
-            App.ObjFieldBinding(BodyTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.Body);
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
+            MailToTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));
+            SubjectTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.Subject));
+            BodyTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.Body));
+            BodyTextBox.AdjustHight(100);
 
-            App.FillComboFromEnumVal(EmailMethodComboBox, runSetActionSendSMS.SMSEmail.EmailMethod);
-            App.ObjFieldBinding(EmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendSMS.SMSEmail, Email.Fields.EmailMethod);
-
-            App.ObjFieldBinding(SMTPMailHostTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPMailHost);
-            App.ObjFieldBinding(SMTPPortTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPort);
-            App.ObjFieldBinding(SMTPUserTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPUser);
-            App.ObjFieldBinding(SMTPPassTextBox, TextBox.TextProperty, runSetActionSendSMS.SMSEmail, Email.Fields.SMTPPass);
-        */}
+        }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {

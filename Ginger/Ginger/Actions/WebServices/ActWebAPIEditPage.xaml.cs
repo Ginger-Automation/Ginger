@@ -114,10 +114,10 @@ namespace Ginger.Actions.WebServices
             CertificateTypeRadioButton.Init(typeof(ApplicationAPIUtils.eCretificateType), CertificateSelection, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString()), CertificateSelection_Changed);
 
             //Response validation checkbox: 
-            GingerCore.General.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnBadRespose, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, "False"));
 
             //Use Legacy JSON Parsing
-            GingerCore.General.ObjFieldBinding(UseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mAct, ActWebAPIBase.Fields.UseLegacyJSONParsing);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseLegacyJSONParsingCheckBox, CheckBox.IsCheckedProperty, mAct, ActWebAPIBase.Fields.UseLegacyJSONParsing);
 
             //Request Body fields:
             RequestBodyUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.RequestBody), true, false, UCValueExpression.eBrowserType.Folder, "*", null);
@@ -125,14 +125,14 @@ namespace Ginger.Actions.WebServices
             RequestBodyUCValueExpression.ValueTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
 
             //Import Request File
-            GingerCore.General.ActInputValueBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportRequestFile, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportRequestFile, "False"));
 
             //SSL Certificates:
             CertificatePath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
             CertificatePasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePassword), true, false, UCValueExpression.eBrowserType.Folder);
 
             //Import Certificate
-            GingerCore.General.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
 
             //Security:
             SecurityTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString()), typeof(ApplicationAPIUtils.eSercurityType), false, null);
@@ -271,7 +271,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (TemplateFileNameFileBrowser.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -341,7 +341,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -543,7 +543,7 @@ namespace Ginger.Actions.WebServices
 
                 dlg.DefaultExt = "*.*";
                 dlg.Filter = "All files (All Files)|*.*";
-                string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

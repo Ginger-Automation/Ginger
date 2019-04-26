@@ -40,11 +40,11 @@ namespace Ginger.Agents
             InitializeComponent();
 
             mNewAgent.Active = true;
-            App.ObjFieldBinding(AgentNameTextBox, TextBox.TextProperty, mNewAgent, Agent.Fields.Name);
-            App.ObjFieldBinding(DriverTypeComboBox, ComboBox.TextProperty, mNewAgent, Agent.Fields.DriverType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AgentNameTextBox, TextBox.TextProperty, mNewAgent, Agent.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DriverTypeComboBox, ComboBox.TextProperty, mNewAgent, Agent.Fields.DriverType);
 
             PlatformTypeComboBox.SelectionChanged += PlatformTypeComboBox_SelectionChanged;
-            App.FillComboFromEnumVal(PlatformTypeComboBox, mNewAgent.Platform); 
+            GingerCore.General.FillComboFromEnumObj(PlatformTypeComboBox, mNewAgent.Platform); 
             AgentNameTextBox.Focus();
         }
 
@@ -54,7 +54,7 @@ namespace Ginger.Agents
             DriverTypeComboBox.Items.Clear();
 
             List<object> driverTypeValues = mNewAgent.GetDriverTypesByPlatfrom(PlatformTypeComboBox.SelectedItem.ToString());
-            App.FillComboFromEnumVal(DriverTypeComboBox, mNewAgent.DriverType, driverTypeValues, false);
+            GingerCore.General.FillComboFromEnumObj(DriverTypeComboBox, mNewAgent.DriverType, driverTypeValues, false);
             if (DriverTypeComboBox.Items.Count > 0)
                 DriverTypeComboBox.SelectedItem = DriverTypeComboBox.Items[0];
         }

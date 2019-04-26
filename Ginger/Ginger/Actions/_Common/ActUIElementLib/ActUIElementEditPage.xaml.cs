@@ -71,11 +71,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if ((Context.GetAsContext(mAction.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-                platform = (from x in WorkSpace.UserProfile.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             }
             else
             {
-                platform = WorkSpace.UserProfile.Solution.ApplicationPlatforms[0].Platform;
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms[0].Platform;
             }             
             return platform;
         }

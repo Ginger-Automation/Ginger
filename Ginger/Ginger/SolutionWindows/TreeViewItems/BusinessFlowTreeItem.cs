@@ -96,7 +96,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
             if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
-                if ( WorkSpace.UserProfile.UserTypeHelper.IsSupportAutomate)
+                if ( WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
                 {   
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
@@ -138,7 +138,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~",  WorkSpace.UserProfile.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;

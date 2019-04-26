@@ -50,7 +50,7 @@ namespace Ginger.Variables
 
             comboSelectedValue.ItemsSource = mVar.OptionalValuesList;
             comboSelectedValue.DisplayMemberPath = nameof(OptionalValue.Value);
-            App.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));
             //comboSelectedValue.BindControl(mVar, nameof(VariableSelectionList.SelectedValue), mVar.OptionalValuesList.ToList<OptionalValue>());
         }
 

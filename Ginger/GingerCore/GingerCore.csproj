@@ -723,6 +723,7 @@
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
+    <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="GeneralLib\StringCompressor.cs" />
@@ -802,7 +803,7 @@
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
-    <Compile Include="GeneralFunctions\RegistryFunctions.cs" />
+    <Compile Include="GeneralLib\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>

@@ -68,31 +68,31 @@ namespace Ginger.Actions
             mAct = Act;
             InitializeComponent();
 
-            App.FillComboFromEnumVal(cmbColSelectorValue, mAct.ColSelectorValue);            
+            GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, mAct.ColSelectorValue);            
            
-            App.FillComboFromEnumVal(WhereColumn, mAct.ColSelectorValue);
+            GingerCore.General.FillComboFromEnumObj(WhereColumn, mAct.ColSelectorValue);
             
 
-            App.FillComboFromEnumVal(WhereProperty, mAct.WhereProperty);
-            App.FillComboFromEnumVal(WhereOperator, mAct.WhereOperator);
-            App.FillComboFromEnumVal(ControlActionComboBox, mAct.ControlAction);           
+            GingerCore.General.FillComboFromEnumObj(WhereProperty, mAct.WhereProperty);
+            GingerCore.General.FillComboFromEnumObj(WhereOperator, mAct.WhereOperator);
+            GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);           
 
             SetDescriptionDetails();
-            App.ObjFieldBinding(cmbColSelectorValue, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ColSelectorValue);
-            App.ObjFieldBinding(cmbColumnValue, ComboBox.TextProperty, mAct, ActTableElement.Fields.LocateColTitle);
-            App.ObjFieldBinding(RowNum, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByRowNum);
-            App.ObjFieldBinding(AnyRow, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByRandRow);
-            App.ObjFieldBinding(BySelectedRow, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.BySelectedRow);
-            App.ObjFieldBinding(Where, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByWhere);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColSelectorValue, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ColSelectorValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.TextProperty, mAct, ActTableElement.Fields.LocateColTitle);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowNum, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByRowNum);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AnyRow, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByRandRow);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BySelectedRow, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.BySelectedRow);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Where, CheckBox.IsCheckedProperty, mAct, ActTableElement.Fields.ByWhere);
 
-            App.ObjFieldBinding(RowSelectorValue, ComboBox.TextProperty, mAct, ActTableElement.Fields.LocateRowValue);
-            App.ObjFieldBinding(WhereColumn, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereColSelector);
-            App.ObjFieldBinding(WhereColumnTitle, ComboBox.TextProperty, mAct, ActTableElement.Fields.WhereColumnTitle);
-            App.ObjFieldBinding(WhereProperty, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereProperty);
-            App.ObjFieldBinding(WhereOperator, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereOperator);     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowSelectorValue, ComboBox.TextProperty, mAct, ActTableElement.Fields.LocateRowValue);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereColumn, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereColSelector);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereColumnTitle, ComboBox.TextProperty, mAct, ActTableElement.Fields.WhereColumnTitle);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereProperty, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereProperty);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereOperator, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereOperator);     
             WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
 
-            App.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ControlAction);
             if (WhereColumn.SelectedIndex == -1)
                 WhereColumn.SelectedIndex = 0;
             if (cmbColSelectorValue.SelectedIndex == -1)
@@ -363,16 +363,16 @@ namespace Ginger.Actions
             RowSelectorValue.SelectedIndex = 0;        
 
             ActTableElement ACJT = new ActTableElement();
-            App.FillComboFromEnumVal(cmbColSelectorValue, ACJT.ColSelectorValue);
+            GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, ACJT.ColSelectorValue);
             if (cmbColSelectorValue.SelectedIndex == -1)
                 cmbColSelectorValue.SelectedIndex = 0;
-            App.FillComboFromEnumVal(WhereColumn, ACJT.ColSelectorValue);
+            GingerCore.General.FillComboFromEnumObj(WhereColumn, ACJT.ColSelectorValue);
             if (WhereColumn.SelectedIndex == -1)
                 WhereColumn.SelectedIndex = 0;
-            App.FillComboFromEnumVal(WhereProperty, ACJT.WhereProperty);
+            GingerCore.General.FillComboFromEnumObj(WhereProperty, ACJT.WhereProperty);
             if (WhereProperty.SelectedIndex == -1)
                 WhereProperty.SelectedIndex = 0;            
-            App.FillComboFromEnumVal(WhereOperator, ACJT.WhereOperator);
+            GingerCore.General.FillComboFromEnumObj(WhereOperator, ACJT.WhereOperator);
             if (WhereOperator.SelectedIndex == -1)
                 WhereOperator.SelectedIndex = 0;
             WherePanel.Visibility = Visibility.Collapsed;
@@ -613,8 +613,8 @@ namespace Ginger.Actions
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mAct.LocateRowValue = RowSelectorValue.Text;      
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            mAct.LocateRowValue = RowSelectorValue.Text;
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -658,7 +658,7 @@ namespace Ginger.Actions
         private void RowSelectorValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             mAct.LocateRowValue = RowSelectorValue.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -679,7 +679,7 @@ namespace Ginger.Actions
         {
 
             mAct.WhereColumnValue = WhereColumnValue.ValueTextBox.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             
             SetDescriptionDetails();
 

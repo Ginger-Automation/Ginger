@@ -984,7 +984,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath));
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serializer is calling Old Serializer for loading the file: '{0}'", EventArgs.FilePath));
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

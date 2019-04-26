@@ -27,9 +27,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.SmartSyncAction);            
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "SmartSyncAction");
-            App.ObjFieldBinding(WaitTimeTextbox, TextBox.TextProperty, Act, ActSmartSync.Fields.WaitTime);
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.SmartSyncAction);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "SmartSyncAction");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WaitTimeTextbox, TextBox.TextProperty, Act, ActSmartSync.Fields.WaitTime);
         }
     }
 }

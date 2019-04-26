@@ -190,7 +190,7 @@ namespace Ginger.Run.RunSetActions
 
         public void ExecuteWithRunPageBFES()
         {
-            ReportInfo RI = new ReportInfo(WorkSpace.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.RunsetExecutor);
+            ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
             RunAction(RI);
         }
 

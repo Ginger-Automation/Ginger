@@ -278,7 +278,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
-             WorkSpace.UserProfile.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)
             {
@@ -577,7 +577,7 @@ namespace Ginger.Reports
             _previousCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
 
-            HTMLReportsConfiguration currentConf =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             
             //changing the solution because report should not be created in installtion folder due to permissions issues + it can be multiple users will run same Ginger on server
             if (Directory.Exists(mPreviewDummyReportPath))            

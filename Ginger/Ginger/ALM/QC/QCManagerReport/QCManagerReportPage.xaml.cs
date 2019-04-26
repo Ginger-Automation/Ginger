@@ -75,10 +75,10 @@ namespace Ginger.ALM.QC
 
             SetGridView();
 
-            App.FillComboFromEnumVal(ViewComboBox, mViewType);
+            GingerCore.General.FillComboFromEnumObj(ViewComboBox, mViewType);
             ViewComboBox.SelectedValue = eViewType.Coverage;
 
-            App.FillComboFromEnumVal(ExecutionPeriodFilterComboBox, mExecutionPeriodSelectedFilter);
+            GingerCore.General.FillComboFromEnumObj(ExecutionPeriodFilterComboBox, mExecutionPeriodSelectedFilter);
             ExecutionPeriodFilterComboBox.SelectedValue = eExecutionPeriod.Any;
 
             ExecutionTesterFilterComboBox.Items.Add("Any");

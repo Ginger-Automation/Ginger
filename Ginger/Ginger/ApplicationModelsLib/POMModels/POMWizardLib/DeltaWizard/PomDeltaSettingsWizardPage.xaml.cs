@@ -51,7 +51,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;
                     if (mWizard.mPomDeltaUtils.POM.TargetApplicationKey != null)
                     {
-                        mAppPlatform = WorkSpace.UserProfile.Solution.GetTargetApplicationPlatform(mWizard.mPomDeltaUtils.POM.TargetApplicationKey);
+                        mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomDeltaUtils.POM.TargetApplicationKey);
                     }
 
                     SetAutoMapElementTypes();                    

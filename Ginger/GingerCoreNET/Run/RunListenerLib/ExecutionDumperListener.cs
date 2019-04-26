@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {            
-            ActionReport actionReport = new ActionReport(action);
+            ActionReport actionReport = new ActionReport(action, null);//need to provide valid Context
             SaveObjToJSonFile(actionReport, Path.Combine(CurrentActivityFolder, CurrentActionFolder, "ActionReport.txt"));
         }
 

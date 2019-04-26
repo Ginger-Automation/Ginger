@@ -40,12 +40,12 @@ namespace Ginger.Actions
         public ActGenerateFileFromTemplateEditPage(Act act)
         {
             InitializeComponent();
-            TemplatesFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\Templates\");
-            OutputFilesPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, @"Documents\OutputFiles\");
+            TemplatesFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Templates\");
+            OutputFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\OutputFiles\");
             this.mAct = (ActGenerateFileFromTemplate)act;
-            App.FillComboFromEnumVal(FileActionComboBox, mAct.FileAction);
-            App.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
-            App.ObjFieldBinding(DataFileNameTextBox, TextBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.DataFileName);
+            GingerCore.General.FillComboFromEnumObj(FileActionComboBox, mAct.FileAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionComboBox, ComboBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.FileAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataFileNameTextBox, TextBox.TextProperty, mAct, ActGenerateFileFromTemplate.Fields.DataFileName);
             TemplateFileNamComboBox.SelectedValue = System.IO.Path.GetFileName(mAct.TemplateFileName)!=null?System.IO.Path.GetFileName(mAct.TemplateFileName):null;
             OutputFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenerateFileFromTemplate.Fields.OutputFileName));
            
@@ -74,7 +74,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.xlsx";
             dlg.Filter = "Excel Files (*.xlsx)|*.xlsx";
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

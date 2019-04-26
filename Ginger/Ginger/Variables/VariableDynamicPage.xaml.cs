@@ -32,7 +32,7 @@ namespace Ginger.Variables
         {            
             InitializeComponent();
             mVariableDynamic = var;
-            App.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
             ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             mVariableDynamic.PropertyChanged +=mVariableDynamic_PropertyChanged; 
         }

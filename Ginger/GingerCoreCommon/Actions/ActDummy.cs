@@ -57,7 +57,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Dummy/PlaceHolder";
+                return "Dummy";
             }
         }
 

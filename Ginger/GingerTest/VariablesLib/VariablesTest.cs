@@ -85,7 +85,7 @@ namespace GingerTest
             //Act                        
             GlobalVariablesPOM globalVariablesPOM = mGingerAutomator.MainWindowPOM.GotoGlobalVariables();
             globalVariablesPOM.AddStringVariable(name);
-            VariableBase v = (from x in WorkSpace.UserProfile.Solution.Variables where x.Name == name select x).SingleOrDefault();
+            VariableBase v = (from x in WorkSpace.Instance.Solution.Variables where x.Name == name select x).SingleOrDefault();
 
             //Assert
             Assert.AreEqual(name, v.Name, "Var Name");

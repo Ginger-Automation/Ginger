@@ -42,7 +42,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             Bind();
-            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
         }
         
         public void Bind()
@@ -51,7 +51,7 @@ namespace Ginger.Actions
             ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ExcelFileName);
             SheetNamComboBox.BindControl(mAct, ActExcel.Fields.SheetName);
             SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SelectRowsWhere);
-            GingerCore.General.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, ActExcel.Fields.SelectAllRows);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, ActExcel.Fields.SelectAllRows);
             PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.PrimaryKeyColumn);
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SetDataUsed);
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ColMappingRules);
@@ -84,7 +84,7 @@ namespace Ginger.Actions
 
             dlg.DefaultExt = "*.xlsx or .xls or .xlsm";
             dlg.Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm";
-            string SolutionFolder = WorkSpace.UserProfile.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
             
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -102,7 +102,7 @@ namespace Ginger.Actions
 
         private void FillSheetCombo()
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
             //Move code to ExcelFunction no in Act...
             List<string> SheetsList = mAct.GetSheets();
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
@@ -111,7 +111,7 @@ namespace Ginger.Actions
 
         private void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             DataTable dt = mAct.GetExcelSheetData(null);
             if (dt != null)
@@ -120,7 +120,7 @@ namespace Ginger.Actions
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             DataTable dt = mAct.GetExcelSheetDataWithWhere();
             if(dt!=null)
@@ -129,7 +129,7 @@ namespace Ginger.Actions
 
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
 
             if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData")
             {
@@ -148,7 +148,7 @@ namespace Ginger.Actions
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.SheetName = SheetNamComboBox.Text;
-            App.AutomateTabGingerRunner.ProcessInputValueForDriver(mAct);
+            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
         }
 
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)

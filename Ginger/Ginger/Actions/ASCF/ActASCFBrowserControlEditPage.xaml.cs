@@ -33,8 +33,8 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             //TODO: use .Fields
-            App.FillComboFromEnumVal(ControlActionComboBox, mAct.ControlAction);
-            App.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActASCFBrowserElement.Fields.ControlAction);            
+            GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActASCFBrowserElement.Fields.ControlAction);            
         }
     }
 }

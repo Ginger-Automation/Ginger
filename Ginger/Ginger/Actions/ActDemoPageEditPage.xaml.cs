@@ -37,13 +37,13 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = Act;
             Bind();
-            mAct.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
         }
 
         public void Bind()
         {
             //TextBox Example
-            GingerCore.General.ActInputValueBinding(ExampleTextBox, TextBox.TextProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.RegularTextBox));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ExampleTextBox, TextBox.TextProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.RegularTextBox));
 
             //UCValueExpression Example
             ExampleTextBoxNoBrowser.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDemoPage.Fields.TextBoxParamNoBrowser), true, false, UCValueExpression.eBrowserType.Folder);
@@ -63,7 +63,7 @@ namespace Ginger.Actions
             ExampleUCComboBoxWithVE.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.ComboBoxDataValueTypeWithVE), comboBoxItemsList,true);
             
             //CheckBox Example
-            GingerCore.General.ActInputValueBinding(ExampleCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.CheckBoxParam));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ExampleCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.CheckBoxParam));
             
             //UCInputValueGrid Example
             ExampleUCInputValuesGrid.Init(Context.GetAsContext(mAct.Context), mAct.ActionGrid, "Grid Title", "Property Name", "Property Value", "Property Calculated Value");

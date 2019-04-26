@@ -31,8 +31,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(TagNameTextBox, TextBox.TextProperty, EI, "ElementType");
-            App.ObjFieldBinding(XPathTextBox, TextBox.TextProperty, EI, "XPath");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TagNameTextBox, TextBox.TextProperty, EI, "ElementType");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XPathTextBox, TextBox.TextProperty, EI, "XPath");
         }
     }
 }

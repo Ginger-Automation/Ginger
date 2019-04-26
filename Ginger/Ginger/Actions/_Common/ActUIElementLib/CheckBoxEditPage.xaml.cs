@@ -35,7 +35,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             mAction = Action;
 
-            App.ObjFieldBinding(txt1, TextBox.TextProperty, mAction, "Value");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txt1, TextBox.TextProperty, mAction, "Value");
 
             if (mAction.Value == ActUIElement.CheckBoxSetValue.Checked.ToString())
             {

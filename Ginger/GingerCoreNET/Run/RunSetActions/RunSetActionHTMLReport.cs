@@ -25,7 +25,8 @@ using Ginger.Reports;
 using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using GingerCore;
+using GingerCore.DataSource;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -51,9 +52,30 @@ namespace Ginger.Run.RunSetActions
             get { return true; }
         }
 
+        private string mHTMLReportFolderName;
         [IsSerializedForLocalRepository]
-        public string HTMLReportFolderName { get; set; }
-
+        public string HTMLReportFolderName
+        {
+            get
+            {
+                return mHTMLReportFolderName;
+            }
+            set
+            {
+                mHTMLReportFolderName = value;
+                OnPropertyChanged(nameof(HTMLReportFolderName));
+            }
+        }
+        private string mHTMLReportFolderNameCalculated;
+        public string HTMLReportFolderNameCalculated
+        {
+            get
+            {
+                ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE.Value = HTMLReportFolderName;
+                return mHTMLReportFolderNameCalculated = mVE.ValueCalculated;
+            }
+        }
         [IsSerializedForLocalRepository]
         public int selectedHTMLReportTemplateID { get; set; }
 
@@ -67,12 +89,12 @@ namespace Ginger.Run.RunSetActions
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if (WorkSpace.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
             {
                 string runSetFolder = string.Empty;
-                if (WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 { 
-                    runSetFolder = WorkSpace.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                     AutoLogProxy.UserOperationStart("Online Report");
                 }
                 else
@@ -88,11 +110,11 @@ namespace Ginger.Run.RunSetActions
                         string currentHTMLFolderName = string.Empty;
                         if (!isHTMLReportPermanentFolderNameUsed)
                         {
-                            currentHTMLFolderName = HTMLReportFolderName + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                            currentHTMLFolderName = HTMLReportFolderNameCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder);
                         }
                         else
                         {
-                            currentHTMLFolderName = HTMLReportFolderName;
+                            currentHTMLFolderName = HTMLReportFolderNameCalculated;
                         }
                         reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,

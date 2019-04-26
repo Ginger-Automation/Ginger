@@ -45,9 +45,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public bool TreeItemDoubleClicked = false;
         public bool TreeChildFolderOnly { get; set; }
 
-        public Tuple<string, string> TreeNodesFilterByField { get; set; } 
+        public Tuple<string, string> TreeNodesFilterByField { get; set; }
 
-        
+        eFilteroperationType mFilterType = eFilteroperationType.Equals;
+        public eFilteroperationType FilterType
+        {
+            get { return mFilterType; }
+            set { mFilterType = value; }
+        }
+
+        public enum eFilteroperationType
+        {
+            Equals,
+            Contains
+        }
         
 
         public TreeViewItem  LastSelectedTVI
@@ -267,8 +278,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (treeItemToCheckObject is RepositoryFolderBase)
             {
                 return true;
-            }            
-                
+            }
+
             //get the object to filter by
             List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
             object filterByObject = treeItemToCheckObject;
@@ -286,9 +297,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             //compare the value
-            string filterbyValue = TreeNodesFilterByField.Item2.ToString();
+            string filterbyValue = Convert.ToString(TreeNodesFilterByField.Item2);
             if (filterByObject.ToString() == filterbyValue)
+            {
                 return true;
+            }
+
+            if(FilterType == eFilteroperationType.Contains)
+            {
+                if(Convert.ToString(filterByObject).Contains(filterbyValue))
+                {
+                    return true;
+                }
+            }
 
             return false;
         }

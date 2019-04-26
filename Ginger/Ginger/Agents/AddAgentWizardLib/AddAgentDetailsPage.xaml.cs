@@ -89,7 +89,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverTypeComboBox.Items.Clear();
 
             List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
-            App.FillComboFromEnumVal(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
+            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
             if (xDriverTypeComboBox.Items.Count > 0)
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
 

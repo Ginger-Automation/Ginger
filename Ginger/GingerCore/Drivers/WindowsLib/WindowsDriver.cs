@@ -77,7 +77,13 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
             }
         }
-        
+
+        public override void UpdateContext(Context context)
+        {
+            base.UpdateContext(context);
+            mUIAutomationHelper.BusinessFlow = context.BusinessFlow;
+        }
+
         public override void CloseDriver()
         {
             mUIAutomationHelper.StopRecording();
@@ -638,7 +644,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;

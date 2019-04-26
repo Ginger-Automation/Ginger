@@ -57,18 +57,16 @@ namespace Ginger.Actions.Locators.ASCF
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            //TODO: fix me hard coded 0      
-            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
-
-            d.SetCurrentBrowserControl(eLocateBy.ByName, Path);            
-            
-            List<ASCFBrowserElementInfo> lst = d.GetBrowserElements();
-
+            //TODO: fix if been used  
+            //ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //d.SetCurrentBrowserControl(eLocateBy.ByName, Path);            
+            //List<ASCFBrowserElementInfo> lst = d.GetBrowserElements();
+            List<ASCFBrowserElementInfo> lst = null;
             if (lst == null)
-            { 
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "Cannot list Browser elements" );
+            {
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, "Cannot list Browser elements");
                 return null;
-                }
+            }
 
             List<ITreeViewItem> list = new List<ITreeViewItem>();
             foreach(ASCFBrowserElementInfo c in lst)
