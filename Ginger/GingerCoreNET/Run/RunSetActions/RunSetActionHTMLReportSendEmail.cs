@@ -203,7 +203,7 @@ namespace Ginger.Run.RunSetActions
                     return;
                 }
                 mVE.Value = Bodytext;
-                emailReadyHtml = @"<p><!--FULLREPORTLINK--><p>";
+                emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
                 emailReadyHtml += mVE.ValueCalculated;
             }
             else
