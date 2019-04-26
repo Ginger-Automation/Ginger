@@ -276,11 +276,10 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItemType"></param>
         /// <param name="folderPath"></param>
         /// <param name="recursive"></param>
-        public SolutionRepositoryItemInfoBase DeleteRepositoryItemFolder(RepositoryFolderBase repositoryFolder)
+        public void DeleteRepositoryItemFolder(RepositoryFolderBase repositoryFolder)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryFolder.ItemType);
             SRII.DeleteRepositoryItemFolder(repositoryFolder);
-            return SRII;
         }
 
         /// <summary>
