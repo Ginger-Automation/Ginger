@@ -13,19 +13,103 @@ using GingerCore.DataSource;
 using LiteDB;
 using System.Threading;
 using LiteDB.Shell;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace GingerCoreNET.DataSource
 {
     public class GingerLiteDB : DataSourceBase
     {
         string mFilePath = "";
-
         int count = 1;
-      
+        private LiteDatabase _database;
+
+        private LiteDatabase Database
+        {
+            get => _database;
+            set
+            {
+                if (_database != value)
+                {
+                    _database = value;
+                    FillDataGridView(null);
+                    //RefreshCollections();
+                }
+            }
+        }
+        public void FillDataGridView(IEnumerable<BsonDocument> documents)
+        {
+            //if (lb_Collections.Items.Contains("[QUERY]"))
+            //{
+            //    lb_Collections.Items.Remove("[QUERY]");
+            //}
+            //dataGridView.DataSource = null;
+            if (documents != null)
+            {
+                var dt = new LiteDataTable(documents.ToString());
+                foreach (var doc in documents)
+                {
+                    var dr = dt.NewRow() as LiteDataRow;
+                    if (dr != null)
+                    {
+                        dr.UnderlyingValue = doc;
+                        foreach (var property in doc.RawValue)
+                        {
+                            if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
+                            {
+                                if (!dt.Columns.Contains(property.Key))
+                                {
+                                    dt.Columns.Add(new DataColumn(property.Key, typeof(string)));
+                                }
+                                switch (property.Value.Type)
+                                {
+                                    case BsonType.Null:
+                                        dr[property.Key] = "[NULL]";
+                                        break;
+                                    case BsonType.Document:
+                                        dr[property.Key] = property.Value.AsDocument.RawValue.ContainsKey("_type")
+                                            ? $"[OBJECT: {property.Value.AsDocument.RawValue["_type"]}]"
+                                            : "[OBJECT]";
+                                        break;
+                                    case BsonType.Array:
+                                        dr[property.Key] = $"[ARRAY({property.Value.AsArray.Count})]";
+                                        break;
+                                    case BsonType.Binary:
+                                        dr[property.Key] = $"[BINARY({property.Value.AsBinary.Length})]";
+                                        break;
+                                    case BsonType.DateTime:
+                                        dr[property.Key] = property.Value.AsDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                        break;
+                                    case BsonType.String:
+                                        dr[property.Key] = property.Value.AsString;
+                                        break;
+                                    case BsonType.Int32:
+                                    case BsonType.Int64:
+                                        dr[property.Key] = property.Value.AsInt64.ToString();
+                                        break;
+                                    case BsonType.Decimal:
+                                    case BsonType.Double:
+                                        dr[property.Key] = property.Value.AsDecimal.ToString(CultureInfo.InvariantCulture);
+                                        break;
+                                    default:
+                                        dr[property.Key] = property.Value.ToString();
+                                        break;
+                                }
+                            }
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                }
+                //dataGridView.DataSource = dt;
+            }
+        }
         public override void Init(string sFilePath, string sMode = "Read")
         {
             mFilePath = sFilePath;
-            using (var db = new LiteDatabase(sFilePath))
+            using (Database = new LiteDatabase(sFilePath))
             {
                 Console.Out.WriteLine("DB Created at the location: " + sFilePath);
             }
@@ -34,17 +118,13 @@ namespace GingerCoreNET.DataSource
         {
             using (var db = new LiteDatabase(mFilePath))
             {
-                if(tableName== "MyCustomizedDataTable")
-                {
-                    var table = db.GetCollection("MyCustomizedDataTable");
-                    table.Insert(new BsonDocument {[columnName] ="" });
-                    
-                }
-                else
-                {
+                    var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
                     var table = db.GetCollection(tableName);
-                    table.Insert(new BsonDocument { [columnName] = "" });
-                }
+                    foreach (var doc in results)
+                    {
+                        doc.Add(columnName, "");
+                        table.Update(doc);
+                    }
             }
         }
 
@@ -79,7 +159,7 @@ namespace GingerCoreNET.DataSource
 
         public override void Close()
         {
-            throw new NotImplementedException();
+            
         }
 
         public override string CopyTable(string tableName)
@@ -110,7 +190,7 @@ namespace GingerCoreNET.DataSource
         {
             using (var db = new LiteDatabase(mFilePath))
             {
-                var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
+                var results = db.GetCollection(tableName).Find(Query.All(), 0);
                 if (CopyTableName== null)
                 {
                     CopyTableName = results.ToString();
@@ -175,9 +255,18 @@ namespace GingerCoreNET.DataSource
                                     }
 
                                 }
+
                                 else
                                 {
                                     dr[property.Key] = property.Value.AsString;
+                                }
+                                if (ads == "GINGER_USED")
+                                {
+                                    if (property.Value.AsString == "")
+                                    {
+                                        dr[property.Key] = "False";
+                                    }
+
                                 }
                             }
                         }
@@ -282,7 +371,7 @@ namespace GingerCoreNET.DataSource
                     }
                 }
                 DataTable aa = dt;
-                aa.Rows.Add(dt.Rows);
+                //aa.Rows.Add(dt.Rows);
                 aa.TableName = tableName;
 
                 foreach (DataColumn column in aa.Columns)
@@ -301,56 +390,96 @@ namespace GingerCoreNET.DataSource
             }
             return mColumnNames;
         }
+        public byte[] ToByteArray<T>(T obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
 
         public override DataTable GetQueryOutput(string query)
         {
             List<string> mColumnNames = new List<string>();
-            DataTable dtTable = new DataTable();
+            DataTable dataTable = new DataTable();
             using (var db = new LiteDatabase(mFilePath))
             {
-                if (query.Contains("from"))
-                {
-                    query = query.Split(new string[] { "from" }, StringSplitOptions.None).Last();
-                    query = query.Split(new char[] { ' ' })[1];
-                }
-                else if (query.Contains("FROM"))
-                {
-                    query = query.Split(new string[] { "FROM" }, StringSplitOptions.None).Last();
-                    //query = query.Split(new char[] { ' ' })[1];
-                }
                 var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
-
-                var dt = new LiteDataTable(results.ToString());
-                foreach (var doc in results)
+                if (results.Count > 0)
                 {
-                    var dr = dt.NewRow() as LiteDataRow;
-                    if (dr != null)
+                    var result = db.GetCollection<BsonDocument>(query);
+                    
+                    var dt = new LiteDataTable(results.ToString());
+                    foreach (var doc in results)
                     {
-                        dr.UnderlyingValue = doc;
-                        foreach (var property in doc.RawValue)
+                        var dr = dt.NewRow() as LiteDataRow;
+                        if (dr != null)
                         {
-                            if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
+                            dr.UnderlyingValue = doc;
+                            foreach (var property in doc.RawValue)
                             {
-                                if (!dt.Columns.Contains(property.Key))
+                                if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
                                 {
-                                    dt.Columns.Add(property.Key, typeof(string));
+                                    if (!dt.Columns.Contains(property.Key))
+                                    {
+                                        dt.Columns.Add(property.Key, typeof(string));
+                                    }
+                                    if (property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                    {
+                                        dr[property.Key] = "";
+                                    }
+                                    else
+                                    {
+                                        dr[property.Key] = property.Value.AsString;
+                                    }
                                 }
-                                dr[property.Key] = property.Value.AsString;
+                            }
+                            dt.Rows.Add(dr);
+
+                            DataTable aa = dt;
+                            aa.TableName = query;
+                            dataTable = aa;
+                        }
+                    }
+                }
+                else
+                {
+                    //query = "db.yuj.select $ where sew='aa'";
+                    var resultdxs = db.Engine.Run(query);
+                    var docs = BsonMapper.Global.ToDocument(resultdxs[0]);
+
+                    JArray array = new JArray();
+                    foreach (BsonValue bs in db.Engine.Run(query))
+                    {
+                        string js = LiteDB.JsonSerializer.Serialize(bs, true, true);
+                        JObject jo = JObject.Parse(js);
+                        JObject jo2 = new JObject();
+                        foreach (JToken jt in jo.Children())
+                        {
+                            if ((jt as JProperty).Name != "_id")
+                            {
+                                jo2.Add(jt);
                             }
                         }
-                        dt.Rows.Add(dr);
-
-                        DataTable aa = dt;
-                        aa.TableName = query;
-                        dtTable = aa;
+                        array.Add(jo2);
                     }
+                    try
+                    {
+                        dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
+                        var json = JsonConvert.SerializeObject(array);
+                    }
+                    catch (Exception ex)
+                    {
 
+
+                    }
                 }
-
-
-                //dtTable.TableName = tableName;
             }
-            return dtTable;
+            return dataTable;
         }
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
         {
@@ -463,8 +592,13 @@ namespace GingerCoreNET.DataSource
         {
             using (var db = new LiteDatabase(mFilePath))
             {
+                var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
                 var table = db.GetCollection(tableName);
-                table.Delete(x => x.ContainsKey(columnName));
+                foreach (var doc in results)
+                {
+                    doc.Remove(columnName);
+                    table.Update(doc);
+                }
             }
         }
 
@@ -484,24 +618,50 @@ namespace GingerCoreNET.DataSource
         public override void SaveTable(DataTable dataTable)
         {
             using (LiteDatabase db = new LiteDatabase(mFilePath))
-            {
-                using (var aaaa = new LiteEngine(mFilePath))
-                {
-                    
-                }
-                    var table = db.GetCollection(dataTable.ToString());
 
+            {
+                var table = db.GetCollection(dataTable.ToString());
                 var doc = BsonMapper.Global.ToDocument(table);
+                
+                //var dic = BsonSerializer.Deserialize(doc);
                 DataTable dtChange = dataTable.GetChanges();
                 List<string> aa= GetColumnList(dataTable.ToString());
-                dtChange = datatable(dataTable.ToString());
+                //dtChange = datatable(dataTable.ToString());
+                table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
-                foreach (DataRow dr in dtChange.Rows)
+                if (!(dtChange == null))
                 {
-                    var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
-                    batch.Add(doc);
+                    foreach (DataRow dr in dtChange.Rows)
+                    {
+                        var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
+                        //foreach(KeyValuePair<string , object> a in dictionary)
+                        //{
+                        //    if (a.Key.ToString()=="_id" && a.Value.ToString() == null)
+                        //    {
+                        //        Random r = new Random();
+                        //        dictionary[a.Key] = (long)((r.NextDouble() * 2.0 - 1.0) * long.MaxValue);
+                        //    }
+                        //    if(a.Key.ToString()== "GINGER_LAST_UPDATED_BY")
+                        //    {
+                        //        dictionary[a.Key] = System.Environment.UserName;
+                        //    }
+                        //}
+                        var mapper = new BsonMapper();
+                        var sd = mapper.ToDocument(dictionary);
+                        var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
+
+                        batch.Add(new BsonDocument(sd));
+                        //table.Insert(sd);
+                    }
                 }
+                
+                   
+                
                 table.Upsert(batch);
+                //table.InsertBulk(batch);
+               
+                var re = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
+
                 //if (dtChange == null)
                 //    return;
                 //foreach (DataRow row in dataTable.Rows)

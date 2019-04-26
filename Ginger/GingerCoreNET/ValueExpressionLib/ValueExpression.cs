@@ -558,7 +558,11 @@ namespace GingerCore
                 }
                 if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
                     if (rowNum.All(char.IsDigit))
-                        mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
+                    {
+                        int a = dt.Rows.Count;
+                        dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString();
+                        mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[2].ToString());
+                    }
                     else
                         mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
 

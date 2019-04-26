@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.DataSource;
 using System;
 using System.Collections;
@@ -415,6 +416,11 @@ namespace Amdocs.Ginger.Common
         }
 
         public static implicit operator ObservableList<T>(ObservableList<DataSourceBase> v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static implicit operator ObservableList<T>(ObservableList<Activity> v)
         {
             throw new NotImplementedException();
         }
