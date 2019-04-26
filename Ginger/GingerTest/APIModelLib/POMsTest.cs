@@ -127,8 +127,8 @@ namespace GingerTest.APIModelLib
             ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
 
             //Assert  
-            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 24, "POM.MappedUIElements.Count check");
-            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 95, "POM.UnMappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 25, "POM.MappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 94, "POM.UnMappedUIElements.Count check");
             Assert.IsNotNull(EI1, "POM.Element learned check");
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
