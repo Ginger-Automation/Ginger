@@ -23,6 +23,9 @@ using System.Net.Mail;
 using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
+using Ginger.Run.RunSetActions;
 
 namespace GingerCore.GeneralLib
 {
@@ -38,11 +41,41 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public int ID { get; set; }
 
+        private string mMailFrom;
         [IsSerializedForLocalRepository]
-        public string MailFrom { get; set; }
+        public string MailFrom
+        {
+            get
+            {
+                return mMailFrom;
+            }
+            set
+            {
+                if (mMailFrom != value)
+                {
+                    mMailFrom = value;
+                    OnPropertyChanged(nameof(MailFrom));
+                }
+            }
+        }
 
+        private string mMailTo;
         [IsSerializedForLocalRepository]
-        public string MailTo { get; set; }
+        public string MailTo
+        {
+            get
+            {
+                return mMailTo;
+            }
+            set
+            {
+                if (mMailTo != value)
+                {
+                    mMailTo = value;
+                    OnPropertyChanged(nameof(MailTo));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public string MailCC { get; set; }
@@ -50,11 +83,44 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public string MailtoName { get; set; }
 
+        private string mSubject;
         [IsSerializedForLocalRepository]
-        public string Subject { get; set; }
+        public string Subject
+        {
+            get
+            {
+                return mSubject;
+            }
+            set
+            {
+                if (mSubject != value)
+                {
+                    mSubject = value;
+                    OnPropertyChanged(nameof(Subject));
+                }
+            }
+        }
+
+        private string mBody;
+        [IsSerializedForLocalRepository]
+        public string Body
+        {
+            get
+            {
+                return mBody;
+            }
+            set
+            {
+                if(mBody!=value)
+                {
+                    mBody = value;
+                    OnPropertyChanged(nameof(Body));
+                }
+            }
+        }
 
         [IsSerializedForLocalRepository]
-        public string Body { get; set; }
+        public string Comments { get; set; }
 
         [IsSerializedForLocalRepository]
         public List<string> Attachments; // { get; set; } // File names
@@ -133,6 +199,19 @@ namespace GingerCore.GeneralLib
             }
         }
 
+        ValueExpression mValueExpression = null;
+        ValueExpression mVE
+        {
+            get
+            {
+                if (mValueExpression == null)
+                {
+                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                }
+                return mValueExpression;
+            }
+        }
+        public bool IsBodyHTML { get; set; } = false;
         public Email()
         {
             Attachments = new List<string>();
@@ -192,14 +271,17 @@ namespace GingerCore.GeneralLib
                     Event = "Failed: Please provide Mail Host";
                     return false;
                 }
+                mVE.Value = MailFrom;
+                var fromAddress = new MailAddress(mVE.ValueCalculated, "_Amdocs Ginger Automation");
 
-                var fromAddress = new MailAddress(MailFrom, "_Amdocs Ginger Automation");
+                mVE.Value = SMTPMailHost;
+                string mailHost = mVE.ValueCalculated;
 
                 if (this.SMTPPort == 0 || this.SMTPPort == null)
                     this.SMTPPort = 25;
                 var smtp = new SmtpClient()
                 {
-                    Host = SMTPMailHost,  // amdocs config              
+                    Host = mailHost,  // amdocs config              
                     Port = (int)this.SMTPPort,
                     EnableSsl = EnableSSL,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -220,8 +302,8 @@ namespace GingerCore.GeneralLib
                         smtp.Credentials = new NetworkCredential(SMTPUser, SMTPPass);
                     }
                 }
-
-                string emails = MailTo;
+                mVE.Value = MailTo;
+                string emails = mVE.ValueCalculated;
                 Array arrEmails = emails.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 System.Net.Mail.MailMessage myMail = new System.Net.Mail.MailMessage();
                 foreach (string email in arrEmails)
@@ -239,10 +321,17 @@ namespace GingerCore.GeneralLib
                     }
                 }
 
+                mVE.Value = Subject;
+                string subject = mVE.ValueCalculated;
+
+                mVE.Value = Body;
+                string body = mVE.ValueCalculated;
+
                 myMail.From = fromAddress;
-                myMail.IsBodyHtml = true;
-                myMail.Subject = this.Subject.Replace('\r', ' ').Replace('\n', ' ');
-                myMail.Body = this.Body;
+                myMail.IsBodyHtml = IsBodyHTML;
+
+                myMail.Subject = subject.Replace('\r', ' ').Replace('\n', ' ');
+                myMail.Body = body;
 
                 foreach (string AttachmentFileName in Attachments)
                 {

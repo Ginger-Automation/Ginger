@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore;
 using GingerCore.GeneralLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -36,69 +37,20 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionSendFreeEmail.Email = new Email();
             }
-            MailFromTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
-            MailToTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
-            MailCCTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
-            SubjectTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
-            BodyTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
+
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail.Email);
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            MailToTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPort));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionSendFreeEmail.Email, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionSendFreeEmail.Email.EmailMethod);
-            xSMTPMailHostTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailHost));
-            xSMTPUserTextBox.Init(null, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailUser));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionSendFreeEmail.Email, nameof(Email.EmailMethod));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.EnableSSL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionSendFreeEmail.Email, nameof(Email.ConfigureCredential));
             if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
             {
                 runSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
         }
-
-        private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xEmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
-            {
-                xSMTPConfig.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                xSMTPConfig.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
-        {
-            xSMTPUserTextBox.Visibility = Visibility.Visible;
-            xSMTPPassTextBox.Visibility = Visibility.Visible;
-            xLabelPass.Visibility = Visibility.Visible;
-            xLabelUser.Visibility = Visibility.Visible;
-        }
-
-        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            bool res = false;
-            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
-            {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
-                if (res == false)
-                {
-                    xSMTPPassTextBox.Text = string.Empty;
-                }
-            }
-        }
-
-        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
-        {
-            xSMTPUserTextBox.Visibility = Visibility.Collapsed;
-            xSMTPPassTextBox.Visibility = Visibility.Collapsed;
-            xLabelPass.Visibility = Visibility.Collapsed;
-            xLabelUser.Visibility = Visibility.Collapsed;
-        }
     }
 }
  
-//        }
-//    }
-//}
