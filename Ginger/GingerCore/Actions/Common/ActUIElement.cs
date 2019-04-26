@@ -861,7 +861,10 @@ namespace GingerCore.Actions.Common
 
         public NewPayLoad GetActionPayload()
         {
-            NewPayLoad PL = new NewPayLoad("UIElementAction");
+            // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
+
+            NewPayLoad PL = new NewPayLoad("RunPlatformAction");            
+            PL.AddValue("UIElementAction");
             PL.AddValue(this.ElementLocateBy.ToString());
             PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
             PL.AddValue(this.ElementType.ToString());

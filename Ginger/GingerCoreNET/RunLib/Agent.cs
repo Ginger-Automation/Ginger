@@ -330,7 +330,17 @@ namespace GingerCore
 
         public void StartDriver()
         {
-            RepositoryItemHelper.RepositoryItemFactory.StartAgentDriver(this);
+            // if plugin 
+            if (AgentType == eAgentType.Service)
+            {
+                StartPluginService();
+                OnPropertyChanged(Fields.Status);
+            }
+            else
+            {
+                // else
+                RepositoryItemHelper.RepositoryItemFactory.StartAgentDriver(this);
+            }
         }
 
 
@@ -346,7 +356,7 @@ namespace GingerCore
             if (mGingerNodeInfo == null)
             {
                 // Dup with GR consolidate with timeout
-                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, "SeleniumChromeDriver");       // TEMP!!!!!!!!!!!!!!!!!!!!!!
+                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);       
             }
 
             Stopwatch st = Stopwatch.StartNew();
@@ -355,7 +365,7 @@ namespace GingerCore
 
                 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-                mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == "SeleniumChromeDriver" select x).FirstOrDefault();  // Keep First!!!
+                mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId select x).FirstOrDefault();  // Keep First!!!
                 if (mGingerNodeInfo != null) break;
                 Thread.Sleep(100);
             }
@@ -530,7 +540,9 @@ namespace GingerCore
             {
                 return mGingerNodeInfo;
             }
-            set { mGingerNodeInfo = value;
+            set
+            {
+                mGingerNodeInfo = value;
             }
         }
 

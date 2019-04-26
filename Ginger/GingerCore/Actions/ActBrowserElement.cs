@@ -182,7 +182,15 @@ namespace GingerCore.Actions
 
         public NewPayLoad GetActionPayload()
         {
-            throw new NotImplementedException();
+            // temp !!!!!!!!!!!!
+
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");   // !!!!!!!!!!!!!!!! make shorter name   // + use const 
+            payload.AddValue("IWebPlatform"); // Interface     // temp until we move the interfaces then use nameof  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            payload.AddValue("BrowserActions"); // Field
+            payload.AddValue("Navigate"); // Method
+            payload.AddValue(Value);
+            payload.ClosePackage();
+            return payload;
         }
 
         public override String ActionType

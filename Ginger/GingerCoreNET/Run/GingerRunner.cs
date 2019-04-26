@@ -1733,23 +1733,24 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        IActPluginExecution PluginAction = act as IActPluginExecution;
+                                        IActPluginExecution PluginAction = (IActPluginExecution)act;
 
-                                        if (act == null)
-                                        {
-                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
-                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                            break;
-                                        }
+                                        // !!!!!!!!!!!!!!!!!!!!!!!!!
+                                        //if (act == null)
+                                        //{
+                                        //    act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                        //    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                        //    break;
+                                        //}
 
-                                        NewPayLoad ActionPayload = PluginAction.GetActionPayload();
+                                        // NewPayLoad ActionPayload = PluginAction.GetActionPayload();
 
 
-                                        Agent PluginAgent = CurrentBusinessFlow.CurrentActivity.CurrentAgent as Agent;
-                                        GingerNodeInfo PluginNode = ExecuteOnPlugin.GetGingerNodeInfo(PluginAgent.PluginId, PluginAgent.ServiceId);
+                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                        
 
-                                        ExecuteOnPlugin.ExecuteActionOnPlugin(act, ActionPayload, PluginNode, PluginAgent.PluginId);
-
+                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                        
 
                                     }
 
@@ -1770,7 +1771,7 @@ namespace Ginger.Run
                                 GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
                                 if (GNI != null)
                                 {
-                                    ExecuteOnPlugin.ExecutePlugInAction((ActPlugIn)act, GNI);
+                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
                                 }
                             }
                             catch(Exception ex)

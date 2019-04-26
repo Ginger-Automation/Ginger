@@ -247,6 +247,10 @@ namespace Amdocs.Ginger.Repository
                                 {
                                     foreach (Type serviceInterface in interfaces)
                                     {
+
+                                        /// !!!!!!!!!!!!! see new style and remove !!!!!!!!!!!!!!!!
+                                        // Not sure if we need to list all method if they come from interface !!!!!!!!!!!!!! need to list only the interface
+
                                         //check if marked with [GingerInterface] 
                                         GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(serviceInterface, typeof(GingerInterfaceAttribute), false);
                                         
@@ -292,15 +296,16 @@ namespace Amdocs.Ginger.Repository
                             pluginServiceInfo.Actions.Add(action);
                         }
 
-
+                        // Get all interfaces which are marked with attr 'GingerInterface'
                         foreach (Type PluginInterface in interfaces)
                         {
-
-                            ServiceFeatureAttribute gingerInterfaceAttr = (ServiceFeatureAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(ServiceFeatureAttribute), true);
+                            // decide if we need Feature for service and/or Interfaces seperate
+                            // ServiceFeatureAttribute gingerInterfaceAttr = (ServiceFeatureAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(ServiceFeatureAttribute), true);
+                            GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(GingerInterfaceAttribute), true);
 
                             if (gingerInterfaceAttr!=null)
                             {
-                                pluginServiceInfo.Interfaces.Add(PluginInterface.FullName);
+                                pluginServiceInfo.Interfaces.Add(gingerInterfaceAttr.Id);
                             }
                         }
                         mServices.Add(pluginServiceInfo);

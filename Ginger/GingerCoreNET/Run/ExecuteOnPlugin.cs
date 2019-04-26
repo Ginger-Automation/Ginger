@@ -12,6 +12,7 @@ using System.Threading;
 
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore.Actions;
+using GingerCore;
 
 namespace Amdocs.Ginger.CoreNET.Run
 {
@@ -153,30 +154,46 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
 
-        internal static void ExecutePlugInAction(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
+
+        // Use for action whcih run on Agent - session
+        internal static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {
-            NewPayLoad p = CreateActionPayload(actPlugin);
-            ExecuteActionOnPlugin(actPlugin as Act,p, gingerNodeInfo,actPlugin.PluginId);
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //NewPayLoad p = CreateActionPayload(actPlugin);
+            //ExecuteActionOnPlugin(actPlugin as Act,p, gingerNodeInfo,actPlugin.PluginId);
+            GingerNodeInfo gingerNodeInfo = agent.GingerNodeInfo;
+            NewPayLoad p = actPlugin.GetActionPayload();
+            // Pack the action to payload
+            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);   // kepp GNP on agent
+            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+            NewPayLoad RC = GNP.RunAction(p);
 
         }
 
 
-        internal static void ExecuteActionOnPlugin(Act actPlugin, NewPayLoad p, GingerNodeInfo gingerNodeInfo,string PluginId)
+        // Use for Actions which run without agent
+        internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
+            
+            
+            // GingerNodeInfo gingerNodeInfo,string PluginId
+            // GingerNodeInfo PluginNode = ExecuteOnPlugin.GetGingerNodeInfo(PluginAgent.PluginId, PluginAgent.ServiceId);
+            //                         , ActionPayload, PluginNode, PluginAgent.PluginId
+
+
             // first verify we have service ready or start service
             Stopwatch st = Stopwatch.StartNew();
 
-            // keep the proxy on agent
+            // keep the proxy on agent !!!!!!!!!!!!!
             GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
 
-
-            // Pack the action to payload
-           
+            NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
 
+
             // release the node as soon as the result came in
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(PluginId, gingerNodeInfo.ServiceId);
+            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
             if (!IsSessionService)
             {
                 // standalone plugin action release the node
@@ -236,6 +253,8 @@ namespace Amdocs.Ginger.CoreNET.Run
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
+
+        // Move code to the ActPlugIn and make it impl IACtPlug...
         private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent

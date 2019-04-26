@@ -240,10 +240,12 @@ namespace Ginger.Repository
                     return;
                 }
 
+                // Move from here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 if (zAgent.AgentType == eAgentType.Service)
                 {
-                    zAgent.StartPluginService();
-                    zAgent.OnPropertyChanged(Fields.Status);
+                    //zAgent.StartPluginService();
+                    //zAgent.OnPropertyChanged(Fields.Status);
+                    throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
                 }
                 else
                 {
