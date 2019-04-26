@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-        // Use for action whcih run on Agent - session
+        // Use for action which run on Agent - session
         internal static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -164,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             GingerNodeInfo gingerNodeInfo = agent.GingerNodeInfo;
             NewPayLoad p = actPlugin.GetActionPayload();
             // Pack the action to payload
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);   // kepp GNP on agent
+            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);   // kepp GNP on agent !!!
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
             NewPayLoad RC = GNP.RunAction(p);
 
