@@ -122,6 +122,7 @@ namespace UnitTests.UITests
                 }
                 catch (Exception e)
                 {
+                    throw new Exception("Error:", e);
                 }
             }
         }
