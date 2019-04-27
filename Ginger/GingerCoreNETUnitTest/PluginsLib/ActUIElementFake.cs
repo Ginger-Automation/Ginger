@@ -49,18 +49,23 @@ namespace GingerCoreNETUnitTest.PluginsLib
             PL.AddValue(LocateValue); 
             PL.AddValue(ElementType);
             PL.AddValue(ElementAction);
-            PL.AddValue(Value);  // temp for set text box need to be per action   // We double pass Value also in Input values !!!!!!!!!!!!!!!!!!!! FixME
 
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
-            foreach (ActInputValue AIV in this.InputValues)
+            // TODO: think of smart way to pack the extra param or send all AIVs...
+            if (ElementAction == "SetText")
             {
-                if (!string.IsNullOrEmpty(AIV.Value))
-                {
-                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.Value);  // AIV.ValueForDriver
-                    PLParams.Add(AIVPL);
-                }
+                PL.AddValue(Value);  // temp for set text box need to be per action   // We double pass Value also in Input values !!!!!!!!!!!!!!!!!!!! FixME
             }
-            PL.AddListPayLoad(PLParams);
+
+            //List<NewPayLoad> PLParams = new List<NewPayLoad>();
+            //foreach (ActInputValue AIV in this.InputValues)
+            //{
+            //    if (!string.IsNullOrEmpty(AIV.Value))
+            //    {
+            //        NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.Value);  // AIV.ValueForDriver
+            //        PLParams.Add(AIVPL);
+            //    }
+            //}
+            //PL.AddListPayLoad(PLParams);
             PL.ClosePackage();
 
             return PL;

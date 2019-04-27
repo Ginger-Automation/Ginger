@@ -4,6 +4,7 @@ using GingerCore;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
     // Generic platform plugin tester
 
     [TestClass]
+    [Level3]
     public class WebPlatformPluginTest
     {
         static GingerGrid GG;
@@ -83,22 +85,47 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void SetTextBoxText()
         {
             // Arrange
-            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };
-            // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake action
-            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText" , Value = "hello"};
+            // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
+            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };            
+            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText" , Value = "hello"};            
 
             // Act
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
-            for (int i = 0; i < 1000; i++)
+
+            for (int i = 0; i < 10; i++)
             {
                 actUIElementFake.Value = "#" + i;
                 ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
             }
 
-
             // Assert
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
             
+        }
+
+        [TestMethod]
+        public void SetGetTextBoxText()
+        {
+            // Arrange
+            // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
+            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };
+            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText", Value = "hello", AddNewReturnParams = true };
+            ActUIElementFake actUIElementFake2 = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "GetText", AddNewReturnParams = true };
+
+            // Act
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
+
+            
+            actUIElementFake.Value = "12345";
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake2);
+
+
+            // Assert
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
+            Assert.AreEqual("Value", actUIElementFake2.ReturnValues[0].Param);
+            Assert.AreEqual("hello", actUIElementFake2.ReturnValues[0].Actual);
+
         }
 
 
