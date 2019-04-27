@@ -18,7 +18,7 @@
             <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35"/>
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" />
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="True" />
 
         <!--Controls Views Area-->
         <Expander x:Name="ControlsViewsExpander" Grid.Row="1" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
@@ -27,12 +27,12 @@
             </Expander.Header>
             <Expander.Content>
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="127*"/>
-                        <ColumnDefinition Width="322*"/>
-                    </Grid.ColumnDefinitions>
-                    <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="127*"/>
+                        <RowDefinition Height="322*"/>
+                    </Grid.RowDefinitions>
+                    <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
+                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Grid.Row="1" />
                 </Grid>
             </Expander.Content>
         </Expander>

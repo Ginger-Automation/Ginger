@@ -50,7 +50,7 @@
         <ListView x:Name="xListView" Grid.Row="1" 
                   Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  
                   VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
-                  SelectionChanged="xListView_SelectionChanged" >
+                  SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"></StackPanel>

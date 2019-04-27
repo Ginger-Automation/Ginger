@@ -692,6 +692,9 @@
     <Compile Include="UserControlsLib\UCListView\UcListView.xaml.cs">
       <DependentUpon>UcListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCPanelButton.xaml.cs">
+      <DependentUpon>UCPanelButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
       <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
     </Compile>
@@ -3205,6 +3208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\UCListView\UcListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCPanelButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -61,6 +61,7 @@ namespace Amdocs.Ginger.Common.Enums
         HtmlReport,
         SharedRepositoryItem,
         NonSharedRepositoryItem,
+        SharedRepositoryItemDark,
         Tag,
         DataSource,
         PluginPackage,

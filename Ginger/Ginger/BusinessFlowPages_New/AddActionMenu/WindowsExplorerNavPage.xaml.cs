@@ -37,11 +37,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         bool mFirstElementSelectionDone = false;
         private Act mAction;
         ITreeViewItem mRootItem;
+        ObservableList<ElementInfo> VisibleElementsInfoList = new ObservableList<ElementInfo>();
+
         public WindowsExplorerNavPage(Context context)
         {
             InitializeComponent();
             mContext = context;
             xWinGridUC.mContext = mContext;
+
+            WindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
+
+            WindowControlsTreeView.SearchStarted += (object sender,EventArgs e) => StatusTextBlock.Text = "Searching...";
+            WindowControlsTreeView.SearchCancelled += (object sender, EventArgs e) => StatusTextBlock.Text = "Ready";
+            WindowControlsTreeView.SearchCompleted += (object sender, EventArgs e) => StatusTextBlock.Text = "Ready";
+
+            xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+        }
+
+        private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (WindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
+            {
+                RefreshControlsGrid();
+            }
         }
 
         private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
@@ -268,12 +286,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SelectedControlDetailsExpander_Expanded(object sender, RoutedEventArgs e)
         {
-
+            if (mControlFrameContentPage == null)
+            {
+                SelectedControlDetailsExpander.IsExpanded = false;
+                return;
+            }
+            ControlDetailsRow.Height = new GridLength(200, GridUnitType.Star);
+            ControlDetailsRow.MaxHeight = Double.PositiveInfinity;
         }
 
         private void SelectedControlDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
-
+            ControlDetailsRow.Height = new GridLength(35);
+            ControlDetailsRow.MaxHeight = 35;
         }
 
         ObservableList<UIElementFilter> CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
@@ -281,39 +306,115 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void ShowFilterElementsPage()
         {
-            //if (FilteringCreteriaList.Count == 0)
-            //    SetAutoMapElementTypes();
-            //if (FilteringCreteriaList.Count != 0)
-            //{
-            //    CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
-            //    FilterElementsPage FEW = new FilterElementsPage(FilteringCreteriaList, CheckedFilteringCreteriaList, /*ControlsSearchButton_Click,*/ this);
-            //    FEW.ShowAsWindow(eWindowShowStyle.Dialog);
+            if (FilteringCreteriaList.Count == 0)
+                SetAutoMapElementTypes();
+            if (FilteringCreteriaList.Count != 0)
+            {
+                CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
+                FilterElementsPage FEW = new FilterElementsPage(FilteringCreteriaList, CheckedFilteringCreteriaList, null, this);
+                FEW.ShowAsWindow(eWindowShowStyle.Dialog);
 
-            //    foreach (UIElementFilter filter in FilteringCreteriaList)
-            //        if (filter.Selected)
-            //        {
-            //            if (!CheckedFilteringCreteriaList.Contains(filter))
-            //                CheckedFilteringCreteriaList.Add(filter);
-            //        }
-            //}
+                foreach (UIElementFilter filter in FilteringCreteriaList)
+                    if (filter.Selected)
+                    {
+                        if (!CheckedFilteringCreteriaList.Contains(filter))
+                            CheckedFilteringCreteriaList.Add(filter);
+                    }
+            }
         }
         private void SetAutoMapElementTypes()
         {
             List<eElementType> UIElementsTypeList = null;
-            //switch (((Agent)mApplicationAgent.Agent).Platform)
-            //{
-            //    case ePlatformType.Web:
-            //        WebPlatform webPlatformInfo = new WebPlatform();
-            //        UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
-            //        break;
-            //}
-            //if (UIElementsTypeList != null)
-            //{
-            //    foreach (eElementType eET in UIElementsTypeList)
-            //    {
-            //        FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
-            //    }
-            //}
+            switch (xWinGridUC.mPlatform.PlatformType())
+            {
+                case ePlatformType.Web:
+                    WebPlatform webPlatformInfo = new WebPlatform();
+                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
+                    break;
+            }
+            if (UIElementsTypeList != null)
+            {
+                foreach (eElementType eET in UIElementsTypeList)
+                {
+                    FilteringCreteriaList.Add(new UIElementFilter(eET, string.Empty));
+                }
+            }
         }
+
+        public bool DoSearchControls()
+        {
+            bool isSearched = false;
+            foreach (UIElementFilter filter in FilteringCreteriaList)
+                if (filter.Selected)
+                {
+                    if (!CheckedFilteringCreteriaList.Contains(filter))
+                        CheckedFilteringCreteriaList.Add(filter);
+                }
+
+            StatusTextBlock.Text = "Searching Elements...";
+            GingerCore.General.DoEvents();
+
+            isSearched = RefreshFilteredElements();
+
+            return isSearched;
+        }
+
+        private bool RefreshFilteredElements()
+        {
+            if (FilteringCreteriaList.Count != 0)
+            {
+                if (CheckedFilteringCreteriaList.Count == 0)
+                {
+                    Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.FilterNotBeenSet);
+                    if (result == Amdocs.Ginger.Common.eUserMsgSelection.OK)
+                    {
+                        RefreshControlsGrid();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    RefreshControlsGrid();
+                    return true;
+                }
+            }
+            else
+            {
+                Amdocs.Ginger.Common.eUserMsgSelection result = Reporter.ToUser(eUserMsgKey.RetreivingAllElements);
+                if (result == Amdocs.Ginger.Common.eUserMsgSelection.OK)
+                {
+                    RefreshControlsGrid();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        private async void RefreshControlsGrid()
+        {
+            if (xWinGridUC.comboBoxSelectedValue != null && xWinGridUC.mWindowExplorerDriver != null)
+            {
+                List<ElementInfo> list = await Task.Run(() => xWinGridUC.mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                StatusTextBlock.Text = "Ready";
+                // Convert to obserable for the grid
+                VisibleElementsInfoList.Clear();
+                foreach (ElementInfo EI in list)
+                {
+                    VisibleElementsInfoList.Add(EI);
+                }
+
+                WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
+
+            }
+        }
+
     }
 }

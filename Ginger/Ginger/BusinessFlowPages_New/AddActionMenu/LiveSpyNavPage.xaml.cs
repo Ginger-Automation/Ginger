@@ -95,10 +95,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 lblRecording.Content = "Stop Spying";
                 xSpyingButton.BorderThickness = new Thickness(2);
                 xSpyingButton.BorderBrush = Brushes.DeepSkyBlue;
+                StatusTextBlock.Text = "Spying...";
                 //                xSpyingButton.Background = Brushes.White;
             }
             else
             {
+                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
+                StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
                 xSpyingButton.Background = Brushes.DeepSkyBlue;
                 lblRecording.Foreground = Brushes.White;
@@ -117,7 +120,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (mSpyElement != null)
                 {
                     xWinGridUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                    StatusTextBlock.Text = mSpyElement.XPath;
+                    StatusTextBlock.Text = mSpyElement.ElementName;
                     //if (mSyncControlsViewWithLiveSpy)                     /////////// To Check if mSyncControlsViewWithLiveSpy is LiveSpy specific
                     //{
                     //    //TODO: Check Why its here
@@ -180,6 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (detailsExist == false)
             {
+                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
                 SelectedControlDetailsExpanderLable.Content = "Selected Element Details & Actions";
                 SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
                 SelectedControlDetailsExpander.IsEnabled = false;
@@ -187,7 +191,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
-                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
+                SelectedControlDetailsExpander.Visibility = Visibility.Visible;
+                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementName + "' Element Details & Actions";
                 SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)

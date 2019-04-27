@@ -64,33 +64,33 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
             //LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
-            LoadActionFrame(new SharedRepositoryNavPage(mContext)); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
+            LoadActionFrame(new SharedRepositoryNavPage(mContext), "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
-            LoadActionFrame(new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM));
+            LoadActionFrame(new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM), "Page Objects Model", eImageType.ApplicationPOMModel);
         }
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new RecordNavPage(mContext));
+            LoadActionFrame(new RecordNavPage(mContext), "Record", eImageType.Camera);
         }
 
         private void XNavActLib_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new ActionsLibraryNavPage(mContext));
+            LoadActionFrame(new ActionsLibraryNavPage(mContext), "Actions Library", eImageType.Action);
         }
 
         private void XNavSpy_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new LiveSpyNavPage(mContext));
+            LoadActionFrame(new LiveSpyNavPage(mContext), "Live Spy", eImageType.Spy);
         }
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new WindowsExplorerNavPage(mContext));
+            LoadActionFrame(new WindowsExplorerNavPage(mContext), "Windows Explorer", eImageType.Search);
         }
 
         private void UcButton_Click(object sender, RoutedEventArgs e)
@@ -98,10 +98,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             LoadActionFrame(null);
         }
 
-        private void LoadActionFrame(Page navigationPage)
+        private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
         {
             navPnlActionFrame.Content = navigationPage;
-//            this.NavigationService.GoBack();
+            xTitleImage.ImageType = titleImage;
+            xTitleText.Content = titleText;
+            //            this.NavigationService.GoBack();
         }
     }
 }

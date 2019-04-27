@@ -57,6 +57,22 @@ namespace Ginger.UserControlsLib
             get { return GetValue(ContextProperty) as Context; }
             set { SetValue(ContextProperty, value); UpdateWindowsList(); }
         }
+
+        public bool AddSwitchActionRequired
+        {
+            set
+            {
+                if (value == true)
+                {
+                    AddSwitchWindowActionButton.Visibility = Visibility.Visible;
+                }
+                else if (value == false)
+                {
+                    AddSwitchWindowActionButton.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
         public UCWindowsGrid()
         {
             InitializeComponent();
@@ -70,7 +86,7 @@ namespace Ginger.UserControlsLib
                 return;
 
             //Reporter.ToUser(eUserMsgKey.)
-            //mWindowExplorerDriver.SwitchWindow(AW.Title);
+            mWindowExplorerDriver.SwitchWindow(AW.Title);
             //RecordingButton.IsEnabled = true;
 
             switch (AW.WindowType)
@@ -162,11 +178,6 @@ namespace Ginger.UserControlsLib
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
                     break;
             }
-
-            //if (WindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
-            //{
-            //    RefreshControlsGrid();
-            //}
         }
 
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
@@ -178,8 +189,7 @@ namespace Ginger.UserControlsLib
         {
             if (WindowsComboBox.SelectedValue != null)
             {
-                //if (mWindowExplorerDriver.AddSwitchWindowAction(((AppWindow)WindowsComboBox.SelectedValue).Title) == false)
-                //    StatusTextBlock.Text = "Not implemented yet or not needed for this driver type";
+                mWindowExplorerDriver.AddSwitchWindowAction((WindowsComboBox.SelectedValue as AppWindow).Title);
             }
         }
 
@@ -230,19 +240,19 @@ namespace Ginger.UserControlsLib
                 WindowsComboBox.ItemsSource = list;
                 WindowsComboBox.DisplayMemberPath = "WinInfo";
 
-                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+                //AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
 
-                if (ActiveWindow != null)
-                {
-                    foreach (AppWindow w in list)
-                    {
-                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
-                        {
-                            WindowsComboBox.SelectedValue = w;
-                            return;
-                        }
-                    }
-                }
+                //if (ActiveWindow != null)
+                //{
+                //    foreach (AppWindow w in list)
+                //    {
+                //        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                //        {
+                //            WindowsComboBox.SelectedValue = w;
+                //            return;
+                //        }
+                //    }
+                //}
 
                 //TODO: If no selection then select the first if only one window exist in list
                 if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!

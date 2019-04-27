@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -14,12 +15,43 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl
+    public partial class UcListView : UserControl, IDragDrop
     {
         IObservableList mObjList;
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
+
+        // DragDrop event handler
+        public event EventHandler ItemDropped;
+        public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
+
+        public event EventHandler PreviewDragItem;
+        public delegate void PreviewDragItemEventHandler(DragInfo DragInfo);
+
+        private bool mIsDragDropCompatible;
+        public bool IsDragDropCompatible
+        {
+            get { return mIsDragDropCompatible; }
+            set
+            {
+                if (mIsDragDropCompatible == value)
+                    return;
+                else if (value == false)
+                {
+                    DragDrop2.UnHookEventHandlers(this);
+                    mIsDragDropCompatible = value;
+                    return;
+                }
+                else if (value == true)
+                {
+                    DragDrop2.HookEventHandlers(this);
+                    mIsDragDropCompatible = value;
+                    return;
+                }
+
+            }
+        }
         private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
@@ -31,7 +63,11 @@ namespace Ginger.UserControlsLib.UCListView
 
         public UcListView()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            //Hook Drag Drop handler
+            mIsDragDropCompatible = true;
+            DragDrop2.HookEventHandlers(this);
         }
 
         public ListView List
@@ -396,6 +432,45 @@ namespace Ginger.UserControlsLib.UCListView
 
                     xListCommonOperationsPnl.Children.Add(operationBtn);
                 }
+            }
+        }
+
+        public void StartDrag(DragInfo Info)
+        {
+
+        }
+
+        void IDragDrop.DragOver(DragInfo Info)
+        {
+
+        }
+
+        void IDragDrop.Drop(DragInfo Info)
+        {
+            // first check if we did drag and drop in the same grid then it is a move - reorder
+            if (Info.DragSource == this)
+            {
+                if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+                return;
+            }
+
+            // OK this is a dropped from external
+            EventHandler handler = ItemDropped;
+            if (handler != null)
+            {
+                handler(Info, new EventArgs());
+            }
+            // TODO: if in same grid then do move, 
+        }
+
+        void IDragDrop.DragEnter(DragInfo Info)
+        {
+            Info.DragTarget = this;
+
+            EventHandler handler = PreviewDragItem;
+            if (handler != null)
+            {
+                handler(Info, new EventArgs());
             }
         }
     }
