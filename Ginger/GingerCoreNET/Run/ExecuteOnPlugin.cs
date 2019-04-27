@@ -154,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
         // Use for action which run on Agent - session
-        internal static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
+        public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {
             NewPayLoad p = actPlugin.GetActionPayload();
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
@@ -239,7 +239,6 @@ namespace Amdocs.Ginger.CoreNET.Run
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
-
         // Move code to the ActPlugIn and make it impl IACtPlug...
         private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
@@ -308,6 +307,9 @@ namespace Amdocs.Ginger.CoreNET.Run
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
+
+
+
 
 
         internal static void RunServiceAction(NewPayLoad ActionPayload, string PluginId, string ServiceID)
