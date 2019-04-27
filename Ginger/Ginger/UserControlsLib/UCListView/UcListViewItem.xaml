@@ -37,8 +37,8 @@
 
         <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="3" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="100*" MinWidth="100"/>
+                <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
                 <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Title" FontSize="15" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
@@ -48,8 +48,9 @@
 
         <Grid x:Name="xExtraDetailsGrid" Grid.Row="1" Grid.Column="3" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="175"/>
+                <ColumnDefinition Width="50*" MinWidth="50"/>
+                <ColumnDefinition x:Name="xItemOperationsClm" Width="175"/>
+                <!--to set width per need like for notifications-->
             </Grid.ColumnDefinitions>
 
             <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Center" />

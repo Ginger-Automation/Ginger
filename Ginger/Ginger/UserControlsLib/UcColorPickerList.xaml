@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="200">
     
-    <ComboBox Name="xColorsCombo" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="XColorsCombo_SelectionChanged">
+    <ComboBox Name="xColorsCombo" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="XColorsCombo_SelectionChanged" PreviewMouseWheel="XColorsCombo_PreviewMouseWheel"   >
         <ComboBox.ItemsPanel>
             <ItemsPanelTemplate>
                 <Grid x:Name="xPanelGrid" Loaded="xPanelGrid_Loaded" />

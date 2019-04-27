@@ -342,15 +342,14 @@ namespace GingerCore
             set { mActivitiesGroupID = value; OnPropertyChanged(Fields.ActivitiesGroupID); } 
         }
 
-        private String mGroupColor;
+        private String mActivitiesGroupColor;
         /// <summary>
         /// Used to store the Activities Group color which this Activity is belong to in the Business Flow
-        /// </summary>
-        [IsSerializedForLocalRepository]
-        public String GroupColor
+        /// </summary>    
+        public String ActivitiesGroupColor
         {
-            get { return mGroupColor; }
-            set { mGroupColor = value; OnPropertyChanged(nameof(GroupColor)); }
+            get { return mActivitiesGroupColor; }
+            set { mActivitiesGroupColor = value; OnPropertyChanged(nameof(ActivitiesGroupColor)); }
         }
 
 
@@ -690,6 +689,7 @@ namespace GingerCore
                     newInstance.ParentGuid = activityInstance.ParentGuid;
                     newInstance.ExternalID = activityInstance.ExternalID;
                     newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
+                    newInstance.ActivitiesGroupColor = activityInstance.ActivitiesGroupColor;
                     newInstance.TargetApplication = activityInstance.TargetApplication;
                     newInstance.Active = activityInstance.Active;
                     newInstance.VariablesDependencies = activityInstance.VariablesDependencies;                   
@@ -846,7 +846,8 @@ namespace GingerCore
         public override void UpdateItemFieldForReposiotryUse()
         {
             base.UpdateItemFieldForReposiotryUse();
-            ActivitiesGroupID = null;            
+            ActivitiesGroupID = null;
+            ActivitiesGroupColor = null;
         }
 
         public ObservableList<VariableBase> GetVariables()

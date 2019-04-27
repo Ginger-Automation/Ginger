@@ -639,7 +639,7 @@ namespace GingerCore.ALM.QC
                     tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
                     tcActivsGroup.Description = tc.Description;
                 }
-                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+                busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
                 //Add the TC steps as Activities if not already on the Activities group
                 foreach (QCTSTestStep step in tc.Steps)

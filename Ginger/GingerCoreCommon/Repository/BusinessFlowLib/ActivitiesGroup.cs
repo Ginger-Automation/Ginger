@@ -140,6 +140,7 @@ namespace GingerCore.Activities
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
             activity.ActivitiesGroupID = this.Name;
+            activity.ActivitiesGroupColor = this.GroupColor;
             this.ActivitiesIdentifiers.Add(actIdents);
         }
 
@@ -378,7 +379,7 @@ namespace GingerCore.Activities
 
                     foreach (ActivityIdentifiers aIdent in ActivitiesIdentifiers)
                         if (aIdent.IdentifiedActivity != null)
-                            aIdent.IdentifiedActivity.GroupColor = mGroupColor;
+                            aIdent.IdentifiedActivity.ActivitiesGroupColor = mGroupColor;
 
                     OnPropertyChanged(nameof(GroupColor));
                 }

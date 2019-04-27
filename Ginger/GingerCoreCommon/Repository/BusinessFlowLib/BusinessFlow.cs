@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.EnumsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -638,25 +639,19 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<ActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<ActivitiesGroup>();
 
-        public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null)
+        public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
         {
             if (activitiesGroup == null)
-            {
+            {                
                 activitiesGroup = new ActivitiesGroup();
                 activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
-            ActivitiesGroups.Add(activitiesGroup);
-        }
+            if (string.IsNullOrEmpty(activitiesGroup.GroupColor))
+            {
+                SetUniqueGroupColor(activitiesGroup);
+            }            
 
-        public void InsertActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
-        {
-            if (activitiesGroup == null)
-            {
-                activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-            }
-            SetUniqueActivitiesGroupName(activitiesGroup);
             if ((index != -1) && (ActivitiesGroups.Count > index))
             {
                 ActivitiesGroups.Insert(index, activitiesGroup);
@@ -681,6 +676,31 @@ namespace GingerCore
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
+
+        public void SetUniqueGroupColor(ActivitiesGroup activitiesGroup)
+        {
+            List<eColorName> listOfColors = Enum.GetValues(typeof(eColorName)).Cast<eColorName>().ToList();
+            Random rnd = new Random();            
+            List<int> triedColorIndx = new List<int>();
+            int rndColorIndx = 0;
+
+            while (true)
+            {
+                rndColorIndx = rnd.Next(0, listOfColors.Count);
+                while (triedColorIndx.Contains(rndColorIndx) == true && triedColorIndx.Count < listOfColors.Count)
+                {
+                    rndColorIndx = rnd.Next(0, listOfColors.Count);
+                }
+                triedColorIndx.Add(rndColorIndx);
+                
+                if (this.ActivitiesGroups.Where(ag => ag.GroupColor == listOfColors[rndColorIndx].ToString()).FirstOrDefault() == null || triedColorIndx.Count >= listOfColors.Count)
+                {
+                    activitiesGroup.GroupColor = listOfColors[rndColorIndx].ToString();
+                    break; 
+                }
+            }
+        }
+
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
         {
             string missingActivities = string.Empty;
@@ -701,6 +721,7 @@ namespace GingerCore
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
+                        actInstance.ActivitiesGroupColor = activitiesGroup.GroupColor;
                         if (keepOriginalTargetApplicationMapping == false)
                         {
                             SetActivityTargetApplication(actInstance);
@@ -736,22 +757,34 @@ namespace GingerCore
         {
             foreach (ActivitiesGroup group in this.ActivitiesGroups)
             {
+                if (string.IsNullOrEmpty(group.GroupColor))
+                {
+                    SetUniqueGroupColor(group);//added in order to add colors to old activities groups
+                }
+
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
                     Activity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
+                    {
                         activ = this.Activities.Where(act => act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    }
                     if (activ == null)
+                    {
                         activ = this.Activities.Where(act => act.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    }
                     if (activ != null)
                     {
-                        actIdentifis.IdentifiedActivity =(Activity) activ;
+                        actIdentifis.IdentifiedActivity = (Activity)activ;
                         activ.ActivitiesGroupID = group.Name;
+                        activ.ActivitiesGroupColor = group.GroupColor;
                         indx++;
                     }
                     else
+                    {
                         group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
+                    }
                 }
             }
         }
@@ -765,8 +798,13 @@ namespace GingerCore
                     foreach (Activity act in this.Activities)
                     {
                         if (act.ActivitiesGroupID != null && act.ActivitiesGroupID != string.Empty)
+                        {
                             if ((this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault()) == null)
+                            {
                                 act.ActivitiesGroupID = string.Empty;
+                                act.ActivitiesGroupColor = string.Empty;
+                            }
+                        }
                     }
                     break;
 
@@ -775,8 +813,13 @@ namespace GingerCore
                     {
                         ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
                         if (group != null)
+                        {
                             if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
+                            {
                                 act.ActivitiesGroupID = string.Empty;
+                                act.ActivitiesGroupColor = string.Empty;
+                            }
+                        }
                     }
                     break;
 

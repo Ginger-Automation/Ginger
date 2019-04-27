@@ -67,7 +67,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(item);
             if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
             {
-                return new ListItemUniqueIdentifier() { Color = mActivity.GroupColor, Tooltip = mActivity.ActivitiesGroupID };
+                return new ListItemUniqueIdentifier() { Color = mActivity.ActivitiesGroupColor, Tooltip = mActivity.ActivitiesGroupID };
             }
             else if (mActivity.AddDynamicly)
             {

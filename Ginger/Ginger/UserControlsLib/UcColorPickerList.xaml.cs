@@ -50,7 +50,6 @@ namespace Ginger.UserControlsLib
 
             xColorsCombo.SelectedValuePath = "Name";
             xColorsCombo.ItemsSource = typeof(Colors).GetProperties();
-            //xColorsCombo.Items.RemoveAt(0); filter colors
         }
 
         private void xPanelGrid_Loaded(object sender, RoutedEventArgs e)
@@ -82,9 +81,24 @@ namespace Ginger.UserControlsLib
 
         private void XColorsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xColorsCombo.SelectedValue != null)
+            if (xColorsCombo.IsDropDownOpen == false)
+            {
+                e.Handled = true;
+                return;
+            }
+
+                if (xColorsCombo.SelectedValue != null)
             {
                 SelectedColor = xColorsCombo.SelectedValue.ToString();
+            }
+        }
+
+        private void XColorsCombo_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (xColorsCombo.IsDropDownOpen == false)
+            {
+                e.Handled = true;
+                return;
             }
         }
     }

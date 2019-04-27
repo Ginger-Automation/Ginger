@@ -157,8 +157,11 @@ namespace Ginger.UserControlsLib.UCListView
             ListItemUniqueIdentifier identifier = ItemInfo.GetItemUniqueIdentifier(Item);
             if (identifier != null)
             {
-                BrushConverter conv = new BrushConverter();
-                xExpandCollapseBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush; 
+                if (!String.IsNullOrEmpty(identifier.Color))
+                {
+                    BrushConverter conv = new BrushConverter();
+                    xExpandCollapseBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
+                }
                 xExpandCollapseBorder.ToolTip = identifier.Tooltip;
             }
             else
@@ -202,6 +205,7 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     xItemNotificationsPnl.Children.Add(itemInd);
+                    xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 5);
                 }
             }
         }
