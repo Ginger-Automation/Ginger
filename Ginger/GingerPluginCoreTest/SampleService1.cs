@@ -8,13 +8,16 @@ namespace GingerPluginCoreTest
     {        
 
         [GingerAction(Id: "Concat", description: "Concat two string")]        
-        public void Concat(IGingerAction GA,                             
-                            [Max(10)] // define s1 Max 10
+        public void Concat(IGingerAction GA,                                                          
+                            [MinLength(10)]// define s1 Min 10
                             [Mandatory] // user must fill a value
-                            [Default("Default Value")]
+                            [Default("Default")]
+                            [MaxLength(15)]
                             string s1,
 
+                            
                             //[GingerParamProperty(GingerParamProperty.Mandatory)]   // define s2 is Mandatory
+                            [Mandatory]
                             string s2)
         {
             Console.WriteLine(DateTime.Now + "> Concat: " + s1 + "+" + s2);
@@ -33,15 +36,16 @@ namespace GingerPluginCoreTest
 
 
         [GingerAction(Id: "Divide", description: "Divide two numbers")]
-        public void Divide(IGingerAction GA,
+        public void Divide(IGingerAction GA,                            
                             [Mandatory] // user must fill a value
-                            [Label("Numerator")]                                                        
-                            int a,
-                            [Max(10)]
+                            [Label("Numerator")]
+                            [MaxValue(10)]
+                            [MinValue(5)]
+                            int a,                            
                             [InvalidValue(0)] // 0 is not allowed
                             [InvalidValue(new int[] {-1,101,200})] // not allowed
                             [Label("Denominator")]
-                            [Default()]
+                            [Default(1)]
                             [Tooltip("Enter the Denominator value")]
                             int b)
         {

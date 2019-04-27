@@ -5,19 +5,19 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class MinAttribute : Attribute, IActionParamProperty
+    public class MinValueAttribute : Attribute, IActionParamProperty
     {
         // when saved to services json the attr property name will be:
-        public string PropertyName => "Min";
+        public string PropertyName => "MinValue";
 
-        public int Min { get; set; }
+        public int MinValue { get; set; }
 
-        public MinAttribute(int min)
+        public MinValueAttribute(int minValue)
         {
-            Min = min; 
+            MinValue = minValue; 
         }
 
-        public MinAttribute()
+        public MinValueAttribute()
         {
         }
     }

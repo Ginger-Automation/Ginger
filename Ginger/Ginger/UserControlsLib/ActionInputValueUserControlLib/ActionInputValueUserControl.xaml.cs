@@ -74,14 +74,34 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                     //TODO: add AddValidationRule in the UC - but there are 3 UCs !? !!!!!!!!!!!!!!!                  
                     xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());
                 }
-                else if(attr.GetType() == typeof(MaxAttribute))
-                {                   
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaximumValidationRule(((MaxAttribute)attr).Max));
+                else if(attr.GetType() == typeof(MaxValueAttribute))
+                {                           
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaxValueValidationRule(((MaxValueAttribute)attr).MaxValue));                    
                 }
-                else if(attr.GetType() == typeof(MinAttribute))
-                {                   
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinimumValidationRule(((MinAttribute)attr).Min));
-                }              
+                else if(attr.GetType() == typeof(MinValueAttribute))
+                {                    
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinValueValidationRule(((MinValueAttribute)attr).MinValue));                                        
+                }          
+                else if(attr.GetType() == typeof(MaxLengthAttribute))
+                {
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaxLengthValidationRule(((MaxLengthAttribute)attr).MaxLength));
+                }
+                else if(attr.GetType() == typeof(MinLengthAttribute))
+                {
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinLegthValidationRule(((MinLengthAttribute)attr).MinLength));
+                }
+                else if(attr.GetType() == typeof(InvalidValueAttribute))
+                {
+                    InvalidValueValidationRule IVR = (InvalidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(InvalidValueValidationRule));                   
+                    if(IVR is null)
+                    {
+                        xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new InvalidValueValidationRule(((InvalidValueAttribute)attr).InvalidValue));
+                    }
+                    else
+                    {
+                        IVR.InvalidValue.AddRange(((InvalidValueAttribute)attr).InvalidValue);
+                    }
+                }
             }
         }
 

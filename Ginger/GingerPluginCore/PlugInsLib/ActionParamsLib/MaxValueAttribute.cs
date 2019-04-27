@@ -6,19 +6,19 @@ namespace Amdocs.Ginger.Plugin.Core
 {
 
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class MaxAttribute : Attribute, IActionParamProperty
+    public class MaxValueAttribute : Attribute, IActionParamProperty
     {        
         // when saved to services json the attr property name will be:
-        public string PropertyName => "Max";
+        public string PropertyName => "MaxValue";
 
-        public int Max { get; set; }
+        public int MaxValue { get; set; }
 
-        public MaxAttribute(int max)
+        public MaxValueAttribute(int maxValue)
         {
-            Max = max;
+            MaxValue = maxValue;
         }
 
-        public MaxAttribute()
+        public MaxValueAttribute()
         {            
         }
     }
