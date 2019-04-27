@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
@@ -156,27 +157,28 @@ namespace Amdocs.Ginger.CoreNET.Run
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {
+            // Get the action payload
             NewPayLoad p = actPlugin.GetActionPayload();
+
+            // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
 
-            // TODO: unpack the RC and save to actPlugin: outputvalues, exinfo, error etc...
-
+            // Pasrse the result
+            ParseActionResult(RC, (Act)actPlugin);
         }
 
 
-        // Use for Actions which run without agent
+        // Use for Actions which run without agent and are of the generic type ActPlugin - 
         internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
             // first verify we have service ready or start service
             Stopwatch st = Stopwatch.StartNew();
-
-            // keep the proxy on agent !!!!!!!!!!!!!
+            
             GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
             GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
 
             NewPayLoad p = CreateActionPayload(actPlugin);
             NewPayLoad RC = GNP.RunAction(p);
-
 
             // release the node as soon as the result came in
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
@@ -186,6 +188,18 @@ namespace Amdocs.Ginger.CoreNET.Run
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
             }
 
+            ParseActionResult(RC, actPlugin);
+            
+
+            gingerNodeInfo.IncreaseActionCount();
+
+            st.Stop();
+            long millis = st.ElapsedMilliseconds;
+            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
+        }
+
+        private static void ParseActionResult(NewPayLoad RC, Act actPlugin)
+        {
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
@@ -231,12 +245,6 @@ namespace Amdocs.Ginger.CoreNET.Run
                 string Err = RC.GetValueString();
                 actPlugin.Error += Err;
             }
-
-            gingerNodeInfo.IncreaseActionCount();
-
-            st.Stop();
-            long millis = st.ElapsedMilliseconds;
-            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
         // Move code to the ActPlugIn and make it impl IACtPlug...

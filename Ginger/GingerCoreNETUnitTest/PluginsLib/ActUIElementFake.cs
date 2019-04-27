@@ -36,21 +36,27 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public string ElementType { get; set; }
         public string ElementAction { get; set; }
 
+        
+
         public NewPayLoad GetActionPayload()
         {            
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
+
+            // Design best way to send an action with generic packing if possible
+
             PL.AddValue("UIElementAction");
             PL.AddValue(LocateBy);
             PL.AddValue(LocateValue); 
             PL.AddValue(ElementType);
             PL.AddValue(ElementAction);
-            
+            PL.AddValue(Value);  // temp for set text box need to be per action   // We double pass Value also in Input values !!!!!!!!!!!!!!!!!!!! FixME
+
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
             foreach (ActInputValue AIV in this.InputValues)
             {
                 if (!string.IsNullOrEmpty(AIV.Value))
                 {
-                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
+                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.Value);  // AIV.ValueForDriver
                     PLParams.Add(AIVPL);
                 }
             }

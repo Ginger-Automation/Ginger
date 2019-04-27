@@ -30,7 +30,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             // Strat GG
             // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
 
-            // start the plugin to register in LocalGrid
+            // start the plugin to register in LocalGrid !!!!!! I ran it on the 2nd visual studio while running the test and the next loop wait for it
 
             // Start Agent
             GingerGrid GG = WorkSpace.Instance.LocalGingerGrid;
@@ -65,24 +65,40 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]
-        
+        [TestMethod]        
         public void GotoURL()
+        {
+            // Arrange
+            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };            
+
+            // Act
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
+
+            // Assert
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
+        }
+
+
+        [TestMethod]
+        public void SetTextBoxText()
         {
             // Arrange
             ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };
             // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake action
-            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "aaa", ElementType = "TextBox", ElementAction = "SetText" };
+            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText" , Value = "hello"};
 
             // Act
-
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
-
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
+            for (int i = 0; i < 1000; i++)
+            {
+                actUIElementFake.Value = "#" + i;
+                ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
+            }
 
 
             // Assert
-            Assert.AreEqual(actBrowserElementFake.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
+            
         }
 
 
