@@ -1400,6 +1400,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 
 		Component comp=mSwingHelper.FindElement(LocateBy,LocateValue);
 		
+		if(mSwingHelper.getCurrentWindow()==null)
+		{
+			return null;
+		}
+		
 		boolean bStopWaiting=false;
 		long start = System.currentTimeMillis();
 		long elapsed = System.currentTimeMillis() - start;
@@ -1414,7 +1419,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			
 			if(comp==null)
 			{
-				comp=mSwingHelper.FindElement(LocateBy, LocateValue);			
+				comp=mSwingHelper.FindElement(LocateBy, LocateValue);				
 			}
 			else if (comp.isVisible() && comp.isEnabled() && comp.isShowing())
 			{				
@@ -1439,16 +1444,16 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			String controlAction, String Value, String ValueToSelect, String XCoordinate, String YCoordinate) 
 	{	
 
-		Component c=null;
-		//If the action is for IsEnabled or IsVisible property then no need of sync		
-		if (IsImplicitSyncRequired(controlAction, Value, ValueToSelect)) 
-		{
-			c = FindElementWithImplicitSync(locateBy, locateValue);
-		} 
-		else 
-		{
-			c = mSwingHelper.FindElement(locateBy, locateValue);
-		}	
+		Component c=null;		
+			//If the action is for IsEnabled or IsVisible property then no need of sync		
+			if (IsImplicitSyncRequired(controlAction, Value, ValueToSelect)) 
+			{
+				c = FindElementWithImplicitSync(locateBy, locateValue);
+			} 
+			else 
+			{
+				c = mSwingHelper.FindElement(locateBy, locateValue);
+			}	
 					
 		// Handle Text Field		
 		if (c!= null)
