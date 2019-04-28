@@ -1,0 +1,145 @@
+    <Page x:Class="GingerWPF.BusinessFlowsLib.ActivityPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:Activities="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1000"
+      Title="ActivityPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="500*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="200*"></ColumnDefinition>
+            <ColumnDefinition Width="300"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold"/>
+        <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="20" Foreground="{StaticResource $HighlightColor_Red}" />
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC"  Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"/>
+        
+        <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                <usercontrols:ucButton x:Name="xSaveBtn" ButtonType="CircleImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="SharedRepositoryItem" >
+                    <usercontrols:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository"/>
+                    </usercontrols:ucButton.ToolTip>
+                </usercontrols:ucButton>
+                <Menu x:Name="xOtherOperationsMenu" Background="Transparent">
+                    <MenuItem Cursor="Hand">
+                        <MenuItem.Header>
+                            <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16" Width="16" Height="30" Margin="5,5,5,5"/>
+                        </MenuItem.Header>
+                        <MenuItem x:Name="xUploadToShareRepoMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xUploadToShareRepoMenuItem_Click">
+                            <MenuItem.Header >
+                                <DockPanel>
+                                    <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" Width="16" HorizontalAlignment="Left" Margin="0 5 5 5"/>
+                                    <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" FontSize="16" Margin="5 5 0 0"/>
+                                </DockPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
+            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $SelectionColor_Pink}" Margin="4,4,4,4"/>
+            <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run"  ButtonImageType="Play"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                    <usercontrols:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Run [Activity]"/>
+                    </usercontrols:ucButton.ToolTip>
+                </usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xContinueRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xContinueRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                    <usercontrols:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Continue Run from this [Activity]"/>
+                    </usercontrols:ucButton.ToolTip>
+                </usercontrols:ucButton>
+            </StackPanel>
+        </DockPanel>
+
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" />
+                            <TextBlock x:Name="xActionsTabHeaderText" Text="Actions (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+            </TabItem>
+
+            <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" />
+                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+            </TabItem>
+
+            <TabItem x:Name="xConfigurationsab" Style="{StaticResource $CoolTab}" TabIndex="3">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" />
+                            <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <DockPanel>
+                        <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Name:</Label>
+                        <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                        <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Description:</Label>
+                        <TextBox x:Name="xActivityDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>
+                        <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Run Description:</Label>
+                        <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
+                        <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Screen/Component:</Label>
+                        <TextBox x:Name="xScreenTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+                        <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Expected:</Label>
+                        <TextBox x:Name="xExpectedTxt"  DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                            <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
+                            <ComboBox x:Name="xTargetApplicationComboBox" Width="250" Margin="19,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}" />
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                <Label Content="Actions Run Option:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                <ComboBox x:Name="xRunOptionCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Height="20" Margin="11,0,0,0"/>
+                            </StackPanel>
+                            <CheckBox x:Name="xMandatoryActivityCB" Margin="25,0,50,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Activity"/>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
+                            <Label Content="Automation Status:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="xAutomationStatusCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="16,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel x:Name="xHandlerTypeStack" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
+                            <Label Content="Error Handler Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="xHandlerTypeCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel x:Name="xHandlerMappingStack" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Top">
+                            <Label Content="Error Handler Map:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                            <ComboBox x:Name="xErrorHandlerMappingCmb"  Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" Margin="18,0,0,0" SelectionChanged="xErrorHandlerMappingCmb_SelectionChanged"/>
+                            <Button x:Name="xSpecificErrorHandlerBtn" Content="Set Error Handler" Click="xSpecificErrorHandlerBtn_Click"  Margin="10,-5,0,0" Width="120" Style="{StaticResource $InputButtonStyle}"/>
+                        </StackPanel>
+                    </DockPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

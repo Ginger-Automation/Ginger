@@ -62,7 +62,7 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext = new Context();
 
         ActivitiesListViewPage mActivitiesPage;
-        NewActivityEditPage mActivityEditPage;
+        ActivityPage mActivityEditPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(270);
 
@@ -266,7 +266,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mActivityEditPage == null)
                 {
-                    mActivityEditPage = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);
+                    mActivityEditPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
                     xCurrentActivityFrame.Content = mActivityEditPage;
                 }
                 else

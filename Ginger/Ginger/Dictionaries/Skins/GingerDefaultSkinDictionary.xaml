@@ -1049,6 +1049,29 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Border" x:Key="$CoolTabBorderStyle">
+        <Setter Property="Border.BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0 0 0 4"/>
+        <Style.Triggers>
+            <Trigger Property="Border.IsMouseOver" Value="True">
+                <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+            </Trigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="True">
+                <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="False">
+                <Setter Property="Border.BorderBrush" Value="Transparent" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="$CoolTabTextBlockStyle">
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Margin" Value="5 0 0 0"/>
+        <Setter Property="FontSize" Value="15"/>
+    </Style>
+
 
     <Style TargetType="ListBoxItem" x:Key="$BorderlessList">
         <!-- override the default template to remove the default styling on the IsSelected property -->

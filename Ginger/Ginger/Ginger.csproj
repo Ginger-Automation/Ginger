@@ -613,9 +613,6 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml.cs">
-      <DependentUpon>ActionListItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
     <Compile Include="BusinessFlowPages_New\ListViewItems\ActivitiesGroupListItemInfo.cs" />
     <Compile Include="BusinessFlowPages_New\ListViewItems\ActivityListItemInfo.cs" />
@@ -862,8 +859,8 @@
     <Compile Include="BusinessFlowPages_New\ActionsListViewPage.xaml.cs">
       <DependentUpon>ActionsListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\NewActivityEditPage.xaml.cs">
-      <DependentUpon>NewActivityEditPage.xaml</DependentUpon>
+    <Compile Include="BusinessFlowPages_New\ActivityPage.xaml.cs">
+      <DependentUpon>ActivityPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
@@ -2899,15 +2896,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ListViewItems\ActionListItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\NewActivityEditPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
