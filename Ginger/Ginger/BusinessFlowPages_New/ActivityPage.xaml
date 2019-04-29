@@ -91,7 +91,7 @@
                 <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
             </TabItem>
 
-            <TabItem x:Name="xConfigurationsab" Style="{StaticResource $CoolTab}" TabIndex="3">
+            <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >

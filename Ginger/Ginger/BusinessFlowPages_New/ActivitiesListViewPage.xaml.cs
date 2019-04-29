@@ -18,6 +18,11 @@ namespace Ginger.BusinessFlowPages
         BusinessFlow mBusinessFlow;
         Context mContext;
 
+        public UcListView ListView
+        {
+            get { return xActivitiesListView; }
+        }
+
         public ActivitiesListViewPage(BusinessFlow businessFlow, Context context)
         {
             InitializeComponent();

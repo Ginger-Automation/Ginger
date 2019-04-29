@@ -40,7 +40,12 @@ namespace GingerWPF.BusinessFlowsLib
         ActionListItemInfo mActionListItemInfo;
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
-        
+
+        public UcListView ListView
+        {
+            get { return mActionsListView; }
+        }
+
         public ActionsListViewPage(Activity Activity, Context context)
         {
             InitializeComponent();

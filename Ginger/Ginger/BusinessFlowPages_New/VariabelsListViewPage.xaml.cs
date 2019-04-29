@@ -28,6 +28,11 @@ namespace Ginger.BusinessFlowPages
         VariableEditPage mVariabelEditPage;
         VariableBase mVarBeenEdit;
 
+        public UcListView ListView
+        {
+            get { return mVariabelsListView; }
+        }
+
         public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context)
         {
             InitializeComponent();

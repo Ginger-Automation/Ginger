@@ -14,9 +14,12 @@
         
         <DockPanel Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click" />
-            <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             
+            <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
+                <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+            </DockPanel>
+
             <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
                 <StackPanel x:Name="xListCommonOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
                     <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />

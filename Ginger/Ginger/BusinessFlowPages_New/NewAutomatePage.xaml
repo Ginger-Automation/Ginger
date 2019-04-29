@@ -31,7 +31,7 @@
             
             <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
                 <UserControls:ImageMakerControl ImageType="BusinessFlow" Width="32" Height="32" />
-                <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="18" FontWeight="Bold" MaxWidth="250" Margin="5,0,30,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
+                <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,30,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
                 <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
@@ -74,8 +74,6 @@
                 </Menu>
             </StackPanel>
 
-            
-
             <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal">
                 <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                 <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Rest &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Play"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
@@ -102,94 +100,62 @@
                 <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
                     <GradientStop Color="DarkGray" Offset="0"/>
                     <GradientStop Color="LightGray" Offset="0.6"/>
-                    
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
 
-        <!--Middle Row displaying Activities, Actions and Add Action Panel-->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
-                <ColumnDefinition Width="300*"/>
-                <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
-            </Grid.ColumnDefinitions>
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolTab}" TabIndex="1">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" />
+                            <TextBlock x:Name="xBfActiVitiesTabHeaderText" Text="Activities (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="300*"/>
+                        <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
+                    </Grid.ColumnDefinitions>
 
-            <!--<ListView x:Name="ActivitiesList" FontSize="14" SelectionChanged="ActivitiesList_SelectionChanged" Grid.Column="0" >
-                <ListBox.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                        <GradientStop Color="#333" Offset="1"/>
-                        <GradientStop Color="#999"/>
-                    </LinearGradientBrush>
-                </ListBox.Background>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50"/>
-                                <RowDefinition Height="5"/>
-                            </Grid.RowDefinitions>
-                            --><!--Show round button--><!--
-                            <Button x:Name="ActivityNumberButton" Height="35" Width="35">
-                                <Button.Style>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate>
-                                                    <Grid>
-                                                        <Path Name="Ellipse" Stroke="#FF3EA7FC" StrokeThickness="1" Fill="#FFF5EFED">
-                                                            <Path.Data>
-                                                                <RectangleGeometry Rect="2,2,30,30" RadiusX="15" RadiusY="15"/>
-                                                            </Path.Data>
-                                                        </Path>
-                                                        --><!--Show Row Number--><!--
-                                                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF3EA7FC" FontSize="12" Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource RowNumberConverter}}" />
-                                                    </Grid>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="Ellipse" Property="Fill">
-                                                                <Setter.Value>
-                                                                    <SolidColorBrush Color="LightBlue"/>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            --><!--ActivityName--><!--
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding ActivityName}" Foreground="Black"/>
-                            --><!--Status--><!--
-                            <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Status}" Foreground="Black"/>
-                            --><!--Elapsed--><!--
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseconds" HorizontalAlignment="Right" Foreground="Black"/>
-                            --><!--Status Icon--><!--
-                            <UserControls:ImageMakerControl Grid.Column="4" ImageType="{Binding StatusIcon}" Width="16" Height="16"/>
-                            --><!--show line between rows--><!--
-                            <Rectangle Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Fill="LightGray" Height="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListView>-->
-            <Frame x:Name="xActivitiesListFrame" Grid.Column="0" Content="Activities List Frame" Margin="0,0,0,0" NavigationUIVisibility="Hidden" />
+                    <Frame x:Name="xActivitiesListFrame" Grid.Column="0" Content="Activities List Frame" Margin="0,0,0,0" NavigationUIVisibility="Hidden" />
+
+                    <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left"  VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
+
+                    <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="5,0,0,0" NavigationUIVisibility="Hidden" />
+
+                    <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="10" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" />
+
+                    <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="10,0,0,0"/>
+                    <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
+                </Grid>
+            </TabItem>
             
-            <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left"  VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
+            <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Variable" Width="20" Height="18" FontWeight="Bold" />
+                            <TextBlock x:Name="xBfVariablesTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+            </TabItem>
 
-            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="5,0,0,0" NavigationUIVisibility="Hidden" />
-
-            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="10" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" />
-            <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="10,0,0,0"/>
-            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
-        </Grid>
+            <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Config" Width="20" Height="18" FontWeight="Bold" />
+                            <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Page>

@@ -56,12 +56,13 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class NewAutomatePage : Page
     {
         GingerRunner mRunner;
-        BusinessFlow mBusinessFlow = null;
-        Activity mCurrentActivity = null;
+        BusinessFlow mBusinessFlow = null;        
         ProjEnvironment mEnvironment = null;
         Context mContext = new Context();
 
         ActivitiesListViewPage mActivitiesPage;
+        VariabelsListViewPage mBfVariabelsPage;
+
         ActivityPage mActivityEditPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(270);
@@ -81,41 +82,26 @@ namespace GingerWPF.BusinessFlowsLib
             BindEnvsCombo();
         }
 
-
-        private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
-        {
-            switch (EventArgs.EventType)
-            {
-                case GingerRunnerEventArgs.eEventType.ActivityStart:
-                    Activity a = (Activity)EventArgs.Object;
-                    // Just to show we can display progress
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        //StatusLabel.Content = "Running " + a.ActivityName;
-                    });
-
-                    break;
-                case GingerRunnerEventArgs.eEventType.ActionEnd:
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        // just quick code to show activity progress..
-                        int c = (from x in mBusinessFlow.Activities where x.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending select x).Count();
-                        //ProgressBar.Maximum = mBusinessFlow.Activities.Count;
-                        //ProgressBar.Value = c;
-                    });
-                    break;
-            }
-        }
-
-        //private void CurrentBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         //{
-        //    if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+        //    switch (EventArgs.EventType)
         //    {
-        //        ActivitiesList.Dispatcher.Invoke(() =>
-        //        {
-        //            ActivitiesList.SelectedItem = mBusinessFlow.CurrentActivity;
-        //        });
+        //        case GingerRunnerEventArgs.eEventType.ActivityStart:
+        //            Activity a = (Activity)EventArgs.Object;
+        //            // Just to show we can display progress
+        //            this.Dispatcher.Invoke(() =>
+        //            {
+        //                //StatusLabel.Content = "Running " + a.ActivityName;
+        //            });
 
+        //            break;
+        //        case GingerRunnerEventArgs.eEventType.ActionEnd:
+        //            this.Dispatcher.Invoke(() =>
+        //            {
+        //                // just quick code to show activity progress..
+        //                int c = (from x in mBusinessFlow.Activities where x.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending select x).Count();
+        //            });
+        //            break;
         //    }
         //}
 
@@ -140,18 +126,6 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        //private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
-        //    mBusinessFlow.CurrentActivity = SelectedActivity;
-
-        //    if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
-        //    {
-        //        SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
-        //    }
-        //    xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
-        //}
-
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
             if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
@@ -174,12 +148,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionSectionSpliter.IsEnabled = false;
             }
         }
-
-
-
-
-
-        ///////////////////////////////////////
 
         private void InitAutomatePageRunner()
         {
@@ -210,17 +178,32 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
                     xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
 
-                    //ActivitiesList.ItemsSource = mBusinessFlow.Activities;
-                    //SetGherkinOptions();
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+                        mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
                     else
                     {
                         mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
                     }
+                    mBusinessFlow.Activities.CollectionChanged += BfActivities_CollectionChanged;
+                    UpdateBfActivitiesTabHeader();
+
+
+                    if (mBfVariabelsPage == null)
+                    {
+                        mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
+                        mBfVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        xBfVariablesTabFrame.Content = mBfVariabelsPage;
+                    }
+                    else
+                    {
+                        mBfVariabelsPage.UpdateParent(mBusinessFlow);
+                    }
+                    mBusinessFlow.Variables.CollectionChanged += BfVariables_CollectionChanged;
+                    UpdateBfVariabelsTabHeader();
 
                     if (mBusinessFlow.Activities.Count > 0)
                     {
@@ -244,6 +227,31 @@ namespace GingerWPF.BusinessFlowsLib
                     xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
                 }
             }
+        }
+
+        private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateBfVariabelsTabHeader();
+        }
+
+        private void BfActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateBfActivitiesTabHeader();
+        }
+
+        private void UpdateBfVariabelsTabHeader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xBfVariablesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
+            });
+        }
+        private void UpdateBfActivitiesTabHeader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xBfActiVitiesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
+            });
         }
 
         public void UpdateRunnerAgentsUsedBusinessFlow()

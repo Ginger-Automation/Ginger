@@ -240,6 +240,18 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        public Visibility ListTitleVisibility
+        {
+            get
+            {
+                return xListTitlePnl.Visibility;
+            }
+            set
+            {
+                xListTitlePnl.Visibility = value;
+            }
+        }
+
         public Visibility DeleteAllBtnVisiblity
         {
             get

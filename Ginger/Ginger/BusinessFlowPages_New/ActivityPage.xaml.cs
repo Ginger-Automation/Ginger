@@ -64,9 +64,11 @@ namespace GingerWPF.BusinessFlowsLib
             xRunOptionCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eActionRunOption));
 
             mActionsPage = new ActionsListViewPage(mActivity, mContext);
+            mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActionsTabFrame.Content = mActionsPage;
 
             mVariabelsPage = new VariabelsListViewPage(mActivity, mContext);
+            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
         }
 
