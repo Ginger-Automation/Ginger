@@ -160,14 +160,14 @@ namespace Ginger.UserControlsLib.UCListView
                 if (!String.IsNullOrEmpty(identifier.Color))
                 {
                     BrushConverter conv = new BrushConverter();
-                    xExpandCollapseBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
+                    xIdentifierBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
                 }
-                xExpandCollapseBorder.ToolTip = identifier.Tooltip;
+                xIdentifierBorder.ToolTip = identifier.Tooltip;
             }
             else
             {
-                xExpandCollapseBorder.Background = System.Windows.Media.Brushes.Transparent;
-                xExpandCollapseBorder.ToolTip = string.Empty;
+                xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
+                xIdentifierBorder.ToolTip = string.Empty;
             }
         }
 
@@ -297,7 +297,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (string.IsNullOrEmpty(ItemExecutionStatusField))
             {
-                xItemIcon.Visibility = Visibility.Collapsed;
+                xItemStatusImage.Visibility = Visibility.Collapsed;
             }
             else
             {

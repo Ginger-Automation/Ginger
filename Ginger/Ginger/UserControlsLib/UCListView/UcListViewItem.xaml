@@ -21,11 +21,12 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="xExpandCollapseCol" Width="25"/>
             <ColumnDefinition x:Name="xIndexCol" Width="25"/>
-            <ColumnDefinition x:Name="xIconCol" Width="70"/>
+            <ColumnDefinition x:Name="xIdentifierCol" Width="8"/>
+            <ColumnDefinition x:Name="xIconCol" Width="50"/>
             <ColumnDefinition x:Name="xDetailsCol" Width="100*"/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Name="xExpandCollapseBorder" Grid.RowSpan="2" Grid.Column="0" BorderBrush="Transparent">
+        <Border Grid.RowSpan="2" Grid.Column="0" BorderBrush="Transparent">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Expand" Click="xExpandCollapseBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Visible" ToolTip="Expand" />
         </Border>
 
@@ -33,9 +34,12 @@
             <TextBlock x:Name="xItemIndexTxt" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="12" FontWeight="Bold" Text="1"/>
         </Border>
 
-        <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="2" ImageType="Unknown" ImageForeground="DarkGray" SetAsFontImageWithSize="20" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+        <Border x:Name="xIdentifierBorder" Grid.RowSpan="2" Grid.Column="2" BorderBrush="Transparent"/>
 
-        <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="3" >
+
+        <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageType="Unknown" ImageForeground="DarkGray" SetAsFontImageWithSize="20" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+
+        <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="4" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*" MinWidth="100"/>
                 <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
@@ -46,7 +50,7 @@
             <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" Grid.Column="2"/>
         </Grid>
 
-        <Grid x:Name="xExtraDetailsGrid" Grid.Row="1" Grid.Column="3" >
+        <Grid x:Name="xExtraDetailsGrid" Grid.Row="1" Grid.Column="4" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50*" MinWidth="50"/>
                 <ColumnDefinition x:Name="xItemOperationsClm" Width="175"/>

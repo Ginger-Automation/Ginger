@@ -619,6 +619,10 @@
     <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ListViewItems\VariableListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
+      <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -2959,6 +2963,10 @@
     <Page Include="BusinessFlowPages_New\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\VariabelsListViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>

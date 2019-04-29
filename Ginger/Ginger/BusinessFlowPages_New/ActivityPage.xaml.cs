@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.Activities;
+using Ginger.BusinessFlowPages;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -41,6 +42,7 @@ namespace GingerWPF.BusinessFlowsLib
         Ginger.General.RepositoryItemPageViewMode mPageMode;
 
         ActionsListViewPage mActionsPage;
+        VariabelsListViewPage mVariabelsPage;
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
         public ActivityPage(Activity activity, Context context, Ginger.General.RepositoryItemPageViewMode pageMode)
@@ -63,6 +65,9 @@ namespace GingerWPF.BusinessFlowsLib
 
             mActionsPage = new ActionsListViewPage(mActivity, mContext);
             xActionsTabFrame.Content = mActionsPage;
+
+            mVariabelsPage = new VariabelsListViewPage(mActivity, mContext);
+            xVariabelsTabFrame.Content = mVariabelsPage;
         }
 
         public void UpdateActivity(Activity activity)
@@ -99,6 +104,7 @@ namespace GingerWPF.BusinessFlowsLib
             //Variables Tab Bindings            
             mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
             UpdateVariabelsTabHeader();
+            mVariabelsPage.UpdateParent(mActivity);
 
             //Configurations Tab Bindings
             xRunDescritpion.Init(mContext, mActivity, nameof(Activity.RunDescription));                        

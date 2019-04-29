@@ -21,6 +21,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
+        private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
+        {
+            UcListViewEventHandler handler = UcListViewEvent;
+            if (handler != null)
+            {
+                handler(new UcListViewEventArgs(eventType, eventObject));
+            }
+        }
 
         // DragDrop event handler
         public event EventHandler ItemDropped;
@@ -50,14 +58,6 @@ namespace Ginger.UserControlsLib.UCListView
                     return;
                 }
 
-            }
-        }
-        private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
-        {
-            UcListViewEventHandler handler = UcListViewEvent;
-            if (handler != null)
-            {
-                handler(new UcListViewEventArgs(eventType, eventObject));
             }
         }
 

@@ -1,0 +1,29 @@
+﻿<Page x:Class="Ginger.BusinessFlowPages.VariabelsListViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.BusinessFlowPages"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="VariabelsListViewPage">
+
+    <DockPanel>
+        <StackPanel x:Name="xBackToListPnl" Orientation="Horizontal" DockPanel.Dock="Top">
+            <UserControls:ucButton x:Name="xGoToList" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToList_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+                <UserControls:ucButton.ToolTip>
+                    <GingerCore:ucTextDicResource Text="Back to [Variables] List"></GingerCore:ucTextDicResource>
+                </UserControls:ucButton.ToolTip>
+            </UserControls:ucButton>
+            <Label Style="{StaticResource $HeaderStyle}" VerticalAlignment="Center">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="Back to [Variables] List"></GingerCore:ucTextDicResource>
+                </Label.Content>
+            </Label>
+        </StackPanel>
+
+        <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
+    </DockPanel>
+</Page>

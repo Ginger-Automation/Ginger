@@ -1,7 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.UserControls;
-using Ginger.Actions;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -18,6 +17,17 @@ namespace Ginger.BusinessFlowPages.ListViewItems
     {
         Act mAction;
         Context mContext;
+
+        public delegate void ActionListItemEventHandler(ActionListItemEventArgs EventArgs);
+        public event ActionListItemEventHandler ActionListItemEvent;
+        private void OnActionListItemEvent(ActionListItemEventArgs.eEventType eventType, Object eventObject = null)
+        {
+            ActionListItemEventHandler handler = ActionListItemEvent;
+            if (handler != null)
+            {
+                handler(new ActionListItemEventArgs(eventType, eventObject));
+            }
+        }
 
         public ActionListItemInfo(Context context)
         {
@@ -168,9 +178,10 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(sender);
             mAction.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             mAction.Context = mContext;
-            ActionEditPage actedit = new ActionEditPage(mAction, General.RepositoryItemPageViewMode.Automation);//TODO: check if need diifrent mode
+            //ActionEditPage actedit = new ActionEditPage(mAction, General.RepositoryItemPageViewMode.Automation);//TODO: check if need diifrent mode
             //actedit.ap = this;
-            actedit.ShowAsWindow();
+            //actedit.ShowAsWindow();
+            OnActionListItemEvent(ActionListItemEventArgs.eEventType.ShowActionEditPage, mAction);
         }
 
         private void ActiveHandler(object sender, RoutedEventArgs e)
@@ -219,6 +230,23 @@ namespace Ginger.BusinessFlowPages.ListViewItems
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class ActionListItemEventArgs
+    {
+        public enum eEventType
+        {
+            ShowActionEditPage,
+        }
+
+        public eEventType EventType;
+        public Object EventObject;
+
+        public ActionListItemEventArgs(eEventType eventType, object eventObject = null)
+        {
+            this.EventType = eventType;
+            this.EventObject = eventObject;
         }
     }
 }
