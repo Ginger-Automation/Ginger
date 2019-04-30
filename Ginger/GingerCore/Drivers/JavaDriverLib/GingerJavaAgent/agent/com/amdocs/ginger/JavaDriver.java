@@ -1749,9 +1749,13 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			{			
 				nodeText=mASCFHelper.GetNodeText(matchingNode);
 			}
-			else
+			else if(matchingNode instanceof DefaultMutableTreeNode)
 			{
 				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
+			}
+			else
+			{
+				nodeText = matchingNode.toString();
 			}
 		
 			if(node.equalsIgnoreCase(nodeText)) 
