@@ -13,11 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and 
 limitations under the License. 
 */
-
-var source = arguments[0],
-    target = arguments[1],
-    offsetX = arguments[2] || 0,
-    offsetY = arguments[3] || 0;
+"use strict";
+var args = arguments;
+var source = args[0],
+    target = args[1],
+    offsetX = args[2] || 0,
+    offsetY = args[3] || 0;
 var sourceDoc = source.ownerDocument,
     docView = sourceDoc.defaultView,
     sourceBox = source.getBoundingClientRect(),
