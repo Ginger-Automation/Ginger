@@ -6411,7 +6411,6 @@ namespace GingerCore.Drivers
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
                                 string script = Properties.Resources.Html5DragAndDrop;
-                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
