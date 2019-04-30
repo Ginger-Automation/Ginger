@@ -71,6 +71,7 @@ namespace Amdocs.Ginger.Common
 
 
         // CDL
+        public bool ShowNewBusinessFlowPage { get { return GetFeature(nameof(ShowNewBusinessFlowPage)).Selected; } set { UpdateFeature(nameof(ShowNewBusinessFlowPage), value); } }
         public bool ShowNewautomate { get { return GetFeature(nameof(ShowNewautomate)).Selected; } set { UpdateFeature(nameof(ShowNewautomate), value); } }
 
         
@@ -104,6 +105,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
 
             //New Automate
+            mFeatures.Add(new BetaFeature() { Group = "Automnate", Description = "Show new Business Flow view page", ID = nameof(ShowNewBusinessFlowPage) });
             mFeatures.Add(new BetaFeature() { Group = "Automnate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
 
 

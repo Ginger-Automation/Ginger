@@ -436,22 +436,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (!string.IsNullOrEmpty(ItemTagsField))
                 {
                     Object tags = Item.GetType().GetField(ItemTagsField).GetValue(Item);
-                    if (tags != null)
-                    {                        
-                        if (((ObservableList<Guid>)tags).Count > 0)
-                        {
-                            string tagsDesc = string.Empty;
-                            foreach (Guid tagID in ((ObservableList<Guid>)tags))
-                            {
-                                RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
-                                if (tag != null)
-                                {
-                                    tagsDesc += "#" + tag.Name;
-                                }
-                            }
-                            fullDesc += tagsDesc + " ";
-                        }
-                    }
+                    fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";                    
                 }
 
                 xItemDescriptionTxtBlock.Text = fullDesc;

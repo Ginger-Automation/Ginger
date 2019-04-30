@@ -159,6 +159,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (!string.IsNullOrEmpty(mActivity.Description))
             {
                 xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
                 xDescTextBlockHelper.AddLineBreak();
             }
             if (!string.IsNullOrEmpty(mActivity.RunDescription))

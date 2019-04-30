@@ -33,6 +33,7 @@ using System.Windows.Threading;
 using System.Drawing;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger
 {
@@ -476,6 +477,28 @@ namespace Ginger
             {
                 return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
             }
+        }
+
+        public static string GetTagsListAsString(ObservableList<Guid> tagsIDsList)
+        {
+            string tagsDesc = string.Empty;
+
+            if (tagsIDsList != null)
+            {
+                if (tagsIDsList.Count > 0)
+                {                    
+                    foreach (Guid tagID in tagsIDsList)
+                    {
+                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
+                        if (tag != null)
+                        {
+                            tagsDesc += "#" + tag.Name;
+                        }
+                    }
+                }
+            }
+
+            return tagsDesc;
         }
     }         
 }

@@ -878,9 +878,6 @@
     <Compile Include="BusinessFlowPages_New\BusinessFlowInfoPage.xaml.cs">
       <DependentUpon>BusinessFlowInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\BusinessFlowsPage.xaml.cs">
-      <DependentUpon>BusinessFlowsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
       <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
     </Compile>
@@ -2949,10 +2946,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\BusinessFlowInfoPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowPages_New\BusinessFlowsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

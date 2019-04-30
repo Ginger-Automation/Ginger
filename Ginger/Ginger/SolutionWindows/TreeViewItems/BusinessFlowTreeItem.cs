@@ -25,6 +25,7 @@ using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
 using GingerCore;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -37,6 +38,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private BusinessFlowPage mBusinessFlowPage;
+        private BusinessFlowViewPage mBusinessFlowViewPage;
+
         private BusinessFlow mBusinessFlow { get; set; }
         private readonly eBusinessFlowsTreeViewMode mViewMode;
 
@@ -78,11 +81,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         Page ITreeViewItem.EditPage()
         {
-            if (mBusinessFlowPage == null)
+            if (!WorkSpace.Instance.BetaFeatures.ShowNewBusinessFlowPage)
             {
-                mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
+                if (mBusinessFlowPage == null)
+                {
+                    mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
+                }
+                return mBusinessFlowPage;
             }
-            return mBusinessFlowPage;
+            else
+            {
+                if (mBusinessFlowViewPage == null)
+                {
+                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.RepositoryItemPageViewMode.View);
+                }
+                return mBusinessFlowViewPage;
+            }            
         }
 
         ContextMenu ITreeViewItem.Menu()
