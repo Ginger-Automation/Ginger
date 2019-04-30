@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 "use strict";
+
 var args = arguments;
 var source = args[0],
     target = args[1],
@@ -28,44 +29,54 @@ var sourceDoc = source.ownerDocument,
     x2 = targetBox.left + (targetBox.width >> 1) + offsetX,
     y2 = targetBox.top + (targetBox.height >> 1) + offsetY,
     data = Object.create(Object.prototype, {
-        _items: {
-            value: {}
+        "_items": {
+            "value": {}
         },
-        effectAllowed: {
-            value: "all",
-            writable: !0
+        "effectAllowed": {
+            "value": "all",
+            "writable": !0
         },
-        dropEffect: {
-            value: "move",
-            writable: !0
+        "dropEffect": {
+            "value": "move",
+            "writable": !0
         },
-        files: {
-            get: function () {
+        "files": {
+            "get"() {
+
                 return this._items.Files;
+
             }
         },
-        types: {
-            get: function () {
+        "types": {
+            "get"() {
+
                 return Object.keys(this._items);
+
             }
         },
-        setData: {
-            value: function (e, t) {
+        "setData": {
+            "value"(e, t) {
+
                 this._items[e] = t;
+
             }
         },
-        getData: {
-            value: function (e) {
+        "getData": {
+            "value"(e) {
+
                 return this._items[e];
+
             }
         },
-        clearData: {
-            value: function (e) {
+        "clearData": {
+            "value"(e) {
+
                 delete this._items[e];
+
             }
         },
-        setDragImage: {
-            value: function (e) { }
+        "setDragImage": {
+            "value"(e) { }
         }
     });
 
