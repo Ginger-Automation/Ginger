@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Actions="clr-namespace:Ginger.Actions" 
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionSendSMSEditPage">
@@ -13,16 +14,20 @@
                     
                     <StackPanel>
                         <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From (enter your email address):" />
-                        <TextBox x:Name="MailFromTextBox" Style="{StaticResource @TextBoxStyle}" />
+                        <!--<TextBox x:Name="MailFromTextBox" Style="{StaticResource @TextBoxStyle}" />-->
+                        <Actions:UCValueExpression x:Name="MailFromTextBox" ToolTip="From"/>
 
                         <Label Style="{StaticResource @LabelStyle}" Content="To (Enter recipients separated with ';' PhoneNumber@SMSgateway i.e.: 1234567890@txt.att.net):"/>
-                        <TextBox x:Name="MailToTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+                        <!--<TextBox x:Name="MailToTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"/>-->
+                        <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>
 
                         <Label Style="{StaticResource @LabelStyle}" Content="Subject:"  />
-                        <TextBox x:Name="SubjectTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" />
+                        <!--<TextBox x:Name="SubjectTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" />-->
+                        <Actions:UCValueExpression x:Name="SubjectTextBox" ToolTip="Subject"/>
 
                         <Label Style="{StaticResource @LabelStyle}" Content="Body (Up to 160 Chars):" />
-                        <TextBox x:Name="BodyTextBox" TextWrapping="Wrap" Height="120" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+                        <!--<TextBox x:Name="BodyTextBox" TextWrapping="Wrap" Height="120" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}"/>-->
+                        <Actions:UCValueExpression x:Name="BodyTextBox"  ToolTip="Body Text" ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                             <Label Style="{StaticResource @LabelStyle}" FontSize="11" VerticalAlignment="Center">
@@ -39,27 +44,7 @@
             </TabItem>
            
             <TabItem Header="Delivery Method">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                        <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="0,10,0,10" >E-mail Method:</Label>
-                            <ComboBox x:Name="EmailMethodComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="150" Height="25"/>
-                        </StackPanel>
-                    <StackPanel x:Name="SMTPConfig">
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:</Label>
-                        <TextBox x:Name="SMTPMailHostTextBox" Style="{StaticResource @TextBoxStyle}" Width="200" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPort">SMTP Port:</Label>
-                            <TextBox x:Name="SMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="200" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelUser">SMTP User:</Label>
-                            <TextBox x:Name="SMTPUserTextBox" Style="{StaticResource @TextBoxStyle}" Width="200" HorizontalAlignment="Left"/>
-
-                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPass">SMTP Password:</Label>
-                            <TextBox x:Name="SMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="200" HorizontalAlignment="Left"/>
-                    </StackPanel>
-                </StackPanel>
-                </Grid>
+               <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>
     </Grid>
