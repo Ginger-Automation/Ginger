@@ -1,13 +1,11 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,7 +16,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for ListViewItem.xaml
     /// </summary>
-    public partial class UcListViewItem : UserControl
+    public partial class UcListViewItem : UserControl, INotifyPropertyChanged
     {
         //public static readonly DependencyProperty ParentListProperty = DependencyProperty.Register(nameof(ParentList), typeof(UcListView), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnParentListPropertyChanged)));
         //public UcListView ParentList
@@ -40,7 +38,33 @@ namespace Ginger.UserControlsLib.UCListView
         //        control.ParentList = ((UcListView)e.NewValue);
         //    }
         //}
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
         public UcListView ParentList { get; set; }
+
+        public bool IsSelected
+        {
+            get
+            {
+                if (ParentList != null && ParentList.CurrentItem == Item)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         public static readonly DependencyProperty ItemProperty = DependencyProperty.Register(nameof(Item), typeof(object), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnItemPropertyChanged)));
         public object Item
@@ -361,9 +385,17 @@ namespace Ginger.UserControlsLib.UCListView
                     ParentList = (UcListView)parent;
                     ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
                     ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+                    ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
+                    ParentList.List.SelectionChanged += ParentList_SelectionChanged;
                 }
+                OnPropertyChanged(nameof(IsSelected));
             }
             SetItemIndex();
+        }
+
+        private void ParentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(IsSelected));
         }
 
         private void SetItemIndex()

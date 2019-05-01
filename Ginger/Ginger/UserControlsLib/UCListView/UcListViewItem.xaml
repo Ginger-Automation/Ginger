@@ -45,7 +45,27 @@
                 <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
                 <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="Title" FontSize="15" Margin="2,0,0,0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" TextTrimming="CharacterEllipsis"  />
+            <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" Text="Title">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontWeight" Value="Normal"/>
+                        <Setter Property="Margin" Value="2,0,0,0"/>
+                        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Setter Property="FontWeight" Value="Normal"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <StackPanel x:Name="xItemNotificationsPnl" Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,0,0" />
             <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" Grid.Column="2"/>
         </Grid>

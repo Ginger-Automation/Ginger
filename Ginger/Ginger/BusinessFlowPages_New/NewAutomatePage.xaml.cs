@@ -62,8 +62,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         ActivitiesListViewPage mActivitiesPage;
         VariabelsListViewPage mBfVariabelsPage;
-
-        ActivityPage mActivityEditPage;
+        ActivityPage mActivityPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(270);
 
@@ -182,6 +181,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
                         mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
                     else
@@ -229,6 +229,12 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mBusinessFlow.CurrentActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
+            mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+        }
+
         private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateBfVariabelsTabHeader();
@@ -272,14 +278,14 @@ namespace GingerWPF.BusinessFlowsLib
                 //mBusinessFlow.Activities.CurrentItem = mBusinessFlow.Activities[0];
                 //mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
 
-                if (mActivityEditPage == null)
+                if (mActivityPage == null)
                 {
-                    mActivityEditPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
-                    xCurrentActivityFrame.Content = mActivityEditPage;
+                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                    xCurrentActivityFrame.Content = mActivityPage;
                 }
                 else
                 {
-                    mActivityEditPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
                 }
             }
             else
@@ -289,19 +295,10 @@ namespace GingerWPF.BusinessFlowsLib
         }
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
-            {
-                //if (mBusinessFlow.CurrentActivity != null)
-                //{
-                //    if (mBusinessFlow.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
-                //    {
-                //        SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
-                //    }
-                //    xCurrentActivityFrame.Content = new NewActivityEditPage(SelectedActivity, mContext);
-                //}
-                SetActivityEditPage();
-
-            }
+            //if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+            //{
+            //    SetActivityEditPage();
+            //}
         }
 
         private void SetBusinessFlowTargetAppIfNeeded()
