@@ -486,13 +486,13 @@ namespace Ginger.UserControlsLib.UCListView
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || ((bool)value) == false)
+            if (value != null && value is bool && ((bool)value) == false)
             {
                 return System.Windows.Media.Brushes.LightGray;
             }
             else
             {
-                return System.Windows.Media.Brushes.Transparent;
+                return System.Windows.Media.Brushes.White;
             }
         }
 

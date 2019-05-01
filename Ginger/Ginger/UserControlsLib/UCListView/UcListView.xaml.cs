@@ -376,7 +376,7 @@ namespace Ginger.UserControlsLib.UCListView
                 ScrollToViewCurrentItem();
             }
 
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private void XExpandCollapseBtn_Click(object sender, RoutedEventArgs e)

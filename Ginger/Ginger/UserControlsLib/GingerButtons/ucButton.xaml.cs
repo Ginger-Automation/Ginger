@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.UserControls
         public string ButtonText
         {
             get { return xButtonText.Text.ToString(); }
-            set { xButtonText.Text = value; xButtonTextNew.Text = value; }
+            set { xButtonText.Text = value; }
         }      
 
         public eImageType ButtonImageType
@@ -134,11 +134,10 @@ namespace Amdocs.Ginger.UserControls
                     xButtonImage.Margin = new Thickness(3);
                     break;
                 case (Core.eButtonType.PanelButton):
-                    xButtonText.Visibility = Visibility.Collapsed;
-                    xButtonTextNew.Visibility = Visibility.Visible;
-                    xButtonTextNew.Margin = new Thickness(10, 0, 10, 0);
+                    xButtonText.Visibility = Visibility.Visible;
+                    xButtonText.Margin = new Thickness(10, 0, 10, 0);
                     xButtonImage.Margin = new Thickness(0, 0, 10, 0);
-                    xButton.Style = FindResource("@PanelButtonStyle") as Style;
+                    xButton.Style = FindResource("$PanelButtonStyle") as Style;
                     break;
             }
         }     
@@ -181,7 +180,7 @@ namespace Amdocs.Ginger.UserControls
                         xButton.Style = FindResource("$CircleImageButtonStyle_Disabled") as Style;
                         break;
                     case (Core.eButtonType.PanelButton):
-                        xButton.Style = FindResource("@PanelButtonStyle") as Style;
+                        xButton.Style = FindResource("$PanelButtonStyle") as Style;
 
                         break;
                 }

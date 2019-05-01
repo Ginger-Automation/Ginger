@@ -68,7 +68,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActivitiesTabFrame" Content="Activities" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="xActivitiesTabFrame" Content="Activities" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
@@ -80,7 +80,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
             <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
@@ -92,7 +92,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="xConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
         </TabControl>
     </Grid>

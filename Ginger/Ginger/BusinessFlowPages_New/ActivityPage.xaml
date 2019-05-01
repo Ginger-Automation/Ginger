@@ -76,7 +76,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
@@ -88,7 +88,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
             <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">

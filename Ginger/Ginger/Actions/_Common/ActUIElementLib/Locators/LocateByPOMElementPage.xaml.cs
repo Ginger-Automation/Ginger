@@ -79,7 +79,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mOnlyPOMRequest = onlyPOMRequest;
             mContext = context;
 
-            if (mContext.BusinessFlow != null)//temp wrokaround, full is in Master 
+            if (mContext != null && mContext.BusinessFlow != null)//temp wrokaround, full is in Master 
             {
                 if (mContext.BusinessFlow.CurrentActivity != null)
                 {

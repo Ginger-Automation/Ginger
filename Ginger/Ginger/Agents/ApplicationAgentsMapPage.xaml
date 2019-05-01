@@ -8,7 +8,7 @@
 	Title="ApplicationAgentsMapPage">
 
     <Grid>
-        <ListBox x:Name="AppAgentsListBox" Background="Transparent" MouseDoubleClick="AppAgentsListBox_MouseDoubleClick" Style="{StaticResource @ListBoxTransparntSelectedItem}">            
+        <ListBox x:Name="AppAgentsListBox" Background="Transparent" MouseDoubleClick="AppAgentsListBox_MouseDoubleClick" Style="{StaticResource @ListBoxTransparntSelectedItem}" BorderThickness="0">            
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                     <StackPanel Orientation="Horizontal" Height="21.5" VerticalAlignment="Center">

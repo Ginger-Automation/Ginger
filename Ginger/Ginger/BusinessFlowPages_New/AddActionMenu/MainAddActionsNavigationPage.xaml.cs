@@ -3,29 +3,10 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Ginger.MenusLib;
-using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
-using Ginger.WindowExplorer;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.DataSource;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -40,8 +21,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             mContext = context;
             InitializeComponent();
-            navigationBar.Visibility = Visibility.Collapsed;
-            navPnlActionFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
+            xNavigationBarPnl.Visibility = Visibility.Collapsed;
+            xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
         }
 
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
@@ -49,14 +30,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if ((sender as Frame).Content == null)
             {
                 (sender as Frame).Visibility = Visibility.Collapsed;
-                navigationBar.Visibility = Visibility.Collapsed;
-                navHomeStackPnl.Visibility = Visibility.Visible;
+                xNavigationBarPnl.Visibility = Visibility.Collapsed;
+                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
             }
             else
             {
                 (sender as Frame).Visibility = Visibility.Visible;
-                navigationBar.Visibility = Visibility.Visible;
-                navHomeStackPnl.Visibility = Visibility.Collapsed;
+                xNavigationBarPnl.Visibility = Visibility.Visible;
+                xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
                 //navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
             }
         }
@@ -93,17 +74,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             LoadActionFrame(new WindowsExplorerNavPage(mContext), "Windows Explorer", eImageType.Search);
         }
 
-        private void UcButton_Click(object sender, RoutedEventArgs e)
+        private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
             LoadActionFrame(null);
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
-        {
-            navPnlActionFrame.Content = navigationPage;
-            xTitleImage.ImageType = titleImage;
-            xTitleText.Content = titleText;
-            //            this.NavigationService.GoBack();
+        {            
+            xSelectedItemFrame.Content = navigationPage;
+
+            if (navigationPage != null)
+            {
+                xSelectedItemTitlePnl.Visibility = Visibility.Visible;
+                xSelectedItemTitleImage.ImageType = titleImage;
+                xSelectedItemTitleText.Content = titleText;
+            }
+            else
+            {
+                xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

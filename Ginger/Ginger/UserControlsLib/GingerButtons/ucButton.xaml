@@ -11,7 +11,6 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <usercontrols:ImageMakerControl x:Name="xButtonImage" SetAsFontImageWithSize="{Binding ButtonFontImageSize}" ImageType="Empty" HorizontalAlignment="Center" SetBorder="False"  VerticalAlignment="Center" />
-            <TextBlock x:Name="xButtonTextNew" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
         </StackPanel>
     </Button>
 
