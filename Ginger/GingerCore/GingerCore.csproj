@@ -555,8 +555,6 @@
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Common\ActUIElement.cs" />
-    <Compile Include="Actions\Common\UIElementPropertyValueLocator.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\ActBrowserElement.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
@@ -681,7 +679,6 @@
     </Compile>
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
     <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\Payload.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
