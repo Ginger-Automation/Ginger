@@ -100,7 +100,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource $BackgroundColor_LightGray}">
                     <DockPanel>
                         <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Name:</Label>
                         <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>

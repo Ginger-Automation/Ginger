@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="55"/>
+            <RowDefinition Height="65"/>
             <!--<RowDefinition Height="10"/>-->
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
@@ -109,9 +109,9 @@
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White">
-                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolTab}" TabIndex="1"  >
+                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1"  >
                     <TabItem.Header>
-                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" Margin="-15,0,0,0">
                             <DockPanel >
                                 <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" />
                                 <TextBlock x:Name="xBfActiVitiesTabHeaderText" Text="Activities (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
@@ -127,7 +127,14 @@
 
                         <Frame x:Name="xActivitiesListFrame" Grid.Column="0" Content="Activities List Frame" Margin="0,0,3,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
-                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left"  VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,0,0,0"/>
+                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0">
+                            <!--<GridSplitter.Background>
+                                --><!--<LinearGradientBrush EndPoint="0,5" StartPoint="0,1">
+                                    <GradientStop Color="DarkGray" Offset="0.2"/>
+                                    <GradientStop Color="LightGray" Offset="0.2"/>
+                                </LinearGradientBrush>--><!--
+                            </GridSplitter.Background>-->
+                        </GridSplitter>
 
                         <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="5,0,0,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
@@ -138,7 +145,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
+                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0">
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
@@ -150,7 +157,7 @@
                     <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
-                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
+                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0">
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
@@ -159,6 +166,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
+                    <Frame x:Name="xBfConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
             </TabControl>
         </Border>

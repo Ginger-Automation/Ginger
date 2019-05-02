@@ -79,7 +79,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
 
         public string GetItemIconField()
         {
-            return null;//TODO: return Variabel image type
+            return nameof(VariableBase.Image);
         }
 
         public List<ListItemNotification> GetNotificationsList(object item)

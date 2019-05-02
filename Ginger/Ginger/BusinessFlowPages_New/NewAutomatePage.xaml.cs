@@ -60,8 +60,9 @@ namespace GingerWPF.BusinessFlowsLib
         ProjEnvironment mEnvironment = null;
         Context mContext = new Context();
 
-        ActivitiesListViewPage mActivitiesPage;
+        ActivitiesListViewPage mBfActivitiesPage;
         VariabelsListViewPage mBfVariabelsPage;
+        BusinessFlowConfigurationsPage mBfConfigurationsPage;
         ActivityPage mActivityPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(250);
@@ -177,16 +178,17 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
                     xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
 
-                    if (mActivitiesPage == null)
+                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                    if (mBfActivitiesPage == null)
                     {
-                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
-                        mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-                        mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
-                        xActivitiesListFrame.Content = mActivitiesPage;
+                        mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+                        mBfActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        mBfActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
+                        xActivitiesListFrame.Content = mBfActivitiesPage;
                     }
                     else
                     {
-                        mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                        mBfActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
                     }
                     mBusinessFlow.Activities.CollectionChanged += BfActivities_CollectionChanged;
                     UpdateBfActivitiesTabHeader();
@@ -204,6 +206,16 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     mBusinessFlow.Variables.CollectionChanged += BfVariables_CollectionChanged;
                     UpdateBfVariabelsTabHeader();
+
+                    if (mBfConfigurationsPage == null)
+                    {
+                        mBfConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext);
+                        xBfConfigurationsTabFrame.Content = mBfConfigurationsPage;
+                    }
+                    else
+                    {
+                        mBfConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
 
                     if (mBusinessFlow.Activities.Count > 0)
                     {
@@ -231,7 +243,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mBusinessFlow.CurrentActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
+            mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
         }
 

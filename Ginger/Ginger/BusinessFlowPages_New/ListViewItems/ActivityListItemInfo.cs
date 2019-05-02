@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -81,7 +82,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
 
         public string GetItemIconField()
         {
-            return null;//TODO: return Activity image type
+            return nameof(RepositoryItemBase.ItemImageType);
         }
 
         public List<ListItemNotification> GetNotificationsList(object item)

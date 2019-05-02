@@ -43,6 +43,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         ActivitiesListViewPage mActivitiesPage;
         VariabelsListViewPage mVariabelsPage;
+        BusinessFlowConfigurationsPage mConfigurationsPage;
 
         public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.RepositoryItemPageViewMode pageMode)
         {
@@ -70,6 +71,9 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
+
+            mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext);
+            xConfigurationsTabFrame.Content = mConfigurationsPage;
         }
 
         public void UpdateBusinessFlow(BusinessFlow businessFlow)
@@ -99,7 +103,8 @@ namespace GingerWPF.BusinessFlowsLib
             mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
             UpdateDescription();
 
-            //Actions Tab Bindings            
+            //Activities Tab Bindings      
+            mBusinessFlow.AttachActivitiesGroupsAndActivities();
             mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
             UpdateActivitiesTabHeader();
             mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
@@ -110,7 +115,7 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage.UpdateParent(mBusinessFlow);
 
             //Configurations Tab Bindings
-            
+            mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
         }
 
         private void mBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

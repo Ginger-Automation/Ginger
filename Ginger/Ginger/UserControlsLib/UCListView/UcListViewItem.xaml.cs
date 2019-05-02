@@ -192,6 +192,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
                 xIdentifierBorder.ToolTip = string.Empty;
+                xIdentifierBorder.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -290,22 +291,13 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
             }
-            //BindingHandler.ObjFieldBinding(xItemNameTxtBlock, TextBlock.TextProperty, Item, ItemNameField);
             SetItemFullName();
 
-            //if (string.IsNullOrEmpty(ItemDescriptionField))
-            //{
-            //    xItemDescriptionTxtBlock.Visibility = Visibility.Collapsed;
-            //}
-            //else
-            //{
-            //    BindingHandler.ObjFieldBinding(xItemDescriptionTxtBlock, TextBlock.TextProperty, Item, ItemDescriptionField, BindingMode.OneWay);
-            //}
             SetItemDescription();
 
             if (!string.IsNullOrEmpty(ItemIconField))
             {
-                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField);
+                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode:BindingMode.OneWay);
             }
 
             if (!string.IsNullOrEmpty(ItemActiveField))
