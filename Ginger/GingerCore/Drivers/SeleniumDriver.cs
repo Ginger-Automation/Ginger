@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GingerCore.Actions;
-using System.Windows;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Diagnostics;
@@ -51,7 +50,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers
 {
@@ -356,41 +354,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            FirefoxOption.Proxy = new Proxy();
-                            switch (mProxy.Kind)
-                            {
-                                case ProxyKind.Manual:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Manual;
-                                    FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
-                                    FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
-                                    //TODO: GETTING ERROR LAUNCHING BROWSER 
-                                    //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
-                                    break;
-
-                                case ProxyKind.ProxyAutoConfigure:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
-                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
-                                    break;
-
-                                case ProxyKind.Direct:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Direct;
-                                    break;
-
-                                case ProxyKind.AutoDetect:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
-
-                                    break;
-
-                                case ProxyKind.System:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-
-                                default:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-                            }
+                            SetProxy(FirefoxOption);
                         }
 
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
@@ -404,14 +368,15 @@ namespace GingerCore.Drivers
                     #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-
                         options.AddArgument("--start-maximized");
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
-                        options.Proxy = mProxy == null ? null : mProxy;
+                        
+                        //setting proxy
+                        SetProxy(options);
 
                         //DownloadFolderPath
                         if (!string.IsNullOrEmpty(DownloadFolderPath))
@@ -462,7 +427,7 @@ namespace GingerCore.Drivers
                         break;
                     #endregion
 
-                  
+
 
                     #region Safari - To be Added
                     //TODO: add Safari
@@ -547,6 +512,47 @@ namespace GingerCore.Drivers
                 ErrorMessageFromDriver = ex.Message;
             }
         }
+
+        private void SetProxy(dynamic options)
+        {
+            options.Proxy = new Proxy();
+            switch (mProxy.Kind)
+            {
+                case ProxyKind.Manual:
+                    options.Proxy.Kind = ProxyKind.Manual;
+                    options.Proxy.HttpProxy = mProxy.HttpProxy;
+                    options.Proxy.SslProxy = mProxy.SslProxy;
+
+                    //TODO: GETTING ERROR LAUNCHING BROWSER 
+                    // options.Proxy.SocksProxy = mProxy.SocksProxy;
+                    break;
+
+                case ProxyKind.ProxyAutoConfigure:
+                    options.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+                    options.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
+                    break;
+
+                case ProxyKind.Direct:
+                    options.Proxy.Kind = ProxyKind.Direct;
+                    break;
+
+                case ProxyKind.AutoDetect:
+                    options.Proxy.Kind = ProxyKind.AutoDetect;
+
+                    break;
+
+                case ProxyKind.System:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+
+                default:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+            }
+        }
+
         public override void CloseDriver()
         {
             try
@@ -3111,7 +3117,7 @@ namespace GingerCore.Drivers
 
             foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
             {
-                if(!locator.IsAutoLearned)
+                if (!locator.IsAutoLearned)
                 {
                     ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
                     ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
@@ -3359,59 +3365,67 @@ namespace GingerCore.Drivers
         {
             IReadOnlyCollection<IWebElement> elem = null; //TODO: Not found
             //TODO: switch case By.. - order by most common first
-            if (LocatorType == eLocateBy.ByID)
+            switch (LocatorType)
             {
-                elem = Driver.FindElements(By.Id(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByName)
-            {
-                elem = Driver.FindElements(By.Name(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByHref)
-            {
-                string sel = "a[href='@']";
-                sel = sel.Replace("@", LocValue);
-                elem = Driver.FindElements(By.CssSelector(sel));
+                case eLocateBy.ByID:
 
-            }
-            if (LocatorType == eLocateBy.ByClassName)
-            {
-                elem = Driver.FindElements(By.ClassName(LocValue));
-            }
-            if (LocatorType == eLocateBy.ByLinkText)
-            {
-                LocValue = LocValue.Trim();
-                try
-                {
-                    elem = Driver.FindElements(By.LinkText(LocValue));
-                }
-                catch (Exception ex)
-                {
+                    elem = Driver.FindElements(By.Id(LocValue));
+                    break;
+
+                case eLocateBy.ByName:
+
+                    elem = Driver.FindElements(By.Name(LocValue));
+                    break;
+
+                case eLocateBy.ByHref:
+
+                    string sel = "a[href='@']";
+                    sel = sel.Replace("@", LocValue);
+                    elem = Driver.FindElements(By.CssSelector(sel));
+                    break;
+
+                case eLocateBy.ByClassName:
+
+                    elem = Driver.FindElements(By.ClassName(LocValue));
+                    break;
+
+                case eLocateBy.ByLinkText:
+
+                    LocValue = LocValue.Trim();
                     try
                     {
-                        if (ex.GetType() == typeof(NoSuchElementException))
-                        {
-                            elem = Driver.FindElements(By.XPath("//*[text()='" + LocValue + "']"));
-
-                        }
+                        elem = Driver.FindElements(By.LinkText(LocValue));
                     }
-                    catch { }
-                }
-            }
-            if (LocatorType == eLocateBy.ByXPath || LocatorType == eLocateBy.ByRelXPath)
-            {
-                elem = Driver.FindElements(By.XPath(LocValue));
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            if (ex.GetType() == typeof(NoSuchElementException))
+                            {
+                                elem = Driver.FindElements(By.XPath("//*[text()='" + LocValue + "']"));
+                            }
+                        }
+                        catch { }
+                    }
+                    break;
+
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
+
+                    elem = Driver.FindElements(By.XPath(LocValue));
+                    break;
+
+                case eLocateBy.ByValue:
+
+                    elem = Driver.FindElements(By.XPath("//*[@value=\"" + LocValue + "\"]"));
+                    break;
+
+                case eLocateBy.ByCSS:
+
+                    elem = Driver.FindElements(By.CssSelector(LocValue));
+                    break;
             }
 
-            if (LocatorType == eLocateBy.ByValue)
-            {
-                elem = Driver.FindElements(By.XPath("//*[@value=\"" + LocValue + "\"]"));
-            }
-
-            if (LocatorType == eLocateBy.ByCSS)
-            {
-                elem = Driver.FindElements(By.CssSelector(LocValue));
-            }
 
             if (elem != null)
             {
@@ -3453,7 +3467,7 @@ namespace GingerCore.Drivers
             {
                 foreach (IWebElement e in elements)
                 {
-                    ElementInfo elementInfo = GetElementInfoWithIWebElement(e, null, string.Empty);
+                    //ElementInfo elementInfo = GetElementInfoWithIWebElement(e, null, string.Empty);
 
                     //string highlightJavascript = string.Empty;
                     //if (elementInfo.ElementType == "INPUT.CHECKBOX" || elementInfo.ElementType == "TR" || elementInfo.ElementType == "TBODY")
@@ -3462,7 +3476,11 @@ namespace GingerCore.Drivers
                     //    highlightJavascript = "arguments[0].style.border='3px dashed red'";
                     //((IJavaScriptExecutor)Driver).ExecuteScript(highlightJavascript, new object[] { e });
                     //LastHighLightedElementInfo = elementInfo;
+                    //elementInfo.ElementObject = e;
+
+                    HTMLElementInfo elementInfo = new HTMLElementInfo();
                     elementInfo.ElementObject = e;
+
                     HighlightElement(elementInfo);
                 }
             }
@@ -3520,7 +3538,7 @@ namespace GingerCore.Drivers
                     };
                     result = action.BeginInvoke(null, null);
 
-                    if (result.AsyncWaitHandle.WaitOne(10000,true))
+                    if (result.AsyncWaitHandle.WaitOne(10000, true))
                     {
                         if (count == 0)
                             return false;
@@ -3626,7 +3644,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             mIsDriverBusy = true;
 
@@ -3638,7 +3656,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
                 allReadElem.Clear();
-                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, learnFullElementInfoDetails));
+                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
                 allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3653,7 +3671,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnPartialElementInfoDetails = false)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3661,7 +3679,7 @@ namespace GingerCore.Drivers
             string documentContents = Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x=>!x.Name.StartsWith("#"));
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
             if (htmlElements.Count() != 0)
             {
@@ -3677,32 +3695,32 @@ namespace GingerCore.Drivers
                         //get Element Type
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
 
-                        //filter element if needed                        
-                        if (filteredElementType != null && filteredElementType.Count > 0)
+                        // set the Flag in case you wish to learn the element or not
+                        bool learnElement = true;
+
+                        //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
+                        if (filteredElementType != null)
                         {
+                            //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
                             if (!filteredElementType.Contains(elementTypeEnum.Item2))
+                                learnElement = false;
+                        }
+
+                        if (learnElement)
+                        {
+                            IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
+                            if (el == null)
                             {
                                 continue;
                             }
-                        }
 
-                        IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
-                        if (el == null)
-                        {
-                            continue;
-                        }
+                            //filter none visible elements
+                            if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                            {
+                                continue;
+                            }
 
-                        //filter none visible elements
-                        if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
-                        {
-                            continue;
-                        }
-
-                        HTMLElementInfo foundElemntInfo;
-
-                        if (learnPartialElementInfoDetails)
-                        {
-                            foundElemntInfo = new HTMLElementInfo();
+                            HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
                             foundElemntInfo.ElementType = elementTypeEnum.Item1;
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
                             foundElemntInfo.ElementObject = el;
@@ -3710,16 +3728,14 @@ namespace GingerCore.Drivers
                             foundElemntInfo.XPath = htmlElemNode.XPath;
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+
+                            foundElemntInfo.IsAutoLearned = true;
+                            foundElementsList.Add(foundElemntInfo);
+
+                            allReadElem.Add(foundElemntInfo);
                         }
-                        else
-                        {
-                            foundElemntInfo = GetElementInfoWithIWebElement(el, htmlElemNode, path, learnPartialElementInfoDetails);
-                        }
-                            
-                        foundElemntInfo.IsAutoLearned = true;
-                        foundElementsList.Add(foundElemntInfo);
-                        allReadElem.Add(foundElemntInfo);
-                        if (el.TagName == "iframe" || el.TagName == "frame")
+
+                        if (eElementType.Iframe == elementTypeEnum.Item2)
                         {
                             string xpath = htmlElemNode.XPath;
                             Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
@@ -3732,10 +3748,9 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, learnPartialElementInfoDetails);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
                             Driver.SwitchTo().ParentFrame();
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -3781,13 +3796,14 @@ namespace GingerCore.Drivers
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL")) ||
-                 elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
+            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
+                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL" 
+                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
-            else if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "IMAGE" || elementTypeAtt.ToUpper() == "SUBMIT")) ||
-                    elementTagName.ToUpper() == "BUTTON" || elementTagName.ToUpper() == "SUBMIT")
+            else if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "IMAGE" || elementTypeAtt.ToUpper() == "SUBMIT" || elementTypeAtt.ToUpper() == "BUTTON")) ||
+                    elementTagName.ToUpper() == "BUTTON" || elementTagName.ToUpper() == "SUBMIT" || elementTagName.ToUpper() == "RESET")
             {
                 elementType = eElementType.Button;
             }
@@ -3840,7 +3856,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME")
+            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
             {
                 elementType = eElementType.Iframe;
             }
@@ -3898,39 +3914,39 @@ namespace GingerCore.Drivers
             return EI;
         }
 
-        private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
-        {
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.WindowExplorer = this;
-            EI.ElementTitle = GenerateElementTitle(el);
-            EI.ID = GenerateElementID(el);
-            EI.Value = GenerateElementValue(el);
-            EI.Name = GenerateElementName(el);
-            EI.ElementType = GenerateElementType(el);
-            EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
-            EI.Path = path;
-            if (elNode != null)
-            {
-                EI.XPath = elNode.XPath;
-            }
-            else
-            {
-                EI.XPath = string.Empty;
-            }
-            EI.ElementObject = el;
-            EI.HTMLElementObject = elNode;
+        //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
+        //{
+        //    HTMLElementInfo EI = new HTMLElementInfo();
+        //    EI.WindowExplorer = this;
+        //    EI.ElementTitle = GenerateElementTitle(el);
+        //    EI.ID = GenerateElementID(el);
+        //    EI.Value = GenerateElementValue(el);
+        //    EI.Name = GenerateElementName(el);
+        //    EI.ElementType = GenerateElementType(el);
+        //    EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
+        //    EI.Path = path;
+        //    if (elNode != null)
+        //    {
+        //        EI.XPath = elNode.XPath;
+        //    }
+        //    else
+        //    {
+        //        EI.XPath = string.Empty;
+        //    }
+        //    EI.ElementObject = el;
+        //    EI.HTMLElementObject = elNode;
 
-            if (setFullElementInfoDetails)
-            {
-                EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-                EI.ElementName = GetElementName(EI);
-                EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI); 
-                ((IWindowExplorer)this).UpdateElementInfoFields(EI); 
-                EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI); 
-            }
+        //    if (setFullElementInfoDetails)
+        //    {
+        //        EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
+        //        EI.ElementName = GetElementName(EI);
+        //        EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+        //        ((IWindowExplorer)this).UpdateElementInfoFields(EI);
+        //        EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+        //    }
 
-            return EI;
-        }
+        //    return EI;
+        //}
 
         string GetElementName(HTMLElementInfo EI)
         {
@@ -3998,7 +4014,7 @@ namespace GingerCore.Drivers
                     {
                         return null;
                     }
-                   
+
                 }
             }
 
@@ -4417,33 +4433,26 @@ namespace GingerCore.Drivers
                 SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
 
                 //Find element 
-
-                if ((IWebElement)ElementInfo.ElementObject == null)
+                if (locateElementByItLocators)
                 {
-
-                    if (locateElementByItLocators)
+                    ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.ElementObject = LocateElementByLocators(ElementInfo.Locators);
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
                     }
-                    else
+                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
                     {
-                        if (string.IsNullOrEmpty(ElementInfo.XPath))
-                        {
-                            ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
-                        }
-                        if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
-                        {
-                            ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
-                        }
-                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
+                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
                     return;
                 }
-
-
 
                 //Highlight element
                 IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
@@ -4634,7 +4643,7 @@ namespace GingerCore.Drivers
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
-           
+
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -4916,7 +4925,6 @@ namespace GingerCore.Drivers
                 IframePath = IframeElementInfo.Path + "," + IframeElementInfo.XPath;
             else
                 IframePath = IframeElementInfo.XPath;
-            ElementInfo elementInfo = GetHTMLElementInfoFromIWebElement(elInsideIframe, IframePath);
 
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
 
@@ -4931,28 +4939,28 @@ namespace GingerCore.Drivers
             return foundElemntInfo;
         }
 
-        public ElementInfo GetHTMLElementInfoFromIWebElement(IWebElement EL, string path)
-        {
-            string xpath = GenerateXpathForIWebElement(EL, "");
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.ElementObject = EL;
-            EI.ElementTitle = GenerateElementTitle(EL);
-            EI.WindowExplorer = this;
-            EI.ID = GenerateElementID(EL);
-            EI.Value = GenerateElementValue(EL);
-            EI.Name = GenerateElementName(EL);
-            EI.ElementType = GenerateElementType(EL);
-            EI.ElementTypeEnum = GetElementTypeEnum(EL).Item2;
-            EI.Path = path;
-            EI.XPath = xpath;
-            EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-            return EI;
-        }
+        //public ElementInfo GetHTMLElementInfoFromIWebElement(IWebElement EL, string path)
+        //{
+        //    string xpath = GenerateXpathForIWebElement(EL, "");
+        //    HTMLElementInfo EI = new HTMLElementInfo();
+        //    EI.ElementObject = EL;
+        //    EI.ElementTitle = GenerateElementTitle(EL);
+        //    EI.WindowExplorer = this;
+        //    EI.ID = GenerateElementID(EL);
+        //    EI.Value = GenerateElementValue(EL);
+        //    EI.Name = GenerateElementName(EL);
+        //    EI.ElementType = GenerateElementType(EL);
+        //    EI.ElementTypeEnum = GetElementTypeEnum(EL).Item2;
+        //    EI.Path = path;
+        //    EI.XPath = xpath;
+        //    EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
+        //    return EI;
+        //}
 
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
-                return "/" + IWE.TagName +"[1]" + current;
+                return "/" + IWE.TagName + "[1]" + current;
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
@@ -6409,7 +6417,6 @@ namespace GingerCore.Drivers
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
                                 string script = Properties.Resources.Html5DragAndDrop;
-                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
@@ -6548,7 +6555,7 @@ namespace GingerCore.Drivers
         public Bitmap GetScreenShot()
         {
             try
-            {                
+            {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
                 using (var ms = new MemoryStream(ss.AsByteArray))
                 {
@@ -6746,8 +6753,14 @@ namespace GingerCore.Drivers
                 return parentEI;
             }
 
-            parentEI = GetElementInfoFromIWebElement(parentElementIWebElement, parentElementHtmlNode, ElementInfo);
-            return parentEI;
+            IWebElement parentElementObject = Driver.FindElement(By.XPath(parentElementHtmlNode.XPath));
+
+            HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+            foundElemntInfo.ElementObject = parentElementObject;
+            foundElemntInfo.HTMLElementObject = parentElementHtmlNode;
+            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+
+            return foundElemntInfo;
         }
 
         string IXPath.GetElementID(ElementInfo EI)
@@ -6780,39 +6793,39 @@ namespace GingerCore.Drivers
             return LocateElements(LocatorType, LocValue).ToList<object>();
         }
 
-        private ElementInfo GetElementInfoFromIWebElement(IWebElement el, HtmlNode htmlNode, ElementInfo ChildElementInfo)
-        {
-            IWebElement webElement = null;
-            if (el == null)
-            {
-                webElement = Driver.FindElement(By.XPath(htmlNode.XPath));
-            }
-            else
-            {
-                webElement = el;
-            }
-            HTMLElementInfo EI = new HTMLElementInfo();
-            EI.ElementTitle = GenerateElementTitle(webElement);
-            EI.WindowExplorer = this;
-            EI.ID = GenerateElementID(webElement);
-            EI.Value = GenerateElementValue(webElement);
-            EI.Name = GenerateElementName(webElement);
-            EI.ElementType = GenerateElementType(webElement);
-            EI.ElementTypeEnum = GetElementTypeEnum(webElement).Item2;
-            EI.Path = ChildElementInfo.Path;
-            if (!string.IsNullOrEmpty(ChildElementInfo.XPath))
-            {
-                EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
-            }
-            EI.ElementObject = el;
-            EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-            return EI;
-        }
+        //private ElementInfo GetElementInfoFromIWebElement(IWebElement el, HtmlNode htmlNode, ElementInfo ChildElementInfo)
+        //{
+        //    IWebElement webElement = null;
+        //    if (el == null)
+        //    {
+        //        webElement = Driver.FindElement(By.XPath(htmlNode.XPath));
+        //    }
+        //    else
+        //    {
+        //        webElement = el;
+        //    }
+        //    HTMLElementInfo EI = new HTMLElementInfo();
+        //    EI.ElementTitle = GenerateElementTitle(webElement);
+        //    EI.WindowExplorer = this;
+        //    EI.ID = GenerateElementID(webElement);
+        //    EI.Value = GenerateElementValue(webElement);
+        //    EI.Name = GenerateElementName(webElement);
+        //    EI.ElementType = GenerateElementType(webElement);
+        //    EI.ElementTypeEnum = GetElementTypeEnum(webElement).Item2;
+        //    EI.Path = ChildElementInfo.Path;
+        //    if (!string.IsNullOrEmpty(ChildElementInfo.XPath))
+        //    {
+        //        EI.XPath = ChildElementInfo.XPath.Substring(0, ChildElementInfo.XPath.LastIndexOf("/"));
+        //    }
+        //    EI.ElementObject = webElement;              // el;
+        //    EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
+        //    return EI;
+        //}
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
         {
             string elementProperty = null;
-            
+
             if (ElementInfo.ElementObject == null)
             {
                 ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
@@ -7080,7 +7093,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                foreach (ElementLocator el in EI.Locators.Where(x=>x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                foreach (ElementLocator el in EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
                 {
                     el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 }
@@ -7115,7 +7128,7 @@ namespace GingerCore.Drivers
                             EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                         }
                         else
-                        {                            
+                        {
                             EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                         }
                     }

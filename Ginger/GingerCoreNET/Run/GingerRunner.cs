@@ -604,7 +604,7 @@ namespace Ginger.Run
 
         private void PrepareVariables()
         {
-            if (ExecutedFrom == eExecutedFrom.Run)
+                        if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //We need to set variable mapped values only when running run set
                 SetVariableMappedValues();
@@ -645,7 +645,7 @@ namespace Ginger.Run
                 {
                     mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
                 }
-                else
+                else if(inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))
                 {
                     //if input variable value mapped to none, and value is differt from origin                   
                     if (inputVar.DiffrentFromOrigin)
@@ -1417,10 +1417,14 @@ namespace Ginger.Run
 
         private void executeErrorAndPopUpHandler(ObservableList<ErrorHandler> errorHandlerActivity)
         {
-            
+            Activity originActivity = CurrentBusinessFlow.CurrentActivity;
+            Act orginAction = (Act) CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+
             eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
             foreach (ErrorHandler errActivity in errorHandlerActivity)
             {
+               CurrentBusinessFlow.CurrentActivity = errActivity;
+                SetCurrentActivityAgent();
                 Stopwatch stE = new Stopwatch();
                 stE.Start();                
                 foreach (Act act in errActivity.Acts)
@@ -1429,6 +1433,7 @@ namespace Ginger.Run
                     st.Start();
                     if (act.Active)
                     {
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
                         if (errActivity.HandlerType == eHandlerType.Popup_Handler)
                             act.Timeout = 1;
                         PrepAction(act, ref ActionExecutorType, st);
@@ -1442,6 +1447,11 @@ namespace Ginger.Run
                 stE.Stop();
                 errActivity.Elapsed = stE.ElapsedMilliseconds;
             }
+
+            CurrentBusinessFlow.CurrentActivity = originActivity;
+            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+            mCurrentActivityChanged = false;
+            SetCurrentActivityAgent();
         }
 
         private void PrepAction(Act action, ref eActionExecutorType ActExecutorType, Stopwatch st)

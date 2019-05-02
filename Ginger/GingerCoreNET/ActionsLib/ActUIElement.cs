@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Helpers;
-using GingerCore.Properties;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
@@ -28,12 +27,11 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Run;
-using GingerCoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions.Common
 {
-    public class ActUIElement : Act, IActPluginExecution
+    public class ActUIElement : Act
     {
         // --------------------------------------------------------------------------------------------
         // TODO: remove after we take LocateBy, LocateValue from Act.cs
@@ -716,33 +714,33 @@ namespace GingerCore.Actions.Common
                 switch (ElementType)
                 {
                     case eElementType.Button:
-                        return Resources.ActButton;
+                        return Resource.ActButton;
                     case eElementType.TextBox:
-                        return Resources.TextBox_16x16;
+                        return Resource.TextBox_16x16;
                     case eElementType.ComboBox:
-                        return Resources.DropDownList_16x16;
+                        return Resource.DropDownList_16x16;
                     case eElementType.List:
-                        return Resources.List_16x16;
+                        return Resource.List_16x16;
                     case eElementType.CheckBox:
-                        return Resources.CheckBox_16x16;
+                        return Resource.CheckBox_16x16;
                     case eElementType.Image:
-                        return Resources.Image_16x16;
+                        return Resource.Image_16x16;
                     case eElementType.Label:
-                        return Resources.Label_16x16;
+                        return Resource.Label_16x16;
                     case eElementType.MenuItem:
-                        return Resources.MenuItem_16x16;
+                        return Resource.MenuItem_16x16;
                     case eElementType.MenuBar:
-                        return Resources.MenuBar_16x16;
+                        return Resource.MenuBar_16x16;
                     case eElementType.RadioButton:
-                        return Resources.RadioButton_16x16;
+                        return Resource.RadioButton_16x16;
                     case eElementType.TreeView:
-                        return Resources.TreeView_16x16;
+                        return Resource.TreeView_16x16;
                     case eElementType.Window:
-                        return Resources.Window_16x16;
+                        return Resource.Window_16x16;
                     case eElementType.Table:
-                        return Resources.Table;
+                        return Resource.Table;
                     default:
-                        return Resources.Window_16x16;  // FIXME
+                        return Resource.Window_16x16;  // FIXME
                 }
             }
         }
@@ -836,7 +834,7 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        internal Drivers.CommunicationProtocol.PayLoad GetPayLoad()
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
             PayLoad PL = new PayLoad("UIElementAction");
             PL.AddValue(this.ElementLocateBy.ToString());
@@ -850,32 +848,6 @@ namespace GingerCore.Actions.Common
                 if (!string.IsNullOrEmpty(AIV.Value))
                 {
                     PayLoad AIVPL = new PayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                    PLParams.Add(AIVPL);
-                }
-            }
-            PL.AddListPayLoad(PLParams);
-            PL.ClosePackage();
-
-            return PL;
-        }
-
-        public NewPayLoad GetActionPayload()
-        {
-            // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
-
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");            
-            PL.AddValue("UIElementAction");
-            PL.AddValue(this.ElementLocateBy.ToString());
-            PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
-            PL.AddValue(this.ElementType.ToString());
-            PL.AddValue(this.ElementAction.ToString());
-            // Make it generic function in Act.cs to be used by other actions
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
-            foreach (ActInputValue AIV in this.InputValues)
-            {
-                if (!string.IsNullOrEmpty(AIV.Value))
-                {
-                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
                     PLParams.Add(AIVPL);
                 }
             }
