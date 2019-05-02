@@ -184,7 +184,7 @@ namespace GingerCore.Actions
         {
             // temp !!!!!!!!!!!!
 
-            NewPayLoad payload = new NewPayLoad("RunPlatformAction");   // !!!!!!!!!!!!!!!! make shorter name   // + use const 
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");   // !!!!!!!!!!!!!!!! make shorter name   // + use const + keep all const in Platforms.dll
             payload.AddValue("IWebPlatform"); // Interface     // temp until we move the interfaces then use nameof  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             payload.AddValue("BrowserActions"); // Field
             payload.AddValue("Navigate"); // Method
