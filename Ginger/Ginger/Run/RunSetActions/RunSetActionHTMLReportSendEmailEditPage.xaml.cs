@@ -54,22 +54,18 @@ namespace Ginger.Run.RunSetActions
             {
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
-            MailFromTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
-            MailToTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
-            MailCCTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
-            SubjectTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
 
-            BodyTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
-            CommentTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email);
+            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
+            MailFromTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
+            MailToTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));
+            MailCCTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailCC));
+            SubjectTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
+            BodyTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
+            CommentTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
+
             BodyTextBox.AdjustHight(100);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPort));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.SMTPPass));
-            GingerCore.General.FillComboFromEnumObj(xEmailMethodComboBox, runSetActionHTMLReportSendEmail.Email.EmailMethod);
-            xSMTPMailHostTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailHost));
-            xSMTPUserTextBox.Init(null, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailUser));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EmailMethod));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.EnableSSL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, runSetActionHTMLReportSendEmail.Email, nameof(Email.ConfigureCredential));
+
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
                 runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
@@ -180,6 +176,7 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Collapsed;
                 BodyTextBox.Visibility = Visibility.Visible;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText;
+                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = false;
             }
             catch (Exception ex)
             {
@@ -193,6 +190,7 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Visible;
                 BodyTextBox.Visibility = Visibility.Collapsed;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = true;
             }
             catch (Exception ex)
             {
@@ -220,18 +218,6 @@ namespace Ginger.Run.RunSetActions
                 DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault());
             }
         }
-        private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xEmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
-            {
-                xSMTPConfig.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                xSMTPConfig.Visibility = Visibility.Visible;
-            }
-        }
-
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
             EmailAttachment item =(EmailAttachment) AttachmentsGrid.CurrentItem;
@@ -244,33 +230,5 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
-        {            
-                xSMTPUserTextBox.Visibility = Visibility.Visible;
-                xSMTPPassTextBox.Visibility = Visibility.Visible;
-                xLabelPass.Visibility = Visibility.Visible;
-                xLabelUser.Visibility = Visibility.Visible;
-        }
-
-        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            bool res= false;
-            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
-            {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
-                if (res == false)
-                {
-                    xSMTPPassTextBox.Text = string.Empty;
-                }
-            }
-        }
-
-        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
-        {
-            xSMTPUserTextBox.Visibility = Visibility.Collapsed;
-            xSMTPPassTextBox.Visibility = Visibility.Collapsed;
-            xLabelPass.Visibility = Visibility.Collapsed;
-            xLabelUser.Visibility = Visibility.Collapsed;
-        }
     }
 }
