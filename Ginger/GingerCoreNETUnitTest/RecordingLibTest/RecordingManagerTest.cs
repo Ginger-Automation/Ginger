@@ -42,7 +42,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithoutPOMTest()
         {
             List<ApplicationPOMModel> currentPOM = null;          
-            RecordingManager mngr = new RecordingManager(currentPOM, Context, mDriver, PlatformInfo);
+            RecordingManager mngr = new RecordingManager(currentPOM, mBF, Context, mDriver, PlatformInfo);
             if(mngr != null)
             {
                 mngr.StartRecording();
@@ -62,7 +62,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
-            RecordingManager mngr = new RecordingManager(lstPOM, Context, mDriver, PlatformInfo);
+            RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
             if (mngr != null)
             {
                 mngr.StartRecording();
@@ -92,7 +92,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
-            RecordingManager mngr = new RecordingManager(lstPOM, Context, mDriver, PlatformInfo);
+            RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
             if (mngr != null)
             {
                 mngr.StartRecording();

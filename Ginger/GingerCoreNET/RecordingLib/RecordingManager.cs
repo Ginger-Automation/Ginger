@@ -4,6 +4,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,15 @@ namespace Amdocs.Ginger.CoreNET
         
         public Context Context { get; set; }
 
+        public BusinessFlow BusinessFlow { get; set; }
+
         public IRecord PlatformDriver { get; set; }
 
         public ApplicationPOMModel CurrentPOM { get; set; }
 
         public IPlatformInfo PlatformInfo { get; set; }
 
-        public RecordingManager(List<ApplicationPOMModel> lstApplicationPOM, Context context, IRecord platformDriver, IPlatformInfo pInfo)
+        public RecordingManager(List<ApplicationPOMModel> lstApplicationPOM, BusinessFlow bFlow, Context context, IRecord platformDriver, IPlatformInfo pInfo)
         {
             try
             {
@@ -53,6 +56,7 @@ namespace Amdocs.Ginger.CoreNET
                     PlatformDriver.PageChanged += PlatformDriver_PageChanged;
                 }
 
+                BusinessFlow = bFlow;
                 Context = context;
                 PlatformDriver.ElementRecorded += PlatformDriver_ElementRecorded;
             }
@@ -66,11 +70,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             POMObjectRecordingHelper recordingHelper = new POMObjectRecordingHelper();
             try
-            {
-                if (CreatePOM)
-                {
-                    CurrentPOM = new ApplicationPOMModel();
-                }
+            {                
                 CurrentPOM.FileName = pageTitle;
                 CurrentPOM.FilePath = pageTitle;
                 CurrentPOM.Name = pageTitle;
@@ -95,12 +95,15 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
+                POMObjectRecordingHelper newPOMHelper = null;
                 if (ListPOMObjectHelper != null && ListPOMObjectHelper.Count > 0)
                 {
                     var obj = ListPOMObjectHelper.FirstOrDefault(s => s.PageTitle == e.PageTitle && s.PageURL == e.PageURL);
                     if (obj == null && !string.IsNullOrEmpty(e.PageTitle) && !string.IsNullOrEmpty(e.PageURL))
                     {
-                        ListPOMObjectHelper.Add(GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot));
+                        newPOMHelper = GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot);
+                        CurrentPOM = newPOMHelper.ApplicationPOM;
+                        ListPOMObjectHelper.Add(newPOMHelper);
                     }
                     else if (!(CurrentPOM.PageURL == obj.PageURL && CurrentPOM.Name == obj.PageTitle))
                     {
@@ -109,8 +112,10 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
+                    newPOMHelper = GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot);
+                    CurrentPOM = newPOMHelper.ApplicationPOM;
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    ListPOMObjectHelper.Add(GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot));
+                    ListPOMObjectHelper.Add(newPOMHelper);
                 }
             }
             catch (Exception ex)
@@ -144,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         CurrentPOM.MappedUIElements.Add(einfo);
                     }
-                    Context.BusinessFlow.AddAct(actUI);
+                    BusinessFlow.AddAct(actUI);
                 }
             }
             catch (Exception ex)
@@ -172,13 +177,15 @@ namespace Amdocs.Ginger.CoreNET
                 PlatformDriver.StopRecording();
                 if (ListPOMObjectHelper != null)
                 {
+                    RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                     foreach (var cPom in ListPOMObjectHelper)
                     {
                         if (!string.IsNullOrEmpty(cPom.PageTitle) && !string.IsNullOrEmpty(cPom.PageURL))
                         {
                             try
-                            {
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
+                            {        
+                                PomLearnUtils utils = new PomLearnUtils(cPom.ApplicationPOM);
+                                utils.SaveLearnedPOM();
                             }
                             catch (Exception e)
                             {

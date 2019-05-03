@@ -5429,7 +5429,7 @@ namespace GingerCore.Drivers
                         {
                             PageURL = url,
                             PageTitle = title,          
-                            ScreenShot = BitmapToBase64(GetScreenShot())
+                            ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
                         };
                         OnPageChanged(args);
                     }
@@ -5458,17 +5458,7 @@ namespace GingerCore.Drivers
             }
 
             return eInfo;
-        }
-
-        private string BitmapToBase64(Bitmap bitmap)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                byte[] byteImage = ms.ToArray();
-                return Convert.ToBase64String(byteImage); //Get Base64
-            }
-        }
+        }        
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)
         {
