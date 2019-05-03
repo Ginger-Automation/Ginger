@@ -87,7 +87,7 @@ namespace Ginger
             GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
 
-
+        
 
         static bool bDone = false;
 

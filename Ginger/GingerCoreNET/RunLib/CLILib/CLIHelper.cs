@@ -6,6 +6,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -24,8 +25,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
 
 
-        bool mShowAutoRunWindow = false; // default is false except in ConfigFile which is true to keep backword compatibility
-        public bool ShowAutoRunWindow
+        static bool mShowAutoRunWindow ; // default is false except in ConfigFile which is true to keep backword compatibility
+        
+        public static bool ShowAutoRunWindow
         {
             get
             {
@@ -35,12 +37,38 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 mShowAutoRunWindow = value;
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
-            }  
+            }
         }
-        public bool RunAnalyzer { get; set; }
+
+        static bool mDownloadSolutionFromSourceControl;
+        public static bool DownloadSolutionFromSourceControlBool
+        {
+            get
+            {
+                return mDownloadSolutionFromSourceControl;
+            }
+            set
+            {
+                mDownloadSolutionFromSourceControl = value;
+            }
+
+        }
+
+        static bool mRunAnalyzer;
+        public static bool RunAnalyzer {
+            get
+            {
+                return mRunAnalyzer;
+            }
+            set
+            {
+                mRunAnalyzer = value;
+            }
+        }
 
         RunsetExecutor mRunsetExecutor;
-        UserProfile mUserProfile;        
+        //UserProfile WorkSpace.Instance.UserProfile;
+        RunSetConfig runSetConfig;
 
         public void ProcessArgs(RunsetExecutor runsetExecutor)
         {
@@ -70,37 +98,44 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         private void SetRunAnalyzer()
         {
             // TODO: once analyzer moved to GingerCoreNET we can run it here 
-            mRunsetExecutor.RunSetConfig.RunWithAnalyzer = RunAnalyzer;
+            try
+            {
+                runSetConfig.RunWithAnalyzer = RunAnalyzer;
 
-            //// Return true if there are analyzer issues
-            //private bool RunAnalyzer()
-            //{
-            //    //Running Runset Analyzer to look for issues
-            //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            //    try
-            //    {
-            //        //run analyzer
-            //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
-            //        if (analyzeRes == 1)
-            //        {
-            //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            //            return true;//cancel run because issues found
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-            //        return true;
-            //    }
-            //    return false;
-            //}
+                //// Return true if there are analyzer issues
+                //private bool RunAnalyzer()
+                //{
+                //    //Running Runset Analyzer to look for issues
+                //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                //    try
+                //    {
+                //        //run analyzer
+                //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
+                //        if (analyzeRes == 1)
+                //        {
+                //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                //            return true;//cancel run because issues found
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+                //        return true;
+                //    }
+                //    return false;
+                //}
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.CannotRunShortcut, ex.Message);
+            }
         }
 
         private void SelectRunset()
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
+            runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
             if (runSetConfig != null)
             {
                 mRunsetExecutor.RunSetConfig = runSetConfig;
@@ -108,6 +143,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             else
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToUser(eUserMsgKey.CannotRunShortcut);
                 // TODO: throw
                 // return false;
             }
@@ -142,7 +178,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 else
                 {
                     // App.DownloadSolution(value);
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
+                    //RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
+
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
                 }
             }
         }
@@ -150,40 +188,40 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SetSourceControlPassword(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-            mUserProfile.SourceControlPass = value;
+            WorkSpace.Instance.UserProfile.SourceControlPass = value;
             sourceControlPass = value;
         }
 
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-            string pswd = mUserProfile.SourceControlPass;
+            string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
             if (value == "Y")
             {
-                pswd = EncryptionHandler.DecryptwithKey(mUserProfile.SourceControlPass, ENCRYPTION_KEY);
+                pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, ENCRYPTION_KEY);
             }
 
-            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
             {
                 pswd = "Test";
             }
 
-            mUserProfile.SourceControlPass = pswd;
+            WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
         }
 
         internal void SourceControlProxyPort(string value)
         {
             if (value == "")
             {
-                mUserProfile.SolutionSourceControlConfigureProxy = false;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
             else
             {
-                mUserProfile.SolutionSourceControlConfigureProxy = true;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
             Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-            mUserProfile.SolutionSourceControlProxyPort = value;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
         }
 
         internal void SourceControlProxyServer(string value)
@@ -191,11 +229,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
             if (value == "")
             {
-                mUserProfile.SolutionSourceControlConfigureProxy = false;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
             else
             {
-                mUserProfile.SolutionSourceControlConfigureProxy = true;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
             if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
@@ -203,25 +241,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 value = "http://" + value;
             }
 
-            mUserProfile.SolutionSourceControlProxyAddress = value;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
         }
 
         internal void SetSourceControlUser(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
             {
                 value = "Test";
             }
 
-            mUserProfile.SourceControlUser = value;
+            WorkSpace.Instance.UserProfile.SourceControlUser = value;
             SourcecontrolUser = value;
         }
 
         internal void SetSourceControlURL(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-            if (mUserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                 {
@@ -232,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     value = value + "/";
                 }
             }
-            mUserProfile.SourceControlURL = value;
+            WorkSpace.Instance.UserProfile.SourceControlURL = value;
             SourceControlURL = value;
         }
 
@@ -241,15 +279,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
             if (value.Equals("GIT"))
             {
-                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
+                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
             }
             else if (value.Equals("SVN"))
             {
-                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+               WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
             }
             else
             {
-                mUserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
+                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
             }
         }
 

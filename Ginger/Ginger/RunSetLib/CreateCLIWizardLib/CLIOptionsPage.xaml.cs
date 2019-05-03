@@ -1,4 +1,6 @@
-﻿using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +13,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class CLIOptionsPage : Page, IWizardPage
     {
         CreateCLIWizard mCreateCLIWizard;
+        CLIHelper mCLIHelper = new CLIHelper();
         public CLIOptionsPage()
         {
             InitializeComponent();
@@ -23,7 +26,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
                     xGingerEXERadioButton.IsChecked = true;
-                    xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));   
+                    xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));
+                    if (!(WorkSpace.Instance.Solution.SourceControl == null))
+                    {
+                        xDownloadsolutionFromSourceControlcheckBox.IsEnabled = true;
+                    }
+                    else
+                    {
+                        xDownloadsolutionFromSourceControlcheckBox.IsEnabled = false;
+                    }
                     break;
                 case EventType.Active:
                     //
@@ -35,19 +46,29 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void XDownloadsolutionFromSourceControlcheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.DownloadSolutionFromSourceControl = true;
+            CLIHelper.DownloadSolutionFromSourceControlBool = true;
         }
 
         private void XDownloadsolutionFromSourceControlcheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.DownloadSolutionFromSourceControl = false;
+            CLIHelper.DownloadSolutionFromSourceControlBool = false;
         }
 
         private void XGingerEXERadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mCreateCLIWizard.SetGingerExecutor();
         }
-
+        
+        private void xGingerRunEXEWindowShow_Checked(object sender, RoutedEventArgs e)
+        {
+            CLIHelper.ShowAutoRunWindow = true;
+            
+        }
+        private void xGingerRunEXEWindowShow_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CLIHelper.ShowAutoRunWindow = false;
+            
+        }
         private void XGingerConsoleRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mCreateCLIWizard.SetGingerConsoleExecutor();
@@ -55,12 +76,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void RunAnalyzerCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.RunAnalyzer = true;
+            CLIHelper.RunAnalyzer = true;
         }
 
         private void RunAnalyzerCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.RunAnalyzer = false;
+            CLIHelper.RunAnalyzer = false;
         }
     }
 }

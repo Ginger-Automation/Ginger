@@ -403,11 +403,13 @@ namespace Ginger.Repository
             {
                 Thread.Sleep(100);
             }
-
-            mAutoRunWindow.Dispatcher.Invoke(() => 
+            if (!WorkSpace.Instance.RunningInExecutionMode)
             {
-                Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
+                mAutoRunWindow.Dispatcher.Invoke(() =>
+                {
+                    Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
             });
+            }
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)

@@ -143,17 +143,19 @@ namespace Ginger.AnalyzerLib
         }
 
         private async Task Analyze()
-        {         
-                // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
-                BusyInProcess = true;
-                mAnalyzerCompleted = false;
-                mAnalyzeDoneOnce = true;
-                try
+        {
+            // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
+            BusyInProcess = true;
+            mAnalyzerCompleted = false;
+            mAnalyzeDoneOnce = true;
+            try
+            {
+                if (mAnalyzeWithUI)
                 {
-                    if (mAnalyzeWithUI)
-                    {
-                        SetStatus("Analyzing Started");
-                    }
+                    SetStatus("Analyzing Started");
+                }
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
                     await Task.Run(() =>
                     {
                         switch (mAnalyzedObject)
@@ -163,22 +165,26 @@ namespace Ginger.AnalyzerLib
                                 break;
                             case AnalyzedObject.BusinessFlow:
                                 RunBusinessFlowAnalyzer(businessFlow, true);
-
                                 break;
                             case AnalyzedObject.RunSetConfig:
                                 RunRunSetConfigAnalyzer(mRunSetConfig);
                                 break;
                         }
                     });
-
-
                 }
-                finally
+                else
                 {
-                    BusyInProcess = false;
-                    mAnalyzerCompleted = true;
+                    RunRunSetConfigAnalyzer(mRunSetConfig);
                 }
+            }
 
+           
+            finally
+            {
+                    BusyInProcess = false;
+                mAnalyzerCompleted = true;
+            }
+            
         }
 
         private void SetAnalayzeProceesAsCompleted()
@@ -273,11 +279,11 @@ namespace Ginger.AnalyzerLib
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            Parallel.ForEach(businessFlow.Activities, activity =>
+            Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5},  activity =>
             {
                 issues = AnalyzeActivity.Analyze(businessFlow, activity);
                 AddIssues(issues);
-                Parallel.ForEach(activity.Acts, iaction =>
+                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                 {
                     Act action = (Act)iaction;
                     List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
@@ -490,7 +496,7 @@ namespace Ginger.AnalyzerLib
                     new Action(
                         delegate ()
                         {
-                        foreach (AnalyzerItemBase AIB in issues)
+                            foreach (AnalyzerItemBase AIB in issues)
                             {
                                 mIssues.Add(AIB);
                                 IssuesCounterLabel.Content = "Total Issues: ";

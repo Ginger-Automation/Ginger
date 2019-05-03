@@ -81,7 +81,7 @@
                     </usercontrols:ucButton>
                     <usercontrols:ucButton x:Name="xCLIButton"  ButtonType="CircleImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="CLI"  Click="XCLIButton_Click">
                         <usercontrols:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Create Shortcut/CLI"/>
+                            <GingerCore:ucTextDicResource Text="Create Ginger Auto Run Configuration"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
 

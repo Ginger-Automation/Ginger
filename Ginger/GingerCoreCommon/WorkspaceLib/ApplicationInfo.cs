@@ -41,7 +41,7 @@ namespace amdocs.ginger.GingerCoreNET
                         }
                         else//Official Release
                         {
-                            mAppVersion = string.Format("{0}.{1}", fileVersionInfo.ProductMajorPart, fileVersionInfo.ProductMinorPart);
+                            mAppVersion = string.Format("{0}.{1}", fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart);
                         }
                     }
 

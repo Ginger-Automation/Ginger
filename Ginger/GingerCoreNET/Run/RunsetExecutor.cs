@@ -294,8 +294,11 @@ namespace Ginger.Run
             return result;
         }
 
-        public void RunRunset(bool doContinueRun = false)
+        public async void RunRunset(bool doContinueRun = false)
         {
+            int analyzeRes = await RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            if (analyzeRes == 1) return;
+
             List<Task> runnersTasks = new List<Task>();
 
             //reset run       

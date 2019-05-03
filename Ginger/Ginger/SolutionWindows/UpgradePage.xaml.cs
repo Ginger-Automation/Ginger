@@ -183,8 +183,8 @@ namespace Ginger.SolutionWindows
                     //first copy to backup folder
                     string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
                     MakeSurePathExistforBakFile(BakFile);
-                    System.IO.File.Copy(filePath, BakFile, true);
-
+                        System.IO.File.Copy(filePath, BakFile, true);
+                    
                     //make sure backup was created
                     if (File.Exists(BakFile) == true)
                     {

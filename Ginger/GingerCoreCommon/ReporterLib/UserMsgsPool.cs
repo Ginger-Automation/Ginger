@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.Common
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
         ErrorReadingRepositoryItem,
         EnvNotFound, SelectItemToAdd, CannotAddGinger,
-        ShortcutCreated,
+        ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
         SolutionFileNotFound, PlugInFileNotFound,
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
         MobileConnectionFailed, MobileRefreshScreenShotFailed, MobileShowElementDetailsFailed, MobileActionWasAdded,
@@ -500,6 +500,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.CannotAddGinger, new UserMsg(eUserMsgType.ERROR, "Cannot Add Ginger", "Number of Gingers is limited to 12 Gingers.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on desktop - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreationFailed, new UserMsg(eUserMsgType.ERROR, "Shortcut creation Failed", "Cannot create shortcut.Please avoid special characters in the Name/Description. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.CannotRunShortcut, new UserMsg(eUserMsgType.ERROR, "Shortcut Execution Failed", "Cannot execute shortcut. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionFileNotFound, new UserMsg(eUserMsgType.ERROR, "Solution File Not Found", "Cannot find Solution File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 

@@ -12,7 +12,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
     public class CreateCLIWizard : WizardBase
     {       
-        public override string Title { get { return "Create CLI"; } }
+        public override string Title { get { return "Create Ginger Auto Run Configuration"; } }
 
         //public RunSetConfig RunSetConfig { get; set; }
         public string FileContent { get; set; }  
@@ -20,14 +20,27 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public ICLI SelectedCLI;
 
-        public string CLIExecutor { get; set; }  // Ginger.exe or dotnet GingerConsole.dll
+        public string CLIExecutor { get; set; }
+        // Ginger.exe or dotnet GingerConsole.dll
+        bool mShowAutoRunWindow;
+        public bool ShowAutoRunWindow
+        {
+            get
+            {
+                return mShowAutoRunWindow;
+            }
+            set
+            {
+                mShowAutoRunWindow = value;
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+            }
+        }
 
-        
         public string ShortcutDescription { get; set; }
 
         public eAppReporterLoggingLevel AppLoggingLevel { get; set; } =  eAppReporterLoggingLevel.Debug;
 
-        public bool RunAnalyzer { get; internal set; }
+        public bool RunAnalyzer { get;set; }
 
         public string CLIFileName
         {
@@ -54,10 +67,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public CreateCLIWizard()
         {            
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "CLI Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
-            AddPage(Name: "CLI Options", Title: "CLI Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());                        
-            AddPage(Name: "CLI Type", Title: "CLI Type", SubTitle: "CLI Type", Page: new CreateCLIChooseTypePage());
-            AddPage(Name: "CLI Location", Title: "CLI Location", SubTitle: "CLI Location", Page: new CreateCLILocationPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
+            AddPage(Name: "Auto Run Configuration Options", Title: "Auto Run Configuration Options", SubTitle: "CLI Options", Page: new CLIOptionsPage());                        
+            AddPage(Name: "Auto Run Configuration Type", Title: "Auto Run Configuration Type", SubTitle: "CLI Type", Page: new CreateCLIChooseTypePage());
+            AddPage(Name: "Auto Run Configuration Location", Title: "Auto Run Configuration Location", SubTitle: "CLI Location", Page: new CreateCLILocationPage());
         }
 
 
@@ -90,20 +103,28 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         string WorkingDirectory;
         public override void Finish()
         {
-            // Write the content file with runset data
-            System.IO.File.WriteAllText(CLIFileName, FileContent);
+            try
+            {
+                // Write the content file with runset data
+                System.IO.File.WriteAllText(CLIFileName, FileContent);
 
-            // Create windows shortcut
-            WshShell shell = new WshShell();            
-            string shortcutAddress = Path.Combine(CLIFolder, ShortcutDescription + ".lnk");            
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = ShortcutDescription;
-            shortcut.WorkingDirectory = WorkingDirectory;
-            shortcut.TargetPath = Path.Combine(WorkingDirectory, CLIExecutor);
-            shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";   
-            shortcut.Save();
+                // Create windows shortcut
+                WshShell shell = new WshShell();
+                string shortcutAddress = Path.Combine(CLIFolder, ShortcutDescription + ".lnk");
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+                shortcut.Description = ShortcutDescription;
+                shortcut.WorkingDirectory = WorkingDirectory;
+                shortcut.TargetPath = Path.Combine(WorkingDirectory, CLIExecutor);
+                shortcut.Arguments = SelectedCLI.Identifier + "=\"" + CLIFileName + "\"";
 
-            Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
+                shortcut.Save();
+
+                Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.ShortcutCreationFailed, ex.Message);
+            }
         }
         
 

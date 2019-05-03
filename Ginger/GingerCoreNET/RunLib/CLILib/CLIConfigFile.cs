@@ -2,13 +2,14 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
+using GingerCoreNET.SourceControl;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
     {        
-        CLIHelper mCLIHelper = new CLIHelper();                
+        CLIHelper mCLIHelper = new CLIHelper();
 
         public string Identifier
         {
@@ -32,14 +33,28 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             runsetExecutor.RunRunset();            
         }
 
-       
+
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
-            string sConfig = "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+            string sConfig = null;
+            if (CLIHelper.DownloadSolutionFromSourceControlBool == true)
+            {
+               
+                sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
+                sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
+                sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
+                sConfig += "SourceControlPassword=" + WorkSpace.Instance.Solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
+                if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                {
+                    sConfig += "SourceControlProxyServer=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlProxyPort=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                }
+            }
+            sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + runsetExecutor.RunSetConfig.RunWithAnalyzer + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + mCLIHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
+            sConfig += "RunAnalyzer=" + CLIHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            sConfig += "ShowAutoRunWindow=" + CLIHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             // TODO: add source control and all other options !!!!!!!!!!!
 
@@ -48,7 +63,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void LoadContent(string content, RunsetExecutor runsetExecutor)
         {
-            mCLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
+            
+            CLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
@@ -91,10 +107,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             mCLIHelper.Runset = value;                            
                             break;
                         case "ShowAutoRunWindow":                                                        
-                            mCLIHelper.ShowAutoRunWindow = bool.Parse(value);
+                            CLIHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
-                            mCLIHelper.RunAnalyzer = bool.Parse(value);                            
+                            CLIHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");

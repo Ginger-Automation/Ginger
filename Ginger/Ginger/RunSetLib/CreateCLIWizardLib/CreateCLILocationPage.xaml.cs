@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +65,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void XShortcutDescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+            //Regex containsABadCharacter = new Regex("["+ Regex.Escape(System.IO.Path.InvalidPathChars) + "]");
+            if (mCreateCLIWizard.CLIFileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
+           {
+                //xCLIFileName.Text = xCLIFileName.BindingGroup.ValidatesOnNotifyDataError
+            }
+            else
+            {
+                xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+            }
         }
 
         private void XBrowseButton_Click(object sender, RoutedEventArgs e)

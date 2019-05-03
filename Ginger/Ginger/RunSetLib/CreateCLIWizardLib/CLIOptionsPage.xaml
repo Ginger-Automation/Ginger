@@ -11,13 +11,14 @@
     <Grid>
         <StackPanel Margin="10">
             
-            <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
-            <CheckBox x:Name="RunAnalyzerCheckBox" Checked="RunAnalyzerCheckBox_Checked" Unchecked="RunAnalyzerCheckBox_Unchecked" Margin="5">Run analyzer before execution</CheckBox>
+            <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" IsChecked="false" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
+            
+            <CheckBox x:Name="RunAnalyzerCheckBox" Checked="RunAnalyzerCheckBox_Checked" Unchecked="RunAnalyzerCheckBox_Unchecked" IsChecked="True" Margin="5">Run analyzer before execution</CheckBox>
             <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Runset Executer</Label>
             <StackPanel>
                 <RadioButton x:Name="xGingerEXERadioButton" Checked="XGingerEXERadioButton_Checked">Ginger.exe</RadioButton>
                 <Label HorizontalAlignment="Left" Margin="25,0,0,0">Run on Windows only</Label>
-                <CheckBox Margin="25,5,0,0">Show Run set execution window while running</CheckBox>
+                <CheckBox x:Name="xGingerRunEXEWindowShow" Checked="xGingerRunEXEWindowShow_Checked" Unchecked="xGingerRunEXEWindowShow_Unchecked" Margin="25,5,0,0">Show Run set execution window while running</CheckBox>
 
                 <Label>---</Label>
                 
@@ -27,7 +28,7 @@
             </StackPanel>
 
             <Label HorizontalAlignment="Left" FontWeight="Bold">Console output options</Label>
-            <CheckBox Margin="5">Show console window</CheckBox>
+            <CheckBox Margin="5" IsChecked="True">Show console window</CheckBox>
 
             <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal">
                 <Label>Debug Level</Label>
