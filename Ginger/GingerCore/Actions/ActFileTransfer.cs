@@ -172,7 +172,21 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("PCPath", value);
             }
         }
-        private string drvPCPath { get { return GetInputParamCalculatedValue("PCPath"); } }
+        private string mPCPathCalculated=string.Empty;
+
+        private string PCPathCalculated
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(mPCPathCalculated))
+                {
+                    mPCPathCalculated = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath"));
+                    mPCPathCalculated=mPCPathCalculated.Replace(Environment.NewLine, "");
+                }               
+
+                return mPCPathCalculated;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public string UnixPath
@@ -186,7 +200,20 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("UnixPath", value);
             }
         }
-        private string drvUnixPath { get { return GetInputParamCalculatedValue("UnixPath"); } }
+
+        private string mUnixPathCalculated = string.Empty;
+        private string UnixPathCalculated
+        {
+            get
+            {  
+                if(string.IsNullOrEmpty(mUnixPathCalculated))
+                {
+                    mUnixPathCalculated = GetInputParamCalculatedValue("UnixPath").Replace("~/", workdir + "/");
+                    
+                }
+                return mUnixPathCalculated;
+            }
+        }
 
         public override String ActionType
         {
@@ -218,239 +245,193 @@ namespace GingerCore.Actions
 
         public override System.Drawing.Image Image { get { return Resources.console16x16; } }
 
-        private bool VerifyFTPConnected()
+        private bool ConnectFTPClient()
         {
             try
-            {
-                string passPhrase = null;
-                string pw = null;
-                if (string.IsNullOrEmpty(drvPassword))
-                    pw = "";
-                else
-                    pw = drvPassword;
-                var connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
-                                new PasswordAuthenticationMethod(drvUserName, pw)
-                            );
+            {                  
+                UnixFTPClient = new SftpClient(GetConnectionInfo());
+                UnixFTPClient.Connect();
+                workdir = UnixFTPClient.WorkingDirectory;
 
-                if (!string.IsNullOrEmpty(drvPrivateKeyPassPhrase))
-                    passPhrase = drvPrivateKeyPassPhrase;
-
-                //if (File.Exists(PrivateKey))
-                if (File.Exists(drvPrivateKey))
-                {
-                    connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
-                       new PasswordAuthenticationMethod(drvUserName, pw),
-                       new PrivateKeyAuthenticationMethod(drvUserName,
-                            new PrivateKeyFile(File.OpenRead(drvPrivateKey), passPhrase)
-                            )
-                   );
-                }
-
-                //        var connectionInfo = new PasswordConnectionInfo(drvHost, drvPort, drvUserName, drvPassword);
-                
-                if (UnixFTPClient == null)
-                {
-                    //ZZZZ prep for Manuj Send XML to unix folder
-                    // OK UnixFTPClient = new SftpClient("10.120.21.172", "infrahf", "unix11");
-
-                    UnixFTPClient = new SftpClient(connectionInfo);
-                    UnixFTPClient.Connect();
-                    workdir = UnixFTPClient.WorkingDirectory;
-                }
-                if (UnixFTPClient.IsConnected)
-                    return true;
-
+                return UnixFTPClient.IsConnected;  
             }
-            catch
+            catch(Exception ex)
             {
-                //return false;
+                Reporter.ToLog(eLogLevel.ERROR, "Connecting FTP Client", ex);
+                this.Error = ex.Message;
             }
             return false;
         }
 
+        private ConnectionInfo GetConnectionInfo()
+        {
+            string passPhrase = null;
+            string pw = null;
+            if (string.IsNullOrEmpty(drvPassword))
+                pw = "";
+            else
+                pw = drvPassword;
+            var connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
+                            new PasswordAuthenticationMethod(drvUserName, pw)
+                        );
+
+            if (!string.IsNullOrEmpty(drvPrivateKeyPassPhrase))
+                passPhrase = drvPrivateKeyPassPhrase;
+
+
+            if (File.Exists(drvPrivateKey))
+            {
+                connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
+                   new PasswordAuthenticationMethod(drvUserName, pw),
+                   new PrivateKeyAuthenticationMethod(drvUserName,
+                        new PrivateKeyFile(File.OpenRead(drvPrivateKey), passPhrase)
+                        )
+               );
+            }
+
+            return connectionInfo;
+        }
+
         public override void Execute()
         {
-            string sPCPath="";           
-            sPCPath = drvPCPath;
-            
-            string UnixTargetFilePath = "";
-            string targetFileName = string.Empty;
-            try
-            {               
-                switch (FileTransferAction)
-                {
-                    case eFileTransferAction.GetFile:
-
-
-                        try
-                        {
-                            if (!VerifyFTPConnected())
-                            {
-                                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                this.Error = "Failed to login!";
-                                return;
-                            }
-                            if (UnixFTPClient.Exists(drvUnixPath.Replace("~/", workdir + "/")))
-                            {
-                                UnixTargetFilePath = drvUnixPath.Replace("~/", workdir + "/");
-                            }
-                            else
-                            {
-                                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                this.Error = "'" + drvUnixPath + "' path does not exists";
-                                return;
-                            }
-
-                            //if (File.Exists(act.GetInputParam("PCDir")))
-                            //{
-                            //    PCTargetFilePath = act.GetInputParam("PCDir");
-                            //}else if (IsFile(act.GetInputParam("PCDir")))
-                            //{
-                            //    PCTargetFilePath = Path.GetDirectoryName(act.GetInputParam("PCDir"));
-                            //}
-                            //else
-                            //{
-
-                            //if (sPCPath.StartsWith(@"~\"))
-                            //{
-                            //    sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
-                            //}
-                            sPCPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sPCPath);
-
-                            sPCPath =sPCPath.Replace(Environment.NewLine, "");
-                            
-                            //}
-
-                            DownloadFiles(UnixTargetFilePath, sPCPath);
-                            targetFileName = UnixTargetFilePath.Substring(UnixTargetFilePath.LastIndexOf('/') + 1);
-                            if(!sPCPath.EndsWith(@"\"))
-                            {
-                                sPCPath += @"\";
-                            }
-
-                            if(!File.Exists(sPCPath+targetFileName))
-                            {
-                                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                this.Error = "GET File action failed on '"+ targetFileName + "' "+ sPCPath + "\\" + " directory";
-                            }
-                            this.ExInfo = "GetFile action Success on path "+ sPCPath;
-                        }
-                        catch (Exception e)
-                        {
-                            this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            this.Error = e.Message;
-                            Reporter.ToLog(eLogLevel.ERROR, e.Message);
-                        }
-                        
-                        break;
-
-                    case eFileTransferAction.PutFile:
-                          try{
-                              if (!VerifyFTPConnected())
-                              {
-                                  this.Error = "Failed to login!";
-                                  return;
-                              }
-                            if (UnixFTPClient.Exists(drvUnixPath.Replace("~/", workdir + "/")))
-                                UnixTargetFilePath = drvUnixPath.Replace("~/", workdir + "/");
-                            else if (!UnixFTPClient.Exists(workdir + @"/Ginger/Uploaded"))
-                            {
-                                UnixFTPClient.CreateDirectory(workdir + @"/Ginger/Uploaded");
-                                UnixTargetFilePath = workdir + @"/Ginger/Uploaded";
-                            }
-
-
-                            if (!(UnixTargetFilePath.EndsWith("/")))
-                            {
-                                UnixTargetFilePath +="/";
-                            }
-
-                            //if (sPCPath.StartsWith(@"~\"))
-                            //{
-                            //    sPCPath = System.IO.Path.Combine(this.SolutionFolder, sPCPath.Remove(0, 2));
-                            //}
-                            sPCPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sPCPath);
-
-                            if (!IsDir(sPCPath))
-	                        {
-                                using (var f = File.OpenRead(sPCPath))
-                                {
-                                    UnixFTPClient.UploadFile(f, UnixTargetFilePath + Path.GetFileName(sPCPath));
-                                    PutFileOperationStatus(sPCPath, UnixTargetFilePath);
-                                }
-                            }
-	                        else
-	                        {
-                                string[] fileEntries = Directory.GetFiles(sPCPath);
-		                        foreach (string fileName in fileEntries)
-		                        { using (var f = File.OpenRead(fileName))
-			                        {
-                                        UnixFTPClient.UploadFile(f, UnixTargetFilePath + Path.GetFileName(fileName), null);
-                                    }
-		                        }
-                                PutFileOperationStatus(sPCPath, UnixTargetFilePath);
-	                        }
-                            this.ExInfo = "PutFile action Success on path- "+ UnixTargetFilePath;
-                        }
-                        catch(Exception e)
-                        {
-                            this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            this.Error = e.Message;
-	                        Reporter.ToLog(eLogLevel.ERROR, e.Message);
-                        }
-                        
-                        break;
-
-                    default:
-
-                        break;
-
-                }
-            }
-            catch (Exception e)
+            switch (FileTransferAction)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                case eFileTransferAction.GetFile:
+                    try
+                    {
+                        if (!ConnectFTPClient())
+                        {
+                            return;
+                        }
+                        string UnixTargetFilePath = UnixPathCalculated;
+                        if (UnixFTPClient.Exists(UnixTargetFilePath) == false)
+                        {
+                            this.Error = "'" + UnixPathCalculated + "' path does not exists";
+                            return;
+                        }
+
+                        DownloadFileAndValidate(UnixTargetFilePath, PCPathCalculated);                        
+                    }
+                    catch (Exception e)
+                    {
+                        this.Error = e.Message;
+                        Reporter.ToLog(eLogLevel.ERROR, "Get File", e);
+                    }
+                    finally
+                    {
+                        UnixFTPClient.Disconnect();
+                        UnixFTPClient.Disconnect();
+                    }
+
+                    break;
+
+                case eFileTransferAction.PutFile:
+                    try
+                    {
+                        if (!ConnectFTPClient())
+                        {
+                            return;
+                        }
+                        string unixTargetFolder = CalculateTargetFolder();
+
+                        if (IsDir(PCPathCalculated) == false)
+                        {
+                            UploadFileAndValidate(PCPathCalculated, unixTargetFolder);
+                        }
+                        else
+                        {
+                            string[] fileEntries = Directory.GetFiles(PCPathCalculated);
+                            foreach (string fileName in fileEntries)
+                            {
+                                UploadFileAndValidate(fileName, unixTargetFolder);
+                            }
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        this.Error = e.Message;
+                        Reporter.ToLog(eLogLevel.ERROR, "Put File", e);
+                    }
+                    finally
+                    {
+                        UnixFTPClient.Disconnect();
+                        UnixFTPClient.Dispose();
+                    }
+                    break;
+
+                default:
+                    break;
+
             }
         }
 
-        private void PutFileOperationStatus(string sPCPath, string UnixTargetFilePath)
+        private string CalculateTargetFolder()
         {
-            string targetFileName = sPCPath.Substring(sPCPath.LastIndexOf("\\") + 1);
-            if (!UnixFTPClient.Exists(UnixTargetFilePath + targetFileName))
+            string targetFolder=UnixPathCalculated;
+            if (UnixFTPClient.Exists(UnixPathCalculated) == false)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                this.Error = "Put File failed on '" + targetFileName + "' to " + UnixTargetFilePath + "\\";
+                //if path given by user does not exist upload it to /Ginger/Upload
+                targetFolder = Path.Combine(workdir, "/Ginger/Uploaded");
+                if (UnixFTPClient.Exists(targetFolder) == false)
+                {
+                    UnixFTPClient.CreateDirectory(targetFolder);
+                }
             }
+            return targetFolder;
         }
 
-        private void DownloadFiles(string remoteFile, string localPath)
+        private void UploadFileAndValidate(string filePath,string targetFolder)
         {
-            /// Try catch blocked so as to catch exception inside "Execute()"  
-            // var files = UnixFTPClient.ListDirectory(remoteDirectory);
-            //try
+            using (var fileToUpload = File.OpenRead(filePath))
             {
-                var filename = "";
+                string targetFilePath= Path.Combine(targetFolder, Path.GetFileName(filePath));
+                UnixFTPClient.UploadFile(fileToUpload, targetFilePath);
 
-                if (File.Exists(localPath))
+                if (UnixFTPClient.Exists(targetFilePath))
                 {
-                    File.Delete(localPath);
-                    filename = localPath;
+                    this.ExInfo += "File '" + Path.GetFileName(filePath) + "' successfully uploaded to '" + targetFolder + "' directory\n";
                 }
-                else if (!IsDir(localPath))
-                    filename = localPath;
                 else
-                    filename = localPath + @"\" + Path.GetFileName(remoteFile);
-
-                using (var f = File.OpenWrite(filename))
                 {
-                    UnixFTPClient.DownloadFile(remoteFile, f);
+                    this.Error += "Failed to upload '" + Path.GetFileName(filePath) + "' to " + targetFolder + "\n";                    
                 }
             }
-            //catch (Exception e)
-            //{
-            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, e.Message);
-           // }
+        }
 
+      
+        private void DownloadFileAndValidate(string remoteFile, string localPath)
+        {
+            string filename;
+            if (File.Exists(localPath))
+            {
+                File.Delete(localPath);
+                filename = localPath;
+            }
+            else if (IsDir(localPath)==false)
+            {
+                filename = localPath;
+            }               
+            else
+            {
+                filename =  Path.Combine(localPath,Path.GetFileName(remoteFile));
+            }                
+
+            using (var f = File.OpenWrite(filename))
+            {
+                UnixFTPClient.DownloadFile(remoteFile, f);
+            }
+
+
+            string targetFileName = Path.GetFileName(remoteFile);
+            if (File.Exists(Path.Combine(localPath, targetFileName)))
+            {
+                this.ExInfo = "File '" + targetFileName + "' successfully  downloaded to '" + localPath + "' directory";
+            }
+            else
+            {                
+                this.Error = "Failed to get file '" + targetFileName + "' " + "to " + localPath + "\\" + " directory";
+            }
         }
 
         private bool IsDir(string path)
