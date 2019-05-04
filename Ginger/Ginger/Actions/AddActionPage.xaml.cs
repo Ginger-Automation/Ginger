@@ -27,6 +27,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -454,6 +455,7 @@ namespace Ginger.Actions
                 // Adding manually from GingerCoreNET
                 AllActionType.Add(typeof(ActAgentManipulation));
                 AllActionType.Add(typeof(ActSetVariableValue));
+                AllActionType.Add(typeof(ActUIElement));
 
                 AllActionType = subclasses.ToList();
             }
