@@ -7,8 +7,9 @@
 
     <!--Background Colors-->
     <SolidColorBrush x:Key="$BackgroundColor_DarkBlue" Color="#152B37" />
-    <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="LightGray" />
+    <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="#DEE0E5" />
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#EDEFF5" />
+    <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="DarkGray" />
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="White" />
 
     <!--Selection Colors-->
@@ -25,7 +26,7 @@
     <!--Execution Status Colors-->
     <SolidColorBrush x:Key="$PassedStatusColor" Color="#109717"/>
     <SolidColorBrush x:Key="$FailedStatusColor" Color="#DC3812"/>
-    <SolidColorBrush x:Key="$PendingStatusColor" Color="#FF9900"/>
+    <SolidColorBrush x:Key="$PendingStatusColor" Color="#FFC268"/>
     <SolidColorBrush x:Key="$RunningStatusColor" Color="#3EA7FC"/>
     <SolidColorBrush x:Key="$StoppedStatusColor" Color="#ED5588"/>
     <SolidColorBrush x:Key="$SkippedStatusColor" Color="#737373"/>
@@ -1065,7 +1066,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $SelectionColor_Pink}">
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_DarkBlue}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"

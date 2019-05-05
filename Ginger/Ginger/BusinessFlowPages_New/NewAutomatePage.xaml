@@ -16,13 +16,12 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="65"/>
-            <!--<RowDefinition Height="10"/>-->
+            <RowDefinition Height="58"/>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
         
         <!--Top Row displaying Business Flow level controls-->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
             <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
                     <UserControls:ucButton.ToolTip>
@@ -31,8 +30,12 @@
                 </UserControls:ucButton>
 
                 <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ImageMakerControl ImageType="BusinessFlow" Width="32" Height="32" />
-                    <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,30,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
+                    <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="32" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                    <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,30,0">
+                        <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}">></Label>
+                        <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
+                    </StackPanel>
                     <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
@@ -45,7 +48,7 @@
                     </UserControls:ucButton>
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $SelectionColor_Pink}" Margin="5,7,5,7"/>
+                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>
 
                 <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
                     <UserControls:ucButton x:Name="xSearchBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
@@ -82,7 +85,7 @@
                     <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Run" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $SelectionColor_Pink}" Margin="5,7,5,7"/>
+                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>
 
                 <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Right" Orientation="Horizontal">
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
@@ -93,7 +96,7 @@
                     <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" />
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $SelectionColor_Pink}" Margin="5,7,5,7"/>
+                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>
             </DockPanel>
         </ScrollViewer>
        
@@ -108,16 +111,16 @@
         </Border>-->
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
-            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White">
-                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1"  >
-                    <TabItem.Header>
+            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
+                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
+                    <!--<TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}" Margin="-15,0,0,0">
                             <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" />
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                                 <TextBlock x:Name="xBfActiVitiesTabHeaderText" Text="Activities (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
                             </DockPanel>
                         </Border>
-                    </TabItem.Header>
+                    </TabItem.Header>-->
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="400"/>
@@ -125,7 +128,9 @@
                             <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
                         </Grid.ColumnDefinitions>
 
-                        <Frame x:Name="xActivitiesListFrame" Grid.Column="0" Content="Activities List Frame" Margin="0,0,3,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                        <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,0,0">
+                            <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
+                        </Border>
 
                         <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0">
                             <!--<GridSplitter.Background>
@@ -136,7 +141,7 @@
                             </GridSplitter.Background>-->
                         </GridSplitter>
 
-                        <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="5,0,0,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                        <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
                         <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="10" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
 
@@ -145,27 +150,27 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0">
-                    <TabItem.Header>
+                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0"  Visibility="Collapsed">
+                    <!--<TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Variable" Width="20" Height="18" FontWeight="Bold" />
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Variable" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                                 <TextBlock x:Name="xBfVariablesTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
                             </DockPanel>
                         </Border>
-                    </TabItem.Header>
+                    </TabItem.Header>-->
                     <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
-                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0">
-                    <TabItem.Header>
+                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0"  Visibility="Collapsed">
+                    <!--<TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Config" Width="20" Height="18" FontWeight="Bold" />
+                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Config" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                                 <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
                             </DockPanel>
                         </Border>
-                    </TabItem.Header>
+                    </TabItem.Header>-->
                     <Frame x:Name="xBfConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
             </TabControl>
