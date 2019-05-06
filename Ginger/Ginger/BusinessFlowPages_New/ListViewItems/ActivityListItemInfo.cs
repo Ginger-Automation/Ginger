@@ -66,11 +66,12 @@ namespace Ginger.BusinessFlowPages.ListViewItems
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-            if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-            {
-                return new ListItemUniqueIdentifier() { Color = mActivity.ActivitiesGroupColor, Tooltip = mActivity.ActivitiesGroupID };
-            }
-            else if (mActivity.AddDynamicly)
+            //if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+            //{
+            //    return new ListItemUniqueIdentifier() { Color = mActivity.ActivitiesGroupColor, Tooltip = mActivity.ActivitiesGroupID };
+            //}
+            //else 
+            if (mActivity.AddDynamicly)
             {
                 return new ListItemUniqueIdentifier() { Color = "Plum", Tooltip = "Added Dynamically from Shared Repository" };
             }

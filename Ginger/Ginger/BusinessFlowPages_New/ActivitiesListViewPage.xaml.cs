@@ -64,11 +64,6 @@ namespace Ginger.BusinessFlowPages
             PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(Activity.ActivitiesGroupID));
             groupView.GroupDescriptions.Clear();
             groupView.GroupDescriptions.Add(groupDescription);
-
-            //CollectionViewSource view2 = (CollectionView)CollectionViewSource.GetDefaultView(xActivitiesListView.List.ItemsSource);
-            //PropertyGroupDescription groupDescription2 = new PropertyGroupDescription(nameof(Activity.ActivitiesGroupID));
-            //view2.IsLiveGroupingRequested = true;
-            //view2.GroupDescriptions.Add(groupDescription2);
         }
 
         private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)

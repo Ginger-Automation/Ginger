@@ -151,28 +151,31 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void UpdateDescription()
         {
-            xDescriptionTextBlock.Text = string.Empty;
-            TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+            this.Dispatcher.Invoke(() =>
+            {
+                xDescriptionTextBlock.Text = string.Empty;
+                TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
 
-            //Application info
-            if (!string.IsNullOrEmpty(mActivity.Description))
-            {
-                xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
-                xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
-                xDescTextBlockHelper.AddLineBreak();
-            }
-            if (!string.IsNullOrEmpty(mActivity.RunDescription))
-            {
-                xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
-                xDescTextBlockHelper.AddLineBreak();
-            }
-            if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-            {
-                xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
-                xDescTextBlockHelper.AddLineBreak();
-            }
-            xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);            
+                //Application info
+                if (!string.IsNullOrEmpty(mActivity.Description))
+                {
+                    xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                    xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
+                    xDescTextBlockHelper.AddLineBreak();
+                }
+                if (!string.IsNullOrEmpty(mActivity.RunDescription))
+                {
+                    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
+                    xDescTextBlockHelper.AddLineBreak();
+                }
+                if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+                {
+                    xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
+                    xDescTextBlockHelper.AddLineBreak();
+                }
+                xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
+            });
         }
 
         private void xSaveBtn_Click(object sender, System.Windows.RoutedEventArgs e)
