@@ -179,9 +179,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                     default:
                         throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
-                }
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                }                
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -413,7 +411,7 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.Click:
-                        string status = mUIAutomationHelper.ClickElement(AE);                        
+                        string status = mUIAutomationHelper.ClickElement(AE);
                         if (!status.Contains("Clicked Successfully"))
                         {
                             actWC.Error += status;
