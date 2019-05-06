@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GingerCore.Actions;
-using System.Windows;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Diagnostics;
@@ -51,7 +50,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers
 {
@@ -3798,8 +3796,9 @@ namespace GingerCore.Drivers
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL")) ||
-                 elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
+            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
+                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL" 
+                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
@@ -3857,7 +3856,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME")
+            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
             {
                 elementType = eElementType.Iframe;
             }
@@ -6418,7 +6417,6 @@ namespace GingerCore.Drivers
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
                                 string script = Properties.Resources.Html5DragAndDrop;
-                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
