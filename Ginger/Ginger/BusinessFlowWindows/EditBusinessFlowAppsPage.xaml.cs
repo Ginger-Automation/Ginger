@@ -87,7 +87,10 @@ namespace Ginger.BusinessFlowWindows
             if (IsNewBusinessflow == true)
             {
                 SetTargetApplications();
-                mBusinessFlow.CurrentActivity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                if (mBusinessFlow.TargetApplications?.Count != 0)
+                {
+                    mBusinessFlow.CurrentActivity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                }
             }
             else
             {               
