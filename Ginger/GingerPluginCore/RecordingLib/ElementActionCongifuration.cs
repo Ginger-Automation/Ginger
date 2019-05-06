@@ -17,5 +17,9 @@ namespace Amdocs.Ginger.Plugin.Core
         public bool AddPOMToAction { get; set; }
         public string POMGuid { get; set; }
         public string ElementGuid { get; set; }
+
+        public RecordedPageChangedEventArgs PageChangedArgs { get; set; }
+
+        public eRecordingEvent RecordingEvent { get; set; }
     }
 }

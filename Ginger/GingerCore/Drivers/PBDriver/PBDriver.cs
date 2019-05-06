@@ -1066,15 +1066,13 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
-        public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
-        public bool LearnAdditionalDetails { get; set; }
 
         public override void StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
 
-        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
             mUIAutomationHelper.StartRecording();
         }

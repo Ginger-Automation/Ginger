@@ -29,6 +29,8 @@ namespace Amdocs.Ginger.CoreNET
 
         public IPlatformInfo PlatformInfo { get; set; }
 
+        public bool LearnAdditionalDetails { get; set; }
+
         public RecordingManager(List<ApplicationPOMModel> lstApplicationPOM, BusinessFlow bFlow, Context context, IRecord platformDriver, IPlatformInfo pInfo)
         {
             try
@@ -39,13 +41,13 @@ namespace Amdocs.Ginger.CoreNET
                 //or else create new POM
                 if (lstApplicationPOM == null)
                 {
-                    PlatformDriver.LearnAdditionalDetails = false;
+                    LearnAdditionalDetails = false;
                     CreatePOM = false;
                     CurrentPOM = null;
                 }
                 else
                 {
-                    PlatformDriver.LearnAdditionalDetails = true;
+                    LearnAdditionalDetails = true;
                     CreatePOM = true;
                     CurrentPOM = lstApplicationPOM[0];
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
@@ -53,11 +55,11 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         ListPOMObjectHelper.Add(new POMObjectRecordingHelper() { PageTitle = cPom.ItemName, PageURL = cPom.PageURL, ApplicationPOM = cPom });
                     }
-                    PlatformDriver.PageChanged += PlatformDriver_PageChanged;
                 }
 
                 BusinessFlow = bFlow;
                 Context = context;
+                PlatformDriver.ElementRecorded -= PlatformDriver_ElementRecorded;
                 PlatformDriver.ElementRecorded += PlatformDriver_ElementRecorded;
             }
             catch (Exception ex)
@@ -70,19 +72,20 @@ namespace Amdocs.Ginger.CoreNET
         {
             POMObjectRecordingHelper recordingHelper = new POMObjectRecordingHelper();
             try
-            {                
-                CurrentPOM.FileName = pageTitle;
-                CurrentPOM.FilePath = pageTitle;
-                CurrentPOM.Name = pageTitle;
-                CurrentPOM.Guid = new Guid();
-                CurrentPOM.ItemName = pageTitle;
-                CurrentPOM.PageURL = pageURL;
-                CurrentPOM.ScreenShotImage = screenShot;
-                CurrentPOM.MappedUIElements = new ObservableList<ElementInfo>();
+            {
+                ApplicationPOMModel newPOM = new ApplicationPOMModel();
+                newPOM.FileName = pageTitle;
+                newPOM.FilePath = pageTitle;
+                newPOM.Name = pageTitle;
+                newPOM.Guid = new Guid();
+                newPOM.ItemName = pageTitle;
+                newPOM.PageURL = pageURL;
+                newPOM.ScreenShotImage = screenShot;
+                newPOM.MappedUIElements = new ObservableList<ElementInfo>();
 
                 recordingHelper.PageTitle = pageTitle;
                 recordingHelper.PageURL = pageURL;
-                recordingHelper.ApplicationPOM = CurrentPOM;
+                recordingHelper.ApplicationPOM = newPOM;
             }
             catch (Exception ex)
             {
@@ -91,19 +94,19 @@ namespace Amdocs.Ginger.CoreNET
             return recordingHelper;
         }
 
-        private void PlatformDriver_PageChanged(object sender, RecordedPageChangedEventArgs e)
+        private void PlatformDriverPageChangedHandler(RecordedPageChangedEventArgs args)
         {
             try
             {
                 POMObjectRecordingHelper newPOMHelper = null;
                 if (ListPOMObjectHelper != null && ListPOMObjectHelper.Count > 0)
                 {
-                    var obj = ListPOMObjectHelper.FirstOrDefault(s => s.PageTitle == e.PageTitle && s.PageURL == e.PageURL);
-                    if (obj == null && !string.IsNullOrEmpty(e.PageTitle) && !string.IsNullOrEmpty(e.PageURL))
+                    var obj = ListPOMObjectHelper.FirstOrDefault(s => s.PageTitle == args.PageTitle && s.PageURL == args.PageURL);
+                    if (obj == null && !string.IsNullOrEmpty(args.PageTitle) && !string.IsNullOrEmpty(args.PageURL))
                     {
-                        newPOMHelper = GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot);
-                        CurrentPOM = newPOMHelper.ApplicationPOM;
+                        newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);                        
                         ListPOMObjectHelper.Add(newPOMHelper);
+                        CurrentPOM = newPOMHelper.ApplicationPOM;
                     }
                     else if (!(CurrentPOM.PageURL == obj.PageURL && CurrentPOM.Name == obj.PageTitle))
                     {
@@ -112,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    newPOMHelper = GetNewPOM(e.PageTitle, e.PageURL, e.ScreenShot);
+                    newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);
                     CurrentPOM = newPOMHelper.ApplicationPOM;
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
                     ListPOMObjectHelper.Add(newPOMHelper);
@@ -124,24 +127,44 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private void PlatformDriver_ElementRecorded(object sender, ElementActionCongifuration e)
+        private void PlatformDriver_ElementRecorded(object sender, ElementActionCongifuration args)
+        {
+            try
+            {
+                switch (args.RecordingEvent)
+                {
+                    case eRecordingEvent.ElementRecorded:
+                        ElementRecordedHandler(args);
+                        break;
+                    case eRecordingEvent.PageChanged:
+                        PlatformDriverPageChangedHandler(args.PageChangedArgs);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Element recording event handler while recording", ex);
+            }
+        }
+
+        private void ElementRecordedHandler(ElementActionCongifuration args)
         {
             try
             {
                 Act actUI;
                 ElementInfo einfo = null;
-                if (e.LearnedElementInfo != null)
+                if (args.LearnedElementInfo != null)
                 {
-                    einfo = (ElementInfo)e.LearnedElementInfo;
-                    e.AddPOMToAction = CreatePOM;
-                    e.POMGuid = CurrentPOM.Guid.ToString();
-                    e.ElementGuid = einfo.Guid.ToString();
+                    einfo = (ElementInfo)args.LearnedElementInfo;
+                    args.AddPOMToAction = CreatePOM;
+                    args.POMGuid = CurrentPOM.Guid.ToString();
+                    args.ElementGuid = einfo.Guid.ToString();
 
-                    actUI = PlatformInfo.GetPlatformAction(einfo, e);                    
+                    actUI = PlatformInfo.GetPlatformAction(einfo, args);
                 }
                 else
                 {
-                    actUI = PlatformInfo.GetPlatformAction(null, e);
+                    actUI = PlatformInfo.GetPlatformAction(null, args);
                 }
                 if (actUI != null)
                 {
@@ -162,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                PlatformDriver.StartRecording();
+                PlatformDriver.StartRecording(LearnAdditionalDetails);
             }
             catch (Exception ex)
             {
@@ -185,10 +208,13 @@ namespace Amdocs.Ginger.CoreNET
                             try
                             {        
                                 PomLearnUtils utils = new PomLearnUtils(cPom.ApplicationPOM);
+                                cPom.ApplicationPOM.ContainingFolder = repositoryFolder.FolderRelativePath;
+                                cPom.ApplicationPOM.ContainingFolderFullPath = repositoryFolder.FolderFullPath;
                                 utils.SaveLearnedPOM();
                             }
                             catch (Exception e)
                             {
+                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(cPom.ApplicationPOM);
                                 Reporter.ToLog(eLogLevel.ERROR, "Error while saving the POM", e);
                             }                            
                         }

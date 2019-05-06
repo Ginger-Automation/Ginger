@@ -1054,10 +1054,8 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
-        public event Amdocs.Ginger.Plugin.Core.PageChangedHandler PageChanged;
-        public bool LearnAdditionalDetails { get; set; }
 
-        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording()
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
             StartRecord();
         }

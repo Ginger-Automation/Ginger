@@ -5165,12 +5165,12 @@ namespace GingerCore.Drivers
             DoRecording();
         }
 
-        void IRecord.StartRecording()
+        void IRecord.StartRecording(bool learnAdditionalChanges)
         {
-            DoRecording();
+            DoRecording(learnAdditionalChanges);
         }
 
-        private void DoRecording()
+        private void DoRecording(bool learnAdditionalChanges = false)
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
@@ -5191,7 +5191,7 @@ namespace GingerCore.Drivers
 
             Task t = new Task(() =>
             {
-                DoGetRecordings();
+                DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
             t.Start();
@@ -5311,7 +5311,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void DoGetRecordings()
+        private void DoGetRecordings(bool learnAdditionalChanges)
         {
             try
             {
@@ -5347,7 +5347,7 @@ namespace GingerCore.Drivers
                                 args.Type = GetElementTypeEnum(null, type).Item2;
                                 args.Description = GetDescription(args.Operation, args.LocateValue, args.ElementValue, type);
 
-                                if (LearnAdditionalDetails)
+                                if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
@@ -5397,9 +5397,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public bool LearnAdditionalDetails { get; set; }
         public event ElementRecordedEventHandler ElementRecorded;
-        public event PageChangedHandler PageChanged;
         private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
@@ -5407,12 +5405,7 @@ namespace GingerCore.Drivers
         {
             ElementRecorded?.Invoke(this, e);
         }
-
-        protected void OnPageChanged(RecordedPageChangedEventArgs e)
-        {
-            PageChanged?.Invoke(this, e);
-        }
-
+        
         ElementInfo LearnRecorededElementFullDetails(string xCordinate, string yCordinate)
         {
             ElementInfo eInfo = null;
@@ -5425,13 +5418,16 @@ namespace GingerCore.Drivers
                     if (!lstURL.Contains(url) && CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
-                        RecordedPageChangedEventArgs args = new RecordedPageChangedEventArgs()
+                        RecordedPageChangedEventArgs pageArgs = new RecordedPageChangedEventArgs()
                         {
                             PageURL = url,
                             PageTitle = title,          
                             ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
                         };
-                        OnPageChanged(args);
+                        ElementActionCongifuration args = new ElementActionCongifuration();
+                        args.PageChangedArgs = pageArgs;
+                        args.RecordingEvent = eRecordingEvent.PageChanged;
+                        OnLearnedElement(args);
                     }
 
                     double xCord = 0;

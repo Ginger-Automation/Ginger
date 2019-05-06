@@ -7,15 +7,15 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
 {
     public class TestDriver : IRecord
     {
-        public bool LearnAdditionalDetails { get; set; }
+        private bool LearnAdditionalDetails { get; set; }
         public event ElementRecordedEventHandler ElementRecorded;
-        public event PageChangedHandler PageChanged;
         public Timer mGetRecordingTimer;
         int i = 0;
 
-        public void StartRecording()
+        public void StartRecording(bool learnAdditionalChanges = false)
         {
             i = 0;
+            LearnAdditionalDetails = learnAdditionalChanges;
             mGetRecordingTimer = new Timer(1000);
             mGetRecordingTimer.Elapsed += MGetRecordingTimer_Elapsed;
             mGetRecordingTimer.Start();
@@ -65,7 +65,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             if (i != 2)
             {
                 pageArgs.PageURL = "www.google.com";
-                pageArgs.PageTitle = "Google";
+                pageArgs.PageTitle = "Google";                
             }
             else
             {
@@ -73,7 +73,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
                 pageArgs.PageTitle = "New";
             }
 
-            OnPageChanged(pageArgs);
+            OnLearnedElement(new ElementActionCongifuration() { RecordingEvent = eRecordingEvent.PageChanged, PageChangedArgs = pageArgs });
             OnLearnedElement(eleArgs);
             i++;
         }
@@ -90,11 +90,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         protected void OnLearnedElement(ElementActionCongifuration e)
         {
             ElementRecorded?.Invoke(this, e);
-        }
-
-        protected void OnPageChanged(RecordedPageChangedEventArgs e)
-        {
-            PageChanged?.Invoke(this, e);
         }
     }
 }
