@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GingerCore.Actions;
-using System.Windows;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Diagnostics;
@@ -51,7 +50,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers
 {
@@ -356,41 +354,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            FirefoxOption.Proxy = new Proxy();
-                            switch (mProxy.Kind)
-                            {
-                                case ProxyKind.Manual:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Manual;
-                                    FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
-                                    FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
-                                    //TODO: GETTING ERROR LAUNCHING BROWSER 
-                                    //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
-                                    break;
-
-                                case ProxyKind.ProxyAutoConfigure:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
-                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
-                                    break;
-
-                                case ProxyKind.Direct:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Direct;
-                                    break;
-
-                                case ProxyKind.AutoDetect:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
-
-                                    break;
-
-                                case ProxyKind.System:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-
-                                default:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-                            }
+                            SetProxy(FirefoxOption);
                         }
 
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
@@ -404,14 +368,15 @@ namespace GingerCore.Drivers
                     #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-
                         options.AddArgument("--start-maximized");
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
-                        options.Proxy = mProxy == null ? null : mProxy;
+                        
+                        //setting proxy
+                        SetProxy(options);
 
                         //DownloadFolderPath
                         if (!string.IsNullOrEmpty(DownloadFolderPath))
@@ -547,6 +512,47 @@ namespace GingerCore.Drivers
                 ErrorMessageFromDriver = ex.Message;
             }
         }
+
+        private void SetProxy(dynamic options)
+        {
+            options.Proxy = new Proxy();
+            switch (mProxy.Kind)
+            {
+                case ProxyKind.Manual:
+                    options.Proxy.Kind = ProxyKind.Manual;
+                    options.Proxy.HttpProxy = mProxy.HttpProxy;
+                    options.Proxy.SslProxy = mProxy.SslProxy;
+
+                    //TODO: GETTING ERROR LAUNCHING BROWSER 
+                    // options.Proxy.SocksProxy = mProxy.SocksProxy;
+                    break;
+
+                case ProxyKind.ProxyAutoConfigure:
+                    options.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+                    options.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
+                    break;
+
+                case ProxyKind.Direct:
+                    options.Proxy.Kind = ProxyKind.Direct;
+                    break;
+
+                case ProxyKind.AutoDetect:
+                    options.Proxy.Kind = ProxyKind.AutoDetect;
+
+                    break;
+
+                case ProxyKind.System:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+
+                default:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+            }
+        }
+
         public override void CloseDriver()
         {
             try
@@ -3790,8 +3796,9 @@ namespace GingerCore.Drivers
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL")) ||
-                 elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
+            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
+                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL" 
+                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
@@ -3849,7 +3856,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME")
+            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
             {
                 elementType = eElementType.Iframe;
             }
@@ -6410,7 +6417,6 @@ namespace GingerCore.Drivers
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
                                 string script = Properties.Resources.Html5DragAndDrop;
-                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
