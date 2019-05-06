@@ -60,10 +60,35 @@
                     <StackPanel Orientation="Vertical"></StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-            <!--<ListView.ItemTemplate>
-                <DataTemplate>                    
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
+
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="18" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" />
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Label Style="{StaticResource $LabelStyle}">(</Label>
+                                                        <Label Content="{Binding ItemCount}" Style="{StaticResource $LabelStyle}"></Label>
+                                                        <Label Style="{StaticResource $LabelStyle}">)</Label>
+                                                        <usercontrols:ucButton x:Name="xDeleteGroupBtn" Tag="{Binding Name}" ToolTip="Delete Group" ButtonType="CircleImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16"  ButtonImageType="Delete" Click="XDeleteGroupBtn_Click" HorizontalAlignment="Right" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
         </ListView>
     </Grid>
 </UserControl>

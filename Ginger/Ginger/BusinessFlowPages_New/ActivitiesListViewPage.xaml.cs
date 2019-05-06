@@ -33,13 +33,18 @@ namespace Ginger.BusinessFlowPages
             SetListView();
         }
 
+        CollectionView groupView;
         private void SetListView()
         {
+            //List Title
             xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
+            //List Items
             xActivitiesListView.SetDefaultListDataTemplate(new ActivityListItemInfo(mContext));
 
+
+            //List tools bar
             xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;
 
             List<ListItemOperation> operationsListToAdd = new List<ListItemOperation>();
@@ -51,13 +56,26 @@ namespace Ginger.BusinessFlowPages
             operationsListToAdd.Add(groupsManager);
             xActivitiesListView.AddListOperations(operationsListToAdd);
 
+            //List Data
             xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+
+            //List Grouping
+            groupView = (CollectionView)CollectionViewSource.GetDefaultView(xActivitiesListView.List.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(Activity.ActivitiesGroupID));
+            groupView.GroupDescriptions.Clear();
+            groupView.GroupDescriptions.Add(groupDescription);
+
+            //CollectionViewSource view2 = (CollectionView)CollectionViewSource.GetDefaultView(xActivitiesListView.List.ItemsSource);
+            //PropertyGroupDescription groupDescription2 = new PropertyGroupDescription(nameof(Activity.ActivitiesGroupID));
+            //view2.IsLiveGroupingRequested = true;
+            //view2.GroupDescriptions.Add(groupDescription2);
         }
 
         private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
         {
             ActivitiesGroupsManagerPage activitiesGroupsManagerPage = new ActivitiesGroupsManagerPage(mBusinessFlow);
             activitiesGroupsManagerPage.ShowAsWindow();
+            groupView.Refresh();
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)

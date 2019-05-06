@@ -86,6 +86,7 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Configurations");
+            xBusinessFlowItemComboBox.SelectedIndex = 0;
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
             BindEnvsCombo();

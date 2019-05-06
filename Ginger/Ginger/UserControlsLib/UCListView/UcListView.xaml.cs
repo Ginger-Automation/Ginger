@@ -495,6 +495,11 @@ namespace Ginger.UserControlsLib.UCListView
                 handler(Info, new EventArgs());
             }
         }
+
+        private void XDeleteGroupBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public class UcListViewEventArgs
