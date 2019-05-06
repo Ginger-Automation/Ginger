@@ -28,10 +28,12 @@ using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace GingerCore.Actions.Common
 {
-    public class ActUIElement : Act
+    public class ActUIElement : Act,IActPluginExecution
     {
         // --------------------------------------------------------------------------------------------
         // TODO: remove after we take LocateBy, LocateValue from Act.cs
@@ -893,7 +895,31 @@ namespace GingerCore.Actions.Common
                 return d;
             }
         }
+        public NewPayLoad GetActionPayload()
+        {
+            // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
 
+            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
+            PL.AddValue("UIElementAction");
+            PL.AddValue(this.ElementLocateBy.ToString());
+            PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
+            PL.AddValue(this.ElementType.ToString());
+            PL.AddValue(this.ElementAction.ToString());
+            // Make it generic function in Act.cs to be used by other actions
+            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+            foreach (ActInputValue AIV in this.InputValues)
+            {
+                if (!string.IsNullOrEmpty(AIV.Value))
+                {
+                    NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
+                    PLParams.Add(AIVPL);
+                }
+            }
+            PL.AddListPayLoad(PLParams);
+            PL.ClosePackage();
+
+            return PL;
+        }
         public string ElementLocateValueForDriver
         {
             get
