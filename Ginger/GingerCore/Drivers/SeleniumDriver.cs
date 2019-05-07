@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GingerCore.Actions;
-using System.Windows;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Diagnostics;
@@ -52,10 +51,11 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using HtmlAgilityPack;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM
+    public class SeleniumDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
         public enum eBrowserType
         {
@@ -356,41 +356,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            FirefoxOption.Proxy = new Proxy();
-                            switch (mProxy.Kind)
-                            {
-                                case ProxyKind.Manual:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Manual;
-                                    FirefoxOption.Proxy.HttpProxy = mProxy.HttpProxy;
-                                    FirefoxOption.Proxy.SslProxy = mProxy.SslProxy;
-                                    //TODO: GETTING ERROR LAUNCHING BROWSER 
-                                    //  FirefoxOption.Proxy.SocksProxy = mProxy.SocksProxy;
-                                    break;
-
-                                case ProxyKind.ProxyAutoConfigure:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
-                                    FirefoxOption.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
-                                    break;
-
-                                case ProxyKind.Direct:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.Direct;
-                                    break;
-
-                                case ProxyKind.AutoDetect:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.AutoDetect;
-
-                                    break;
-
-                                case ProxyKind.System:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-
-                                default:
-                                    FirefoxOption.Proxy.Kind = ProxyKind.System;
-
-                                    break;
-                            }
+                            SetProxy(FirefoxOption);
                         }
 
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
@@ -404,14 +370,15 @@ namespace GingerCore.Drivers
                     #region Chrome
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
-
                         options.AddArgument("--start-maximized");
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
-                        options.Proxy = mProxy == null ? null : mProxy;
+                        
+                        //setting proxy
+                        SetProxy(options);
 
                         //DownloadFolderPath
                         if (!string.IsNullOrEmpty(DownloadFolderPath))
@@ -547,6 +514,47 @@ namespace GingerCore.Drivers
                 ErrorMessageFromDriver = ex.Message;
             }
         }
+
+        private void SetProxy(dynamic options)
+        {
+            options.Proxy = new Proxy();
+            switch (mProxy.Kind)
+            {
+                case ProxyKind.Manual:
+                    options.Proxy.Kind = ProxyKind.Manual;
+                    options.Proxy.HttpProxy = mProxy.HttpProxy;
+                    options.Proxy.SslProxy = mProxy.SslProxy;
+
+                    //TODO: GETTING ERROR LAUNCHING BROWSER 
+                    // options.Proxy.SocksProxy = mProxy.SocksProxy;
+                    break;
+
+                case ProxyKind.ProxyAutoConfigure:
+                    options.Proxy.Kind = ProxyKind.ProxyAutoConfigure;
+                    options.Proxy.ProxyAutoConfigUrl = mProxy.ProxyAutoConfigUrl;
+                    break;
+
+                case ProxyKind.Direct:
+                    options.Proxy.Kind = ProxyKind.Direct;
+                    break;
+
+                case ProxyKind.AutoDetect:
+                    options.Proxy.Kind = ProxyKind.AutoDetect;
+
+                    break;
+
+                case ProxyKind.System:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+
+                default:
+                    options.Proxy.Kind = ProxyKind.System;
+
+                    break;
+            }
+        }
+
         public override void CloseDriver()
         {
             try
@@ -3483,9 +3491,9 @@ namespace GingerCore.Drivers
         public override ePlatformType Platform
         {
             get { return ePlatformType.Web; }
-        }
+        }        
         private int exceptioncount = 0;
-
+               
 
 
         public override bool IsRunning()
@@ -3790,8 +3798,9 @@ namespace GingerCore.Drivers
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL")) ||
-                 elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
+            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
+                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL" 
+                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
             }
@@ -3849,7 +3858,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME")
+            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
             {
                 elementType = eElementType.Iframe;
             }
@@ -3883,7 +3892,7 @@ namespace GingerCore.Drivers
 
             return returnTuple;
         }
-
+        
         ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
         {
             if (string.IsNullOrEmpty(EI.ElementType) || EI.ElementTypeEnum == eElementType.Unknown)
@@ -3906,7 +3915,7 @@ namespace GingerCore.Drivers
 
             return EI;
         }
-
+        
         //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
         //{
         //    HTMLElementInfo EI = new HTMLElementInfo();
@@ -4847,6 +4856,11 @@ namespace GingerCore.Drivers
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
+            return SpyControlAndGetElement();
+        }
+
+        private ElementInfo SpyControlAndGetElement()
+        {
             Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             try
             {
@@ -5148,6 +5162,16 @@ namespace GingerCore.Drivers
 
         public override void StartRecording()
         {
+            DoRecording();
+        }
+
+        void IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            DoRecording(learnAdditionalChanges);
+        }
+
+        private void DoRecording(bool learnAdditionalChanges = false)
+        {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
             InjectRecordingIfNotInjected();
@@ -5167,7 +5191,7 @@ namespace GingerCore.Drivers
 
             Task t = new Task(() =>
             {
-                DoGetRecordings();
+                DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
             t.Start();
@@ -5287,63 +5311,154 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void DoGetRecordings()
+        private void DoGetRecordings(bool learnAdditionalChanges)
         {
             try
             {
                 IframeClicked = false;
                 while (IsRecording)
                 {
-                    InjectRecordingIfNotInjected();
-                    HandleIframeClicked();
-                    HandleRedirectClick();
-                    Thread.Sleep(500);
-                    // TODO: call JS to get the recording
-
-                    PayLoad PLgerRC = new PayLoad("GetRecording");
-                    PLgerRC.ClosePackage();
-                    PayLoad plrcRec = ExceuteJavaScriptPayLoad(PLgerRC);
-
-                    if (!PLgerRC.IsErrorPayLoad())
+                    try
                     {
-                        List<PayLoad> PLs = plrcRec.GetListPayLoad();
+                        InjectRecordingIfNotInjected();
+                        HandleIframeClicked();
+                        HandleRedirectClick();
+                        Thread.Sleep(1000);
+                        // TODO: call JS to get the recording
 
-                        // Each Payload is one recording...
-                        foreach (PayLoad PLR in PLs)
+                        PayLoad PLgerRC = new PayLoad("GetRecording");
+                        PLgerRC.ClosePackage();
+                        PayLoad plrcRec = ExceuteJavaScriptPayLoad(PLgerRC);
+
+                        if (!PLgerRC.IsErrorPayLoad())
                         {
-                            string LocateBy = PLR.GetValueString();
-                            string LocateValue = PLR.GetValueString();
-                            string ElemValue = PLR.GetValueString();
-                            string ControlAction = PLR.GetValueString();
-                            string Type = PLR.GetValueString();
+                            List<PayLoad> PLs = plrcRec.GetListPayLoad();
 
-                            if (ControlAction.ToLower() == "click" && (Type.ToLower() == "a" || Type.ToLower() == "submit"))
-                                Thread.Sleep(2000);
-
-                            ActUIElement actUI = new ActUIElement();
-                            actUI.Description = GetDescription(ControlAction, LocateValue, ElemValue, Type);
-                            actUI.ElementLocateBy = GetLocateBy(LocateBy);
-                            actUI.ElementLocateValue = LocateValue;
-                            actUI.ElementType = GetElementTypeEnum(null, Type).Item2;
-                            if (Enum.IsDefined(typeof(ActUIElement.eElementAction), ControlAction))
-                                actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), ControlAction);
-                            else
-                                continue;
-                            actUI.Value = ElemValue;
-                            this.BusinessFlow.AddAct(actUI);
-                            if (mActionRecorded != null)
+                            // Each Payload is one recording...
+                            foreach (PayLoad PLR in PLs)
                             {
-                                mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
+                                ElementActionCongifuration configArgs = new ElementActionCongifuration();
+                                string locateBy = PLR.GetValueString();
+                                configArgs.LocateBy = GetLocateBy(locateBy);
+                                configArgs.LocateValue = PLR.GetValueString();
+                                configArgs.ElementValue = PLR.GetValueString();
+                                configArgs.Operation = PLR.GetValueString();
+                                string type = PLR.GetValueString();
+                                configArgs.Type = GetElementTypeEnum(null, type).Item2;
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
+
+                                if (learnAdditionalChanges)
+                                {
+                                    string xCordinate = PLR.GetValueString();
+                                    string yCordinate = PLR.GetValueString();
+                                    ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
+
+                                    if (eInfo != null)
+                                    {
+                                        configArgs.LearnedElementInfo = eInfo;
+                                    }
+                                }
+                                if (RecordingEvent != null)
+                                {
+                                    //New implementation supporting POM
+                                    RecordingEventArgs args = new RecordingEventArgs();
+                                    args.EventType = eRecordingEvent.ElementRecorded;
+                                    args.EventArgs = configArgs;
+                                    OnRecordingEvent(args);
+                                }
+                                else
+                                {  
+                                    //Temp existing implementation
+                                    ActUIElement actUI = new ActUIElement();
+                                    actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
+                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
+                                    actUI.ElementLocateValue = configArgs.LocateValue;
+                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
+                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
+                                    else
+                                        continue;
+                                    actUI.Value = configArgs.ElementValue;
+                                    this.BusinessFlow.AddAct(actUI);
+                                    if (mActionRecorded != null)
+                                    {
+                                        mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
+                                    }
+                                }                                
                             }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
                     }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
             }
         }
+
+        public event RecordingEventHandler RecordingEvent;
+        private List<string> lstURL = new List<string>();
+        private string CurrentPageURL = string.Empty;
+
+        protected void OnRecordingEvent(RecordingEventArgs e)
+        {
+            RecordingEvent?.Invoke(this, e);
+        }
+        
+        ElementInfo LearnRecorededElementFullDetails(string xCordinate, string yCordinate)
+        {
+            ElementInfo eInfo = null;
+            if (!string.IsNullOrEmpty(xCordinate) && !string.IsNullOrEmpty(yCordinate))
+            {
+                try
+                {
+                    string url = Driver.Url;
+                    string title = Driver.Title;
+                    if (!lstURL.Contains(url) && CurrentPageURL != url)
+                    {
+                        CurrentPageURL = url;
+                        PageChangedEventArgs pageArgs = new PageChangedEventArgs()
+                        {
+                            PageURL = url,
+                            PageTitle = title,          
+                            ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
+                        };
+
+                        RecordingEventArgs args = new RecordingEventArgs();
+                        args.EventType = eRecordingEvent.ElementRecorded;
+                        args.EventArgs = args;
+                        OnRecordingEvent(args);
+                    }
+
+                    double xCord = 0;
+                    double yCord = 0;
+                    double.TryParse(xCordinate, out xCord);
+                    double.TryParse(yCordinate, out yCord);
+
+                    IWebElement el = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(" + xCord + ", " + yCord + ");");
+                    if (el != null)
+                    {
+                        string elementName = GenerateElementTitle(el);
+                        HTMLElementInfo foundElemntInfo = new HTMLElementInfo
+                        {
+                            ElementObject = el                            
+                        };
+                        eInfo = ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+                        eInfo.ElementName = elementName;
+                    }                    
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording - while reading element", ex);
+                }
+            }
+
+            return eInfo;
+        }        
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)
         {
@@ -5431,6 +5546,16 @@ namespace GingerCore.Drivers
         }
 
         public override void StopRecording()
+        {
+            EndRecordings();
+        }
+
+        void IRecord.StopRecording()
+        {
+            EndRecordings();
+        }
+
+        private void EndRecordings()
         {
             CurrentFrame = string.Empty;
             Driver.SwitchTo().DefaultContent();
@@ -6410,7 +6535,6 @@ namespace GingerCore.Drivers
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
                                 string script = Properties.Resources.Html5DragAndDrop;
-                                script += "simulateHTML5DragAndDrop(arguments[0], arguments[1])";
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
@@ -7030,7 +7154,7 @@ namespace GingerCore.Drivers
         }
 
 
-        POMEventHandler mActionRecorded;
+        POMEventHandler mActionRecorded;        
 
 
         public void ActionRecordedCallback(POMEventHandler ActionRecorded)
