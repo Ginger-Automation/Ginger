@@ -102,6 +102,18 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                         IVR.InvalidValue.AddRange(((InvalidValueAttribute)attr).InvalidValue);
                     }
                 }
+                else if (attr.GetType() == typeof(ValidValueAttribute))
+                {
+                    ValidValueValidationRule VVR = (ValidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(ValidValueValidationRule));
+                    if (VVR is null)
+                    {
+                        xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new ValidValueValidationRule(((ValidValueAttribute)attr).ValidValue));
+                    }
+                    else
+                    {
+                        VVR.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
+                    }
+                }
             }
         }
 

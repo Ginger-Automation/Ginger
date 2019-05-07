@@ -625,6 +625,7 @@
     <Compile Include="GeneralValidationRules\MaxValueValidationRule.cs" />
     <Compile Include="GeneralValidationRules\MinLegthValidationRule.cs" />
     <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>

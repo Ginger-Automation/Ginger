@@ -15,9 +15,9 @@ namespace GingerPluginCoreTest
                             [MaxLength(15)]
                             string s1,
 
-                            
-                            //[GingerParamProperty(GingerParamProperty.Mandatory)]   // define s2 is Mandatory
-                            [Mandatory]
+                            [ValidValue(new int[]{10, 20, 30})]
+                            [ValidValue(123)]
+                            //[GingerParamProperty(GingerParamProperty.Mandatory)]   // define s2 is Mandatory                                  
                             string s2)
         {
             Console.WriteLine(DateTime.Now + "> Concat: " + s1 + "+" + s2);

@@ -33,11 +33,7 @@ namespace Amdocs.Ginger.Plugin.Core
             {
                 InvalidValue = new List<int>();
             }
-            foreach (int value in invalidValues)
-            {
-                InvalidValue.Add(value);
-            }
-            
+            InvalidValue.AddRange(invalidValues);            
         }
 
         public InvalidValueAttribute()
