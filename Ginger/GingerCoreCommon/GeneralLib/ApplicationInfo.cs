@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mApplicationMajorVersion == string.Empty)
                 {
-                    mApplicationMajorVersion = string.Format("{0}.{1}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart);
+                    mApplicationMajorVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, 0, 0);
                 }
                 return mApplicationMajorVersion;
             }
