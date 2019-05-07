@@ -33,37 +33,7 @@ namespace GingerCoreNET.GeneralLib
 {
     public class General
     {
-        public static long GetGingerVersionAsLong(string gingerVersionAsString)
-        {
-            try
-            {
-                int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(gingerVersionAsString);
-                if (match.Success)
-                {
-                    try { iMajor = Int32.Parse(match.Groups[1].Value); }
-                    catch (Exception) { }
-                    try { iMinor = Int32.Parse(match.Groups[2].Value); }
-                    catch (Exception) { }
-                    try { iBuild = Int32.Parse(match.Groups[3].Value); }
-                    catch (Exception) { }
-                    try { iRevision = Int32.Parse(match.Groups[4].Value); }
-                    catch (Exception) { }
-                }
-                else
-                {
-                    return 0;//failed to get the version as long
-                }
-
-                long version = iMajor * 1000000 + iMinor * 10000 + iBuild * 100 + iRevision;
-                return version;
-            }
-            catch (Exception)
-            {
-                return 0;//failed to get the version as long
-            }
-        }
+        
         
         #region ENUM
 

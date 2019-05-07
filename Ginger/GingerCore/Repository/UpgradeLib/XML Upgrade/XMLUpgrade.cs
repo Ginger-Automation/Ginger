@@ -38,7 +38,7 @@ namespace GingerCore.XMLConverters
             try
             {
                 long currentXmlVersion = xmlVersion;
-                long latestGingerVersion = GingerVersion.GetCurrentVersionAsLong();
+                long latestGingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
 
                 string updatedXML = null;
                 string inputXML = xml;
@@ -213,7 +213,7 @@ namespace GingerCore.XMLConverters
             long xmlGingerVersion = SolutionUpgrade.GetSolutonFileGingerVersionAsLong(xmlFilePath, xml);
             if (xmlGingerVersion <= 0) return null;//failed to get the version
             
-            if (GingerVersion.GetCurrentVersionAsLong() > xmlGingerVersion)
+            if (Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion) > xmlGingerVersion)
             {
                 //upgrade
                 GingerCore.XMLConverters.XMLConverterBase.eGingerFileType FileType = XMLConverterBase.GetGingerFileTypeFromFilename(xmlFilePath);

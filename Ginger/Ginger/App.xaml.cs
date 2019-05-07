@@ -266,7 +266,7 @@ namespace Ginger
 
             Console.Title = "Ginger";
             Console.WriteLine("Starting Ginger");
-            Console.WriteLine("Version: " + WorkSpace.Instance.ApplicationInfo.AppVersion);
+            Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
 
             if (e.Args.Length == 0)
             {

@@ -60,7 +60,7 @@ namespace Ginger
         public MainWindow()
         {
             InitializeComponent();            
-            lblAppVersion.Content = "Version " + WorkSpace.Instance.ApplicationInfo.AppShortVersion;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             GingerCore.General.DoEvents();
         }
 
@@ -83,7 +83,7 @@ namespace Ginger
                  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
-                xGingerIconImg.ToolTip = WorkSpace.Instance.ApplicationInfo.AppFullProductName + Environment.NewLine + "Version " + WorkSpace.Instance.ApplicationInfo.AppVersion;
+                xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
                 if ( WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
@@ -96,7 +96,7 @@ namespace Ginger
                 xProcessMsgPnl.Visibility = Visibility.Collapsed;                
                 WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatures_PropertyChanged;
                 SetBetaFlagIconVisibility();
-                lblVersion.Content = "Version " + WorkSpace.Instance.ApplicationInfo.AppVersion;
+                lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
                 //Solution                                    
                 if ( WorkSpace.Instance.UserProfile.AutoLoadLastSolution &&  WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)

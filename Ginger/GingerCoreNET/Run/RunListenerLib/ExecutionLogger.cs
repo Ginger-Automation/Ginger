@@ -400,7 +400,7 @@ namespace Ginger.Run
                 RunSetReport.Elapsed = (double)RunSetReport.Watch.ElapsedMilliseconds / 1000;
                 RunSetReport.MachineName = Environment.MachineName.ToString();
                 RunSetReport.ExecutedbyUser = Environment.UserName.ToString();
-                RunSetReport.GingerVersion = WorkSpace.Instance.ApplicationInfo.AppVersion.ToString();
+                RunSetReport.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
                 if (LogFolder == null)
                 {

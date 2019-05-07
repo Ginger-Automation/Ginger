@@ -85,7 +85,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 line1 = reader.ReadLine();
                 line2 = reader.ReadLine();
 
-                long currentVersion = GingerVersion.GetCurrentVersionAsLong();
+                long currentVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
                 fileVersion = GetXMLVersion(line2);
                 long fileXmlVersion = GetXMLVersionAsLong(line2);
 
@@ -269,8 +269,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 return eGingerVersionComparisonResult.LowerVersion;
             }
 
-            long fileVersionAsLong = GingerCoreNET.GeneralLib.General.GetGingerVersionAsLong(fileGingerVersion);
-            long currentVersionAsLong = GingerVersion.GetCurrentVersionAsLong();
+            long fileVersionAsLong = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(fileGingerVersion);
+            long currentVersionAsLong = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
 
             if (fileVersionAsLong == 0)
             {
@@ -370,7 +370,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         public static long GetSolutonFileGingerVersionAsLong(string xmlFilePath, string xml = "")
         {
             string fileGingerVersion = GetSolutonFileGingerVersion(xmlFilePath, xml);
-            return GingerCoreNET.GeneralLib.General.GetGingerVersionAsLong(fileGingerVersion);
+            return Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(fileGingerVersion);
         }
 
 

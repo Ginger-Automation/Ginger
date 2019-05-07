@@ -64,8 +64,6 @@ namespace amdocs.ginger.GingerCoreNET
 
         public SourceControlBase SourceControl;
 
-        public ApplicationInfo ApplicationInfo = new ApplicationInfo();
-
         public ReportsInfo ReportsInfo = new ReportsInfo();
         /// <summary>
         /// Hold all Run Set execution data + execution methods
@@ -140,7 +138,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BetaFeatures.DisplayStatus();
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.AppVersion + " Started ! ########################");
+            Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########################");
 
             Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
             UserMsgsPool.LoadUserMsgsPool();
@@ -180,7 +178,7 @@ namespace amdocs.ginger.GingerCoreNET
             
 
             Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
-            AutoLogProxy.Init(ApplicationInfo.AppVersion);
+            AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
 
             Reporter.ToLog(eLogLevel.DEBUG, "Initializing the Source control");
             SetLoadingInfo(phase);
