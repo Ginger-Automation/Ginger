@@ -25,10 +25,12 @@ using GingerCore.Actions.Common;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
-    public abstract class PlatformInfoBase
+    public abstract class PlatformInfoBase: IPlatformInfo
     {
         static JavaPlatform mJavaPlatform = new JavaPlatform();
         static WebPlatform mWebPlatform = new WebPlatform();
@@ -154,6 +156,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
+        public virtual Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
+        {           
+            return null;
+        }
+
+        Act IPlatformInfo.GetPlatformAction(ElementInfo eInfo, ElementActionCongifuration actConfig)
+        {
+            return GetPlatformActionByElementInfo(eInfo, actConfig);
+        }
+        
         public virtual List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();

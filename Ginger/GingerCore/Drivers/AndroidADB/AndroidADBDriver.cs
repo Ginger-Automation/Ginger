@@ -40,7 +40,7 @@ using System.Xml;
 
 namespace GingerCore.Drivers.AndroidADB
 {
-    public class AndroidADBDriver : DriverBase, IWindowExplorer, IVisualTestingDriver
+    public class AndroidADBDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
 
         public string mGingerPackageName = "amdocs.ginger.android";
@@ -1066,6 +1066,16 @@ namespace GingerCore.Drivers.AndroidADB
             return false;
         }
 
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StartRecording();
+            });
+        }
+
         public override void StartRecording()
         {            
             Dispatcher.Invoke(() =>
@@ -1080,6 +1090,14 @@ namespace GingerCore.Drivers.AndroidADB
             {
                 DriverWindow.StopRecording();
             });   
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StopRecording();
+            });
         }
 
 
