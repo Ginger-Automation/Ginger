@@ -5337,15 +5337,15 @@ namespace GingerCore.Drivers
                             // Each Payload is one recording...
                             foreach (PayLoad PLR in PLs)
                             {
-                                ElementActionCongifuration args = new ElementActionCongifuration();
+                                ElementActionCongifuration configArgs = new ElementActionCongifuration();
                                 string locateBy = PLR.GetValueString();
-                                args.LocateBy = GetLocateBy(locateBy);
-                                args.LocateValue = PLR.GetValueString();
-                                args.ElementValue = PLR.GetValueString();
-                                args.Operation = PLR.GetValueString();
+                                configArgs.LocateBy = GetLocateBy(locateBy);
+                                configArgs.LocateValue = PLR.GetValueString();
+                                configArgs.ElementValue = PLR.GetValueString();
+                                configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
-                                args.Type = GetElementTypeEnum(null, type).Item2;
-                                args.Description = GetDescription(args.Operation, args.LocateValue, args.ElementValue, type);
+                                configArgs.Type = GetElementTypeEnum(null, type).Item2;
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
 
                                 if (learnAdditionalChanges)
                                 {
@@ -5355,27 +5355,30 @@ namespace GingerCore.Drivers
 
                                     if (eInfo != null)
                                     {
-                                        args.LearnedElementInfo = eInfo;
+                                        configArgs.LearnedElementInfo = eInfo;
                                     }
                                 }
                                 if (RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
+                                    RecordingEventArgs args = new RecordingEventArgs();
+                                    args.EventType = eRecordingEvent.ElementRecorded;
+                                    args.EventArgs = configArgs;
                                     OnRecordingEvent(args);
                                 }
                                 else
                                 {  
                                     //Temp existing implementation
                                     ActUIElement actUI = new ActUIElement();
-                                    actUI.Description = GetDescription(args.Operation, args.LocateValue, args.ElementValue, Convert.ToString(args.Type));
-                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(args.LocateBy));
-                                    actUI.ElementLocateValue = args.LocateValue;
-                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(args.Type)).Item2;
-                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), args.Operation))
-                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), args.Operation);
+                                    actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
+                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
+                                    actUI.ElementLocateValue = configArgs.LocateValue;
+                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
+                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
                                     else
                                         continue;
-                                    actUI.Value = args.ElementValue;
+                                    actUI.Value = configArgs.ElementValue;
                                     this.BusinessFlow.AddAct(actUI);
                                     if (mActionRecorded != null)
                                     {
@@ -5401,7 +5404,7 @@ namespace GingerCore.Drivers
         private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
-        protected void OnRecordingEvent(ElementActionCongifuration e)
+        protected void OnRecordingEvent(RecordingEventArgs e)
         {
             RecordingEvent?.Invoke(this, e);
         }
@@ -5418,15 +5421,16 @@ namespace GingerCore.Drivers
                     if (!lstURL.Contains(url) && CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
-                        RecordingEventArgs pageArgs = new RecordingEventArgs()
+                        PageChangedEventArgs pageArgs = new PageChangedEventArgs()
                         {
                             PageURL = url,
                             PageTitle = title,          
                             ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
                         };
-                        ElementActionCongifuration args = new ElementActionCongifuration();
-                        args.EventArgs = pageArgs;
-                        args.EventType = eRecordingEvent.PageChanged;
+
+                        RecordingEventArgs args = new RecordingEventArgs();
+                        args.EventType = eRecordingEvent.ElementRecorded;
+                        args.EventArgs = args;
                         OnRecordingEvent(args);
                     }
 

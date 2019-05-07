@@ -6,8 +6,8 @@ namespace Amdocs.Ginger.Plugin.Core
 {
     public class RecordingEventArgs
     {
-        public string PageURL { get; set; }
-        public string PageTitle { get; set; }
-        public string ScreenShot { get; set; }
+        public object EventArgs { get; set; }
+
+        public eRecordingEvent EventType { get; set; }
     }
 }

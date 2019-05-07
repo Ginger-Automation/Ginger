@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET
             return recordingHelper;
         }
 
-        private void PlatformDriverPageChangedHandler(RecordingEventArgs args)
+        private void PlatformDriverPageChangedHandler(PageChangedEventArgs args)
         {
             try
             {
@@ -127,17 +127,19 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private void PlatformDriver_RecordingEvent(object sender, ElementActionCongifuration args)
+        private void PlatformDriver_RecordingEvent(object sender, RecordingEventArgs args)
         {
             try
             {
                 switch (args.EventType)
                 {
                     case eRecordingEvent.ElementRecorded:
-                        ElementRecordedHandler(args);
+                        ElementActionCongifuration elementAction = (ElementActionCongifuration)args.EventArgs;
+                        ElementRecordedHandler(elementAction);
                         break;
                     case eRecordingEvent.PageChanged:
-                        PlatformDriverPageChangedHandler(args.EventArgs);
+                        PageChangedEventArgs pageChanged = (PageChangedEventArgs)args.EventArgs;
+                        PlatformDriverPageChangedHandler(pageChanged);
                         break;
                 }
             }

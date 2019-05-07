@@ -62,7 +62,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
                 eleArgs.LearnedElementInfo = eInfo;
             }
 
-            RecordingEventArgs pageArgs = new RecordingEventArgs();
+            PageChangedEventArgs pageArgs = new PageChangedEventArgs();
             if (i != 2)
             {
                 pageArgs.PageURL = "www.google.com";
@@ -74,8 +74,8 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
                 pageArgs.PageTitle = "New";
             }
 
-            OnRecordingEvent(new ElementActionCongifuration() { EventType = eRecordingEvent.PageChanged, EventArgs = pageArgs });
-            OnRecordingEvent(eleArgs);
+            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = pageArgs });
+            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = eleArgs });
             i++;
         }
 
@@ -88,7 +88,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             }
         }
 
-        protected void OnRecordingEvent(ElementActionCongifuration e)
+        protected void OnRecordingEvent(RecordingEventArgs e)
         {
             RecordingEvent?.Invoke(this, e);
         }
