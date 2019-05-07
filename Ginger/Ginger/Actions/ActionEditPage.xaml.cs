@@ -298,7 +298,10 @@ namespace Ginger.Actions
 
             if (mAction.ValueConfigsNeeded == false)
             {
-                InputValuesEditControls.Visibility = System.Windows.Visibility.Collapsed;
+                this.Dispatcher.Invoke(() =>
+                {
+                    InputValuesEditControls.Visibility = System.Windows.Visibility.Collapsed;
+                });
                 return;
             }
 

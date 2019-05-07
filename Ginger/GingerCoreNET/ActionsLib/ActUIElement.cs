@@ -30,6 +30,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Run;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using System.Reflection;
 
 namespace GingerCore.Actions.Common
 {
@@ -898,15 +899,30 @@ namespace GingerCore.Actions.Common
         public NewPayLoad GetActionPayload()
         {
             // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
+       //TODO:     // Make it generic function in Act.cs to be used by other actions
 
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue("UIElementAction");
+            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+
+            foreach (FieldInfo FI in typeof(ActUIElement.Fields).GetFields())
+            {
+                string Name = FI.Name;
+                string Value = GetOrCreateInputParam(Name).ValueForDriver;
+
+                if (!string.IsNullOrEmpty(Value))
+                {
+                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
+                    PLParams.Add(FieldPL);
+                }
+            }
+            /*
             PL.AddValue(this.ElementLocateBy.ToString());
             PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
             PL.AddValue(this.ElementType.ToString());
             PL.AddValue(this.ElementAction.ToString());
-            // Make it generic function in Act.cs to be used by other actions
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+  */
+
             foreach (ActInputValue AIV in this.InputValues)
             {
                 if (!string.IsNullOrEmpty(AIV.Value))
