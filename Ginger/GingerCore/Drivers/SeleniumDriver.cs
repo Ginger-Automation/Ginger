@@ -5358,10 +5358,10 @@ namespace GingerCore.Drivers
                                         args.LearnedElementInfo = eInfo;
                                     }
                                 }
-                                if (ElementRecorded != null)
+                                if (RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
-                                    OnLearnedElement(args);
+                                    OnRecordingEvent(args);
                                 }
                                 else
                                 {  
@@ -5397,13 +5397,13 @@ namespace GingerCore.Drivers
             }
         }
 
-        public event ElementRecordedEventHandler ElementRecorded;
+        public event RecordingEventHandler RecordingEvent;
         private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
-        protected void OnLearnedElement(ElementActionCongifuration e)
+        protected void OnRecordingEvent(ElementActionCongifuration e)
         {
-            ElementRecorded?.Invoke(this, e);
+            RecordingEvent?.Invoke(this, e);
         }
         
         ElementInfo LearnRecorededElementFullDetails(string xCordinate, string yCordinate)
@@ -5418,16 +5418,16 @@ namespace GingerCore.Drivers
                     if (!lstURL.Contains(url) && CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
-                        RecordedPageChangedEventArgs pageArgs = new RecordedPageChangedEventArgs()
+                        RecordingEventArgs pageArgs = new RecordingEventArgs()
                         {
                             PageURL = url,
                             PageTitle = title,          
                             ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
                         };
                         ElementActionCongifuration args = new ElementActionCongifuration();
-                        args.PageChangedArgs = pageArgs;
-                        args.RecordingEvent = eRecordingEvent.PageChanged;
-                        OnLearnedElement(args);
+                        args.EventArgs = pageArgs;
+                        args.EventType = eRecordingEvent.PageChanged;
+                        OnRecordingEvent(args);
                     }
 
                     double xCord = 0;

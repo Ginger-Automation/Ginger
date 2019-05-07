@@ -19,12 +19,12 @@ limitations under the License.
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    public delegate void ElementRecordedEventHandler(object sender, ElementActionCongifuration e);
+    public delegate void RecordingEventHandler(object sender, ElementActionCongifuration e);
 
     [GingerInterface("IRecord", "Record user actions")]
     public interface IRecord
     {
-        event ElementRecordedEventHandler ElementRecorded;
+        event RecordingEventHandler RecordingEvent;
         
         void StartRecording(bool learnAdditionalChanges);
         void StopRecording();

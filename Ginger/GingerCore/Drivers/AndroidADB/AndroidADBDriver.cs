@@ -1066,7 +1066,7 @@ namespace GingerCore.Drivers.AndroidADB
             return false;
         }
 
-        public event Amdocs.Ginger.Plugin.Core.ElementRecordedEventHandler ElementRecorded;
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {

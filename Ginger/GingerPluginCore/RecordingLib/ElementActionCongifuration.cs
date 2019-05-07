@@ -18,8 +18,8 @@ namespace Amdocs.Ginger.Plugin.Core
         public string POMGuid { get; set; }
         public string ElementGuid { get; set; }
 
-        public RecordedPageChangedEventArgs PageChangedArgs { get; set; }
+        public RecordingEventArgs EventArgs { get; set; }
 
-        public eRecordingEvent RecordingEvent { get; set; }
+        public eRecordingEvent EventType { get; set; }
     }
 }

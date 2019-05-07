@@ -59,8 +59,8 @@ namespace Amdocs.Ginger.CoreNET
 
                 BusinessFlow = bFlow;
                 Context = context;
-                PlatformDriver.ElementRecorded -= PlatformDriver_ElementRecorded;
-                PlatformDriver.ElementRecorded += PlatformDriver_ElementRecorded;
+                PlatformDriver.RecordingEvent -= PlatformDriver_RecordingEvent;
+                PlatformDriver.RecordingEvent += PlatformDriver_RecordingEvent;
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET
             return recordingHelper;
         }
 
-        private void PlatformDriverPageChangedHandler(RecordedPageChangedEventArgs args)
+        private void PlatformDriverPageChangedHandler(RecordingEventArgs args)
         {
             try
             {
@@ -127,17 +127,17 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        private void PlatformDriver_ElementRecorded(object sender, ElementActionCongifuration args)
+        private void PlatformDriver_RecordingEvent(object sender, ElementActionCongifuration args)
         {
             try
             {
-                switch (args.RecordingEvent)
+                switch (args.EventType)
                 {
                     case eRecordingEvent.ElementRecorded:
                         ElementRecordedHandler(args);
                         break;
                     case eRecordingEvent.PageChanged:
-                        PlatformDriverPageChangedHandler(args.PageChangedArgs);
+                        PlatformDriverPageChangedHandler(args.EventArgs);
                         break;
                 }
             }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    public class RecordedPageChangedEventArgs
+    public class RecordingEventArgs
     {
         public string PageURL { get; set; }
         public string PageTitle { get; set; }
