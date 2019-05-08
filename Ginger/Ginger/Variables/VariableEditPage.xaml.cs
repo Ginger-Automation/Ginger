@@ -127,7 +127,17 @@ namespace Ginger.Variables
                 if (mVariable.VariableEditPage != null)
                 {
                     Type t = Assembly.GetExecutingAssembly().GetType("Ginger.Variables." + mVariable.VariableEditPage);
-                    Page varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
+                    Page varTypeConfigsPage = null;
+                    if (t!= typeof(VariableDynamicPage))
+                    {
+                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
+                    }
+                    else
+                    {
+                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable, mContext);
+                    }
+
+                    
                     if (varTypeConfigsPage != null)
                     {              
                         frmVarTypeInfo.Content = varTypeConfigsPage;
