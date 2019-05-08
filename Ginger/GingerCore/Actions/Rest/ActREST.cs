@@ -31,10 +31,11 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions.REST
 {
-    public class ActREST : ActWithoutDriver
+    public class ActREST : ActWithoutDriver, IObsoleteAction
     {
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // We keep a dictionary of each host and cookies
@@ -840,6 +841,38 @@ namespace GingerCore.Actions.REST
 
             }
             return NewReqBody;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if(Platform == ePlatformType.WebServices)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            throw new NotImplementedException();
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.WebServices;
         }
     }
 }
