@@ -338,19 +338,10 @@ namespace Amdocs.Ginger.Common
         {
             foreach (XmlNode XN in XNL)
             {
-                //if (Regex.Matches(XN.OuterXml, @"<(.)*>$").Count > 0)
-                //{
-                //    ChildNodes.Add(new XMLDocExtended(this, XN));
-                //}
                 if (Regex.Matches(XN.OuterXml, @"<(.)*>", RegexOptions.Compiled).Count > 0)
                 {
                     ChildNodes.Add(new XMLDocExtended(this, XN));
                 }
-
-                //if (XElement.Parse(XN.OuterXml).Elements().Count() > 0)
-                //{
-                //    ChildNodes.Add(new XMLDocExtended(this, XN));
-                //}
             }
         }
 
