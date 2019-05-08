@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -128,8 +129,8 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             foreach (Attribute attr in mActionParamProperties)
             {                
                 if (attr.GetType() == typeof(LabelAttribute))
-                {
-                    mLabel = ((LabelAttribute)attr).Label;   // We keep the label as is defined on the param - do not capitilize or change
+                {                                        
+                    mLabel = Regex.Replace(Regex.Replace(Regex.Replace(((LabelAttribute)attr).Label, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"\b\w", (Match match) => match.ToString().ToUpper());
                 }
                 else if (attr.GetType() == typeof(TooltipAttribute))
                 {

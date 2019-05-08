@@ -11,7 +11,8 @@ namespace GingerPluginCoreTest
         public void Concat(IGingerAction GA,                                                          
                             [MinLength(10)]// define s1 Min 10
                             [Mandatory] // user must fill a value
-                            [Default("Default")]
+                            [Default("webSiteURL")]
+                            [Label("webSiteURL")]
                             [MaxLength(15)]
                             string s1,
 
@@ -61,8 +62,8 @@ namespace GingerPluginCoreTest
             GA.AddOutput("result", result);
 
             GA.AddExInfo(a + "/" + b + "=" + result);
-        }
-            
+        }   
+        
 
     }
 }
