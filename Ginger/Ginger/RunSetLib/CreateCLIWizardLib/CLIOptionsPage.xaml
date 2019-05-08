@@ -27,13 +27,13 @@
                 
             </StackPanel>
 
-            <Label HorizontalAlignment="Left" FontWeight="Bold">Console output options</Label>
+            <!--<Label HorizontalAlignment="Left" FontWeight="Bold">Console output options</Label>
             <CheckBox Margin="5" IsChecked="True">Show console window</CheckBox>
 
             <StackPanel HorizontalAlignment="Left" Margin="10" Orientation="Horizontal">
                 <Label>Debug Level</Label>
                 <ComboBox x:Name="xAppLoggingLevelComboBox" Width="100"></ComboBox>
-            </StackPanel>
+            </StackPanel>-->
         </StackPanel>
         
         

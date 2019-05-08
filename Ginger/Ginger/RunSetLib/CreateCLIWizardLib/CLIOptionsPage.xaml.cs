@@ -26,7 +26,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
                     xGingerEXERadioButton.IsChecked = true;
-                    xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));
+                    //xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));
                     if (!(WorkSpace.Instance.Solution.SourceControl == null))
                     {
                         xDownloadsolutionFromSourceControlcheckBox.IsEnabled = true;

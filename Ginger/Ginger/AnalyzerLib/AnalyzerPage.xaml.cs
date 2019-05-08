@@ -279,25 +279,28 @@ namespace Ginger.AnalyzerLib
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5},  activity =>
+            Task.Factory.StartNew(() =>
             {
-                issues = AnalyzeActivity.Analyze(businessFlow, activity);
-                AddIssues(issues);
-                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
-                {
-                    Act action = (Act)iaction;
-                    List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
-                    AddIssues(actionissues);
-                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                    usedVariablesInActivity.AddRange(tempList);
-                });
+                Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                 {
+                     issues = AnalyzeActivity.Analyze(businessFlow, activity);
+                     AddIssues(issues);
+                     Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+                     {
+                         Act action = (Act)iaction;
+                         List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
+                         AddIssues(actionissues);
+                         List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+                         usedVariablesInActivity.AddRange(tempList);
+                     });
 
-                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-                usedVariablesInActivity.AddRange(activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity);
-                usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();
-            });
+                     List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+                     usedVariablesInActivity.AddRange(activityVarList);
+                     ReportUnusedVariables(activity, usedVariablesInActivity);
+                     usedVariablesInBF.AddRange(usedVariablesInActivity);
+                     usedVariablesInActivity.Clear();
+                 });
+            }).GetAwaiter().GetResult();
 
             ReportUnusedVariables(businessFlow, usedVariablesInBF);
 

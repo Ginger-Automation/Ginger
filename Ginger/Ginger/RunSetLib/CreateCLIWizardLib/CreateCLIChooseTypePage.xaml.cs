@@ -27,6 +27,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
                     xConfigRadioButton.IsChecked = true;
+
+                    //Disabling the option which are not working right now. Can enable it once its full fuctionality is working
+                    xDynamicRadioButton.IsEnabled = false;
+                    xScriptRadioButton.IsEnabled = false;
+                    xParametersRadioButton.IsEnabled = false;
+                    xExcelRadioButton.IsEnabled = false;
+
                     break;
                 case EventType.Active:
                     xCLICommandTextBox.Text = mCreateCLIWizard.CLIExecutor;
