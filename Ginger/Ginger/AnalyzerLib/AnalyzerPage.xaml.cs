@@ -37,6 +37,7 @@ using Ginger.BusinessFlowWindows;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using static Ginger.AnalyzerLib.AnalyzerItemBase;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -275,40 +276,45 @@ namespace Ginger.AnalyzerLib
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
 
-            DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(); 
+            DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
             List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
             AddIssues(issues);
-            Task.Factory.StartNew(() =>
-            {
-                Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
-                 {
-                     issues = AnalyzeActivity.Analyze(businessFlow, activity);
-                     AddIssues(issues);
-                     Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
-                     {
-                         Act action = (Act)iaction;
-                         List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
-                         AddIssues(actionissues);
-                         List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                         usedVariablesInActivity.AddRange(tempList);
-                     });
+           
+            // Removing Parallel.Foreach as its freezing on main thread when running from CLI
 
-                     List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-                     usedVariablesInActivity.AddRange(activityVarList);
-                     ReportUnusedVariables(activity, usedVariablesInActivity);
-                     usedVariablesInBF.AddRange(usedVariablesInActivity);
-                     usedVariablesInActivity.Clear();
-                 });
-            }).GetAwaiter().GetResult();
+                //Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                // {
+                foreach (Activity activity in businessFlow.Activities)
+                {
+                    issues = AnalyzeActivity.Analyze(businessFlow, activity);
+                    AddIssues(issues);
 
-            ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
-            if (markCompletion)
-            {
-                SetAnalayzeProceesAsCompleted();
-            }
+                    //Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+                    //{
+                    foreach (IAct iaction in activity.Acts)
+                    {
+                        Act action = (Act)iaction;
+                        List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
+                        AddIssues(actionissues);
+                        List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+                        usedVariablesInActivity.AddRange(tempList);
+                    };
 
+                    List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+                    usedVariablesInActivity.AddRange(activityVarList);
+                    ReportUnusedVariables(activity, usedVariablesInActivity);
+                    usedVariablesInBF.AddRange(usedVariablesInActivity);
+                    usedVariablesInActivity.Clear();
+                };
+             ReportUnusedVariables(businessFlow, usedVariablesInBF);
+
+             if (markCompletion)
+             {
+                 SetAnalayzeProceesAsCompleted();
+             }
+         
             return usedVariablesInBF;
 
         }
