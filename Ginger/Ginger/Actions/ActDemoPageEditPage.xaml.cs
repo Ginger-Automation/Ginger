@@ -60,7 +60,7 @@ namespace Ginger.Actions
             ExampleUCComboBox.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.ComboBoxDataValueType), typeof(ActDemoPage.eComboBoxDataValueType));
 
             //UCComboBox With VE Button Example.
-            ExampleUCComboBoxWithVE.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.ComboBoxDataValueTypeWithVE), comboBoxItemsList,true);
+            ExampleUCComboBoxWithVE.Init(mAct.GetOrCreateInputParam(ActDemoPage.Fields.ComboBoxDataValueTypeWithVE), comboBoxItemsList,true, context: Context.GetAsContext(mAct.Context));
             
             //CheckBox Example
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ExampleCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDemoPage.Fields.CheckBoxParam));
