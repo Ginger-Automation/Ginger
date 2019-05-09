@@ -29,61 +29,51 @@ var sourceDoc = source.ownerDocument,
     x2 = targetBox.left + (targetBox.width >> 1) + offsetX,
     y2 = targetBox.top + (targetBox.height >> 1) + offsetY,
     data = Object.create(Object.prototype, {
-        "_items": {
-            "value": {}
+        _items: {
+            value: {}
         },
-        "effectAllowed": {
-            "value": "all",
-            "writable": !0
+        effectAllowed: {
+            value: "all",
+            writable: !0
         },
-        "dropEffect": {
-            "value": "move",
-            "writable": !0
+        dropEffect: {
+            value: "move",
+            writable: !0
         },
-        "files": {
-            "get"() {
-
+        files: {
+            get: function get() {
                 return this._items.Files;
-
             }
         },
-        "types": {
-            "get"() {
-
+        types: {
+            get: function get() {
                 return Object.keys(this._items);
-
             }
         },
-        "setData": {
-            "value"(e, t) {
-
+        setData: {
+            value: function value(e, t) {
                 this._items[e] = t;
-
             }
         },
-        "getData": {
-            "value"(e) {
-
+        getData: {
+            value: function value(e) {
                 return this._items[e];
-
             }
         },
-        "clearData": {
-            "value"(e) {
-
+        clearData: {
+            value: function value(e) {
                 delete this._items[e];
-
             }
         },
-        "setDragImage": {
-            "value"(e) { }
+        setDragImage: {
+            value: function value(e) { }
         }
     });
 
 function emit(element, type, delay, callback) {
     var event = sourceDoc.createEvent("DragEvent");
     event.initMouseEvent(type, !0, !0, docView, 0, 0, 0, x1, y1, !1, !1, !1, !1, 0, null), Object.defineProperty(event, "dataTransfer", {
-        get: function () {
+        get: function get() {
             return data;
         }
     }), element.dispatchEvent(event), docView.setTimeout(callback, delay);

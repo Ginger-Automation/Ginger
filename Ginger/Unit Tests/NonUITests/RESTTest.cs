@@ -31,6 +31,7 @@ using GingerTestHelper;
 
 namespace UnitTests.NonUITests
 {
+    [Ignore]
     [TestClass]
     [Level3]
     public class RESTTest 

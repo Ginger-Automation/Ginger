@@ -79,7 +79,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             CookieMode.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.CookieMode), typeof(ApplicationAPIUtils.eCookieMode));
             RequestTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.RequestType), typeof(ApplicationAPIUtils.eRequestType));
             HttpVersioncombobox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ReqHttpVersion), typeof(ApplicationAPIUtils.eHttpVersion));
-            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ContentType), typeof(ApplicationAPIUtils.eContentType), false, ContentTypeChange);
+            ContentTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ContentType), typeof(ApplicationAPIUtils.eContentType), ContentTypeChange);
             ResponseTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.ResponseContentType), typeof(ApplicationAPIUtils.eContentType));
             //Check maybe the binding of TemplateFileNameFileBrowser need to be different between soap and rest
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateFileNameFileBrowser, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.TemplateFileNameFileBrowser));
@@ -228,7 +228,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             SecurityTypeComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             //Authorization:
-            AuthTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.AuthorizationType), typeof(ApplicationAPIUtils.eAuthType), false, AuthorizationBox);
+            AuthTypeComboBox.Init(mApplicationAPIModel, nameof(mApplicationAPIModel.AuthorizationType), typeof(ApplicationAPIUtils.eAuthType), AuthorizationBox);
             AuthTypeComboBox.ComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AuthUserTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthUsername));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AuthPasswordTextBox, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.AuthPassword));

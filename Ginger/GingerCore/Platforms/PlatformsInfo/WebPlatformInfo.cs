@@ -25,6 +25,9 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
+using System.Reflection;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
@@ -163,6 +166,75 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
+        public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
+        {
+            Act elementAction = null;
+            if (elementInfo != null)
+            {
+                ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+                if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
+                {
+                    if (elementTypeOperations.ActionType == typeof(ActBrowserElement))
+                    {
+                        elementAction = new ActBrowserElement()
+                        {
+                            Description = actConfig.Description,
+                            ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), actConfig.Operation),
+                            LocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                            Value = actConfig.ElementValue
+                        };
+                    }
+                    else if (elementTypeOperations.ActionType == typeof(ActUIElement))
+                    {
+                        elementAction = new ActUIElement()
+                        {
+                            Description = actConfig.Description,
+                            ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                            ElementLocateValue = actConfig.LocateValue,
+                            Value = actConfig.ElementValue
+                        };
+
+                        if (actConfig.AddPOMToAction)
+                        {
+                            PropertyInfo pLocateBy = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateBy));
+                            if (pLocateBy != null)
+                            {
+                                if (pLocateBy.PropertyType.IsEnum)
+                                {
+                                    pLocateBy.SetValue(elementAction, Enum.Parse(pLocateBy.PropertyType, nameof(eLocateBy.POMElement)));
+                                }
+                            }
+
+                            PropertyInfo pLocateVal = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateValue));
+                            if (pLocateVal != null)
+                            {
+                                pLocateVal.SetValue(elementAction, string.Format("{0}_{1}", actConfig.POMGuid, actConfig.ElementGuid));
+                            }
+
+                            PropertyInfo pElementType = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementType));
+                            if (pElementType != null && pElementType.PropertyType.IsEnum)
+                            {
+                                pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
+                            }
+                        }
+                    }
+                } 
+            }
+            else
+            {
+                elementAction = new ActUIElement()
+                {
+                    Description = actConfig.Description,
+                    ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                    ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                    ElementLocateValue = actConfig.LocateValue,
+                    ElementType = (eElementType)System.Enum.Parse(typeof(eElementType), Convert.ToString(actConfig.Type)),
+                    Value = actConfig.ElementValue
+                };
+            }
+            return elementAction;
+        }
+        
         public List<ElementTypeData> GetPlatformElementTypesData()
         {
             if (mPlatformElementTypeOperations == null)
