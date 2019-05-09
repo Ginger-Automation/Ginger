@@ -78,7 +78,17 @@ namespace GingerWPF.BusinessFlowsLib
             UpdateAutomatePageRunner();
             LoadBusinessFlowToAutomate(businessFlow);
 
-            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);            
+            SetUIControls();
+        }
+
+        private void SetUIControls()
+        {
+            xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
+            xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
+            xBusinessFlowItemComboBox.Items.Add("Configurations");
+            xBusinessFlowItemComboBox.SelectedIndex = 0;
+
+            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
             BindEnvsCombo();
         }
 
@@ -182,7 +192,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mBfActivitiesPage == null)
                     {
                         mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
-                        mBfActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        //mBfActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         mBfActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mBfActivitiesPage;
                     }
@@ -190,22 +200,22 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mBfActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
                     }
-                    mBusinessFlow.Activities.CollectionChanged += BfActivities_CollectionChanged;
-                    UpdateBfActivitiesTabHeader();
+                    //mBusinessFlow.Activities.CollectionChanged += BfActivities_CollectionChanged;
+                    //UpdateBfActivitiesTabHeader();
 
 
                     if (mBfVariabelsPage == null)
                     {
                         mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
-                        mBfVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        //mBfVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xBfVariablesTabFrame.Content = mBfVariabelsPage;
                     }
                     else
                     {
                         mBfVariabelsPage.UpdateParent(mBusinessFlow);
                     }
-                    mBusinessFlow.Variables.CollectionChanged += BfVariables_CollectionChanged;
-                    UpdateBfVariabelsTabHeader();
+                    //mBusinessFlow.Variables.CollectionChanged += BfVariables_CollectionChanged;
+                    //UpdateBfVariabelsTabHeader();
 
                     if (mBfConfigurationsPage == null)
                     {
@@ -247,30 +257,30 @@ namespace GingerWPF.BusinessFlowsLib
             mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
         }
 
-        private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            UpdateBfVariabelsTabHeader();
-        }
+        //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        //{
+        //    UpdateBfVariabelsTabHeader();
+        //}
 
-        private void BfActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            UpdateBfActivitiesTabHeader();
-        }
+        //private void BfActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        //{
+        //    UpdateBfActivitiesTabHeader();
+        //}
 
-        private void UpdateBfVariabelsTabHeader()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                xBfVariablesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
-            });
-        }
-        private void UpdateBfActivitiesTabHeader()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                xBfActiVitiesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
-            });
-        }
+        //private void UpdateBfVariabelsTabHeader()
+        //{
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //        xBfVariablesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mBusinessFlow.Variables.Count);
+        //    });
+        //}
+        //private void UpdateBfActivitiesTabHeader()
+        //{
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //        xBfActiVitiesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
+        //    });
+        //}
 
         public void UpdateRunnerAgentsUsedBusinessFlow()
         {
@@ -711,6 +721,26 @@ namespace GingerWPF.BusinessFlowsLib
         private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void xBusinessFlowItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(xBusinessFlowItemComboBox.SelectedItem == GingerDicser.GetTermResValue(eTermResKey.Activities))
+            {
+                xItemsTabs.SelectedItem = xBfActiVitiesTab;
+            }
+            else if (xBusinessFlowItemComboBox.SelectedItem == GingerDicser.GetTermResValue(eTermResKey.Variables))
+            {
+                xItemsTabs.SelectedItem = xBfVariablesTab;
+            }
+            else if (xBusinessFlowItemComboBox.SelectedItem == "Configurations")
+            {
+                xItemsTabs.SelectedItem = xBfConfigurationsTab; 
+            }
+            else
+            {
+                xItemsTabs.SelectedItem = xBfActiVitiesTab;
+            }
         }
     }
 }

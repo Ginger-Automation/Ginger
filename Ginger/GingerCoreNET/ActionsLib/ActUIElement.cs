@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Helpers;
-using GingerCore.Properties;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.UIElement;
@@ -28,8 +27,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act
@@ -835,7 +832,7 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        internal Drivers.CommunicationProtocol.PayLoad GetPayLoad()
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
             PayLoad PL = new PayLoad("UIElementAction");
             PL.AddValue(this.ElementLocateBy.ToString());

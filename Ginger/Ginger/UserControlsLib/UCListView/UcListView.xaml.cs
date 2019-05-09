@@ -135,6 +135,7 @@ namespace Ginger.UserControlsLib.UCListView
                     mObjList.PropertyChanged += ObjListPropertyChanged;
                     BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    UpdateTitleListCount();
                 }
             }
 
@@ -173,6 +174,15 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
                 }
+                UpdateTitleListCount();
+            });
+        }
+
+        private void UpdateTitleListCount()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xListCountTitleLbl.Content = string.Format("({0})", mObjList.Count);
             });
         }
 
@@ -484,6 +494,11 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 handler(Info, new EventArgs());
             }
+        }
+
+        private void XDeleteGroupBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

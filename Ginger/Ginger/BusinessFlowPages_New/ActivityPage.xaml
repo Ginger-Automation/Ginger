@@ -23,8 +23,8 @@
             <ColumnDefinition Width="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold"/>
-        <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="20" Foreground="{StaticResource $HighlightColor_Red}" />
+        <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+        <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
         <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
         <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC"  Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"/>
         
@@ -51,7 +51,7 @@
                     </MenuItem>
                 </Menu>
             </StackPanel>
-            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $SelectionColor_Pink}" Margin="4,4,4,4"/>
+            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
             <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                 <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run"  ButtonImageType="Play"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                     <usercontrols:ucButton.ToolTip>
@@ -71,7 +71,7 @@
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" />
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                             <TextBlock x:Name="xActionsTabHeaderText" Text="Actions (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
@@ -83,7 +83,7 @@
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" />
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                             <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
@@ -95,7 +95,7 @@
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" />
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
                             <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>

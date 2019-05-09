@@ -419,20 +419,20 @@ namespace Ginger.UserControlsLib.UCListView
                         fullname += name;
                     }
                 }
-                if (!string.IsNullOrEmpty(ItemGroupField))
-                {
-                    Object group = Item.GetType().GetProperty(ItemGroupField).GetValue(Item);
-                    if (group != null)
-                    {
-                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
-                        {
-                            FontSize = 10,
-                            Text = string.Format("[{0}]", group.ToString())
-                    });
+                //if (!string.IsNullOrEmpty(ItemGroupField))
+                //{
+                //    Object group = Item.GetType().GetProperty(ItemGroupField).GetValue(Item);
+                //    if (group != null)
+                //    {
+                //        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                //        {
+                //            FontSize = 10,
+                //            Text = string.Format("[{0}]", group.ToString())
+                //    });
 
-                        fullname += string.Format("[{0}]", group.ToString());
-                    }
-                }
+                //        fullname += string.Format("[{0}]", group.ToString());
+                //    }
+                //}
 
                 xItemNameTxtBlock.ToolTip = fullname;
             }

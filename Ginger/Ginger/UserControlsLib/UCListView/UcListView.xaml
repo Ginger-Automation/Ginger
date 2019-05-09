@@ -12,12 +12,13 @@
             <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
         
-        <DockPanel Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+        <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click" />
             
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
                 <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+                <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
 
             <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
@@ -59,10 +60,48 @@
                     <StackPanel Orientation="Vertical"></StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-            <!--<ListView.ItemTemplate>
-                <DataTemplate>                    
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
+
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        
+                                            
+                                       
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <Grid HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="100*"/>
+                                                        <ColumnDefinition Width="100"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <DockPanel HorizontalAlignment="Stretch">
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" Margin="0,0,0,0" />
+                                                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
+                                                            <Label Foreground="{StaticResource $BackgroundColor_DarkBlue}">(</Label>
+                                                            <Label Content="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="-9,0,0,0"></Label>
+                                                            <Label Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="-9,0,0,0">)</Label>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                    <!--<StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                        <usercontrols:ucButton DockPanel.Dock="Right" Tag="{Binding Name}" ToolTip="Delete Group" ButtonType="CircleImageButton" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  ButtonImageType="Delete" Click="XDeleteGroupBtn_Click" HorizontalAlignment="Right" />
+                                                        <usercontrols:ucButton DockPanel.Dock="Right" Tag="{Binding Name}" ToolTip="Add Activity" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="12" ButtonImageHeight="12"  ButtonImageType="Add"  HorizontalAlignment="Right" />
+                                                    </StackPanel>-->
+                                                </Grid>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                       
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
         </ListView>
     </Grid>
 </UserControl>
