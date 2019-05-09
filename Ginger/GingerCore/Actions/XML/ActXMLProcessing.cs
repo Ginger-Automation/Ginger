@@ -25,6 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.XML
 {
     public class ActXMLProcessing : ActWithoutDriver
@@ -88,7 +90,7 @@ namespace GingerCore.Actions.XML
                 }
             }
 
-            public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+            public override eImageType Image { get { return eImageType.CodeFileBlue; } }
 
             public override void Execute()
             {

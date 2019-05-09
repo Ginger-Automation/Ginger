@@ -90,7 +90,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override eImageType Image { get { return eImageType.vbs; } }
+        public override eImageType Image { get { return eImageType.Image; } }
 
         public override void Execute()
         {
@@ -136,7 +136,7 @@ namespace GingerCore.Actions
 
                     }
 
-                    result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
 
 
                     if (result.Count <= 0)
@@ -157,7 +157,7 @@ namespace GingerCore.Actions
                         continue;
                     MainWinImage = GetWindowBitmap(w);
                     if (File.Exists(ExpectedImgFile1) && MainWinImage != null)
-                        result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                        result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
                     else
                         continue;
                     if (result.Count > 0)
@@ -179,7 +179,7 @@ namespace GingerCore.Actions
                 {
                     WinAPIAutomation.ShowWindow(targetWin);
                     MainWinImage = GetWindowBitmap(targetWin);
-                    result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
 
                     if (result.Count <= 0)
                     {

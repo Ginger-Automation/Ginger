@@ -25,6 +25,8 @@ using GingerCore.Properties;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActDSTableElement : ActWithoutDriver
@@ -63,7 +65,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override System.Drawing.Image Image { get { return Resources.Act; } }
+        public override eImageType Image { get { return eImageType.Action; } }
 
         public override void Execute()
         {

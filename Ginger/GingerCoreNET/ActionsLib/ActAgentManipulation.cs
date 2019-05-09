@@ -156,6 +156,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return null; } }
+        public override eImageType Image { get { return eImageType.Agent; } }
     }
 }

@@ -124,7 +124,7 @@ namespace GingerCore.Actions
             get { return "Create PDF Chart from CSV data"; }
         }
 
-        public override eImageType Image { get { return eImageType.ExcelFile; } }
+        public override eImageType Image { get { return eImageType.PDFFile; } }
         
         public override void Execute()
         {

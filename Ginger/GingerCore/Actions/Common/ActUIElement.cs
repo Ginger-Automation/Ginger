@@ -28,6 +28,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act
@@ -704,7 +706,7 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public override System.Drawing.Image Image
+        public override eImageType Image
         {
             get
             {
@@ -713,33 +715,33 @@ namespace GingerCore.Actions.Common
                 switch (ElementType)
                 {
                     case eElementType.Button:
-                        return Resources.ActButton;
+                        return eImageType.Button;
                     case eElementType.TextBox:
-                        return Resources.TextBox_16x16;
+                        return eImageType.Edit;
                     case eElementType.ComboBox:
-                        return Resources.DropDownList_16x16;
+                        return eImageType.ExpandAll;
                     case eElementType.List:
-                        return Resources.List_16x16;
+                        return eImageType.DropList;
                     case eElementType.CheckBox:
-                        return Resources.CheckBox_16x16;
+                        return eImageType.CheckBox;
                     case eElementType.Image:
-                        return Resources.Image_16x16;
+                        return eImageType.Image;
                     case eElementType.Label:
-                        return Resources.Label_16x16;
+                        return eImageType.Paragraph;
                     case eElementType.MenuItem:
-                        return Resources.MenuItem_16x16;
+                        return eImageType.Menu;
                     case eElementType.MenuBar:
-                        return Resources.MenuBar_16x16;
+                        return eImageType.Window;
                     case eElementType.RadioButton:
-                        return Resources.RadioButton_16x16;
+                        return eImageType.RadioButton;
                     case eElementType.TreeView:
-                        return Resources.TreeView_16x16;
+                        return eImageType.MapSigns;
                     case eElementType.Window:
-                        return Resources.Window_16x16;
+                        return eImageType.WindowsIcon;
                     case eElementType.Table:
-                        return Resources.Table;
+                        return eImageType.Table;
                     default:
-                        return Resources.Window_16x16;  // FIXME
+                        return eImageType.Window;  // FIXME
                 }
             }
         }

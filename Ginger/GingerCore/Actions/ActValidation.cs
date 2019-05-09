@@ -68,7 +68,7 @@ namespace GingerCore.Actions
         }
 
         //public override System.Drawing.Image Image { get { return Resources.Act; } }
-        public override eImageType Image { get { return eImageType.Action; } }
+        public override eImageType Image { get { return eImageType.Check; } }
 
         public override void Execute()
         {

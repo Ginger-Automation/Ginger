@@ -83,7 +83,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Action; } }
+        public override eImageType Image { get { return eImageType.Label; } }
 
         Type IObsoleteAction.TargetAction()
         {

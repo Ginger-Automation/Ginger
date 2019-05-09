@@ -24,6 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -67,7 +68,7 @@ namespace GingerCore.Actions
                 return "Goto URL";
             }
         }
-        public override System.Drawing.Image Image { get { return Resources.ActGotoURL; } }
+        public override eImageType Image { get { return eImageType.Browser; } }
 
         //
         // IObsoleteAction part

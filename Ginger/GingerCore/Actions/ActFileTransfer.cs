@@ -32,6 +32,8 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActFileTransfer : ActWithoutDriver
@@ -243,7 +245,7 @@ namespace GingerCore.Actions
             
         }
 
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
         private bool ConnectFTPClient()
         {

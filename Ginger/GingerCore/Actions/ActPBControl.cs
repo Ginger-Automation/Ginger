@@ -24,6 +24,8 @@ using GingerCore.Properties;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     // Action class for PB control
@@ -119,7 +121,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.Codepen; } }
 
 
         public void SetActionDetails(String Description, eLocateBy LocateBy, String LocateValue, ActPBControl.eControlAction ControlAction, String Value)

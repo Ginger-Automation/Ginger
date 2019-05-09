@@ -66,6 +66,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.Rows; } }
     }
 }

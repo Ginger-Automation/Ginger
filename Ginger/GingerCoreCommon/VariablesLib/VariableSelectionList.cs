@@ -33,7 +33,7 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableSelectionListPage"; } }
 
-        public override eImageType Image { get { return eImageType.VariableList; } }
+        public override eImageType Image { get { return eImageType.VariableSelectionList; } }
 
         public override string VariableType() { return "Selection List"; }
 

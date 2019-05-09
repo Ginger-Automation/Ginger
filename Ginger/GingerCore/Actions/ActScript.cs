@@ -30,6 +30,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActScript : ActWithoutDriver
@@ -118,7 +120,7 @@ namespace GingerCore.Actions
         }
         public string ExpectString { get; set; }
  
-        public override System.Drawing.Image Image { get { return Resources.Vbs16x16; } }
+        public override eImageType Image { get { return eImageType.CodeFileRed; } }
 
         protected void Process_Exited(object sender, EventArgs e)
         {

@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
@@ -97,6 +99,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsListView.CurrentItem != null)
             {
+                (mActionsListView.CurrentItem as Act).Context = mContext;
                 ShowHideEditPage((Act)mActionsListView.CurrentItem);
             }
         }
@@ -131,7 +134,9 @@ namespace GingerWPF.BusinessFlowsLib
         // Drag Drop handlers
         private void listActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)) 
+                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
+                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo)))
             {
                 // OK to drop                         
                 DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
@@ -140,18 +145,26 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
-            Act a = (Act)((DragInfo)sender).Data;
-            Act instance = (Act)a.CreateInstance(true);
-            mActivity.Acts.Add(instance);
+            Act a, instance;
+            if (((DragInfo)sender).Data.GetType() == typeof(Act))
+            {
+                a = (Act)((DragInfo)sender).Data;
+                instance = (Act)a.CreateInstance(true);
+                mActivity.Acts.Add(instance);
 
-            int selectedActIndex = -1;
-            if (mActivity.Acts.CurrentItem != null)
-            {
-                selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
+                int selectedActIndex = -1;
+                if (mActivity.Acts.CurrentItem != null)
+                {
+                    selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
+                }
+                if (selectedActIndex >= 0)
+                {
+                    mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
+                }
             }
-            if (selectedActIndex >= 0)
+            else if(((DragInfo)sender).Data.GetType() == typeof(ElementInfo))
             {
-                mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
+
             }
         }
 

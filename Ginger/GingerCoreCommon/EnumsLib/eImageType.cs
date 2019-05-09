@@ -74,6 +74,12 @@ namespace Amdocs.Ginger.Common.Enums
         Random,
         Sequence,
         Timer,
+        VariableString,
+        SortAsc,
+        VariableSelectionList,
+        VariableRandomString,
+        VariableDynamic,
+
         #endregion
 
         #region Execution Status Images
@@ -164,6 +170,7 @@ namespace Amdocs.Ginger.Common.Enums
         EditWindow,
         UserDefined,
         Spy,
+
         #endregion
 
         #region Items Images
@@ -219,6 +226,29 @@ namespace Amdocs.Ginger.Common.Enums
         Ping,
         Database,
         Output,
+        CodeFile,
+        CodeFileRed,
+        CodeFileBlue,
+        Rows,
+        Column,
+        Columns,
+        Browser,
+        KeyboardLayout,
+        Linux,
+        BatteryThreeQuarter,
+        Mobile,
+        Codepen,
+        MousePointer,
+        AudioFileOutline,
+        ChartLine,
+        Suitcase,
+        Paragraph,
+        BullsEye,
+        WindowsIcon,
+        SoapUI,
+        Java,
+        PDFFile,
+
         #endregion
 
         #region Source control Images     
@@ -268,6 +298,7 @@ namespace Amdocs.Ginger.Common.Enums
         ListItem,
         Window,
         Text,
+        LinkSquare,
         #endregion
     }
 }
