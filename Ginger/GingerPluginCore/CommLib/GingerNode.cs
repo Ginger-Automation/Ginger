@@ -19,9 +19,13 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.ActionsLib;
+using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -112,6 +116,20 @@ namespace GingerCoreNET.DriversLib
             }
         }
 
+        public static NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> aOVs)
+        {
+            // We send back only item which can change - ExInfo and Output values
+            NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
+            PLRC.AddValue(exInfo);  // ExInfo
+            PLRC.AddValue(error); // Error
+
+            // add output values            
+            PLRC.AddListPayLoad(GingerNode.GetOutpuValuesPayLoad(aOVs));
+
+            PLRC.ClosePackage();
+            return PLRC;
+        }
+
         // Being used in plugin - DO NOT Remove will show 0 ref
         public void NotifyNodeClosing()
         {
@@ -130,7 +148,7 @@ namespace GingerCoreNET.DriversLib
         }
 
         private void HubClientMessageHandler(GingerSocketInfo gingerSocketInfo)
-        {
+            {
             Console.WriteLine("Processing Message");
 
             NewPayLoad pl = gingerSocketInfo.DataAsPayload;
@@ -141,6 +159,9 @@ namespace GingerCoreNET.DriversLib
                     break;
                 case "RunAction":
                     gingerSocketInfo.Response = RunAction(pl);
+                    break;
+                case "RunPlatformAction":
+                    gingerSocketInfo.Response = RunPlatformAction(pl);
                     break;
                 case "StartDriver":
                     gingerSocketInfo.Response = StartDriver();
@@ -157,11 +178,96 @@ namespace GingerCoreNET.DriversLib
                 case "AttachDisplay":
                     gingerSocketInfo.Response = AttachDisplay(pl);
                     break;
+                case "ScreenshotAction":
+                    gingerSocketInfo.Response = TakeScreenot(pl);
+                    break;
                 default:
                     throw new Exception("Unknown Messgae: " + pl.Name);
             }
         }
 
+
+        private NewPayLoad RunPlatformAction(NewPayLoad payload)
+        {
+            // GingerNode needs to remain generic so we have one entry point and delagate the work to the platform handler
+            if (mService is IPlatformService platformService)
+            {                
+                    NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService,payload);
+                    return newPayLoad;                
+            }
+
+            NewPayLoad err2 = NewPayLoad.Error("RunPlatformAction: service is not supporting IPlatformService cannot delegate to run action "); 
+            return err2;
+        }
+        private NewPayLoad TakeScreenot(NewPayLoad ActionPayload)
+        {
+            if (mService is IScreenShotSetvice ScreenshotService)
+            {
+                
+                Dictionary<string, string> InputParams = new Dictionary<string, string>();
+                List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
+
+
+                foreach (NewPayLoad Np in FieldsandParams)
+                {
+                    string Name = Np.GetValueString();
+
+                    string Value = Np.GetValueString();
+                    if (!InputParams.ContainsKey(Name))
+                    {
+                        InputParams.Add(Name, Value);
+                    }
+                }
+                NewPayLoad ResponsePL = new NewPayLoad("ScreenShots");
+                string WindowsToCapture = InputParams["WindowsToCapture"];
+
+                List<NewPayLoad> ScreenShots = new List<NewPayLoad>();
+
+                switch (WindowsToCapture)
+                {
+                    case "OnlyActiveWindow":
+                        ScreenShots.Add(BitmapToPayload(ScreenshotService.GetActiveScreenImage()));
+                       
+                        break;
+                    case "AllAvailableWindows":
+
+
+                        foreach(Bitmap bmp in ScreenshotService.GetAllScreensImages())
+                        {
+                            ScreenShots.Add(BitmapToPayload(bmp));
+                        }
+                        break;
+
+                    default: 
+                        return NewPayLoad.Error("Service is not supporting IScreenShotSetvice cannot delegate to take screenshot"); 
+
+
+                }
+
+
+
+
+
+                Bitmap img = ScreenshotService.GetActiveScreenImage();
+
+
+                ResponsePL.AddListPayLoad(ScreenShots);
+                ResponsePL.ClosePackage();
+                return ResponsePL;
+            }
+
+            NewPayLoad err2 = NewPayLoad.Error("Service is not supporting IScreenShotSetvice cannot delegate to take screenshot");
+            return err2;
+        }
+        static NewPayLoad BitmapToPayload(Bitmap bitmap)
+        {
+            MemoryStream ms = new MemoryStream();
+
+
+            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+            string Base64Image = Convert.ToBase64String(ms.GetBuffer());
+            return new NewPayLoad("ScreenShot", Base64Image);
+        }
         private NewPayLoad Reserve(NewPayLoad pl)
         {
             Guid sessionID = pl.GetGuid();
@@ -252,20 +358,13 @@ namespace GingerCoreNET.DriversLib
             // mService.RunAction(AH.GingerAction);
             
             ExecuteMethod(AH, actionInputParams, nodeGingerAction);
+
+            NewPayLoad PLRC = CreateActionResult(nodeGingerAction.ExInfo, nodeGingerAction.Errors, nodeGingerAction.Output.OutputValues);
             
-            // We send back only item which can change - ExInfo and Output values
-            NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
-            PLRC.AddValue(nodeGingerAction.ExInfo);
-            PLRC.AddValue(nodeGingerAction.Errors);            
-            PLRC.AddListPayLoad(GetOutpuValuesPayLoad(nodeGingerAction.Output.OutputValues));
-            PLRC.ClosePackage();
             return PLRC;            
         }
 
-        private List<NewPayLoad> GetOutpuValuesPayLoad(object values)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public static void ExecuteMethod(ActionHandler AH, ActionInputParams p, NodeGingerAction GA)  
         {            
@@ -413,30 +512,33 @@ namespace GingerCoreNET.DriversLib
             
         }
 
-        internal List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
+        public static List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
         {
             List<NewPayLoad> OutputValuesPayLoad = new List<NewPayLoad>();
-            foreach (NodeActionOutputValue AOV in AOVs)
+            if (AOVs != null) // we return empty list in case of null - no output values
             {
-                NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);  
-                PLO.AddValue(AOV.Param);
-                PLO.AddValue(AOV.Path);
-                PLO.AddEnumValue(AOV.GetParamType());
-                switch (AOV.GetParamType())
+                foreach (NodeActionOutputValue AOV in AOVs)
                 {
-                    case NodeActionOutputValue.OutputValueType.String:
-                        PLO.AddValue(AOV.ValueString);
-                        break;
-                    case NodeActionOutputValue.OutputValueType.ByteArray:
-                        PLO.AddBytes(AOV.ValueByteArray);
-                        break;
+                    NewPayLoad PLO = new NewPayLoad(SocketMessages.ActionOutputValue);
+                    PLO.AddValue(AOV.Param);
+                    PLO.AddValue(AOV.Path);
+                    PLO.AddEnumValue(AOV.GetParamType());
+                    switch (AOV.GetParamType())
+                    {
+                        case NodeActionOutputValue.OutputValueType.String:
+                            PLO.AddValue(AOV.ValueString);
+                            break;
+                        case NodeActionOutputValue.OutputValueType.ByteArray:
+                            PLO.AddBytes(AOV.ValueByteArray);
+                            break;
                         // TODO: add other types
-                    default:
-                        throw new Exception("Unknown output Value Type - " + AOV.GetParamType());
-                }
-                PLO.ClosePackage();
+                        default:
+                            throw new Exception("Unknown output Value Type - " + AOV.GetParamType());
+                    }
+                    PLO.ClosePackage();
 
-                OutputValuesPayLoad.Add(PLO);
+                    OutputValuesPayLoad.Add(PLO);
+                }
             }
             return OutputValuesPayLoad;
         }

@@ -912,7 +912,12 @@ namespace GingerCore.Actions.Common
 
                 if(string.IsNullOrEmpty(Value))
                 {
-                    Value= this.GetType().GetProperty(Name)!=null? this.GetType().GetProperty(Name).GetValue(this, null).ToString():string.Empty ;
+                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
+
+                    if (Output != null)
+                    {
+                        Value = Output.ToString();
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(Value))

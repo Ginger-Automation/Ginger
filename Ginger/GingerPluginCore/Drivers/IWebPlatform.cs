@@ -6,6 +6,8 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.Drivers
 {
+
+    // ???????????????
     [ServiceFeature]
    public interface IWebPlatform
     {

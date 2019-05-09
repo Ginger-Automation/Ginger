@@ -119,14 +119,15 @@ namespace Ginger.Agents.AddAgentWizardLib
         {
             xDriverSubTypeComboBox.Items.Clear();
             xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
-
-            DriverInfo DI= xDriverTypeComboBox.SelectedItem as DriverInfo;
-            mWizard.Agent.DriverInfo = DI;
-            foreach (var service in mWizard.Agent.DriverInfo.services)
+            if (xDriverTypeComboBox.Items.Count > 0)
             {
-                xDriverSubTypeComboBox.Items.Add(service);
+                DriverInfo DI = xDriverTypeComboBox.SelectedItem as DriverInfo;
+                mWizard.Agent.DriverInfo = DI;
+                foreach (var service in mWizard.Agent.DriverInfo.services)
+                {
+                    xDriverSubTypeComboBox.Items.Add(service);
+                }
             }
-          
 //TODO: Fix me asap
          //   mWizard.Agent.InitDriverConfigs();
         }
