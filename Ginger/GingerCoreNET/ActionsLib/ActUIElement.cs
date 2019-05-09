@@ -910,6 +910,11 @@ namespace GingerCore.Actions.Common
                 string Name = FI.Name;
                 string Value = GetOrCreateInputParam(Name).ValueForDriver;
 
+                if(string.IsNullOrEmpty(Value))
+                {
+                    Value= this.GetType().GetProperty(Name)!=null? this.GetType().GetProperty(Name).GetValue(this, null).ToString():string.Empty ;
+                }
+
                 if (!string.IsNullOrEmpty(Value))
                 {
                     NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);

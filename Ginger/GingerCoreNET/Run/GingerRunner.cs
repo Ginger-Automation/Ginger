@@ -1579,6 +1579,9 @@ namespace Ginger.Run
                                 Reporter.ToLog(eLogLevel.WARN, msg);
                                 act.ExInfo += Environment.NewLine + msg;
                             }
+
+
+
                             else if (a.Status != Agent.eStatus.Running)
                             {
                                 msg = "Screenshot not captured because agent is not running for the action:'" + act.Description + "'";
@@ -1587,16 +1590,33 @@ namespace Ginger.Run
                             }
                             else
                             {
-                                a.RunAction(ASS);//TODO: Use IVisal driver to get screen shot instead of running action                         
-                                if (string.IsNullOrEmpty(ASS.Error))//make sure the screen shot succeed
+                                if (a.AgentType == Agent.eAgentType.Driver)
                                 {
-                                    act.ScreenShots.AddRange(ASS.ScreenShots);
-                                    act.ScreenShotsNames.AddRange(ASS.ScreenShotsNames);
+
+                                    a.RunAction(ASS);//TODO: Use IVisal driver to get screen shot instead of running action                         
+                                    if (string.IsNullOrEmpty(ASS.Error))//make sure the screen shot succeed
+                                    {
+                                        act.ScreenShots.AddRange(ASS.ScreenShots);
+                                        act.ScreenShotsNames.AddRange(ASS.ScreenShotsNames);
+                                    }
+                                    else
+                                    {
+                                        act.ExInfo += Environment.NewLine + ASS.Error;
+                                    }
                                 }
-                                else
+                                else if (a.AgentType == Agent.eAgentType.Service)
+
                                 {
-                                    act.ExInfo += Environment.NewLine + ASS.Error;
+
+
+                                    ExecuteOnPlugin.ExecutesScreenShotActionOnAgent(a, act);
+                                 
+
+
                                 }
+
+                                
+
                             }
                         }
                     }

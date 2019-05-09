@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Run
@@ -326,6 +327,46 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
+        }
+
+        public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
+
+        {
+
+
+            NewPayLoad PL = new NewPayLoad("ScreenshotAction");
+       
+            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+
+           NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
+            PLParams.Add(AIVPL);
+            PL.AddListPayLoad(PLParams);
+            // Get the action payload
+
+            PL.ClosePackage();
+            // Send the payload to the service
+            NewPayLoad RC = agent.GingerNodeProxy.RunAction(PL);
+
+            if (RC.Name == "ScreenShots")
+            {
+                List<NewPayLoad> FieldsandParams = RC.GetListPayLoad();
+
+                foreach (NewPayLoad Np in FieldsandParams)
+                {
+                    string Name = Np.GetValueString();
+
+                    //string base64string = Np.GetValueString();
+                    act.AddScreenShot(Name);
+                }
+            }
+            else
+            {
+                // The RC is not OK when we faced some unexpected exception 
+                //TODO: 
+                string Err = RC.GetValueString();
+                act.Error += Err;
+            }
+     
         }
     }
 }
