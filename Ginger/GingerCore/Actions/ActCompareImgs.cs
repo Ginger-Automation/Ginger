@@ -29,6 +29,8 @@ using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActCompareImgs : ActWithoutDriver
@@ -88,7 +90,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override System.Drawing.Image Image { get { return Resources.Vbs16x16; } }
+        public override eImageType Image { get { return eImageType.vbs; } }
 
         public override void Execute()
         {
