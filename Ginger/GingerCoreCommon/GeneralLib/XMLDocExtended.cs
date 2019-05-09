@@ -338,7 +338,7 @@ namespace Amdocs.Ginger.Common
         {
             foreach (XmlNode XN in XNL)
             {
-                if (Regex.Matches(XN.OuterXml, @"<(.)*>", RegexOptions.Compiled).Count > 0)
+                if(XN.OuterXml.ElementAt(0).Equals('<') && XN.OuterXml.ElementAt(XN.OuterXml.Length - 1).Equals('>'))
                 {
                     ChildNodes.Add(new XMLDocExtended(this, XN));
                 }
