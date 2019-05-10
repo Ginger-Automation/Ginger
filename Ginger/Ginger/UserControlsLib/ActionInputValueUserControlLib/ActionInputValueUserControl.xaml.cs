@@ -43,6 +43,10 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         List<Attribute> mActionParamProperties;
         string mLabel;
         object mDefaultValue;
+        bool mBrowseNeeded = false;
+        Environment.SpecialFolder mFolderType = Environment.SpecialFolder.MyComputer;
+        Ginger.Activities.UCValueExpression.eBrowserType mBrowseType = Ginger.Activities.UCValueExpression.eBrowserType.File;
+        string mFileType = string.Empty;
         public ActionInputValueUserControl(Context context, ActInputValue actInputValue, List<Attribute> actionParamProperties)
         {
             InitializeComponent();
@@ -73,7 +77,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 {
                     xTextBoxInputPnl.Background = Brushes.Orange;
                     //TODO: add AddValidationRule in the UC - but there are 3 UCs !? !!!!!!!!!!!!!!!                  
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());                    
                 }
                 else if(attr.GetType() == typeof(MaxValueAttribute))
                 {                           
@@ -114,7 +118,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                     {
                         VVR.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
                     }
-                }
+                }                
             }
         }
 
@@ -127,18 +131,41 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             }
             
             foreach (Attribute attr in mActionParamProperties)
-            {                
+            {
                 if (attr.GetType() == typeof(LabelAttribute))
-                {                                        
+                {
                     mLabel = Regex.Replace(Regex.Replace(Regex.Replace(((LabelAttribute)attr).Label, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"\b\w", (Match match) => match.ToString().ToUpper());
                 }
                 else if (attr.GetType() == typeof(TooltipAttribute))
                 {
                     xTextBoxInputPnl.ToolTip = ((TooltipAttribute)attr).Tooltip;
                 }
-                else if(attr.GetType() == typeof(DefaultAttribute))
+                else if (attr.GetType() == typeof(DefaultAttribute))
                 {
                     mDefaultValue = ((DefaultAttribute)attr).DefaultValue;
+                }
+                else if (attr.GetType() == typeof(BrowseAttribute))
+                {
+                    mBrowseNeeded = ((BrowseAttribute)attr).IsNeeded;
+                }
+                else if (attr.GetType() == typeof(BrowseTypeAttribute))
+                {
+                    if (((BrowseTypeAttribute)attr).Browseype.ToString() == Ginger.Activities.UCValueExpression.eBrowserType.File.ToString())
+                    {
+                        mBrowseType = Ginger.Activities.UCValueExpression.eBrowserType.File;
+                    }
+                    else
+                    {
+                        mBrowseType = Ginger.Activities.UCValueExpression.eBrowserType.Folder;
+                    }
+                }
+                else if (attr.GetType() == typeof(FileTypeAttribute))
+                {
+                    mFileType = ((FileTypeAttribute)attr).FileType;
+                }
+                else if (attr.GetType() == typeof(FolderTypeAttribute))
+                {
+                    mFolderType = ((FolderTypeAttribute)attr).FolderType;
                 }
                 //TODO: handle layout here like Grid.Col/Row
             }
@@ -154,7 +181,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         }
 
         private void SetControlToInputValue()
-        {
+        {          
             if (string.IsNullOrEmpty(mActInputValue.Value) && mDefaultValue != null)
             {
                 mActInputValue.Value = mDefaultValue.ToString();
@@ -164,7 +191,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
                 xTextBoxInputLabel.Content = mLabel;                                
-                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value));
+                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value),isBrowseNeeded : mBrowseNeeded, browserType : mBrowseType, fileType : mFileType, specialFolder: mFolderType);
                 return;
             }           
 

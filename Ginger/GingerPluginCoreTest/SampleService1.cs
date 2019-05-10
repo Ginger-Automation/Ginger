@@ -19,7 +19,15 @@ namespace GingerPluginCoreTest
                             [ValidValue(new int[]{10, 20, 30})]
                             [ValidValue(123)]
                             //[GingerParamProperty(GingerParamProperty.Mandatory)]   // define s2 is Mandatory                                  
-                            string s2)
+                            string s2,
+                            [Browse(true)]
+                            [FileType("txt")]
+                            [BrowseType(BrowseTypeAttribute.eBrowseType.File)]
+                            string File,
+                            [Browse(true)]
+                            [BrowseType(BrowseTypeAttribute.eBrowseType.Folder)]
+                            [FolderType(Environment.SpecialFolder.NetworkShortcuts)]
+                            string Folder)
         {
             Console.WriteLine(DateTime.Now + "> Concat: " + s1 + "+" + s2);
             //In

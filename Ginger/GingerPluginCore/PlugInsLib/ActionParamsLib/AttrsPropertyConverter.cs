@@ -81,9 +81,17 @@ namespace Amdocs.Ginger.Plugin.Core
                             }
                             propertyInfo.SetValue(attr, list);
                         }
+                        else if(propertyInfo.PropertyType == typeof(bool))
+                        {
+                            propertyInfo.SetValue(attr, p.Value.Value<bool>());
+                        }
                         else if(propertyInfo.PropertyType == typeof(object))
                         {
                             propertyInfo.SetValue(attr, p.Value.Value<object>());
+                        }
+                        else if(propertyInfo.PropertyType.IsEnum)
+                        {                            
+                            propertyInfo.SetValue(attr, Enum.Parse(propertyInfo.PropertyType, p.Value.ToString()));
                         }
                         else
                         {
