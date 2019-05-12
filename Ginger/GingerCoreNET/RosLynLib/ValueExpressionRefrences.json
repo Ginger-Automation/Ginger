@@ -3,9 +3,9 @@
     {
       "Category": "String Functions",
       "Name": "Trim whitespace",
-      "Expression": "{CS Exp=\"hel lo\".Replace(\" \",\"\")}",
+      "Expression": "{CS Exp=@\"hel lo\".Replace(@\" \",@\"\")}",
       "UseCase": null,
-      "Samples": [ "{CS Exp=\"hel lo\".Replace(\" \",\"\")} will change hel lo to hello" ],
+      "Samples": [ "{CS Exp=@\"hel lo\".Replace(\" \",@\"\")} will change hel lo to hello" ],
       "ReturnType": "String",
       "ExpressionResult": "hello",
       "IconImageName": "@A_16x16.png"
@@ -13,7 +13,7 @@
     {
       "Category": "String Functions",
       "Name": "Trim whitespace & line breaks",
-      "Expression": "{CS Exp={Actual}.Replace(System.Environment.NewLine,\"\").Replace(\" \",\"\")}",
+      "Expression": "{CS Exp={Actual}.Replace(System.Environment.NewLine,@\"\").Replace(@\" \",@\"\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -93,7 +93,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Hour (0# format)",
-      "Expression": "{CS Exp=DateTime.Now.Hour.ToString(\"D2\")}",
+      "Expression": "{CS Exp=DateTime.Now.Hour.ToString(@\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -103,7 +103,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Minute (0# format)",
-      "Expression": "{CS Exp=DateTime.Now.Minute.ToString(\"D2\")}",
+      "Expression": "{CS Exp=DateTime.Now.Minute.ToString(@\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -113,7 +113,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Time Seconds (0# format)",
-      "Expression": "{CS Exp=DateTime.Now.Second.ToString(\"D2\")}",
+      "Expression": "{CS Exp=DateTime.Now.Second.ToString(@\"D2\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -123,9 +123,9 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Month (0# format)",
-      "Expression": "{CS Exp=DateTime.Now.ToString(\"MM\")}",
+      "Expression": "{CS Exp=DateTime.Now.ToString(@\"MM\")}",
       "UseCase": "Get Current Month ",
-      "Samples": [ "{CS Exp=DateTime.Now.ToString(\"MM\")} If today's date is 1st Feb it will give 02" ],
+      "Samples": [ "{CS Exp=DateTime.Now.ToString(@\"MM\")} If today's date is 1st Feb it will give 02" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": "@Clock_16x16.png"
@@ -133,7 +133,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Day (0# format)",
-      "Expression": "{CS Exp=DateTime.Now.ToString(\"dd\")}",
+      "Expression": "{CS Exp=DateTime.Now.ToString(@\"dd\")}",
       "UseCase": "Get Current Day",
       "Samples": [ "If today's date is 1st Feb it will give 01" ],
       "ReturnType": null,
@@ -153,9 +153,9 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Year (## format)",
-      "Expression": "{CS Exp=DateTime.Now.ToString(\"yy\")}",
+      "Expression": "{CS Exp=DateTime.Now.ToString(@\"yy\")}",
       "UseCase": "Get Current Year ",
-      "Samples": [ "{CS Exp=DateTime.Now.ToString(\"yy\")} If today's date is 1st Feb 2019 it will give 19" ],
+      "Samples": [ "{CS Exp=DateTime.Now.ToString(@\"yy\")} If today's date is 1st Feb 2019 it will give 19" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": "@Clock_16x16.png"
@@ -183,7 +183,7 @@
     {
       "Category": "Date Time Functions",
       "Name": "Current Month -1 (MM format)",
-      "Expression": "{CS Exp=DateTime.Today.AddMonths(-1).ToString(\"MM/dd/yyyy\")}",
+      "Expression": "{CS Exp=DateTime.Today.AddMonths(-1).ToString(@\"MM/dd/yyyy\")}",
       "UseCase": "get previous month in MM format ",
       "Samples": [ "if Today is 2nd Feb 2019 the expression will result in 01" ],
       "ReturnType": null,
@@ -233,9 +233,9 @@
     {
       "Category": "General Operations",
       "Name": "Concatenate list w delimiter",
-      "Expression": "{CS Exp=String.Join(\"|\", new string[] { \"A\", \"B\", \"C\", \"D\" })}",
+      "Expression": "{CS Exp=String.Join(@\"|\", new string[] { @\"A\", @\"B\", @\"C\", @\"D\" })}",
       "UseCase": "Joins an array of elements with provided delimiter",
-      "Samples": [ "{CS Exp=String.Join(\"|\", new string[] { \"A\", \"B\", \"C\", \"D\" })} will results in A|B|C|D" ],
+      "Samples": [ "{CS Exp=String.Join(@\"|\", new string[] { @\"A\", @\"B\", @\"C\", @\"D\" })} will results in A|B|C|D" ],
       "ReturnType": null,
       "ExpressionResult": "A|B|C|D",
       "IconImageName": "@Clock_16x16.png"
@@ -243,9 +243,9 @@
     {
       "Category": "String Functions",
       "Name": "Get Inner String Index",
-      "Expression": "{CS Exp=\"Hello World\".IndexOf(\"World\")}",
+      "Expression": "{CS Exp=@\"Hello World\".IndexOf(@\"World\")}",
       "UseCase": "Provides Index(base 0) of Provided keyword in string",
-      "Samples": [ "{CS Exp=\"Hello World\".IndexOf(\"World\")} will return 6" ],
+      "Samples": [ "{CS Exp=@\"Hello World\".IndexOf(@\"World\")} will return 6" ],
       "ReturnType": null,
       "ExpressionResult": "6",
       "IconImageName": "@Clock_16x16.png"
@@ -293,7 +293,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual Contains String 'ABC'",
-      "Expression": "{CS Exp={Actual}.Contains(\"ABC\")}",
+      "Expression": "{CS Exp=@{Actual}.Contains(@\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -303,7 +303,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual start with 'ABC'",
-      "Expression": "{CS Exp={Actual}.StartsWith(\"ABC\")}",
+      "Expression": "{CS Exp=@{Actual}.StartsWith(@\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -313,7 +313,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual String Length is 5 chars",
-      "Expression": "{CS Exp={Actual}.Length.Equals(5)}",
+      "Expression": "{CS Exp=@{Actual}.Length.Equals(5)}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -323,7 +323,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual SubString from char in position 2 length 3 is 'ABC'",
-      "Expression": "{CS Exp={Actual}.Substring(2, 3).Equals(\"ABC\")}",
+      "Expression": "{CS Exp=@{Actual}.Substring(2, 3).Equals(@\"ABC\")}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -333,7 +333,7 @@
     {
       "Category": "Output Validation",
       "Name": "Actual to Upper Case = 'ABC'",
-      "Expression": "{CS Exp=\"abc\".ToUpper()}",
+      "Expression": "{CS Exp=@\"abc\".ToUpper()}",
       "UseCase": "Returns the string in Upper Case",
       "Samples": [],
       "ReturnType": null,
@@ -345,18 +345,18 @@
     {
       "Category": "String Functions",
       "Name": "Replace Text",
-      "Expression": "{CS Exp=\"abc\".Replace(\"b\",\"d\")}",
+      "Expression": "{CS Exp=@\"abc\".Replace(@\"b\",@\"d\")}",
       "UseCase": "Replcaes Text in String",
-      "Samples": [ "{CS Exp=\"abc\".Replace(\"b\",\"d\")} will  change abc to adc" ],
+      "Samples": [ "{CS Exp=@\"abc\".Replace(@\"b\",@\"d\")} will  change abc to adc" ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "adc"
     },
     {
       "Category": "String Functions",
       "Name": "Text Contains",
-      "Expression": "{CS Exp=\"abc\".Contains(\"b\")}",
+      "Expression": "{CS Exp=@\"abc\".Contains(\"b\")}",
       "UseCase": "Check if provided text is present in string",
-      "Samples": [ "{CS Exp=\"abc\".Contains(\"b\")} will return true if b is present in abc" ],
+      "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\")} will return true if b is present in abc" ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "true"
     },
@@ -371,36 +371,36 @@
     {
       "Category": "String Functions",
       "Name": "Starts With",
-      "Expression": "{CS Exp=\"Abc\".StartsWith(\"A\")}",
+      "Expression": "{CS Exp=@\"Abc\".StartsWith(@\"A\")}",
       "UseCase": "Check if provided string Starts with provided characters",
-      "Samples": [ "{CS Exp=\"Abc\".StartsWith(\"A\")} will return true as Abc Starts with A" ],
+      "Samples": [ "{CS Exp=@\"Abc\".StartsWith(@\"A\")} will return true as Abc Starts with A" ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "true"
     },
     {
       "Category": "String Functions",
       "Name": "Ends With",
-      "Expression": "{CS Exp=\"Abc\".EndsWith(\"c\")}",
+      "Expression": "{CS Exp=@\"Abc\".EndsWith(\"c\")}",
       "UseCase": "Check if provided string Ends with provided characters",
-      "Samples": [ "{CS Exp=\"\"Abc\".EndsWith(\"c\")\"} will return true as Abc Ends with B" ],
+      "Samples": [ "{CS Exp=@\"\"Abc\".EndsWith(\"c\")\"} will return true as Abc Ends with B" ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "true"
     },
     {
       "Category": "String Functions",
       "Name": "Get String Length",
-      "Expression": "{CS Exp=\"Abc\".Length}",
+      "Expression": "{CS Exp=@\"Abc\".Length}",
       "UseCase": "Calculates length of string",
-      "Samples": [ "{CS Exp=\"Abc\".Length} will return 3 as length of string" ],
+      "Samples": [ "{CS Exp=@\"Abc\".Length} will return 3 as length of string" ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "3"
     },
     {
       "Category": "String Functions",
       "Name": "Get Substring",
-      "Expression": "{CS Exp=\"Abcdefgh\".Substring(1,3)}",
+      "Expression": "{CS Exp=@\"Abcdefgh\".Substring(1,3)}",
       "UseCase": "Get sub strings from provided starting index(base 0) of specified ",
-      "Samples": [ "{CS Exp=\"Abcdefgh\".Substring(1,3)\"}  will return bcd from starting index 1(base 0) of length r " ],
+      "Samples": [ "{CS Exp=@\"Abcdefgh\".Substring(1,3)\"}  will return bcd from starting index 1(base 0) of length r " ],
       "IconImageName": "@A_16x16.png",
       "ExpressionResult": "bcd"
     }

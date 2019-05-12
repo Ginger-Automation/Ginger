@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 
 namespace Ginger.Variables
@@ -27,13 +28,14 @@ namespace Ginger.Variables
     public partial class VariableDynamicPage : Page
     {
         private VariableDynamic mVariableDynamic;
-
-        public VariableDynamicPage(VariableDynamic var)
+        private Context mContext;
+        public VariableDynamicPage(VariableDynamic var, Context context)
         {            
             InitializeComponent();
+            mContext = context;
             mVariableDynamic = var;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
-            ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+            ValueExpressionTextBox.Init(mContext, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             mVariableDynamic.PropertyChanged +=mVariableDynamic_PropertyChanged; 
         }
 
@@ -41,7 +43,7 @@ namespace Ginger.Variables
         {
             if (e.PropertyName == nameof(VariableBase.Formula))
             {
-                ValueExpressionTextBox.Init(null, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
+                ValueExpressionTextBox.Init(mContext, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
             }
         }
     }

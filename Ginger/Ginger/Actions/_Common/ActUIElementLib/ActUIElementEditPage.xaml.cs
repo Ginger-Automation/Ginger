@@ -299,7 +299,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Width = 600,
                         Margin = new Thickness(10, 0, 0, 0)
                     };
-                    comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
+                    comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true,context:Context.GetAsContext(mAction.Context));
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
                     if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {
