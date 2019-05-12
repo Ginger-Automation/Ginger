@@ -296,11 +296,6 @@ namespace Ginger.Run
 
         public void RunRunset(bool doContinueRun = false)
         {
-            //int analyzeRes = await RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
-            //if (analyzeRes == 1) return;
-
-            List<Task> runnersTasks = new List<Task>();
-
             //reset run       
             if (doContinueRun == false)
             {
@@ -313,6 +308,7 @@ namespace Ginger.Run
             {
                 RunSetConfig.LastRunsetLoggerFolder = null;
             }
+
             mStopRun = false;
 
             //configure Runners for run
@@ -336,11 +332,12 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Continuation: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
             }
+
             mStopwatch.Start();
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Started", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            List<Task> runnersTasks = new List<Task>();
             if (RunSetConfig.RunModeParallel)
             {
-
                 foreach (GingerRunner GR in Runners)
                 {
                     if (mStopRun)
@@ -356,10 +353,10 @@ namespace Ginger.Run
                         }
                         else
                             if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                        {
-                            GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                            GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                        }
+                            {
+                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                            }
                     }, TaskCreationOptions.LongRunning);
                     runnersTasks.Add(t);
                     t.Start();
@@ -414,10 +411,11 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
             }
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             CreateGingerExecutionReportAutomaticly();
             CloseAllEnvironments();
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
         }
 
@@ -526,10 +524,6 @@ namespace Ginger.Run
             }
         }
 
-
-
-
-
         public async Task<int> RunRunsetAnalyzerBeforeRun(bool runInSilentMode = false)
         {
             int x = 0;
@@ -541,8 +535,7 @@ namespace Ginger.Run
 
             }
             return x;
-        }
-        
+        }        
         
         //public int RunRunsetAnalyzerBeforeRunSync(bool runInSilentMode = false)
         //{

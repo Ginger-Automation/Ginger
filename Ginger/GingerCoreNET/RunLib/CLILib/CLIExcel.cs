@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             throw new NotImplementedException();
         }
 
-        public void LoadContent(string content, RunsetExecutor runsetExecutor)
+        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             throw new NotImplementedException();
         }

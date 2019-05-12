@@ -15,7 +15,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         string CreateContent(RunsetExecutor runsetExecutor);
 
         // Parse the content and load it into runsetExecutor
-        void LoadContent(string content, RunsetExecutor runsetExecutor);
+        void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor);
 
         void Execute(RunsetExecutor runsetExecutor);
         

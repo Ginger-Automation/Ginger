@@ -144,60 +144,21 @@ namespace amdocs.ginger.GingerCoreNET
             UserMsgsPool.LoadUserMsgsPool();
             StatusMsgsPool.LoadStatusMsgsPool();
 
-            SetLoadingInfo("Init Application");
             // AppVersion = AppShortVersion;
             // We init the classes dictionary for the Repository Serializer only once
             InitClassTypesDictionary();
 
             // TODO: need to add a switch what we get from old ginger based on magic key
 
-            phase = "Loading User Profile";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading User Profile");            
             UserProfile = UserProfile.LoadUserProfile();
             
-            phase = "Configuring User Type";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
+            Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
-
-            phase = "Loading User Selected Resource Dictionaries";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-
-            // Move back to App
-            //if (WorkSpace.Instance.UserProfile != null)
-            //{
-            //    LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, WorkSpace.Instance.UserProfile.TerminologyDictionaryType);
-            //}
-            //else
-            //{
-            //    LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
-            //}
-
             
-
             Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
             AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Initializing the Source control");
-            SetLoadingInfo(phase);
-
-            phase = "Loading the Main Window";
-            Reporter.ToLog(eLogLevel.DEBUG, phase);
-            SetLoadingInfo(phase);
-
-
             AutoLogProxy.LogAppOpened();
-
-
-            // Register our own Ginger tool tip handler
-            //--Canceling customize tooltip for now due to many issues and no real added value            
-
-            phase = "Application was loaded and ready";
-            Reporter.ToLog(eLogLevel.INFO, phase);
-            // mIsReady = true;
-
         }
 
        

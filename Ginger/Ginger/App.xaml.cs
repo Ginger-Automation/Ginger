@@ -52,13 +52,10 @@ namespace Ginger
         //DO NOT REMOVE- Needed for Log to work
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
                                        (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         
-
         public new static MainWindow MainWindow { get; set; }
 
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
-
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -89,9 +86,7 @@ namespace Ginger
             // set terminology type
             GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
-
         
-
         static bool bDone = false;
 
         public static void InitClassTypesDictionary()
@@ -126,63 +121,53 @@ namespace Ginger
             NewRepositorySerializer.AddClasses(list);
         }
 
+        //private static void HandleSolutionLoadSourceControl(Solution solution)
+        //{
+        //    string RepositoryRootFolder = string.Empty;
+        //    SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
+        //    if (type == SourceControlBase.eSourceControlType.GIT)
+        //    {
+        //        solution.SourceControl = new GITSourceControl();
+        //    }
+        //    else if (type == SourceControlBase.eSourceControlType.SVN)
+        //    {
+        //        solution.SourceControl = new SVNSourceControl();
+        //    }
 
+        //    if (solution.SourceControl != null)
+        //    {
+        //        if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+        //        {
+        //            if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
+        //            {
+        //                solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+        //                solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+        //                solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+        //                solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
+        //            solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
+        //            solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+        //            solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+        //        }
 
-       
+        //        string error = string.Empty;
+        //        solution.SourceControl.SolutionFolder = solution.Folder;
+        //        solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
+        //        solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
+        //        solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+        //        solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+        //        solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+        //        solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
 
-        
-
-
-
-        private static void HandleSolutionLoadSourceControl(Solution solution)
-        {
-            string RepositoryRootFolder = string.Empty;
-            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
-            if (type == SourceControlBase.eSourceControlType.GIT)
-            {
-                solution.SourceControl = new GITSourceControl();
-            }
-            else if (type == SourceControlBase.eSourceControlType.SVN)
-            {
-                solution.SourceControl = new SVNSourceControl();
-            }
-
-            if (solution.SourceControl != null)
-            {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
-                {
-                    if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
-                    {
-                        solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                        solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                        solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                        solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-                    }
-                }
-                else
-                {
-                    solution.SourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SolutionSourceControlUser;
-                    solution.SourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SolutionSourceControlPass;
-                    solution.SourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
-                    solution.SourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
-                }
-
-                string error = string.Empty;
-                solution.SourceControl.SolutionFolder = solution.Folder;
-                solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
-                solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
-                solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
-
-                WorkSpace.Instance.SourceControl = solution.SourceControl;
-                RepositoryItemBase.SetSourceControl(solution.SourceControl);
-                RepositoryFolderBase.SetSourceControl(solution.SourceControl);
-            }
-        }
-
-
+        //        WorkSpace.Instance.SourceControl = solution.SourceControl;
+        //        RepositoryItemBase.SetSourceControl(solution.SourceControl);
+        //        RepositoryFolderBase.SetSourceControl(solution.SourceControl);
+        //    }
+        //}
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
@@ -217,13 +202,11 @@ namespace Ginger
         }
 
 
-
         internal static void CheckIn(string Path)
         {
             CheckInPage CIW = new CheckInPage(Path);
             CIW.ShowAsWindow();
         }
-
 
         public Dispatcher GetMainWindowDispatcher()
         {
@@ -264,15 +247,21 @@ namespace Ginger
             // add additional classed from Ginger and GingerCore
             InitClassTypesDictionary();
 
-            Console.Title = "Ginger";
-            Console.WriteLine("Starting Ginger");
-            Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            if (e.Args.Length != 0)
+            {
+                WorkSpace.Instance.RunningInExecutionMode = true;
+                Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console      
+            }
+
+            //write Ginger start to log + console
+            Reporter.ToLog(eLogLevel.INFO, Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + " Started");
+            Reporter.ToLog(eLogLevel.INFO, "Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
 
             if (e.Args.Length == 0)
             {
-                HideConsoleWindow();
-                // start regular Ginger UI
-                StartGingerUI();
+                HideConsoleWindow();                
+                StartGingerUI();// start regular Ginger UI
             }
             else
             {
@@ -303,15 +292,10 @@ namespace Ginger
         }
 
         private void RunNewCLI(string[] args)
-        {
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
-            WorkSpace.Instance.RunningInExecutionMode = true;
-            Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
-
-            // Is needed?
-            // LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
+        {                    
             CLIProcessor cLIProcessor = new CLIProcessor();
             cLIProcessor.ExecuteArgs(args);
+
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown();
         }
@@ -324,12 +308,9 @@ namespace Ginger
                 InitClassTypesDictionary();
             }
 
-
             MainWindow = new MainWindow();
             MainWindow.Show();
             GingerCore.General.DoEvents();
-
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
 
             MainWindow.Init();
 

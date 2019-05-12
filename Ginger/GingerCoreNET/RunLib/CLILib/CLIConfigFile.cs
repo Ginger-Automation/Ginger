@@ -9,8 +9,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
     {        
-        CLIHelper mCLIHelper = new CLIHelper();
-
         public string Identifier
         {
             get
@@ -29,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async void Execute(RunsetExecutor runsetExecutor)
         {
-            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            runsetExecutor.InitRunners();
 
             int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
@@ -42,8 +40,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             string sConfig = null;
             if (CLIHelper.DownloadSolutionFromSourceControlBool == true)
-            {
-               
+            {               
                 sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
                 sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
                 sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
@@ -65,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return sConfig;
         }
 
-        public void LoadContent(string content, RunsetExecutor runsetExecutor)
+        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             
             CLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
@@ -81,34 +78,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     switch (param)
                     {
                         case "SourceControlType":
-                            mCLIHelper.SetSourceControlType(value);
+                            cliHelper.SetSourceControlType(value);
                             break;
                         case "SourceControlUrl":
-                            mCLIHelper.SetSourceControlURL(value);                            
+                            cliHelper.SetSourceControlURL(value);                            
                             break;
                         case "SourceControlUser":
-                            mCLIHelper.SetSourceControlUser(value);                            
+                            cliHelper.SetSourceControlUser(value);                            
                             break;
                         case "SourceControlPassword":
-                            mCLIHelper.SetSourceControlPassword(value);                            
+                            cliHelper.SetSourceControlPassword(value);                            
                             break;
                         case "PasswordEncrypted":
-                            mCLIHelper.PasswordEncrypted(value);                            
+                            cliHelper.PasswordEncrypted(value);                            
                             break;
                         case "SourceControlProxyServer":
-                            mCLIHelper.SourceControlProxyServer(value);                            
+                            cliHelper.SourceControlProxyServer(value);                            
                             break;
                         case "SourceControlProxyPort":
-                            mCLIHelper.SourceControlProxyPort(value);                            
+                            cliHelper.SourceControlProxyPort(value);                            
                             break;
                         case "Solution":
-                            mCLIHelper.Solution = value;                            
+                            cliHelper.Solution = value;                            
                             break;
                         case "Env":
-                            mCLIHelper.Env = value;                        
+                            cliHelper.Env = value;                        
                             break;
                         case "RunSet":
-                            mCLIHelper.Runset = value;                            
+                            cliHelper.Runset = value;                            
                             break;
                         case "ShowAutoRunWindow":                                                        
                             CLIHelper.ShowAutoRunWindow = bool.Parse(value);
@@ -120,10 +117,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
                             throw new ArgumentException("Unknown argument", param);
                     }
-                }
-
-
-                mCLIHelper.ProcessArgs(runsetExecutor);
+                }                
             }            
         }
 

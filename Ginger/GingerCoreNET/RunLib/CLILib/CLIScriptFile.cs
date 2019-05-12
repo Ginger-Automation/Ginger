@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             var rc = CodeProcessor.ExecuteNew(mScriptFile);            
         }
 
-        public void LoadContent(string content, RunsetExecutor runsetExecutor)
+        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             mScriptFile = content;            
         }

@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore;
 using System;
@@ -11,13 +12,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public class CLIProcessor
     {
         ICLI mCLIHandler;
+        CLIHelper mCLIHelper = new CLIHelper();
+
         public void ExecuteArgs(string[] args)
         {
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
-            WorkSpace.Instance.RunningInExecutionMode = true;
-            Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console                             
+                          
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
@@ -35,8 +36,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     value = args[1].Trim();
                 }                
             }
-            HandleArg(param, value);
-           
+            HandleArg(param, value);           
         }
 
         private void HandleArg(string param, string value)
@@ -46,45 +46,50 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             switch (param)
             {
                 case "--version":
-                    Console.WriteLine("Ginger Version " + "???"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    Console.WriteLine(string.Format("{0} Version: {1}", ApplicationInfo.ApplicationName, ApplicationInfo.ApplicationVersionWithInfo));
                     break;
                 case "--help":
                 case "-h":
                     ShowCLIHelp();
-                    break;                                    
+                    break;
                 case "ConfigFile":
                 case "--configfile":
-                    mCLIHandler = new CLIConfigFile();
-                    string config = ReadFile(value);
-                    mCLIHandler.LoadContent(config, WorkSpace.Instance.RunsetExecutor);
-                    Execute();
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", value));
+                    mCLIHandler = new CLIConfigFile();                   
+                    PerformLoadAndExecution(ReadFile(value));
                     break;
                 case "--scriptfile":
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
                     mCLIHandler = new CLIScriptFile();
-                    string script = ReadFile(value);
-                    mCLIHandler.LoadContent(script, null);
-                    Execute();
+                    PerformLoadAndExecution(ReadFile(value));
                     break;
                 case "--dynamicfile":
                 case "DynamicXML":
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
                     mCLIHandler = new CLIDynamicXML();
-                    string dynamicXML = ReadFile(value);
-                    mCLIHandler.LoadContent(dynamicXML, WorkSpace.Instance.RunsetExecutor);
-                    Execute();
+                    PerformLoadAndExecution(ReadFile(value));
                     break;
                 case "--args":
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
                     mCLIHandler = new CLIArgs();
-                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
-                    Execute();
+                    PerformLoadAndExecution(value);
                     break;
                 case "--excel":
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
                     mCLIHandler = new CLIExcel();
-                    mCLIHandler.LoadContent(value, WorkSpace.Instance.RunsetExecutor);
-                    Execute();
-                    break;                    
+                    PerformLoadAndExecution(value);
+                    break;
             }
+        }
 
-
+        private void PerformLoadAndExecution(string configurations)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
+            mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
+            mCLIHelper.ProcessArgs(WorkSpace.Instance.RunsetExecutor);
+            Reporter.ToLog(eLogLevel.DEBUG, "Executing based on Configurations...");
+            Execute();
         }
 
         void Execute()
@@ -110,8 +115,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToConsole(eLogLevel.ERROR, "Execution Failed with exception: " + ex.Message);
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception occured during execution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured during execution", ex);
                 Environment.ExitCode = 1; //failure
             }
         }

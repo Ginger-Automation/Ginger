@@ -1287,16 +1287,16 @@ namespace Ginger.Run
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
             AutoLogProxy.UserOperationStart("xRunRunsetBtn_Click");
+
             ResetALMDefectsSuggestions();
+
             //check runner is not empty
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '"+mCurrentSelectedRunner.Name+"' to start run.");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mCurrentSelectedRunner.Name + "' to start run.");
                 return;
             }
-            //do it in executor!!!!!!!!!!!!!! !!!
 
-            //----- Add to RunsetExecutor
             //run analyzer
             int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
@@ -1368,13 +1368,13 @@ namespace Ginger.Run
                 return;
             }
 
-            //----- Add to RunsetExecutor
             //run analyzer
             int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
 
             //continue run            
             await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync(true);//doing continue run
+
             AutoLogProxy.UserOperationEnd();
         }
 

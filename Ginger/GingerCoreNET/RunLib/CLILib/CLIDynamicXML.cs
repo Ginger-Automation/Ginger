@@ -33,11 +33,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void Execute(RunsetExecutor runsetExecutor)
         {
-            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            runsetExecutor.InitRunners();
             runsetExecutor.RunRunset();
         }
 
-        public void LoadContent(string content, RunsetExecutor runsetExecutor)
+        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             DynamicRunSet dynamicRunSet =  DynamicRunSetManager.LoadContent(content);
             DynamicRunSetManager.LoadRunSet(runsetExecutor, dynamicRunSet);

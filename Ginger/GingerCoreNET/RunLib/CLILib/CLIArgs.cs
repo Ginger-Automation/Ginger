@@ -9,8 +9,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
     {
-
-        CLIHelper mCLIHelper = new CLIHelper();
         string ICLI.Identifier
         {
             get
@@ -40,12 +38,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void Execute(RunsetExecutor runsetExecutor)
         {
-            WorkSpace.Instance.RunsetExecutor.InitRunners();
+            runsetExecutor.InitRunners();
             runsetExecutor.RunRunset();
         }
         
 
-        public void LoadContent(string args, RunsetExecutor runsetExecutor)
+        public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             //TODO: make -s --solution  work  but not -solution or -Solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -61,16 +59,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {                        
                     case "-s":
                     case "--solution":
-                        mCLIHelper.Solution = arg.ArgValue;
+                        cliHelper.Solution = arg.ArgValue;
                         break;                     
                     case "-e":
                     case "--env":
                     case "--environment":
-                        mCLIHelper.Env = arg.ArgValue;
+                        cliHelper.Env = arg.ArgValue;
                         break;                        
                     case "-r":
                     case "--runset":
-                        mCLIHelper.Runset = arg.ArgValue;
+                        cliHelper.Runset = arg.ArgValue;
                         break;
 
                     // TODO: add all the rest !!!!!!!!!!!!!
@@ -79,7 +77,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         throw new ArgumentException("Unknown argument: ", arg.ArgName);
                 }
             }                
-            mCLIHelper.ProcessArgs(runsetExecutor);
         }
 
         public struct Arg
