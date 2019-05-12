@@ -18,12 +18,19 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
+using GingerCore.Platforms;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
 using System;
 using System.Windows;
@@ -75,7 +82,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void SetListView() 
+        private void SetListView()
         {
             mActionsListView = new UcListView();
             mActionsListView.Title = "Actions";
@@ -106,7 +113,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void MActionListItemInfo_ActionListItemEvent(ActionListItemEventArgs EventArgs)
         {
-           switch(EventArgs.EventType)
+            switch (EventArgs.EventType)
             {
                 case ActionListItemEventArgs.eEventType.ShowActionEditPage:
                     ShowHideEditPage((Act)EventArgs.EventObject);
@@ -134,7 +141,7 @@ namespace GingerWPF.BusinessFlowsLib
         // Drag Drop handlers
         private void listActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)) 
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
                     || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo)))
             {
@@ -145,27 +152,94 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
-            Act a, instance;
-            if (((DragInfo)sender).Data.GetType() == typeof(Act))
+            Act a = ((DragInfo)sender).Data as Act;
+            Act instance = null;
+            if (a != null)
             {
                 a = (Act)((DragInfo)sender).Data;
                 instance = (Act)a.CreateInstance(true);
-                mActivity.Acts.Add(instance);
-
-                int selectedActIndex = -1;
-                if (mActivity.Acts.CurrentItem != null)
-                {
-                    selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
-                }
             }
-            else if(((DragInfo)sender).Data.GetType() == typeof(ElementInfo))
+            else if (((DragInfo)sender).Data.GetType() == typeof(ElementInfo) || ((DragInfo)sender).Data.GetType() == typeof(HTMLElementInfo))
             {
-
+                HTMLElementInfo htmlElementInfo = ((DragInfo)sender).Data as HTMLElementInfo;
+                instance = GenerateRelatedAction(htmlElementInfo);
             }
+            else if (((DragInfo)sender).Data.GetType() == typeof(ApplicationPOMModel))
+            {
+                ApplicationPOMModel currentPOM = ((DragInfo)sender).Data as ApplicationPOMModel;
+                foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
+                {
+                    HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
+                    instance = GenerateRelatedAction(htmlElementInfo);
+                    if (instance != null)
+                    {
+                        instance.Active = true;
+                        AddGeneratedAction(instance);
+                    }
+                }
+                instance = null;
+            }
+
+            if (instance != null)
+            {
+                AddGeneratedAction(instance);
+            }
+        }
+
+        private void AddGeneratedAction(Act instance)
+        {
+            mActivity.Acts.Add(instance);
+
+            int selectedActIndex = -1;
+            if (mActivity.Acts.CurrentItem != null)
+            {
+                selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
+            }
+            if (selectedActIndex >= 0)
+            {
+                mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
+            }
+        }
+
+        private static Act GenerateRelatedAction(HTMLElementInfo htmlElementInfo)
+        {
+            Act instance;
+            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
+            ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
+            {
+                Description = "UIElement Action : " + htmlElementInfo.ItemName,
+                Operation = ActUIElement.eElementAction.NotExist.ToString(),
+                LocateBy = eLocateBy.POMElement,
+                LocateValue = htmlElementInfo.ParentGuid.ToString() + "_" + htmlElementInfo.Guid.ToString(),
+                ElementValue = "",
+                AddPOMToAction = true,
+                POMGuid = htmlElementInfo.ParentGuid.ToString(),
+                ElementGuid = htmlElementInfo.Guid.ToString(),
+                LearnedElementInfo = htmlElementInfo,
+            };
+
+            switch (htmlElementInfo.ElementTypeEnum)
+            {
+                case eElementType.Button:
+                case eElementType.CheckBox:
+                case eElementType.RadioButton:
+                case eElementType.HyperLink:
+                case eElementType.Span:
+                case eElementType.Div:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.Click.ToString();
+                    break;
+
+                case eElementType.TextBox:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.SetText.ToString();
+                    break;
+
+                default:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.NotExist.ToString();
+                    break;
+            }
+
+            instance = mPlatform.GetPlatformAction(htmlElementInfo, actionConfigurations);
+            return instance;
         }
 
         private void xGoToActionsList_Click(object sender, RoutedEventArgs e)

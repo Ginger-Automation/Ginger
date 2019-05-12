@@ -68,7 +68,7 @@ namespace GingerCore.Actions
                 return "Goto URL";
             }
         }
-        public override eImageType Image { get { return eImageType.Browser; } }
+        public override eImageType Image { get { return eImageType.Globe; } }
 
         //
         // IObsoleteAction part

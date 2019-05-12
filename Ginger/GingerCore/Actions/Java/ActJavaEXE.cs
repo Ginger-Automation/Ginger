@@ -58,7 +58,7 @@ namespace GingerCore.Actions.Java
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
         public override bool IsSelectableAction { get { return true; } }
-        public override eImageType Image { get { return eImageType.Java; } }
+        public override eImageType Image { get { return eImageType.Coffee; } }
         public override String ActionType
         {
             get

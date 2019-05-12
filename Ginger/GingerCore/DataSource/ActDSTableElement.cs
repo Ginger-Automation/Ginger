@@ -65,7 +65,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override eImageType Image { get { return eImageType.Action; } }
+        public override eImageType Image { get { return eImageType.Columns; } }
 
         public override void Execute()
         {

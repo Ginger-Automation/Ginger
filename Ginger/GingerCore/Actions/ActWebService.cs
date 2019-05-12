@@ -101,6 +101,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Globe; } }
+        public override eImageType Image { get { return eImageType.Exchange; } }
     }
 }

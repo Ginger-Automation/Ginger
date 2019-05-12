@@ -268,10 +268,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
                     break;
                 case eImageType.VariableString:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Tumblr);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Font);
                     break;
                 case eImageType.VariableRandomString:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AudioDescription);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Language);
                     break;
                 case eImageType.SortAsc:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SortNumericAsc);
@@ -766,12 +766,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Windows);
                     break;
 
-                case eImageType.Java:
-                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
-                    break;
-
                 case eImageType.SoapUI:
-                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee, Brushes.DeepPink);
                     break;
 
                 case eImageType.PDFFile:

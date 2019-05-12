@@ -84,7 +84,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.RadioButton; } }
+        public override eImageType Image { get { return eImageType.MousePointer; } }
 
         Type IObsoleteAction.TargetAction()
         {

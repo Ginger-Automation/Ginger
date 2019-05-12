@@ -27,6 +27,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Common
 {
     public class ActUIElement : Act
@@ -712,7 +714,7 @@ namespace GingerCore.Actions.Common
                 switch (ElementType)
                 {
                     case eElementType.Button:
-                        return eImageType.Button;
+                        return eImageType.MousePointer;
                     case eElementType.TextBox:
                         return eImageType.Edit;
                     case eElementType.ComboBox:

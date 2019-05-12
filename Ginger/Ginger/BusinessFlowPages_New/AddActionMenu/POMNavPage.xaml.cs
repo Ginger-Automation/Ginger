@@ -108,6 +108,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                     xPOMItems.Height = new GridLength(400, GridUnitType.Auto);
                     xMainElementsGrid.Visibility = Visibility.Visible;
+                    foreach(ElementInfo elem in mPOM.MappedUIElements)
+                    {
+                        elem.ParentGuid = mPOM.Guid;
+                    }
                     xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                 }
                 else

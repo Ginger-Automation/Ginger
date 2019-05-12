@@ -102,7 +102,7 @@ namespace GingerCore.Actions.JSON
             }
         }
 
-        public override eImageType Image { get { return eImageType.Help; } }        // eImageType.Help = LifeRing in FontAwesomeIcon
+        public override eImageType Image { get { return eImageType.Search; } }        // eImageType.Help = LifeRing in FontAwesomeIcon
 
         public override void Execute()
         {

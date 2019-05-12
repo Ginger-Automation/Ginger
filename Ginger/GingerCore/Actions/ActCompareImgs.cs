@@ -90,7 +90,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override eImageType Image { get { return eImageType.Image; } }
+        public override eImageType Image { get { return eImageType.Camera; } }
 
         public override void Execute()
         {

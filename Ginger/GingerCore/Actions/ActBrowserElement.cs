@@ -187,7 +187,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Browser; } }
+        public override eImageType Image { get { return eImageType.Globe; } }
         public string PomGUID
         {
             get

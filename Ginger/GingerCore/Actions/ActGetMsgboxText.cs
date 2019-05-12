@@ -67,6 +67,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.LinkSquare; } }        
+        public override eImageType Image { get { return eImageType.Label; } }        
     }
 }

@@ -85,7 +85,7 @@ namespace GingerCore.Actions
                 return "Generic Web Element: " + GenElementAction.ToString();
             }
         }
-        public override eImageType Image { get { return eImageType.Link; } }
+        public override eImageType Image { get { return eImageType.Warn; } }
 
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)

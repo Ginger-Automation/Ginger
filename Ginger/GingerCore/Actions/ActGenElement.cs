@@ -480,7 +480,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.LinkSquare; } }  // TODO: make me dynamic based on elem type
+        public override eImageType Image { get { return eImageType.Screen; } }  // TODO: make me dynamic based on elem type
         
         public override ActionDetails Details
         {            

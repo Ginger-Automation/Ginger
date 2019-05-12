@@ -121,7 +121,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Codepen; } }
+        public override eImageType Image { get { return eImageType.ApplicationModel; } }
 
 
         public void SetActionDetails(String Description, eLocateBy LocateBy, String LocateValue, ActPBControl.eControlAction ControlAction, String Value)
