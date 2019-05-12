@@ -83,9 +83,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 DialogResult result = folderBrowserDialog.ShowDialog();
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
                 {
-                    xCLIFolderTextBox.Text = folderBrowserDialog.SelectedPath;                    
+                    xCLIFolderTextBox.Text = folderBrowserDialog.SelectedPath;
+                    
                 }
             }
+        }
+        
+        private void XCLIFolderTextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+            mCreateCLIWizard.SetCLIFolder(xCLIFolderTextBox.Text);
         }
     }
 }

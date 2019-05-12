@@ -1296,10 +1296,10 @@ namespace Ginger.Run
             }
             //do it in executor!!!!!!!!!!!!!! !!!
 
-            //----- Added to RunsetExecutor
+            //----- Add to RunsetExecutor
             //run analyzer
-            //int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
-            //if (analyzeRes == 1) return;//cancel run because issues found
+            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            if (analyzeRes == 1) return;//cancel run because issues found
 
             //run             
             var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
@@ -1368,10 +1368,10 @@ namespace Ginger.Run
                 return;
             }
 
-            //----- Added to RunsetExecutor
+            //----- Add to RunsetExecutor
             //run analyzer
-            //int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
-            //if (analyzeRes == 1) return;//cancel run because issues found
+            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            if (analyzeRes == 1) return;//cancel run because issues found
 
             //continue run            
             await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync(true);//doing continue run

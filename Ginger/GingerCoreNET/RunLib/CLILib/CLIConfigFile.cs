@@ -27,9 +27,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async void Execute(RunsetExecutor runsetExecutor)
         {
             WorkSpace.Instance.RunsetExecutor.InitRunners();
+
+            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            if (analyzeRes == 1) return;//cancel run because issues found
+
             runsetExecutor.RunRunset();            
         }
 
