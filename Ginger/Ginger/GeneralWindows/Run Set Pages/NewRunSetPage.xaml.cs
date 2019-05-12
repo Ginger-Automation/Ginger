@@ -1298,7 +1298,7 @@ namespace Ginger.Run
             }
 
             //run analyzer
-            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRunWithUI().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
 
             //run             
@@ -1369,7 +1369,7 @@ namespace Ginger.Run
             }
 
             //run analyzer
-            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
+            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRunWithUI().ConfigureAwait(false);
             if (analyzeRes == 1) return;//cancel run because issues found
 
             //continue run            

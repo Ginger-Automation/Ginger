@@ -57,9 +57,15 @@ namespace Amdocs.Ginger.Common
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
 
+        Task<int> AnalyzeRunsetWithUI(object runset, bool runInSilentMode);
 
-
-        Task<int> AnalyzeRunset(Object a, bool b);
+        /// <summary>
+        /// Run Runset Analyzer process and return true in case High+ issues were found
+        /// </summary>
+        /// <param name="runset"></param>
+        /// <param name="reportIssues"></param>
+        /// <returns></returns>
+        bool AnalyzeRunset(object runset, bool reportIssues);
 
         void ShowAutoRunWindow();
 

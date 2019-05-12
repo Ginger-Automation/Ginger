@@ -556,6 +556,7 @@
       <DependentUpon>JiraImportSetByIdPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\Repository\JIRA_Repository.cs" />
+    <Compile Include="AnalyzerLib\AnalyzerUtils.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
       <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
     </Compile>

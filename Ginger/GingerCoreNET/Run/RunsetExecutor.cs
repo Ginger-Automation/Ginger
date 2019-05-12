@@ -524,15 +524,14 @@ namespace Ginger.Run
             }
         }
 
-        public async Task<int> RunRunsetAnalyzerBeforeRun(bool runInSilentMode = false)
+        public async Task<int> RunRunsetAnalyzerBeforeRunWithUI(bool runInSilentMode = false)
         {
             int x = 0;
             if (mRunSetConfig.RunWithAnalyzer)
             {
                 //check if not including any High or Critical issues before execution
                 Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
-
+                x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunsetWithUI(mRunSetConfig, runInSilentMode);
             }
             return x;
         }        

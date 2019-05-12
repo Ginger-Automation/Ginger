@@ -27,11 +27,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async void Execute(RunsetExecutor runsetExecutor)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Runset Runners");
             runsetExecutor.InitRunners();
 
-            int analyzeRes = await WorkSpace.Instance.RunsetExecutor.RunRunsetAnalyzerBeforeRun().ConfigureAwait(false);
-            if (analyzeRes == 1) return;//cancel run because issues found
-
+            if (runsetExecutor.RunSetConfig.RunWithAnalyzer)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Running Runset Analyzer");
+                if (RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(runsetExecutor.RunSetConfig, true))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Stopping Run Set execution due to Analyzer issues");
+                    return;
+                }
+            }
             runsetExecutor.RunRunset();            
         }
 

@@ -32,7 +32,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             set
             {
                 mShowAutoRunWindow = value;
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+                //Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
             }
         }
 

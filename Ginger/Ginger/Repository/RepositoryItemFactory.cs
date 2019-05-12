@@ -348,18 +348,17 @@ namespace Ginger.Repository
 
     
 
-        public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
+        public async Task<int> AnalyzeRunsetWithUI(object runset, bool runInSilentMode)
         {
             try
             {
                 AnalyzerPage analyzerPage = new AnalyzerPage();
+                RunSetConfig runSetConfig = (RunSetConfig)runset;
                 Dispatcher.CurrentDispatcher.Invoke(() => 
-                {
-                    RunSetConfig runSetConfig = (RunSetConfig)a;
+                {                    
                     analyzerPage.Init( WorkSpace.Instance.Solution, runSetConfig);
                 });
                 await analyzerPage.AnalyzeWithoutUI();
-
 
                 if (analyzerPage.TotalHighAndCriticalIssues > 0)
                 {
@@ -377,7 +376,33 @@ namespace Ginger.Repository
             }
             return 0;
         }
-        
+
+        public bool AnalyzeRunset(object runset, bool reportIssues)
+        {
+            RunSetConfig runSetConfig = (RunSetConfig)runset;
+            AnalyzerUtils analyzerUtils = new AnalyzerUtils();
+            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
+            analyzerUtils.RunRunSetConfigAnalyzer(runSetConfig, issues);
+
+            if (reportIssues)
+            {
+                foreach (AnalyzerItemBase issue in issues)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Analyzer Issue found: {0}/{1}[{2}] => {3}", issue.ItemParent, issue.ItemName, issue.ItemClass, issue.Description));
+                }
+            }
+
+            if (issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList().Count > 0)
+            {
+                return true;//critical issues exist
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
         AutoRunWindow mAutoRunWindow;
         public void ShowAutoRunWindow()
         {            
