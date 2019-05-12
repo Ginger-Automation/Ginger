@@ -618,6 +618,7 @@ namespace Ginger
             if ( WorkSpace.Instance.Solution != null)
             {
                 Solution sol =  WorkSpace.Instance.Solution;
+                SolutionUpgrade.ClearPreviousScans();
                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(Solution.SolutionFiles(sol.Folder)), eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                 {

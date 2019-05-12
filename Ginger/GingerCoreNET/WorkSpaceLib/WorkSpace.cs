@@ -250,36 +250,37 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
-                LoadingSolution = true;                  
+                LoadingSolution = true;
 
-                //Cleanup
+                //Cleanup previous Solution load
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Cleaning previous Solution items");
                 SolutionCleanup();
 
-                //Load new Solution
-
-                Reporter.ToConsole(eLogLevel.DEBUG, "Opening Solution located at: " + solutionFolder);
+                //Load Solution file
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Opening Solution located at: " + solutionFolder);
                 string solutionFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
-                Reporter.ToConsole(eLogLevel.DEBUG, "Loading Solution File: " + solutionFile);
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution File: " + solutionFile);
                 if (System.IO.File.Exists(solutionFile))
                 {
-                    Reporter.ToConsole(eLogLevel.DEBUG, "Solution File exist");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File exist");
                 }
                 else
                 {
-                    Reporter.ToConsole(eLogLevel.DEBUG, "Solution File Not Found");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File Not Found");
                 }
-                Reporter.ToConsole(eLogLevel.DEBUG, "Loading Solution File: " + solutionFile);
                 if (!File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
                 {
                     Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                     return false;
                 }
 
-                //get Solution files
+                //Checking if Ginger upgrade is needed
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Checking if Ginger upgrade is needed");
                 IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
+                SolutionUpgrade.ClearPreviousScans();
+                SolutionUpgrade.CheckGingerUpgrade(solutionFolder, solutionFiles);
 
-                SolutionUpgrade.CheckGingerUpgrade(solutionFolder, solutionFiles);                     
-
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
                 if (solution == null)
                 {
@@ -287,32 +288,30 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
 
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading needed Plugins");
                 PlugInsManager.SolutionChanged(SolutionRepository);
 
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
 
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-
                 Solution = solution;
-
                 UserProfile.LoadRecentAppAgentMapping();
-                AutoLogProxy.SetAccount(solution.Account);
-    
-
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
                 }
 
+                //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
                 
-
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)  
                 {

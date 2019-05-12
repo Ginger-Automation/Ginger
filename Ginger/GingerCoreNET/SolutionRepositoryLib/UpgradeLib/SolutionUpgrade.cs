@@ -51,6 +51,10 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 {
     public class SolutionUpgrade
     {
+        public static void ClearPreviousScans()
+        {
+            solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
+        }
 
         public static IEnumerable<RepositoryFile> GetAllToUpgrade(IEnumerable<RepositoryFile> RepositoryFiles)
         {
@@ -336,18 +340,18 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             //get the version based on XML type (new/old repository item type)
             if (string.IsNullOrEmpty(xml) == false)
             {
-                //if (RepositorySerializer.IsLegacyXmlType(xml) == true)
-                //{
-                //    fileVersion = RepositorySerializer.GetXMLGingerVersion(xml, xmlFilePath);
-                //    if (fileVersion == "3.0.0.0")
-                //    {
-                //        fileVersion = fileVersion + "Beta";
-                //    }
-                //}
-                //else
-                //{
+                if (IsLegacyXmlType(xml) == true)
+                {
+                    fileVersion = GetLegacyXMLGingerVersion(xml, xmlFilePath);
+                    if (fileVersion == "3.0.0.0")
+                    {
+                        fileVersion = fileVersion + "Beta";
+                    }
+                }
+                else
+                {
                     fileVersion = NewRepositorySerializer.GetXMLGingerVersion(xml, xmlFilePath);//New XML type
-                //}
+                }
 
                 if (fileVersion == null)
                     Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
@@ -360,6 +364,53 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
         }
 
+        public static bool IsLegacyXmlType(string xml)
+        {
+            if (xml.Contains("<!--Ginger Repository Item ")) return true;
+            return false;
+        }
+        public static string GetLegacyXMLGingerVersion(string xml, string xmlFilePath)
+        {
+            try
+            {
+                /* Expecting the 1st comment in file to contain build info and 
+                * expecting  comment to look this: 
+                * <!--Ginger Repository Item created with version: 0.1.2.3 -->*/
+                int i1 = xml.IndexOf("<!--Ginger Repository Item created with version: ");
+                int i2 = xml.IndexOf("-->");
+
+                string BuildInfo = xml.Substring(i1, i2 - i1);
+                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
+                Match match = regex.Match(BuildInfo);
+                if (match.Success)
+                {
+                    //avoiding Beta + Alpha numbers because for now it is not supposed to be writen to XML's, only oficial release numbers
+                    int counter = 0;
+                    string ver = string.Empty;
+                    for (int indx = 0; indx < match.Value.Length; indx++)
+                    {
+                        if (match.Value[indx] == '.')
+                            counter++;
+                        if (counter == 2)
+                            return ver + ".0.0";
+                        else
+                            ver += match.Value[indx];
+                    }
+                    return ver;//something wronge
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath));
+                    return null;//failed to get the version
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the XML Ginger version of the XML at path = '{0}'", xmlFilePath));
+                Console.WriteLine(ex.StackTrace);
+                return null;//failed to get the version
+            }
+        }
 
         /// <summary>
         /// Pull and return the Ginger Version (in Long format) which the Solution file was created with 
@@ -382,6 +433,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             {
                 if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Checking is Solution Items Upgrade is needed");
                     if (solutionFilesWithVersion == null)
                     {
                         solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
