@@ -49,8 +49,9 @@ namespace Ginger.AnalyzerLib
             }
 
             // Check all GRs BFS
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
-            {
+            //foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
+            {            
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
                 {
                     AddIssue(issuesList, issue);
@@ -58,7 +59,8 @@ namespace Ginger.AnalyzerLib
 
                 //Code to analyze Runner Unique Businessflow with Source BF
                 List<Guid> checkedGuidList = new List<Guid>();
-                foreach (BusinessFlow BF in GR.BusinessFlows)
+                //foreach (BusinessFlow BF in GR.BusinessFlows)
+                Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
@@ -69,17 +71,18 @@ namespace Ginger.AnalyzerLib
                             RunBusinessFlowAnalyzer(actualBf, issuesList);
                         }
                     }
-                }
+                });
 
                 //Code to analyze Runner BF i.e. BFFlowControls
-                foreach (BusinessFlow BF in GR.BusinessFlows)
+                //foreach (BusinessFlow BF in GR.BusinessFlows)
+                Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     foreach (AnalyzerItemBase issue in AnalyzeRunnerBusinessFlow.Analyze(GR, BF))
                     {
                         AddIssue(issuesList, issue);
                     }
-                }
-            }
+                });
+            });
         }       
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
@@ -265,7 +268,7 @@ namespace Ginger.AnalyzerLib
         }
 
         /// <summary>
-        /// Run Runset Analyzer process and return true in case High+ issues were found
+        /// Run Runset Analyzer process and return true in case High+ issues were found, also allows to write the High+ found issues to log/console
         /// </summary>
         /// <param name="runset"></param>
         /// <param name="reportIssues"></param>

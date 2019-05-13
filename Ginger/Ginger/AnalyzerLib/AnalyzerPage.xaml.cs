@@ -638,6 +638,8 @@ namespace Ginger.AnalyzerLib
             RerunButton.Click += new RoutedEventHandler(RerunButton_Click);
             winButtons.Add(RerunButton);
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
 
             if (mAnalyzeDoneOnce)

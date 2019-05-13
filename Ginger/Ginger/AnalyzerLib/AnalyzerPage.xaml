@@ -4,15 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-     Height="600" Width="1000"
+      d:DesignHeight="600" d:DesignWidth="1000"
       Loaded="Page_Loaded"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Analyzer"
 	Title="AnalyzerPage">
 
     <Grid x:Name="AnalyzerItems" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="500*"/>
-            <RowDefinition Height="250"/>
+            <RowDefinition Height="400"/>
+            <RowDefinition Height="200"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
