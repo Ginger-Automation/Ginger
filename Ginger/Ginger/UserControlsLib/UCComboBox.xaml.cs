@@ -149,8 +149,14 @@ namespace Ginger.UserControlsLib
                 ComboBox.Items.Clear();
                 ComboBox.SelectedValuePath = "Value";
                 Type Etype = comboBoxEnumItemsList[0].GetType();
-
-                GingerCore.General.FillComboFromEnumType(ComboBox, Etype, comboBoxEnumItemsList);
+                try
+                {
+                    GingerCore.General.FillComboFromEnumType(ComboBox, Etype, comboBoxEnumItemsList);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Fill ComboBox From Dynamic List", ex);
+                }
             }
         }
         private void BindVEAndSelectionChangedEvent(bool isVENeeded, SelectionChangedEventHandler UCselectionChange)

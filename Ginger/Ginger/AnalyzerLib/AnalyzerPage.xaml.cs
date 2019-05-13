@@ -90,28 +90,29 @@ namespace Ginger.AnalyzerLib
 
             mIssues.CollectionChanged += MIssues_CollectionChanged;
         }
-
+        
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
+        {
+            IssuesCounterLabel.Content = "Total Issues: ";
+            IssuesCountLabel.Content = mIssues.Count();
+            if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
             {
-                IssuesCounterLabel.Content = "Total Issues: ";
-                IssuesCountLabel.Content = mIssues.Count();
-                if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
-                {
-                    CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
-                    CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
-                    CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
-                    CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
-                }
-                if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
-                {
-                    CanAutoFixLable.Content = "Can be Auto Fixed: ";
-                    CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
-                    CanAutoFixLable.Visibility = Visibility.Visible;
-                }
+                CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
+                CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
+                CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
+                CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
+            }
+            if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
+            {
+                CanAutoFixLable.Content = "Can be Auto Fixed: ";
+                CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
+                CanAutoFixLable.Visibility = Visibility.Visible;
+            }
 
-            });
+        });
+
         }
 
         public void Init(Solution Solution)
@@ -180,20 +181,22 @@ namespace Ginger.AnalyzerLib
                     SetStatus("Analyzing Started");
                 }
 
-                await Task.Run(() =>
+                await Task.Factory.StartNew(() =>
                 {
                     switch (mAnalyzedObject)
                     {
                         case AnalyzedObject.Solution:
+                            SetStatus("Analyzing Solution...");
                             mAnalyzerUtils.RunSolutionAnalyzer(WorkSpace.Instance.Solution, mIssues);
                             break;
 
                         case AnalyzedObject.BusinessFlow:
-                            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
+                            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name + "...");
                             mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
                             break;
 
                         case AnalyzedObject.RunSetConfig:
+                            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + "...");
                             mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mIssues);
                             break;
                     }

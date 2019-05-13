@@ -16,22 +16,28 @@ namespace Ginger.AnalyzerLib
 {
     public class AnalyzerUtils
     {
+        private readonly object mAddIssuesLock = new object();
+
         public void RunSolutionAnalyzer(Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
             foreach (AnalyzerItemBase issue in AnalyzeSolution.Analyze(solution))
             {
-                issuesList.Add(issue);
+                AddIssue(issuesList, issue);
             }
 
             //TODO: once this analyzer is taking long time due to many checks, run it using parallel
             ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             List<string> usedVariablesInSolution = new List<string>();
 
-            foreach (BusinessFlow BF in BFs)
+            //foreach (BusinessFlow BF in BFs)
+            Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
             {
                 List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                usedVariablesInSolution.AddRange(tempList);
-            }
+                lock (mAddIssuesLock)
+                {
+                    usedVariablesInSolution.AddRange(tempList);
+                }
+            });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
 
@@ -39,7 +45,7 @@ namespace Ginger.AnalyzerLib
         {
             foreach (AnalyzerItemBase issue in RunSetConfigAnalyzer.Analyze(mRunSetConfig))
             {
-                issuesList.Add(issue);
+                AddIssue(issuesList, issue);
             }
 
             // Check all GRs BFS
@@ -47,7 +53,7 @@ namespace Ginger.AnalyzerLib
             {
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
                 {
-                    issuesList.Add(issue);
+                    AddIssue(issuesList, issue);
                 }
 
                 //Code to analyze Runner Unique Businessflow with Source BF
@@ -70,12 +76,11 @@ namespace Ginger.AnalyzerLib
                 {
                     foreach (AnalyzerItemBase issue in AnalyzeRunnerBusinessFlow.Analyze(GR, BF))
                     {
-                        issuesList.Add(issue);
+                        AddIssue(issuesList, issue);
                     }
                 }
             }
-        }
-
+        }       
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
         {
@@ -85,15 +90,15 @@ namespace Ginger.AnalyzerLib
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
             {
-                issuesList.Add(issue);
+                AddIssue(issuesList, issue);
             }
 
             Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
             { 
                  foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
                  {
-                     issuesList.Add(issue);
-                 }
+                    AddIssue(issuesList, issue);
+                }
 
                  Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                  {
@@ -101,7 +106,7 @@ namespace Ginger.AnalyzerLib
                      Act action = (Act)iaction;
                      foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
                      {
-                         issuesList.Add(issue);
+                         AddIssue(issuesList, issue);
                      }
 
                      List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
@@ -172,7 +177,7 @@ namespace Ginger.AnalyzerLib
                         aa.IssueType = AnalyzerItemBase.eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = AnalyzerItemBase.eSeverity.Medium;
-                        issuesList.Add(aa);
+                        AddIssue(issuesList, aa);
                     }
                     else if (obj.GetType().Equals(typeof(Solution)))
                     {
@@ -186,7 +191,7 @@ namespace Ginger.AnalyzerLib
                         aa.IssueType = AnalyzerItemBase.eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = AnalyzerItemBase.eSeverity.Medium;
-                        issuesList.Add(aa);
+                        AddIssue(issuesList, aa);
                     }
                     else
                     {
@@ -202,7 +207,7 @@ namespace Ginger.AnalyzerLib
                         aa.IssueType = AnalyzerItemBase.eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = AnalyzerItemBase.eSeverity.Medium;
-                        issuesList.Add(aa);
+                        AddIssue(issuesList, aa);
                     }
                 }
             }
@@ -248,6 +253,14 @@ namespace Ginger.AnalyzerLib
                         break;
                     }
                 }
+            }
+        }
+
+        private void AddIssue(ObservableList<AnalyzerItemBase> issuesList, AnalyzerItemBase issue)
+        {
+            lock (mAddIssuesLock)
+            {
+                issuesList.Add(issue);
             }
         }
     }

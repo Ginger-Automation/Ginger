@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mShowAutoRunWindow = value;
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+                //Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public void ProcessArgs(RunsetExecutor runsetExecutor)
         {
             mRunsetExecutor = runsetExecutor;
-            SetDebugLevel();
+           // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
             DownloadSolutionFromSourceControl();
             OpenSolution();
             SelectEnv();
@@ -91,7 +91,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if(ShowAutoRunWindow)
             {
+                Reporter.ToLog(eLogLevel.DEBUG, "Showing RunSet AutoRunWindow");
                 RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Not Showing RunSet AutoRunWindow");
             }
         }
 

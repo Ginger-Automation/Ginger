@@ -384,17 +384,18 @@ namespace Ginger.Repository
             ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
             analyzerUtils.RunRunSetConfigAnalyzer(runSetConfig, issues);
 
-            if (reportIssues)
+            List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList();
+            if (highCriticalIssues != null && highCriticalIssues.Count > 0)
             {
-                foreach (AnalyzerItemBase issue in issues)
+                if (reportIssues)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Analyzer Issue found: {0}/{1}[{2}] => {3}", issue.ItemParent, issue.ItemName, issue.ItemClass, issue.Description));
+                    foreach (AnalyzerItemBase issue in highCriticalIssues)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Analyzer High+ Issue found: {0}/{1}[{2}] => {3}", issue.ItemParent, issue.ItemName, issue.ItemClass, issue.Description));
+                    }
                 }
-            }
 
-            if (issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList().Count > 0)
-            {
-                return true;//critical issues exist
+                return true;//High+ issues exist
             }
             else
             {
