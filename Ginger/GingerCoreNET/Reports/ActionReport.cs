@@ -58,7 +58,8 @@ namespace Ginger.Reports
         }
         
         private IAct mAction;
-        private ProjEnvironment mExecutionEnviroment;
+        Context mContext;
+        //private ProjEnvironment mExecutionEnviroment;
         private string _localFolder;
 
         [JsonProperty]
@@ -367,10 +368,12 @@ namespace Ginger.Reports
         public bool IsSkipped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped; } }
         public bool IsBlocked { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked; } }
    
-        public ActionReport(IAct Act, ProjEnvironment environment=null)
+        public ActionReport(IAct Act, Context context)
         {
             this.mAction = Act;
-            this.mExecutionEnviroment = environment;
+            mContext = context;
+            //this.mExecutionEnviroment = environment;            
+
         }
 
         public string LocalFolder
@@ -423,13 +426,20 @@ namespace Ginger.Reports
 
         private string GetValueForDriverWithoutDescrypting(string value)
         {
-            // !!!!!!!!!!!!!!!!!!!!!!!!! should not use WorkSpace.BF here 
-            ValueExpression VE = new ValueExpression(mExecutionEnviroment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-            VE.DecryptFlag = false;
-            VE.Value = value;
+            if (mContext != null)
+            {               
+                ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                VE.DecryptFlag = false;
+                VE.Value = value;
 
-            return VE.ValueCalculated;
+                return VE.ValueCalculated;
+            }
+            else
+            {
+                return value;
+            }
         }
   
     }
 }
+ 

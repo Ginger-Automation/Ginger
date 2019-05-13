@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.Repository
                                 foreach (Match match in matches)
                                 {
                                     string val = match.Value.Substring(28);
-                                    val = val.Replace("}}", "}");
+                                    val = val.Replace("}", "");
                                     if (!usedGlobalParam.Contains(val))
                                         usedGlobalParam.Add(val);
                                 }

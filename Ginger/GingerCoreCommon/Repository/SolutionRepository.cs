@@ -387,16 +387,21 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertSolutionRelativePath(string relativePath)
         {
-            if (relativePath.TrimStart().StartsWith("~"))
+            try
             {
-                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                return fullPath;
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                    return fullPath;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return relativePath;
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
+
+            return relativePath;
         }
 
         /// <summary>

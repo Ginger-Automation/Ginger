@@ -246,19 +246,19 @@ namespace Ginger
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());          
             TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0)};
-            txt.Text = count;
-           // if(typ==0)
-           // {
-           //     App.RunsetBFTextbox = txt;
-           // }
-           //else if(typ==1)
-           // {
-           //     App.RunsetActivityTextbox = txt;
-           // }
-           // else
-           // {
-           //     App.RunsetActionTextbox = txt;
-           // }        
+            // if(typ==0)
+            // {
+            //     App.RunsetBFTextbox = txt;
+            // }
+            //else if(typ==1)
+            // {
+            //     App.RunsetActivityTextbox = txt;
+            // }
+            // else
+            // {
+            //     App.RunsetActionTextbox = txt;
+            // }        
+            txt.Text = count.ToString();
             grd.Children.Add(txt);        
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
