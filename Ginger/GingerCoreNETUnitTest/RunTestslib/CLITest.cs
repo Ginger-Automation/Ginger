@@ -42,7 +42,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-
+        [Ignore]
         [TestMethod]
         public void ScriptFile()
         {

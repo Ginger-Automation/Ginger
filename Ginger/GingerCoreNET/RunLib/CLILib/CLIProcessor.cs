@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 case "--scriptfile":
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
                     mCLIHandler = new CLIScriptFile();
-                    PerformLoadAndExecution(ReadFile(value));
+                    PerformLoadAndExecution(ReadFile(value), false);
                     break;
                 case "--dynamicfile":
                 case "DynamicXML":
@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        private void PerformLoadAndExecution(string configurations)
+        private void PerformLoadAndExecution(string configurations, bool runCLIHelper = true)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);

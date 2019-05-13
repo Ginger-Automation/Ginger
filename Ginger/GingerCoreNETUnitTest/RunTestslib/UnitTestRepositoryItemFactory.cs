@@ -14,7 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class UnitTestRepositoryItemFactory : IRepositoryItemFactory
     {
-        public Task<int> AnalyzeRunset(object a, bool b)
+        public Task<int> AnalyzeRunsetWithUI(object a, bool b)
         {
             throw new NotImplementedException();
         }
