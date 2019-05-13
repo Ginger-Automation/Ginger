@@ -557,22 +557,16 @@ namespace Ginger.AnalyzerLib
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-
-            //TODO: add image
-            // view.GridColsView.Add(new GridColView() { Field = "Image", Header = " ", BindImageCol = "Image", WidthWeight = 2.5, MaxWidth = 20 });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Selected, Header = "Selected", WidthWeight = 2, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.SeverityIcon, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Selected, Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemClass, Header = "Item Type", WidthWeight = 3 ,AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemName, Header = "Item Name", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemParent, Header= "Item Parent", WidthWeight = 10, AllowSorting = true });                       
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Description, Header = "Issue", WidthWeight = 15, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Severity, Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Details, Header = "Details", WidthWeight = 10 });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Impact, Header = "Impact", WidthWeight = 5 });
-            // view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.HowToFix, Header = "How To Fix", WidthWeight = 10, AllowSorting=true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Status, Header = "Status", WidthWeight = 3, AllowSorting = true });
+            
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.SeverityIcon), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Selected), Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3 ,AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header= "Item Parent", WidthWeight = 10, AllowSorting = true });                       
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Description), Header = "Issue", WidthWeight = 15, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Severity), Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.CanAutoFix), Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Status), Header = "Status", WidthWeight = 3, AllowSorting = true });
 
             AnalyzerItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Select/UnSelect all issues which can be auto fixed", new RoutedEventHandler(MarkUnMark));
 

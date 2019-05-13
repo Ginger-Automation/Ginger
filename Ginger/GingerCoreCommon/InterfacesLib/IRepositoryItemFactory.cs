@@ -59,14 +59,6 @@ namespace Amdocs.Ginger.Common
 
         Task<int> AnalyzeRunsetWithUI(object runset, bool runInSilentMode);
 
-        /// <summary>
-        /// Run Runset Analyzer process and return true in case High+ issues were found
-        /// </summary>
-        /// <param name="runset"></param>
-        /// <param name="reportIssues"></param>
-        /// <returns></returns>
-        bool AnalyzeRunset(object runset, bool reportIssues);
-
         void ShowAutoRunWindow();
 
         bool Send_Outlook(bool actualSend = true, string MailTo=null, string Event=null, string Subject=null, string Body=null, string MailCC=null, List<string> Attachments=null, List<KeyValuePair<string, string>> EmbededAttachment=null);

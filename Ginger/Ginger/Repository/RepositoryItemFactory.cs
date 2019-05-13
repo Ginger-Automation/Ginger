@@ -377,32 +377,6 @@ namespace Ginger.Repository
             return 0;
         }
 
-        public bool AnalyzeRunset(object runset, bool reportIssues)
-        {
-            RunSetConfig runSetConfig = (RunSetConfig)runset;
-            AnalyzerUtils analyzerUtils = new AnalyzerUtils();
-            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
-            analyzerUtils.RunRunSetConfigAnalyzer(runSetConfig, issues);
-
-            List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList();
-            if (highCriticalIssues != null && highCriticalIssues.Count > 0)
-            {
-                if (reportIssues)
-                {
-                    foreach (AnalyzerItemBase issue in highCriticalIssues)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Analyzer High+ Issue found: {0}/{1}[{2}] => {3}", issue.ItemParent, issue.ItemName, issue.ItemClass, issue.Description));
-                    }
-                }
-
-                return true;//High+ issues exist
-            }
-            else
-            {
-                return false;
-            }
-        }
-
 
         AutoRunWindow mAutoRunWindow;
         public void ShowAutoRunWindow()

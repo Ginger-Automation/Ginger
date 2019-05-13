@@ -486,6 +486,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Warn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
                     break;
+                case eImageType.HighWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Red);
+                    break;
+                case eImageType.MediumWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Orange);
+                    break;
+                case eImageType.LowWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Yellow);
+                    break;
                 case eImageType.EditWindow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
                     break;

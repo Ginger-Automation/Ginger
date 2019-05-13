@@ -263,5 +263,35 @@ namespace Ginger.AnalyzerLib
                 issuesList.Add(issue);
             }
         }
+
+        /// <summary>
+        /// Run Runset Analyzer process and return true in case High+ issues were found
+        /// </summary>
+        /// <param name="runset"></param>
+        /// <param name="reportIssues"></param>
+        /// <returns></returns>
+        public bool AnalyzeRunset(RunSetConfig runset, bool reportIssues)
+        {
+            ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
+            RunRunSetConfigAnalyzer(runset, issues);
+
+            List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList();
+            if (highCriticalIssues != null && highCriticalIssues.Count > 0)
+            {
+                if (reportIssues)
+                {
+                    foreach (AnalyzerItemBase issue in highCriticalIssues)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Analyzer High+ Issue found: {0}/{1}[{2}] => {3}", issue.ItemParent, issue.ItemName, issue.ItemClass, issue.Description));
+                    }
+                }
+
+                return true;//High+ issues exist
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

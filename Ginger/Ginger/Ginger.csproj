@@ -556,7 +556,6 @@
       <DependentUpon>JiraImportSetByIdPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\Repository\JIRA_Repository.cs" />
-    <Compile Include="AnalyzerLib\AnalyzerUtils.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelBodyNodeSyncPage.xaml.cs">
       <DependentUpon>APIModelBodyNodeSyncPage.xaml</DependentUpon>
     </Compile>
@@ -683,7 +682,6 @@
     <Compile Include="ALM\RQM\RQMPlansExplorerPage.xaml.cs">
       <DependentUpon>RQMPlansExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AnalyzerLib\AnalyzeRunnerBusinessFlow.cs" />
     <Compile Include="ApiModelsFolder\AddApiModelActionWizardPage.cs" />
     <Compile Include="ApiModelsFolder\APIModelParamsWizardPage.xaml.cs">
       <DependentUpon>APIModelParamsWizardPage.xaml</DependentUpon>
@@ -1496,7 +1494,6 @@
       <DependentUpon>QCManagerReportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\QC\QCManagerReport\QCManagerReportTestCaseDetails.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeAction.cs" />
     <Compile Include="Drivers\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
       <DependentUpon>AndroidADBDriverEditPage.xaml</DependentUpon>
     </Compile>
@@ -1803,15 +1800,9 @@
       <DependentUpon>ActivitiesGroupsActivitiesSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\BusinessFlowActivityUsage.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeActivity.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeBusinessFlow.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeGingerRunner.cs" />
-    <Compile Include="AnalyzerLib\AnalyzerItemBase.cs" />
     <Compile Include="AnalyzerLib\AnalyzerPage.xaml.cs">
       <DependentUpon>AnalyzerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AnalyzerLib\AnalyzeSolution.cs" />
-    <Compile Include="AnalyzerLib\RunSetConfigAnalyzer.cs" />
     <Compile Include="BusinessFlowWindows\EditBusinessFlowAppsPage.xaml.cs">
       <DependentUpon>EditBusinessFlowAppsPage.xaml</DependentUpon>
     </Compile>

@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Ginger.AnalyzerLib;
 using Ginger.Run;
 using GingerCoreNET.SourceControl;
 using System;
@@ -33,12 +34,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (runsetExecutor.RunSetConfig.RunWithAnalyzer)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Running Runset Analyzer");
-                if (RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(runsetExecutor.RunSetConfig, true))
+                AnalyzerUtils analyzerUtils = new AnalyzerUtils();
+                if (analyzerUtils.AnalyzeRunset(runsetExecutor.RunSetConfig, true))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Stopping Run Set execution due to Analyzer issues");
                     return;
                 }
             }
+
             runsetExecutor.RunRunset();            
         }
 
