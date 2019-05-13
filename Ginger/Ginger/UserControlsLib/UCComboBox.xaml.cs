@@ -148,14 +148,13 @@ namespace Ginger.UserControlsLib
             {
                 ComboBox.Items.Clear();
                 ComboBox.SelectedValuePath = "Value";
-                Type Etype = comboBoxEnumItemsList[0].GetType();
-                try
+                Type Etype = comboBoxEnumItemsList[0].GetType();                
+                foreach (object item in comboBoxEnumItemsList)
                 {
-                    GingerCore.General.FillComboFromEnumType(ComboBox, Etype, comboBoxEnumItemsList);
-                }
-                catch(Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Fill ComboBox From Dynamic List", ex);
+                    GingerCore.General.ComboItem CEI = new GingerCore.General.ComboItem();
+                    CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
+                    CEI.Value = item;
+                    ComboBox.Items.Add(CEI);
                 }
             }
         }
