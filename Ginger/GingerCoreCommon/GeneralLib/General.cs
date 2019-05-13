@@ -148,6 +148,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        public static string BitmapToBase64(Bitmap bitmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byte[] byteImage = ms.ToArray();
+                return Convert.ToBase64String(byteImage); //Get Base64
+            }
+        }
 
         public static string TimeConvert(string s)
         {

@@ -70,7 +70,7 @@ namespace Ginger.SourceControl
                  WorkSpace.Instance.UserProfile.SourceControlURL = "";
             }
 
-            SourceControlClassComboBox.Init( WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
+            SourceControlClassComboBox.Init( WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.

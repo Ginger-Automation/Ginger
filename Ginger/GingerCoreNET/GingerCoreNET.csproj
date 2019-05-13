@@ -30,6 +30,8 @@
 
   <ItemGroup>
     <Compile Remove="ALMLib\ExternalItemField.cs" />
+    <Compile Remove="RecordingLib\ElementRecordEventArgs.cs" />
+    <Compile Remove="RecordingLib\PageChangedEventArgs.cs" />
   </ItemGroup>
 
   <ItemGroup>
