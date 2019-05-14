@@ -267,21 +267,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Timer:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
                     break;
-                case eImageType.VariableString:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Font);
-                    break;
-                case eImageType.VariableRandomString:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Language);
-                    break;
-                case eImageType.SortAsc:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SortNumericAsc);
-                    break;
-                case eImageType.VariableDynamic:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Css3);
-                    break;
-                case eImageType.VariableSelectionList:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusSquare);
-                    break;
                 #endregion
 
 
@@ -766,16 +751,23 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Windows);
                     break;
 
-                case eImageType.SoapUI:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee, Brushes.DeepPink);
-                    break;
-
                 case eImageType.PDFFile:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FilePdfOutline);
                     break;
 
+                case eImageType.CSS3Text:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Css3);
+                    break;
 
-                #endregion
+                case eImageType.Languages:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Language);
+                    break;
+
+                case eImageType.MinusSquare:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusSquare);
+                    break;
+
+                    #endregion
 
                 #region ElementType Images
                 case eImageType.Button:

@@ -66,6 +66,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Rows; } }
+        public override eImageType Image { get { return eImageType.VariableList; } }
     }
 }

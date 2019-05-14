@@ -74,12 +74,6 @@ namespace Amdocs.Ginger.Common.Enums
         Random,
         Sequence,
         Timer,
-        VariableString,
-        SortAsc,
-        VariableSelectionList,
-        VariableRandomString,
-        VariableDynamic,
-
         #endregion
 
         #region Execution Status Images
@@ -248,7 +242,9 @@ namespace Amdocs.Ginger.Common.Enums
         SoapUI,
         Java,
         PDFFile,
-
+        CSS3Text,
+        Languages,
+        MinusSquare,
         #endregion
 
         #region Source control Images     

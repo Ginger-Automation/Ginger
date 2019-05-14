@@ -81,7 +81,7 @@ namespace GingerCore.Variables
             Value = val.ToString();
         }
     
-        public override eImageType Image { get { return eImageType.SortAsc; } }
+        public override eImageType Image { get { return eImageType.SequentialExecution; } }
         public override string VariableType() { return "Sequence"; }
         public override bool SupportSetValue { get { return false; } }
 

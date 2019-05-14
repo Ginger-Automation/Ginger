@@ -43,7 +43,7 @@ namespace GingerCore.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
-        public override eImageType Image { get { return eImageType.SoapUI; } }
+        public override eImageType Image { get { return eImageType.Exchange; } }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
