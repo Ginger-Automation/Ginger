@@ -12,7 +12,7 @@
     <Grid x:Name="AnalyzerItems" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="400"/>
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="200*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 

@@ -336,25 +336,23 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        private static void SolutionCleanup()
+        private void SolutionCleanup()
         {
-            //if (WorkSpace.Instance.SolutionRepository != null)
-            //{
-            //    WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-            //}
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            }
 
-            //if (!WorkSpace.Instance.RunningInExecutionMode)
-            //{
-            //    AppSolutionAutoSave.SolutionAutoSaveEnd();
-            //}
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                AppSolutionAutoSave.SolutionAutoSaveEnd();
+            }
 
-            //WorkSpace.Instance.Solution = null;
+            CloseAllRunningAgents();
 
-            //CloseAllRunningAgents();
-            //App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ClearAutomate, null);
-            //AutoLogProxy.SetAccount("");
-            //WorkSpace.Instance.SolutionRepository = null;
-            //WorkSpace.Instance.SourceControl = null;
+            WorkSpace.Instance.Solution = null;
+            WorkSpace.Instance.SolutionRepository = null;
+            WorkSpace.Instance.SourceControl = null;
         }
 
         public void CloseAllRunningAgents()
