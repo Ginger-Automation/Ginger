@@ -35,7 +35,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new System.NotImplementedException();
         }
 
-        public void SetSolutionSourceControl(Solution solution)
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
             Console.WriteLine("SetSolutionSourceControl");
         }

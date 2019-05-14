@@ -30,7 +30,7 @@ namespace Amdocs.Ginger
             throw new NotImplementedException();
         }
 
-        public void SetSolutionSourceControl(Solution solution)
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
             throw new NotImplementedException();
         }

@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.ReporterLib;
+using Ginger.Repository;
 using GingerWPF.WorkSpaceLib;
 using GingerWPFUnitTest.POMs;
 using System;
@@ -91,13 +93,11 @@ namespace GingerTest
                 
                 app = new Ginger.App();
                 WorkSpace.Init(new WorkSpaceEventHandler());
+                WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
                 WorkSpace.Instance.RunningFromUnitTest = true;                
                 
                 app.StartGingerUI();
                 
-
-                
-
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
                 //Ginger.App.MainWindow.Closed += (sender1, e1) => 

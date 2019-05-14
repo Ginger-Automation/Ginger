@@ -39,10 +39,9 @@ namespace GingerWPF.WorkSpaceLib
         {
         }
 
-        public void SetSolutionSourceControl(Solution solution)
-        {
-            string RepositoryRootFolder = string.Empty;
-            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref RepositoryRootFolder);
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
+        {           
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
                 solution.SourceControl = new GITSourceControl();

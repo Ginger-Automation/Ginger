@@ -298,14 +298,12 @@ namespace amdocs.ginger.GingerCoreNET
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
-            string RepositoryRootFolder = string.Empty;
-
-            WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution);
+            string repositoryRootFolder = string.Empty;
+            WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
             
-
-            if (solution.SourceControl != null)
+            if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+                if ( string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
                 {
                     if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
                     {
@@ -325,7 +323,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 string error = string.Empty;
                 solution.SourceControl.SolutionFolder = solution.Folder;
-                solution.SourceControl.RepositoryRootFolder = RepositoryRootFolder;
+                solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
                 solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
                 solution.SourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
                 solution.SourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;

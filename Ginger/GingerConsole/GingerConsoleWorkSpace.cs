@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.GingerConsole
             throw new NotImplementedException();
         }
 
-        public void SetSolutionSourceControl(Solution solution)
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
             Console.WriteLine("SetSolutionSourceControl " + solution + " NOT IMPL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
