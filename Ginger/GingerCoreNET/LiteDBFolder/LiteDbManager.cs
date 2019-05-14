@@ -99,32 +99,6 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
             dbConnector.SetCollection(objectLiteColl, objectColl);
         }
-        private LiteDbReportBase GetGingerObject(String reportLevelName,RepositoryItemBase objectData)
-        {
-            LiteDbReportBase data = new LiteDbReportBase();
-            switch (reportLevelName)
-            {
-                case "Actions":
-                    data = new LiteDbAction();
-                    data.SetReportData((Act)objectData);
-                    break;
-                case "Activities":
-                    data = new LiteDbActivity();
-                    data.SetReportData((Activity)objectData);
-                    break;
-                case "ActivityGroups":
-                    break;
-                case "BusinessFlows":
-                    break;
-                case "Runners":
-                    break;
-                case "RunSet":
-                    break;
-                default:
-                    break;
-            }
-            return data;
-        }
         private List<LiteDbRunSet> GetGingerRunSet(List<LiteDbRunner> runnersData)
         {
             List<LiteDbRunSet> data = new List<LiteDbRunSet>();
