@@ -99,56 +99,61 @@ public class SwingHelper implements IXPath {
 		return null;
 	}
 
-	public Component FindElement(String LocateBy, String LocateValue) 
+	public Component FindElement(String locateBy, String locateValue) 
+	{
+		Component comp=null;
+		if(CurrentWindow!=null)
+		{
+			comp= FindElementInWindow(CurrentWindow,locateBy,locateValue);
+		}
+		else
+		{
+			//If Current window is null i.e. switch window is not done 
+			// Then look for elements in all available windows 
+			Window [] windowList = GetAllWindowsByReflection();
+			for (Window w : windowList) 
+			{
+				comp = FindElementInWindow(w, locateBy, locateValue);
+				if (comp != null) 
+				{				
+					CurrentWindow = w; //if element is found set this window as current window for subsequent actions					
+				}
+			}
+		}		
+		
+		return comp;
+		
+	}
+	
+	public Component FindElementInWindow(Window window, String LocateBy, String LocateValue)
 	{
 		Component comp = null;
 		if(LocateBy.equals("ByName")||LocateBy.equals("ByValue"))
 		{	
-			if (CurrentWindow == null) {
-				//TODO: Not sure why we are doing this. User is supposed do Switch window before running any other action. 
-				//So if current window is null we should give the message switch window is needed
-				Frame[] Frames = Frame.getFrames();
-				for (Frame f : Frames) {
-					comp = FindElementRecursive(f, LocateBy, LocateValue);
-					if (comp != null) {
-						CurrentWindow = f;
-						return comp;
-					}
-				}
-			}
-			if (CurrentWindow == null) {
-				return null;
-			}
-			comp = FindElementRecursive(CurrentWindow, LocateBy, LocateValue);									
+
+			comp = FindElementRecursive(window, LocateBy, LocateValue);									
 		}
 		else if(LocateBy.equals("ByContainerName"))
 		{
 			Component tblComp = null;
-			if (CurrentWindow == null) {
-				Frame[] Frames = Frame.getFrames();
-				for (Frame f : Frames) {
-					comp = FindElementRecursive(f, "ByName", LocateValue);
-					if (comp != null) { 
-						CurrentWindow = f;
-						tblComp = comp;
-						return tblComp;
-					}
-				}
-			}			
-			else
-			{
-				tblComp = FindElementRecursive(CurrentWindow, "ByName", LocateValue);	
-			}		
+
+				tblComp = FindElementRecursive(window, "ByName", LocateValue);	
+			
 			tblComp = FindElementRecursive((Container)tblComp, "ByClassName", "SearchJTable");
 			return tblComp;
 		}
 		else if(LocateBy.equalsIgnoreCase("ByXPath"))
 		{
-			comp=mXPathHelper.GetComponentByXPath(CurrentWindow,LocateValue);
+			
+				comp=mXPathHelper.GetComponentByXPath(window,LocateValue);
+			
+	
 		}
 		else if(LocateBy.equalsIgnoreCase("ByMulitpleProperties"))
 		{
-			comp = mXPathHelper.GetComponentByMultipleProperties(CurrentWindow, LocateValue);
+			
+				comp = mXPathHelper.GetComponentByMultipleProperties(window, LocateValue);
+					
 		}
 		return comp;
 	}

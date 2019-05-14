@@ -168,7 +168,7 @@ namespace Ginger.WindowExplorer
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             SetActionDetails(act);
-
+            act.Context = mContext;
             mContext.BusinessFlow.AddAct(act, true);
            
             ActionEditPage AEP = new ActionEditPage(act);

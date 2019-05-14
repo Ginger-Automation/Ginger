@@ -195,12 +195,12 @@ namespace Ginger.Run.RunSetActions
 
         private void EmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(EmailMethodComboBox.SelectedItem.ToString()=="OUTLOOK")
-            {                
+            if (EmailMethodComboBox.SelectedItem.ToString() == "OUTLOOK")
+            {
                 SMTPConfig.Visibility = Visibility.Collapsed;
             }
             else
-            {             
+            {
                 SMTPConfig.Visibility = Visibility.Visible;
             }
         }

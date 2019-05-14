@@ -51,19 +51,31 @@ namespace Ginger.Actions.PlugIns
         {
         }
 
+
         private void SetActionInputsControls()
         {
             List<ActionInputValueInfo> actionInputsDetails = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(mAct.PluginId, mAct.ServiceId, mAct.ActionId);
 
-            foreach (ActInputValue param in mAct.InputValues)
+            foreach (ActionInputValueInfo actionInputValueInfo in actionInputsDetails)
             {
-                // update the type based on the info json of the plugin
-                param.ParamType = (from x in actionInputsDetails where x.Param == param.Param select x.ParamType).SingleOrDefault();
-                
+                ActInputValue actInputValue = (from x in mAct.InputValues where x.Param == actionInputValueInfo.Param select x).SingleOrDefault();
+
+                if (actInputValue == null)
+                {
+                    actInputValue = new ActInputValue();
+                    actInputValue.Param = actionInputValueInfo.Param;
+                    actInputValue.ParamType = actionInputValueInfo.ParamType;
+                    mAct.InputValues.Add(actInputValue);
+                }
+                else
+                {
+                    actInputValue.ParamType = actionInputValueInfo.ParamType;
+                }
+
                 // Add ActionInputValueUserControl for the param value to edit
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), actInputValue);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
-                actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
+                actionInputValueUserControl.Margin = new Thickness(0, 10, 0, 0);
                 xActionInputControlsPnl.Children.Add(actionInputValueUserControl);
             }
         }

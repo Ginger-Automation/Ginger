@@ -204,7 +204,7 @@ namespace Ginger.Run.RunSetActions
                     return;
                 }
                 mVE.Value = Bodytext;
-                emailReadyHtml = @"<p><!--FULLREPORTLINK--><p>";
+                emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
                 emailReadyHtml += mVE.ValueCalculated;
             }
             else
@@ -1014,7 +1014,7 @@ namespace Ginger.Run.RunSetActions
                                     fieldsNamesHTMLTableCells.Append("<td bgcolor='#1B3651' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityRunStatusValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport).ToString());
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.NumberOfActions)
                             {
