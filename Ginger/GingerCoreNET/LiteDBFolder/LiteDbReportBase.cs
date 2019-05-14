@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public List<string> InputValues { get; set; }
         public List<string> OutputValues { get; set; }
         public List<string> FlowControls { get; set; }
-        public string ScreenShots { get; set; }
+        public List<string> ScreenShots { get; set; }
         public int Wait { get; set; }
         public int? TimeOut { get; set; }
 

@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 liteDbAction.Wait = action.Wait;
                 liteDbAction.TimeOut = action.Timeout;
-                liteDbActionList.Add(liteDbAction);
+                
                 // Save screenShots
                 int screenShotCountPerAction = 0;
                 for (var s = 0; s < action.ScreenShots.Count; s++)
@@ -49,14 +49,19 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     try
                     {
                         screenShotCountPerAction++;
+                        string imagesFolderName = executionLogFolder + "LiteDBImages";
+                        if (!System.IO.Directory.Exists(imagesFolderName))
+                        {
+                            System.IO.Directory.CreateDirectory(imagesFolderName);
+                        }
                         if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            System.IO.File.Copy(action.ScreenShots[s], executionLogFolder + /*action.ExecutionLogFolder +*/ @"\ScreenShot_" + liteDbAction.Seq + "_" + screenShotCountPerAction.ToString() + ".png", true);
+                            System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png", true);
                         }
                         else
                         {
-                            System.IO.File.Move(action.ScreenShots[s], executionLogFolder + /*action.ExecutionLogFolder +*/ @"\ScreenShot_" + liteDbAction.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
-                            action.ScreenShots[s] = executionLogFolder + /*action.ExecutionLogFolder +*/ @"\ScreenShot_" + liteDbAction.Seq + "_" + screenShotCountPerAction.ToString() + ".png";
+                            System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png");
+                            action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png";
                         }
                     }
                     catch (Exception ex)
@@ -65,7 +70,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         screenShotCountPerAction--;
                     }
                 }
-
+                liteDbAction.ScreenShots = action.ScreenShots;
+                liteDbActionList.Add(liteDbAction);
             }
             else
             {
