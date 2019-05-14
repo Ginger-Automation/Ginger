@@ -1484,7 +1484,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
                 HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
                 string reportsResultFolder = string.Empty;
@@ -1523,7 +1523,8 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLoggerManager.GenerateRunSetOfflineReport();
+                GingerRunner gr = new GingerRunner();
+                gr.ExecutionLoggerManager.GenerateRunSetOfflineReport();
             }
 
         }

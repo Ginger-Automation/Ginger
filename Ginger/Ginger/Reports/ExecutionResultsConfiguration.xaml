@@ -12,14 +12,19 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel Margin="0,0,0,0">
             <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="7,0,0,0"/>
-            <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
+            <StackPanel Margin="10,10,0,0" HorizontalAlignment="Left">
                 <Label Content="Execution Logger Result Producing:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
-                <StackPanel x:Name="executionResultSwitchRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel x:Name="executionResultSwitchRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="On" Padding="5,0,15,0" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
                     <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="Off" Padding="5,0,0,0" IsChecked="True" Checked="executionResultOffRadioBtnsPnl_Checked"></RadioButton>
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="ExecutionResultFolderPnl" Margin="10,10,0,0" HorizontalAlignment="Left">
+                <Label Content="Data Save Options:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
+                <StackPanel x:Name="dataSaveOptionsRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <RadioButton x:Name="textFileRadioBtnsPnl" Content="Text File" Padding="5,0,15,0" Checked="TextFileRadioBtnsPnl_Checked"></RadioButton>
+                    <RadioButton x:Name="liteDbRadioBtnsPnl" Content="LiteDB" Padding="5,0,0,0" IsChecked="True" Checked="LiteDbRadioBtnsPnl_Checked"></RadioButton>
+                </StackPanel>
                 <Label Content="Execution Logger Results Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
                 <Label  Style="{StaticResource @LabelStyle}">Folder Path:</Label>
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >

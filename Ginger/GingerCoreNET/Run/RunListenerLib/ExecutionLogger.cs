@@ -26,6 +26,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -41,12 +42,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Ginger.Run
+namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     // Each ExecutionLogger instance should be added to GingerRunner Listeneres
     // Create new ExecutionLogger for each run 
 
-    public class ExecutionLogger : RunListenerBase
+    public abstract class ExecutionLogger 
     {
         static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -58,7 +59,7 @@ namespace Ginger.Run
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         uint meventtime;
-        IValueExpression mVE;
+        public IValueExpression mVE;
 
         ProjEnvironment mExecutionEnvironment = null;
 
@@ -77,7 +78,6 @@ namespace Ginger.Run
         }
 
         private GingerReport gingerReport = new GingerReport();
-        public static Ginger.Reports.RunSetReport RunSetReport;
 
         public int ExecutionLogBusinessFlowsCounter = 0;
 
@@ -110,24 +110,82 @@ namespace Ginger.Run
         public ParentGingerData GingerData = new ParentGingerData();
 
         // TODO: remove the need for env - get it from notify event !!!!!!
-        public ExecutionLogger(ProjEnvironment environment, eExecutedFrom executedFrom = eExecutedFrom.Run)
+        //public ExecutionLogger(ProjEnvironment environment, eExecutedFrom executedFrom = eExecutedFrom.Run)
+        //{
+        //    mJsonSerializer = new JsonSerializer();
+        //    mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+        //    ExecutedFrom = executedFrom;
+        //    ExecutionEnvironment = environment;//needed for supporting diffrent env config per Runner
+        //}
+        //public void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
+        //{
+        //    //TODO: for speed we can do it async on another thread...
+        //    using (StreamWriter SW = new StreamWriter(FileName, toAppend))
+        //    using (JsonWriter writer = new JsonTextWriter(SW))
+        //    {
+        //        mJsonSerializer.Serialize(writer, obj);
+
+        //    }
+        //}
+        public abstract void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false);
+        public abstract object SetReportAction(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false);
+        internal ActionReport GetActionReportData(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
-            mJsonSerializer = new JsonSerializer();
-            mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-            ExecutedFrom = executedFrom;
-            ExecutionEnvironment = environment;//needed for supporting diffrent env config per Runner
-        }
-        public void SaveObjToJSonFile(object obj, string FileName, bool toAppend = false)
-        {
-            //TODO: for speed we can do it async on another thread...
-            using (StreamWriter SW = new StreamWriter(FileName, toAppend))
-            using (JsonWriter writer = new JsonTextWriter(SW))
+            ActionReport AR = new ActionReport(action, context);
+            AR.Seq = context.Activity.ExecutionLogActionCounter;
+            if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
             {
-                mJsonSerializer.Serialize(writer, obj);
-
+                if (mVE == null)
+                {
+                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                }
+                mVE.Value = action.RunDescription;
+                AR.RunDescription = mVE.ValueCalculated;
             }
+            return AR;
         }
+        internal ActivityReport GetActivityReportData(Activity activity, Context context, bool offlineMode)
+        {
+            ActivityReport AR = new ActivityReport(activity);
+            AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
+            AR.VariablesBeforeExec = activity.VariablesBeforeExec;
 
+            if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
+            {
+                if (mVE == null)
+                {
+                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+
+                }
+                mVE.Value = activity.RunDescription;
+                AR.RunDescription = mVE.ValueCalculated;
+            }
+            return AR;
+        }
+        internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
+        {
+            ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, businessFlow);
+            AGR.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
+            AGR.ExecutionLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+            return AGR;
+        }
+        internal BusinessFlowReport GetBFReportData(BusinessFlow businessFlow, ProjEnvironment environment)
+        {
+            BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
+            BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
+            BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
+            BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
+            if (!string.IsNullOrEmpty(businessFlow.RunDescription))
+            {
+                if (mVE == null)
+                {
+                    mVE = new GingerCore.ValueExpression(environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                }
+                mVE.Value = businessFlow.RunDescription;
+                BFR.RunDescription = mVE.ValueCalculated;
+            }
+            return BFR;
+        }
         public static object LoadObjFromJSonFile(string FileName, Type t)
         {
             return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
@@ -137,16 +195,53 @@ namespace Ginger.Run
         {
             return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
         }
-        
-        public override void ExecutionContext(uint eventTime, ExecutionLoggerConfiguration.AutomationTabContext automationTabContext, BusinessFlow businessFlow)
+
+        public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false);
+
+        public abstract object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run);
+        public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
+        public virtual void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
-            mCurrentBusinessFlow = businessFlow;
-            mCurrentActivity = businessFlow.CurrentActivity;
-            meventtime = eventTime;
+            if (gingerRunner == null)
+            {
+                gingerReport.Seq = this.GingerData.Seq;
+                gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
+                gingerReport.GUID = this.GingerData.Ginger_GUID.ToString();
+                gingerReport.Name = this.GingerData.GingerName.ToString();
+                gingerReport.ApplicationAgentsMappingList = this.GingerData.GingerAggentMapping;
+                gingerReport.EnvironmentName = mContext.Environment != null ? mContext.Environment.Name : string.Empty;
+                gingerReport.Elapsed = (double)gingerReport.Watch.ElapsedMilliseconds / 1000;
+            }
+            else
+            {
+                if (runnerCount != 0)
+                {
+                    gingerReport.Seq = runnerCount;
+                }
+                else
+                {
+                    gingerReport.Seq = this.GingerData.Seq;  //!!!
+                }
+                gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
+                gingerReport.GUID = gingerRunner.Guid.ToString();
+                gingerReport.Name = gingerRunner.Name;
+                gingerReport.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                gingerReport.EnvironmentName = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
+                gingerReport.Elapsed = (double)gingerRunner.Elapsed / 1000;
+                if (gingerReport.LogFolder == null && !(string.IsNullOrEmpty(filename)))
+                {
+                    gingerReport.LogFolder = filename;
+                }
+            }
         }
-        public void SaveObjToLiteDb(object obj, bool toAppend = false)
+        internal virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
-            
+            runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
+            runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
+            runSetReport.MachineName = Environment.MachineName.ToString();
+            runSetReport.ExecutedbyUser = Environment.UserName.ToString();
+            runSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
         }
+
     }
 }

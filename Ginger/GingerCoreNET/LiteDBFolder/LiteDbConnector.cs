@@ -6,7 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Amdocs.Ginger.CoreNET.LiteDB
+namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
     public class LiteDbConnector
     {

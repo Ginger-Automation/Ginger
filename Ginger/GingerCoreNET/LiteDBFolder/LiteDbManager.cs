@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.Actions;
 using LiteDB;
 
-namespace Amdocs.Ginger.CoreNET.LiteDB
+namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
     public class LiteDbManager
     {
         private LiteDbConnector dbConnector;
         public LiteDbManager()
         {
-            dbConnector = new LiteDbConnector("LiteDbData.db"); // Set data to ExecutionResults folder name
+            string folderName = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder;
+            dbConnector = new LiteDbConnector(Path.Combine(folderName,"LiteDbData.db")); // Set data to ExecutionResults folder name
             InitMappers();
         }
         public void InitMappers()
@@ -34,13 +40,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
 
             runSetMapper.DbRef(rf => rf.RunnerColl, "runnersColl");
         }
+        private LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
+        {
+            return dbConnector.GetCollection<LiteDbReportBase>(reportLevelName);
+        }
         private LiteCollection<LiteDbRunSet> GetRunSetLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunSet>("Runset");
         }
         private LiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
-            return dbConnector.GetCollection<LiteDbRunner>("Runner");
+            return dbConnector.GetCollection<LiteDbRunner>("Runners");
         }
         private LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
         {
@@ -83,6 +93,38 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             dbConnector.SetCollection(activitiesLiteColl, activitiesColl);
             dbConnector.SetCollection(actionsLiteColl, actionsColl);
         }
+        public void WriteToLiteDb(string reportLevelName, List<LiteDbReportBase> objectColl)
+        {
+            var objectLiteColl = GetObjectLiteData(reportLevelName);
+            //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
+            dbConnector.SetCollection(objectLiteColl, objectColl);
+        }
+        private LiteDbReportBase GetGingerObject(String reportLevelName,RepositoryItemBase objectData)
+        {
+            LiteDbReportBase data = new LiteDbReportBase();
+            switch (reportLevelName)
+            {
+                case "Actions":
+                    data = new LiteDbAction();
+                    data.SetReportData((Act)objectData);
+                    break;
+                case "Activities":
+                    data = new LiteDbActivity();
+                    data.SetReportData((Activity)objectData);
+                    break;
+                case "ActivityGroups":
+                    break;
+                case "BusinessFlows":
+                    break;
+                case "Runners":
+                    break;
+                case "RunSet":
+                    break;
+                default:
+                    break;
+            }
+            return data;
+        }
         private List<LiteDbRunSet> GetGingerRunSet(List<LiteDbRunner> runnersData)
         {
             List<LiteDbRunSet> data = new List<LiteDbRunSet>();
@@ -90,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             {
                 LiteDbRunSet item = new LiteDbRunSet();
                 item.Seq = a;
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.Name = ("RunSet_name");
                 item.Description = ("RunSet_description");
                 item.StartTimeStamp = DateTime.Now;
@@ -110,10 +152,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             {
                 LiteDbRunner item = new LiteDbRunner();
                 item.Seq = 1;
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.RunStatus = "run";
+                item.BusinessFlowColl = bfsData;
                 data.Add(item);
             }
             return data;
@@ -125,12 +168,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             {
                 LiteDbBusinessFlow item = new LiteDbBusinessFlow();
                 item.Seq = a;
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.StartTimeStamp = DateTime.Now;
                 item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = "17";
+                item.Elapsed = 17;
                 item.RunStatus = "run";
                 item.ActivitiesGroupColl = acGrpData;
                 item.ActivitiesColl = activitiesColl;
@@ -147,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
                 LiteDbActivityGroup item = new LiteDbActivityGroup();
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.RunStatus = "run";
                 item.ActivitiesColl = activitiesColl;
                 data.Add(item);
@@ -161,12 +204,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             {
                 LiteDbActivity item = new LiteDbActivity();
                 item.Seq = a;
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.StartTimeStamp = DateTime.Now;
                 item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = "17";
+                item.Elapsed = 17;
                 item.RunStatus = "run";
                 item.actionsColl = actionsColl;
                 data.Add(item);
@@ -180,12 +223,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDB
             {
                 LiteDbAction item = new LiteDbAction();
                 item.Seq = a;
-                item.GUID = Guid.NewGuid().ToString();
+                item.GUID = Guid.NewGuid();
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.StartTimeStamp = DateTime.Now;
                 item.EndTimeStamp = DateTime.Today;
-                item.Elapsed = "17";
+                item.Elapsed = 17;
                 item.RunStatus = "run";
                 data.Add(item);
             }

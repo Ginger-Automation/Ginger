@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
                     System.IO.Directory.CreateDirectory(logsFolder);
 
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                 }
             }
             catch (Exception ex)

@@ -55,7 +55,7 @@ namespace GingerCore
                 if (genWindow != null)
                 {
                     winStyle = genWindow.ReShowStyle;
-                    genWindow.BottomPanel.Children.Clear();
+                    //genWindow.BottomPanel.Children.Clear();
                     genWindow = null;
                 }
                 else

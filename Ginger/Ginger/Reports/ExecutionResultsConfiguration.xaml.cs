@@ -36,7 +36,7 @@ namespace Ginger.Reports
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
 
         private static ExecutionResultsConfiguration mInstance;
-
+        
         public static ExecutionResultsConfiguration Instance
         {
             get
@@ -52,11 +52,13 @@ namespace Ginger.Reports
         {
             InitializeComponent();
             Init();
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(textFileRadioBtnsPnl, RadioButton.IsCheckedProperty, _selectedExecutionLoggerConfiguration, nameof(Fields.SelectedDataRepositoryMethod));
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(liteDbRadioBtnsPnl, RadioButton.IsCheckedProperty, _selectedExecutionLoggerConfiguration, Fields.SelectedDataRepositoryMethod);
         }
 
         private void Init()
         {
-            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
         }
@@ -66,23 +68,23 @@ namespace Ginger.Reports
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 ExecutionResultFolderPnl.IsEnabled = true;
-            }
-            else
-            {
-                ExecutionResultFolderPnl.IsEnabled = false;
-            }
-
-            if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
                 executionResultOnRadioBtnsPnl.IsChecked = true;
                 executionResultOffRadioBtnsPnl.IsChecked = false;
             }
             else
             {
+                ExecutionResultFolderPnl.IsEnabled = false;
                 executionResultOnRadioBtnsPnl.IsChecked = false;
                 executionResultOffRadioBtnsPnl.IsChecked = true;
             }
-
+            if(_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                textFileRadioBtnsPnl.IsChecked = true;
+            }
+            else
+            {
+                liteDbRadioBtnsPnl.IsChecked = true;
+            }
             FolderTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder == null ? string.Empty : _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder;
             SizeTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize.ToString();
         }
@@ -160,9 +162,27 @@ namespace Ginger.Reports
 
             // validate the paths of inserted folders
             //GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder);
 
             //App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        }
+        private void TextFileRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                ExecutionResultFolderPnl.IsEnabled = true;
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+            }
+        }
+        private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                ExecutionResultFolderPnl.IsEnabled = true;
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+            }
         }
     }
 }

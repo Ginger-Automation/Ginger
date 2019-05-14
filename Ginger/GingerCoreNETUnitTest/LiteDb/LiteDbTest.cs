@@ -1,4 +1,4 @@
-﻿using Amdocs.Ginger.CoreNET.LiteDB;
+﻿using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -37,16 +37,16 @@ namespace GingerCoreNETUnitTest.LiteDb
         [TestMethod]
         public void WriteToLiteDbFromObject()
         {
-            Amdocs.Ginger.CoreNET.LiteDB.LiteDbManager dbManager = new LiteDbManager();
+            LiteDbManager dbManager = new LiteDbManager();
             dbManager.WriteToLiteDb();
         }
 
         [TestInitialize]
         public void InitTest()
         {
-            //dbConector = new LiteDbConnector("LiteDbData.db");
-            //var mapper = dbConector.GetMapper<GingerBusinessFlow>();
-            //mapper.DbRef(x => x.ActivitiesGroupColl, "acGrColl");
+            dbConector = new LiteDbConnector("LiteDbData.db");
+            var mapper = dbConector.GetMapper<GingerBusinessFlow>();
+            mapper.DbRef(x => x.ActivitiesGroupColl, "acGrColl");
         }
 
         private List<GingerActvityGroup> GetGingerActvityGroup()
