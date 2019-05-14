@@ -96,23 +96,6 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-
- 
-        //public ObservableList<IDatabase> GetDatabaseList()
-        //{
-        //    return new ObservableList<IDatabase>();
-        //}
-
-        //public ObservableList<DataSourceBase> GetDatasourceList()
-        //{
-        //    return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-        //}
-
-
-        //public ObservableList<IAgent> GetAllIAgents()
-        //{
-        //    return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
-        //}
   
         public void StartAgentDriver(IAgent agent)
         {
@@ -345,39 +328,6 @@ namespace Ginger.Repository
             }
         }
         
-
-    
-
-        public async Task<int> AnalyzeRunsetWithUI(object runset, bool runInSilentMode)
-        {
-            try
-            {
-                AnalyzerPage analyzerPage = new AnalyzerPage();
-                RunSetConfig runSetConfig = (RunSetConfig)runset;
-                Dispatcher.CurrentDispatcher.Invoke(() => 
-                {                    
-                    analyzerPage.Init( WorkSpace.Instance.Solution, runSetConfig);
-                });
-                await analyzerPage.AnalyzeWithoutUI();
-
-                if (analyzerPage.TotalHighAndCriticalIssues > 0)
-                {
-                    if (!runInSilentMode)
-                    {
-                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
-                        analyzerPage.ShowAsWindow();
-                    }
-                    return 1;
-                }
-            }
-            finally
-            {
-                Reporter.HideStatusMessage();
-            }
-            return 0;
-        }
-
-
         AutoRunWindow mAutoRunWindow;
         public void ShowAutoRunWindow()
         {            

@@ -14,11 +14,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class UnitTestRepositoryItemFactory : IRepositoryItemFactory
     {
-        public Task<int> AnalyzeRunsetWithUI(object a, bool b)
-        {
-            throw new NotImplementedException();
-        }
-
         public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder)
         {
             throw new NotImplementedException();

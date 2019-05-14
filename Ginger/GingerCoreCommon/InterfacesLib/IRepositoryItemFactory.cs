@@ -57,8 +57,6 @@ namespace Amdocs.Ginger.Common
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
 
-        Task<int> AnalyzeRunsetWithUI(object runset, bool runInSilentMode);
-
         void ShowAutoRunWindow();
 
         bool Send_Outlook(bool actualSend = true, string MailTo=null, string Event=null, string Subject=null, string Body=null, string MailCC=null, List<string> Attachments=null, List<KeyValuePair<string, string>> EmbededAttachment=null);

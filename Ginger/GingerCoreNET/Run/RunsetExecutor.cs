@@ -296,79 +296,51 @@ namespace Ginger.Run
 
         public void RunRunset(bool doContinueRun = false)
         {
-            //reset run       
-            if (doContinueRun == false)
+            try
             {
-                RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                mStopwatch.Reset();
-                ResetRunnersExecutionDetails();
-            }
-            else
-            {
-                RunSetConfig.LastRunsetLoggerFolder = null;
-            }
+                mRunSetConfig.IsRunning = true;
 
-            mStopRun = false;
-
-            //configure Runners for run
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            ConfigureAllRunnersForExecution();
-
-            //Process all pre execution Run Set Operations
-            if (doContinueRun == false)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
-            }
-
-            //Start Run 
-            if (doContinueRun == false)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Started: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
-                SetRunnersExecutionLoggerConfigs();//contains ExecutionLogger.RunSetStart()
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Continuation: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
-            }
-
-            mStopwatch.Start();
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Started", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            List<Task> runnersTasks = new List<Task>();
-            if (RunSetConfig.RunModeParallel)
-            {
-                foreach (GingerRunner GR in Runners)
+                //reset run       
+                if (doContinueRun == false)
                 {
-                    if (mStopRun)
-                    {
-                        return;
-                    }
-
-                    Task t = new Task(() =>
-                    {
-                        if (doContinueRun == false)
-                        {
-                            GR.RunRunner();
-                        }
-                        else
-                            if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                            {
-                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                            }
-                    }, TaskCreationOptions.LongRunning);
-                    runnersTasks.Add(t);
-                    t.Start();
-
-                    // Wait one second before starting another runner
-                    Thread.Sleep(1000);
+                    RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    mStopwatch.Reset();
+                    ResetRunnersExecutionDetails();
                 }
-            }
-            else
-            {
-                //running sequentially 
-                Task t = new Task(() =>
+                else
+                {
+                    RunSetConfig.LastRunsetLoggerFolder = null;
+                }
+
+                mStopRun = false;
+
+                //configure Runners for run
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                ConfigureAllRunnersForExecution();
+
+                //Process all pre execution Run Set Operations
+                if (doContinueRun == false)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
+                }
+
+                //Start Run 
+                if (doContinueRun == false)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Started: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
+                    SetRunnersExecutionLoggerConfigs();//contains ExecutionLogger.RunSetStart()
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Continuation: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSetConfig.Name));
+                }
+
+                mStopwatch.Start();
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Started", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                List<Task> runnersTasks = new List<Task>();
+                if (RunSetConfig.RunModeParallel)
                 {
                     foreach (GingerRunner GR in Runners)
                     {
@@ -377,46 +349,83 @@ namespace Ginger.Run
                             return;
                         }
 
-                        if (doContinueRun == false)
+                        Task t = new Task(() =>
                         {
-                            GR.RunRunner();
-                        }
-                        else
-                            if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                        {
-                            GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                            GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
-                        }
-                        else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
-                        {
-                            GR.RunRunner();
-                        }
+                            if (doContinueRun == false)
+                            {
+                                GR.RunRunner();
+                            }
+                            else
+                                if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                            {
+                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                            }
+                        }, TaskCreationOptions.LongRunning);
+                        runnersTasks.Add(t);
+                        t.Start();
+
                         // Wait one second before starting another runner
                         Thread.Sleep(1000);
                     }
-                }, TaskCreationOptions.LongRunning);
-                runnersTasks.Add(t);
-                t.Start();
+                }
+                else
+                {
+                    //running sequentially 
+                    Task t = new Task(() =>
+                    {
+                        foreach (GingerRunner GR in Runners)
+                        {
+                            if (mStopRun)
+                            {
+                                return;
+                            }
+
+                            if (doContinueRun == false)
+                            {
+                                GR.RunRunner();
+                            }
+                            else
+                                if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                        {
+                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                            GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                            }
+                            else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
+                        {
+                                GR.RunRunner();
+                            }
+                        // Wait one second before starting another runner
+                        Thread.Sleep(1000);
+                        }
+                    }, TaskCreationOptions.LongRunning);
+                    runnersTasks.Add(t);
+                    t.Start();
+                }
+
+                Task.WaitAll(runnersTasks.ToArray());
+                mStopwatch.Stop();
+
+                //Do post execution items
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                ExecutionLogger.RunSetEnd();
+                if (mStopRun == false)
+                {
+                    // Process all post execution RunSet Operations
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                CreateGingerExecutionReportAutomaticly();
+                CloseAllEnvironments();
+
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             }
-
-            Task.WaitAll(runnersTasks.ToArray());
-            mStopwatch.Stop();
-
-            //Do post execution items
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            ExecutionLogger.RunSetEnd();
-            if (mStopRun == false)
+            finally
             {
-                // Process all post execution RunSet Operations
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Running Post-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionEnd });
+                mRunSetConfig.IsRunning = false;
             }
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            CreateGingerExecutionReportAutomaticly();
-            CloseAllEnvironments();
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
         }
 
         public void CreateGingerExecutionReportAutomaticly()
@@ -524,30 +533,6 @@ namespace Ginger.Run
             }
         }
 
-        public async Task<int> RunRunsetAnalyzerBeforeRunWithUI(bool runInSilentMode = false)
-        {
-            int x = 0;
-            if (mRunSetConfig.RunWithAnalyzer)
-            {
-                //check if not including any High or Critical issues before execution
-                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                x = await RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunsetWithUI(mRunSetConfig, runInSilentMode);
-            }
-            return x;
-        }        
-        
-        //public int RunRunsetAnalyzerBeforeRunSync(bool runInSilentMode = false)
-        //{
-            
-        //    if (mRunSetConfig.RunWithAnalyzer)
-        //    {
-        //        //check if not including any High or Critical issues before execution
-        //        Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-        //        RepositoryItemHelper.RepositoryItemFactory.AnalyzeRunset(mRunSetConfig, runInSilentMode);
-        //    }
-        //    // ?? !!!
-        //    return 0;   // temp if issues found need to return 1 !!!!!!!!!!!!!!!!!!!!!!!!!
-        //}
 
         /// <summary>
         /// Create a summary json of the execution 
