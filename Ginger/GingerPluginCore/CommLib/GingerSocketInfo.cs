@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                                     SocketRequestHandler(gingerSocketInfo);
                                     break;
                                 default:
-                                    throw new Exception("Unknown Payload Type, Payload.Name: " + Resp.Name);
+                                    throw new InvalidOperationException("Unknown Payload Type, Payload.Name: " + Resp.Name);
                             }
                             
                             mProcessingStatus = eProcessingStatus.SendingResponse;
@@ -262,7 +262,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 return;
             }
 
-            throw new Exception("SocketRequestHandler - Unknown Request: " + Req.Name);
+            throw new InvalidOperationException("SocketRequestHandler - Unknown Request: " + Req.Name);
         }
 
         private void SendCallback(IAsyncResult ar)
