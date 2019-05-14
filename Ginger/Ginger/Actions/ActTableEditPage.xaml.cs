@@ -360,8 +360,8 @@ namespace Ginger.Actions
             {
                 RowSelectorValue.Items.Add(i.ToString());
             }
-            RowSelectorValue.SelectedIndex = 0;        
-
+            RowSelectorValue.SelectedIndex = 0;
+         
             ActTableElement ACJT = new ActTableElement();
             GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, ACJT.ColSelectorValue);
             if (cmbColSelectorValue.SelectedIndex == -1)
@@ -614,7 +614,12 @@ namespace Ginger.Actions
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.LocateRowValue = RowSelectorValue.Text;
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            //TODO: Handle it to pass the context
+            if(mAct.Context!=null)
+            {
+                Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            }
+                
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
