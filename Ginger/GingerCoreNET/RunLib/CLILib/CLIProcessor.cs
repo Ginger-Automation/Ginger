@@ -87,9 +87,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
-            mCLIHelper.ProcessArgs(WorkSpace.Instance.RunsetExecutor);
-            Reporter.ToLog(eLogLevel.DEBUG, "Executing based on Configurations...");
-            Execute();
+            if (mCLIHelper.ProcessArgs(WorkSpace.Instance.RunsetExecutor))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Executing based on Run Configurations...");
+                Execute();
+            }
         }
 
         void Execute()

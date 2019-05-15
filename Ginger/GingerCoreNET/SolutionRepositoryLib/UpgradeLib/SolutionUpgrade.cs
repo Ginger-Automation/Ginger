@@ -197,9 +197,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             return solutionFilesWithVersion;
         }
 
-        internal static void CheckGingerUpgrade(string solutionFolder, IEnumerable<string> solutionFiles)
-        {
-                        
+        internal static bool IsGingerUpgradeNeeded(string solutionFolder, IEnumerable<string> solutionFiles)
+        {                        
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
 
             //check if Ginger Upgrade is needed for loading this Solution
@@ -214,20 +213,20 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 if (higherVersionFiles.Count > 0)
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
-                    {
-                        // MainWindow.HideSplash(); !!!!
-                        WorkSpace.Instance.EventHandler.ShowUpgradeGinger(solutionFolder, higherVersionFiles.ToList());
-                        
+                    {                        
+                        WorkSpace.Instance.EventHandler.ShowUpgradeGinger(solutionFolder, higherVersionFiles.ToList());                        
                     }
                     Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
-                    // return false;
+                    return true;
                 }
+
+                return false;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
-            }
-            
+                return false;
+            }            
         }
 
 

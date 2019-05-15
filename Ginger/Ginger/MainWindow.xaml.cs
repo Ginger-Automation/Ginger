@@ -183,7 +183,8 @@ namespace Ginger
                     xMainWindowFrame.Visibility = Visibility.Visible;                    
                     GingerCore.General.DoEvents();
                 }
-                else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
+                //else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
+                else if (WorkSpace.Instance.Solution == null)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
                     xNoLoadedSolutionImg.Visibility = Visibility.Visible;
