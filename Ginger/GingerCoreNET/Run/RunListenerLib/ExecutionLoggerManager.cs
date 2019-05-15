@@ -204,8 +204,10 @@ namespace Ginger.Run
                         gingerReport.LogFolder = mExecutionLogger.ExecutionLogfolder;
                         break;
                 }
-                System.IO.Directory.CreateDirectory(gingerReport.LogFolder);
-
+                if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    System.IO.Directory.CreateDirectory(gingerReport.LogFolder);
+                }
 
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
             }
@@ -243,13 +245,14 @@ namespace Ginger.Run
                 RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
                 RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
                 RunSetReport.Watch.Start();
-                if (!offline)
-                    RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder + "\\" + folderNameNormalazing(RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
-                else
-                    RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
-
-                DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(RunSetReport.LogFolder, maxFolderSize);
-
+                if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    if (!offline)
+                        RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder + "\\" + folderNameNormalazing(RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+                    else
+                        RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
+                    DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(RunSetReport.LogFolder, maxFolderSize);
+                }
                 executionLoggerHelper.CreateTempDirectory();
             }
 
@@ -319,9 +322,10 @@ namespace Ginger.Run
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 businessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 businessFlow.ExecutionLogFolder = BFFolder;
-
-                System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + BFFolder);
-
+                if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + BFFolder);
+                }
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, null);
             }
         }
@@ -383,7 +387,10 @@ namespace Ginger.Run
                 }
 
                 activity.ExecutionLogFolder = ActivityFolder;
-                System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + ActivityFolder);
+                if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + ActivityFolder);
+                }
                 activity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             }
 
@@ -447,7 +454,10 @@ namespace Ginger.Run
                     ActionFolder = mCurrentActivity.ExecutionLogFolder + @"\" + mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description);
                 }
                 action.ExecutionLogFolder = ActionFolder;
-                System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + ActionFolder);
+                if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    System.IO.Directory.CreateDirectory(mExecutionLogger.ExecutionLogfolder + ActionFolder);
+                }
 
             }
         }

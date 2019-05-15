@@ -27,17 +27,22 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
             var action = dbConnector.GetMapper<LiteDbAction>();
 
-            activityMapper.DbRef(rf => rf.actionsColl, "actionsColl");
+            activityMapper.DbRef(rf => rf.actionsColl, NameInDb<LiteDbAction>());
 
-            agMapper.DbRef(rf => rf.ActivitiesColl, "activitiesColl");
+            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
 
-            bfMapper.DbRef(rf => rf.ActivitiesGroupColl, "agsColl");
+            bfMapper.DbRef(rf => rf.ActivitiesGroupColl, NameInDb<LiteDbActivityGroup>());
 
-            bfMapper.DbRef(rf => rf.ActivitiesColl, "activitiesColl");
+            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
 
-            runnerMapper.DbRef(rf => rf.BusinessFlowColl, "bfsColl");
+            runnerMapper.DbRef(rf => rf.BusinessFlowColl, NameInDb<LiteDbBusinessFlow>());
 
-            runSetMapper.DbRef(rf => rf.RunnerColl, "runnersColl");
+            runSetMapper.DbRef(rf => rf.RunnerColl, NameInDb<LiteDbRunner>());
+        }
+        public string NameInDb<T>()
+        {
+            var name = typeof(T).Name + "s";
+            return name;
         }
         private LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
         {
@@ -45,28 +50,28 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         private LiteCollection<LiteDbRunSet> GetRunSetLiteData()
         {
-            return dbConnector.GetCollection<LiteDbRunSet>("Runset");
+            return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
         private LiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
-            return dbConnector.GetCollection<LiteDbRunner>("Runners");
+            return dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
         }
         private LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
         {
-            return dbConnector.GetCollection<LiteDbBusinessFlow>("BusinessFlows");
+            return dbConnector.GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
         }
 
         private LiteCollection<LiteDbActivityGroup> GetActGrLiteData()
         {
-            return dbConnector.GetCollection<LiteDbActivityGroup>("ActivityGroups");
+            return dbConnector.GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
         }
         private LiteCollection<LiteDbActivity> GetActivitiesLiteData()
         {
-            return dbConnector.GetCollection<LiteDbActivity>("Activities");
+            return dbConnector.GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
         }
         private LiteCollection<LiteDbAction> GetActionsLiteData()
         {
-            return dbConnector.GetCollection<LiteDbAction>("Actions");
+            return dbConnector.GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
         }
         public void WriteToLiteDb()
         {

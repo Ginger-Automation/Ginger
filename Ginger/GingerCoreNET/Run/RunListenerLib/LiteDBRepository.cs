@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + executionLogFolder + action.ExecutionLogFolder);
             }
-            SaveObjToReporsitory(liteDbAction, "Actions");
+            SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             return liteDbAction;
         }
 
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.actionsColl.AddRange(liteDbActionList);
             liteDbActivityList.Add(AR);
-            SaveObjToReporsitory(AR, "Activities");
+            SaveObjToReporsitory(AR, liteDbManager.NameInDb<LiteDbActivity>());
             liteDbActionList.Clear();
             return AR;
         }
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
             AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
-            SaveObjToReporsitory(AGR, "ActivityGroups", true);
+            SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
             return AGR;
         }
@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupColl.AddRange(liteDbAGList);
-                    SaveObjToReporsitory(BFR, "BusinessFlows");
+                    SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
                 }
@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 {
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupColl.AddRange(liteDbAGList);
-                    SaveObjToReporsitory(BFR, "BusinessFlows");
+                    SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbRunner runner = new LiteDbRunner();
             runner.SetReportData(gingerReport);
             runner.BusinessFlowColl.AddRange(liteDbBFList);
-            SaveObjToReporsitory(runner, "Runners");
+            SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
             liteDbRunnerList.Add(runner);
             liteDbBFList.Clear();
         }
@@ -161,7 +161,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             base.SetReportRunSet(runSetReport, logFolder);
             runSet.SetReportData(runSetReport);
             runSet.RunnerColl.AddRange(liteDbRunnerList);
-            SaveObjToReporsitory(runSet, "RunSet");
+            SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             liteDbRunnerList.Clear();
         }
     }

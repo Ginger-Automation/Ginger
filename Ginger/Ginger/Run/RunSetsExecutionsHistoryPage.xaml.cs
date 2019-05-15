@@ -103,7 +103,11 @@ namespace Ginger.Run
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
             grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
         }
-        
+        public string NameInDb<T>()
+        {
+            var name = typeof(T).Name + "s";
+            return name;
+        }
         private async void LoadExecutionsHistoryData()
         {
             grdExecutionsHistory.Visibility = Visibility.Collapsed;
@@ -138,18 +142,29 @@ namespace Ginger.Run
                         }
                         catch { }
                     }
+                    LiteDbManager liteDbManager = new LiteDbManager(mRunSetExecsRootFolder);
                     LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
-                    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>("RunSet");
-                    var results = rsLiteColl.Find(Query.StartsWith("Name", "Daily"));
+                    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+                    var runnerColl = dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
+                    var bfColl = dbConnector.GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
+
+                    //var results = rsLiteColl.Find(Query.StartsWith("Name", "Daily"));
                     var results2 = rsLiteColl.FindAll();
+                    var results3 = runnerColl.FindAll();
+                    var result4 = rsLiteColl.Find(Query.All());
+                    var all = rsLiteColl.Include(x => x.RunnerColl).Include(x => x.RunnerColl[0].BusinessFlowColl).FindAll();
+                    
                     foreach (var item in results2)
                     {
                         RunSetReport runSetReport = new RunSetReport();
                         runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                         runSetReport.SetLiteDBData(item);
                         mExecutionsHistoryList.Add(runSetReport);
+                        foreach (var item2 in item.RunnerColl)
+                        {
+                            //var results3 = rsLiteColl.Include(x => x.RunnerColl).FindById(item2._id);
+                        }
                     }
-                    
                 }
             });
 

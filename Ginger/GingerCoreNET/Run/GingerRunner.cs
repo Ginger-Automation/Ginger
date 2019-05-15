@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
+using Ginger.Reports;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -4732,7 +4733,11 @@ namespace Ginger.Run
                         }
                         activity.ExecutionLogActionCounter++;
                         action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
-                        System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
+                        if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        {
+                            System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
+                        }
+                        executionLoggerManager.mCurrentActivity = activity;
                         executionLoggerManager.ActionEnd(eventTime, action, true);
                     }
                     executionLoggerManager.ActivityEnd(eventTime, activity, true);

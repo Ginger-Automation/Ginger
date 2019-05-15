@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest.LiteDb
             dbConector.SetCollection(bfLiteColl, filterData);
             Assert.IsTrue(bfLiteColl.Count() > 0);
         }
-
+        
         [TestMethod]
         public void WriteToLiteDbFromObject()
         {
