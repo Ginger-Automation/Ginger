@@ -16,6 +16,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void ExecuteArgs(string[] args)
         {
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            Reporter.ReportAllAlsoToConsole = true;
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                           
