@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
@@ -168,13 +169,13 @@ namespace Ginger.Run
         {
             try
             {
-                if (!Directory.Exists(WorkSpace.EmailReportTempFolder))
+                if (!Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
                 {
-                    System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
+                    System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
                 else
                 {
-                    CleanDirectory(WorkSpace.EmailReportTempFolder);
+                    CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)
@@ -399,7 +400,7 @@ namespace Ginger.Run
                 RunSetReport.Elapsed = (double)RunSetReport.Watch.ElapsedMilliseconds / 1000;
                 RunSetReport.MachineName = Environment.MachineName.ToString();
                 RunSetReport.ExecutedbyUser = Environment.UserName.ToString();
-                RunSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
+                RunSetReport.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
                 if (LogFolder == null)
                 {
@@ -413,7 +414,7 @@ namespace Ginger.Run
                 if ( WorkSpace.Instance.RunningInExecutionMode)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
-                    WorkSpace.Instance.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
+                    WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
                 {

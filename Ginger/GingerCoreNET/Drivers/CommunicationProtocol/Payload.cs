@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -639,8 +640,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public void DumpToConsole()
         {
-            String s = this.ToString();
-            Console.WriteLine(s);
+            Reporter.ToConsole(eLogLevel.INFO, this.ToString());
         }
 
         public static PayLoad Error(String ErrorMessage)

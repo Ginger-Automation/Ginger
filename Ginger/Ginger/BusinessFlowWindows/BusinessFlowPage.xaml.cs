@@ -66,7 +66,8 @@ namespace Ginger.BusinessFlowFolder
             mContext = new Context() { BusinessFlow = BizFlow, Activity= BizFlow.CurrentActivity };
             RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
-            LoadBizFlowData();
+            LoadBizFlowData();            
+
             mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
      
             if (mBusinessFlow.TargetApplications == null)

@@ -41,7 +41,21 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
+        private bool mIsRunning;
+        public bool IsRunning
+        {
+            get { return mIsRunning; }
+            set
+            {
+                if (mIsRunning != value)
+                {
+                    mIsRunning = value;
+                    OnPropertyChanged(nameof(IsRunning));
+                }
+            }
+        }
+
 
         private string mDescription;
         [IsSerializedForLocalRepository]
