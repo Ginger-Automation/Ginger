@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
         {
-            return baseColl.Find(query).ToList();
+            return baseColl.IncludeAll().Find(query).ToList();
         }
 
         public void SetCollection<T>(LiteCollection<T> baseColl, List<T> updateData)
