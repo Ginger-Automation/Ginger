@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public Activity mCurrentActivity;
         uint meventtime;
         public IValueExpression mVE;
-
+        public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
         ProjEnvironment mExecutionEnvironment = null;
 
         int mBusinessFlowCounter { get; set; }

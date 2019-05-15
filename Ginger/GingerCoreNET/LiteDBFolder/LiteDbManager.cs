@@ -13,10 +13,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     public class LiteDbManager
     {
         private LiteDbConnector dbConnector;
-        public LiteDbManager()
+        public LiteDbManager(String dbFolderName = "")
         {
-            string folderName = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder;
-            dbConnector = new LiteDbConnector(Path.Combine(folderName,"LiteDbData.db")); // Set data to ExecutionResults folder name
+            dbConnector = new LiteDbConnector(Path.Combine(dbFolderName, "LiteDbData.db")); // Set data to ExecutionResults folder name
             InitMappers();
         }
         public void InitMappers()

@@ -23,6 +23,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 
 namespace Ginger.Reports
 {
@@ -44,6 +45,7 @@ namespace Ginger.Reports
             public static string ExecutedBusinessFlowsDetails = "ExecutedBusinessFlowsDetails";
             public static string ExecutedActivitiesDetails = "ExecutedActivitiesDetails";
             public static string FailuresDetails = "FailuresDetails";
+            public static string DataRepMethod = "DataRepMethod";
         }
 
         public int Seq { get; set; }
@@ -165,7 +167,7 @@ namespace Ginger.Reports
         public string LogFolder { get; set; }
 
         public System.Diagnostics.Stopwatch Watch = new System.Diagnostics.Stopwatch();
-
+        public ExecutionLoggerConfiguration.DataRepositoryMethod DataRepMethod { get; set; }
         private List<GingerReport> gingerReports;
         public List<GingerReport> GingerReports
         {
@@ -214,6 +216,21 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 }
+            }
+        }
+
+        public void SetLiteDBData(LiteDbRunSet item)
+        {
+            GUID = item.GUID.ToString();
+            Name = item.Name;
+            Description = item.Description;
+            StartTimeStamp = item.StartTimeStamp;
+            EndTimeStamp = item.EndTimeStamp;
+            Elapsed = item.Elapsed;
+            Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
+            if(Enum.TryParse("Active", out myStatus))
+            {
+                //RunSetExecutionStatus = myStatus;
             }
         }
 

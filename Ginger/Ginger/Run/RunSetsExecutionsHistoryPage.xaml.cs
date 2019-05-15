@@ -32,6 +32,8 @@ using System.Windows.Data;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using LiteDB;
 
 namespace Ginger.Run
 {
@@ -89,6 +91,7 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Elapsed, Header = "Execution Duration (Seconds)", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.RunSetExecutionStatus, Header = "Execution Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Visible = false, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Generate Report", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] });
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
@@ -117,6 +120,7 @@ namespace Ginger.Run
                         try
                         {
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
+                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
@@ -134,6 +138,18 @@ namespace Ginger.Run
                         }
                         catch { }
                     }
+                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>("RunSet");
+                    var results = rsLiteColl.Find(Query.StartsWith("Name", "Daily"));
+                    var results2 = rsLiteColl.FindAll();
+                    foreach (var item in results2)
+                    {
+                        RunSetReport runSetReport = new RunSetReport();
+                        runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                        runSetReport.SetLiteDBData(item);
+                        mExecutionsHistoryList.Add(runSetReport);
+                    }
+                    
                 }
             });
 
