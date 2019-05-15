@@ -350,9 +350,9 @@ namespace amdocs.ginger.GingerCoreNET
 
             CloseAllRunningAgents();
 
-            WorkSpace.Instance.Solution = null;
-            WorkSpace.Instance.SolutionRepository = null;
-            WorkSpace.Instance.SourceControl = null;
+            //WorkSpace.Instance.Solution = null;
+            //WorkSpace.Instance.SolutionRepository = null;
+            //WorkSpace.Instance.SourceControl = null;
         }
 
         public void CloseAllRunningAgents()
