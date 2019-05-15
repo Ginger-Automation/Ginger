@@ -120,7 +120,7 @@ namespace GingerCore.Actions
         }
         public string ExpectString { get; set; }
  
-        public override eImageType Image { get { return eImageType.CodeFileRed; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
         protected void Process_Exited(object sender, EventArgs e)
         {

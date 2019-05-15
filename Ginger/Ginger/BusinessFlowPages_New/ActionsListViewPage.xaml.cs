@@ -152,37 +152,40 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
-            Act a = ((DragInfo)sender).Data as Act;
-            Act instance = null;
-            if (a != null)
+            object droppedItem = ((DragInfo)sender).Data as object;
+            if (droppedItem != null)
             {
-                a = (Act)((DragInfo)sender).Data;
-                instance = (Act)a.CreateInstance(true);
-            }
-            else if (((DragInfo)sender).Data.GetType() == typeof(ElementInfo) || ((DragInfo)sender).Data.GetType() == typeof(HTMLElementInfo))
-            {
-                HTMLElementInfo htmlElementInfo = ((DragInfo)sender).Data as HTMLElementInfo;
-                instance = GenerateRelatedAction(htmlElementInfo);
-            }
-            else if (((DragInfo)sender).Data.GetType() == typeof(ApplicationPOMModel))
-            {
-                ApplicationPOMModel currentPOM = ((DragInfo)sender).Data as ApplicationPOMModel;
-                foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
+                Act instance = null;
+                if (droppedItem is Act)
                 {
-                    HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
-                    instance = GenerateRelatedAction(htmlElementInfo);
-                    if (instance != null)
-                    {
-                        instance.Active = true;
-                        AddGeneratedAction(instance);
-                    }
+                    Act a = droppedItem as Act;
+                    instance = (Act)a.CreateInstance(true);
                 }
-                instance = null;
-            }
+                else if (droppedItem is ElementInfo)
+                {
+                    ElementInfo elementInfo = droppedItem as ElementInfo;
+                    instance = GenerateRelatedAction(elementInfo);
+                }
+                else if (droppedItem is ApplicationPOMModel)
+                {
+                    ApplicationPOMModel currentPOM = ((DragInfo)sender).Data as ApplicationPOMModel;
+                    foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
+                    {
+                        HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
+                        instance = GenerateRelatedAction(htmlElementInfo);
+                        if (instance != null)
+                        {
+                            instance.Active = true;
+                            AddGeneratedAction(instance);
+                        }
+                    }
+                    instance = null;
+                }
 
-            if (instance != null)
-            {
-                AddGeneratedAction(instance);
+                if (instance != null)
+                {
+                    AddGeneratedAction(instance);
+                }
             }
         }
 
@@ -201,24 +204,24 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private static Act GenerateRelatedAction(HTMLElementInfo htmlElementInfo)
+        private static Act GenerateRelatedAction(ElementInfo elementInfo)
         {
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
             {
-                Description = "UIElement Action : " + htmlElementInfo.ItemName,
+                Description = "UIElement Action : " + elementInfo.ItemName,
                 Operation = ActUIElement.eElementAction.NotExist.ToString(),
                 LocateBy = eLocateBy.POMElement,
-                LocateValue = htmlElementInfo.ParentGuid.ToString() + "_" + htmlElementInfo.Guid.ToString(),
+                LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
                 ElementValue = "",
                 AddPOMToAction = true,
-                POMGuid = htmlElementInfo.ParentGuid.ToString(),
-                ElementGuid = htmlElementInfo.Guid.ToString(),
-                LearnedElementInfo = htmlElementInfo,
+                POMGuid = elementInfo.ParentGuid.ToString(),
+                ElementGuid = elementInfo.Guid.ToString(),
+                LearnedElementInfo = elementInfo,
             };
 
-            switch (htmlElementInfo.ElementTypeEnum)
+            switch (elementInfo.ElementTypeEnum)
             {
                 case eElementType.Button:
                 case eElementType.CheckBox:
@@ -238,7 +241,7 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
             }
 
-            instance = mPlatform.GetPlatformAction(htmlElementInfo, actionConfigurations);
+            instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
             return instance;
         }
 

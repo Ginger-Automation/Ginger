@@ -221,8 +221,6 @@ namespace Amdocs.Ginger.Common.Enums
         Database,
         Output,
         CodeFile,
-        CodeFileRed,
-        CodeFileBlue,
         Rows,
         Column,
         Columns,

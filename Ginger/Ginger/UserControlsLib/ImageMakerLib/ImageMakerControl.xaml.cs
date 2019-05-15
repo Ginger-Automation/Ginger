@@ -679,14 +679,6 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileCodeOutline);
                     break;
 
-                case eImageType.CodeFileRed:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileCodeOutline, Brushes.Red);
-                    break;
-
-                case eImageType.CodeFileBlue:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileCodeOutline, Brushes.Blue);
-                    break;
-
                 case eImageType.Rows:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsH);
                     break;

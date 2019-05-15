@@ -129,7 +129,7 @@ namespace GingerCore.Actions.XML
         }
 
 
-        public override eImageType Image { get { return eImageType.CodeFileBlue; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
 
 
