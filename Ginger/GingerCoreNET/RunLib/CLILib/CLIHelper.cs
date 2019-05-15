@@ -70,16 +70,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig runSetConfig;
 
-        public void ProcessArgs(RunsetExecutor runsetExecutor)
+        public bool ProcessArgs(RunsetExecutor runsetExecutor)
         {
-            mRunsetExecutor = runsetExecutor;
-           // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
-            DownloadSolutionFromSourceControl();
-            OpenSolution();
-            SelectEnv();
-            SelectRunset();
-            SetRunAnalyzer();
-            HandleAutoRunWindow();
+            try
+            {
+                mRunsetExecutor = runsetExecutor;
+                // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
+                DownloadSolutionFromSourceControl();
+                if (OpenSolution())
+                {
+                    SelectEnv();
+                    SelectRunset();
+                    SetRunAnalyzer();
+                    HandleAutoRunWindow();
+                    return true;
+                }
+
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while processing the Run Configurations", ex);
+                return false;
+            }
         }
 
         private void SetDebugLevel()
@@ -296,25 +309,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void OpenSolution()
+        private bool OpenSolution()
         {
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + Solution + "'");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + Solution + "'");
             try
             {
-                if (WorkSpace.Instance.OpenSolution(Solution) == false)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                    // TODO: throw
-                    return;
-                }
+                //if (WorkSpace.Instance.OpenSolution(Solution) == false)
+                //{
+                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                //    // TODO: throw
+                //    return;
+                //}
+                return WorkSpace.Instance.OpenSolution(Solution);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                //Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 // TODO: throw
-                return;
+                return false;
             }
         }
     }

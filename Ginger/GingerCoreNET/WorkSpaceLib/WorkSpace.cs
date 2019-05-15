@@ -209,13 +209,13 @@ namespace amdocs.ginger.GingerCoreNET
         {
             mPluginsManager = null;            
             try
-            {
+            {               
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
-                //Cleanup previous Solution load
+                //Cleaning previous Solution load
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Cleaning previous Solution items");
-                SolutionCleanup();
+                CloseSolution();
 
                 //Load Solution file
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Opening Solution located at: " + solutionFolder);
@@ -227,25 +227,30 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File Not Found");
-                }
-                if (!File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
-                {
-                    Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
-                    return false;
-                }
+                    if (!File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
+                    {
+                        //Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
+                        Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Solution File Not Found");
+                        return false;
+                    }                   
+                }                
 
                 //Checking if Ginger upgrade is needed
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Checking if Ginger upgrade is needed");
                 IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
                 SolutionUpgrade.ClearPreviousScans();
-                SolutionUpgrade.CheckGingerUpgrade(solutionFolder, solutionFiles);
+                if (SolutionUpgrade.IsGingerUpgradeNeeded(solutionFolder, solutionFiles))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Current Ginger version can't load the Solution because it includes items from higher Ginger version");
+                    return false;
+                }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
                 if (solution == null)
                 {
-                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Load solution from file failed.");
+                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
+                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Failed to load the Solution file");
                     return false;
                 }
 
@@ -277,20 +282,20 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)  
                 {
                     UserProfile.AddSolutionToRecent(solution);
-                }                    
+                }
 
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading the solution", ex);
-                SolutionCleanup();
+                Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Unexpected Error occurred while loading the solution", ex);
+                CloseSolution();
                 throw ex;
             }
             finally
             {
-                LoadingSolution = false;                  
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading the Solution '{0}'", solutionFolder));                
+                LoadingSolution = false;                                               
             }
         }
 
@@ -336,25 +341,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        private void SolutionCleanup()
-        {
-            if (WorkSpace.Instance.SolutionRepository != null)
-            {
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-            }
-
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
-            }
-
-            CloseAllRunningAgents();
-
-            //WorkSpace.Instance.Solution = null;
-            //WorkSpace.Instance.SolutionRepository = null;
-            //WorkSpace.Instance.SourceControl = null;
-        }
-
         public void CloseAllRunningAgents()
         {
             if (SolutionRepository != null)
@@ -384,10 +370,23 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void CloseSolution()
         {
+            if (WorkSpace.Instance.SolutionRepository != null)
+            {
+                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            }
+
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                AppSolutionAutoSave.SolutionAutoSaveEnd();
+            }
+
+            CloseAllRunningAgents();
+
             SolutionRepository = null;
-            SourceControl = null;
-            EventHandler.SolutionClosed();
+            SourceControl = null;            
             Solution = null;
+
+            EventHandler.SolutionClosed();
         }        
 
         public UserProfile UserProfile { get; set; }
