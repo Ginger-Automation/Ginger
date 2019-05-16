@@ -186,7 +186,7 @@ namespace GingerCore.Variables
             Value = RandomString(c);
         }
 
-        public override eImageType Image { get { return eImageType.Random; } }
+        public override eImageType Image { get { return eImageType.Languages; } }
         public override string VariableType() { return "RandomString"; }
         public override bool SupportSetValue { get { return false; } }
 

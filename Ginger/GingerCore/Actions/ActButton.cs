@@ -26,6 +26,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Enums;
 // This class is for Button actions
 namespace GingerCore.Actions
 {
@@ -83,7 +84,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActButton; } }
+        public override eImageType Image { get { return eImageType.MousePointer; } }
 
         Type IObsoleteAction.TargetAction()
         {

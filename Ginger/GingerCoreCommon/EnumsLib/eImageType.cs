@@ -167,6 +167,7 @@ namespace Amdocs.Ginger.Common.Enums
         EditWindow,
         UserDefined,
         Spy,
+
         #endregion
 
         #region Items Images
@@ -222,6 +223,29 @@ namespace Amdocs.Ginger.Common.Enums
         Ping,
         Database,
         Output,
+        CodeFile,
+        Rows,
+        Column,
+        Columns,
+        Browser,
+        KeyboardLayout,
+        Linux,
+        BatteryThreeQuarter,
+        Mobile,
+        Codepen,
+        MousePointer,
+        AudioFileOutline,
+        ChartLine,
+        Suitcase,
+        Paragraph,
+        BullsEye,
+        WindowsIcon,
+        SoapUI,
+        Java,
+        PDFFile,
+        CSS3Text,
+        Languages,
+        MinusSquare,
         #endregion
 
         #region Source control Images     
@@ -272,6 +296,7 @@ namespace Amdocs.Ginger.Common.Enums
         Window,
         Text,
         CLI,
+        LinkSquare,
         #endregion
     }
 }

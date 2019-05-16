@@ -25,6 +25,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Java
 {
     public class ActJavaElement : Act
@@ -187,7 +189,7 @@ namespace GingerCore.Actions.Java
         }
 
         //TODO: Change icon to Java
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.Coffee; } }
         
         public PayLoad Pack()
         {

@@ -29,6 +29,8 @@ using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActCompareImgs : ActWithoutDriver
@@ -88,7 +90,7 @@ namespace GingerCore.Actions
         }
 
 
-        public override System.Drawing.Image Image { get { return Resources.Vbs16x16; } }
+        public override eImageType Image { get { return eImageType.Camera; } }
 
         public override void Execute()
         {
@@ -134,7 +136,7 @@ namespace GingerCore.Actions
 
                     }
 
-                    result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
 
 
                     if (result.Count <= 0)
@@ -155,7 +157,7 @@ namespace GingerCore.Actions
                         continue;
                     MainWinImage = GetWindowBitmap(w);
                     if (File.Exists(ExpectedImgFile1) && MainWinImage != null)
-                        result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                        result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
                     else
                         continue;
                     if (result.Count > 0)
@@ -177,7 +179,7 @@ namespace GingerCore.Actions
                 {
                     WinAPIAutomation.ShowWindow(targetWin);
                     MainWinImage = GetWindowBitmap(targetWin);
-                    result = GetSubPositions(MainWinImage, Image.FromFile(ExpectedImgFile1));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(ExpectedImgFile1));
 
                     if (result.Count <= 0)
                     {

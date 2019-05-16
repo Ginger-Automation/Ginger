@@ -23,6 +23,7 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
 // This class is for Grid actions
 namespace GingerCore.Actions
 {    
@@ -78,6 +79,6 @@ namespace GingerCore.Actions
             }
              }
 
-        public override System.Drawing.Image Image { get { return Resources.List; } }
+        public override eImageType Image { get { return eImageType.Columns; } }
     }
 }
