@@ -563,7 +563,7 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra))
+            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
             {
                 return rc;
             }
@@ -578,7 +578,7 @@ namespace GingerCore.Environments
                 NoSqlDriver = new GingerCouchbase(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
-            else if (DBType == Database.eDBTypes.Couchbase)
+            else if (DBType == Database.eDBTypes.MongoDb)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerMongoDb(this);

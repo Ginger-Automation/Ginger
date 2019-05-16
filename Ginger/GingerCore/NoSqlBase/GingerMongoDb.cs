@@ -22,13 +22,11 @@ using System.Linq;
 using System.Reflection;
 using GingerCore.Actions;
 using Amdocs.Ginger.Common;
-using Couchbase;
-using Couchbase.Configuration.Client;
-using Couchbase.Authentication;
-using Couchbase.N1QL;
-using Couchbase.Configuration.Server.Serialization;
+
 using MongoDB.Driver;
 using MongoDB.Bson;
+
+using Newtonsoft.Json;
 
 namespace GingerCore.NoSqlBase
 {
@@ -37,7 +35,7 @@ namespace GingerCore.NoSqlBase
         MongoClient mongoClient = null;
         ActDBValidation Act = null;
         //MongoServer
-       
+        string DbName;
         public override List<eNoSqlOperations> GetSupportedActions()
         {
             List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
@@ -49,52 +47,76 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                //way 1
-                if (Db.ConnectionString != null)
+                ///
+                /// ConnectionString format
+                /// "mongodb://user1:password1@localhost/DB"
+                ///
+                if (Db.ConnectionString != null && !string.IsNullOrEmpty(Db.ConnectionString))
                 {
                     var connectionString = Db.ConnectionStringCalculated.ToString();
+                    DbName = MongoUrl.Create(Db.ConnectionStringCalculated.ToString()).DatabaseName;
+                    if (DbName == null)
+                    {
+                        return false;
+                    }
                     mongoClient = new MongoClient(connectionString);
+                    
                 }
                 else
                 {
-                    string[] HostKeySpace = Db.TNSCalculated.Split('/');
-                    string[] HostPort = HostKeySpace[0].Split(':');
+                    ///
+                    /// Host format
+                    /// "mongodb://localhost:27017/inventory"
+                    ///
+                    string[] HostPortDB = Db.TNSCalculated.Split('/');
+                    string[] HostPort = HostPortDB[0].Split(':');
                     //need to get db name
+
                     MongoCredential mongoCredential = null;
-                    bool res = false;
-                    String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
-                    if (res == true)
+                    MongoClientSettings mongoClientSettings = null;
+                    if (HostPort.Length == 2 && HostPortDB.Length == 2)
                     {
-                        mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, deCryptValue);
+                        if (string.IsNullOrEmpty(HostPortDB[HostPortDB.Length - 1]))
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Database is not mentioned in the TNS/Host.");
+                            return false;
+                        }
+
+                        if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
+                        {
+                            mongoClientSettings = new MongoClientSettings
+                            {
+                                Server = new MongoServerAddress(HostPort[0], Convert.ToInt32(HostPort[1]))
+                            };
+                        }
+                        else
+                        {
+                            bool res = false;
+                            String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
+                            if (res == true)
+                            {
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.UserCalculated, deCryptValue);
+                            }
+                            else
+                            {
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.UserCalculated, Db.PassCalculated.ToString());
+                            }
+                            mongoClientSettings = new MongoClientSettings
+                            {
+                                Server = new MongoServerAddress(HostPort[0], Convert.ToInt32(HostPort[1])),
+                                //UseSsl = true,
+                                Credentials = new[] { mongoCredential }
+                            };
+                        }
+                        DbName = HostPortDB[HostPortDB.Length - 1];
+                        mongoClient = new MongoClient(mongoClientSettings);
                     }
                     else
                     {
-                        mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, Db.PassCalculated.ToString());
+                        return false;
                     }
 
-                    //var mongoCredential = MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, deCryptValue);
-                    var settings = new MongoClientSettings
-                    {
-                        Server = new MongoServerAddress("localhost", 27017),
-                        UseSsl = false,
-                        Credentials = new[] { mongoCredential }
-                    };
-                    mongoClient = new MongoClient(settings);
                 }
-
-                GetTableList("inventory");
-
-                
-                //var settings1 = MongoClientSettings.FromUrl(MongoUrl.Create("mongodb://localhost:27017"));  //"mongodb://localhost:27017/DbName"
-
-                //MongoClientSettings setting = MongoClientSettings.FromUrl(MongoUrl.Create(Db.TNSCalculated));
-                //setting.Credential= MongoCredential.CreateMongoCRCredential("inventory", Db.UserCalculated, Db.PassCalculated);
-                //mongoClient = new MongoClient(settings);
-
-                //way 2
-                //var connectionString = Db.ConnectionStringCalculated.ToString(); //"mongodb://user1:password1@localhost/test";
-                //mongoClient = new MongoClient(connectionString);
-
                 return true;
             }
             catch (Exception e)
@@ -121,29 +143,101 @@ namespace GingerCore.NoSqlBase
         {
             return null;
         }
-
         public override List<string> GetTableList(string dbName)
         {
-            //Connect();
+            Connect();
+            if (string.IsNullOrEmpty(dbName))
+            {
+                dbName = this.DbName;
+            }
             List<string> table = new List<string>();
-            var db = mongoClient.GetDatabase(dbName); 
-            foreach (var item in db.ListCollectionsAsync().Result.ToListAsync<BsonDocument>().Result)
+            var db = mongoClient.GetDatabase(dbName);
+            var names = db.ListCollectionNames().ToList();
+            foreach (var item in names)
             {
                 table.Add(item.ToString());
             }
             return table;
         }
 
-        public override List<string> GetColumnList(string tablename)
+        public override List<string> GetColumnList(string collectionName)
         {
-            return null;
+            Connect();
+            List<string> columns = new List<string>();
+            var db = mongoClient.GetDatabase(DbName);
+            var collection = db.GetCollection<BsonDocument>(collectionName);
+
+            var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
+            Dictionary<string, object> dictionary = null;
+            foreach(var row in result)
+            {
+                dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(row.ToString());
+                List <string> previousRowColumns = columns.ToList();
+                var currentRowColumns = previousRowColumns.Union(dictionary.Keys);
+                if (currentRowColumns.Count() > previousRowColumns.Count)
+                {
+                    columns.Clear();//clear previousRowColumns columns
+                    foreach (string key in currentRowColumns)
+                    {
+                        columns.Add(key);
+                    }
+                }
+            }
+
+            return columns;
         }
 
         private void Disconnect()
         {
             //            
         }
-
+        private string GetCollectionName(string inputSQL)
+        {
+            if (Action == ActDBValidation.eDBValidationType.RecordCount)
+            {
+                return inputSQL;
+            }
+            else
+            {
+                if (inputSQL.Contains("."))
+                {
+                    string[] sqlWords = inputSQL.Split('.');
+                    return sqlWords[1];
+                }
+                else
+                {
+                    Act.Error = "Invalid Query format.";
+                    return null;
+                }
+            }
+            
+        }
+        private string GetUpdateQueryParams(string inputSQL)
+        {
+            int startIndex = inputSQL.IndexOf("(") + 1;
+            int endIndex = inputSQL.IndexOf(")");
+            string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
+            return updateQueryParams.Trim();
+        }
+        private string GetQueryParamater(string inputSQL,string param)
+        {
+            int startIndex = inputSQL.IndexOf(param);
+            string queryParameterValue = "";
+            if (startIndex != -1)
+            {
+                int endIndex = inputSQL.IndexOf(")", startIndex);
+                queryParameterValue = inputSQL.Substring(startIndex, endIndex - startIndex);
+            }
+            if (param.Equals("sort")&& string.IsNullOrEmpty(queryParameterValue))
+            {
+                return "{ _id:-1 }";
+            }
+            if (param.Equals("limit") && string.IsNullOrEmpty(queryParameterValue))
+            {
+                return "0";
+            }
+            return queryParameterValue.Replace(param + "(", "");
+        }
         public override void PerformDBAction()
         {
             if (!Connect())
@@ -157,28 +251,62 @@ namespace GingerCore.NoSqlBase
             VE.Value = SQL;
             string SQLCalculated = VE.ValueCalculated;
 
-            IQueryResult<dynamic> result = null;
+            var DB = mongoClient.GetDatabase(DbName);
+            string collectionName = GetCollectionName(SQLCalculated);
+            var collection = DB.GetCollection<BsonDocument>(collectionName);
+
             try
             {
                 switch (Action)
                 {
                     case Actions.ActDBValidation.eDBValidationType.FreeSQL:
-                        //result = clusterCB.Query<dynamic>(SQLCalculated);
-                        //for (int i = 0; i < result.Rows.Count; i++)
-                        //{
-                        //    Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i + 1);
-                        //}
+                        var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
+                            Project(Builders<BsonDocument>.Projection.Exclude("_id").Exclude(GetQueryParamater(SQLCalculated, "projection"))).
+                            Sort(BsonDocument.Parse(GetQueryParamater(SQLCalculated, "sort"))).
+                            Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
+                            ToList();
+
+                        var obj =  result.ToJson();
+                        Act.ParseJSONToOutputValues(obj.ToString(), 1);
                         break;
                     case Actions.ActDBValidation.eDBValidationType.RecordCount:
-                        //result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
-                        //Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
+                        var count = collection.Count(new BsonDocument());
+                        Act.AddOrUpdateReturnParamActual("Record Count", count.ToString());
                         break;
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
-                        //var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
-                        break;
+                        string updateQueryParams = GetUpdateQueryParams(SQLCalculated);
+                        string[] updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
+                        //set filter
+                        var filterString = updateQueryParamsStrings[0];
+                        //set param
+                        var paramString = updateQueryParamsStrings[1];
+                        BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
+                        BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
 
+                        //do commit
+                        if (Act.CommitDB_Value == true)
+                        {
+                            var session = mongoClient.StartSession();
+                            session.StartTransaction();
+                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            session.CommitTransaction();
+                        }
+                        else
+                        {
+                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                        }
+                        break;
+                    case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
+                        string table = Act.Table;
+                        string col = Act.Column;
+                        string where = Act.Where;
+                        var coll = DB.GetCollection<BsonDocument>(table);
+                        var filter = "{" + col + ":\"" + where + "\"}";
+                        var resultSimpleSQLOne = coll.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
+                        Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
+                        break;
                     default:
-                        throw new Exception("Action Not SUpported");
+                        throw new Exception("Action Not Supported");
                 }
             }
             catch (Exception e)

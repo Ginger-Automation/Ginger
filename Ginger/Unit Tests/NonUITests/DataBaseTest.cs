@@ -22,6 +22,12 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,13 +38,33 @@ namespace UnitTests.NonUITests
     
     public class DataBaseTest 
     {
+        static GingerRunner mGR = null;
+
+        static BusinessFlow mBF;
 
         [TestInitialize]
         public void TestInitialize()
         {
             
         }
-   
+
+        [ClassInitialize()]
+        public static void ClassInit(TestContext context)
+        {           
+            mGR = new GingerRunner();            
+
+            mBF = new BusinessFlow();
+            mBF.Activities = new ObservableList<Activity>();
+            mBF.Name = "DB Test";
+            mBF.Active = true;
+
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+          
+            mGR.CurrentBusinessFlow = mBF;          
+        }
+
         [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void TestOracleDBConnectionAndReadAllTables()
@@ -176,6 +202,124 @@ namespace UnitTests.NonUITests
                 db.CloseConnection();
             }
            Assert.IsNotNull(impactedlines);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MongoDbTestConnection()
+        {
+            Database db = new Database();
+            db.DBType = Database.eDBTypes.MongoDb;
+            db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
+            Boolean b = db.Connect();
+            if (b)
+            {
+                db.CloseConnection();
+            }
+            Assert.AreEqual(b, true);
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void MongoDbFreeSQL()
+        {
+            ActDBValidation actDB = new ActDBValidation();
+            actDB.DBValidationType = ActDBValidation.eDBValidationType.FreeSQL;
+
+            actDB.AppName = "DB";
+            actDB.DBName = "MongoDb";
+            actDB.SQL = "db.products.find( {} )";
+            
+            mBF.CurrentActivity.Acts.Add(actDB);
+            mBF.CurrentActivity.Acts.CurrentItem = actDB;
+
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            projEnvironment.Name = "MongoDbApp";
+
+            EnvApplication envApplication = new EnvApplication();
+            envApplication.Name = "DB";
+
+            Database db = new Database();
+            db.Name = "MongoDb";
+            db.DBType = Database.eDBTypes.MongoDb;
+            db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
+
+            envApplication.Dbs.Add(db);
+            projEnvironment.Applications.Add(envApplication);
+            mGR.ProjEnvironment = projEnvironment;
+
+            mGR.RunAction(actDB, false);
+
+            Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void MongoDbRecordCount()
+        {
+            ActDBValidation actDB = new ActDBValidation();
+            actDB.DBValidationType = ActDBValidation.eDBValidationType.RecordCount;
+
+            actDB.AppName = "DB";
+            actDB.DBName = "MongoDb";
+            actDB.SQL = "products";
+
+            mBF.CurrentActivity.Acts.Add(actDB);
+            mBF.CurrentActivity.Acts.CurrentItem = actDB;
+
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            projEnvironment.Name = "MongoDbApp";
+
+            EnvApplication envApplication = new EnvApplication();
+            envApplication.Name = "DB";
+
+            Database db = new Database();
+            db.Name = "MongoDb";
+            db.DBType = Database.eDBTypes.MongoDb;
+            db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
+
+            envApplication.Dbs.Add(db);
+            projEnvironment.Applications.Add(envApplication);
+            mGR.ProjEnvironment = projEnvironment;
+
+            mGR.RunAction(actDB, false);
+
+            Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MongoDbUpdateDB()
+        {
+            ActDBValidation actDB = new ActDBValidation();
+            actDB.DBValidationType = ActDBValidation.eDBValidationType.UpdateDB;
+
+            actDB.AppName = "DB";
+            actDB.DBName = "MongoDb";
+            actDB.SQL = "db.inventory.updateOne({ item: \"paper\" },{$set: { \"size.uom\": \"cm\", status: \"P\" }})";
+
+            mBF.CurrentActivity.Acts.Add(actDB);
+            mBF.CurrentActivity.Acts.CurrentItem = actDB;
+
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            projEnvironment.Name = "MongoDbApp";
+
+            EnvApplication envApplication = new EnvApplication();
+            envApplication.Name = "DB";
+
+            Database db = new Database();
+            db.Name = "MongoDb";
+            db.DBType = Database.eDBTypes.MongoDb;
+            db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
+
+            envApplication.Dbs.Add(db);
+            projEnvironment.Applications.Add(envApplication);
+            mGR.ProjEnvironment = projEnvironment;
+
+            mGR.RunAction(actDB, false);
+
+            Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
+
         }
     }
 }

@@ -147,7 +147,17 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.Name, WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.Description, WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.DBVer, Header = "Version", WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Type, WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
+
+            System.Collections.Generic.List<GingerCore.General.ComboEnumItem> DBTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(Database.eDBTypes));
+            GridColView dbTypeColView = new GridColView()
+            {
+                Field = nameof(Database.DBType),
+                Header = "Db Type1",
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(DBTypeList, nameof(Database.DBType), false, true, "", false, DbType_SelectionChanged),
+                WidthWeight = 15
+            };
+            view.GridColsView.Add(dbTypeColView);
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.TNS, Header="TNS / File Path / Host ", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "VE1", Header="...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.User, Header="User Name", WidthWeight = 10 });
@@ -161,7 +171,18 @@ namespace Ginger.Environments
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }
-
+        private void DbType_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            Database item = (Database)grdAppDbs.CurrentItem;
+            if (item.DBType == Database.eDBTypes.MongoDb)
+            {
+                item.KeepConnectionOpen = true;
+            }
+            else
+            {
+                item.KeepConnectionOpen = false;
+            }
+        }
         private void AddNewDB(object sender, RoutedEventArgs e)
         {
             Database db = new Database();
