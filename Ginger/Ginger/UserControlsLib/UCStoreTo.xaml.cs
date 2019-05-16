@@ -127,7 +127,7 @@ namespace Ginger.UserControlsLib
         {
             bool isValid = true;
             if ((this.Checked == ActReturnValue.eStoreTo.Variable.ToString() && !GingerCore.General.CheckComboItemExist(VariableList,this.TextProp))
-                || (this.Checked == ActReturnValue.eStoreTo.DataSource.ToString() && GingerCore.General.CheckDataSource(this.TextProp,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != "")
+                || (this.Checked == ActReturnValue.eStoreTo.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(this.TextProp,WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != "")
                 || (this.Checked == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() && !GingerCore.General.CheckComboItemExist(xModelsParamsComboBox, this.TextProp, "Value")))
                 isValid = false;
 

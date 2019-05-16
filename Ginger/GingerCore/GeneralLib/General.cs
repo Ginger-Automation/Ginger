@@ -1034,67 +1034,7 @@ namespace GingerCore
                 ObservableList.Add(o);
             return ObservableList;
         }
-        public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
-        {
-            string DSVE = DataSourceVE;
-            DataSourceBase DataSource = null;
-            DataSourceTable DSTable = null;
-            if (DSVE.IndexOf("{DS Name=") != 0)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            DSVE = DSVE.Replace("{DS Name=", "");
-            DSVE = DSVE.Replace("}", "");
-            if (DSVE.IndexOf(" DST=") == -1)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            string DSName = DSVE.Substring(0, DSVE.IndexOf(" DST="));
-
-            foreach (DataSourceBase ds in DSList)
-                if (ds.Name == DSName)
-                {
-                    DataSource = ds;
-                    break;
-                }
-
-
-            if (DataSource == null)
-            {
-                return "Data Source: '" + DSName + "' used in '" + DataSourceVE + "' not found in solution.";
-            }
-
-            DSVE = DSVE.Substring(DSVE.IndexOf(" DST=")).Trim();
-            if (DSVE.IndexOf(" ") == -1)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            string DSTableName = DSVE.Substring(DSVE.IndexOf("DST=") + 4, DSVE.IndexOf(" ") - 4);
-
-            if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                //if (DataSource.FileFullPath.StartsWith("~"))
-                //{
-                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                //}
-                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-
-                DataSource.Init(DataSource.FileFullPath);
-                ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-                foreach (DataSourceTable dst in dsTables)
-                    if (dst.Name == DSTableName)
-                    {
-                        DSTable = dst;
-                        break;
-                    }
-                if (DSTable == null)
-                {
-                    return "Data Source Table : '" + DSTableName + "' used in '" + DataSourceVE + "' not found in solution.";
-                }
-            }
-            return "";
-        }
+        
     }
 }
 

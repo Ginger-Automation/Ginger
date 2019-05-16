@@ -28,7 +28,7 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Generic;
-
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 
 namespace Ginger.Run
 {
@@ -58,6 +58,7 @@ namespace Ginger.Run
             RunSetActionsGrid.AddToolbarTool("@AddScript_16x16.png", "Add Generate TestNGReport", AddGenerateTestNGReportAction);
             RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Automated ALM Defect’s Opening", AddAutomatedALMDefectsOperation);
             RunSetActionsGrid.AddToolbarTool("@AddSMS_16x16.png", "Add Send SMS Action", AddSendSMS);
+            RunSetActionsGrid.AddToolbarTool("@AddSave_16x16.png", "Add JSON Summary Action", AddJSONSummary);
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@Run_16x16.png", "Run Selected", RunSelected);
             RunSetActionsGrid.AddToolbarTool("@RunAll_16x16.png", "Run All", RunAll);
@@ -231,5 +232,16 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSAAAD);
             RunSetActionsGrid.Grid.SelectedItem = RSAAAD;
         }
+
+        private void AddJSONSummary(object sender, RoutedEventArgs e)
+        {
+            RunSetActionJSONSummary runSetActionJSONSummary = new RunSetActionJSONSummary();
+            runSetActionJSONSummary.Name = "JSON Summary";
+            runSetActionJSONSummary.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            mRunSetConfig.RunSetActions.Add(runSetActionJSONSummary);
+            RunSetActionsGrid.Grid.SelectedItem = runSetActionJSONSummary;
+        }
+
+
     }
 }

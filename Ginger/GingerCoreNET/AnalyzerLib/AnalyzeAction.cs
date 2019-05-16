@@ -37,11 +37,11 @@ namespace Ginger.AnalyzerLib
 {
     public class AnalyzeAction : AnalyzerItemBase
     {
-        public  BusinessFlow mBusinessFlow { get; set; }
+        public BusinessFlow mBusinessFlow { get; set; }
         public Activity mActivity { get; set; }
-        public  Act mAction { get; set; }
+        public Act mAction { get; set; }
         private ePlatformType ActivitySourcePlatform { get; set; }
-        
+
         public static List<AnalyzerItemBase> Analyze(BusinessFlow BusinessFlow, Activity parentActivity, Act a, ObservableList<DataSourceBase> DSList)
         {
             // Put all tests on Action here
@@ -88,7 +88,7 @@ namespace Ginger.AnalyzerLib
             //    }
             //}
             //Flow Control -> GoToAction , Check if Action u want to go to exist
-            if (a.FlowControls.Count > 0 )
+            if (a.FlowControls.Count > 0)
             {
                 foreach (GingerCore.FlowControlLib.FlowControl f in a.FlowControls)
                 {
@@ -136,14 +136,14 @@ namespace Ginger.AnalyzerLib
                                 if (BusinessFlow.Activities.Where(x => x.ActivityName == f.GetNameFromValue()).FirstOrDefault() != null)
                                 {
                                     //can be auto fix
-                                    AA.HowToFix = "Remap Flow Control " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ". Auto fix found other " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " with the same name so it will fix the mapping to this " + GingerDicser.GetTermResValue(eTermResKey.Activity) +".";
+                                    AA.HowToFix = "Remap Flow Control " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ". Auto fix found other " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " with the same name so it will fix the mapping to this " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".";
                                     AA.ErrorInfoObject = f;
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
                                     AA.FixItHandler = FixFlowControlWrongActivityMapping;
                                 }
                                 else
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                               
+
                                 AA.IssueType = eType.Error;
                                 AA.Impact = "Flow Control will fail on run time";
                                 AA.Severity = eSeverity.High;
@@ -173,8 +173,8 @@ namespace Ginger.AnalyzerLib
                             {
                                 string SetVariableValue = f.GetNameFromValue();
                                 string[] vals = SetVariableValue.Split(new char[] { '=' });
-                                if(!BusinessFlow.CheckIfVariableExists(vals[0].ToString().Trim(), parentActivity))
-                                { 
+                                if (!BusinessFlow.CheckIfVariableExists(vals[0].ToString().Trim(), parentActivity))
+                                {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                                     AA.Description = "Flow control mapped to " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " which does not exist"; ;
                                     AA.Details = "'" + vals[0].Trim() + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " does not exist in parent items";
@@ -198,7 +198,7 @@ namespace Ginger.AnalyzerLib
                                 if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                    AA.Description = "Flow control mapped to Shared Repository "+ GingerDicser.GetTermResValue(eTermResKey.Activity) +" which does not exist";
+                                    AA.Description = "Flow control mapped to Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist";
                                     AA.Details = "'" + RunSharedRepositoryActivity + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " does not exist in Shared Repository";
                                     AA.HowToFix = "Remap the Flow Control Action";
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
@@ -243,7 +243,7 @@ namespace Ginger.AnalyzerLib
                         string StoreToValue = ARV.StoreToValue;
                         ActReturnValue.eStoreTo StoreToType = ARV.StoreTo;
                         if (StoreToType == ActReturnValue.eStoreTo.Variable)
-                        {                           
+                        {
                             if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.Name == StoreToValue).Select(x => x.Name).FirstOrDefault() == null)
                             {
                                 AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
@@ -267,23 +267,23 @@ namespace Ginger.AnalyzerLib
                                 Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
                                 MatchCollection matches = rxDSPattern.Matches(StoreToValue);
-                                    foreach (Match match in matches)
+                                foreach (Match match in matches)
+                                {
+                                    chkDataSource = GingerCoreNET.GeneralLib.General.CheckDataSource(match.Value, DSList);
+                                    if (chkDataSource != "")
                                     {
-                                        chkDataSource = GingerCore.General.CheckDataSource(match.Value, DSList);
-                                        if(chkDataSource != "")
-                                        {
-                                            AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                            AA.Description = chkDataSource;
-                                            AA.Details = "Invalid '" + StoreToValue + "' StoreTo Value used In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                                            AA.HowToFix = "Remap Output Values";
-                                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                                            AA.IssueType = eType.Error;
-                                            AA.Impact = "Execution will fail in run time";
-                                            AA.Severity = eSeverity.Critical;
-                                            IssuesList.Add(AA);
+                                        AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                                        AA.Description = chkDataSource;
+                                        AA.Details = "Invalid '" + StoreToValue + "' StoreTo Value used In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
+                                        AA.HowToFix = "Remap Output Values";
+                                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                        AA.IssueType = eType.Error;
+                                        AA.Impact = "Execution will fail in run time";
+                                        AA.Severity = eSeverity.Critical;
+                                        IssuesList.Add(AA);
 
                                     }
-                                    }
+                                }
                             }
                         }
                     }
@@ -339,7 +339,7 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            
+
 
 
             GlobalAppModelParameter.GetListOfUsedGlobalParameters(a, ref mUsedGlobalParameters);
@@ -351,7 +351,7 @@ namespace Ginger.AnalyzerLib
                     if (globalParam == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                        AA.Description = "The Application Global Parameter "+ Param + " is missing";
+                        AA.Description = "The Application Global Parameter " + Param + " is missing";
                         AA.Details = "The Application Global Parameter: '" + Param + "' Does not exist in Models Global Parameters";
                         AA.HowToFix = " Create new Application Global Parameter or Delete it from the action.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
@@ -382,15 +382,15 @@ namespace Ginger.AnalyzerLib
             }
             // Put All Special Actions Analyze Here
             //actions combination
-            if (a.GetType() == typeof(ActLaunchJavaWSApplication))//forbidden combination: Launch & (platform\agent manipulation action)
+            if (a.GetType().ToString() == "ActLaunchJavaWSApplication")//forbidden combination: Launch & (platform\agent manipulation action)
             {
                 List<IAct> driverActs = parentActivity.Acts.Where(x => ((x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false) && x.Active == true).ToList();
                 if (driverActs.Count > 0)
                 {
-                    string list = string.Join(",",driverActs.Select(x => x.ActionDescription).ToList().ToArray());
+                    string list = string.Join(",", driverActs.Select(x => x.ActionDescription).ToList().ToArray());
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                     AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " has forbidden combinations";
-                    AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " has " + a.ActionDescription + " Action with the following platform actions: " + list+ ".\nPlatform action inside this current "+ GingerDicser.GetTermResValue(eTermResKey.Activity) + " will try to activate the agent before the application is launch(will cause agent issue).";
+                    AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " has " + a.ActionDescription + " Action with the following platform actions: " + list + ".\nPlatform action inside this current " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " will try to activate the agent before the application is launch(will cause agent issue).";
                     AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and put " + a.ActionDescription + " Action in a separate " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // we can autofix by delete, but don't want to                
                     AA.IssueType = eType.Error;
@@ -416,16 +416,16 @@ namespace Ginger.AnalyzerLib
                     }
                     Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
                     ApplicationPOMModel POM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                    
+
                     if (POM == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "Action's mapped Page Objects Model is missing";
-                        AA.Details =  "Action " + a.ActionDescription + " has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
+                        AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model which is missing, reason can be that the Page Objects Model has been deleted after mapping it to this action.";
                         AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Page Objects Model and Element";
-                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
-                        AA.Impact =  "Action will fail during execution";
+                        AA.Impact = "Action will fail during execution";
                         AA.Severity = eSeverity.High;
 
                         IssuesList.Add(AA);
@@ -440,7 +440,7 @@ namespace Ginger.AnalyzerLib
                             AA.Description = "Page Objects Model Element which mapped to this action is missing";
                             AA.Details = "Action " + a.ActionDescription + " has mapped Page Objects Model Element which is missing, reason can be that the Element has been deleted after mapping it to this action.";
                             AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and the Action in order to map different Element";
-                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;                
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                             AA.IssueType = eType.Error;
                             AA.Impact = "Action will fail during execution";
                             AA.Severity = eSeverity.High;
@@ -449,7 +449,7 @@ namespace Ginger.AnalyzerLib
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                     AA.Description = "Action's mapped Page Objects Model or Element is invalid";
@@ -463,7 +463,7 @@ namespace Ginger.AnalyzerLib
                     IssuesList.Add(AA);
                 }
             }
-                return IssuesList;
+            return IssuesList;
         }
 
         private static void GetAllStoreToGlobalParameters(Act a, ObservableList<GlobalAppModelParameter> modelsGlobalParamsList, ref List<string> missingStoreToGlobalParameters)
@@ -486,7 +486,7 @@ namespace Ginger.AnalyzerLib
             VariableBase.GetListOfUsedVariables(action, ref actionUsedVariables);
             return actionUsedVariables;
         }
-        
+
 
         private static void FixFlowControlWrongActionMapping(object sender, EventArgs e)
         {
@@ -500,10 +500,10 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mActivity.GetAct(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Act similarNameAct =(Act) AA.mActivity.Acts.Where(x => x.Description == flowControl.GetNameFromValue()).FirstOrDefault();
+                Act similarNameAct = (Act)AA.mActivity.Acts.Where(x => x.Description == flowControl.GetNameFromValue()).FirstOrDefault();
                 if (similarNameAct != null)
                 {
-                    string updatedMappingValue= similarNameAct.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameAct.Description;
+                    string updatedMappingValue = similarNameAct.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameAct.Description;
                     flowControl.Value = updatedMappingValue;
                     flowControl.ValueCalculated = string.Empty;
                     AA.Status = eStatus.Fixed;
@@ -551,10 +551,9 @@ namespace Ginger.AnalyzerLib
             AA.ItemParent = BusinessFlow.Name + " > " + Activity.ActivityName;
             AA.mAction = action;
             AA.mBusinessFlow = BusinessFlow;
-            AA.ItemClass = "Action";          
+            AA.ItemClass = "Action";
             return AA;
         }
-
 
         
     }
