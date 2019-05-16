@@ -220,8 +220,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             copy.DSC = DSTableDetails.DSC;
             copy.DSTableType = DSTableDetails.DSTableType;
             
-            DSDetails.DSTableList.Add(copy);           
-
+            DSDetails.DSTableList.Add(copy);
+            
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
          }
     }

@@ -75,8 +75,19 @@ namespace Ginger.DataSource
 
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
                 {
-                    grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
-                    grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
+                    if (dsTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
+                    {
+                        if (!(dsTableDetails.Name == "MyKeyValueDataTable"))
+                        {
+                            grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
+                            grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
+                        }
+                    }
+                    else
+                    {
+                        grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
+                        grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
+                    }
                 }               
                 grdTableData.AddToolbarTool("@Commit_16x16.png", "Commit", new RoutedEventHandler(SaveTable));
                 grdTableData.Grid.LostFocus += Grid_LostFocus;                         
@@ -291,7 +302,19 @@ namespace Ginger.DataSource
             foreach (string sColName in mColumnNames)
             {
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                    dr[sColName] = "";
+                {
+                    if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
+                    {
+                        if (sColName == "GINGER_USED")
+                        {
+                            dr[sColName] = "False";
+                        }
+                    }
+                    else
+                    {
+                        dr[sColName] = "";
+                    }
+                }
                 else if (sColName == "GINGER_ID")
                 {
                     if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
@@ -359,9 +382,44 @@ namespace Ginger.DataSource
                 DataRow dr = mDSTableDetails.DataTable.NewRow();
                 foreach (string sColName in mColumnNames)
                     if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                        dr[sColName] = row[sColName];                    
+                    {
+                        if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
+                        {
+                            if (sColName == "GINGER_USED")
+                            {
+                                object a =row[sColName].GetType();
+                                if (a.ToString().Contains("System.DBNull"))
+                                {
+                                    dr[sColName] = "False";
+                                }
+                                else
+                                {
+                                    dr[sColName] = row[sColName];
+                                }
+                            }
+                        }
+                        else
+                        {
+                            dr[sColName] = row[sColName];
+                        }
+                    }
                     else
-                        dr[sColName] = System.DBNull.Value;
+                    {
+                        if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
+                        {
+                                dr[0] = Guid.NewGuid();
+                            
+                            if (sColName == "GINGER_ID")
+                            {
+                                int count = mDSTableDetails.DataTable.Rows.Count;
+                                dr[sColName] = count + 1;
+                            }
+                        }
+                        else
+                        {
+                            dr[sColName] = System.DBNull.Value;
+                        }
+                    }
                 mDSTableDetails.DataTable.Rows.Add(dr);              
             }                 
         }

@@ -559,9 +559,7 @@ namespace GingerCore
                     if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
                         if (rowNum.All(char.IsDigit))
                         {
-                            int a = dt.Rows.Count;
-                            dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString();
-                            mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[1].ToString());
+                            mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
                         }
                         else
                             mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
@@ -645,6 +643,7 @@ namespace GingerCore
 
                     string litedbquery = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - (p.IndexOf("QUERY=") + 7));
 
+                    // Query is with Customized option
                     if (p.Contains("ICOLVAL="))
                     {
                         string[] tokens = p.Split(new[] { "ICOLVAL=" }, StringSplitOptions.None);
@@ -653,7 +652,7 @@ namespace GingerCore
 
                         string[] markasdone = tokens[0].Split(new[] { "MASD=" }, StringSplitOptions.None)[1].Split(splitchar);
 
-                        string[] col = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
+                        string[] tableName = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
 
                         iColVal = Name[0];
 
@@ -673,12 +672,13 @@ namespace GingerCore
                         {
                             Markasdone = true;
                         }
-
+                        // Get Value query
                         if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
                         {
-                            mValueCalculated = liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, col[0]);
+                            mValueCalculated = liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]);
                         }
 
+                        // Set value Query
                         else if (litedbquery.Contains(".update") && this.updateValue != null)
                         {
                             if (litedbquery.Contains("where"))
@@ -692,14 +692,13 @@ namespace GingerCore
                             else
                             {
                                 litedbquery = litedbquery.Replace("\"\"", "\"" + updateValue + "\"");
-                                
                             }
                             bool nextavail = false;
                             if (IRow == "NxtAvail")
                             {
                                 nextavail = true;
                             }
-                                liteDB.RunQuery(litedbquery, 0, col[0], Markasdone, nextavail);
+                                liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
                         }
                     }
                     else

@@ -64,78 +64,47 @@ namespace GingerCore.Actions
             }
         }
 
-        // TODO: Fix it
+        // TODO: Need Fix it
         //public override System.Drawing.Image Image { get { return Resources.Act; } }
 
         public override void Execute()
         {
             DataSourceBase DataSource = null;
-            GingerCoreNET.DataSource.GingerLiteDB liteDB= new GingerCoreNET.DataSource.GingerLiteDB();
             string outVal = "";
             foreach (DataSourceBase ds in DSList)
                 if (ds.Name == DSName)
                     DataSource = ds;
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
+                GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                 string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 liteDB.Init(liteDB.FileFullPath);
                 liteDB.DSC = liteDB;
                 int DSCondition = this.ActDSConditions.Count;
-                bool cust = this.Customized;
                 DataTable dt = new DataTable();
+
                 switch (ControlAction)
                 {
                     case eControlAction.GetValue:
                         // Customized Query
-                        if (cust)
+                        if (this.Customized)
                         {
                             string col = this.LocateColTitle;
-                             
                             bool nextavail = this.ByNextAvailable;
                             if (nextavail)
                             {
-
                                 string op= liteDB.GetQueryOutput(Query, col, 0, MarkUpdate, DSTableName);
-                                //dt = liteDB.GetQueryOutput(this.ValueExp);
-                                //dt.TableName = DSTableName;
-                                //DataRow row = dt.Rows[0];
-                                //string rowValue = row[col].ToString();
                                 AddOrUpdateReturnParamActual(col, op);
-                                
                             }
                             else if (this.ByRowNum)
                             {
-                                //string Query = "db." + DSTableName + ".find";
                                 string op = liteDB.GetQueryOutput(Query, col, Int32.Parse(this.LocateRowValue), MarkUpdate, DSTableName);
-                                //dt = liteDB.GetQueryOutput(this.ValueExp);
-                                //dt.TableName = DSTableName;
-                                //int x = Int32.Parse(this.LocateRowValue);
-                                //DataRow row = dt.Rows[x];
-                                //if (MarkUpdate)
-                                //{
-                                //    string rowID = row["GINGER_ID"].ToString();
-                                //    string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
-                                //    liteDB.RunQuery(query);
-                                //}
-                                //string rowValue = row[col].ToString();
-                                
                                 AddOrUpdateReturnParamActual(col, op);
                             }
                             else
                             {
                                 string op = liteDB.GetQueryOutput(Query, col, 0, MarkUpdate, DSTableName);
-                                //dt = liteDB.GetQueryOutput(this.ValueExp);
-                                //dt.TableName = DSTableName;
-                                //DataRow row = dt.Rows[0];
-                                //if (MarkUpdate)
-                                //{
-                                //    string rowID = row["GINGER_ID"].ToString();
-                                //    string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
-                                //    liteDB.RunQuery(query);
-                                //}
-                                //string rowValue = row[col].ToString();
-
                                 AddOrUpdateReturnParamActual(col, op);
                             }
                         }
@@ -149,7 +118,6 @@ namespace GingerCore.Actions
                                 {
                                     AddOrUpdateReturnParamActual(colunm.ToString(), row[colunm].ToString());
                                 }
-                                
                             }
                         }
                         // By Selected Cell
@@ -177,38 +145,14 @@ namespace GingerCore.Actions
                         case eControlAction.SetValue:
                         if (this.ByRowNum)
                         {
-                            //dt = liteDB.GetQueryOutput("db." + DSTableName + ".find");
-                            //int x = Int32.Parse(this.LocateRowValue);
-                            //DataRow row = dt.Rows[x];
-                            //if (MarkUpdate)
-                            //{
-                            //    string rowID = row["GINGER_ID"].ToString();
-                            //    string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
-                            //    liteDB.RunQuery(query);
-                            //}
-                            //string rowValue = row["GINGER_ID"].ToString();
-                            
                             liteDB.RunQuery(Query, Int32.Parse(this.LocateRowValue), DSTableName, MarkUpdate);
                             AddOrUpdateReturnParamActual("Output", "Success");
-
-                            //liteDB.RunQuery(Query + " where GINGER_ID = \"" + rowValue + "\"");
                         }
                         else
                         {
                             if (ByNextAvailable)
                             {
                                 liteDB.RunQuery(Query, 0, DSTableName, MarkUpdate, true);
-                                //dt = liteDB.GetQueryOutput("db." + DSTableName + ".find GINGER_USED=\"False\"");
-                                //DataRow row = dt.Rows[0];
-                                //row[LocateColTitle] = ValueUC;
-                                //if (MarkUpdate)
-                                //{
-                                //    string rowID = row["GINGER_ID"].ToString();
-                                //    string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
-                                //    liteDB.RunQuery(query);
-                                //}
-                                //liteDB.SaveTable(dt);
-                                AddOrUpdateReturnParamActual("Output", "Success");
                             }
                             else
                             {
@@ -221,7 +165,7 @@ namespace GingerCore.Actions
                     case eControlAction.MarkAllUsed:
                     case eControlAction.MarkAllUnUsed:
                             var aa= liteDB.GetResult(Query);
-                            AddOrUpdateReturnParamActual("Count", aa.ToString());
+                            AddOrUpdateReturnParamActual("Result", aa.ToString());
                             break;
                     
                         case eControlAction.RowCount:
@@ -234,19 +178,7 @@ namespace GingerCore.Actions
                         AddOrUpdateReturnParamActual("Count", roaw[0].ToString());
                         break;
                     case eControlAction.ExportToExcel:
-                        //ValueExpression EVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        //EVE.Value = this.Value;
-
-                        //ValueExpression ETERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, false, EVE.ValueCalculated);
-                        //ETERC.Value = ValueExp;
-                        //// VE.ReplaceDataSource(ValueExp);                    
-                        //if (ETERC.ValueCalculated == "The Export Excel can be *.xlsx only")
-                        //{
-                        //    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        //    Error = "The Export Excel can be *.xlsx only";
-                        //}
-                        //else
-                        //    outVal = ETERC.ValueCalculated;
+                        
                         break;
                     case eControlAction.DeleteRow:
                         if (this.ByRowNum)
@@ -289,7 +221,7 @@ namespace GingerCore.Actions
                 }
                     return;
             }
-            else
+            else if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 switch (ControlAction)
                 {
@@ -480,35 +412,39 @@ namespace GingerCore.Actions
         public string QueryValue { get; set; }
 
         //public string InputValue { get; set; }
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string ColSelectorValue { get; set; }
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string DSName { get; set; }
 
+        [IsSerializedForLocalRepository]
         public  bool Customized { get; set; }
 
+        [IsSerializedForLocalRepository]
         public  bool ByQuery { get; set; }
-        //[IsSerializedForLocalRepository]
+
+        [IsSerializedForLocalRepository]
         public string  DSTableName { get; set; }
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eRunColPropertyValue WhereProperty { get; set; }
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eRunColOperator WhereOperator { get; set; }
                 
         //[IsSerializedForLocalRepository]
         //public eRunActionOn RunActionOn { get; set; }
         
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool ByRowNum { get; set; }
+
         public int RowVal { get; set; }
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool ByNextAvailable { get; set; }
         
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool ByWhere { get; set; }
 
         public bool MarkUpdate { get; set; }
@@ -520,9 +456,9 @@ namespace GingerCore.Actions
         //[IsSerializedForLocalRepository]
         public string WhereColumnValue { get; set; }       
        
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string LocateColTitle{ get; set; }
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string LocateRowType { get; set; }
         //[IsSerializedForLocalRepository]
         public string LocateRowValue { get; set; }

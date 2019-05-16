@@ -36,17 +36,11 @@ namespace GingerCoreNET.DataSource
                 {
                     _database = value;
                     FillDataGridView(null);
-                    //RefreshCollections();
                 }
             }
         }
         public void FillDataGridView(IEnumerable<BsonDocument> documents)
         {
-            //if (lb_Collections.Items.Contains("[QUERY]"))
-            //{
-            //    lb_Collections.Items.Remove("[QUERY]");
-            //}
-            //dataGridView.DataSource = null;
             if (documents != null)
             {
                 var dt = new LiteDataTable(documents.ToString());
@@ -103,15 +97,18 @@ namespace GingerCoreNET.DataSource
                         dt.Rows.Add(dr);
                     }
                 }
-                //dataGridView.DataSource = dt;
             }
         }
         public override void Init(string sFilePath, string sMode = "Read")
         {
             mFilePath = sFilePath;
-            using (Database = new LiteDatabase(sFilePath))
+            try
             {
-                Console.Out.WriteLine("DB Created at the location: " + sFilePath);
+                Database = new LiteDatabase(sFilePath);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Cannot Connect to Datasource. Exception Occured : ", ex);
             }
         }
         public override void AddColumn(string tableName, string columnName, string columnType)
@@ -153,13 +150,13 @@ namespace GingerCoreNET.DataSource
                     doc[List[3]] = "";
                 }
                 table.Insert(doc);
-
             }
         }
 
         public override void Close()
         {
-
+            Database = new LiteDatabase(mFilePath);
+            Database.Dispose();
         }
 
         public override string CopyTable(string tableName)
@@ -174,9 +171,7 @@ namespace GingerCoreNET.DataSource
                 {
                     var CopyTable = db.GetCollection(CopyTableName);
                     var table = db.GetCollection(tableName);
-
-
-
+                    
                     DataTable dtChange = new DataTable(CopyTableName);
                     dtChange = datatable(tableName, CopyTableName);
                     //CopyTable.Upsert(doc);
@@ -253,9 +248,7 @@ namespace GingerCoreNET.DataSource
                                         dr[property.Key] = count.ToString();
                                         count++;
                                     }
-
                                 }
-
                                 else
                                 {
                                     dr[property.Key] = property.Value.AsString;
@@ -266,19 +259,18 @@ namespace GingerCoreNET.DataSource
                                     {
                                         dr[property.Key] = "False";
                                     }
-
                                 }
                             }
                         }
                         dt.Rows.Add(dr.ItemArray);
                     }
                 }
-                DataTable aa = dt;
-                aa.Rows.Add(dt.Rows);
-                aa.TableName = CopyTableName;
-                return aa;
+                // converting Litedatatable to Datatable
+                DataTable dttable = dt;
+                dttable.Rows.Add(dt.Rows);
+                dttable.TableName = CopyTableName;
+                return dttable;
             }
-
         }
 
         public override void DeleteTable(string tableName)
@@ -393,31 +385,16 @@ namespace GingerCoreNET.DataSource
             return mColumnNames;
         }
 
-        public String GetQueryOutput(string query, string col, bool mark = false, string DSTableName= null)
-        {
-            DataTable ddd = GetQueryOutput(query);
-            
-            DataRow row = ddd.Rows[0];
-
-            if (mark)
-            {
-                string rowID = row["GINGER_ID"].ToString();
-                //string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
-                DataTable d=GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"");
-            }
-
-            return  row[col].ToString();
-        }
 
         public String GetQueryOutput(string query,string col, int rownumber , bool mark = false, string DSTableName = null)
         {
-            DataTable ddd = GetQueryOutput(query);
-            
-            DataRow row = ddd.Rows[rownumber];
+            DataTable datatble = GetQueryOutput(query);
+            DataRow row = datatble.Rows[rownumber];
+
             if (mark)
             {
                 string rowID = row["GINGER_ID"].ToString();
-                ddd=GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"");
+                datatble=GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"");
             }
             return row[col].ToString();
         }
@@ -468,14 +445,18 @@ namespace GingerCoreNET.DataSource
                 }
                 else
                 {
+                    // If we need to run a direct query
                     try
                     {
                         var resultdxs = db.Engine.Run(query);
-                        
+
+                        // Converting BSON to JSON 
                         JArray array = new JArray();
                         foreach (BsonValue bs in db.Engine.Run(query))
                         {
                             string js = LiteDB.JsonSerializer.Serialize(bs, true, true);
+                            if (js == "0")
+                                return dataTable;
                             JObject jo = JObject.Parse(js);
                             JObject jo2 = new JObject();
                             foreach (JToken jt in jo.Children())
@@ -497,110 +478,24 @@ namespace GingerCoreNET.DataSource
                                     {
                                         jo2.Add(jt);
                                     }
-                                    
                                 }
                             }
                             array.Add(jo2);
-                            
-                                
                         }
+                        // JSON to Datatable
                         dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
-                        
                         var json = JsonConvert.SerializeObject(array);
                     }
                     catch (Exception ex)
                     {
-                        if (ex.Message.Contains("is not a valid shell command."))
-                        {
-                            string[] tokens = query.Split(new[] { "from" }, StringSplitOptions.None);
-                            char[] splitchar = { ' ' };
-                            string[] tablename = tokens[1].Split(splitchar);
-                            
-                            var res = db.GetCollection(tablename[1]).Find(Query.All(), 0).ToList();
-                            var dt = new LiteDataTable(tablename[1].ToString());
-                            foreach (var doc in res)
-                            {
-                                var dr = dt.NewRow() as LiteDataRow;
-                                if (dr != null)
-                                {
-                                    dr.UnderlyingValue = doc;
-                                    foreach (var property in doc.RawValue)
-                                    {
-                                        if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
-                                        {
-                                            if (!dt.Columns.Contains(property.Key))
-                                            {
-                                                dt.Columns.Add(property.Key, typeof(string));
-                                                dataTable.Columns.Add(property.Key, typeof(string));
-                                            }
-                                            if (property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
-                                            {
-                                                dr[property.Key] = "";
-                                            }
-                                            else
-                                            {
-                                                dr[property.Key] = property.Value.AsString;
-                                            }
-                                        }
-                                    }
-                                    dt.Rows.Add(dr);
-
-                                    DataTable aa = dt;
-                                    aa.TableName = query;
-                                   
-                                    DataRow[] rowArray = aa.Select("GINGER_ID= 1");
-                                    foreach (DataRow row in rowArray)
-                                    {
-                                        dataTable.ImportRow(row);
-                                    }
-                                }
-                            }
-                        }
-
+                        Reporter.ToLog(eLogLevel.ERROR,"Exception Occured: ",ex);
                     }
                 }
             }
             return dataTable;
         }
 
-        private void ConvertSQLShellCommand(string SQLcommand)
-        {
-            string[] tokens = SQLcommand.Split(new[] { "from" }, StringSplitOptions.None);
-            char[] splitchar = { ' ' };
-            string [] tablename = tokens[1].Split(splitchar);
-            DataTable dataTable = new DataTable();
-            using (var db = new LiteDatabase(mFilePath))
-            {
-                string query = "db." + tablename[1] + ".find limit 100";
-                var resultdxs = db.Engine.Run(query);
-                var docs = BsonMapper.Global.ToDocument(resultdxs[0]);
-
-                JArray array = new JArray();
-                foreach (BsonValue bs in db.Engine.Run(query))
-                {
-                    string js = LiteDB.JsonSerializer.Serialize(bs, true, true);
-                    JObject jo = JObject.Parse(js);
-                    JObject jo2 = new JObject();
-                    foreach (JToken jt in jo.Children())
-                    {
-                        if ((jt as JProperty).Name != "_id")
-                        {
-                            jo2.Add(jt);
-                        }
-                    }
-                    array.Add(jo2);
-                }
-                dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
-                DataRow[] rowArray = dataTable.Select("GINGER_ID= 1");
-                foreach (DataRow row in rowArray)
-                {
-                    dataTable.ImportRow(row);
-                }
-                //var result = db.GetCollection(tablename);
-
-            }
-
-        }
+        
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
         {
             string tablename = dtTable.TableName;
@@ -628,29 +523,7 @@ namespace GingerCoreNET.DataSource
             sTableDetail.DSC = this;
             return sTableDetail;
         }
-        public DataTable ToDataTable<T>(List<T> items)
-        {
-            DataTable dataTable = new DataTable(typeof(T).Name);
-            //Get all the properties by using reflection   
-            PropertyInfo[] Props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (PropertyInfo prop in Props)
-            {
-                //Setting column names as Property names  
-                dataTable.Columns.Add(prop.Name);
-            }
-            foreach (T item in items)
-            {
-                var values = new object[Props.Length];
-                for (int i = 0; i < Props.Length; i++)
-                {
-
-                    values[i] = Props[i].GetValue(item, null);
-                }
-                dataTable.Rows.Add(values);
-            }
-
-            return dataTable;
-        }
+        
         public override ObservableList<DataSourceTable> GetTablesList()
         {
             DataTable Datatable = new DataTable();
@@ -731,17 +604,16 @@ namespace GingerCoreNET.DataSource
         {
             using (LiteDatabase db = new LiteDatabase(mFilePath))
             {
-                var resultdxs = db.Engine.Run(query);
+                var result = db.Engine.Run(query);
             }
         }
 
         public void RunQuery(string query, int LocateRowValue, string DSTableName, bool MarkUpdate=false, bool NextAvai= false)
         {
             DataTable dt = GetQueryOutput("db." + DSTableName + ".find");
-            //int x = Int32.Parse(LocateRowValue);
             DataRow row = dt.Rows[LocateRowValue];
-            
             string rowValue = row["GINGER_ID"].ToString();
+
             //Rownumber
             if (!query.Contains("where"))
             {
@@ -750,21 +622,20 @@ namespace GingerCoreNET.DataSource
             //Nextavailable
             else if (NextAvai)
             {
-                DataTable dta = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
-                row = dta.Rows[LocateRowValue];
+                DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
+                row = datatble.Rows[LocateRowValue];
                 string rowID = row["GINGER_ID"].ToString();
-                //GetQueryOutput(query);
+               
                 query = query + " and GINGER_ID= \"" + rowID + "\"";
                 GetQueryOutput(query);
 
                 if (MarkUpdate)
                 {
-                    //string rowID = row["GINGER_ID"].ToString();
-                    //string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
                     GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_USED =\"False\" and GINGER_ID= \"" + rowID + "\"");
                 }
                 return;
             }
+            // Where Condition
             else
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
@@ -774,17 +645,23 @@ namespace GingerCoreNET.DataSource
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1] );
-                    //int x = Int32.Parse(LocateRowValue);
+                    
                     row = dt.Rows[0];
+                }
+                else if (query.Contains("where"))
+                {
+                    GetQueryOutput(query);
+                    //string[] querysplit = query.Split(new[] { "where =" }, StringSplitOptions.None);
+                    //dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1]);
                 }
             }
             if (MarkUpdate)
             {
                 string rowID = row["GINGER_ID"].ToString();
-                //string query = "db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
+                
                 GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"");
             }
-            return;
+            
         }
 
         public object GetResult (string query)
@@ -797,7 +674,6 @@ namespace GingerCoreNET.DataSource
                 {
                     result = bs.AsString;
                 }
-
             }
             return result;
         }
@@ -812,8 +688,8 @@ namespace GingerCoreNET.DataSource
             {
                 string[] tokens = query.Split(new[] { "where" }, StringSplitOptions.None);
                 string rowID = row[0].ToString();
-                string queryq = "db." + DSTableName + ".update GINGER_USED = \"True\" where "+ tokens[1];
-                RunQuery(queryq);
+                string Newquery = "db." + DSTableName + ".update GINGER_USED = \"True\" where "+ tokens[1];
+                RunQuery(Newquery);
             }
             return row[0].ToString();
         }
@@ -825,12 +701,8 @@ namespace GingerCoreNET.DataSource
                 var table = db.GetCollection(dataTable.ToString());
                 var doc = BsonMapper.Global.ToDocument(table);
                 
-                //var dic = BsonSerializer.Deserialize(doc);
-                
                 DataTable dtChange = dataTable;
-                //DataTable dtChange = dataTable;
-                List<string> aa= GetColumnList(dataTable.ToString());
-                //dtChange = datatable(dataTable.ToString());
+               
                 table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
                 if (!(dtChange == null))
@@ -841,18 +713,17 @@ namespace GingerCoreNET.DataSource
                        
                         var mapper = new BsonMapper();
                         var sd = mapper.ToDocument(dictionary);
-                        
+                       
                         var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
 
                         batch.Add(new BsonDocument(sd));
                         table.Upsert(batch);
                     }
                 }
-                
 
-                var re = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
+                var result = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
 
-                if (dataTable.Rows.Count > re.Count)
+                if (dataTable.Rows.Count > result.Count)
                 {
                     table.Upsert(batch);
                 }

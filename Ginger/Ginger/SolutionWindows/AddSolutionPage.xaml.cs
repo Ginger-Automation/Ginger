@@ -209,8 +209,10 @@ namespace Ginger.SolutionWindows
             lite.Name = "LiteDB";
             lite.FilePath = @"~\DataSources\LiteDB.db";
             lite.DSType = DataSourceBase.eDSType.LiteDataBase;
+
             RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder.AddRepositoryItem(lite);
+            
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

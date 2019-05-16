@@ -428,10 +428,14 @@ namespace Ginger.Actions
             if (mActDSTblElem.ValueExp != null && mActDSTblElem.ValueExp != "")
                 SetDataSourceVEParams(mActDSTblElem.ValueExp);
 
-            
             GetTableDetails();
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowNum, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByRowNum);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NextAvailable, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByNextAvailable);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Where, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByWhere);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.SelectedValueProperty, mActDSTblElem, ActDSTableElement.Fields.ColSelectorValue);
 
             ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
             ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
@@ -1173,14 +1177,11 @@ namespace Ginger.Actions
                     TBH.AddText(" DST=");
                     TBH.AddBoldText(mDSTable.Name);
                     TBH.AddText(" MASD=");
-                    //TBH.AddText("DST=" + mDSTable.Name + " MASD=");
+                    
                     if (MarkAsDone.IsChecked == true)
                         TBH.AddBoldText("Y");
                     else
                         TBH.AddBoldText("N");
-
-                    
-
                     if (ByQuery.IsChecked == true)
                     {
                         TBH.AddText(" Query QUERY=");
@@ -1209,10 +1210,9 @@ namespace Ginger.Actions
                         else if (NextAvailable.IsChecked == true)
                         {
                             TBH.AddUnderLineText("NxtAvail");
-                            //TBH.AddText("row number");
                         }
                         TBH.AddText(" Query QUERY=");
-                        // db.tablename
+                        
                         TBH.AddText("db." + mDSTable.Name);
                         //Get ColunmNA
                         if (cmbColumnValue.SelectedIndex != -1)
@@ -1259,13 +1259,10 @@ namespace Ginger.Actions
 
                                 return;
                             }
-                            
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAsDone")
                             {
                                 TBH.AddBoldText(".update GINGER_USED= \"True\" where");
                             }
-                            //else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
-                            //{ TBH.AddBoldText("ARC"); }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                             {
                                 TBH.AddBoldText(".delete");
@@ -1274,8 +1271,6 @@ namespace Ginger.Actions
                     
                                 return;
                             }
-                            //else if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
-                            //{ TBH.AddBoldText("ETE"); }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed")
                             {
                                 TBH.AddBoldText(".update GINGER_USED= \"False\" ");
@@ -1397,17 +1392,11 @@ namespace Ginger.Actions
                                         //    wQuery = wQuery + " " + wCond + " " + wColVal + " IS NULL";
                                         //else if (wOpr == "IsNotNull")
                                         //    wQuery = wQuery + " " + wCond + " " + wColVal + " IS NOT NULL";
-
                                         TBH.AddText(wQuery);
-                                
                                     }
                                 }
                             }
-
-
                         }
-
-
                     }
                     else if (SelectedCell.IsChecked == true)
                     {
@@ -1437,12 +1426,8 @@ namespace Ginger.Actions
                     TBH.AddText("}");
                     mActDSTblElem.ValueExp = TBH.GetText();
                 }
-
             }
-            else
-            {
-                CommonVE();
-            }
+            
         }
 
         private void ColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
