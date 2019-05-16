@@ -217,20 +217,21 @@ namespace Ginger.Reports
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 }
             }
+            set { }
         }
 
-        public void SetLiteDBData(LiteDbRunSet item)
+        public void SetLiteDBData(LiteDbRunSet runSet)
         {
-            GUID = item.GUID.ToString();
-            Name = item.Name;
-            Description = item.Description;
-            StartTimeStamp = item.StartTimeStamp;
-            EndTimeStamp = item.EndTimeStamp;
-            Elapsed = item.Elapsed;
+            GUID = runSet.GUID.ToString();
+            Name = runSet.Name;
+            Description = runSet.Description;
+            StartTimeStamp = runSet.StartTimeStamp;
+            EndTimeStamp = runSet.EndTimeStamp;
+            Elapsed = runSet.Elapsed;
             Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
-            if(Enum.TryParse("Active", out myStatus))
+            if(Enum.TryParse(runSet.RunStatus, out myStatus))
             {
-                //RunSetExecutionStatus = myStatus;
+                RunSetExecutionStatus = myStatus;
             }
         }
 
