@@ -324,7 +324,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             actWebAPIBase.SolutionFolder = actWebAPIModel.SolutionFolder;
             actWebAPIBase.SupportSimulation = actWebAPIModel.SupportSimulation;
             actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
-
             actWebAPIBase.Description = actWebAPIModel.Description;
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
@@ -339,7 +338,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, AAMBDuplicate.URLPass);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, AAMBDuplicate.DoNotFailActionOnBadRespose.ToString());
             actWebAPIBase.HttpHeaders = ConvertAPIModelKeyValueToActInputValues(AAMBDuplicate.HttpHeaders, actWebAPIModel);
-
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, AAMBDuplicate.RequestBodyType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, AAMBDuplicate.RequestBody);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, AAMBDuplicate.CertificateType.ToString());
