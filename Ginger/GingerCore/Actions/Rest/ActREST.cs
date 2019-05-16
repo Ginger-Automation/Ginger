@@ -32,6 +32,7 @@ using System.Web;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.WebServices;
 
 namespace GingerCore.Actions.REST
 {
@@ -845,7 +846,7 @@ namespace GingerCore.Actions.REST
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
         {
-            if(Platform == ePlatformType.WebServices)
+            if(Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
             {
                 return true;
             }
@@ -857,17 +858,40 @@ namespace GingerCore.Actions.REST
 
         Act IObsoleteAction.GetNewAction()
         {
-            throw new NotImplementedException();
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIRest>(); });
+            ActWebAPIRest convertedActWebAPIRest = mapConfigUIElement.CreateMapper().Map<Act, ActWebAPIRest>(this);
+
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Convert.ToString(this.DoNotFailActionOnBadRespose));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Convert.ToString(this.UseLegacyJSONParsing));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, Convert.ToString(this.URLDomain.ValueForDriver));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, Convert.ToString(this.URLUser.ValueForDriver));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, Convert.ToString(this.URLPass.ValueForDriver));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, Convert.ToString(this.SecurityType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, Convert.ToString(this.RequestBody.ValueForDriver));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestFileName, Convert.ToString(this.TemplateFile));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, Convert.ToString(this.RequestType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, Convert.ToString(this.ResponseContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.CookieMode, Convert.ToString(this.CookieMode));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, Convert.ToString(this.ContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, Convert.ToString(this.ReqHttpVersion));
+           
+            convertedActWebAPIRest.mUseTemplateFile = this.UseTemplateFile;
+            convertedActWebAPIRest.mUseRequestBody = this.UseTemplateFile;
+            convertedActWebAPIRest.DynamicElements = this.DynamicElements;
+            convertedActWebAPIRest.HttpHeaders = this.HttpHeaders;
+            
+            return convertedActWebAPIRest;
         }
 
         Type IObsoleteAction.TargetAction()
         {
-            throw new NotImplementedException();
+            return typeof(ActWebAPIRest);
         }
 
         string IObsoleteAction.TargetActionTypeName()
         {
-            throw new NotImplementedException();
+            ActWebAPIRest newActApiRest = new ActWebAPIRest();
+            return newActApiRest.ActionDescription;
         }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
