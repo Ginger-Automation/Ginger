@@ -41,7 +41,7 @@ namespace Ginger
             InitializeComponent();
             
             //TODO: load from external - so easier to update
-            lblAppVersion.Content = "Version " + Ginger.App.AppVersion;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
                                   
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
@@ -85,7 +85,7 @@ namespace Ginger
 
                 if (selectedSol != null)
                 {
-                    App.SetSolution(selectedSol.Folder);                    
+                    WorkSpace.Instance.OpenSolution(selectedSol.Folder);                    
                 }
                 else
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");

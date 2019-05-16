@@ -16,16 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.Run;
+using GingerCore;
+using GingerCore.FlowControlLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Environments;
-using GingerCore;
-using GingerCore.Platforms;
-using GingerCore.FlowControlLib;
-using Ginger.Run;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.AnalyzerLib
 {

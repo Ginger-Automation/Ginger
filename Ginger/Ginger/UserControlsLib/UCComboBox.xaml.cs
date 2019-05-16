@@ -148,9 +148,14 @@ namespace Ginger.UserControlsLib
             {
                 ComboBox.Items.Clear();
                 ComboBox.SelectedValuePath = "Value";
-                Type Etype = comboBoxEnumItemsList[0].GetType();
-
-                GingerCore.General.FillComboFromEnumType(ComboBox, Etype, comboBoxEnumItemsList);
+                Type Etype = comboBoxEnumItemsList[0].GetType();                
+                foreach (object item in comboBoxEnumItemsList)
+                {
+                    GingerCore.General.ComboItem CEI = new GingerCore.General.ComboItem();
+                    CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
+                    CEI.Value = item;
+                    ComboBox.Items.Add(CEI);
+                }
             }
         }
         private void BindVEAndSelectionChangedEvent(bool isVENeeded, SelectionChangedEventHandler UCselectionChange)

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using GingerCore.ALM;
 using GingerCore.Activities;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionAutoSaveAndRecover;
 
 namespace Amdocs.Ginger.Common
 {
@@ -56,11 +57,7 @@ namespace Amdocs.Ginger.Common
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
 
-       
-
-        Task<int> AnalyzeRunset(Object a, bool b);
-
-        void RunRunSetFromCommandLine();
+        void ShowAutoRunWindow();
 
         bool Send_Outlook(bool actualSend = true, string MailTo=null, string Event=null, string Subject=null, string Body=null, string MailCC=null, List<string> Attachments=null, List<KeyValuePair<string, string>> EmbededAttachment=null);
 
@@ -78,8 +75,6 @@ namespace Amdocs.Ginger.Common
         string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
 
-        bool ProcessCommandLineArgs(string[] file);
-
         void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields);
 
         void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
@@ -88,5 +83,8 @@ namespace Amdocs.Ginger.Common
 
         void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
         bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);
+        void DownloadSolution(string v);
+
+        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
     }
 }

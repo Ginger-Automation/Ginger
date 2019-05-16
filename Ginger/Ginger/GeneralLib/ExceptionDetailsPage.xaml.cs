@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
@@ -217,7 +217,7 @@ namespace Ginger.GeneralLib
             html.Append(@"<table width=""100%"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""font-family:arial;"">").AppendLine();
             html.Append(@"<tr><td><p>" + "Hi," + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "Error occurred on Ginger, please find details below:" + "<br><br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + "<b>Version:</b> " + App.AppVersion + "<br><br></p></td></tr>").AppendLine();
+            html.Append(@"<tr><td><p>" + "<b>Version:</b> " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "<b>Steps to Reproduce:</b> " + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "1. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();

@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Properties;
+using Amdocs.Ginger.Common.Enums;
 using System;
 using System.ComponentModel;
 
@@ -65,28 +65,8 @@ namespace Ginger.AnalyzerLib
             Maybe = 3
         }
 
-        public static class Fields
-        {
-            public static string Selected = "Selected";
-            public static string ItemName = "ItemName";
-            public static string ItemParent = "ItemParent";
-            public static string Description = "Description";
-            public static string UTDescription = "UTDescription";
-            public static string Details = "Details";
-            public static string HowToFix = "HowToFix";
-            public static string CanAutoFix = "CanAutoFix";
-            public static string Severity = "Severity";
-            public static string SeverityIcon = "SeverityIcon";
-            public static string Status = "Status";
-            public static string IssueType = "IssueType";
-            public static string ItemClass = "ItemClass";
-            public static string Impact = "Impact";
-            public static string IsAutoFix = "IsAutoFix";
-
-        }
-
         private bool mSelected;
-        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(Fields.Selected); } } }
+        public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
         public string ItemName { get; set; }
         public string ItemParent { get; set; }
         public string ItemClass { get; set; }
@@ -96,7 +76,7 @@ namespace Ginger.AnalyzerLib
         public string HowToFix { get; set; }
 
         private eCanFix mCanAutoFix;
-        public eCanFix CanAutoFix { get { return mCanAutoFix; } set { if (mCanAutoFix != value) { mCanAutoFix = value; OnPropertyChanged(Fields.CanAutoFix); OnPropertyChanged(Fields.IsAutoFix); } } }
+        public eCanFix CanAutoFix { get { return mCanAutoFix; } set { if (mCanAutoFix != value) { mCanAutoFix = value; OnPropertyChanged(nameof(CanAutoFix)); OnPropertyChanged(nameof(IsAutoFix)); } } }
 
         public bool IsAutoFix
         {
@@ -125,12 +105,12 @@ namespace Ginger.AnalyzerLib
                 if (mStatus != value)
                 {
                     mStatus = value;
-                    OnPropertyChanged(Fields.Status );
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
 
-        public System.Drawing.Image SeverityIcon
+        public eImageType SeverityIcon
         {            
             get
             {
@@ -138,13 +118,13 @@ namespace Ginger.AnalyzerLib
                 {
                     case eSeverity.Critical:
                     case eSeverity.High:
-                        return Resources._ErrorRed_16x16;
+                        return eImageType.HighWarn;
                     case eSeverity.Medium:
-                        return Resources._ErrorOrange_16x16;
+                        return eImageType.MediumWarn;
                     case eSeverity.Low:
-                        return Resources._ErrorYellow_16x16;
+                        return eImageType.LowWarn;
                     default:
-                        return Resources._ErrorYellow_16x16;
+                        return eImageType.LowWarn;
                 }
                            
             }
