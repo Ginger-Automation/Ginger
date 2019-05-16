@@ -44,11 +44,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var name = typeof(T).Name + "s";
             return name;
         }
+
+        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        {
+            return dbConnector.FilterCollection(baseColl, query);
+        }
+
         private LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
         {
             return dbConnector.GetCollection<LiteDbReportBase>(reportLevelName);
         }
-        private LiteCollection<LiteDbRunSet> GetRunSetLiteData()
+        public LiteCollection<LiteDbRunSet> GetRunSetLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
