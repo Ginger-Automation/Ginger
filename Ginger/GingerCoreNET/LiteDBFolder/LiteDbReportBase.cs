@@ -30,8 +30,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public double? Elapsed { get; set; }
         public string RunStatus { get; set; }
         public List<string> VariablesBeforeExec { get; set; }
-        public List<string> VariablesAfterExec { get; set; }      
+        public List<string> VariablesAfterExec { get; set; }
         public LiteDB.ObjectId _id { get; set; }
+
+        public string ExecutionRate { get; set; }
+        public string PassRate { get; set; }
+
         public LiteDbReportBase()
         {
             _id = LiteDB.ObjectId.NewObjectId();
