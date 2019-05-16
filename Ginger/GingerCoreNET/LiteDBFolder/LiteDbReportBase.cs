@@ -44,10 +44,10 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public string GingerVersion { get; set; }
         public string MachineName { get; set; }
         public string ExecutedbyUser { get; set; }
-        public List<LiteDbRunner> RunnerColl { get; set; }
+        public List<LiteDbRunner> RunnersColl { get; set; }
         public LiteDbRunSet()
         {
-            RunnerColl = new List<LiteDbRunner>();
+            RunnersColl = new List<LiteDbRunner>();
         }
 
         internal void SetReportData(RunSetReport runSetReport)
@@ -63,15 +63,16 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             MachineName = System.Environment.MachineName.ToString();
             ExecutedbyUser = System.Environment.UserName.ToString();
             GingerVersion = WorkSpace.AppVersion.ToString();
+            RunStatus = runSetReport.RunSetExecutionStatus.ToString();
         }
     }
     public class LiteDbRunner : LiteDbReportBase
     {
         public List<string> ApplicationAgentsMappingList { get; set; }
-        public List<LiteDbBusinessFlow> BusinessFlowColl { get; set; }
+        public List<LiteDbBusinessFlow> BusinessFlowsColl { get; set; }
         public LiteDbRunner()
         {
-            BusinessFlowColl = new List<LiteDbBusinessFlow>();
+            BusinessFlowsColl = new List<LiteDbBusinessFlow>();
         }
 
         internal void SetReportData(GingerReport gingerReport)
@@ -85,6 +86,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             EndTimeStamp = gingerReport.EndTimeStamp;
             Elapsed = gingerReport.Elapsed;
             ApplicationAgentsMappingList = gingerReport.ApplicationAgentsMappingList;
+            RunStatus = gingerReport.GingerExecutionStatus.ToString();
         }
     }
     public class LiteDbBusinessFlow : LiteDbReportBase
@@ -93,11 +95,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public List<string> SolutionVariablesBeforeExec { get; set; }
         public List<string> SolutionVariablesAfterExec { get; set; }
         public List<LiteDbActivity> ActivitiesColl { get; set; }
-        public List<LiteDbActivityGroup> ActivitiesGroupColl { get; set; }
+        public List<LiteDbActivityGroup> ActivitiesGroupsColl { get; set; }
         public List<string> BFFlowControlDT { get; set; }
         public LiteDbBusinessFlow()
         {
-            ActivitiesGroupColl = new List<LiteDbActivityGroup>();
+            ActivitiesGroupsColl = new List<LiteDbActivityGroup>();
             ActivitiesColl = new List<LiteDbActivity>();
         }
         public void SetReportData(BusinessFlowReport bfReport)
@@ -150,10 +152,10 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     public class LiteDbActivity : LiteDbReportBase
     {
         public string ActivityGroupName { get; set; }
-        public List<LiteDbAction> actionsColl { get; set; }
+        public List<LiteDbAction> ActionsColl { get; set; }
         public LiteDbActivity()
         {
-            actionsColl = new List<LiteDbAction>();
+            ActionsColl = new List<LiteDbAction>();
         }
 
         public void SetReportData(ActivityReport activityReport)

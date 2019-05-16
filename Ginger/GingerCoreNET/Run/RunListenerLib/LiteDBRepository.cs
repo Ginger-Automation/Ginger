@@ -56,12 +56,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         }
                         if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png", true);
+                            System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png", true);
                         }
                         else
                         {
-                            System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png");
-                            action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + screenShotCountPerAction.ToString() + ".png";
+                            System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png");
+                            action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png";
                         }
                     }
                     catch (Exception ex)
@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbActivity AR = new LiteDbActivity();
             AR.SetReportData(GetActivityReportData(activity,context, offlineMode));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
-            AR.actionsColl.AddRange(liteDbActionList);
+            AR.ActionsColl.AddRange(liteDbActionList);
             liteDbActivityList.Add(AR);
             SaveObjToReporsitory(AR, liteDbManager.NameInDb<LiteDbActivity>());
             liteDbActionList.Clear();
@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
                     }
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
-                    BFR.ActivitiesGroupColl.AddRange(liteDbAGList);
+                    BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
@@ -128,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 else
                 {
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
-                    BFR.ActivitiesGroupColl.AddRange(liteDbAGList);
+                    BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
             runner.SetReportData(gingerReport);
-            runner.BusinessFlowColl.AddRange(liteDbBFList);
+            runner.BusinessFlowsColl.AddRange(liteDbBFList);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
             liteDbRunnerList.Add(runner);
             liteDbBFList.Clear();
@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbRunSet runSet = new LiteDbRunSet();
             base.SetReportRunSet(runSetReport, logFolder);
             runSet.SetReportData(runSetReport);
-            runSet.RunnerColl.AddRange(liteDbRunnerList);
+            runSet.RunnersColl.AddRange(liteDbRunnerList);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             liteDbRunnerList.Clear();
         }

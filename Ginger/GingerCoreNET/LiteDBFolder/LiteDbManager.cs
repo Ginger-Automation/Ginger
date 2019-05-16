@@ -27,17 +27,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
             var action = dbConnector.GetMapper<LiteDbAction>();
 
-            activityMapper.DbRef(rf => rf.actionsColl, NameInDb<LiteDbAction>());
+            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
 
             agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
 
-            bfMapper.DbRef(rf => rf.ActivitiesGroupColl, NameInDb<LiteDbActivityGroup>());
+            bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
 
             bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
 
-            runnerMapper.DbRef(rf => rf.BusinessFlowColl, NameInDb<LiteDbBusinessFlow>());
+            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
 
-            runSetMapper.DbRef(rf => rf.RunnerColl, NameInDb<LiteDbRunner>());
+            runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
         }
         public string NameInDb<T>()
         {
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.GingerVersion = "66";
                 item.MachineName = "my machine";
                 item.ExecutedbyUser = "my name";
-                item.RunnerColl = runnersData;
+                item.RunnersColl = runnersData;
                 data.Add(item);
             }
             return data;
@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.RunStatus = "run";
-                item.BusinessFlowColl = bfsData;
+                item.BusinessFlowsColl = bfsData;
                 data.Add(item);
             }
             return data;
@@ -153,7 +153,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.EndTimeStamp = DateTime.Today;
                 item.Elapsed = 17;
                 item.RunStatus = "run";
-                item.ActivitiesGroupColl = acGrpData;
+                item.ActivitiesGroupsColl = acGrpData;
                 item.ActivitiesColl = activitiesColl;
                 data.Add(item);
             }
@@ -189,7 +189,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.EndTimeStamp = DateTime.Today;
                 item.Elapsed = 17;
                 item.RunStatus = "run";
-                item.actionsColl = actionsColl;
+                item.ActionsColl = actionsColl;
                 data.Add(item);
             }
             return data;
