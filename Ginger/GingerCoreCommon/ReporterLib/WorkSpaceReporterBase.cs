@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -45,10 +45,10 @@ namespace Amdocs.Ginger.Common
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     break;
                 case eLogLevel.DEBUG:
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case eLogLevel.INFO:
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 case eLogLevel.WARN:
                     Console.ForegroundColor = ConsoleColor.DarkYellow;

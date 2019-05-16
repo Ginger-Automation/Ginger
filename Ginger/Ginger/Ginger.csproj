@@ -110,8 +110,8 @@
     <Reference Include="De.TorstenMandelkow.MetroChart, Version=0.9.5818.20693, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ModernUICharts.WPF.Beta.0.9.1\lib\De.TorstenMandelkow.MetroChart.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -671,6 +671,19 @@
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml.cs">
+      <DependentUpon>CLIOptionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml.cs">
+      <DependentUpon>CreateCLIChooseTypePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml.cs">
+      <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIWizard.cs" />
+    <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
+      <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -720,7 +733,6 @@
     <Compile Include="ALM\RQM\RQMPlansExplorerPage.xaml.cs">
       <DependentUpon>RQMPlansExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AnalyzerLib\AnalyzeRunnerBusinessFlow.cs" />
     <Compile Include="ApiModelsFolder\AddApiModelActionWizardPage.cs" />
     <Compile Include="ApiModelsFolder\APIModelParamsWizardPage.xaml.cs">
       <DependentUpon>APIModelParamsWizardPage.xaml</DependentUpon>
@@ -848,11 +860,9 @@
     <Compile Include="UserControlsLib\TwoLevelMenuLib\TwoLevelMenuPage.xaml.cs">
       <DependentUpon>TwoLevelMenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\RecoveredItem.cs" />
     <Compile Include="SolutionAutoSaveAndRecover\RecoverPage.xaml.cs">
       <DependentUpon>RecoverPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\SolutionAutoSave.cs" />
     <Compile Include="BDD\BDDIntegration.cs" />
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
@@ -1053,7 +1063,6 @@
     <Compile Include="Run\RunSetsALMDefectsOpeningPage.xaml.cs">
       <DependentUpon>RunSetsALMDefectsOpeningPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionAutoSaveAndRecover\SolutionRecover.cs" />
     <Compile Include="SolutionLibNew\NewSolutionAgentsWizardPage.xaml.cs">
       <DependentUpon>NewSolutionAgentsWizardPage.xaml</DependentUpon>
     </Compile>
@@ -1533,7 +1542,6 @@
       <DependentUpon>QCManagerReportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\QC\QCManagerReport\QCManagerReportTestCaseDetails.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeAction.cs" />
     <Compile Include="Drivers\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
       <DependentUpon>AndroidADBDriverEditPage.xaml</DependentUpon>
     </Compile>
@@ -1840,15 +1848,9 @@
       <DependentUpon>ActivitiesGroupsActivitiesSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\BusinessFlowActivityUsage.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeActivity.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeBusinessFlow.cs" />
-    <Compile Include="AnalyzerLib\AnalyzeGingerRunner.cs" />
-    <Compile Include="AnalyzerLib\AnalyzerItemBase.cs" />
     <Compile Include="AnalyzerLib\AnalyzerPage.xaml.cs">
       <DependentUpon>AnalyzerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AnalyzerLib\AnalyzeSolution.cs" />
-    <Compile Include="AnalyzerLib\RunSetConfigAnalyzer.cs" />
     <Compile Include="BusinessFlowWindows\EditBusinessFlowAppsPage.xaml.cs">
       <DependentUpon>EditBusinessFlowAppsPage.xaml</DependentUpon>
     </Compile>
@@ -3023,6 +3025,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4554,6 +4572,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <Resource Include="RunSetLib\CreateCLIWizardLib\CreateCLI.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>
@@ -4726,10 +4745,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\BusinessFlowReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\GingerExecutionReport.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

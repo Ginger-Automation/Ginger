@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -35,7 +36,7 @@ namespace Ginger.Actions
              GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
              GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
             List<GingerCore.General.ComboItem> comboBoxItemsList = GeneratecomboBoxItemsListSendkeys();
-            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true);
+            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true, context:Context.GetAsContext(mAct.Context));
         }
 
         public List<GingerCore.General.ComboItem> GeneratecomboBoxItemsListSendkeys()

@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 
 namespace Ginger.Functionalties
 {
@@ -41,7 +40,7 @@ namespace Ginger.Functionalties
             }
             set
             {
-                App.RecoverFolderPath = mRecoverFolderPath;
+                WorkSpace.Instance.RecoverFolderPath = mRecoverFolderPath;
             }
         }
 
@@ -113,11 +112,9 @@ namespace Ginger.Functionalties
                 }
             }
 
-            //show recover page
-            if (recovredItems.Count > 0 || showRecoverPageAnyway)
+            if (recovredItems.Count > 0 || showRecoverPageAnyway)                
             {
-                RecoverPage recoverPage = new SolutionAutoSaveAndRecover.RecoverPage(recovredItems);
-                recoverPage.ShowAsWindow(eWindowShowStyle.Dialog);
+                RepositoryItemHelper.RepositoryItemFactory.ShowRecoveryItemPage(recovredItems);
             }
         }
         public void CleanUp()
@@ -142,5 +139,21 @@ namespace Ginger.Functionalties
             }
         }
 
+        
+        public void DoSolutionAutoSaveAndRecover()
+        {            
+            //Init
+            WorkSpace.Instance.AppSolutionAutoSave.SolutionInit(WorkSpace.Instance.Solution.Folder);
+            SolutionInit(WorkSpace.Instance.Solution.Folder);
+
+            //start Auto Save
+            WorkSpace.Instance.AppSolutionAutoSave.SolutionAutoSaveStart();
+
+            //check if Recover is needed
+            if (!WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions)
+            {
+                SolutionRecoverStart();
+            }
+        }
     }
 }
