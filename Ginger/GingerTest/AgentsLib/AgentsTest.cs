@@ -54,6 +54,7 @@ namespace GingerTest
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
             mGingerAutomator = GingerAutomator.StartSession();
+
             mGingerAutomator.OpenSolution(SolutionFolder);            
         }
 

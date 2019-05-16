@@ -108,12 +108,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             RowSelectorPanelInit();
             WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);    
-            WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged);
+            WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged, context: Context.GetAsContext(mAct.Context));
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
             WhereOperator.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator)), typeof(ActUIElement.eTableElementRunColOperator), isVENeeded: false, UCselectionChange: WhereOperator_SelectionChanged);
             WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue)));
             
-            RowSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue), isVENeeded: true, UCselectionChange: RowSelectorValue_SelectionChanged);          
+            RowSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue), isVENeeded: true, UCselectionChange: RowSelectorValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));          
         }
         
         private void InitTableInfo()
@@ -242,7 +242,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 operationTypeList = mPlatform.GetTableControlActions(mAct.ElementAction).Select(x => new GingerCore.General.ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
             }
-            ControlActionComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ControlAction), operationTypeList, isVENeeded: true, UCselectionChange: ControlActionComboBox_SelectionChanged);
+            ControlActionComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ControlAction), operationTypeList, isVENeeded: true, UCselectionChange: ControlActionComboBox_SelectionChanged, context: Context.GetAsContext(mAct.Context));
 
             if (mAct.ElementAction == ActUIElement.eElementAction.TableRowAction || mAct.GetInputParamValue(ActUIElement.Fields.SubElementAction) == ActUIElement.eElementAction.TableRowAction.ToString())
             {
@@ -262,7 +262,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 cmbColSelectorValuePanel.Visibility = Visibility.Visible;
                 cmbColumnValuePanel.Visibility = Visibility.Visible;                
                 cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
-                cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged);
+                cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));
                 TableActionFieldBinding();
             }
         }

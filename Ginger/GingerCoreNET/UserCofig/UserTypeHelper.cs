@@ -37,15 +37,30 @@ namespace Ginger.UserConfig
         {
             XmlDocument doc = new XmlDocument();
             string ConfigFileSourcePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\UserTypeConfiguration.XML";
-            doc.Load(ConfigFileSourcePath);
-            XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc);
-            IsSupportAutomate = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Automate']", manager).Attributes["Enable"].Value);
-            IsSupportExecution = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Execution']", manager).Attributes["Enable"].Value);
-            IsSupportReports = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Reports']", manager).Attributes["Enable"].Value);
-            IsSupportSourceControl = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='SourceControl']", manager).Attributes["Enable"].Value);
-            IsSupportALM = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='ALM']", manager).Attributes["Enable"].Value);
-            IsSupportSupport = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Support']", manager).Attributes["Enable"].Value);
-            IsSupportAnalyzer = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Analyzer']", manager).Attributes["Enable"].Value);
+
+            // for unit test we might not have this file
+            if (System.IO.File.Exists(ConfigFileSourcePath))
+            {
+                doc.Load(ConfigFileSourcePath);
+                XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc);
+                IsSupportAutomate = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Automate']", manager).Attributes["Enable"].Value);
+                IsSupportExecution = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Execution']", manager).Attributes["Enable"].Value);
+                IsSupportReports = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Reports']", manager).Attributes["Enable"].Value);
+                IsSupportSourceControl = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='SourceControl']", manager).Attributes["Enable"].Value);
+                IsSupportALM = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='ALM']", manager).Attributes["Enable"].Value);
+                IsSupportSupport = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Support']", manager).Attributes["Enable"].Value);
+                IsSupportAnalyzer = Boolean.Parse(doc.SelectSingleNode("//Ginger/UserType[@Name='" + UserType + "']/Functionality[@Name='Analyzer']", manager).Attributes["Enable"].Value);
+            }
+            else
+            {
+                IsSupportAutomate = true;
+                IsSupportExecution = 
+                IsSupportReports = true;
+                IsSupportSourceControl = true;
+                IsSupportALM = true;
+                IsSupportSupport = true;
+                IsSupportAnalyzer = true;
+            }
         }
     }
 }

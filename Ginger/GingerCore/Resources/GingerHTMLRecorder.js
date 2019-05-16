@@ -38,7 +38,7 @@ function define_GingerRecorderLib() {
         $(":button").click(function (event) {
 
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type, $(this).offset().left, $(this).offset().top);
 
         });
 
@@ -46,7 +46,7 @@ function define_GingerRecorderLib() {
 
             if (!isActionFromTimeOut) {
                 element = event.currentTarget;
-                GingerRecorderLib.AddRecordingtoQ(element, "Submit", element.value, element.type);
+                GingerRecorderLib.AddRecordingtoQ(element, "Submit", element.value, element.type, $(this).offset().left, $(this).offset().top);
 
                 setTimeout(function () { isActionFromTimeOut = true; element.click(); }, 1500);
                 return false;
@@ -59,26 +59,26 @@ function define_GingerRecorderLib() {
         $(":checkbox").click(function (event) {
             element = event.currentTarget;
             event.stopPropagation();
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type, $(this).offset().left, $(this).offset().top);
         });
 
         //radio click action
         $(":radio").click(function (event) {
             element = event.currentTarget;
             event.stopPropagation();
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type, $(this).offset().left, $(this).offset().top);
         });
 
         //text change action
-        $(":text").change(function (event) {
+        $(":text").change(function (event) {            
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "SetValue", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "SetValue", element.value, element.type, $(this).offset().left, $(this).offset().top);
         });
 
         $(":password").change(function (event) {
 
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "SetValue", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "SetValue", element.value, element.type, $(this).offset().left, $(this).offset().top);
         });
 
         //select change action
@@ -88,7 +88,7 @@ function define_GingerRecorderLib() {
             var optionSelected = $(this).find("option:selected");
             var elemValue = optionSelected.text();
 
-            GingerRecorderLib.AddRecordingtoQ(element, "SelectByText", elemValue, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "SelectByText", elemValue, element.type, $(this).offset().left, $(this).offset().top);
 
         });
 
@@ -96,7 +96,7 @@ function define_GingerRecorderLib() {
         $("textarea").change(function (event) {
 
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "SendKeys", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "SendKeys", element.value, element.type, $(this).offset().left, $(this).offset().top);
 
         });
 
@@ -106,7 +106,7 @@ function define_GingerRecorderLib() {
 
                 if (!GingerRecorderLib.IsClickeEventExist(this)) {
                     element = event.currentTarget;
-                    GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName);
+                    GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName, $(this).offset().left, $(this).offset().top);
                 }
             });
 
@@ -114,7 +114,7 @@ function define_GingerRecorderLib() {
 
         $('p').on('click', function (event) {
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName, $(this).offset().left, $(this).offset().top);
 
         });
 
@@ -125,7 +125,7 @@ function define_GingerRecorderLib() {
             if (elemValue == null)
                 elemValue = $(event.target).text();
 
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", elemValue, element.tagName);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", elemValue, element.tagName, $(this).offset().left, $(this).offset().top);
             if (($(this).attr('href') !== undefined))
             {
                 setTimeout(function () { window.location.href = elemValue }, 1500);
@@ -135,23 +135,23 @@ function define_GingerRecorderLib() {
 
         $('img').on('click', function (event) {
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName, $(this).offset().left, $(this).offset().top);
         });
 
         $('li').on('click', function (event) {
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.id, element.tagName, $(this).offset().left, $(this).offset().top);
         });
 
         $(":file").click(function (event) {
             element = event.currentTarget;
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", element.value, element.type, $(this).offset().left, $(this).offset().top);
         });
 
         $('span').on('click', function (event) {
             element = event.currentTarget;
             var elemValue = $(this).text();
-            GingerRecorderLib.AddRecordingtoQ(element, "Click", elemValue, element.tagName);
+            GingerRecorderLib.AddRecordingtoQ(element, "Click", elemValue, element.tagName, $(this).offset().left, $(this).offset().top);
         });
 
     }
@@ -160,18 +160,19 @@ function define_GingerRecorderLib() {
 	//  AddRecordingtoQ (adding values to PayLoad)
 	//----------------------------------------------------------------------------------------------------------------------	
 	
-	GingerRecorderLib.AddRecordingtoQ = function (element, action, value, type){
+    GingerRecorderLib.AddRecordingtoQ = function (element, action, value, type, xCordinate, yCordinate) {       
         var PLR = new GingerPayLoad("html" + type);
-       
 		GingerRecorderLib.AddBestLocator(element, PLR);
 		if (value != undefined || value != "")
         {
             PLR.AddValueString(value);			
 		}	
 		PLR.AddValueString(action);
-		PLR.AddValueString(type);
-		PLR.ClosePackage();					
-		actions[count] =  PLR;
+        PLR.AddValueString(type);
+        PLR.AddValueString(String(xCordinate));
+        PLR.AddValueString(String(yCordinate));        
+        PLR.ClosePackage();				
+        actions[count] = PLR;
 		count++; 
 	}
 	
