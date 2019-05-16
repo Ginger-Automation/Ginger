@@ -25,7 +25,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class CreateCLILocationPage : Page, IWizardPage
     {
 
-        CreateCLIWizard mCreateCLIWizard;
+        CreateAutoRunWizard mCreateCLIWizard;
 
         public CreateCLILocationPage()
         {
@@ -38,8 +38,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
-                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(CreateCLIWizard.ShortcutDescription));
+                    mCreateCLIWizard = (CreateAutoRunWizard)WizardEventArgs.Wizard;
+                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(CreateAutoRunWizard.ShortcutFileName));
                     xDesktopRadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
@@ -48,7 +48,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         string description = WorkSpace.Instance.Solution.Name + " " + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + " " + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
                         xShortcutDescriptionTextBox.Text = description;                        
                     }
-                    xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+                    xCLIFileName.Text = mCreateCLIWizard.AutoRunConfigurationFileName;
                     break;
             }
         }
@@ -66,13 +66,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void XShortcutDescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             //Regex containsABadCharacter = new Regex("["+ Regex.Escape(System.IO.Path.InvalidPathChars) + "]");
-            if (mCreateCLIWizard.CLIFileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
+            if (mCreateCLIWizard.AutoRunConfigurationFileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
            {
                 //xCLIFileName.Text = xCLIFileName.BindingGroup.ValidatesOnNotifyDataError
             }
             else
             {
-                xCLIFileName.Text = mCreateCLIWizard.CLIFileName;
+                xCLIFileName.Text = mCreateCLIWizard.AutoRunConfigurationFileName;
             }
         }
 

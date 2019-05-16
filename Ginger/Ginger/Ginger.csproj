@@ -636,19 +636,22 @@
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunConfiguration.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunOptions.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunShortcut.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml.cs">
-      <DependentUpon>CLIOptionsPage.xaml</DependentUpon>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunOptionsPage.xaml.cs">
+      <DependentUpon>AutoRunOptionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml.cs">
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateCLIChooseTypePage.xaml.cs">
       <DependentUpon>CreateCLIChooseTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml.cs">
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateCLILocationPage.xaml.cs">
       <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateCLIWizardLib\CreateCLIWizard.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateAutoRunWizard.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
@@ -2948,15 +2951,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateCLIWizardLib\CLIOptionsPage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\AutoRunOptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLIChooseTypePage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\CreateCLIChooseTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateCLIWizardLib\CreateCLILocationPage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\CreateCLILocationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4472,7 +4475,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
-    <Resource Include="RunSetLib\CreateCLIWizardLib\CreateCLI.md" />
+    <Resource Include="RunSetLib\CreateAutoRunWizardLib\CreateCLI.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>

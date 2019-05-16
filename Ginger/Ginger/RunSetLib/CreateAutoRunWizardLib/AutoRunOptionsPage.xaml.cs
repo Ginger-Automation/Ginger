@@ -10,11 +10,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// <summary>
     /// Interaction logic for CLISourceControlPage.xaml
     /// </summary>
-    public partial class CLIOptionsPage : Page, IWizardPage
+    public partial class AutoRunOptionsPage : Page, IWizardPage
     {
-        CreateCLIWizard mCreateCLIWizard;
+        CreateAutoRunWizard mCreateCLIWizard;
         CLIHelper mCLIHelper = new CLIHelper();
-        public CLIOptionsPage()
+        public AutoRunOptionsPage()
         {
             InitializeComponent();
         }
@@ -24,7 +24,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    mCreateCLIWizard = (CreateAutoRunWizard)WizardEventArgs.Wizard;
                     xGingerEXERadioButton.IsChecked = true;
                     //xAppLoggingLevelComboBox.BindControl(mCreateCLIWizard , nameof(CreateCLIWizard.AppLoggingLevel));
                     if (!(WorkSpace.Instance.Solution.SourceControl == null))

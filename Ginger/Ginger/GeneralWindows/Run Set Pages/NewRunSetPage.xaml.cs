@@ -2351,10 +2351,10 @@ namespace Ginger.Run
             mContext.Environment = (ProjEnvironment)xRunsetEnvironmentCombo.SelectedItem;
         }
 
-        private void XCLIButton_Click(object sender, RoutedEventArgs e)
+        private void XAutoRunButton_Click(object sender, RoutedEventArgs e)
         {
             // pass mRunSetConfig + env !!!!!!!!!!!
-            WizardWindow.ShowWizard(new CreateCLIWizard());
+            WizardWindow.ShowWizard(new CreateAutoRunWizard(mRunSetConfig, mContext));
             
         }
     }

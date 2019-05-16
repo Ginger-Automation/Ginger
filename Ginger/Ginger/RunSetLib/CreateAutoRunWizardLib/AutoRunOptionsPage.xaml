@@ -1,15 +1,15 @@
-﻿<Page x:Class="Ginger.RunSetLib.CreateCLIWizardLib.CLIOptionsPage"
+﻿<Page x:Class="Ginger.RunSetLib.CreateCLIWizardLib.AutoRunOptionsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.RunSetLib.CreateCLIWizardLib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CLIOptionsPage">
 
-    <Grid>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel Margin="10">
+            <Label HorizontalAlignment="Left" FontWeight="Bold">Choose Runset Executer</Label>
             
             <CheckBox x:Name="xDownloadsolutionFromSourceControlcheckBox" Checked="XDownloadsolutionFromSourceControlcheckBox_Checked" IsChecked="false" Unchecked="XDownloadsolutionFromSourceControlcheckBox_Unchecked"  Margin="5">Download solution from source control</CheckBox>
             

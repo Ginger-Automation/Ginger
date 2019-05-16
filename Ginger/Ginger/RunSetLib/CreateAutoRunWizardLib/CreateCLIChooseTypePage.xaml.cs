@@ -13,7 +13,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// </summary>
     public partial class CreateCLIChooseTypePage : Page, IWizardPage
     {
-        CreateCLIWizard mCreateCLIWizard;
+        CreateAutoRunWizard mCreateCLIWizard;
         string CLITXT;
         public CreateCLIChooseTypePage()
         {
@@ -25,14 +25,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateCLIWizard)WizardEventArgs.Wizard;
+                    mCreateCLIWizard = (CreateAutoRunWizard)WizardEventArgs.Wizard;
                     xConfigRadioButton.IsChecked = true;
 
                     //Disabling the option which are not working right now. Can enable it once its full fuctionality is working
-                    xDynamicRadioButton.IsEnabled = false;
-                    xScriptRadioButton.IsEnabled = false;
-                    xParametersRadioButton.IsEnabled = false;
-                    xExcelRadioButton.IsEnabled = false;
+                    //xDynamicRadioButton.IsEnabled = false;
+                    //xScriptRadioButton.IsEnabled = false;
+                    //xParametersRadioButton.IsEnabled = false;
+                    //xExcelRadioButton.IsEnabled = false;
 
                     break;
                 case EventType.Active:
@@ -48,7 +48,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void ShowContent()
         {
             string content = mCreateCLIWizard.SelectedCLI.CreateContent(WorkSpace.Instance.RunsetExecutor);
-            mCreateCLIWizard.FileContent = content;
+            mCreateCLIWizard.AutoRunConfigurationFileContent = content;
             xCLIContentTextBox.Text = content;
             xCLITypeHelpTextBlock.Text = CLITXT;            
         }
