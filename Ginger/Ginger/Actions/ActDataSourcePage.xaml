@@ -133,7 +133,7 @@
                         </StackPanel>
                         <StackPanel x:Name="IdentifierSelectorPanel" Margin="0,0,0,0" Grid.Row="0" Grid.Column="2">
                             <RadioButton Name="SelectedCell" Content="By Selected Cell" IsEnabled="False" Checked="SelectedCell_Checked" Margin="0,5,0,5" HorizontalAlignment="Right" Width="130"/>
-                            <RadioButton Name="ByQuery" Content="By Query" Checked="Query_Checked" Margin="0,5,0,5" HorizontalAlignment="Right" Width="130"/>
+                            <RadioButton Name="ByQuery" Content="By Query" Checked="Query_Checked" Unchecked="ByQuery_Unchecked" Margin="0,5,0,5" HorizontalAlignment="Right" Width="130"/>
                             <RadioButton Name="Customized" Content="Customized" IsChecked="True" Checked="Customized_Checked" Unchecked="Customized_Unchecked" Margin="0,5,0,5"/>
                         </StackPanel>
                         <Grid Name="QueryPanel" VerticalAlignment="Top" Visibility="Collapsed"  Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="5">
@@ -176,7 +176,7 @@
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0.2,0.8,0.6">
                                     <RadioButton Name="RowNum" Content="Row Number" IsChecked="True" Checked="RowNum_Checked" Unchecked="RowNum_Unchecked" Margin="0,5,0,5"/>
-                                    <RadioButton Name="NextAvailable" Content="Next Available Row" Checked="NextAvailable_Checked" Margin="0,5,0,5"/>
+                                    <RadioButton Name="NextAvailable" Content="Next Available Row" Checked="NextAvailable_Checked" Unchecked="NextAvailable_Unchecked" Margin="0,5,0,5"/>
                                     <RadioButton Name="Where" Content="Where..." Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5"/>
                                 </StackPanel>
                                 <StackPanel Name="RowNumSelectorPanel" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Top" Height="30" Margin="100,0,-0.6,0" Grid.Row="1">

@@ -77,6 +77,7 @@ namespace Ginger
         string mAttrName;
         Context mContext;
         ValueExpression mVE = null;
+        GingerCore.Actions.ActDSTableElement actDStable = null;
         static List<HighlightingRule> mHighlightingRules = null;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
 
@@ -641,7 +642,8 @@ namespace Ginger
             DataSourceTable dsTable = (DataSourceTable)tvi.DataContext;
             ActDataSourcePage dsVEPage;
             string VE = "";
-                dsVEPage = new ActDataSourcePage(((TreeViewItem)tvi.Parent).Tag.ToString(),dsTable);
+            dsVEPage = new ActDataSourcePage(((TreeViewItem)tvi.Parent).Tag.ToString(),dsTable);
+            actDStable = dsVEPage.mActDSTblElem;
                 dsVEPage.ShowAsWindow();
                 VE = dsVEPage.VE;
             if (VE != "")    
@@ -767,6 +769,7 @@ namespace Ginger
             if (mVE == null)
             {
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                
             }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;
@@ -775,7 +778,11 @@ namespace Ginger
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             string value = ValueUCTextEditor.textEditor.Text;
-
+            if (mVE == null)
+            {
+                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE.actDSTableElement = actDStable;
+            }
             //Update the obj attr with new Value
             if (mObj is ExpandoObject)
             {

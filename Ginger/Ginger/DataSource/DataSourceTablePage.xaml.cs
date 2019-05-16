@@ -227,7 +227,7 @@ namespace Ginger.DataSource
                     }
                     catch(Exception ex)
                     {
-                        
+                        i = 0;
                         sCol.DisplayIndex = i++;
                     }
                 }
@@ -283,23 +283,34 @@ namespace Ginger.DataSource
         private void AddRow(object sender, RoutedEventArgs e)
         {
             DataRow dr = mDSTableDetails.DataTable.NewRow();
+            if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
+            {
+                dr[0] = Guid.NewGuid();
+            }
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
+            {
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     dr[sColName] = "";
                 else if (sColName == "GINGER_ID")
                 {
-                    if (mDSTableDetails.DSC.DSType== DataSourceBase.eDSType.MSAccess)
+                    if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
                     {
                         dr[sColName] = System.DBNull.Value;
                     }
                     else
                     {
+                        //foreach (object oRow in grdTableData.Grid.SelectedItems)
+                        //{
+                        //    dr[sColName] = grdTableData.GetDataGridRow(oRow).GetIndex();
+                        //}
                         int count = mDSTableDetails.DataTable.Rows.Count;
                         dr[sColName] = count + 1;
                     }
-                    
+
                 }
+
+            }
             mDSTableDetails.DataTable.Rows.Add(dr);             
         }
 
