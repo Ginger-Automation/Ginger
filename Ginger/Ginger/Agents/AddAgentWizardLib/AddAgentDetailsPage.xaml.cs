@@ -71,15 +71,8 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
-
        
-                    break;
-                case EventType.Next:
-
-                    Console.WriteLine("");
-                    
-                    break;
-
+                    break;               
             }
 
         }
@@ -88,26 +81,19 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             xDriverTypeComboBox.SelectedItem = null;
-            xDriverTypeComboBox.Items.Clear();
-
-            //List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
-
-
-            //GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
-
-            // mWizard.Agent.Platform = xPlatformTypeComboBox.SelectedValue as GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType;
+            xDriverTypeComboBox.Items.Clear();            
             mWizard.Agent.Platform=(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType) Enum.Parse(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType), xPlatformTypeComboBox.SelectedValue.ToString());
-             DriversforPlatform = DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
+            DriversforPlatform = DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
 
-            foreach (DriverInfo  Di in DriversforPlatform)
+            foreach (DriverInfo driverInfo in DriversforPlatform)
             {
-                xDriverTypeComboBox.Items.Add(Di);
-
+                xDriverTypeComboBox.Items.Add(driverInfo);
             }
-    
 
             if (xDriverTypeComboBox.Items.Count > 0)
+            {
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
+            }
 
             if (xDriverTypeComboBox.Items.Count > 1)
             {
@@ -117,19 +103,14 @@ namespace Ginger.Agents.AddAgentWizardLib
             {
                 xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
             }
-
-            ObservableList<PluginPackage> PIS = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-
-        {
-           
+        {           
             xDriverSubTypeComboBox.Items.Clear();
             xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
             if (xDriverTypeComboBox.SelectedItem!=null)
             {
-
                 xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
                 if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
                 {
@@ -147,9 +128,6 @@ namespace Ginger.Agents.AddAgentWizardLib
                     else
                     {
                         mWizard.Agent.AgentType = Agent.eAgentType.Driver;
-
-
-
                     }
 
                     xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
@@ -158,18 +136,12 @@ namespace Ginger.Agents.AddAgentWizardLib
                         mWizard.Agent.InitDriverConfigs();
                     }
                 }
-
-
             }
-
-
-           
         }
 
         private void XDriverSubTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xDriverTypeComboBox.SelectedItem is DriverInfo DI && xDriverSubTypeComboBox != null)
-
             {
                 mWizard.Agent.DriverInfo = DI;
                 foreach (var service in mWizard.Agent.DriverInfo.services)
@@ -183,23 +155,15 @@ namespace Ginger.Agents.AddAgentWizardLib
                 }
                 else
                 {
-
                     mWizard.Agent.DriverType = (eDriverType)Enum.Parse(typeof(eDriverType), SubdriverType);
-
-
                 }
                 mWizard.Agent.InitDriverConfigs();
             }
         }
 
         void ShowConfig()
-        {
-           
-             
-                xDriverConfigStackPanel.Visibility = Visibility.Visible;
-            
-            
-            
+        {             
+            xDriverConfigStackPanel.Visibility = Visibility.Visible;            
         }
 
 
