@@ -91,6 +91,13 @@ namespace UnitTests.UITests
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            mBF.CurrentActivity.Acts.ClearAll();
+        }
+
         [TestMethod]
         public void TakeScreenShotAction()
         {
@@ -274,7 +281,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
 
-
+     
         [TestMethod]
         public void CloseTabExceptByTitle()
         {
