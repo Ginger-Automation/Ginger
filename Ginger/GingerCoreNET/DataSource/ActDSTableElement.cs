@@ -173,9 +173,9 @@ namespace GingerCore.Actions
                         AddOrUpdateReturnParamActual("Count", a.ToString());
                         break;
                     case eControlAction.AvailableRowCount:
-                        DataTable kkk =liteDB.GetQueryOutput(Query);
-                        DataRow roaw = dt.Rows[0];
-                        AddOrUpdateReturnParamActual("Count", roaw[0].ToString());
+                        dt =liteDB.GetQueryOutput(Query);
+                        
+                        AddOrUpdateReturnParamActual("Count", dt.Rows.Count.ToString());
                         break;
                     case eControlAction.ExportToExcel:
                         
@@ -185,21 +185,39 @@ namespace GingerCore.Actions
                         {
                             if (IsSelectableAction)
                             {
-
+                                string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
+                                liteDB.RunQuery("db." + DSTableName + ".delete " + tokens[1]);
                             }
-                            dt = liteDB.GetQueryOutput("db." + DSTableName + ".find");
-                            int x = Int32.Parse(this.LocateRowValue);
-                            DataRow row = dt.Rows[x];
+                            else
+                            {
+                                dt = liteDB.GetQueryOutput("db." + DSTableName + ".find");
+                                int x = Int32.Parse(this.LocateRowValue);
+                                DataRow row = dt.Rows[x];
+                                string rowValue = row["GINGER_ID"].ToString();
+                                liteDB.RunQuery(Query + " GINGER_ID = \"" + rowValue + "\"");
+                                AddOrUpdateReturnParamActual("Output", "Success");
+                            }
+                        }
+                        else if (ByNextAvailable)
+                        {
+                            dt = liteDB.GetQueryOutput("db." + DSTableName + ".find GINGER_USED=\"False\"");
+                            DataRow row = dt.Rows[0];
                             string rowValue = row["GINGER_ID"].ToString();
-                            liteDB.RunQuery(Query + " GINGER_ID = \"" + rowValue + "\"");
+                            string query = "db." + DSTableName + ".delete GINGER_ID=\"" + rowValue + "\"";
+                            liteDB.GetResult(query);
                             AddOrUpdateReturnParamActual("Output", "Success");
+                        }
+                        else if (IsSelectableAction)
+                        {
+                            string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
+                            liteDB.RunQuery("db." + DSTableName + ".delete " + tokens[1]);
                         }
                         else
                         {
                             liteDB.GetResult(Query);
                             AddOrUpdateReturnParamActual("Output", "Success");
                         }
-                            break;
+                        break;
                     case eControlAction.DeleteAll:
                         dt = liteDB.GetQueryOutput("db." + DSTableName + ".find");
                         int c = dt.Rows.Count;
@@ -214,9 +232,7 @@ namespace GingerCore.Actions
                         AddOrUpdateReturnParamActual("Output", "Success");
                         break;
                     default:
-                        ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VEDR.Value = ValueExp;
-                        outVal = VEDR.ValueCalculated;
+                        
                         break;
                 }
                     return;
@@ -440,10 +456,11 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public bool ByRowNum { get; set; }
 
+        [IsSerializedForLocalRepository]
         public int RowVal { get; set; }
         [IsSerializedForLocalRepository]
         public bool ByNextAvailable { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public bool ByWhere { get; set; }
 

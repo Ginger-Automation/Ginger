@@ -37,8 +37,12 @@ namespace Ginger.DataSource
         public RemoveTableColumnPage(List<string> mColNameList)
         {
             InitializeComponent();
+            // mandatory fields which cannot be removed
             mColNameList.Remove("GINGER_ID");
-            if(mColNameList.Contains("GINGER_USED"))
+            mColNameList.Remove("GINGER_LAST_UPDATED_BY");
+            mColNameList.Remove("GINGER_LAST_UPDATE_DATETIME");
+
+            if (mColNameList.Contains("GINGER_USED"))
                 mColNameList.Remove("GINGER_USED");           
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);

@@ -348,7 +348,7 @@ namespace GingerCore
             string IRow = "";
             string ExcelPath = "";
             string ExcelSheet = "";
-            
+
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 //if (DataSource.FileFullPath.StartsWith("~"))
@@ -698,7 +698,7 @@ namespace GingerCore
                             {
                                 nextavail = true;
                             }
-                                liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+                            liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
                         }
                     }
                     else
@@ -708,107 +708,18 @@ namespace GingerCore
                         string[] Token = tokens[1].Split(splitchar);
 
                         string[] col = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
-                        if (Token[0]== "Y")
+                        if (Token[0] == "Y")
                         {
                             Markasdone = true;
                         }
-
                         mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
                     }
                 }
-
-                
                 catch (Exception e)
                 {
                     mValueCalculated = pOrg;
                     Console.WriteLine(e.StackTrace);
                 }
-                if (Query != "")
-                {
-                    DataTable dt = DataSource.DSC.GetQueryOutput(Query);
-                    if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
-                    {
-                        DataSource.DSC.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
-                        dt = DataSource.DSC.GetQueryOutput(Query);
-                    }
-                    if (dt.Rows.Count == 0)
-                    {
-                        mValueCalculated = "No Row found with " + Query;
-                        return;
-                    }
-                    if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
-                        if (rowNum.All(char.IsDigit))
-                        {
-                            int a = dt.Rows.Count;
-                            dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString();
-                            mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[1].ToString());
-                        }
-                        else
-                            mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
-
-                    string GingerIds = "";
-                    if (dt.Columns.Contains("GINGER_ID"))
-                    {
-                        if (bMultiRow == "Y")
-                        {
-                            foreach (DataRow row in dt.Rows)
-                                GingerIds += row["GINGER_ID"].ToString() + ",";
-                            GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
-                        }
-                        else
-                            GingerIds = dt.Rows[Convert.ToInt32(rowNum)]["GINGER_ID"].ToString();
-                    }
-                    if (bUpdate == true)
-                    {
-                        if (updateQuery == "")
-                        {
-                            if (iColVal == "")
-                                iColVal = dt.Columns[0].ColumnName;
-                            if (updateValue == null)
-                            {
-                                updateValue = string.Empty;
-                            }
-                            updateQuery = "UPDATE " + DSTable + " SET ";
-                            foreach (DataColumn sCol in dt.Columns)
-                            {
-                                if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
-                                    updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
-                            }
-                            updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
-                            if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
-                                updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
-                            if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
-                                updateQuery = updateQuery + ",GINGER_LAST_UPDATE_DATETIME = '" + DateTime.Now.ToString() + "' ";
-
-                            updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
-                        }
-                        DataSource.DSC.RunQuery(updateQuery);
-                    }
-                    if (bMarkAsDone == "Y" && bDone == true)
-                    {
-                        DataSource.DSC.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
-                    }
-                    else if (sAct == "DR" && bDone == true)
-                        DataSource.DSC.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
-                }
-                else if (updateQuery != "" && bDone == true)
-                {
-                    DataSource.DSC.RunQuery(updateQuery);
-                    mValueCalculated = "";
-                }
-                else if (sAct == "ETE" && bDone == true)
-                {
-                    if (ExcelSheet == "")
-                        ExcelSheet = DSTable;
-                    if (ExcelPath.ToLower().EndsWith(".xlsx"))
-                    {
-                        DataSource.DSC.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
-                        mValueCalculated = "";
-                    }
-                    else
-                        mValueCalculated = "The Export Excel can be *.xlsx only";
-                }
-
             }
             DataSource.Close();
         }

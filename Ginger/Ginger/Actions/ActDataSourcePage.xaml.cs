@@ -78,14 +78,14 @@ namespace Ginger.Actions
 
             mActDSTblElem = Act;
             InitializeComponent();
-                        
+
             InitPageData();
 
             grdTableData.btnRefresh.Visibility = Visibility.Visible;
             grdTableData.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshTable));
 
             ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
-
+            
             ControlActionPanel.Visibility = Visibility.Visible;
             ActionRow.Height = new GridLength(55);            
 
@@ -432,11 +432,6 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowNum, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByRowNum);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NextAvailable, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByNextAvailable);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Where, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByWhere);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.SelectedValueProperty, mActDSTblElem, ActDSTableElement.Fields.ColSelectorValue);
-
             ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
             ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
@@ -445,7 +440,7 @@ namespace Ginger.Actions
             ExcelSheetName.ValueTextBox.LostFocus += ExcelSheetNameTextBox_LostFocus; 
             
             UpdateValueExpression();
-            NextAvailable.IsChecked = true;
+            //NextAvailable.IsChecked = mActDSTblElem.ByNextAvailable;
             SetComponents();
             SetTableDetails();
             grdTableData.SetTitleLightStyle = true;
@@ -718,8 +713,8 @@ namespace Ginger.Actions
         }
 
         private void Where_Checked(object sender, RoutedEventArgs e)
-        {           
-            
+        {
+            mActDSTblElem.ByWhere = true;
             RowSelectorValue.Visibility = Visibility.Collapsed;
             RowSelectorValue.Visibility = Visibility.Collapsed;
             RowSelectorValueVE.Visibility = Visibility.Collapsed;
@@ -744,6 +739,7 @@ namespace Ginger.Actions
         {
             WherePanel.Visibility = Visibility.Collapsed;
             SetIdentifierHeight();
+            mActDSTblElem.ByWhere = false;
             //IdentifierRow.Height = new GridLength(240);
         }
         public void CommonVE ()
@@ -1811,9 +1807,30 @@ namespace Ginger.Actions
             Customized.IsChecked = true;
 
             if (NextAvailable.Visibility == Visibility.Visible)
-                NextAvailable.IsChecked = true;
-            else            
+            {
+                if (mActDSTblElem.ByNextAvailable)
+                {
+                    NextAvailable.IsChecked = true;
+                }
+                else if (mActDSTblElem.ByRowNum)
+                {
+                    RowNum.IsChecked = true;
+                    
+                }
+                else if (mActDSTblElem.ByWhere)
+                {
+                    Where.IsChecked = true;
+                }
+            }
+            else if (mActDSTblElem.ByWhere)
+            {
                 Where.IsChecked = true;
+            }
+            else if (mActDSTblElem.ByQuery)
+            {
+                ByQuery.IsChecked = true;
+            }
+           
 
             HandleControlActionChange();
         }

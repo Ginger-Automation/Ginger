@@ -138,10 +138,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
+                TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -370,9 +373,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     return;
                 }
-                //TODO: use Path.Combine instead of string concat
-                dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
-                dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
+                if (dsDetailsCopy.DSType==DataSourceBase.eDSType.MSAccess)
+                {
+                    //TODO: use Path.Combine instead of string concat
+                    dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
+                    dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
+                }
+                else if (dsDetailsCopy.DSType==DataSourceBase.eDSType.LiteDataBase)
+                {
+                    dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".db";
+                    dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".db";
+                }
 
                 if (File.Exists(dsDetailsCopy.FileFullPath))
                 { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }

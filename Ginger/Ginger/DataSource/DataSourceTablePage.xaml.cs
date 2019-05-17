@@ -82,6 +82,10 @@ namespace Ginger.DataSource
                             grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
                             grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
                         }
+                        else
+                        {
+                            dsTableDetails.DSTableType = DataSourceTable.eDSTableType.GingerKeyValue;
+                        }
                     }
                     else
                     {
@@ -268,6 +272,7 @@ namespace Ginger.DataSource
                 {
                     Source = mDSTableDetails.DataTable
                 });
+                mDSTableDetails.DataTable.DefaultView.Sort = "GINGER_ID";
                 grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
             }
             else

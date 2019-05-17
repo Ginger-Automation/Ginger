@@ -98,14 +98,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Rename", Rename, null, "@Edit_16x16.png");
             TV.AddToolbarTool("@Edit_16x16.png", "Rename", new RoutedEventHandler(Rename));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate,null, "@Duplicate_16x16.png");
+            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, "@Duplicate_16x16.png");
             TV.AddToolbarTool("@Duplicate_16x16.png", "Duplicate", new RoutedEventHandler(Duplicate));
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", DeleteTable,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(DeleteTable));
-            
-            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+            if (DSTableDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+
+            }
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
@@ -219,10 +222,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             copy.DataTable = DSTableDetails.DataTable;
             copy.DSC = DSTableDetails.DSC;
             copy.DSTableType = DSTableDetails.DSTableType;
-            
+
             DSDetails.DSTableList.Add(copy);
-            
+           
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
-         }
+        }
     }
 }

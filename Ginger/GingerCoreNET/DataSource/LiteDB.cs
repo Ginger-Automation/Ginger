@@ -174,7 +174,7 @@ namespace GingerCoreNET.DataSource
                     
                     DataTable dtChange = new DataTable(CopyTableName);
                     dtChange = datatable(tableName, CopyTableName);
-                    //CopyTable.Upsert(doc);
+                    SaveTable(dtChange);
                 }
             }
 
@@ -380,7 +380,6 @@ namespace GingerCoreNET.DataSource
                 var s = mColumnNames.RemoveAll(a => a.Contains("_id"));
                 var name = mColumnNames.RemoveAll(i => i.Contains("Name"));
 
-
             }
             return mColumnNames;
         }
@@ -558,10 +557,8 @@ namespace GingerCoreNET.DataSource
                         Datatable.TableName = table;
                     }
                     mDataSourceTableDetails.Add(CheckDSTableDesign(Datatable));
-
                 }
             }
-
             return mDataSourceTableDetails;
         }
         public override bool IsTableExist(string tableName)
@@ -700,15 +697,18 @@ namespace GingerCoreNET.DataSource
             {
                 var table = db.GetCollection(dataTable.ToString());
                 var doc = BsonMapper.Global.ToDocument(table);
-                
+
+                DataTable changed = dataTable.GetChanges();
                 DataTable dtChange = dataTable;
-               
+                
                 table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
                 if (!(dtChange == null))
                 {
                     foreach (DataRow dr in dtChange.Rows)
                     {
+                        dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
+                        dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
                         var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
                        
                         var mapper = new BsonMapper();
@@ -727,7 +727,7 @@ namespace GingerCoreNET.DataSource
                 {
                     table.Upsert(batch);
                 }
-
+                
                 var rea = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
             }
         }
