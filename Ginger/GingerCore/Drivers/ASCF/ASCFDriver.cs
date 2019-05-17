@@ -1054,6 +1054,17 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+        object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
+        {
+            get
+            {
+                return BusinessFlow;
+            }
+            set
+            {
+                BusinessFlow = (BusinessFlow)value;
+            }
+        }
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {

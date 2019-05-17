@@ -1066,6 +1066,17 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+        object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
+        {
+            get
+            {
+                return BusinessFlow;
+            }
+            set
+            {
+                BusinessFlow = (BusinessFlow)value;
+            }
+        }
 
         public override void StartRecording()
         {

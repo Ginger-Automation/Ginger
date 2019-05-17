@@ -164,18 +164,25 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+            try
             {
-                //different kind of changes that may have occurred in collection
-                if (e.Action == NotifyCollectionChangedAction.Add ||
-                e.Action == NotifyCollectionChangedAction.Replace ||
-                e.Action == NotifyCollectionChangedAction.Remove ||
-                e.Action == NotifyCollectionChangedAction.Move)
-                {
-                    OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
-                }
-                UpdateTitleListCount();
-            });
+                this.Dispatcher.Invoke(() =>
+                    {
+                        //different kind of changes that may have occurred in collection
+                        if (e.Action == NotifyCollectionChangedAction.Add ||
+                            e.Action == NotifyCollectionChangedAction.Replace ||
+                            e.Action == NotifyCollectionChangedAction.Remove ||
+                            e.Action == NotifyCollectionChangedAction.Move)
+                        {
+                            OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
+                        }
+                        UpdateTitleListCount();
+                    });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Collection Changed Method", ex);
+            }
         }
 
         private void UpdateTitleListCount()
@@ -410,7 +417,10 @@ namespace Ginger.UserControlsLib.UCListView
             listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
             listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
             dataTemp.VisualTree = listItemFac;
-            xListView.ItemTemplate = dataTemp;
+            this.Dispatcher.Invoke(() =>
+            {
+                xListView.ItemTemplate = dataTemp;
+            });
         }
 
         public void AddListOperations(List<ListItemOperation> operations)

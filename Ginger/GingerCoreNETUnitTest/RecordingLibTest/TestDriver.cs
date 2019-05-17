@@ -9,6 +9,11 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
     {
         private bool LearnAdditionalDetails { get; set; }
         public event RecordingEventHandler RecordingEvent;
+        object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
+        {
+            get;
+            set;
+        }
 
         public Timer mGetRecordingTimer;
         int i = 0;

@@ -75,6 +75,29 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return null;
             }
         }
+
+        public static PlatformInfoBase GetPlatformTargetApplication(string targetApp)
+        {
+            switch (targetApp)
+            {                
+                case "MyJavaApp":
+                    return mJavaPlatform;
+                case "MyWebApp":
+                case "MyNewWebApp":
+                    return mWebPlatform;
+                case "CSM":
+                    return mPowerBuilderPlatform;
+                case "MyWindowsApp":
+                    return mWindowsPlatform;
+                case "MyMobileApp":
+                    return mMobilePlatform;
+                //TODO: add the rest
+
+                default:
+                    return null;
+            }
+        }
+
         public static List<eElementType> GetPlatformUIElementsList(ePlatformType Platform)
         {
             PlatformInfoBase PB = GetPlatformImpl(Platform);

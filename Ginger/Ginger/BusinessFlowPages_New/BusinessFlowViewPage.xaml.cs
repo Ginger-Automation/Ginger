@@ -125,34 +125,41 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void UpdateDescription()
         {
-            this.Dispatcher.Invoke(() =>
+            try
             {
-                xDescriptionTextBlock.Text = string.Empty;
-                TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                this.Dispatcher.Invoke(() =>
+                {
+                    xDescriptionTextBlock.Text = string.Empty;
+                    TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
+                    //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
 
-                if (!string.IsNullOrEmpty(mBusinessFlow.Description))
-                {
-                    xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description);
-                    xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mBusinessFlow.Tags));
-                    xDescTextBlockHelper.AddLineBreak();
-                }
-                if (!string.IsNullOrEmpty(mBusinessFlow.RunDescription))
-                {
-                    xDescTextBlockHelper.AddText("Run Description: " + mBusinessFlow.RunDescription);
-                    xDescTextBlockHelper.AddLineBreak();
-                }
-                xDescTextBlockHelper.AddText("Target/s: ");
-                foreach (TargetBase target in mBusinessFlow.TargetApplications)
-                {
-                    xDescTextBlockHelper.AddText(target.Name);
-                    if (mBusinessFlow.TargetApplications.IndexOf(target) + 1 < mBusinessFlow.TargetApplications.Count)
+                    if (!string.IsNullOrEmpty(mBusinessFlow.Description))
                     {
-                        xDescTextBlockHelper.AddText(", ");
+                        xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description);
+                        xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mBusinessFlow.Tags));
+                        xDescTextBlockHelper.AddLineBreak();
                     }
-                }
-                xDescTextBlockHelper.AddLineBreak();
-            });
+                    if (!string.IsNullOrEmpty(mBusinessFlow.RunDescription))
+                    {
+                        xDescTextBlockHelper.AddText("Run Description: " + mBusinessFlow.RunDescription);
+                        xDescTextBlockHelper.AddLineBreak();
+                    }
+                    xDescTextBlockHelper.AddText("Target/s: ");
+                    foreach (TargetBase target in mBusinessFlow.TargetApplications)
+                    {
+                        xDescTextBlockHelper.AddText(target.Name);
+                        if (mBusinessFlow.TargetApplications.IndexOf(target) + 1 < mBusinessFlow.TargetApplications.Count)
+                        {
+                            xDescTextBlockHelper.AddText(", ");
+                        }
+                    }
+                    xDescTextBlockHelper.AddLineBreak();
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Updating the Description", ex);
+            }
         }
 
         private void Activities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -176,7 +183,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             this.Dispatcher.Invoke(() =>
             {
-                xActivitiesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);                
+                xActivitiesTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Activities), mBusinessFlow.Activities.Count);
             });
         }
 

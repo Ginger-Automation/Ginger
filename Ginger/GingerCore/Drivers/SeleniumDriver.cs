@@ -5400,6 +5400,18 @@ namespace GingerCore.Drivers
             }
         }
 
+        object IRecord.CurrentBusinessFlow
+        {
+            get
+            {
+                return BusinessFlow;
+            }
+            set
+            {
+                BusinessFlow = (BusinessFlow)value;
+            }
+        }
+
         public event RecordingEventHandler RecordingEvent;
         private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
@@ -5418,8 +5430,9 @@ namespace GingerCore.Drivers
                 {
                     string url = Driver.Url;
                     string title = Driver.Title;
-                    if (!lstURL.Contains(url) && CurrentPageURL != url)
+                    if (lstURL.Count == 0 || (!lstURL.Contains(url) && CurrentPageURL != url))
                     {
+                        lstURL.Add(url);
                         CurrentPageURL = url;
                         PageChangedEventArgs pageArgs = new PageChangedEventArgs()
                         {
@@ -5429,8 +5442,8 @@ namespace GingerCore.Drivers
                         };
 
                         RecordingEventArgs args = new RecordingEventArgs();
-                        args.EventType = eRecordingEvent.ElementRecorded;
-                        args.EventArgs = args;
+                        args.EventType = eRecordingEvent.PageChanged;
+                        args.EventArgs = pageArgs;
                         OnRecordingEvent(args);
                     }
 

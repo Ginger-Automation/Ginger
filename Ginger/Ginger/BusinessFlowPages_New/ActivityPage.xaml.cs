@@ -87,8 +87,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RemoveBindings()
         {
-            mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
-            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;            
+            if (mActivity != null)
+            {
+                mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
+                mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;             
+            }
         }
 
         private void BindControls()
@@ -119,7 +122,24 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));           
             BindingHandler.ObjFieldBinding(xAutomationStatusCombo, ComboBox.TextProperty, mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
-            BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
+            
+            if(xTargetApplicationComboBox.ItemsSource == null)
+            {
+                BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
+            }
+
+            if (mContext != null && mContext.BusinessFlow != null)
+            {
+                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
+            }
+            else
+            {
+                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            }           
+
+            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -132,16 +152,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xHandlerMappingStack.Visibility = Visibility.Visible;                
                 xHandlerTypeStack.Visibility = Visibility.Collapsed;
             }
-            if (mContext != null && mContext.BusinessFlow != null)
-            {
-                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
-            }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
-            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -153,29 +163,32 @@ namespace GingerWPF.BusinessFlowsLib
         {
             this.Dispatcher.Invoke(() =>
             {
-                xDescriptionTextBlock.Text = string.Empty;
-                TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
-
-                //Application info
-                if (!string.IsNullOrEmpty(mActivity.Description))
+            xDescriptionTextBlock.Text = string.Empty;
+            TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                if (mActivity != null)
                 {
-                    xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
-                    xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
-                    xDescTextBlockHelper.AddLineBreak();
+                    //Application info
+                    if (!string.IsNullOrEmpty(mActivity.Description))
+                    {
+                        xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                        xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
+                        xDescTextBlockHelper.AddLineBreak();
+                    }
+                    if (!string.IsNullOrEmpty(mActivity.RunDescription))
+                    {
+                        xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
+                        xDescTextBlockHelper.AddLineBreak();
+                    }
+                    if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+                    {
+                        xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
+                        xDescTextBlockHelper.AddLineBreak();
+                    }
+                    xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
                 }
-                if (!string.IsNullOrEmpty(mActivity.RunDescription))
-                {
-                    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
-                    xDescTextBlockHelper.AddLineBreak();
-                }
-                if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-                {
-                    xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
-                    xDescTextBlockHelper.AddLineBreak();
-                }
-                xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
             });
+        
         }
 
         private void xSaveBtn_Click(object sender, System.Windows.RoutedEventArgs e)

@@ -64,8 +64,9 @@ namespace GingerWPF.BusinessFlowsLib
         VariabelsListViewPage mBfVariabelsPage;
         BusinessFlowConfigurationsPage mBfConfigurationsPage;
         ActivityPage mActivityPage;
+        MainAddActionsNavigationPage MainNavigationPage;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(250);
+        GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
         public NewAutomatePage(BusinessFlow businessFlow)
         {
@@ -146,6 +147,10 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
                 xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
                 xAddActionSectionSpliter.IsEnabled = true;
+                if(MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
+                {
+                    MainNavigationPage.StartAgent();
+                }
             }
             else
             {
@@ -246,7 +251,8 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();
-                    xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
+                    MainNavigationPage = new MainAddActionsNavigationPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication);
+                    xAddActionMenuFrame.Content = MainNavigationPage;
                 }
             }
         }
@@ -255,6 +261,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+            if (MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
+            {
+                MainNavigationPage.StartAgent();
+            }
         }
 
         //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -652,6 +662,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xGoToBFsTreeBtn_Click(object sender, RoutedEventArgs e)
         {
+            if(xAddActionMenuFrame != null && xAddActionMenuFrame.Content != null && xAddActionMenuFrame.Content.GetType() == typeof(MainAddActionsNavigationPage))
+            {
+                ((MainAddActionsNavigationPage)xAddActionMenuFrame.Content).StopRecording();
+            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, mBusinessFlow);
         }
 
