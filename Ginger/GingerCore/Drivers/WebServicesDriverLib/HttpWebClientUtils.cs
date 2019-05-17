@@ -326,6 +326,7 @@ namespace GingerCore.Actions.WebAPI
                 if (mAct.GetType() == typeof(ActWebAPISoap))
                 {
                     RequestFileContent = BodyString;
+                    mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, "XML");
                 }
                 else if (mAct.GetType() == typeof(ActWebAPIRest))
                 {
@@ -408,7 +409,7 @@ namespace GingerCore.Actions.WebAPI
 
             if (fileType == "Request")
             {
-                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.RequestType);
+                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType);
             }
             else if (fileType == "Response")
             {
@@ -523,6 +524,7 @@ namespace GingerCore.Actions.WebAPI
                 if (mAct.GetType() == typeof(ActWebAPISoap))
                 {
                     ResponseFileContent = ResponseMessage;
+                    mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, "XML");
                 }
                 else if (mAct.GetType() == typeof(ActWebAPIRest))
                 {
