@@ -37,13 +37,13 @@ namespace Amdocs.Ginger.UserControls
         // We list all available icons for Ginger, this icons can be resized and will automatically match
         public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register("ImageType", typeof(eImageType), typeof(ImageMakerControl),
                         new FrameworkPropertyMetadata(eImageType.Ginger, OnIconPropertyChanged));
-               
+
         private static void OnIconPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ImageMakerControl IMC = (ImageMakerControl)d;
-            IMC.SetImage();       
+            IMC.SetImage();
         }
-                
+
         public eImageType ImageType
         {
             get { return (eImageType)GetValue(ImageTypeProperty); }
@@ -56,16 +56,16 @@ namespace Amdocs.Ginger.UserControls
 
 
 
-         public static readonly DependencyProperty ImageToolTipProperty = DependencyProperty.Register("ImageToolTip", typeof(string), typeof(ImageMakerControl),
-                        new FrameworkPropertyMetadata(string.Empty, OnToolTipPropertyChanged));
-               
+        public static readonly DependencyProperty ImageToolTipProperty = DependencyProperty.Register("ImageToolTip", typeof(string), typeof(ImageMakerControl),
+                       new FrameworkPropertyMetadata(string.Empty, OnToolTipPropertyChanged));
+
         private static void OnToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ImageMakerControl IMC = (ImageMakerControl)d;
             IMC.SetImageToolTip();
-      
+
         }
-                
+
         public string ImageToolTip
         {
             get { return (string)GetValue(ImageToolTipProperty); }
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.UserControls
             }
         }
 
-        
+
         //Font Size Property
         //if this value is set then instead of showing image will show FAFont and set its FontSize 
         public static readonly DependencyProperty SetAsFontImageWithSizeProperty = DependencyProperty.Register("SetAsFontImageWithSize", typeof(double), typeof(ImageMakerControl), new FrameworkPropertyMetadata(0.0, OnIconPropertyChanged));
@@ -142,13 +142,13 @@ namespace Amdocs.Ginger.UserControls
                 SetValue(SetImageMakerForegroundProperty, value);
                 SetImage();
             }
-        }      
+        }
 
         public ImageMakerControl()
         {
             InitializeComponent();
         }
-       
+
         private void SetImage()
         {
             ResetImageView();
@@ -204,7 +204,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.RunSet:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
-                    break;                    
+                    break;
                 case eImageType.APIModel:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
@@ -219,7 +219,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
                     break;
                 case eImageType.Application:
-                case eImageType.ApplicationPOMModel:                
+                case eImageType.ApplicationPOMModel:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
                     break;
                 case eImageType.HtmlReport:
@@ -402,12 +402,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.SequentialExecution:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SortNumericAsc);
-                    break;               
+                    break;
                 case eImageType.Search:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Search);                    
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Search);
                     break;
                 case eImageType.Duplicate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FilesOutline);                    
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FilesOutline);
                     break;
                 case eImageType.Merge:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ObjectGroup);
@@ -428,7 +428,7 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.View:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Eye);
                     break;
-                case eImageType.Download:                   
+                case eImageType.Download:
                 case eImageType.GetLatest:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
                     break;
@@ -492,8 +492,20 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Warn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
                     break;
+                case eImageType.HighWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Red);
+                    break;
+                case eImageType.MediumWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Orange);
+                    break;
+                case eImageType.LowWarn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Yellow);
+                    break;
                 case eImageType.EditWindow:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
+                    break;
+                case eImageType.CLI:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
                     break;
                 #endregion
 
@@ -506,7 +518,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.FlowDiagram:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
-                    break;                
+                    break;
                 case eImageType.DataTable:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
                     break;
@@ -524,7 +536,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.EllipsisH:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EllipsisH);
-                    break;                
+                    break;
                 case eImageType.ListGroup:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ListUl);
                     break;
@@ -560,16 +572,16 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Screen:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Desktop);
-                    break;                
+                    break;
                 case eImageType.Info:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
-                    break;              
+                    break;
                 case eImageType.Service:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
-                    break;                
+                    break;
                 case eImageType.FileVideo:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileVideoOutline);
-                    break;                                    
+                    break;
                 case eImageType.Email:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
                     break;
@@ -577,7 +589,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CodeFork);
                     break;
                 case eImageType.SourceControlNew:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip:"New");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip: "New");
                     break;
                 case eImageType.SourceControlModified:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil, Brushes.OrangeRed, toolTip: "Modified");
@@ -601,8 +613,8 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
                     break;
                 case eImageType.Bug:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);                                   
-                    break;                
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
+                    break;
                 case eImageType.Power:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
                     break;
@@ -647,11 +659,11 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
                     break;
                 case eImageType.Coffee:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee, Brushes.Red);
                     break;
                 case eImageType.MapSigns:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
-                    break;                
+                    break;
                 case eImageType.Elements:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
                     break;
@@ -674,7 +686,92 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Spy:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);
                     break;
-                #endregion
+
+                case eImageType.CodeFile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileCodeOutline);
+                    break;
+
+                case eImageType.Rows:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsH);
+                    break;
+
+                case eImageType.Column:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsV);
+                    break;
+
+                case eImageType.Columns:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Columns);
+                    break;
+
+                case eImageType.Browser:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Firefox);
+                    break;
+
+                case eImageType.KeyboardLayout:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.KeyboardOutline);
+                    break;
+
+                case eImageType.Linux:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Linux);
+                    break;
+
+                case eImageType.BatteryThreeQuarter:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.BatteryThreeQuarters);
+                    break;
+
+                case eImageType.Mobile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Mobile);
+                    break;
+
+                case eImageType.Codepen:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Codepen);
+                    break;
+
+                case eImageType.MousePointer:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MousePointer);
+                    break;
+
+                case eImageType.AudioFileOutline:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileAudioOutline);
+                    break;
+
+                case eImageType.ChartLine:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LineChart);
+                    break;
+
+                case eImageType.Suitcase:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Suitcase);
+                    break;
+
+                case eImageType.Paragraph:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Paragraph);
+                    break;
+
+                case eImageType.BullsEye:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bullseye);
+                    break;
+
+                case eImageType.WindowsIcon:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Windows);
+                    break;
+
+                case eImageType.PDFFile:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FilePdfOutline);
+                    break;
+
+                case eImageType.CSS3Text:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Css3);
+                    break;
+
+                case eImageType.Languages:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Language);
+                    break;
+
+                case eImageType.MinusSquare:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusSquare);
+                    break;
+
+                    #endregion
 
                 #region ElementType Images
                 case eImageType.Button:
@@ -722,6 +819,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Text:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
                     break;
+                case eImageType.LinkSquare:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLinkSquare);
+                    break;
                 #endregion
 
                 #region Comparison Status Images
@@ -748,7 +848,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
             }
         }
-        
+
         private void ResetImageView()
         {
             // Reset All do defaults
@@ -767,12 +867,12 @@ namespace Amdocs.Ginger.UserControls
             xFAFont.Icon = fontAwesomeIcon;
             xFAImage.Icon = fontAwesomeIcon;
             if (SetAsFontImageWithSize > 0)
-            {                
+            {
                 xFAFont.Visibility = Visibility.Visible;
                 xFAFont.FontSize = SetAsFontImageWithSize;
             }
             else
-            {                
+            {
                 xFAImage.Visibility = Visibility.Visible;
             }
 
@@ -781,11 +881,11 @@ namespace Amdocs.Ginger.UserControls
             {
                 foreground = (SolidColorBrush)this.ImageForeground;
             }
-            else if(foreground == null)
-                foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");           
+            else if (foreground == null)
+                foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
-                xFAFont.Foreground = foreground;                       
+                xFAFont.Foreground = foreground;
 
             if (spinDuration != 0)
             {
@@ -795,12 +895,12 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.SpinDuration = spinDuration;
             }
 
-            if(!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
+            if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {
-                xFAImage.ToolTip = toolTip;                
+                xFAImage.ToolTip = toolTip;
                 xFAFont.ToolTip = toolTip;
             }
-            
+
             if (SetBorder)
             {
                 ImageMakerBorder.BorderThickness = new Thickness(1);
@@ -826,12 +926,12 @@ namespace Amdocs.Ginger.UserControls
             {
                 IM.SetAsFontAwesomeIcon(IM.xFAImage.Icon, foreground, spinDuration, toolTip);
             }
-            IM.Width = width;            
+            IM.Width = width;
 
             if (IM.xFAImage.Visibility == Visibility.Visible)
             {
                 return IM.xFAImage.Source;
-            }                
+            }
             else if (IM.xStaticImage.Visibility == Visibility.Visible)
             {
                 return IM.xStaticImage.Source;
@@ -847,7 +947,7 @@ namespace Amdocs.Ginger.UserControls
             else
                 xStaticImage.Source = GetImageBitMap(imageName);
         }
-        
+
         Shape GetKidsDrawingShape()
         {
             Path path = new Path();

@@ -1,0 +1,37 @@
+﻿<Page x:Class="Ginger.RunSetLib.CreateCLIWizardLib.CreateCLILocationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.RunSetLib.CreateCLIWizardLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CreateCLIContentPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="86"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="235*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut description</Label>
+            <TextBox x:Name="xShortcutDescriptionTextBox" TextChanged="XShortcutDescriptionTextBox_TextChanged" Margin="15"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="1" Grid.RowSpan="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Shortcut Location</Label>
+            <RadioButton x:Name="xDesktopRadioButton" Checked="XDesktopRadioButton_Checked" Margin="5">Desktop</RadioButton>
+            <RadioButton x:Name="xFolderRadioButton" Checked="XFolderRadioButton_Checked" Margin="5">Folder</RadioButton>
+            <StackPanel Orientation="Horizontal" Margin="60,-25,0,0">
+                <TextBox x:Name="xCLIFolderTextBox" TextChanged="XCLIFolderTextBox_TextChanged_1" Width="300"  Margin="15,0,0,0" Height="20"></TextBox>
+                <Button x:Name="xBrowseButton" Click="XBrowseButton_Click" Width="40" Grid.Row="2">...</Button>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="5">
+            <Label HorizontalAlignment="Left">CLI file name</Label>
+            <TextBox x:Name="xCLIFileName" TextWrapping="Wrap" Height="50" ></TextBox>
+        </StackPanel>
+        
+    </Grid>
+</Page>

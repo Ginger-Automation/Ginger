@@ -32,6 +32,8 @@ using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActFileTransfer : ActWithoutDriver
@@ -74,7 +76,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public eFileTransferAction FileTransferAction { get; set; }
 
-        [IsSerializedForLocalRepository]
+       
         public string Host
         {
             get
@@ -88,7 +90,7 @@ namespace GingerCore.Actions
         }
         private string drvHost { get { return GetInputParamCalculatedValue("Host"); } }
        
-        [IsSerializedForLocalRepository]        
+              
         public string Port//public int Port
         {
             get
@@ -104,7 +106,7 @@ namespace GingerCore.Actions
         }
         private int drvPort { get { return Convert.ToInt32(GetInputParamCalculatedValue("Port")); } }
         
-        [IsSerializedForLocalRepository]
+        
         public string UserName
         {
             get
@@ -118,7 +120,7 @@ namespace GingerCore.Actions
         }
         private string drvUserName { get { return GetInputParamCalculatedValue("UserName"); } }
 
-        [IsSerializedForLocalRepository]
+        
         public string Password
         {
             get
@@ -132,7 +134,7 @@ namespace GingerCore.Actions
         }
         private string drvPassword { get { return GetInputParamCalculatedValue("Password"); } }
 
-        [IsSerializedForLocalRepository]
+       
         public string PrivateKey
         {
             get
@@ -146,7 +148,7 @@ namespace GingerCore.Actions
         }
         private string drvPrivateKey { get { return GetInputParamCalculatedValue("PrivateKey"); } }
 
-        [IsSerializedForLocalRepository]
+        
         public string PrivateKeyPassPhrase
         {
             get
@@ -160,7 +162,7 @@ namespace GingerCore.Actions
         }
         private string drvPrivateKeyPassPhrase { get { return GetInputParamCalculatedValue("PrivateKeyPassPhrase"); } }
 
-        [IsSerializedForLocalRepository]
+        
         public string PCPath
         {
             get
@@ -169,7 +171,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("PCPath", value);
+                AddOrUpdateInputParamValue("PCPath", value);               
             }
         }
         private string mPCPathCalculated=string.Empty;
@@ -178,17 +180,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                if(string.IsNullOrEmpty(mPCPathCalculated))
-                {
-                    mPCPathCalculated = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath"));
-                    mPCPathCalculated=mPCPathCalculated.Replace(Environment.NewLine, "");
-                }               
-
-                return mPCPathCalculated;
+                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");                           
             }
         }
 
-        [IsSerializedForLocalRepository]
+    
         public string UnixPath
         {
             get
@@ -197,21 +193,16 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("UnixPath", value);
+                AddOrUpdateInputParamValue("UnixPath", value);             
             }
         }
-
-        private string mUnixPathCalculated = string.Empty;
+               
         private string UnixPathCalculated
         {
             get
-            {  
-                if(string.IsNullOrEmpty(mUnixPathCalculated))
-                {
-                    mUnixPathCalculated = GetInputParamCalculatedValue("UnixPath").Replace("~/", workdir + "/");
-                    
-                }
-                return mUnixPathCalculated;
+            {
+                return GetInputParamCalculatedValue("UnixPath").Replace("~/", workdir + "/");
+
             }
         }
 
@@ -243,7 +234,7 @@ namespace GingerCore.Actions
             
         }
 
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
         private bool ConnectFTPClient()
         {
@@ -372,7 +363,8 @@ namespace GingerCore.Actions
             if (UnixFTPClient.Exists(UnixPathCalculated) == false)
             {
                 //if path given by user does not exist upload it to /Ginger/Upload
-                targetFolder = Path.Combine(workdir, "/Ginger/Uploaded");
+                targetFolder = Path.Combine(workdir, "Ginger/Uploaded").Replace("\\","/");                
+
                 if (UnixFTPClient.Exists(targetFolder) == false)
                 {
                     UnixFTPClient.CreateDirectory(targetFolder);
@@ -385,12 +377,15 @@ namespace GingerCore.Actions
         {
             using (var fileToUpload = File.OpenRead(filePath))
             {
-                string targetFilePath= Path.Combine(targetFolder, Path.GetFileName(filePath));
+                string targetFilePath= Path.Combine(targetFolder, Path.GetFileName(filePath)).Replace("\\","/");
                 UnixFTPClient.UploadFile(fileToUpload, targetFilePath);
 
                 if (UnixFTPClient.Exists(targetFilePath))
                 {
                     this.ExInfo += "File '" + Path.GetFileName(filePath) + "' successfully uploaded to '" + targetFolder + "' directory\n";
+                    this.AddOrUpdateReturnParamActual("Uploaded File Name", Path.GetFileName(filePath));
+                    this.AddOrUpdateReturnParamActual("Uploaded File Directory", targetFolder);
+                    this.AddOrUpdateReturnParamActual("Uploaded File Path", targetFilePath);
                 }
                 else
                 {
@@ -427,9 +422,12 @@ namespace GingerCore.Actions
             if (File.Exists(Path.Combine(localPath, targetFileName)))
             {
                 this.ExInfo = "File '" + targetFileName + "' successfully  downloaded to '" + localPath + "' directory";
+                this.AddOrUpdateReturnParamActual("Downloaded File Name", targetFileName);
+                this.AddOrUpdateReturnParamActual("Downloaded File Path", Path.Combine(localPath, targetFileName));
+                this.AddOrUpdateReturnParamActual("Downloaded File Directory", localPath);
             }
             else
-            {                
+            {
                 this.Error = "Failed to get file '" + targetFileName + "' " + "to " + localPath + "\\" + " directory";
             }
         }

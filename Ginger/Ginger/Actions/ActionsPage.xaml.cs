@@ -255,7 +255,7 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                if (mContext.Runner != null)
+                if (mContext != null && mContext.Runner != null)
                 {
                     mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
                 }
@@ -326,7 +326,7 @@ namespace Ginger.Actions
             //# Default View
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();          
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });            
+            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });            
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth=50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            

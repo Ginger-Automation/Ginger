@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActConsoleCommand : Act
@@ -106,7 +108,7 @@ namespace GingerCore.Actions
         }
 
         //TODO: find icon for console
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
     }
 }

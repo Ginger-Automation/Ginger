@@ -486,7 +486,7 @@ namespace Ginger
             if (tagsIDsList != null)
             {
                 if (tagsIDsList.Count > 0)
-                {                    
+                {
                     foreach (Guid tagID in tagsIDsList)
                     {
                         RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();

@@ -89,6 +89,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
             LoadActionFrame(new WindowsExplorerNavPage(mContext), "Windows Explorer", eImageType.Search);
+            ListViewItem lvi = new ListViewItem();
         }
 
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)

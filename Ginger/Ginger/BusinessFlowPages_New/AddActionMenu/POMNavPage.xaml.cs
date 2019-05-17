@@ -59,12 +59,35 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
             SetElementsGridView();
-
             //if (treeItemDoubleClickHandler != null)
             //{
             //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             //}
         }
+
+        //public POMNavPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addItemHandler = null, EventHandler itemDoubleClickHandler = null)
+        //{
+        //    InitializeComponent();
+
+        //    GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
+        //    xTreeView.TreeTitle = itemTypeName;
+        //    xTreeView.TreeIcon = itemTypeIcon;
+
+        //    TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
+        //    r.IsExpanded = true;
+
+        //    itemTypeRootNode.SetTools(xTreeView);
+        //    xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
+
+        //    xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
+
+        //    SetElementsGridView();
+        //    //if (treeItemDoubleClickHandler != null)
+        //    //{
+        //    //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
+        //    //}
+        //}
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
         {
@@ -78,16 +101,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ApplicationPOMModel mPOM = mPOMObj.NodeObject() as ApplicationPOMModel;
             if (tvItem is ITreeViewItem)
             {
-                if(mPOM is ApplicationPOMModel)
+                if (mPOM is ApplicationPOMModel)
                 {
-                    if(xPOMDetails.Height.Value < POMDetailsRegionHeight.Value)
+                    if (xPOMDetails.Height.Value < POMDetailsRegionHeight.Value)
                         xPOMDetails.Height = POMDetailsRegionHeight;
 
+                    xPOMItems.Height = new GridLength(400, GridUnitType.Auto);
+                    xMainElementsGrid.Visibility = Visibility.Visible;
+                    foreach(ElementInfo elem in mPOM.MappedUIElements)
+                    {
+                        elem.ParentGuid = mPOM.Guid;
+                    }
                     xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                 }
                 else
+                {
+                    xMainElementsGrid.Visibility = Visibility.Collapsed;
                     xPOMDetails.Height = unloadedPOMDetailsHeight;
-
+                    xPOMItems.Height = POMDetailsRegionHeight;
+                }
                 //ApplicationPOMModel appPOM = tvItem as ApplicationPOMModel
                 //mPomAllElementsPage = new PomAllElementsPage(appPOM, this);
                 //xPOMLDetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
