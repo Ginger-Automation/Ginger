@@ -43,6 +43,9 @@ namespace Amdocs.Ginger.Common
         [JsonProperty]
         public List<PluginServiceActionInfo> Actions { get { return mActions; } }
 
-        
+        [JsonProperty]
+        public List<PluginServiceConfigInfo> Configs { get; set; } = new List<PluginServiceConfigInfo>();
+
+
     }
 }

@@ -286,7 +286,7 @@ namespace GingerCore
         public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<DriverConfigParam> DriverConfiguration;
+        public ObservableList<DriverConfigParam> DriverConfiguration { get; set; }
 
         public ProjEnvironment ProjEnvironment { get; set; }
 
@@ -404,58 +404,91 @@ namespace GingerCore
             if (BusinessFlow == null)
                 BusinessFlow = new GingerCore.BusinessFlow();//to avoid value expertion exception
 
-            Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
-            SetDriverMissingParams(driverType);
-
-            foreach (DriverConfigParam DCP in DriverConfiguration)
+            if (AgentType == eAgentType.Service)
             {
-                //process Value expression in case used
-                ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
-                VE.Value = DCP.Value;
-                string value = VE.ValueCalculated;
+                SetServiceMissingParams();
+            }
+            else
+            {
+                Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
 
-                //TODO: check if Convert.To is better option
-                //TODO: hanlde other feilds type
-                PropertyInfo tp = Driver.GetType().GetProperty(DCP.Parameter);
-                if (tp != null)
+                SetDriverMissingParams(driverType);
+
+                foreach (DriverConfigParam DCP in DriverConfiguration)
                 {
-                    string tpName = tp.PropertyType.Name;
-                    switch (tpName)
-                    {
+                    //process Value expression in case used
+                    ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
+                    VE.Value = DCP.Value;
+                    string value = VE.ValueCalculated;
 
-                        case "String":
-                            Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, value);
-                            break;
-                        case "Boolean":
-                            try
-                            {
-                                bValue = Convert.ToBoolean(value);
-                            }
-                            catch (Exception)
-                            {
-                                bValue = true;
-                            }
-                            Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, bValue);
-                            break;
-                        case "Int32":
-                            int i = int.Parse(value);
-                            Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, i);
-                            break;
-                        case "eType":
-                            //TODO: Handle enums later...
-                            throw new Exception("Driver Config - Enum not supported yet");
-                        default:
-                            Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
-                            break;
+                    //TODO: check if Convert.To is better option
+                    //TODO: hanlde other feilds type
+                    PropertyInfo tp = Driver.GetType().GetProperty(DCP.Parameter);
+                    if (tp != null)
+                    {
+                        string tpName = tp.PropertyType.Name;
+                        switch (tpName)
+                        {
+
+                            case "String":
+                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, value);
+                                break;
+                            case "Boolean":
+                                try
+                                {
+                                    bValue = Convert.ToBoolean(value);
+                                }
+                                catch (Exception)
+                                {
+                                    bValue = true;
+                                }
+                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, bValue);
+                                break;
+                            case "Int32":
+                                int i = int.Parse(value);
+                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, i);
+                                break;
+                            case "eType":
+                                //TODO: Handle enums later...
+                                throw new Exception("Driver Config - Enum not supported yet");
+                            default:
+                                Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // TODO: show message to user to remove param - old
                     }
                 }
-                else
-                {
-                    // TODO: show message to user to remove param - old
-                }
+
+                Driver.AdvanceDriverConfigurations = this.AdvanceAgentConfigurations;
             }
-            Driver.AdvanceDriverConfigurations = this.AdvanceAgentConfigurations;
         }
+
+        private void SetServiceMissingParams()
+        {
+
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
+            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+
+            PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
+            PP.LoadServicesFromJSON();
+            PSI = PP.Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+            DriverConfiguration.Clear();
+            foreach (var config in PSI.Configs)
+            {
+                DriverConfigParam DI = new DriverConfigParam();
+                DI.Parameter = config.Name;
+                DI.Value = config.DefaultValue;
+                DI.Description = config.Description;
+                DI.OptionalValues = config.OptionalValues;
+                DI.Type = config.Type;
+                DriverConfiguration.Add(DI);
+            }
+        }
+        
 
         public void InitDriverConfigs()
         {
@@ -468,11 +501,22 @@ namespace GingerCore
                 DriverConfiguration.Clear();
             }
 
-            Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
-            SetDriverDefualtParams(driverType);
+            if (AgentType == eAgentType.Driver)
+            {
+                Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                SetDriverDefualtParams(driverType);
+            }
 
+            else if (AgentType == eAgentType.Service)
+            {
+                SetServiceConfiguration();
+            }
         }
 
+        private void SetServiceConfiguration()
+        {
+            SetServiceMissingParams();
+        }
 
         private void SetDriverDefualtParams(Type t)
         {
@@ -498,6 +542,7 @@ namespace GingerCore
         /// <param name="driverType"> Type of the driver</param>
         private void SetDriverMissingParams(Type driverType)
         {
+            
             MemberInfo[] members = driverType.GetMembers();
             UserConfiguredAttribute token = null;
 

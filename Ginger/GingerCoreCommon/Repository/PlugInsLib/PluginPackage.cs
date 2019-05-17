@@ -308,7 +308,38 @@ namespace Amdocs.Ginger.Repository
                                 pluginServiceInfo.Interfaces.Add(gingerInterfaceAttr.Id);
                             }
                         }
+
+
+                        MemberInfo[] members = type.GetMembers();
+                        GingerServiceConfigurationAttribute token = null;
+
+                        foreach (MemberInfo mi in members)
+                        {
+                            if( Attribute.GetCustomAttribute(mi, typeof(GingerServiceConfigurationAttribute), false) is GingerServiceConfigurationAttribute mconfig)
+                            {
+                                PluginServiceConfigInfo Config =new  PluginServiceConfigInfo();
+                                Config.Name = mconfig.Name;
+                                Config.Description = mconfig.Description;
+                                Config.Type = mconfig.Type.Name;
+                                Config.DefaultValue = mconfig.DefaultValue?.ToString();
+                               
+                                if (mconfig.OptionalValues!=null)
+                                {
+                                    foreach (var val in mconfig.OptionalValues)
+                                    {
+                                        Config.OptionalValues.Add(val.ToString());
+                                    }
+
+                                }
+                                pluginServiceInfo.Configs.Add(Config);
+                            }
+
+                          
+                        }
+
+
                         mServices.Add(pluginServiceInfo);
+
                     }                    
                 }
             }            

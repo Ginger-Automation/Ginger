@@ -544,11 +544,17 @@
       <DependentUpon>AddAgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AddAgentWizardLib\AddAgentWizard.cs" />
+    <Compile Include="Agents\AgentConfigControl.xaml.cs">
+      <DependentUpon>AgentConfigControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Agents\AgentControlValidationRule.cs" />
     <Compile Include="Agents\AgentDriverConfigPage.xaml.cs">
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AgentNameValidationRule.cs" />
+    <Compile Include="Agents\NewAgentDriverConfigPage.xaml.cs">
+      <DependentUpon>NewAgentDriverConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\JIRA\JiraImportReviewPage.xaml.cs">
       <DependentUpon>JiraImportReviewPage.xaml</DependentUpon>
     </Compile>
@@ -2678,7 +2684,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Agents\AgentConfigControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Agents\AgentDriverConfigPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Agents\NewAgentDriverConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
