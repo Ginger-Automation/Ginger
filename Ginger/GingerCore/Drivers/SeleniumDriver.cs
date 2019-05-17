@@ -5358,7 +5358,7 @@ namespace GingerCore.Drivers
                                         configArgs.LearnedElementInfo = eInfo;
                                     }
                                 }
-                                if (RecordingEvent != null)
+                                if (learnAdditionalChanges && RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
                                     RecordingEventArgs args = new RecordingEventArgs();
@@ -5367,7 +5367,15 @@ namespace GingerCore.Drivers
                                     OnRecordingEvent(args);
                                 }
                                 else
-                                {  
+                                {
+                                    string url = Driver.Url;
+                                    string title = Driver.Title;
+                                    if (CurrentPageURL != url)
+                                    {
+                                        CurrentPageURL = url;
+                                        AddBrowserAction(title, url);
+                                    }
+                                    
                                     //Temp existing implementation
                                     ActUIElement actUI = new ActUIElement();
                                     actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
@@ -5413,7 +5421,6 @@ namespace GingerCore.Drivers
         }
 
         public event RecordingEventHandler RecordingEvent;
-        private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
         protected void OnRecordingEvent(RecordingEventArgs e)
@@ -5430,9 +5437,8 @@ namespace GingerCore.Drivers
                 {
                     string url = Driver.Url;
                     string title = Driver.Title;
-                    if (lstURL.Count == 0 || (!lstURL.Contains(url) && CurrentPageURL != url))
+                    if (CurrentPageURL != url)
                     {
-                        lstURL.Add(url);
                         CurrentPageURL = url;
                         PageChangedEventArgs pageArgs = new PageChangedEventArgs()
                         {
@@ -5471,7 +5477,26 @@ namespace GingerCore.Drivers
             }
 
             return eInfo;
-        }        
+        }
+
+        private void AddBrowserAction(string pageTitle, string pageURL)
+        {
+            try
+            {
+                ActBrowserElement browseAction = new ActBrowserElement()
+                {
+                    Description = "Go to Url - " + pageTitle,
+                    ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                    LocateBy = eLocateBy.NA,
+                    Value = pageURL
+                };
+                this.BusinessFlow.AddAct(browseAction);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding browser action", ex);
+            }
+        }
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)
         {

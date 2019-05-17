@@ -261,7 +261,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
-            if (MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
+            if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add && MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
             {
                 MainNavigationPage.StartAgent();
             }
