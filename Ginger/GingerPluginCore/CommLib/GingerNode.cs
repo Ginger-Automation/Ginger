@@ -201,7 +201,7 @@ namespace GingerCoreNET.DriversLib
         }
         private NewPayLoad TakeScreenot(NewPayLoad ActionPayload)
         {
-            if (mService is IScreenShotSetvice ScreenshotService)
+            if (mService is IScreenShotService ScreenshotService)
             {
                 
                 Dictionary<string, string> InputParams = new Dictionary<string, string>();

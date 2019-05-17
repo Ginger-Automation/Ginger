@@ -5,11 +5,9 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 {
-   public interface IScreenShotSetvice
+   public interface IScreenShotService
     {
-
-       
-        Bitmap  GetActiveScreenImage();
+       Bitmap GetActiveScreenImage();
 
        List<Bitmap> GetAllScreensImages();
     }
