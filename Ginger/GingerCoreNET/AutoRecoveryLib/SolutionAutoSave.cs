@@ -165,7 +165,8 @@ namespace Ginger.Functionalties
                 }
 
                 //save item
-                itemCopy.RepositorySerializer.SaveToFile(itemCopy, Path.Combine(itemAutoSavePath, itemCopy.FileName.ToString()));
+                string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(itemCopy.FileName.ToString());
+                itemCopy.RepositorySerializer.SaveToFile(itemCopy, Path.Combine(itemAutoSavePath, businessFlowName));
             }
             catch (Exception ex)
             {
