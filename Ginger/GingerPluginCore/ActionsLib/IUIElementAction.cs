@@ -20,7 +20,7 @@ limitations under the License.
 namespace Amdocs.Ginger.Plugin.Core
 {
 
-    public enum eElementType
+    public enum eUIElementType
     {
         TextBox,
         ComboBox,
@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.Plugin.Core
         // do not put grid
     }
 
-    public enum eLocateBy
+    public enum eUILocateBy
     {
         Id,
         Name,
@@ -49,6 +49,6 @@ namespace Amdocs.Ginger.Plugin.Core
     [GingerInterface("IUIElementAction", "UI Element Action")]
     public interface IUIElementAction 
     {
-        void UIElementAction(GingerAction gingerAction, eElementType elementType, eLocateBy locateBy, string locateValue, eElementAction elementAction, string value = null);
+        void UIElementAction(GingerAction gingerAction, eUIElementType elementType, eUILocateBy locateBy, string locateValue, eElementAction elementAction, string value = null);
     }
 }

@@ -639,6 +639,9 @@
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
+      <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -2940,6 +2943,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ReporterLib\ReporterTestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

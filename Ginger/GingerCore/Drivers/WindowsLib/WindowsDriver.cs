@@ -34,7 +34,7 @@ using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver
+    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
         int mActionTimeout = 10;
 
@@ -179,9 +179,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                     default:
                         throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
-                }
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                }                
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -413,7 +411,7 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.Click:
-                        string status = mUIAutomationHelper.ClickElement(AE);                        
+                        string status = mUIAutomationHelper.ClickElement(AE);
                         if (!status.Contains("Clicked Successfully"))
                         {
                             actWC.Error += status;
@@ -644,7 +642,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -941,10 +939,24 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return mUIAutomationHelper.IsWindowValid(obj);
         }
+
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            mUIAutomationHelper.StartRecording();
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+
+        }
+
         public override void StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
+
         public override void StopRecording()
         {
 

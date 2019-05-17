@@ -326,6 +326,7 @@
     <Compile Include="NonUITests\RESTTest.cs" />
     <Compile Include="NonUITests\SolutionTest.cs" />
     <Compile Include="UITests\PBDriverWidgetTest.cs" />
+    <Compile Include="UITests\WebDriverUnitTestCase.cs" />
     <Compile Include="UITests\UIAAutomationTest.cs" />
     <Compile Include="NonUITests\UnixShellTest.cs" />
     <Compile Include="NonUITests\ValueExpressionTest.cs" />
@@ -417,6 +418,9 @@
   <ItemGroup>
     <Content Include="Documents\delayedstockquote.xml" />
     <Content Include="TestResources\APlusB.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\ScreenShot\Temp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
@@ -921,6 +925,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestResources\AutoPilot\ImportOptionalValue\" />
+    <Folder Include="TestResources\Web\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestResources\UIA Form\FormEmbeddedBrowser.resx">

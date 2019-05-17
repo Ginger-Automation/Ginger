@@ -36,6 +36,7 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
@@ -379,7 +380,8 @@ namespace Ginger
             AddClass(list, typeof(RunSetActionPublishToQC));
             AddClass(list, typeof(ActSetVariableValue));
             AddClass(list, typeof(ActClearAllVariables));
-            AddClass(list, typeof(ActAgentManipulation));       
+            AddClass(list, typeof(ActAgentManipulation));
+            AddClass(list, typeof(ActUIElement));
             AddClass(list, typeof(UserProfile));
             AddClass(list, typeof(Solution));
             AddClass(list, typeof(Email));
