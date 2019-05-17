@@ -203,7 +203,7 @@ namespace UnitTests.NonUITests
             }
            Assert.IsNotNull(impactedlines);
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void MongoDbTestConnection()
@@ -218,6 +218,7 @@ namespace UnitTests.NonUITests
             }
             Assert.AreEqual(b, true);
         }
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void MongoDbFreeSQL()
@@ -252,6 +253,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 
         }
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void MongoDbRecordCount()
@@ -286,7 +288,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void MongoDbUpdateDB()
