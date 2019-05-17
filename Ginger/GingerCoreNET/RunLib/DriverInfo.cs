@@ -66,13 +66,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (platformType == ePlatformType.Web.ToString())
             {
                 foreach (PluginPackage plugin in Plugins) //.Where(x => x.Services!=null && x.Services.Any(a=>a.Interfaces.Contains("IWebPlatform"))))
-                {                    
+                {
+                    DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
                     foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains("IWebPlatform")))
                     {
-                        DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
+               
                         DI.services.Add(PI.ServiceId);
-                        PlatformServices.Add(DI);
-                    }                    
+                    
+                    }
+                    PlatformServices.Add(DI);
                 }
 
             }

@@ -406,7 +406,7 @@ namespace GingerCore
 
             if (AgentType == eAgentType.Service)
             {
-                SetServiceMissingParams();
+                SetServiceConfiguration();
             }
             else
             {
@@ -466,28 +466,6 @@ namespace GingerCore
             }
         }
 
-        private void SetServiceMissingParams()
-        {
-
-            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
-            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
-
-            PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
-            PP.LoadServicesFromJSON();
-            PSI = PP.Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
-            DriverConfiguration.Clear();
-            foreach (var config in PSI.Configs)
-            {
-                DriverConfigParam DI = new DriverConfigParam();
-                DI.Parameter = config.Name;
-                DI.Value = config.DefaultValue;
-                DI.Description = config.Description;
-                DI.OptionalValues = config.OptionalValues;
-                DI.Type = config.Type;
-                DriverConfiguration.Add(DI);
-            }
-        }
         
 
         public void InitDriverConfigs()
@@ -515,7 +493,34 @@ namespace GingerCore
 
         private void SetServiceConfiguration()
         {
+            DriverConfiguration.Clear();
             SetServiceMissingParams();
+        }
+
+        private void SetServiceMissingParams()
+        {
+
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
+            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+
+            PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
+            PP.LoadServicesFromJSON();
+            PSI = PP.Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+
+            foreach (var config in PSI.Configs)
+            {
+                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() != 0)
+                {
+                    DriverConfigParam DI = new DriverConfigParam();
+                    DI.Parameter = config.Name;
+                    DI.Value = config.DefaultValue;
+                    DI.Description = config.Description;
+                    DI.OptionalValues = config.OptionalValues;
+                    DI.Type = config.Type;
+                    DriverConfiguration.Add(DI);
+                }
+            }
         }
 
         private void SetDriverDefualtParams(Type t)

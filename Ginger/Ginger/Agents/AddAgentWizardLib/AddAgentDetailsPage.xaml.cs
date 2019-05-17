@@ -28,6 +28,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
+using static GingerCore.Agent;
 
 namespace Ginger.Agents.AddAgentWizardLib
 {
@@ -72,7 +73,13 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
 
        
-                    break;                
+                    break;
+                case EventType.Next:
+
+                    Console.WriteLine("");
+                    
+                    break;
+
             }
 
         }
@@ -117,23 +124,74 @@ namespace Ginger.Agents.AddAgentWizardLib
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 
         {
+           
             xDriverSubTypeComboBox.Items.Clear();
             xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
-            if (xDriverTypeComboBox.Items.Count > 0)
+            if (xDriverTypeComboBox.SelectedItem!=null)
             {
-                DriverInfo DI = xDriverTypeComboBox.SelectedItem as DriverInfo;
+
+                xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
+                if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
+                {
+                    mWizard.Agent.DriverInfo = DI;
+                    foreach (var service in mWizard.Agent.DriverInfo.services)
+                    {
+                        xDriverSubTypeComboBox.Items.Add(service);
+                    }
+
+                    if (DI.isDriverPlugin)
+                    {
+                        mWizard.Agent.AgentType = Agent.eAgentType.Service;
+                        mWizard.Agent.PluginId = DI.Name;
+                    }
+                    else
+                    {
+                        mWizard.Agent.AgentType = Agent.eAgentType.Driver;
+
+
+
+                    }
+
+                    xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
+                   if(DI.services.Count==0)
+                    {
+                        mWizard.Agent.InitDriverConfigs();
+                    }
+                }
+
+
+            }
+
+
+           
+        }
+
+        private void XDriverSubTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xDriverTypeComboBox.SelectedItem is DriverInfo DI && xDriverSubTypeComboBox != null)
+
+            {
                 mWizard.Agent.DriverInfo = DI;
                 foreach (var service in mWizard.Agent.DriverInfo.services)
                 {
                     xDriverSubTypeComboBox.Items.Add(service);
                 }
+                string SubdriverType = xDriverSubTypeComboBox.SelectedItem.ToString();
+                if (DI.isDriverPlugin)
+                {
+                    mWizard.Agent.ServiceId = SubdriverType;
+                }
+                else
+                {
+
+                    mWizard.Agent.DriverType = (eDriverType)Enum.Parse(typeof(eDriverType), SubdriverType);
+
+
+                }
+                mWizard.Agent.InitDriverConfigs();
             }
-//TODO: Fix me asap
-         //   mWizard.Agent.InitDriverConfigs();
         }
 
-  
-    
         void ShowConfig()
         {
            
