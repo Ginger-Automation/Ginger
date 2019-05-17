@@ -91,7 +91,8 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-      
+        public Context mContext = new Context();
+
         
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
@@ -140,7 +141,19 @@ namespace Ginger.Run
 
         //!!! remove from here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogFolder { get; set; }
-        public BusinessFlow CurrentBusinessFlow { get; set; }        
+        private BusinessFlow mCurrentBusinessFlow;
+        public BusinessFlow CurrentBusinessFlow
+        {
+            get
+            {
+                return mCurrentBusinessFlow;
+            }
+            set
+            {
+                mCurrentBusinessFlow = value;
+                mContext.BusinessFlow = mCurrentBusinessFlow;
+            }
+        }        
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
         public eExecutedFrom ExecutedFrom;        
@@ -286,7 +299,8 @@ namespace Ginger.Run
             set
             {
                 mProjEnvironment = (ProjEnvironment)value;
-                ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
+                //ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
+                mContext.Environment = mProjEnvironment;
                 NotifyEnvironmentChanged();                
             }
         }
@@ -317,7 +331,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -326,7 +340,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-            RunListeners.Add(new ExecutionLogger(this.ProjEnvironment, ExecutedFrom));
+            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
         }
 
 
@@ -403,7 +417,8 @@ namespace Ginger.Run
                 {
                     if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
                     {
-                        BFR.BusinessFlowCustomizedRunVariables.Add(var);
+                        VariableBase varCopy = (VariableBase)var.CreateCopy(false);
+                        BFR.BusinessFlowCustomizedRunVariables.Add(varCopy);
                     }
                 }
                 BFR.BusinessFlowRunDescription = bf.RunDescription;
@@ -599,8 +614,13 @@ namespace Ginger.Run
 
         private void SetVariableMappedValues()
         {
+            BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
+
+
+            List<VariableBase> cachedVariables = null;
+
             //set the vars to update
-            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(false).ToList();
+            List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(true).ToList();
             List<VariableBase> outputVariables = null;
 
             //do actual value update
@@ -626,8 +646,35 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    //if input variable value mapped to none , we reset it to initial value
-                    inputVar.ResetValue();
+                    //if input variable value mapped to none, and value is differt from origin                   
+                    if (inputVar.DiffrentFromOrigin)
+                    {
+                        // we take value of customized variable from BusinessFlowRun
+                        VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+
+                       
+                        if(runVar!=null)
+                        {
+                           mappedValue = runVar.Value;
+                        }
+                       
+                    }
+                    else
+                    {
+
+                        if(cachedVariables==null)
+                        {
+                            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
+                            cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+                        }
+
+                        //If value is not different from origin we take original value from business flow on cache
+                        VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+                        if(cacheVariable!= null)
+                        {
+                            mappedValue = cacheVariable.Value;
+                        }                       
+                    }
                 }
 
                 if (mappedValue != "")
@@ -657,6 +704,10 @@ namespace Ginger.Run
                     if (inputVar.GetType() == typeof(VariableDynamic))
                     {
                         ((VariableDynamic)inputVar).ValueExpression = mappedValue;
+                    }
+                    if (inputVar.GetType() == typeof(VariableTimer))
+                    {
+                        ((VariableTimer)inputVar).Value = mappedValue;
                     }
                 }
             }
@@ -689,6 +740,17 @@ namespace Ginger.Run
             return outputVariables;
                  
         }      
+
+        private BusinessFlowRun GetCurrenrtBusinessFlowRun()
+        {
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
+
+            if (businessFlowRun == null)
+            {
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow?.Name select x).FirstOrDefault();
+            }
+            return businessFlowRun;
+        }
 
         public void StartAgent(Agent Agent)
         {
@@ -2890,7 +2952,7 @@ namespace Ginger.Run
                 ARC.Status = ActReturnValue.eStatus.Passed;
                 return;
             }
-            
+
             //TODO: document in help, maybe remove this compare takes time and not sure if needed/use case!?
             if (ARC.ExpectedCalculated.StartsWith("{Regex="))
             {
@@ -2913,8 +2975,14 @@ namespace Ginger.Run
                     return;
                 }
             }
-            
-            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
+
+            if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && string.IsNullOrEmpty(ARC.Actual))
+            {
+                ARC.Status = ActReturnValue.eStatus.Failed;
+                return;
+            }
+
+            else if (ARC.ExpectedCalculated.ToUpper().Trim() == "TRUE" && ARC.Actual.ToUpper().Trim() != "TRUE")
             {
                 ARC.Status = ActReturnValue.eStatus.Failed;
                 return;
@@ -3943,8 +4011,8 @@ namespace Ginger.Run
             if (doNotResetBusFlows == false)
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
-                {
-                    businessFlow.Reset();                   
+                {                    
+                    businessFlow.Reset();    
                     NotifyBusinessflowWasReset(businessFlow);
                 }
             }

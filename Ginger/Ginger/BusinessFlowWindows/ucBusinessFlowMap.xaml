@@ -1,0 +1,29 @@
+<UserControl x:Class="Ginger.BusinessFlowWindows.ucBusinessFlowMap"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"          
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="30" d:DesignWidth="365">
+
+    <Grid x:Name="xBFGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="315"/>
+            <ColumnDefinition Width="28"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="xBFTextBox" Grid.Column="0" Style="{StaticResource $TextBoxStyle}" Height="25" Width="310" HorizontalAlignment="Left" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
+        <usercontrols:ucButton Grid.Column="1" x:Name="xSelectBF" HorizontalAlignment="Left" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="xSelectBF_Click" VerticalAlignment="Top" Margin="-5,-8,0,0"  >
+            <usercontrols:ucButton.ToolTip>
+                <GingerCore:ucTextDicResource Text="Select [BusinessFlow]"/>
+            </usercontrols:ucButton.ToolTip>
+        </usercontrols:ucButton>
+        <usercontrols:ucButton Grid.Column="2" x:Name="xGoToAutomateBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xGoToAutomateBtn_Click" ToolTip="Go To Automate Tab" Visibility="Hidden" Margin="-5,-5,0,0" />
+    </Grid>
+</UserControl>
+

@@ -891,7 +891,7 @@ namespace GingerCore
         }
 
         private void ReplaceEnvVars()
-        {
+        {            
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
             foreach (Match match in envParamMatches)            
                 ReplaceEnvParamWithValue(match.Value, null);
@@ -1030,7 +1030,12 @@ namespace GingerCore
             AppName = AppName.Substring(1, AppName.Length - 2);
             AppName = AppName.Replace("EnvURL App=", "");
 
-            EnvApplication app = Env.GetApplication(AppName);
+            EnvApplication app = null;
+            if (Env != null)
+            {
+                app = Env.GetApplication(AppName);
+            }
+
             if (app != null)
             {
                 URL = app.Url + "";
@@ -1038,7 +1043,8 @@ namespace GingerCore
             }
             else
             {
-                // TODO: err
+                // TODO: err                
+                mValueCalculated = mValueCalculated.Replace(p, "");
             }
         }
 
@@ -1057,7 +1063,11 @@ namespace GingerCore
 
             string ParamValue = null;
 
-            EnvApplication app = Env.GetApplication(AppName);
+            EnvApplication app = null;
+            if (Env != null)
+            {
+                app = Env.GetApplication(AppName);
+            }
             if (app != null)
             {
                 GeneralParam GP = app.GetParam(GlobalParamName);

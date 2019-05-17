@@ -63,12 +63,12 @@ namespace Ginger.BusinessFlowFolder
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
-            mContext = new Context() { BusinessFlow = BizFlow };
+            mContext = new Context() { BusinessFlow = BizFlow, Activity= BizFlow.CurrentActivity };
             RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
             LoadBizFlowData();
-            App.PropertyChanged += AppPropertychanged;
-
+            mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
+     
             if (mBusinessFlow.TargetApplications == null)
             {
                 mBusinessFlow.TargetApplications = new ObservableList<TargetBase>();
@@ -179,7 +179,7 @@ namespace Ginger.BusinessFlowFolder
                             break;
                         }                    
                 }
-            }
+            }            
         }
        
         private void LoadBizFlowData()
@@ -199,14 +199,7 @@ namespace Ginger.BusinessFlowFolder
             }
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "BusinessFlow")
-            {
-                LoadBizFlowData();
-            }            
-        }     
-
+   
         private void AddPlatformButton_Click(object sender, RoutedEventArgs e)
         {
             EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(mBusinessFlow);
@@ -344,6 +337,14 @@ namespace Ginger.BusinessFlowFolder
             mBusinessFlow.ActivitiesGroups.CollectionChanged += ActivitiesGroups_CollectionChanged;
             UpdateActivitiesExpanderLabel();
             mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+        }
+
+        private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))
+            {
+                mContext.Activity = mBusinessFlow.CurrentActivity;
+            }
         }
 
         private void Activities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

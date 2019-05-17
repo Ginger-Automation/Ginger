@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
@@ -35,38 +36,22 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Ginger.DataSource;
-using GingerCore.DataSource;
-using Ginger.Actions;
-using Ginger.UserControlsLib.TextEditor;
-using Ginger.Variables;
-using Ginger.Environments;
-using System.Reflection;
-using Amdocs.Ginger.CoreNET.ValueExpression;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.SolutionGeneral;
-using System.IO;
-using System.Dynamic;
-using Newtonsoft.Json.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using System.Linq;
-using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 namespace Ginger
 {
     /// <summary>
     /// Interaction logic for ActionValueEditorWindow.xaml
     /// </summary>
 
-  
+
 
     public partial class ValueExpressionEditorPage : Page
     {
@@ -80,6 +65,7 @@ namespace Ginger
         GingerCore.Actions.ActDSTableElement actDStable = null;
         static List<HighlightingRule> mHighlightingRules = null;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
+        ObservableList<ProjEnvironment> mEnvs;
 
         public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
@@ -88,6 +74,10 @@ namespace Ginger
             mObj = obj;
             mAttrName = AttrName;
             mContext = context;
+            if (mContext == null)
+            {
+                mContext = new Context();
+            }
 
             ValueUCTextEditor.Bind(obj, AttrName);
             ValueUCTextEditor.HideToolBar();
@@ -478,9 +468,9 @@ namespace Ginger
             SetItemView(tviEnvs, "Environments", "", "@Environment_16x16.png");
             xObjectsTreeView.Items.Add(tviEnvs);
 
-            ObservableList<ProjEnvironment> Envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            mEnvs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
-            foreach (ProjEnvironment env in Envs)
+            foreach (ProjEnvironment env in mEnvs)
             {                
                 TreeViewItem tviEnv = new TreeViewItem();
                 SetItemView(tviEnv, env.Name, "", "@Environment_16x16.png");
@@ -682,10 +672,16 @@ namespace Ginger
                     ((Solution) WorkSpace.Instance.Solution).AddVariable(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null)
+                    {
+                        ((BusinessFlow)mContext.BusinessFlow).AddVariable(newStringVar);
+                    }
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
+                    {
+                        ((Activity)mContext.BusinessFlow.CurrentActivity).AddVariable(newStringVar);
+                    }
                     break;
             }
 
@@ -699,10 +695,16 @@ namespace Ginger
                     ((Solution) WorkSpace.Instance.Solution).SetUniqueVariableName(newStringVar);
                     break;
                 case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null)
+                    {
+                        ((BusinessFlow)mContext.BusinessFlow).SetUniqueVariableName(newStringVar);
+                    }
                     break;
                 case eVariablesLevel.Activity:
-                    ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
+                    {
+                        ((Activity)mContext.BusinessFlow.CurrentActivity).SetUniqueVariableName(newStringVar);
+                    }
                     break;
             }
 
@@ -768,6 +770,10 @@ namespace Ginger
         {
             if (mVE == null)
             {
+                if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0)
+                {
+                    mContext.Environment = mEnvs[0];
+                }
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 
             }

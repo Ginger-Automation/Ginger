@@ -598,6 +598,9 @@
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowWindows\ucBusinessFlowMap.xaml.cs">
+      <DependentUpon>ucBusinessFlowMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataSource\DataSourceTablesListPage.xaml.cs">
       <DependentUpon>DataSourceTablesListPage.xaml</DependentUpon>
     </Compile>
@@ -2879,6 +2882,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowWindows\ucBusinessFlowMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="DataSource\DataSourceTablesListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
