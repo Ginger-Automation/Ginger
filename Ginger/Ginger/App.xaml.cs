@@ -23,11 +23,15 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
+using Ginger.Reports;
 using Ginger.Repository;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
@@ -113,38 +117,8 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-            
-            // TODO: remove after it moved to common
-            AddClass(list, typeof(RunSetConfig));
-            AddClass(list, typeof(RunSetActionSendEmail));
-            AddClass(list, typeof(BusinessFlowReport));
-            AddClass(list, typeof(HTMLReportConfiguration));
-            AddClass(list, typeof(HTMLReportConfigFieldToSelect));
-            AddClass(list, typeof(Agent));
-            AddClass(list, typeof(DriverConfigParam));
-            AddClass(list, typeof(GingerRunner));
-            AddClass(list, typeof(ApplicationAgent));
 
-            AddClass(list, typeof(RunSetActionHTMLReportSendEmail));
-            AddClass(list, typeof(EmailHtmlReportAttachment));
-            AddClass(list, typeof(RunSetActionAutomatedALMDefects));
-            AddClass(list, typeof(RunSetActionGenerateTestNGReport));
-            AddClass(list, typeof(RunSetActionHTMLReport));
-            AddClass(list, typeof(RunSetActionSaveResults));
-            AddClass(list, typeof(RunSetActionSendFreeEmail));
-            AddClass(list, typeof(RunSetActionSendSMS));
-            AddClass(list, typeof(RunSetActionPublishToQC));
-            AddClass(list, typeof(ActSetVariableValue));
-            AddClass(list, typeof(ActClearAllVariables));
-            AddClass(list, typeof(ActAgentManipulation));
-            AddClass(list, typeof(ActUIElement));
-            AddClass(list, typeof(UserProfile));
-            AddClass(list, typeof(Solution));
-            AddClass(list, typeof(Email));
-            AddClass(list, typeof(EmailAttachment));
-            AddClass(list, typeof(RunSetActionScript));
-            AddClass(list, typeof(ActScreenShot));
-            AddClass(list, typeof(ActBrowserElement));
+
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
 
