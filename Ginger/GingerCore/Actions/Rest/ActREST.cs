@@ -863,11 +863,11 @@ namespace GingerCore.Actions.REST
 
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Convert.ToString(this.DoNotFailActionOnBadRespose));
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Convert.ToString(this.UseLegacyJSONParsing));
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, Convert.ToString(this.URLDomain.Value));
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, Convert.ToString(this.URLUser.Value));
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, Convert.ToString(this.URLPass.Value));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, this.URLDomain.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, this.URLUser.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, this.URLPass.Value);
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, Convert.ToString(this.SecurityType));
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, Convert.ToString(this.RequestBody.Value));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, this.RequestBody.Value);
             
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, Convert.ToString(this.RequestType));
             convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, Convert.ToString(this.ResponseContentType));
@@ -879,7 +879,7 @@ namespace GingerCore.Actions.REST
             {
                 convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString());
             }
-            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, Convert.ToString(this.TemplateFile.Value));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, this.TemplateFile.Value);
             convertedActWebAPIRest.DynamicElements = this.DynamicElements;
             convertedActWebAPIRest.HttpHeaders = this.HttpHeaders;
             
