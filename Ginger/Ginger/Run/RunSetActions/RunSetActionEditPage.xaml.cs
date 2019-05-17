@@ -51,7 +51,9 @@ namespace Ginger.Run.RunSetActions
             ActionEditPageFrame.Content = p;
 
             if (mRunSetAction.SupportRunOnConfig)
+            {
                 RunActionBtn.Visibility = Visibility.Visible;
+            }
         }
 
         public Page GetEditPage(string R)
@@ -79,7 +81,7 @@ namespace Ginger.Run.RunSetActions
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            mRunSetAction.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+            mRunSetAction.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunSetAction.ExecuteWithRunPageBFES();
         }
     }

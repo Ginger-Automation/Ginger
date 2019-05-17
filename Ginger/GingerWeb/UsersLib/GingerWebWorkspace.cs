@@ -20,10 +20,13 @@ using amdocs.ginger.GingerCoreNET;
 using System;
 // using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
+using System.Collections.Generic;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.GingerConsole
 {
-    public class GingerConsoleWorkSpace : IWorkSpaceEventHandler
+    // GingerWebWorkspace Workspace Event Handler
+    public class GingerWebWorkspace : IWorkSpaceEventHandler
     {
         public void AddApplication()
         {
@@ -45,15 +48,30 @@ namespace Amdocs.Ginger.GingerConsole
             throw new NotImplementedException();
         }
 
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ShowBusinessFlows()
         {
             throw new NotImplementedException();
         }
 
-        //public void SolutionChanged(Solution solution)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public void ShowDebugConsole(bool visible = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SolutionClosed()
         {
