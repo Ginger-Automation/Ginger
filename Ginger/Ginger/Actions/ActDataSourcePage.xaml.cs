@@ -205,9 +205,9 @@ namespace Ginger.Actions
                 }
                 if(p.IndexOf("EP=") == 0)
                 {
-                    ExcelFilePath.ValueTextBox.Text = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ") - 3);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    ExcelSheetName.ValueTextBox.Text = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
+                    ExcelFilePath.ValueTextBox.Text = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ES=") - 3);
+                    p = p.Substring(p.TrimStart().IndexOf(" ES=")).Trim();
+                    ExcelSheetName.ValueTextBox.Text = p.Substring(p.IndexOf("ES=") + 3, p.LastIndexOf("}") - 3);
                 }
                 else if (p.IndexOf("KEY=") == 0)
                 {
