@@ -152,7 +152,7 @@ namespace Ginger.Environments
             GridColView dbTypeColView = new GridColView()
             {
                 Field = nameof(Database.DBType),
-                Header = "Db Type1",
+                Header = "Db Type",
                 StyleType = GridColView.eGridColStyleType.Template,
                 CellTemplate = ucGrid.GetGridComboBoxTemplate(DBTypeList, nameof(Database.DBType), false, true, "", false, DbType_SelectionChanged),
                 WidthWeight = 15
@@ -167,7 +167,6 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.ConnectionString, WidthWeight = 20, Header = "Connection String (Optional)" });
             view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open" , StyleType= GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight=10 });
-
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }
@@ -177,10 +176,6 @@ namespace Ginger.Environments
             if (item.DBType == Database.eDBTypes.MongoDb)
             {
                 item.KeepConnectionOpen = true;
-            }
-            else
-            {
-                item.KeepConnectionOpen = false;
             }
         }
         private void AddNewDB(object sender, RoutedEventArgs e)

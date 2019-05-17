@@ -32,9 +32,8 @@ namespace GingerCore.NoSqlBase
 {
     public class GingerMongoDb : NoSqlBase
     {        
-        MongoClient mongoClient = null;
+        MongoClient mMongoClient = null;
         ActDBValidation Act = null;
-        //MongoServer
         string DbName;
         public override List<eNoSqlOperations> GetSupportedActions()
         {
@@ -59,14 +58,14 @@ namespace GingerCore.NoSqlBase
                     {
                         return false;
                     }
-                    mongoClient = new MongoClient(connectionString);
+                    mMongoClient = new MongoClient(connectionString);
                     
                 }
                 else
                 {
                     ///
                     /// Host format
-                    /// "mongodb://localhost:27017/inventory"
+                    /// "mongodb://HostOrIP:27017/DBName"
                     ///
                     string[] HostPortDB = Db.TNSCalculated.Split('/');
                     string[] HostPort = HostPortDB[0].Split(':');
@@ -109,7 +108,7 @@ namespace GingerCore.NoSqlBase
                             };
                         }
                         DbName = HostPortDB[HostPortDB.Length - 1];
-                        mongoClient = new MongoClient(mongoClientSettings);
+                        mMongoClient = new MongoClient(mongoClientSettings);
                     }
                     else
                     {
@@ -151,7 +150,7 @@ namespace GingerCore.NoSqlBase
                 dbName = this.DbName;
             }
             List<string> table = new List<string>();
-            var db = mongoClient.GetDatabase(dbName);
+            var db = mMongoClient.GetDatabase(dbName);
             var names = db.ListCollectionNames().ToList();
             foreach (var item in names)
             {
@@ -164,7 +163,7 @@ namespace GingerCore.NoSqlBase
         {
             Connect();
             List<string> columns = new List<string>();
-            var db = mongoClient.GetDatabase(DbName);
+            var db = mMongoClient.GetDatabase(DbName);
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
             var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
@@ -189,7 +188,7 @@ namespace GingerCore.NoSqlBase
 
         private void Disconnect()
         {
-            //            
+            //A MongoClient object will be the root object. It is thread-safe and is all that is needed to handle connecting to servers, monitoring servers, and performing operations against those servers. [...] It is recommended to store a MongoClient instance in a global place, either as a static variable or in an IoC container with a singleton lifetime. However, multiple MongoClient instances created with the same settings will utilize the same connection pools underneath.            
         }
         private string GetCollectionName(string inputSQL)
         {
@@ -245,13 +244,11 @@ namespace GingerCore.NoSqlBase
                 Act.Error = "Failed to connect to Mongo DB";
                 return;
             }
-            string SQL = Act.SQL;
-            string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = SQL;
+            VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;
 
-            var DB = mongoClient.GetDatabase(DbName);
+            var DB = mMongoClient.GetDatabase(DbName);
             string collectionName = GetCollectionName(SQLCalculated);
             var collection = DB.GetCollection<BsonDocument>(collectionName);
 
@@ -286,7 +283,7 @@ namespace GingerCore.NoSqlBase
                         //do commit
                         if (Act.CommitDB_Value == true)
                         {
-                            var session = mongoClient.StartSession();
+                            var session = mMongoClient.StartSession();
                             session.StartTransaction();
                             collection.UpdateOne(filterDocumnet, paramDocumnet);
                             session.CommitTransaction();
