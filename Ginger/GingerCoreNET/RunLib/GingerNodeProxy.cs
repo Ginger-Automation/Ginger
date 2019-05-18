@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.Plugin.Core.DriversLib;
+using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Diagnostics;
 

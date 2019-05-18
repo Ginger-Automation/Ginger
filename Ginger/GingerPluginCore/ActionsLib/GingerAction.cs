@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.Plugin.Core
             }
         }
 
-        public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Id { get =>throw new NotImplementedException(); set =>throw new NotImplementedException(); }
 
         public void AddOutput(string param, object value, string path = null)
         {            
