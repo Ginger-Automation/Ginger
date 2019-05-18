@@ -556,7 +556,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
-    <Compile Include="Actions\ActBrowserElement.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />

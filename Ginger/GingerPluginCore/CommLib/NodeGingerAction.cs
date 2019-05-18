@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private string mExInfo;
 
         public NodeActionOutput Output { get; } = new NodeActionOutput();
-        public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Id { get =>throw new NotImplementedException(); set =>throw new NotImplementedException(); }
         public string ExInfo { get { return mExInfo; } }  
 
         public string Errors { get { return mErrors; } } 
