@@ -15,6 +15,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 {
     // Generic platform plugin tester
 
+    [Ignore]
     [TestClass]
     [Level3]
     public class WebPlatformPluginTest
