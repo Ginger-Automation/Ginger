@@ -123,6 +123,7 @@ namespace Ginger.Functionalties
                 {
                     if (runSet.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                     {
+                        runSet.UpdateRunnersBusinessFlowRunsList();
                         DirtyFileAutoSave(runSet);
                     }
                 }
@@ -153,20 +154,17 @@ namespace Ginger.Functionalties
             try
             {
                 RepositoryItemBase itemCopy = itemToSave.CreateCopy(false);
-            
+
                 //create similar folders structure
-                string ItemOriginalpath = itemToSave.ContainingFolderFullPath;
-                string ItemContainingfolder = itemToSave.ContainingFolder;
-                string itemAutoSavePath = ItemOriginalpath.Replace(ItemOriginalpath, mAutoSaveFolderPath);
-                itemAutoSavePath = Path.Combine(itemAutoSavePath, ItemContainingfolder);
-                if(!Directory.Exists(itemAutoSavePath))
+                string itemAutoSavePath = itemToSave.FilePath.Replace(WorkSpace.Instance.Solution.Folder, mAutoSaveFolderPath);
+                string itemAutoSaveFolder = Path.GetDirectoryName(itemAutoSavePath);
+                if (!Directory.Exists(itemAutoSaveFolder))
                 {
-                    Directory.CreateDirectory(itemAutoSavePath);
+                    Directory.CreateDirectory(itemAutoSaveFolder);
                 }
 
                 //save item
-                string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(itemCopy.FileName.ToString());
-                itemCopy.RepositorySerializer.SaveToFile(itemCopy, Path.Combine(itemAutoSavePath, businessFlowName));
+                itemCopy.RepositorySerializer.SaveToFile(itemCopy, itemAutoSavePath);                
             }
             catch (Exception ex)
             {

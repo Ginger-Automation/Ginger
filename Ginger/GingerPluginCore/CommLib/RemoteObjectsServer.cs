@@ -139,7 +139,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     PLRC.ClosePackage();                    
                     return PLRC;                
                 default:
-                    throw new Exception("Unknown PayLoad Action - " + PL.Name);
+                    throw new InvalidOperationException("Unknown PayLoad Action - " + PL.Name);
             }
         }
 

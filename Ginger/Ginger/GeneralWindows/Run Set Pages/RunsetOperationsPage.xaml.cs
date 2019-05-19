@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
-using GingerCore;
-using GingerCoreNET.RunLib;
+using GingerCore.GeneralLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using System.Collections.Generic;
-using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 
 namespace Ginger.Run
 {
@@ -105,9 +104,9 @@ namespace Ginger.Run
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Name, WidthWeight = 150 });
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Type, Header = "Type", WidthWeight = 150, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly=true });
-            List<GingerCore.General.ComboEnumItem> runAtOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunAt));
+            List<ComboEnumItem> runAtOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunAt));
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.RunAt, Header = "Run At", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runAtOptionList });
-            List<GingerCore.General.ComboEnumItem> conditionOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunSetActionCondition));
+            List<ComboEnumItem> conditionOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunSetActionCondition));
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Condition, WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = conditionOptionList });
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Status, WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Errors, WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });

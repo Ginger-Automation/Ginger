@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +27,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
@@ -83,25 +82,7 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        // TODO: move to sperate class
-        public class ComboEnumItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
+        
 
         public class XmlNodeItem
         {
@@ -129,25 +110,7 @@ namespace GingerCoreNET.GeneralLib
             public string path { get; set; }
         }
 
-        public class ComboItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
-
+        
         #endregion ENUM
 
 
@@ -174,21 +137,7 @@ namespace GingerCoreNET.GeneralLib
             return true;
         }
 
-        public static List<General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
-        {
-            List<General.ComboEnumItem> list = new List<General.ComboEnumItem>();
-            foreach (object item in Enum.GetValues(Etype))
-            {
-                General.ComboEnumItem CEI = new General.ComboEnumItem();
-                CEI.text = General.GetEnumValueDescription(Etype, item);
-                CEI.Value = item;
 
-                list.Add(CEI);
-            }
-
-            return list;
-
-        }
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc)
         {

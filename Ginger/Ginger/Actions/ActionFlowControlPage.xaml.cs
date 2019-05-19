@@ -28,6 +28,8 @@ using GingerCore.FlowControlLib;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowFolder;
 using System.Collections.Generic;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Actions
 {
@@ -39,7 +41,7 @@ namespace Ginger.Actions
         private Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
         Activity mActParentActivity = null;
-        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
+        private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
 
         public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
