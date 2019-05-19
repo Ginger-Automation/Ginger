@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.UserControls;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using System;
@@ -576,7 +577,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             FormDataView.GridColsView = new ObservableList<GridColView>();
 
             FormDataView.GridColsView.Add(new GridColView() { Field = nameof(APIModelBodyKeyValue.Param), Header = "Key", WidthWeight = 100 });
-            List<GingerCoreNET.GeneralLib.General.ComboEnumItem> valueTypes = GingerCoreNET.GeneralLib.General.GetEnumValuesForCombo(typeof(APIModelBodyKeyValue.eValueType));
+            List<ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(APIModelBodyKeyValue.eValueType));
             FormDataView.GridColsView.Add(new GridColView() { Field = APIModelBodyKeyValue.Fields.ValueType, Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
             FormDataView.GridColsView.Add(new GridColView() { Field = nameof(APIModelBodyKeyValue.Value), Header = "Value/File Path", WidthWeight = 100 });
 
