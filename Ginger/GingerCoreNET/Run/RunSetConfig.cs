@@ -166,5 +166,19 @@ namespace Ginger.Run
                 return nameof(this.Name);
             }
         }
+
+        public void UpdateRunnersBusinessFlowRunsList()
+        {
+            foreach (GingerRunner GR in GingerRunners)
+            {
+                GR.UpdateBusinessFlowsRunList();
+            }
+        }
+
+        public override void UpdateBeforeSave()
+        {
+            UpdateRunnersBusinessFlowRunsList();
+            base.UpdateBeforeSave();
+        }
     }
 }

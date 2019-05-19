@@ -330,5 +330,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return false;
             }
         }
+
+        public void CloseSolution()
+        {
+            try
+            {
+                WorkSpace.Instance.CloseSolution();
+            }
+            catch (Exception ex)
+            { 
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected Error occurred while closing the Solution", ex);
+            }
+        }
     }
 }

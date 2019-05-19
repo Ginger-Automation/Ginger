@@ -105,11 +105,11 @@
     <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
-    <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+	<Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV, Version=2.4.2.1773, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.1.18.0\lib\net35\Emgu.CV.dll</HintPath>
@@ -568,7 +568,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
-    <Compile Include="Actions\ActBrowserElement.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
@@ -733,6 +732,9 @@
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
+    <Compile Include="GeneralLib\ComboEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboItem.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="GeneralLib\StringCompressor.cs" />
