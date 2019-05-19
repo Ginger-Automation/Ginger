@@ -88,7 +88,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         [TestMethod]
         public void CLIConfigFile()
-        {
+        { 
             // Arrange
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
@@ -101,6 +101,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             string txt = string.Format("Solution={0}", CLISolutionFolder) + Environment.NewLine;
             txt += string.Format("Env={0}", "Default") + Environment.NewLine;
             txt += string.Format("RunSet={0}", "Default Run Set") + Environment.NewLine;
+            txt += string.Format("ShowAutoRunWindow={0}", "False") + Environment.NewLine;
             System.IO.File.WriteAllText(scriptFile, txt);
 
             // Act            
