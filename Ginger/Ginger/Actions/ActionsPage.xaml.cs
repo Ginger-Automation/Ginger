@@ -255,7 +255,7 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                if (mContext != null && mContext.Runner != null)
+                if (mContext != null && mContext.Runner != null && grdActions.CurrentItem != null)
                 {
                     mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
                 }
