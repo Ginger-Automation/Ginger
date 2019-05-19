@@ -16,17 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.UserControls;
-using Ginger.Agents;
-using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static GingerCore.General;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -76,8 +69,23 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="obj"></param>
         public void SelectValue(object obj)
         {
-            Execute(() => {                
-                ((ComboBox)dependencyObject).SelectedValue = obj;
+            Execute(() => {
+                ComboBox combo = (ComboBox)dependencyObject;
+                foreach (var x in combo.Items)
+                {
+                    ComboEnumItem item = (ComboEnumItem)x;
+                    //TODO:  Not working check why
+                    //if (item.Value == obj)
+                    //{
+                    //}
+                    // Meanwhile use toString which works
+                    if (item.Value.ToString() == obj.ToString())
+                    {
+                        combo.SelectedValue = item;
+                    }
+                }
+                // TODO: fail back to find by string if not found by obj so use the .ToString in 2nd option
+                
             });
         }
 
