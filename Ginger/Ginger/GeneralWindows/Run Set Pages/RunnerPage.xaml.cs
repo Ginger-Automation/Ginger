@@ -194,7 +194,7 @@ namespace Ginger.Run
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
             ri.ItemName = bf.Name;
-            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
+            ri.ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              

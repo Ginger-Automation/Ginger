@@ -1254,16 +1254,15 @@ namespace Ginger.Run
 
         internal void SaveRunSetConfig()
         {
-            //Do Runset Save Preperations
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            try
             {
-                GR.UpdateBusinessFlowsRunList();
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
-
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
-            
-
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
         internal void AddNewRunSetConfig()
@@ -1382,8 +1381,11 @@ namespace Ginger.Run
                 }
 
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
@@ -1420,8 +1422,11 @@ namespace Ginger.Run
                 }
 
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //continue run            
                 await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync(true);//doing continue run
@@ -1632,11 +1637,8 @@ namespace Ginger.Run
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            AutoLogProxy.UserOperationStart("SaveRunConfigButton_Click");
-
-            SaveRunSetConfig();
-
-            AutoLogProxy.UserOperationEnd();
+            
+            SaveRunSetConfig();           
         }
         
         private void SetExecutionModeIcon()
