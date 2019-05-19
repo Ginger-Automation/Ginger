@@ -268,7 +268,7 @@ namespace GingerCore.NoSqlBase
                         break;
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
                         string updateQueryParams = GetUpdateQueryParams(SQLCalculated);
-                        string[] updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
+                        var updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
                         //set filter
                         var filterString = updateQueryParamsStrings[0];
                         //set param
@@ -298,8 +298,9 @@ namespace GingerCore.NoSqlBase
                         var resultSimpleSQLOne = coll.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
                         Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
                         break;
-                    default:
-                        throw new Exception("Action Not Supported");
+                    default:                        
+                        Act.Error+= "Operation Type "+ Action +" is not yes supported for Mongo DB";
+                        break;
                 }
             }
             catch (Exception e)
