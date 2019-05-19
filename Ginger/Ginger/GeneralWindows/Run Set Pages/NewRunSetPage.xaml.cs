@@ -1487,13 +1487,16 @@ namespace Ginger.Run
 
             if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
+                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
+                DeleteFoldersData(Path.Combine(clientAppFolderPath,"assets", "Execution_Data"));
+                DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
                 LiteDbRunSet lightDbRunSet = filterData.Last();
-                PopulateMissingFields(lightDbRunSet);
+                PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
-                System.IO.File.WriteAllText("C:/A/dist/Ginger-Web-Client/assets/Execution_Data/executiondata3.Json", json); //TODO - Replace with the real location under Ginger installation
+                RunClientApp(json, clientAppFolderPath);
             }
             else if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
             {
@@ -1547,10 +1550,36 @@ namespace Ginger.Run
 
         }
 
-        //TODO move it to utils class
-        private void PopulateMissingFields(LiteDbRunSet liteDbRunSet)
+        private void RunClientApp(string json,string clientAppFolderPath)
         {
-            int totalRunners = liteDbRunSet.RunnersColl.Count;
+            try
+            {
+                string taskCommand = $"{Path.Combine(clientAppFolderPath, "index.html")} --allow-file-access-from-files";
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.Json"), json); //TODO - Replace with the real location under Ginger installation
+                System.Diagnostics.Process.Start("chrome", taskCommand);
+            }
+            catch(Exception ec)
+            {
+
+            }
+        }
+
+        private void DeleteFoldersData(string clientAppFolderPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
+
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+        }
+
+        //TODO move it to utils class
+        private void PopulateMissingFields(LiteDbRunSet liteDbRunSet,string clientAppPath)
+        {
+            string imageFolderPath = Path.Combine(clientAppPath,"assets","screenshots");
+ 
+             int totalRunners = liteDbRunSet.RunnersColl.Count;
             int totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
             int totalExecuted = totalRunners -  liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
 
@@ -1591,7 +1620,7 @@ namespace Ginger.Run
                             foreach (string screenshot in liteDbAction.ScreenShots)
                             {
 
-                                string newScreenshotPath = Path.Combine("C:/A/dist/Ginger-Web-Client/assets/Execution_Data/", Path.GetFileName(screenshot));
+                                string newScreenshotPath = Path.Combine(imageFolderPath, Path.GetFileName(screenshot));
                                 System.IO.File.Copy(screenshot, newScreenshotPath,true); //TODO - Replace with the real location under Ginger installation
                                 newScreenShotsList.Add(newScreenshotPath);
                             }
