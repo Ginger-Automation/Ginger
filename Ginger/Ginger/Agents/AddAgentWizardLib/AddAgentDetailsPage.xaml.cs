@@ -20,8 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -57,7 +57,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     //Removing ASCF from platform combobox
-                    List<GingerCore.General.ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
+                    List<ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
                   
                     xPlatformTypeComboBox.BindControl(platformList);
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;

@@ -35,6 +35,7 @@ using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,7 @@ namespace Ginger.Actions
 
         bool IsPageClosing = false;
 
-        private static  readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eOperator));
+        private static  readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForCombo(typeof(eOperator));
 
         ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         ObservableList<DataSourceTable> mDSTableList = new ObservableList<DataSourceTable>();

@@ -19,9 +19,11 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using System;
 using System.Collections.Generic;
@@ -154,12 +156,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsSelected), Header = "Update", WidthWeight = 60, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, AllowSorting = true});            
-            List<GingerCore.General.ComboEnumItem> GroupTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
+            List<ComboEnumItem> GroupTypeList = GetEnumValuesForCombo(typeof(ApplicationPOMModel.eElementGroup));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.SelectedElementGroup), Header = "Group", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GroupTypeList, nameof(DeltaElementInfo.SelectedElementGroup), true), WidthWeight = 200 });           
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Name", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode=BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.Description), Header = "Description", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 200, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
+            List<ComboEnumItem> ElementTypeList = GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList, ReadOnly = true, BindingMode = BindingMode.OneWay });            
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 250, MaxWidth = 100, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             //view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.StatusIcon), Header = "Identification Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
@@ -237,8 +239,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            GingerCore.General.ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+            ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
             if (comboItem != null)
             {
                 locateByList.Remove(comboItem);

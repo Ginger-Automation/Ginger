@@ -721,6 +721,9 @@
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
+    <Compile Include="GeneralLib\ComboEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboItem.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="GeneralLib\StringCompressor.cs" />
