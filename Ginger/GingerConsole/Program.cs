@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             // TODO: Console.SetOut
             Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.0.0.2");
+            Console.WriteLine("Ginger Console v3.0.0.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 

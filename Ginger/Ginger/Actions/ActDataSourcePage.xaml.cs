@@ -18,13 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
+using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
 using System.Collections.Generic;
@@ -1135,8 +1136,8 @@ namespace Ginger.Actions
             grdCondition.SetTitleLightStyle = true;
             grdCondition.ShowViewCombo = Visibility.Collapsed;
 
-            List<GingerCore.General.ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
-            List<GingerCore.General.ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
+            List<ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
+            List<ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();

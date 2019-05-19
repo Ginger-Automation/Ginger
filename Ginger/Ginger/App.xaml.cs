@@ -23,11 +23,15 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
+using Ginger.Reports;
 using Ginger.Repository;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Repository;
@@ -113,8 +117,8 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-           
-            
+
+
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));

@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace  Amdocs.Ginger.Plugin.Core.DriversLib
+namespace  Amdocs.Ginger.Plugin.Core.Drivers
 {
     public interface DummyInterface
     {

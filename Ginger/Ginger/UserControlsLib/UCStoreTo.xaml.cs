@@ -29,6 +29,7 @@ using GingerCore.Actions;
 using System.Windows.Media;
 using GingerCore.DataSource;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.GeneralLib;
 
 namespace Ginger.UserControlsLib
 {
@@ -41,7 +42,7 @@ namespace Ginger.UserControlsLib
         DependencyProperty.Register("ItemsSource", typeof(ObservableList<string>), typeof(UCStoreTo), new PropertyMetadata(OnItemsSourcePropertyChanged));
 
         public static DependencyProperty ItemsSourceGlobalParamProperty =
-        DependencyProperty.Register("ItemsSourceGlobalParam", typeof(ObservableList<GingerCoreNET.GeneralLib.General.ComboItem>), typeof(UCStoreTo), new PropertyMetadata(OnItemsSourceGlobalParamPropertyChanged));
+        DependencyProperty.Register("ItemsSourceGlobalParam", typeof(ObservableList<ComboItem>), typeof(UCStoreTo), new PropertyMetadata(OnItemsSourceGlobalParamPropertyChanged));
 
         public static DependencyProperty TextProperty =
         DependencyProperty.Register("TextProp", typeof(string), typeof(UCStoreTo),new PropertyMetadata(OnTextPropertyChanged));
@@ -147,16 +148,16 @@ namespace Ginger.UserControlsLib
         {
             var control = sender as UCStoreTo;
             if (control != null)
-                control.OnItemsSourceGlobalParamChanged((ObservableList<GingerCoreNET.GeneralLib.General.ComboItem>)args.NewValue);
+                control.OnItemsSourceGlobalParamChanged((ObservableList<ComboItem>)args.NewValue);
         }
-        private void OnItemsSourceGlobalParamChanged(ObservableList<GingerCoreNET.GeneralLib.General.ComboItem> list)
+        private void OnItemsSourceGlobalParamChanged(ObservableList<ComboItem> list)
         {
             if (list.Count == 0)            
                 GingerCore.General.DisableComboItem(cmbStoreTo,ActReturnValue.eStoreTo.ApplicationModelParameter);
                 
-            xModelsParamsComboBox.DisplayMemberPath = nameof(GingerCoreNET.GeneralLib.General.ComboItem.text);
-            xModelsParamsComboBox.SelectedValuePath = nameof(GingerCoreNET.GeneralLib.General.ComboItem.Value);
-            xModelsParamsComboBox.ItemsSource = list.OrderBy(nameof(GingerCoreNET.GeneralLib.General.ComboItem.text));
+            xModelsParamsComboBox.DisplayMemberPath = nameof(ComboItem.text);
+            xModelsParamsComboBox.SelectedValuePath = nameof(ComboItem.Value);
+            xModelsParamsComboBox.ItemsSource = list.OrderBy(nameof(ComboItem.text));
         }
 
         private static void OnVarLabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -250,7 +251,7 @@ namespace Ginger.UserControlsLib
                 if (Guid.TryParse(this.TextProp, out refGuid) == false)
                 {
                     xModelsParamsComboBox.SelectedIndex = 0;
-                    this.TextProp = ((GingerCoreNET.GeneralLib.General.ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
+                    this.TextProp = ((ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
                 }
                 else
                     xModelsParamsComboBox.SelectedValue = this.TextProp;
@@ -293,7 +294,7 @@ namespace Ginger.UserControlsLib
         private void xModelsParamsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xModelsParamsComboBox.SelectedItem != null)
-                this.TextProp = ((GingerCoreNET.GeneralLib.General.ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
+                this.TextProp = ((ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
         }
         
         private void cmbStoreTo_SelectionChanged(object sender, SelectionChangedEventArgs e)//1
