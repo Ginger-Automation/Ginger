@@ -27,21 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         public async void Execute(RunsetExecutor runsetExecutor)
-        {
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading Runset Runners");
-            runsetExecutor.InitRunners();
-
-            if (runsetExecutor.RunSetConfig.RunWithAnalyzer)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Running Runset Analyzer");
-                AnalyzerUtils analyzerUtils = new AnalyzerUtils();
-                if (analyzerUtils.AnalyzeRunset(runsetExecutor.RunSetConfig, true))
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Stopping Run Set execution due to Analyzer issues");
-                    return;
-                }
-            }
-
+        {            
             runsetExecutor.RunRunset();            
         }
 
