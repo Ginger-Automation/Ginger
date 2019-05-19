@@ -35,12 +35,7 @@ namespace GingerCore.NoSqlBase
         MongoClient mMongoClient = null;
         ActDBValidation Act = null;
         string DbName;
-        public override List<eNoSqlOperations> GetSupportedActions()
-        {
-            List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
-            SupportedActions.Add(eNoSqlOperations.freesql);
-            return SupportedActions;
-        }
+      
 
         public bool Connect()
         {
@@ -188,7 +183,8 @@ namespace GingerCore.NoSqlBase
 
         private void Disconnect()
         {
-            //A MongoClient object will be the root object. It is thread-safe and is all that is needed to handle connecting to servers, monitoring servers, and performing operations against those servers. [...] It is recommended to store a MongoClient instance in a global place, either as a static variable or in an IoC container with a singleton lifetime. However, multiple MongoClient instances created with the same settings will utilize the same connection pools underneath.            
+            //Driver maintains a connection pool internally. 
+            //No need to dispose of any connections
         }
         private string GetCollectionName(string inputSQL)
         {
