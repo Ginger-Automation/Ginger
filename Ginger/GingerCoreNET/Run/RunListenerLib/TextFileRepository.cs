@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;

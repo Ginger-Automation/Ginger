@@ -222,7 +222,7 @@ namespace Ginger.Reports
 
         public void SetLiteDBData(LiteDbRunSet runSet)
         {
-            GUID = runSet.GUID.ToString();
+            GUID = runSet._id.ToString();
             Name = runSet.Name;
             Description = runSet.Description;
             StartTimeStamp = runSet.StartTimeStamp;
@@ -318,5 +318,6 @@ namespace Ginger.Reports
                 return (TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed));
             }
         }
+        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
     }
 }

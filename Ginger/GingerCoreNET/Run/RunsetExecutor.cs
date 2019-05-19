@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -86,7 +87,7 @@ namespace Ginger.Run
                 return mRunSetConfig.GingerRunners;
             }
         }
-
+        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
         private ProjEnvironment mRunsetExecutionEnvironment = null;
         public ProjEnvironment RunsetExecutionEnvironment
         {

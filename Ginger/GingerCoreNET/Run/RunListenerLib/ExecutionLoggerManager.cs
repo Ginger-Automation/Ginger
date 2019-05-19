@@ -85,6 +85,7 @@ namespace Ginger.Run
         //}
 
         private GingerReport gingerReport = new GingerReport();
+
         public static Ginger.Reports.RunSetReport RunSetReport;
 
         public int ExecutionLogBusinessFlowsCounter = 0;
