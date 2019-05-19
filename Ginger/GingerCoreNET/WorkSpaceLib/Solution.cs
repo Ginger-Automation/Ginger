@@ -284,7 +284,7 @@ namespace Ginger.SolutionGeneral
         public void SetReportsConfigurations()
         {
             try {
-                if (this.ExecutionLoggerConfigurationSetList == null)
+                if (this.ExecutionLoggerConfigurationSetList == null || ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
                     this.ExecutionLoggerConfigurationSetList = new ExecutionLoggerConfiguration();
                     ExecutionLoggerConfigurationSetList.IsSelected = true;
