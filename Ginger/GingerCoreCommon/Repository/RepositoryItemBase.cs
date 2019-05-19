@@ -655,7 +655,7 @@ namespace Amdocs.Ginger.Repository
 
         public virtual string RelativeFilePath { get; set; }
 
-        internal void UpdateBeforeSave()
+        public virtual void UpdateBeforeSave()
         {            
             this.ClearBackup();
         }
