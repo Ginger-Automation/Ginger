@@ -128,7 +128,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
            Assert.AreEqual(a1.Status, eRunStatus.Passed);
            Assert.AreEqual(act1.Status, eRunStatus.Passed);
            Assert.AreEqual(act2.Status, eRunStatus.Skipped);
-           //Assert.AreEqual(act3.Status, eRunStatus.Passed);
+           Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
         [TestMethod]  [Timeout(60000)]
