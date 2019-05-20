@@ -510,7 +510,7 @@ namespace GingerCore
 
             foreach (var config in PSI.Configs)
             {
-                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() != 0)
+                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
