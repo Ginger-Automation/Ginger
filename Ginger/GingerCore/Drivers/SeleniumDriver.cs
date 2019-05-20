@@ -401,18 +401,14 @@ namespace GingerCore.Drivers
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
-                        if (HideConsoleWindow)
-                        {
+
                             ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
-                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            if (HideConsoleWindow)
+                            {
+                                ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            }
                             Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        }
 
-                        else
-                        {
-
-                            Driver = new ChromeDriver(options);
-                        }
                         break;
 
                     #endregion
