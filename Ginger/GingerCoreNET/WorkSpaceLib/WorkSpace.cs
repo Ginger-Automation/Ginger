@@ -387,7 +387,7 @@ namespace amdocs.ginger.GingerCoreNET
                 PlugInsManager.CloseAllRunningPluginProcesses();
                 CloseAllRunningAgents();
                 CloseAllEnvironments();
-
+                SolutionRepository.StopAllRepositoryFolderWatchers();
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
