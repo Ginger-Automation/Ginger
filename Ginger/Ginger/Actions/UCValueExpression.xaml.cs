@@ -35,7 +35,10 @@ namespace Ginger.Actions
         private string fileType;
         eBrowserType mBrowserType;
 
-        //public static readonly DependencyProperty mContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(false));
+                
+        public static DependencyProperty ContextProperty =DependencyProperty.Register("Context", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(ContextChanged));
+  
+
         public Context mContext
         {
             get; set;
@@ -58,6 +61,14 @@ namespace Ginger.Actions
                 ValueExpression ve = (ValueExpression)e.NewValue;
                 Init(mContext, ve.Obj, ve.ObjAttr);
             }
+        }
+        private static void ContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is UCValueExpression ucVE)
+            {
+                ucVE.mContext = (Context)e.NewValue;
+            }
+
         }
 
         public void Init(Context context, object obj, string AttrName)
