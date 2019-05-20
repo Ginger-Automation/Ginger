@@ -453,7 +453,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
