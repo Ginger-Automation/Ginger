@@ -14,6 +14,7 @@ using GingerCore.Activities;
 using Ginger.Reports.GingerExecutionReport;
 using GingerCore.FlowControlLib;
 using Ginger.Reports;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -86,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = runSetReport.Elapsed;
             MachineName = System.Environment.MachineName.ToString();
             ExecutedbyUser = System.Environment.UserName.ToString();
-            GingerVersion = WorkSpace.AppVersion.ToString();
+            GingerVersion = ApplicationInfo.ApplicationVersion;
             RunStatus = SetStatus(RunnersColl);
         }
     }

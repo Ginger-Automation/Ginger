@@ -270,7 +270,7 @@ namespace Ginger.Run
                 if (WorkSpace.Instance.RunningInExecutionMode)
                 {
                     //Amdocs.Ginger.CoreNET.Execution.eRunStatus.TryParse(RunSetReport.RunSetExecutionStatus, out App.RunSetExecutionStatus);//saving the status for determin Ginger exit code
-                    WorkSpace.Instance.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
+                    WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus = RunSetReport.RunSetExecutionStatus;
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
                 {

@@ -32,13 +32,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             try
             {
-                if (!Directory.Exists(WorkSpace.EmailReportTempFolder))
+                if (!Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
                 {
-                    System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
+                    System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
                 else
                 {
-                    CleanDirectory(WorkSpace.EmailReportTempFolder);
+                    CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)

@@ -240,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
             runSetReport.MachineName = Environment.MachineName.ToString();
             runSetReport.ExecutedbyUser = Environment.UserName.ToString();
-            runSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
+            runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
 
     }

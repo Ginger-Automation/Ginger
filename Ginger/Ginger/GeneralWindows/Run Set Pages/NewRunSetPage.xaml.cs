@@ -40,6 +40,7 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using LiteDB;
 using System;
