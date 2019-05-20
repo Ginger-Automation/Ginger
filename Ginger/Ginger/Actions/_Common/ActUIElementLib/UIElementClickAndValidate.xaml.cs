@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -93,7 +94,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 return;
             }
-            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboItem)xValidationElementLocateByComboBox.ComboBox.SelectedItem).Value;
+            eLocateBy SelectedLocType = (eLocateBy)((ComboItem)xValidationElementLocateByComboBox.ComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             if (SelectedLocType != eLocateBy.POMElement)

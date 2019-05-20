@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
 using GingerCore.Helpers;
 using System.Diagnostics;
 using System.Windows;
@@ -40,7 +42,7 @@ namespace Ginger.GeneralLib
         public void ShowAsWindow()
         {
             GenericWindow genWin = null;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, "About " + App.AppFullProductName, this);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, "About " + ApplicationInfo.ApplicationName, this);
         }
 
         private void SetApplicationInfo()
@@ -52,18 +54,16 @@ namespace Ginger.GeneralLib
             //Application info
             TBH.AddFormattedText("Application:", foregroundColor, true);
             TBH.AddLineBreak();
-            TBH.AddFormattedText(App.AppFullProductName, foregroundColor);
+            TBH.AddFormattedText(ApplicationInfo.ApplicationName, foregroundColor);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("Version: " + App.AppVersion, foregroundColor);
+            TBH.AddFormattedText("Version: " + ApplicationInfo.ApplicationVersionWithInfo, foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
 
             //Assembly Info
             TBH.AddFormattedText("Assembly Details:", foregroundColor, true);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("File Name: '" + App.ApplicationInfo.FileName + "'", foregroundColor);
-            TBH.AddLineBreak();
-            TBH.AddFormattedText("Build Time: " + App.AppBuildTime, foregroundColor);
+            TBH.AddFormattedText("Build Time: " + ApplicationInfo.ApplicationBuildTime, foregroundColor);
         }
 
         private void SetCreditInfo()

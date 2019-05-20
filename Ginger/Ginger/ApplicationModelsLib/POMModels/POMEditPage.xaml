@@ -14,13 +14,13 @@
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="POMEditPage">
 
-    <ScrollViewer Grid.Row="0" Margin="0,0,0,5">
-        <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="235"/>
-                <RowDefinition Name="SecondRow" Height="100*"/>
-            </Grid.RowDefinitions>
+    <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="235"/>
+            <RowDefinition Name="SecondRow" Height="100*"/>
+        </Grid.RowDefinitions>
 
+        <ScrollViewer Grid.Row="0" Margin="0,0,0,5">
             <StackPanel Orientation="Vertical">
                 <StackPanel Margin="5,0,5,0">
                     <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
@@ -69,53 +69,53 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
+        </ScrollViewer>
 
-            <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
 
-            <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
-                <TabControl.Resources>
-                    <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                        <Setter Property="Height" Value="25"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabControl.Resources>
+        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Height" Value="25"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
 
-                <TabItem >
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <UserControls:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
-                            <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+            <TabItem >
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <UserControls:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
+                        <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical" >
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                            <UserControls:ucButton x:Name="xTakeScreenShotLoadButton"  ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                         </StackPanel>
-                    </TabItem.Header>
-                    <ScrollViewer>
-                        <StackPanel Orientation="Vertical" >
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                                <UserControls:ucButton x:Name="xTakeScreenShotLoadButton"  ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                            </StackPanel>
-                            <Frame x:Name="xScreenShotFrame"></Frame>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem>
+                        <Frame x:Name="xScreenShotFrame"></Frame>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-                <TabItem>
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                            <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
-                        </StackPanel>
-                    </TabItem.Header>
-                    <Frame x:Name="xUIElementsFrame"></Frame>
-                </TabItem>
-            </TabControl>
-        </Grid>
-    </ScrollViewer>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                        <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame x:Name="xUIElementsFrame"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Page>

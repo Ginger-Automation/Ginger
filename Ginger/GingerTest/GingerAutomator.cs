@@ -17,6 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.ReporterLib;
+using Ginger.Repository;
+using GingerWPF.WorkSpaceLib;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -80,7 +83,6 @@ namespace GingerTest
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
-
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
 
                 // we need sample class - Dummy
@@ -90,16 +92,12 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;
+                WorkSpace.Init(new WorkSpaceEventHandler());
+                WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+                WorkSpace.Instance.RunningFromUnitTest = true;                
+                
                 app.StartGingerUI();
                 
-                //Ginger. WorkSpace.Instance.UserProfile.AutoLoadLastSolution = false;                
-
-                while (!app.IsReady)
-                {
-                    Thread.Sleep(100);
-                }
-
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
                 //Ginger.App.MainWindow.Closed += (sender1, e1) => 
@@ -239,7 +237,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.SetSolution(folder);                
+                WorkSpace.Instance.OpenSolution(folder);                
             });
         }
 
@@ -248,8 +246,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.CloseSolution();
-
+                WorkSpace.Instance.CloseSolution();
             });
 
         }

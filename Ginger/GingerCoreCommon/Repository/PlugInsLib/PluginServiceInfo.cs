@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -34,12 +34,18 @@ namespace Amdocs.Ginger.Common
         [JsonProperty]
         public bool IsSession { get; set; }
 
+        [JsonProperty]
+        public List<string> Interfaces { get; set; } = new List<string>();
+
 
         readonly List<PluginServiceActionInfo> mActions = new List<PluginServiceActionInfo>();
 
         [JsonProperty]
         public List<PluginServiceActionInfo> Actions { get { return mActions; } }
 
-        
+        [JsonProperty]
+        public List<PluginServiceConfigInfo> Configs { get; set; } = new List<PluginServiceConfigInfo>();
+
+
     }
 }

@@ -23,6 +23,7 @@ using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -487,7 +488,7 @@ namespace Ginger.Actions.WebServices
             FormDataView.GridColsView = new ObservableList<GridColView>();
 
             FormDataView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Key", WidthWeight = 100 });
-            List<GingerCore.General.ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(WebAPIKeyBodyValues.eValueType));
+            List<ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(WebAPIKeyBodyValues.eValueType));
             FormDataView.GridColsView.Add(new GridColView() { Field = WebAPIKeyBodyValues.Fields.ValueType, Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
             FormDataView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Value/File Path", WidthWeight = 100 });
             FormDataView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.controlGrid.Resources["VEGridValueExpressionButton"] });

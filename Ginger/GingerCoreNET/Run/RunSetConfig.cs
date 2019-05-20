@@ -41,7 +41,21 @@ namespace Ginger.Run
                 }
             }
         }
-        
+
+        private bool mIsRunning;
+        public bool IsRunning
+        {
+            get { return mIsRunning; }
+            set
+            {
+                if (mIsRunning != value)
+                {
+                    mIsRunning = value;
+                    OnPropertyChanged(nameof(IsRunning));
+                }
+            }
+        }
+
 
         private string mDescription;
         [IsSerializedForLocalRepository]
@@ -151,6 +165,20 @@ namespace Ginger.Run
             {
                 return nameof(this.Name);
             }
+        }
+
+        public void UpdateRunnersBusinessFlowRunsList()
+        {
+            foreach (GingerRunner GR in GingerRunners)
+            {
+                GR.UpdateBusinessFlowsRunList();
+            }
+        }
+
+        public override void UpdateBeforeSave()
+        {
+            UpdateRunnersBusinessFlowRunsList();
+            base.UpdateBeforeSave();
         }
     }
 }

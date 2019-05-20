@@ -85,11 +85,49 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        private ObservableList<ElementInfo> mUnMappedElements;
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
+        public ObservableList<ElementInfo> UnMappedUIElements
+        {
+            get
+            {
+                if (mUnMappedElements == null)
+                {
+                    mUnMappedElements = new ObservableList<ElementInfo>();
+                }
+                if (mUnMappedElements.LazyLoad)
+                {
+                    mUnMappedElements.GetItemsInfo();
+                }
+                return mUnMappedElements;
+            }
+            set
+            {
+                mUnMappedElements = value;
+            }
+        }
 
+        private ObservableList<ElementInfo> mMappedElements;
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
+        public ObservableList<ElementInfo> MappedUIElements
+        {
+            get
+            {
+                if (mMappedElements == null)
+                {
+                    mMappedElements = new ObservableList<ElementInfo>();
+                }
+                if (mMappedElements.LazyLoad)
+                {
+                    mMappedElements.GetItemsInfo();
+                }
+                return mMappedElements;
+            }
+            set
+            {
+                mMappedElements = value;
+            }
+        }
 
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {

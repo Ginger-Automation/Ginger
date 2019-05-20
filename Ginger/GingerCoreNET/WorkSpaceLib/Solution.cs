@@ -412,7 +412,7 @@ namespace Ginger.SolutionGeneral
             //add Solution.xml
             fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
 
-            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
+            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
                     // Get each main folder sub folder all levels
@@ -430,8 +430,8 @@ namespace Ginger.SolutionGeneral
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {            
-
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
+            //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {               
                     CB.Add(file);                

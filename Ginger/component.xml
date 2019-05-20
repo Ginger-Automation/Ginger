@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ComponentInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <AssemblyinfoPath>Ginger\Properties\AssemblyInfo.cs</AssemblyinfoPath>
+  <AssemblyinfoPath>GingerCoreCommon/GingerCoreCommon.csproj</AssemblyinfoPath>
   <InnoSetupScriptPath>GingerInstallerScript.iss</InnoSetupScriptPath>
   <GetLatestCommandPath> </GetLatestCommandPath>
   <CheckinCommandPath></CheckinCommandPath>

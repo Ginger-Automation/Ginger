@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
-using GingerCore.Actions;
-using GingerCore.Platforms;
-using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.UIElement;
-using Ginger.Actions._Common.ActUIElementLib;
-using GingerCore.Platforms.PlatformsInfo;
-using System.Collections.Generic;
-using System;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Ginger.Actions._Common.ActUIElementLib;
+using GingerCore.Actions;
+using GingerCore.GeneralLib;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -155,7 +155,7 @@ namespace Ginger.Actions
                 return;
             }
 
-            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
+            eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:
