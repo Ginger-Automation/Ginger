@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     public abstract class ExecutionLogger 
     {
         static JsonSerializer mJsonSerializer;
-        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
