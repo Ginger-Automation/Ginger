@@ -28,6 +28,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Plugin.Core.PlugInsLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -48,13 +49,14 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        PluginPackageInfo PluginPackageInfo
+        public PluginPackageInfo PluginPackageInfo
         {
             get
             {
-                if (mPluginPackageInfo == null)
+                if (mPluginPackageInfo == null|| mPluginPackageInfo.Id==null)
                 {
-                    mPluginPackageInfo = new PluginPackageInfo();
+
+                    LoadInfoFromJSON();
                 }
                 return mPluginPackageInfo; 
             }
@@ -245,6 +247,10 @@ namespace Amdocs.Ginger.Repository
                                 {
                                     foreach (Type serviceInterface in interfaces)
                                     {
+
+                                        /// !!!!!!!!!!!!! see new style and remove !!!!!!!!!!!!!!!!
+                                        // Not sure if we need to list all method if they come from interface !!!!!!!!!!!!!! need to list only the interface
+
                                         //check if marked with [GingerInterface] 
                                         GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(serviceInterface, typeof(GingerInterfaceAttribute), false);
                                         
@@ -289,13 +295,60 @@ namespace Amdocs.Ginger.Repository
                             }
                             pluginServiceInfo.Actions.Add(action);
                         }
+
+                        // Get all interfaces which are marked with attr 'GingerInterface'
+                        foreach (Type PluginInterface in interfaces)
+                        {
+                            // decide if we need Feature for service and/or Interfaces seperate
+                            // ServiceFeatureAttribute gingerInterfaceAttr = (ServiceFeatureAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(ServiceFeatureAttribute), true);
+                            GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(GingerInterfaceAttribute), true);
+
+                            if (gingerInterfaceAttr!=null)
+                            {
+                                pluginServiceInfo.Interfaces.Add(gingerInterfaceAttr.Id);
+                            }
+                        }
+
+
+                        MemberInfo[] members = type.GetMembers();
+                        GingerServiceConfigurationAttribute token = null;
+
+                        foreach (MemberInfo mi in members)
+                        {
+                            if( Attribute.GetCustomAttribute(mi, typeof(GingerServiceConfigurationAttribute), false) is GingerServiceConfigurationAttribute mconfig)
+                            {
+                                PluginServiceConfigInfo Config =new  PluginServiceConfigInfo();
+                                Config.Name = mconfig.Name;
+                                Config.Description = mconfig.Description;
+                                Config.Type = mconfig.Type.Name;
+                                Config.DefaultValue = mconfig.DefaultValue?.ToString();
+                               
+                                if (mconfig.OptionalValues!=null)
+                                {
+                                    foreach (var val in mconfig.OptionalValues)
+                                    {
+                                        Config.OptionalValues.Add(val.ToString());
+                                    }
+
+                                }
+                                pluginServiceInfo.Configs.Add(Config);
+                            }
+
+                          
+                        }
+
+
                         mServices.Add(pluginServiceInfo);
+
                     }                    
                 }
             }            
         }
 
-        
+        public PluginServiceInfo GetService(string serviceId)
+        {
+            return (from x in Services where x.ServiceId == serviceId select x).SingleOrDefault();
+        }
 
         private void LoadGingerPluginsDLL()
         {

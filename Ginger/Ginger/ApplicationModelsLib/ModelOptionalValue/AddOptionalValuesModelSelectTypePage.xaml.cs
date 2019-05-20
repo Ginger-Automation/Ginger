@@ -17,31 +17,24 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.ValidationRules;
 using Ginger.UserControls;
-using GingerWPF.BindingLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using static Ginger.ApplicationModelsLib.ModelOptionalValue.AddModelOptionalValuesWizard;
-using System.Collections.Specialized;
-using System.Data;
-using GingerCore;
-using System.Linq;
 using static GingerCore.Environments.Database;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common.Enums;
-using static Ginger.ExtensionMethods;
-using System.Diagnostics;
-using System.Reflection;
-using Amdocs.Ginger.ValidationRules;
-using System.IO;
-using System.Data.SqlClient;
-using System.Text.RegularExpressions;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -63,10 +56,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             switch (mOptionalValuesTargetType)
             {
                 case eOptionalValuesTargetType.ModelLocalParams:
-                    ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), null);
+                    GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), null);
                     break;
                 case eOptionalValuesTargetType.GlobalParams:
-                    ControlsBinding.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
+                    GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
                     break;
             }
             

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger;
 using Ginger.BusinessFlowLib;
 using Ginger.Run;
@@ -38,29 +39,32 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class NewAutomatePage : Page
     {
         BusinessFlow mBusinessFlow;
-        GingerRunner mGingerRunner;
-        public NewAutomatePage()
+        GingerRunner mRunner;
+        Context mContext = new Context();
+
+        public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
 
-            mGingerRunner = App.AutomateTabGingerRunner;
-            // Temp - this page need to get BF as param
-            BusinessFlow BusinessFlow = App.BusinessFlow;
-            mBusinessFlow = BusinessFlow;
+            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mContext.Runner = mRunner;
+            mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
+
             //Binding
-            BusinessFlowNameLabel.BindControl(BusinessFlow, nameof(BusinessFlow.Name));
+            BusinessFlowNameLabel.BindControl(mBusinessFlow, nameof(BusinessFlow.Name));
             // TODO: break it down to each folder and show parts with hyperlink
-            FlowPathLabel.Content = BusinessFlow.ContainingFolder;
+            FlowPathLabel.Content = mBusinessFlow.ContainingFolder;
             EnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
             EnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
 
-            if (BusinessFlow.CurrentActivity == null && BusinessFlow.Activities.Count > 0)
+            if (mBusinessFlow.CurrentActivity == null && mBusinessFlow.Activities.Count > 0)
             {
-                BusinessFlow.CurrentActivity = BusinessFlow.Activities[0];
+                mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
             }
 
-            FlowDiagramFrmae.Content = new BusinessFlowDiagramPage(BusinessFlow);
-            ActivitiesList.ItemsSource = BusinessFlow.Activities;
+            FlowDiagramFrmae.Content = new BusinessFlowDiagramPage(mBusinessFlow);
+            ActivitiesList.ItemsSource = mBusinessFlow.Activities;
 
             //TODO: Move these lines to GR to be one function call
             //WorkSpace.Instance.GingerRunner.BusinessFlows.Clear();
@@ -69,19 +73,13 @@ namespace GingerWPF.BusinessFlowsLib
 
             //WorkSpace.Instance.GingerRunner.CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
             //WorkSpace.Instance.GingerRunner.GingerRunnerEvent += GingerRunner_GingerRunnerEvent;
+            
 
-
-            App.PropertyChanged += App_PropertyChanged;
-
-            CurrentActivityFrame.Content = new ActivityPage((Activity)BusinessFlow.Activities[0]);  // TODO: use binding? or keep each activity page
+            CurrentActivityFrame.Content = new ActivityPage((Activity)mBusinessFlow.Activities[0], mContext);  // TODO: use binding? or keep each activity page
 
             InitGingerRunnerControls();
         }
 
-        private void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
 
         static GingerRunnerControlsPage mGingerRunnerControlsPage;
         private void InitGingerRunnerControls()
@@ -89,7 +87,7 @@ namespace GingerWPF.BusinessFlowsLib
             // TODO: if this page is going to be used as standalone pass the controls page as input
             if (mGingerRunnerControlsPage == null)
             {
-                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mGingerRunner);
+                mGingerRunnerControlsPage = new GingerRunnerControlsPage(mRunner);
             }
             GingerRunnerControlsFrame.Content = mGingerRunnerControlsPage;
         }
@@ -155,13 +153,13 @@ namespace GingerWPF.BusinessFlowsLib
         {
             Activity SelectedActivity = (Activity)ActivitiesList.SelectedItem;
             
-            mGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
-            App.AutomateTabGingerRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
+            mRunner.CurrentBusinessFlow.CurrentActivity = SelectedActivity;
             if (SelectedActivity.Acts.CurrentItem == null && SelectedActivity.Acts.Count > 0)
             {
                 SelectedActivity.Acts.CurrentItem = SelectedActivity.Acts[0];
             }
-            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity);
+            CurrentActivityFrame.Content = new ActivityPage(SelectedActivity, mContext);
         }
 
         private void BusinessFlowsHyperlink_Click(object sender, RoutedEventArgs e)

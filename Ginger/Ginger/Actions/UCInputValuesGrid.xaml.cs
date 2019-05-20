@@ -35,6 +35,8 @@ namespace Ginger.Actions
             set;
         }
 
+        Context mContext = null;
+
         public UCInputValuesGrid()
         {
             InitializeComponent();
@@ -48,7 +50,7 @@ namespace Ginger.Actions
         /// <param name="paramTitle">Sets the Parameter Title</param>
         /// <param name="valueTitle">Sets the Value Title</param>
         /// <param name="valueForDriverTitle">Sets the ValueForDriver(Calculated Value) Title</param>
-        public void Init(ObservableList<ActInputValue> dataSource, string gridTitle = "Input Values", string paramTitle = "Parameter Name", string valueTitle = "Parameter Value", string valueForDriverTitle = "Calculated Parameter Value")
+        public void Init(Context context, ObservableList<ActInputValue> dataSource, string gridTitle = "Input Values", string paramTitle = "Parameter Name", string valueTitle = "Parameter Value", string valueForDriverTitle = "Calculated Parameter Value")
         {
             DataSource = dataSource;
             SetVEGrid(gridTitle, paramTitle, valueTitle,  valueForDriverTitle);
@@ -77,7 +79,7 @@ namespace Ginger.Actions
          private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)VEGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mContext);
             VEEW.ShowAsWindow();
         }
 

@@ -35,55 +35,53 @@ namespace Ginger.Run
         public AutoRunWindow()
         {
             InitializeComponent();
-
-            this.Show();
-
-            NewRunSetPage runSetPage = new NewRunSetPage(App.RunsetExecutor.RunSetConfig);
+            NewRunSetPage runSetPage = new NewRunSetPage(WorkSpace.Instance.RunsetExecutor.RunSetConfig);
             this.Content = runSetPage;
         }
 
-        private bool LoadExecutionConfigurations(string runSetName, string environmentName)
-        {
-            ObservableList<RunSetConfig> runSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            RunSetConfig runSetConfig = runSets.Where(x=>x.Name.ToLower().Trim() == runSetName.ToLower().Trim()).FirstOrDefault();
-            if (runSetConfig == null)            
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured {0} with the name '{1}' was not found in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
-                return false;
-            }
 
-            ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == environmentName.ToLower().Trim()).FirstOrDefault();
-            if (env == null)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured Environment with the name '{0}' was not found in the Solution", environmentName));
-                return false;
-            }
+        // zero ref remove
+        //private bool LoadExecutionConfigurations(string runSetName, string environmentName)
+        //{
+        //    ObservableList<RunSetConfig> runSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+        //    RunSetConfig runSetConfig = runSets.Where(x=>x.Name.ToLower().Trim() == runSetName.ToLower().Trim()).FirstOrDefault();
+        //    if (runSetConfig == null)            
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured {0} with the name '{1}' was not found in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
+        //        return false;
+        //    }
+
+        //    ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == environmentName.ToLower().Trim()).FirstOrDefault();
+        //    if (env == null)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured Environment with the name '{0}' was not found in the Solution", environmentName));
+        //        return false;
+        //    }
             
-            try
-            {
-                App.RunsetExecutor.RunSetConfig = runSetConfig;
+        //    try
+        //    {
+        //        WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
 
-                //TODO: create initialize run inside the RunSet executer
-                App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                App.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to setup the RunsetExecutor for the {0} '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                return false;
-            }            
+        //        //TODO: create initialize run inside the RunSet executer
+        //        WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = env;
+        //        WorkSpace.Instance.RunsetExecutor.SetRunnersEnv(env, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());                
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to setup the RunsetExecutor for the {0} '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), runSetName));
+        //        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+        //        return false;
+        //    }            
 
-            return true;
-        }
+        //    return true;
+        //}
 
         protected override void OnClosed(EventArgs e)
         {
-            App.RunsetExecutor.StopRun();
+            WorkSpace.Instance.RunsetExecutor.StopRun();
 
-            base.OnClosed(e);            
-            App.MainWindow.Close();
-            Environment.Exit(0);
+            base.OnClosed(e);                        
+            Environment.Exit(0); //?????
         }
     }
 }

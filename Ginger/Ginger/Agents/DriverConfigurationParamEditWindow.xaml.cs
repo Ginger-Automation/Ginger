@@ -29,7 +29,7 @@ namespace Ginger.Agents
         public DriverConfigurationParamEditWindow(DriverConfigParam DCP)
         {            
             InitializeComponent();
-            ParamValue.Init(DCP, DriverConfigParam.Fields.Value);
+            ParamValue.Init(null, DCP, DriverConfigParam.Fields.Value);
             ParamNameLabel.Content = DCP.Parameter;
         }
 

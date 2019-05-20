@@ -16,7 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Actions;
+using Ginger.BusinessFlowWindows;
+using Ginger.Run;
+using Ginger.SolutionGeneral;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.DataSource;
+using GingerCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,18 +35,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Ginger.SolutionGeneral;
-using Ginger.Run;
-using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Helpers;
-using GingerCore.DataSource;
-using Ginger.Actions;
-using Ginger.BusinessFlowWindows;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Variables;
-using static Ginger.AnalyzerLib.AnalyzerItemBase;
 
 namespace Ginger.AnalyzerLib
 {
@@ -51,6 +49,8 @@ namespace Ginger.AnalyzerLib
             BusinessFlow,
             RunSetConfig
         }
+
+        AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
 
         private AnalyzedObject mAnalyzedObject;
 
@@ -87,6 +87,32 @@ namespace Ginger.AnalyzerLib
             SetAnalyzerItemsGridView();
 
             AnalyzerItemsGrid.DataSourceList = mIssues;
+
+            mIssues.CollectionChanged += MIssues_CollectionChanged;
+        }
+        
+        private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+        {
+            IssuesCounterLabel.Content = "Total Issues: ";
+            IssuesCountLabel.Content = mIssues.Count();
+            if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
+            {
+                CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
+                CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
+                CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
+                CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
+            }
+            if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
+            {
+                CanAutoFixLable.Content = "Can be Auto Fixed: ";
+                CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
+                CanAutoFixLable.Visibility = Visibility.Visible;
+            }
+
+        });
+
         }
 
         public void Init(Solution Solution)
@@ -117,8 +143,7 @@ namespace Ginger.AnalyzerLib
             if (mAnalyzeDoneOnce == false)
             {
                 await Analyze();
-            }
-             
+            }             
         }
 
         private async void RerunButton_Click(object sender, RoutedEventArgs e)
@@ -129,7 +154,6 @@ namespace Ginger.AnalyzerLib
                 return;
             }
 
-            mIssues.Clear();
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
@@ -143,42 +167,50 @@ namespace Ginger.AnalyzerLib
         }
 
         private async Task Analyze()
-        {         
-                // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
-                BusyInProcess = true;
-                mAnalyzerCompleted = false;
-                mAnalyzeDoneOnce = true;
-                try
+        {
+            // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
+            mIssues.Clear();
+            BusyInProcess = true;
+            mAnalyzerCompleted = false;
+            mAnalyzeDoneOnce = true;
+            
+            try
+            {
+                if (mAnalyzeWithUI)
                 {
-                    if (mAnalyzeWithUI)
+                    SetStatus("Analyzing Started");
+                }
+
+                await Task.Factory.StartNew(() =>
+                {
+                    switch (mAnalyzedObject)
                     {
-                        SetStatus("Analyzing Started");
+                        case AnalyzedObject.Solution:
+                            SetStatus("Analyzing Solution...");
+                            mAnalyzerUtils.RunSolutionAnalyzer(WorkSpace.Instance.Solution, mIssues);
+                            break;
+
+                        case AnalyzedObject.BusinessFlow:
+                            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name + "...");
+                            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
+                            break;
+
+                        case AnalyzedObject.RunSetConfig:
+                            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + "...");
+                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mIssues);
+                            break;
                     }
-                    await Task.Run(() =>
-                    {
-                        switch (mAnalyzedObject)
-                        {
-                            case AnalyzedObject.Solution:
-                                RunSolutionAnalyzer();
-                                break;
-                            case AnalyzedObject.BusinessFlow:
-                                RunBusinessFlowAnalyzer(businessFlow, true);
-
-                                break;
-                            case AnalyzedObject.RunSetConfig:
-                                RunRunSetConfigAnalyzer(mRunSetConfig);
-                                break;
-                        }
-                    });
+                });
+            }
 
 
-                }
-                finally
-                {
-                    BusyInProcess = false;
-                    mAnalyzerCompleted = true;
-                }
-
+            finally
+            {
+                BusyInProcess = false;
+                mAnalyzerCompleted = true;
+                SetAnalayzeProceesAsCompleted();
+            }
+            
         }
 
         private void SetAnalayzeProceesAsCompleted()
@@ -206,14 +238,12 @@ namespace Ginger.AnalyzerLib
                 {
 
                     //sort- placing Critical & High on top
-
                     Dispatcher.Invoke(() =>
                     {
                         ObservableList<AnalyzerItemBase> SortedList = new ObservableList<AnalyzerItemBase>();
 
                         foreach (AnalyzerItemBase issue in mIssues.OrderBy(nameof(AnalyzerItemBase.Severity)))
-                            SortedList.Add(issue);
-                        mIssues.ClearAll();
+                            SortedList.Add(issue);                        
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
                         AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
@@ -222,220 +252,228 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while sorting the Analyzer issues", ex);
             }
         }
 
-        private void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig)
-        {
+        //private void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig)
+        //{
             
-                List<AnalyzerItemBase> issues = RunSetConfigAnalyzer.Analyze(mRunSetConfig);
-                AddIssues(issues);
-                //TODO: check agents is not dup in different GR
+        //        List<AnalyzerItemBase> issues = RunSetConfigAnalyzer.Analyze(mRunSetConfig);
+        //        AddIssues(issues);
+        //        //TODO: check agents is not dup in different GR
 
 
-                // Check all GRs BFS
-                foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
-                {
-                    issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.UserProfile.Solution.ApplicationPlatforms);
-                    AddIssues(issues);
+        //        // Check all GRs BFS
+        //        foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+        //        {
+        //            issues = AnalyzeGingerRunner.Analyze(GR,  WorkSpace.Instance.Solution.ApplicationPlatforms);
+        //            AddIssues(issues);
 
-                    //Code to analyze Runner Unique Businessflow with Source BF
-                    List<Guid> checkedGuidList = new List<Guid>();
-                    foreach (BusinessFlow BF in GR.BusinessFlows)
-                    {
-                        if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
-                        {
-                            checkedGuidList.Add(BF.Guid);
-                            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
-                            if (actualBf != null)
-                                RunBusinessFlowAnalyzer(actualBf, false);
-                        }
-                    }
-                    //Code to analyze Runner BF i.e. BFFlowControls
-                    foreach (BusinessFlow BF in GR.BusinessFlows)
-                    {
-                        List<AnalyzerItemBase> fcIssues = AnalyzeRunnerBusinessFlow.Analyze(GR, BF);
-                        AddIssues(fcIssues);
-                    }
-                }
+        //            //Code to analyze Runner Unique Businessflow with Source BF
+        //            List<Guid> checkedGuidList = new List<Guid>();
+        //            foreach (BusinessFlow BF in GR.BusinessFlows)
+        //            {
+        //                if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
+        //                {
+        //                    checkedGuidList.Add(BF.Guid);
+        //                    BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+        //                    if (actualBf != null)
+        //                        RunBusinessFlowAnalyzer(actualBf, false);
+        //                }
+        //            }
+        //            //Code to analyze Runner BF i.e. BFFlowControls
+        //            foreach (BusinessFlow BF in GR.BusinessFlows)
+        //            {
+        //                List<AnalyzerItemBase> fcIssues = AnalyzeRunnerBusinessFlow.Analyze(GR, BF);
+        //                AddIssues(fcIssues);
+        //            }
+        //        }
 
-                SetAnalayzeProceesAsCompleted();
+        //        SetAnalayzeProceesAsCompleted();
             
-        }
+        //}
 
-        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion = true)
-        {
-            List<string> usedVariablesInBF = new List<string>();
-            List<string> usedVariablesInActivity = new List<string>();
+        //private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion = true)
+        //{
+        //    List<string> usedVariablesInBF = new List<string>();
+        //    List<string> usedVariablesInActivity = new List<string>();
 
-            DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(); 
-            SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
-            List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
-            AddIssues(issues);
-            Parallel.ForEach(businessFlow.Activities, activity =>
-            {
-                issues = AnalyzeActivity.Analyze(businessFlow, activity);
-                AddIssues(issues);
-                Parallel.ForEach(activity.Acts, iaction =>
-                {
-                    Act action = (Act)iaction;
-                    List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
-                    AddIssues(actionissues);
-                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                    usedVariablesInActivity.AddRange(tempList);
-                });
+        //    DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+        //    SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
+        //    List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
+        //    AddIssues(issues);
+           
+        //    // Removing Parallel.Foreach as its freezing on main thread when running from CLI
 
-                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-                usedVariablesInActivity.AddRange(activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity);
-                usedVariablesInBF.AddRange(usedVariablesInActivity);
-                usedVariablesInActivity.Clear();
-            });
+        //        //Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+        //        // {
+        //        foreach (Activity activity in businessFlow.Activities)
+        //        {
+        //            issues = AnalyzeActivity.Analyze(businessFlow, activity);
+        //            AddIssues(issues);
 
-            ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
-            if (markCompletion)
-            {
-                SetAnalayzeProceesAsCompleted();
-            }
+        //            //Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+        //            //{
+        //            foreach (IAct iaction in activity.Acts)
+        //            {
+        //                Act action = (Act)iaction;
+        //                List<AnalyzerItemBase> actionissues = AnalyzeAction.Analyze(businessFlow, activity, action, DSList);
+        //                AddIssues(actionissues);
+        //                List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+        //                usedVariablesInActivity.AddRange(tempList);
+        //            };
 
-            return usedVariablesInBF;
+        //            List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+        //            usedVariablesInActivity.AddRange(activityVarList);
+        //            ReportUnusedVariables(activity, usedVariablesInActivity);
+        //            usedVariablesInBF.AddRange(usedVariablesInActivity);
+        //            usedVariablesInActivity.Clear();
+        //        };
+        //     ReportUnusedVariables(businessFlow, usedVariablesInBF);
 
-        }
+        //     if (markCompletion)
+        //     {
+        //         SetAnalayzeProceesAsCompleted();
+        //     }
+         
+        //    return usedVariablesInBF;
 
-        public void ReportUnusedVariables(object obj, List<string> usedVariables)
-        {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
-            Solution solution = null;
-            BusinessFlow businessFlow = null;
-            Activity activity = null;
-            string variableSourceType = "";
-            string variableSourceName = "";
-            ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
-            if (typeof(BusinessFlow).Equals(obj.GetType()))
-            {
-                businessFlow = (BusinessFlow)obj;
-                if (businessFlow.Variables.Count > 0)
-                {
-                    AvailableAllVariables = businessFlow.Variables;
-                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                    variableSourceName = businessFlow.Name;                    
-                }
-            }
-            else if (typeof(Activity).Equals(obj.GetType()))
-            {
-                activity = (Activity)obj;
-                if (activity.Variables.Count > 0)
-                {
-                    AvailableAllVariables = activity.Variables;
-                    variableSourceType = GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    variableSourceName = activity.ActivityName;                    
-                }
-            }
-            else if(typeof(Solution).Equals(obj.GetType()))
-            {
-                solution = (Solution)obj;
-                AvailableAllVariables = solution.Variables;
-                variableSourceType = "Solution";
-                variableSourceName = solution.Name;                                
-            }
+        //}
 
-            foreach (VariableBase var in AvailableAllVariables)
-            {
-                if (usedVariables != null && (!usedVariables.Contains(var.Name)))
-                {                    
-                    if (obj.GetType().Equals(typeof(BusinessFlow)))
-                    {
-                        AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
-                        aa.Details = variableSourceType;                        
-                        aa.mBusinessFlow = businessFlow;
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                   
-                        aa.IssueType = eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = eSeverity.Medium;
-                        IssuesList.Add(aa);
-                    }                        
-                    else if (obj.GetType().Equals(typeof(Solution)))
-                    {
-                        AnalyzeSolution aa = new AnalyzeSolution();
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in Solution";
-                        aa.Details = variableSourceType;                       
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
-                        aa.IssueType = eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = eSeverity.Medium;
-                        IssuesList.Add(aa);
-                    }                        
-                    else
-                    {
-                        AnalyzeActivity aa = new AnalyzeActivity();                        
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
-                        aa.Details = variableSourceType;
-                        aa.mActivity = activity;
-                        //aa.mBusinessFlow = businessFlow;
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
-                        aa.IssueType = eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = eSeverity.Medium;
-                        IssuesList.Add(aa);
-                    }                    
-                }
-            }            
-            AddIssues(IssuesList);
-        }
-        private static void DeleteUnusedVariables(object sender, EventArgs e)
-        {
-            if (sender.GetType().Equals(typeof(AnalyzeActivity)))
-            {
-                Activity activity = ((AnalyzeActivity)sender).mActivity;
-                foreach (VariableBase var in activity.Variables)
-                {
-                    if (var.Name.Equals(((AnalyzeActivity)sender).ItemName))
-                    {
-                        activity.Variables.Remove(var);
-                        activity.RefreshVariablesNames();
-                        ((AnalyzeActivity)sender).Status = eStatus.Fixed;
-                        break;
-                    }
-                }
-            }
-            else if(sender.GetType().Equals(typeof(AnalyzeBusinessFlow)))
-            {
-                BusinessFlow BFlow= ((AnalyzeBusinessFlow)sender).mBusinessFlow;                                                   
-                foreach (VariableBase var in BFlow.Variables)
-                {
-                    if (var.Name.Equals(((AnalyzeBusinessFlow)sender).ItemName))
-                    {
-                        BFlow.Variables.Remove(var);
-                        ((AnalyzeBusinessFlow)sender).Status = eStatus.Fixed;
-                        break;
-                    }
-                }
-            }
-            else if (sender.GetType().Equals(typeof(AnalyzeSolution)))
-            {                 
-                foreach (VariableBase var in BusinessFlow.SolutionVariables)
-                {
-                    if (var.Name.Equals(((AnalyzeSolution)sender).ItemName))
-                    {
-                        BusinessFlow.SolutionVariables.Remove(var);
-                        ((AnalyzeSolution)sender).Status = eStatus.Fixed;
-                        break;
-                    }
-                }
-            }            
-        }
+        //public void ReportUnusedVariables(object obj, List<string> usedVariables)
+        //{
+        //    List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+        //    Solution solution = null;
+        //    BusinessFlow businessFlow = null;
+        //    Activity activity = null;
+        //    string variableSourceType = "";
+        //    string variableSourceName = "";
+        //    ObservableList<VariableBase> AvailableAllVariables = new ObservableList<VariableBase>();
+        //    if (typeof(BusinessFlow).Equals(obj.GetType()))
+        //    {
+        //        businessFlow = (BusinessFlow)obj;
+        //        if (businessFlow.Variables.Count > 0)
+        //        {
+        //            AvailableAllVariables = businessFlow.Variables;
+        //            variableSourceType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+        //            variableSourceName = businessFlow.Name;                    
+        //        }
+        //    }
+        //    else if (typeof(Activity).Equals(obj.GetType()))
+        //    {
+        //        activity = (Activity)obj;
+        //        if (activity.Variables.Count > 0)
+        //        {
+        //            AvailableAllVariables = activity.Variables;
+        //            variableSourceType = GingerDicser.GetTermResValue(eTermResKey.Activity);
+        //            variableSourceName = activity.ActivityName;                    
+        //        }
+        //    }
+        //    else if(typeof(Solution).Equals(obj.GetType()))
+        //    {
+        //        solution = (Solution)obj;
+        //        AvailableAllVariables = solution.Variables;
+        //        variableSourceType = "Solution";
+        //        variableSourceName = solution.Name;                                
+        //    }
+
+        //    foreach (VariableBase var in AvailableAllVariables)
+        //    {
+        //        if (usedVariables != null && (!usedVariables.Contains(var.Name)))
+        //        {                    
+        //            if (obj.GetType().Equals(typeof(BusinessFlow)))
+        //            {
+        //                AnalyzeBusinessFlow aa = new AnalyzeBusinessFlow();
+        //                aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+        //                aa.ItemName = var.Name;
+        //                aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
+        //                aa.Details = variableSourceType;                        
+        //                aa.mBusinessFlow = businessFlow;
+        //                aa.ItemParent = variableSourceName;
+        //                aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                   
+        //                aa.IssueType = eType.Error;
+        //                aa.FixItHandler = DeleteUnusedVariables;
+        //                aa.Severity = eSeverity.Medium;
+        //                IssuesList.Add(aa);
+        //            }                        
+        //            else if (obj.GetType().Equals(typeof(Solution)))
+        //            {
+        //                AnalyzeSolution aa = new AnalyzeSolution();
+        //                aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+        //                aa.ItemName = var.Name;
+        //                aa.Description = var + " is Unused in Solution";
+        //                aa.Details = variableSourceType;                       
+        //                aa.ItemParent = variableSourceName;
+        //                aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
+        //                aa.IssueType = eType.Error;
+        //                aa.FixItHandler = DeleteUnusedVariables;
+        //                aa.Severity = eSeverity.Medium;
+        //                IssuesList.Add(aa);
+        //            }                        
+        //            else
+        //            {
+        //                AnalyzeActivity aa = new AnalyzeActivity();                        
+        //                aa.Status = AnalyzerItemBase.eStatus.NeedFix;
+        //                aa.ItemName = var.Name;
+        //                aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
+        //                aa.Details = variableSourceType;
+        //                aa.mActivity = activity;
+        //                //aa.mBusinessFlow = businessFlow;
+        //                aa.ItemParent = variableSourceName;
+        //                aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;                  
+        //                aa.IssueType = eType.Error;
+        //                aa.FixItHandler = DeleteUnusedVariables;
+        //                aa.Severity = eSeverity.Medium;
+        //                IssuesList.Add(aa);
+        //            }                    
+        //        }
+        //    }            
+        //    AddIssues(IssuesList);
+        //}
+        //private static void DeleteUnusedVariables(object sender, EventArgs e)
+        //{
+        //    if (sender.GetType().Equals(typeof(AnalyzeActivity)))
+        //    {
+        //        Activity activity = ((AnalyzeActivity)sender).mActivity;
+        //        foreach (VariableBase var in activity.Variables)
+        //        {
+        //            if (var.Name.Equals(((AnalyzeActivity)sender).ItemName))
+        //            {
+        //                activity.Variables.Remove(var);
+        //                activity.RefreshVariablesNames();
+        //                ((AnalyzeActivity)sender).Status = eStatus.Fixed;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    else if(sender.GetType().Equals(typeof(AnalyzeBusinessFlow)))
+        //    {
+        //        BusinessFlow BFlow= ((AnalyzeBusinessFlow)sender).mBusinessFlow;                                                   
+        //        foreach (VariableBase var in BFlow.Variables)
+        //        {
+        //            if (var.Name.Equals(((AnalyzeBusinessFlow)sender).ItemName))
+        //            {
+        //                BFlow.Variables.Remove(var);
+        //                ((AnalyzeBusinessFlow)sender).Status = eStatus.Fixed;
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    else if (sender.GetType().Equals(typeof(AnalyzeSolution)))
+        //    {                 
+        //        foreach (VariableBase var in BusinessFlow.SolutionVariables)
+        //        {
+        //            if (var.Name.Equals(((AnalyzeSolution)sender).ItemName))
+        //            {
+        //                BusinessFlow.SolutionVariables.Remove(var);
+        //                ((AnalyzeSolution)sender).Status = eStatus.Fixed;
+        //                break;
+        //            }
+        //        }
+        //    }            
+        //}
     
         private void SetStatus(string txt)
         {
@@ -454,66 +492,64 @@ namespace Ginger.AnalyzerLib
         }
 
 
-        private void RunSolutionAnalyzer()
-        {
-            mIssues.Clear();
+        //private void RunSolutionAnalyzer()
+        //{
+        //    mIssues.Clear();
 
-            //TODO: once this analyzer is taking long time due to many checks, run it using parallel
-            //ObservableList<BusinessFlow> BFs = App.LocalRepository.GetAllBusinessFlows();
-            ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+        //    //TODO: once this analyzer is taking long time due to many checks, run it using parallel
+        //    //ObservableList<BusinessFlow> BFs = App.LocalRepository.GetAllBusinessFlows();
+        //    ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-            // Run it in another task so UI gets updates
-            Task t = Task.Factory.StartNew(() =>
-            {
+        //    // Run it in another task so UI gets updates
+        //    Task t = Task.Factory.StartNew(() =>
+        //    {
 
-                List<AnalyzerItemBase> issues = AnalyzeSolution.Analyze(mSolution);
-                List<string> usedVariablesInSolution = new List<string>();
-                AddIssues(issues);
+        //        List<AnalyzerItemBase> issues = AnalyzeSolution.Analyze(mSolution);
+        //        List<string> usedVariablesInSolution = new List<string>();
+        //        AddIssues(issues);
 
-                foreach (BusinessFlow BF in BFs)
-                {
-                    List<string> tempList=RunBusinessFlowAnalyzer(BF, false);
-                    usedVariablesInSolution.AddRange(tempList);                    
-                }                
-                ReportUnusedVariables(mSolution, usedVariablesInSolution);
+        //        foreach (BusinessFlow BF in BFs)
+        //        {
+        //            List<string> tempList=RunBusinessFlowAnalyzer(BF, false);
+        //            usedVariablesInSolution.AddRange(tempList);                    
+        //        }                
+        //        ReportUnusedVariables(mSolution, usedVariablesInSolution);
 
-                SetAnalayzeProceesAsCompleted();
-            });            
-        }
+        //        SetAnalayzeProceesAsCompleted();
+        //    });            
+        //}
 
 
-        void AddIssues(List<AnalyzerItemBase> issues)
-        {
+        //void AddIssues(List<AnalyzerItemBase> issues)
+        //{
 
-            StatusLabel.Dispatcher.Invoke(
-                System.Windows.Threading.DispatcherPriority.Normal,
-                    new Action(
-                        delegate ()
-                        {
-                        foreach (AnalyzerItemBase AIB in issues)
-                            {
-                                mIssues.Add(AIB);
-                                IssuesCounterLabel.Content = "Total Issues: ";
-                                IssuesCountLabel.Content = mIssues.Count();
-                                if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
-                                {
-                                    CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
-                                    CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
-                                    CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
-                                    CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
-                                }
-                                if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
-                                {
-                                    CanAutoFixLable.Content = "Can be Auto Fixed: ";
-                                    CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
-                                    CanAutoFixLable.Visibility = Visibility.Visible;
-                                }
-
-                            }
-
-                        }
-            ));
-        }
+        //    StatusLabel.Dispatcher.Invoke(
+        //        System.Windows.Threading.DispatcherPriority.Normal,
+        //            new Action(
+        //                delegate ()
+        //                {
+        //                    foreach (AnalyzerItemBase AIB in issues)
+        //                    {
+        //                        mIssues.Add(AIB);
+        //                        IssuesCounterLabel.Content = "Total Issues: ";
+        //                        IssuesCountLabel.Content = mIssues.Count();
+        //                        if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
+        //                        {
+        //                            CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
+        //                            CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
+        //                            CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
+        //                            CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
+        //                        }
+        //                        if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
+        //                        {
+        //                            CanAutoFixLable.Content = "Can be Auto Fixed: ";
+        //                            CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
+        //                            CanAutoFixLable.Visibility = Visibility.Visible;
+        //                        }
+        //                    }
+        //                }
+        //    ));
+        //}
 
         private void SetAnalyzerItemsGridView()
         {
@@ -521,22 +557,16 @@ namespace Ginger.AnalyzerLib
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-
-            //TODO: add image
-            // view.GridColsView.Add(new GridColView() { Field = "Image", Header = " ", BindImageCol = "Image", WidthWeight = 2.5, MaxWidth = 20 });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Selected, Header = "Selected", WidthWeight = 2, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.SeverityIcon, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Selected, Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemClass, Header = "Item Type", WidthWeight = 3 ,AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemName, Header = "Item Name", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.ItemParent, Header= "Item Parent", WidthWeight = 10, AllowSorting = true });                       
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Description, Header = "Issue", WidthWeight = 15, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Severity, Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Details, Header = "Details", WidthWeight = 10 });
-            //view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Impact, Header = "Impact", WidthWeight = 5 });
-            // view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.HowToFix, Header = "How To Fix", WidthWeight = 10, AllowSorting=true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.CanAutoFix, Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = AnalyzerItemBase.Fields.Status, Header = "Status", WidthWeight = 3, AllowSorting = true });
+            
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.SeverityIcon), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Selected), Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3 ,AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header= "Item Parent", WidthWeight = 10, AllowSorting = true });                       
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Description), Header = "Issue", WidthWeight = 15, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Severity), Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.CanAutoFix), Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Status), Header = "Status", WidthWeight = 3, AllowSorting = true });
 
             AnalyzerItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Select/UnSelect all issues which can be auto fixed", new RoutedEventHandler(MarkUnMark));
 
@@ -608,6 +638,8 @@ namespace Ginger.AnalyzerLib
             RerunButton.Click += new RoutedEventHandler(RerunButton_Click);
             winButtons.Add(RerunButton);
 
+            this.Height = 800;
+            this.Width = 800;
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
 
             if (mAnalyzeDoneOnce)
@@ -730,7 +762,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
-                actionIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                actionIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -742,7 +774,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;

@@ -16,25 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Activities;
-using GingerWPF.DragDropLib;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using Ginger.BusinessFlowWindows;
-using Ginger.BusinessFlowFolder;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Repository
 {
@@ -45,25 +40,19 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
         BusinessFlow mBusinessFlow;
-
         bool TreeInitDone = false;
         bool mInTreeModeView = false;
 
-        
+        Context mContext = new Context();
 
         public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder,  BusinessFlow businessFlow = null)
         {
             InitializeComponent();
 
-            mActivitiesGroupFolder = activitiesGroupFolder;
-            if (businessFlow != null)
-                mBusinessFlow = businessFlow;
-            else
-            {
-                mBusinessFlow = App.BusinessFlow;
-                App.PropertyChanged += AppPropertychanged;
-            }
-            
+            mActivitiesGroupFolder = activitiesGroupFolder;           
+            mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
+
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
         }
@@ -80,15 +69,10 @@ namespace Ginger.Repository
             }                
         }
 
-        private void AppPropertychanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            if (e.PropertyName == "BusinessFlow")
-            {
-                if (App.BusinessFlow != mBusinessFlow)
-                {
-                    mBusinessFlow = App.BusinessFlow;
-                }
-            }
+            mBusinessFlow = bf;
+            mContext.BusinessFlow = mBusinessFlow;
         }
 
         private void SetActivitiesRepositoryGridView()
@@ -132,7 +116,7 @@ namespace Ginger.Repository
                         mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
                         
                         int selectedActIndex = -1;
-                        ObservableList<ActivitiesGroup> actsList = App.BusinessFlow.ActivitiesGroups;
+                        ObservableList<ActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
                         if (actsList.CurrentItem != null)
                         {
                             selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
@@ -156,7 +140,7 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup,ActivitiesGroupPage.eEditMode.SharedRepository);
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
             else
@@ -192,7 +176,7 @@ namespace Ginger.Repository
             {
                 //add the Group to repository
                 // App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, mBusinessFlow);
-                SharedRepositoryOperations.AddItemToRepository(dragedItem);
+                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
                 //refresh and select the item
                 try
                 {

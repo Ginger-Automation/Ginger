@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions.Common;
 
 namespace Ginger.Actions._Common.ActUIElementLib
@@ -34,7 +35,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             mAction = Action;
 
-            ValueUCE.BindControl(mAction, ActUIElement.Fields.Value);
+            ValueUCE.BindControl(Context.GetAsContext(mAction.Context), mAction, ActUIElement.Fields.Value);
         }
     }
 }

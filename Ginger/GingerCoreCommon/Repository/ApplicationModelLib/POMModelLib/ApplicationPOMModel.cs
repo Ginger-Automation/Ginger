@@ -41,6 +41,21 @@ namespace Amdocs.Ginger.Repository
 
         private string mPageURL = string.Empty;
 
+        ePageLoadFlowType mPageLoadFlow;
+        [IsSerializedForLocalRepository]
+        public ePageLoadFlowType PageLoadFlow
+        {
+            get
+            {
+                return mPageLoadFlow;
+            }
+            set
+            {
+                mPageLoadFlow = value;
+                OnPropertyChanged(nameof(this.PageLoadFlow));
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public string PageURL //OperationName 
         {
@@ -55,11 +70,64 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        RepositoryItemKey mMappedBusinessFlow;
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementInfo> UnMappedUIElements = new ObservableList<ElementInfo>();
+        public RepositoryItemKey MappedBusinessFlow 
+        {
+            get
+            {
+                return mMappedBusinessFlow;
+            }
+            set
+            {
+                mMappedBusinessFlow = value;
+                OnPropertyChanged(nameof(this.MappedBusinessFlow));
+            }
+        }
 
+        private ObservableList<ElementInfo> mUnMappedElements;
         [IsSerializedForLocalRepository]
-        public ObservableList<ElementInfo> MappedUIElements = new ObservableList<ElementInfo>();
+        public ObservableList<ElementInfo> UnMappedUIElements
+        {
+            get
+            {
+                if (mUnMappedElements == null)
+                {
+                    mUnMappedElements = new ObservableList<ElementInfo>();
+                }
+                if (mUnMappedElements.LazyLoad)
+                {
+                    mUnMappedElements.GetItemsInfo();
+                }
+                return mUnMappedElements;
+            }
+            set
+            {
+                mUnMappedElements = value;
+            }
+        }
+
+        private ObservableList<ElementInfo> mMappedElements;
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementInfo> MappedUIElements
+        {
+            get
+            {
+                if (mMappedElements == null)
+                {
+                    mMappedElements = new ObservableList<ElementInfo>();
+                }
+                if (mMappedElements.LazyLoad)
+                {
+                    mMappedElements.GetItemsInfo();
+                }
+                return mMappedElements;
+            }
+            set
+            {
+                mMappedElements = value;
+            }
+        }
 
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {
@@ -81,6 +149,12 @@ namespace Amdocs.Ginger.Repository
         {
             Mapped,
             Unmapped
+        }
+
+        public enum ePageLoadFlowType
+        {
+            PageURL,
+            BusinessFlow
         }
 
         string mScreenShotImage;

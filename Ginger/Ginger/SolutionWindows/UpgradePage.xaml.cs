@@ -18,21 +18,20 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
-using GingerCore;
 using GingerCore.Repository;
-using GingerCore.XMLConverters;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
-    public enum SolutionUpgradePageViewMode { UpgradeSolution, UpgradeGinger, FailedUpgradeSolution }
+    
 
     /// <summary>
     /// Interaction logic for SolutionUpgradePage.xaml
@@ -65,12 +64,12 @@ namespace Ginger.SolutionWindows
             switch (mViewMode)
             {
                 case SolutionUpgradePageViewMode.UpgradeSolution:
-                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + RepositorySerializer.GetCurrentGingerVersion() + ") before continuing.";
+                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion + ") before continuing.";
 
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
                     FilesListBox.ItemsSource = mFilesToShow;
-                    App.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
                     break;
 
                 case SolutionUpgradePageViewMode.FailedUpgradeSolution:
@@ -118,14 +117,16 @@ namespace Ginger.SolutionWindows
             }
         }
 
-        private void Upgrade(object sender, RoutedEventArgs e)
+        private async void Upgrade(object sender, RoutedEventArgs e)
         {
             try
             {
                 xProcessingImage.Visibility = Visibility.Visible;
+                BackupFolderTextBox.IsReadOnly = true;
+                BrowseButton.IsEnabled = false;
+
                 GingerCore.General.DoEvents();
-                NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
-                mFailedFiles = new List<string>();
+
                 string backupFolderPath = BackupFolderTextBox.Text;
                 //make sure back directory exist if not create
                 if (!Directory.Exists(backupFolderPath))
@@ -133,48 +134,7 @@ namespace Ginger.SolutionWindows
                     MakeSurePathExistforBakFile(backupFolderPath + @"\");
                 }
 
-                // now do the upgrade file by file
-                foreach (string filePathToConvert in mFilesToShow)
-                {
-                    string filePath = filePathToConvert;
-                    //remove info extension
-                    if (filePath.Contains("-->"))
-                    {
-                        filePath = filePath.Remove(filePath.IndexOf("-->"));
-                    }
-
-                    //do upgrade
-                    try
-                    {
-                        //first copy to backup folder
-                        string BakFile = filePath.Replace(mSolutionFolder, BackupFolderTextBox.Text + @"\");
-                        MakeSurePathExistforBakFile(BakFile);
-                        System.IO.File.Copy(filePath, BakFile, true);
-
-                        //make sure backup was created
-                        if (File.Exists(BakFile) == true)
-                        {
-                            //Do Upgrade by unserialize and serialize the item using new serializer
-                            //unserialize
-                            string itemXML = File.ReadAllText(filePath);
-                            RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
-                            itemObject.FilePath = filePath;
-                            //serialize
-                            newSerilizer.SaveToFile(itemObject, filePath);
-                        }
-                        else
-                        {
-                            mFailedFiles.Add(filePathToConvert);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
-                        mFailedFiles.Add(filePathToConvert);
-                    }
-                }
+                await Task.Run(() => { DoUpgrade(backupFolderPath + @"\"); });
 
                 if (mFailedFiles.Count == 0)
                 {
@@ -197,6 +157,55 @@ namespace Ginger.SolutionWindows
             finally
             {
                 xProcessingImage.Visibility = Visibility.Collapsed;
+                BackupFolderTextBox.IsReadOnly = false;
+                BrowseButton.IsEnabled = true;
+            }
+        }
+
+        private void DoUpgrade(string backupFolder)
+        {
+            NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
+            mFailedFiles = new List<string>();          
+
+            // now do the upgrade file by file
+            foreach (string filePathToConvert in mFilesToShow)
+            {
+                string filePath = filePathToConvert;
+                //remove info extension
+                if (filePath.Contains("-->"))
+                {
+                    filePath = filePath.Remove(filePath.IndexOf("-->"));
+                }
+
+                //do upgrade
+                try
+                {
+                    //first copy to backup folder
+                    string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
+                    MakeSurePathExistforBakFile(BakFile);
+                        System.IO.File.Copy(filePath, BakFile, true);
+                    
+                    //make sure backup was created
+                    if (File.Exists(BakFile) == true)
+                    {
+                        //Do Upgrade by unserialize and serialize the item using new serializer
+                        //unserialize
+                        string itemXML = File.ReadAllText(filePath);
+                        RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
+                        itemObject.FilePath = filePath;
+                        //serialize
+                        newSerilizer.SaveToFile(itemObject, filePath);
+                    }
+                    else
+                    {
+                        mFailedFiles.Add(filePathToConvert);
+                    }                    
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
+                    mFailedFiles.Add(filePathToConvert);                    
+                }
             }
         }
 

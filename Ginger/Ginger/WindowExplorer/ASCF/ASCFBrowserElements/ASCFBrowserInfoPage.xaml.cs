@@ -44,9 +44,9 @@ namespace Ginger.Actions.Locators.ASCF
         //TODO: use me
         private void InjectHTMLSpyButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: remove hard code [0]
-            ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
-            d.InjectHTMLSpy(mPath);           
+            //TODO: fix if been used
+            //ASCFDriver d = (ASCFDriver)((Agent)App.AutomateTabGingerRunner.ApplicationAgents[0].Agent).Driver;
+            //d.InjectHTMLSpy(mPath);           
         }
     }
 }

@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition x:Name="dummyWidth_Col"  Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <Actions:UCValueExpression Grid.Column="0" x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" HideVEBusinessFlowAndActivityVariables="True" Margin="0,-13,0,13"/>
+                        <Actions:UCValueExpression Grid.Column="0" x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" Margin="0,-13,0,13"/>
                     </Grid>
                 </StackPanel>
             </StackPanel>

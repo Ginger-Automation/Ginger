@@ -42,7 +42,7 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
             {
                 case EventType.Init:
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
-                    xPluginFolderUC.Init(wiz, nameof(AddPluginPackageWizard.Folder), false, true, UCValueExpression.eBrowserType.Folder);
+                    xPluginFolderUC.Init(null, wiz, nameof(AddPluginPackageWizard.Folder), false, true, UCValueExpression.eBrowserType.Folder);
                     break;
             }
         }

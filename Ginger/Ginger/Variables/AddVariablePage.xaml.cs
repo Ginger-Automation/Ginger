@@ -39,6 +39,8 @@ namespace Ginger.Variables
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
 
+        Context mContext = new Context();
+
         public AddVariablePage(eVariablesLevel variablesLevel, object variablesParentObj)
         {
             InitializeComponent();
@@ -47,7 +49,10 @@ namespace Ginger.Variables
 
             mVariablesLevel = variablesLevel;
             mVariablesParentObj = variablesParentObj;
-
+            if(variablesLevel == eVariablesLevel.BusinessFlow)
+            { 
+                mContext.BusinessFlow = (BusinessFlow)variablesParentObj;
+            }
             SetVariablesGridView();
             LoadGridData();
             VariablesGrid.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
@@ -116,7 +121,7 @@ namespace Ginger.Variables
                 return;
             }
 
-            VariableEditPage varEditPage = new VariableEditPage(newVar);
+            VariableEditPage varEditPage = new VariableEditPage(newVar, mContext);
             _pageGenericWin.Close();
             varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 

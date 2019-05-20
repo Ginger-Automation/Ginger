@@ -433,7 +433,7 @@ namespace Amdocs.Ginger.Repository
         Mutex m = new Mutex();
         private void FileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
+            //Reporter.ToLog(eLogLevel.DEBUG, "FileWatcher change detected: " + e.FullPath + " , " + e.ChangeType);
             try
             {
                 m.WaitOne();
@@ -471,7 +471,7 @@ namespace Amdocs.Ginger.Repository
             {
                 m.ReleaseMutex();
             }
-            Reporter.ToConsole(eLogLevel.DEBUG, "FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+            //Reporter.ToLog(eLogLevel.DEBUG, "FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
         }
 
         private void HandleFileChange(FileSystemEventArgs e)
@@ -501,6 +501,7 @@ namespace Amdocs.Ginger.Repository
                         // add item to cache and list
                         T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
                         AddItemtoCache(e.FullPath, newItem);
+                        mSolutionRepositoryItemInfo.AddItemToCache((T)(object)newItem);
                         mFolderItemsList.Add(newItem);
                         break;
                 }

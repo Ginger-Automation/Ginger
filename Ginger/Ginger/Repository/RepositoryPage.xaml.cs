@@ -74,6 +74,27 @@ namespace Ginger.Repository
             xVariablesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Variables);
         }
 
+        public void UpdateBusinessFlow(BusinessFlow bf)
+        {
+            mBusinessFlow = bf;
+            if (ActivitiesGroupsRepoPage != null)
+            {
+                ActivitiesGroupsRepoPage.UpdateBusinessFlow(mBusinessFlow);
+            }
+            if (ActivitiesRepoPage != null)
+            {
+                ActivitiesRepoPage.UpdateBusinessFlow(mBusinessFlow);
+            }
+            if (ActionsRepoPage != null)
+            {
+                ActionsRepoPage.UpdateBusinessFlow(mBusinessFlow);
+            }
+            if (VariablesRepoPage != null)
+            {
+                VariablesRepoPage.UpdateBusinessFlow(mBusinessFlow);
+            }
+        }
+
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -128,7 +149,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActions.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>());
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mBusinessFlow);
                     frmActions.Content = ActionsRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActions.Tag = "Done";
@@ -139,7 +160,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiVariables.Tag) != "Done")
                 {                    
-                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
+                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
                     frmVariables.Content = VariablesRepoPage;
                     // Mark that this tab is loaded with info
                     tbiVariables.Tag = "Done";

@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-
 using Ginger.Reports;
-using Ginger.Run;
 using GingerCore;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -350,6 +348,16 @@ namespace Ginger.SolutionGeneral
             }
         }       
 
+        public ObservableList<TargetBase> GetSolutionTargetApplications()
+        {
+            ObservableList<TargetBase> solTargetApplications = new ObservableList<TargetBase>();
+            foreach (ApplicationPlatform app in ApplicationPlatforms)
+            {
+                solTargetApplications.Add(new TargetApplication() { AppName = app.AppName, Guid = app.Guid });
+            }
+            return solTargetApplications;
+        }
+
         MRUManager mRecentUsedBusinessFlows;
 
         //public MRUManager RecentlyUsedBusinessFlows
@@ -410,7 +418,7 @@ namespace Ginger.SolutionGeneral
             //add Solution.xml
             fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
 
-            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
+            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
                     // Get each main folder sub folder all levels
@@ -428,8 +436,8 @@ namespace Ginger.SolutionGeneral
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {            
-
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
+            //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {               
                     CB.Add(file);                

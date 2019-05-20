@@ -66,7 +66,7 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
 
             ActionConversionUtils utils = new ActionConversionUtils();
-            ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.BusinessFlow);
+            ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
             xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
             xGrdGroups.Title = "Convert " + GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -79,9 +79,9 @@ namespace Ginger.Actions.ActionConversion
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
-            if (mWizard.BusinessFlow != null)
+            if (mWizard.Context.BusinessFlow != null)
             {
-                mWizard.BusinessFlow.CurrentActivity = (Activity)xGrdGroups.CurrentItem;
+                mWizard.Context.BusinessFlow.CurrentActivity = (Activity)xGrdGroups.CurrentItem;
             }
         }
 

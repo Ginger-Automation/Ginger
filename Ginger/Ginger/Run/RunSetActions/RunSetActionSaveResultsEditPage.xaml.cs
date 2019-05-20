@@ -31,12 +31,12 @@ namespace Ginger.Run.RunSetActions
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(SaveResultstoFolderNameTextBox , TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultstoFolderName);
-            App.ObjFieldBinding(TemplateNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.TemplateName);
-            App.ObjFieldBinding(OpenExecutionResultsFolderCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.OpenExecutionResultsFolder);
-            App.ObjFieldBinding(SaveindividualBFReportCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveindividualBFReport);
-            App.ObjFieldBinding(SaveResultstoInSolutionFolderNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultsInSolutionFolderName);
-            App.ObjFieldBinding(SaveResultstoFolderNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultstoFolderName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveResultstoFolderNameTextBox , TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultstoFolderName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.TemplateName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OpenExecutionResultsFolderCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.OpenExecutionResultsFolder);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveindividualBFReportCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveindividualBFReport);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveResultstoInSolutionFolderNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultsInSolutionFolderName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveResultstoFolderNameTextBox, TextBox.TextProperty, runSetActionSaveResults, RunSetActionSaveResults.Fields.SaveResultstoFolderName);
         }
 
         private void SelectTemplateButton_Click(object sender, RoutedEventArgs e)

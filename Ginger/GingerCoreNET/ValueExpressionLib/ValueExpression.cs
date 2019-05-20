@@ -694,7 +694,7 @@ namespace GingerCore
         }
 
         private void ReplaceEnvVars()
-        {
+        {            
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
             foreach (Match match in envParamMatches)            
                 ReplaceEnvParamWithValue(match.Value, null);
@@ -716,7 +716,7 @@ namespace GingerCore
             }
             else
             {
-                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+                vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
             }
                 
             if (vb != null)
@@ -833,7 +833,12 @@ namespace GingerCore
             AppName = AppName.Substring(1, AppName.Length - 2);
             AppName = AppName.Replace("EnvURL App=", "");
 
-            EnvApplication app = Env.GetApplication(AppName);
+            EnvApplication app = null;
+            if (Env != null)
+            {
+                app = Env.GetApplication(AppName);
+            }
+
             if (app != null)
             {
                 URL = app.Url + "";
@@ -841,7 +846,8 @@ namespace GingerCore
             }
             else
             {
-                // TODO: err
+                // TODO: err                
+                mValueCalculated = mValueCalculated.Replace(p, "");
             }
         }
 
@@ -860,7 +866,11 @@ namespace GingerCore
 
             string ParamValue = null;
 
-            EnvApplication app = Env.GetApplication(AppName);
+            EnvApplication app = null;
+            if (Env != null)
+            {
+                app = Env.GetApplication(AppName);
+            }
             if (app != null)
             {
                 GeneralParam GP = app.GetParam(GlobalParamName);
@@ -1046,7 +1056,7 @@ namespace GingerCore
             }
             else
             {
-                vb = (from v1 in WorkSpace.UserProfile.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
+                vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
             }
 
             if (vb != null)

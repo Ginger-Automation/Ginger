@@ -45,9 +45,9 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
             mSolution = s;
-            App.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
-            App.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
-            App.FillComboFromEnumVal(MainPlatformComboBox, s.MainPlatform);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -82,7 +82,7 @@ namespace Ginger.SolutionWindows
                 }
 
                 //create new folder with solution name
-                mSolution.Folder += mSolution.Name;
+                mSolution.Folder = Path.Combine(mSolution.Folder, mSolution.Name);
                 if (!System.IO.Directory.Exists(mSolution.Folder))
                 {
                     System.IO.Directory.CreateDirectory(mSolution.Folder);
@@ -101,16 +101,16 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
-                
-                App.SetSolution(mSolution.Folder);
+
+                WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
-                App.UpdateApplicationsAgentsMapping();
+                App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

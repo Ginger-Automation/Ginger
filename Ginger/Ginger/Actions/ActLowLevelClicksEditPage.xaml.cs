@@ -32,12 +32,12 @@ namespace Ginger.Actions
             InitializeComponent();
 
             this.f = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.ActLowLevelClicksAction);          
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.ActLowLevelClicksAction);          
             //TODO: fix hard coded ButtonAction use Fields: Fixed
-            App.ObjFieldBinding(MainWindowTitleTextBox, TextBox.TextProperty, Act, ActLowLevelClicks.Fields.WindowTitle, BindingMode.TwoWay);
-            App.ObjFieldBinding(LocatorImageTextBox, TextBox.TextProperty, Act, ActLowLevelClicks.Fields.LocatorImgFile, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MainWindowTitleTextBox, TextBox.TextProperty, Act, ActLowLevelClicks.Fields.WindowTitle, BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LocatorImageTextBox, TextBox.TextProperty, Act, ActLowLevelClicks.Fields.LocatorImgFile, BindingMode.OneWay);
             
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActLowLevelClicksAction");            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActLowLevelClicksAction");            
         }
 
         private void CaptureLocatorImageButton_Click(object sender, RoutedEventArgs e)

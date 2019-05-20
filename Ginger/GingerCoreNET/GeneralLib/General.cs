@@ -17,8 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using GingerCore;
-using GingerCoreNET.GeneralLib;
+using GingerCore.DataSource;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,44 +27,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
 {
     public class General
     {
-        public static long GetGingerVersionAsLong(string gingerVersionAsString)
-        {
-            try
-            {
-                int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(gingerVersionAsString);
-                if (match.Success)
-                {
-                    try { iMajor = Int32.Parse(match.Groups[1].Value); }
-                    catch (Exception) { }
-                    try { iMinor = Int32.Parse(match.Groups[2].Value); }
-                    catch (Exception) { }
-                    try { iBuild = Int32.Parse(match.Groups[3].Value); }
-                    catch (Exception) { }
-                    try { iRevision = Int32.Parse(match.Groups[4].Value); }
-                    catch (Exception) { }
-                }
-                else
-                {
-                    return 0;//failed to get the version as long
-                }
-
-                long version = iMajor * 1000000 + iMinor * 10000 + iBuild * 100 + iRevision;
-                return version;
-            }
-            catch (Exception)
-            {
-                return 0;//failed to get the version as long
-            }
-        }
+        
         
         #region ENUM
 
@@ -112,25 +82,7 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        // TODO: move to sperate class
-        public class ComboEnumItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
+        
 
         public class XmlNodeItem
         {
@@ -158,25 +110,7 @@ namespace GingerCoreNET.GeneralLib
             public string path { get; set; }
         }
 
-        public class ComboItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
-
+        
         #endregion ENUM
 
 
@@ -203,21 +137,7 @@ namespace GingerCoreNET.GeneralLib
             return true;
         }
 
-        public static List<General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
-        {
-            List<General.ComboEnumItem> list = new List<General.ComboEnumItem>();
-            foreach (object item in Enum.GetValues(Etype))
-            {
-                General.ComboEnumItem CEI = new General.ComboEnumItem();
-                CEI.text = General.GetEnumValueDescription(Etype, item);
-                CEI.Value = item;
 
-                list.Add(CEI);
-            }
-
-            return list;
-
-        }
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc)
         {
@@ -346,6 +266,64 @@ namespace GingerCoreNET.GeneralLib
             foreach (T o in List)
                 ObservableList.Add(o);
             return ObservableList;
+        }
+
+        public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
+        {
+            string DSVE = DataSourceVE;
+            DataSourceBase DataSource = null;
+            DataSourceTable DSTable = null;
+            if (DSVE.IndexOf("{DS Name=") != 0)
+            {
+                return "Invalid Data Source Value : '" + DataSourceVE + "'";
+            }
+            DSVE = DSVE.Replace("{DS Name=", "");
+            DSVE = DSVE.Replace("}", "");
+            if (DSVE.IndexOf(" DST=") == -1)
+            {
+                return "Invalid Data Source Value : '" + DataSourceVE + "'";
+            }
+            string DSName = DSVE.Substring(0, DSVE.IndexOf(" DST="));
+
+            foreach (DataSourceBase ds in DSList)
+            {
+                if (ds.Name == DSName)
+                {
+                    DataSource = ds;
+                    break;
+                }
+            }
+
+            if (DataSource == null)
+            {
+                return "Data Source: '" + DSName + "' used in '" + DataSourceVE + "' not found in solution.";
+            }
+
+            DSVE = DSVE.Substring(DSVE.IndexOf(" DST=")).Trim();
+            if (DSVE.IndexOf(" ") == -1)
+            {
+                return "Invalid Data Source Value : '" + DataSourceVE + "'";
+            }
+            string DSTableName = DSVE.Substring(DSVE.IndexOf("DST=") + 4, DSVE.IndexOf(" ") - 4);
+
+            if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+
+                DataSource.Init(DataSource.FileFullPath);
+                ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
+                foreach (DataSourceTable dst in dsTables)
+                    if (dst.Name == DSTableName)
+                    {
+                        DSTable = dst;
+                        break;
+                    }
+                if (DSTable == null)
+                {
+                    return "Data Source Table : '" + DSTableName + "' used in '" + DataSourceVE + "' not found in solution.";
+                }
+            }
+            return "";
         }
     }
 }

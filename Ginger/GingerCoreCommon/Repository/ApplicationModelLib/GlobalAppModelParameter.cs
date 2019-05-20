@@ -122,18 +122,21 @@ namespace Amdocs.Ginger.Repository
                     {
                         try
                         {
-                            if (PI.CanWrite)
+                            if (PI != null)
                             {
-                                string stringValue = value.ToString();
-                                MatchCollection matches = rxGlobalParamPattern.Matches(stringValue);
-                                foreach (Match match in matches)
+                                if (PI.CanWrite)
                                 {
-                                    string val = match.Value.Substring(28);
-                                    val = val.Replace("}}", "}");
-                                    if (!usedGlobalParam.Contains(val))
-                                        usedGlobalParam.Add(val);
-                                }
+                                    string stringValue = value.ToString();
+                                    MatchCollection matches = rxGlobalParamPattern.Matches(stringValue);
+                                    foreach (Match match in matches)
+                                    {
+                                        string val = match.Value.Substring(28);
+                                        val = val.Replace("}", "");
+                                        if (!usedGlobalParam.Contains(val))
+                                            usedGlobalParam.Add(val);
+                                    }
 
+                                }
                             }
                         }
                         catch (Exception ex) { Console.WriteLine(ex.StackTrace); }

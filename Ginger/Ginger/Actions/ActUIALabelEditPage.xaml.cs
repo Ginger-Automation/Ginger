@@ -32,8 +32,8 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             currentAct = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.LabelAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "LabelAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.LabelAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "LabelAction"); 
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

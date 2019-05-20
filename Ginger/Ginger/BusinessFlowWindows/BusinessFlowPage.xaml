@@ -41,7 +41,7 @@
                 </StackPanel>
                 <StackPanel Margin="0,5,10,0" >
                     <Label Style="{StaticResource @LabelStyle}">Run Description:</Label>
-                    <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Run Description" HorizontalAlignment="Stretch" HideVEBusinessFlowAndActivityVariables="True" />
+                    <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Run Description" HorizontalAlignment="Stretch" />
                 </StackPanel>
                 <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left" />
 

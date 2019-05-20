@@ -17,10 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerCore.GeneralFunctions;
-using Newtonsoft.Json.Linq;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,8 +27,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -37,9 +36,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
-using GingerCore.DataSource;
-using System.Reflection;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
@@ -119,6 +115,8 @@ namespace GingerCore
             ((DispatcherFrame)f).Continue = false;
             return null;
         }
+
+
 
         #region ENUM
         /// <summary>
@@ -293,37 +291,9 @@ namespace GingerCore
             }
         }
 
-        // TODO: move to sperate class
-        public class ComboEnumItem
-        {
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
+       
 
-            public override String ToString()
-            {
-                return text;
-            }
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
-
-        public class ComboGroupedEnumItem
-        {
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "text";
-                public static string Category = "Value";
-            }
-
-            public object text { get; set; }
-            public object Value { get; set; }
-            public string Category { get; set; }
-        }
+       
 
         public class XmlNodeItem
         {
@@ -351,87 +321,8 @@ namespace GingerCore
             public string path { get; set; }
         }
 
-        public class ComboItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
+       
         #endregion ENUM
-
-        #region Binding
-        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            ObjFieldBinding(control, dependencyProperty, actInputValue, ActInputValue.Fields.Value, BindingMode);
-        }
-
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
-            try
-            {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                b.NotifyOnValidationError = true;
-                control.SetBinding(dependencyProperty, b);
-            }
-            catch (Exception ex)
-            {
-                //it is possible we load an old enum or something else which will cause the binding to fail
-                // Can happen also if the bind field name is incorrect
-                // mark the control in red, instead of not openning the Page
-                // Set a tool tip with the error
-                
-                control.Style = null; // remove style so red will show
-                control.Background = System.Windows.Media.Brushes.LightPink;
-                control.BorderThickness = new Thickness(2);
-                control.BorderBrush = System.Windows.Media.Brushes.Red;
-
-                control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
-            }
-        }
-
-        public static void ObjFieldBinding(TextBlock textBlockControl, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {
-            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
-            try
-            {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                textBlockControl.SetBinding(dependencyProperty, b);
-            }
-            catch (Exception ex)
-            {
-                //it is possible we load an old enum or something else which will cause the binding to fail
-                // Can happen also if the bind field name is incorrect
-                // mark the control in red, instead of not openning the Page
-                // Set a tool tip with the error
-                
-                textBlockControl.Style = null; // remove style so red will show
-                textBlockControl.Background = System.Windows.Media.Brushes.LightPink;
-                textBlockControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
-            }
-        }
-        #endregion Binding
 
         public static string CorrectJSON(string WrongJson)
         {
@@ -641,12 +532,12 @@ namespace GingerCore
 
         
 
-        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
+        public static List<ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
-            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            List<ComboEnumItem> list = new List<ComboEnumItem>();
             foreach (object item in Enum.GetValues(Etype))
             {
-                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                ComboEnumItem CEI = new ComboEnumItem();
                 CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
                 CEI.Value = item;
 
@@ -656,12 +547,12 @@ namespace GingerCore
         }
 
 
-        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
         {
-            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            List<ComboEnumItem> list = new List<ComboEnumItem>();
             foreach (object item in Items)
             {
-                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                ComboEnumItem CEI = new ComboEnumItem();
                 CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
                 CEI.Value = item;
 
@@ -934,7 +825,7 @@ namespace GingerCore
                     r.Add(status, myBrush);
                     break;
                 case "Pending":
-                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
                     r.Add(status, myBrush);
                     break;
                 case "Running":
@@ -1095,67 +986,7 @@ namespace GingerCore
                 ObservableList.Add(o);
             return ObservableList;
         }
-        public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
-        {
-            string DSVE = DataSourceVE;
-            DataSourceBase DataSource = null;
-            DataSourceTable DSTable = null;
-            if (DSVE.IndexOf("{DS Name=") != 0)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            DSVE = DSVE.Replace("{DS Name=", "");
-            DSVE = DSVE.Replace("}", "");
-            if (DSVE.IndexOf(" DST=") == -1)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            string DSName = DSVE.Substring(0, DSVE.IndexOf(" DST="));
-
-            foreach (DataSourceBase ds in DSList)
-                if (ds.Name == DSName)
-                {
-                    DataSource = ds;
-                    break;
-                }
-
-
-            if (DataSource == null)
-            {
-                return "Data Source: '" + DSName + "' used in '" + DataSourceVE + "' not found in solution.";
-            }
-
-            DSVE = DSVE.Substring(DSVE.IndexOf(" DST=")).Trim();
-            if (DSVE.IndexOf(" ") == -1)
-            {
-                return "Invalid Data Source Value : '" + DataSourceVE + "'";
-            }
-            string DSTableName = DSVE.Substring(DSVE.IndexOf("DST=") + 4, DSVE.IndexOf(" ") - 4);
-
-            if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                //if (DataSource.FileFullPath.StartsWith("~"))
-                //{
-                //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
-                //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
-                //}
-                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-
-                DataSource.Init(DataSource.FileFullPath);
-                ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-                foreach (DataSourceTable dst in dsTables)
-                    if (dst.Name == DSTableName)
-                    {
-                        DSTable = dst;
-                        break;
-                    }
-                if (DSTable == null)
-                {
-                    return "Data Source Table : '" + DSTableName + "' used in '" + DataSourceVE + "' not found in solution.";
-                }
-            }
-            return "";
-        }
+        
     }
 }
 

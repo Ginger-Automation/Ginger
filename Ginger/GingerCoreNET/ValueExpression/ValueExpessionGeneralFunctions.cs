@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -86,11 +87,20 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
 
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Decrypt to Base 64")]
-        [ValueExpressionFunctionExpression("{Function Fun=GetDecryptedBase64String(\"Hello\")}")]
+        [ValueExpressionFunctionExpression("{Function Fun=GetDecryptedBase64String(\"SGVsbG8=\")}")]
         public string GetDecryptedBase64String(object[] obj)
         {
-            byte[] hashedDataBytes = Convert.FromBase64String(obj[0].ToString()); 
-            return ASCIIEncoding.ASCII.GetString(hashedDataBytes); 
+            try
+            {
+                byte[] hashedDataBytes = Convert.FromBase64String(obj[0].ToString());
+                return ASCIIEncoding.ASCII.GetString(hashedDataBytes);
+            }
+            catch
+            {
+                Reporter.ToLog(eLogLevel.INFO, "User provided invalid base 64 string for decrypt");
+                return "Invalid Base64 String";
+
+            }
         }
 
         #endregion PlaceHolders

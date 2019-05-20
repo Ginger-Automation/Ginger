@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions.Common;
 
 namespace Ginger.Actions._Common.ActUIElementLib
@@ -25,14 +26,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// Interaction logic for LocateValueEditPage.xaml
     /// </summary>
     public partial class LocateValueEditPage : Page
-    {
-        
-        public LocateValueEditPage(object locateValueParentObject, string locateValueField)
+    {        
+
+        public LocateValueEditPage(Context context, object locateValueParentObject, string locateValueField)
         {
             InitializeComponent();
         
             // Bind LocateValue and init VE            
-            txtLocateValue.Init(locateValueParentObject, locateValueField);
+            txtLocateValue.Init(context, locateValueParentObject, locateValueField);
         }
     }
 }

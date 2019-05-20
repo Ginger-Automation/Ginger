@@ -100,7 +100,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mVariablesRepositoryPage == null)
             {
-                mVariablesRepositoryPage = new VariablesRepositoryPage(mVariablesFolder);
+                mVariablesRepositoryPage = new VariablesRepositoryPage(mVariablesFolder, null);
             }
             return mVariablesRepositoryPage;
         }

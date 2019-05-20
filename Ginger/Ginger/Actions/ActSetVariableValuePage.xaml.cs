@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions
 {
@@ -37,18 +38,18 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             SetComboListsValues(); 
-            App.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
         }
 
         private void SetComboListsValues()
         {
-            if (App.BusinessFlow != null)
+            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
             {
-                mVars = App.BusinessFlow.GetAllHierarchyVariables();
+                mVars = (Context.GetAsContext(mAct.Context)).BusinessFlow.GetAllHierarchyVariables();
             }
-            else//temp wrokaround, full solution exist on Master
+            else
             {
-                mVars = amdocs.ginger.GingerCoreNET.WorkSpace.UserProfile.Solution.Variables;
+                mVars = WorkSpace.Instance.Solution.Variables;
             }
          
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))

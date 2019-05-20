@@ -29,5 +29,7 @@ namespace Ginger.Reports
         {            
             mEnvironment = env;
         }
+
+        public ProjEnvironment ProjEnvironment {  get { return mEnvironment; } }
     }
 }

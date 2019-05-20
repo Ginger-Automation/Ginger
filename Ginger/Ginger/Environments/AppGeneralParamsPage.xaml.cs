@@ -246,7 +246,7 @@ namespace Ginger.Environments
         private void ParamsGridVEButton_Click(object sender, RoutedEventArgs e)
         {           
             GeneralParam selectedVarb = (GeneralParam)grdAppParams.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, GeneralParam.Fields.Value, true);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, GeneralParam.Fields.Value, null);
             VEEW.ShowAsWindow();            
         }
     }
