@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string Args = string.Format("--solution {0}", WorkSpace.Instance.Solution.Folder);
             Args += string.Format(" --runset {0}", runsetExecutor.RunSetConfig.Name);

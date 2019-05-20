@@ -32,10 +32,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
-            if (CLIHelper.DownloadSolutionFromSourceControlBool == true)
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {               
                 sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
                 sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
@@ -50,10 +50,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + CLIHelper.RunAnalyzer.ToString() + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + CLIHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
-
-            // TODO: add source control and all other options !!!!!!!!!!!
+            sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             return sConfig;
         }

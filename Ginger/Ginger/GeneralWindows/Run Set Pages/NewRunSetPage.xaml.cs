@@ -2361,7 +2361,7 @@ namespace Ginger.Run
         private void XAutoRunButton_Click(object sender, RoutedEventArgs e)
         {
             // pass mRunSetConfig + env !!!!!!!!!!!
-            WizardWindow.ShowWizard(new CreateAutoRunWizard(mRunSetConfig, mContext));
+            WizardWindow.ShowWizard(new AutoRunWizard(mRunSetConfig, mContext));
             
         }
     }

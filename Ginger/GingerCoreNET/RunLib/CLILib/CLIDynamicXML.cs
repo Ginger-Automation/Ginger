@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string xml = DynamicRunSetManager.CreateRunSet(runsetExecutor);
             return xml;            

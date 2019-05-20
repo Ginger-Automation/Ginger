@@ -12,13 +12,15 @@ using IWshRuntimeLibrary;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
-    public class CreateAutoRunWizard : WizardBase
+    public class AutoRunWizard : WizardBase
     {
         public override string Title { get { return string.Format("Create {0} Auto Run Configuration", GingerDicser.GetTermResValue(eTermResKey.RunSet)); } }
 
         public RunSetConfig mRunsetConfig;
 
         public Context mContext;
+
+        public CLIHelper mCLIHelper;
 
         public RunSetAutoRunOptions AutoRunOptions;
 
@@ -27,18 +29,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public RunSetAutoRunShortcut AutoRunShortcut;
 
 
-        public CreateAutoRunWizard(RunSetConfig runSetConfig, Context context)
+        public AutoRunWizard(RunSetConfig runSetConfig, Context context)
         {
             mRunsetConfig = runSetConfig;
             mContext = context;
+            mCLIHelper = new CLIHelper();
             AutoRunOptions = new RunSetAutoRunOptions();
             AutoRunConfiguration = new RunSetAutoRunConfiguration(runSetConfig);
             AutoRunShortcut = new RunSetAutoRunShortcut();
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
-            AddPage(Name: "Auto Run Options", Title: "Set Auto Run Configuration Options", SubTitle: "Set Auto Run Configuration Options", Page: new AutoRunOptionsPage());                        
-            AddPage(Name: "Auto Run Type", Title: "Set Auto Run Configuration Type", SubTitle: "Set Auto Run Configuration Type", Page: new CreateCLIChooseTypePage());
-            AddPage(Name: "Auto Run Shortcut", Title: "Create Auto Run Configuration Execution Shortcut", SubTitle: "Create Auto Run Configuration Execution Shortcut", Page: new CreateCLILocationPage());
+            AddPage(Name: "Auto Run Options", Title: "Set Auto Run Configuration Options", SubTitle: "Set Auto Run Configuration Options", Page: new AutoRunWizardOptionsPage());                        
+            AddPage(Name: "Auto Run Type", Title: "Set Auto Run Configuration Type", SubTitle: "Set Auto Run Configuration Type", Page: new AutoRunWizardCLITypePage());
+            AddPage(Name: "Auto Run Shortcut", Title: "Create Auto Run Configuration Execution Shortcut", SubTitle: "Create Auto Run Configuration Execution Shortcut", Page: new AutoRunWizardShortcutPage());
         }
 
         public override void Finish()

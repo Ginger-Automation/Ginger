@@ -13,7 +13,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string FileExtension => throw new NotImplementedException();
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             //zzz
             func1(@"C:\Yaron\AQE 2019\Ginger\DynamicRunSet.xlsx", "2 lines");

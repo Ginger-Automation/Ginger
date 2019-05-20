@@ -22,12 +22,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// <summary>
     /// Interaction logic for CreateCLIContentPage.xaml
     /// </summary>
-    public partial class CreateCLILocationPage : Page, IWizardPage
+    public partial class AutoRunWizardShortcutPage : Page, IWizardPage
     {
 
-        CreateAutoRunWizard mCreateCLIWizard;
+        AutoRunWizard mCreateCLIWizard;
 
-        public CreateCLILocationPage()
+        public AutoRunWizardShortcutPage()
         {
             InitializeComponent();
         }
@@ -38,8 +38,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateAutoRunWizard)WizardEventArgs.Wizard;
-                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(CreateAutoRunWizard.ShortcutFileName));
+                    mCreateCLIWizard = (AutoRunWizard)WizardEventArgs.Wizard;
+                    xGingerEXERadioButton.IsChecked = true;
+                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(AutoRunWizard.ShortcutFileName));
                     xDesktopRadioButton.IsChecked = true;
                     break;
                 case EventType.Active:
@@ -51,6 +52,16 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     xCLIFileName.Text = mCreateCLIWizard.AutoRunConfigurationFileName;
                     break;
             }
+        }
+
+        private void XGingerEXERadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mAutoRunWizard.SetGingerExecutor();
+        }
+
+        private void XGingerConsoleRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mAutoRunWizard.SetGingerConsoleExecutor();
         }
 
         private void XDesktopRadioButton_Checked(object sender, RoutedEventArgs e)

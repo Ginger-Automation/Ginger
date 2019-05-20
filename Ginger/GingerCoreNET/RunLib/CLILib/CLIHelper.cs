@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         static bool mShowAutoRunWindow ; // default is false except in ConfigFile which is true to keep backword compatibility
         
-        public static bool ShowAutoRunWindow
+        public bool ShowAutoRunWindow
         {
             get
             {
@@ -41,22 +41,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        static bool mDownloadSolutionFromSourceControl;
-        public static bool DownloadSolutionFromSourceControlBool
+        static bool mDownloadUpgradeSolutionFromSourceControl;
+        public bool DownloadUpgradeSolutionFromSourceControl
         {
             get
             {
-                return mDownloadSolutionFromSourceControl;
+                return mDownloadUpgradeSolutionFromSourceControl;
             }
             set
             {
-                mDownloadSolutionFromSourceControl = value;
+                mDownloadUpgradeSolutionFromSourceControl = value;
             }
 
         }
 
         static bool mRunAnalyzer;
-        public static bool RunAnalyzer {
+        public bool RunAnalyzer {
             get
             {
                 return mRunAnalyzer;

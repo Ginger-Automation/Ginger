@@ -648,16 +648,16 @@
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunOptionsPage.xaml.cs">
-      <DependentUpon>AutoRunOptionsPage.xaml</DependentUpon>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardOptionsPage.xaml.cs">
+      <DependentUpon>AutoRunWizardOptionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateCLIChooseTypePage.xaml.cs">
-      <DependentUpon>CreateCLIChooseTypePage.xaml</DependentUpon>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardCLITypePage.xaml.cs">
+      <DependentUpon>AutoRunWizardCLITypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateCLILocationPage.xaml.cs">
-      <DependentUpon>CreateCLILocationPage.xaml</DependentUpon>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardShortcutPage.xaml.cs">
+      <DependentUpon>AutoRunWizardShortcutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\CreateAutoRunWizard.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizard.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
@@ -2965,15 +2965,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateAutoRunWizardLib\AutoRunOptionsPage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardOptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateAutoRunWizardLib\CreateCLIChooseTypePage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardCLITypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RunSetLib\CreateAutoRunWizardLib\CreateCLILocationPage.xaml">
+    <Page Include="RunSetLib\CreateAutoRunWizardLib\AutoRunWizardShortcutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

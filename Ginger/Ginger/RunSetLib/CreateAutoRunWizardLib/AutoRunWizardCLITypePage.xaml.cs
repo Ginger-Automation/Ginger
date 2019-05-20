@@ -11,11 +11,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// <summary>
     /// Interaction logic for CreateCLIChooseTypePage.xaml
     /// </summary>
-    public partial class CreateCLIChooseTypePage : Page, IWizardPage
+    public partial class AutoRunWizardCLITypePage : Page, IWizardPage
     {
-        CreateAutoRunWizard mCreateCLIWizard;
+        AutoRunWizard mCreateCLIWizard;
         string CLITXT;
-        public CreateCLIChooseTypePage()
+        public AutoRunWizardCLITypePage()
         {
             InitializeComponent();
         }
@@ -25,7 +25,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (CreateAutoRunWizard)WizardEventArgs.Wizard;
+                    mCreateCLIWizard = (AutoRunWizard)WizardEventArgs.Wizard;
                     xConfigRadioButton.IsChecked = true;
 
                     //Disabling the option which are not working right now. Can enable it once its full fuctionality is working

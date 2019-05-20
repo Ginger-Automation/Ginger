@@ -12,7 +12,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         string FileExtension { get; }
 
         // Cretae CLI content from runsetExecutor
-        string CreateContent(RunsetExecutor runsetExecutor);
+        string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper);
 
         // Parse the content and load it into runsetExecutor
         void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor);
