@@ -710,7 +710,7 @@ namespace Ginger.Actions
                     mContext.Runner.SetCurrentActivityAgent();
                 }
 
-                mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             });
             
             var result = await mContext.Runner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
