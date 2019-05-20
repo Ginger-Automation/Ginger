@@ -22,6 +22,7 @@ using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions;
 using Ginger.Agents;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -98,10 +99,10 @@ namespace Ginger
             public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
             {
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-                List<GingerCore.General.ComboGroupedEnumItem> l = new List<GingerCore.General.ComboGroupedEnumItem>();
+                List<ComboGroupedEnumItem> l = new List<ComboGroupedEnumItem>();
                 foreach (var v in enumslist)
                 {
-                    GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
+                    ComboGroupedEnumItem item = new ComboGroupedEnumItem();
                     item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
                     item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); 
                     item.Value = v;

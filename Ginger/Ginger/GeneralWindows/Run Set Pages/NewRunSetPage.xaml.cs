@@ -21,7 +21,6 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
@@ -41,7 +40,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
-using IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -193,7 +191,7 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {                
                 Init();
 
@@ -221,14 +219,22 @@ namespace Ginger.Run
             mEditMode = editMode;
             if (mEditMode == eEditMode.View)
             {
-                xResetRunsetBtn.IsEnabled = false;
-                xRunRunsetBtn.IsEnabled = false;
-                xStopRunsetBtn.IsEnabled = false;
-                xContinueRunsetBtn.IsEnabled = false;
-                xRunnersControlPnl.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
+                xRunnersCanvasControls.IsEnabled = false;
+                xRunnersExecutionControls.IsEnabled = false;
+                xBusinessFlowsListOperationsPnl.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
+                return;
             }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+                xRunnersCanvasControls.Visibility = Visibility.Collapsed;
+                xRunnersExecutionControls.Visibility = Visibility.Collapsed;
+                xBusinessFlowsListOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+
             //load Run Set
             if (runSetConfig != null)
             {
@@ -237,7 +243,6 @@ namespace Ginger.Run
             else
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //TODO: hide all pages elements
             }           
         }
 
@@ -1254,16 +1259,15 @@ namespace Ginger.Run
 
         internal void SaveRunSetConfig()
         {
-            //Do Runset Save Preperations
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            try
             {
-                GR.UpdateBusinessFlowsRunList();
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
-
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
-            
-
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
         internal void AddNewRunSetConfig()
@@ -1382,8 +1386,11 @@ namespace Ginger.Run
                 }
 
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
@@ -1420,8 +1427,11 @@ namespace Ginger.Run
                 }
 
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //continue run            
                 await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync(true);//doing continue run
@@ -1632,11 +1642,8 @@ namespace Ginger.Run
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            AutoLogProxy.UserOperationStart("SaveRunConfigButton_Click");
-
-            SaveRunSetConfig();
-
-            AutoLogProxy.UserOperationEnd();
+            
+            SaveRunSetConfig();           
         }
         
         private void SetExecutionModeIcon()

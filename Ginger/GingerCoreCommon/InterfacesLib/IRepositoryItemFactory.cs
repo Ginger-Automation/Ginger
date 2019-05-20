@@ -17,18 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore;
-using GingerCore.DataSource;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using Ginger.Run;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using GingerCore.ALM;
-using GingerCore.Activities;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
+using GingerCore;
+using GingerCore.ALM;
+using GingerCore.Environments;
 
 namespace Amdocs.Ginger.Common
 {
@@ -40,19 +35,10 @@ namespace Amdocs.Ginger.Common
     
 
     public interface IRepositoryItemFactory
-    {        
-        //BusinessFlow CreateBusinessFlow();
-        //ObservableList<BusinessFlow> GetListofBusinessFlow();
-
+    {                
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);
         IValueExpression CreateValueExpression(Object obj, string attr);
-
-        // ObservableList<IDatabase> GetDatabaseList();
-       
-        // ObservableList<IAgent> GetAllIAgents();
-
-   //     ObservableList<DataSourceBase> GetDatasourceList();
 
         void StartAgentDriver(IAgent agent);
         Type GetDriverType(IAgent agent);
