@@ -101,7 +101,7 @@ namespace GingerWPF.TreeViewItemsLib
                     }                        
                 }                   
 
-                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItemBase)item);               
+                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem((RepositoryItemBase)item);
                 return true;
             }
             else
@@ -300,7 +300,6 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
-                    //delete root and refresh tree                    
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)((ITreeViewItem)this).NodeObject());
                 }
             }
@@ -340,7 +339,6 @@ namespace GingerWPF.TreeViewItemsLib
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
                             mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
-                            RefreshParentTreeItemsSourceControlStatus(e.NewItems[0]);                            
                         });
                         }
                         break;
@@ -350,8 +348,7 @@ namespace GingerWPF.TreeViewItemsLib
                         {
                             mTreeView.Tree.Dispatcher.Invoke(() =>
                             {
-                                mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);
-                                RefreshParentTreeItemsSourceControlStatus(e.OldItems[0]);                                
+                                mTreeView.Tree.DeleteItemByObjectAndSelectParent(e.OldItems[0], (ITreeViewItem)this);    
                             });
                         }
                     break;
@@ -364,19 +361,6 @@ namespace GingerWPF.TreeViewItemsLib
                     break;
                 }
         }
-
-        private void RefreshParentTreeItemsSourceControlStatus(object modifiedTreeITemObject)
-        {
-            if (modifiedTreeITemObject is RepositoryItemBase)
-            {
-                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(((RepositoryItemBase)modifiedTreeITemObject).FilePath));
-            }
-            else if (modifiedTreeITemObject is RepositoryFolderBase)
-            {
-                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(((RepositoryFolderBase)modifiedTreeITemObject).FolderFullPath);
-            }
-        }
-
         public override void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)
         {
             if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.SourceControl != null)
@@ -490,7 +474,6 @@ namespace GingerWPF.TreeViewItemsLib
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
 
-            
             //Add direct children's        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once

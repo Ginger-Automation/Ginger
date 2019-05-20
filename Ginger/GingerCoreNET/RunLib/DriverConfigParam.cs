@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using System.Collections.Generic;
+
 namespace GingerCore
 {
     public class DriverConfigParam : RepositoryItemBase
@@ -66,5 +68,8 @@ namespace GingerCore
                 this.Parameter = value;
             }
         }
+
+        public string Type { get; set; }
+        public List<string> OptionalValues { get; set; }
     }
 }

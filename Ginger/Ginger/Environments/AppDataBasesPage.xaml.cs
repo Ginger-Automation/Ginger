@@ -157,11 +157,9 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.ConnectionString, WidthWeight = 20, Header = "Connection String (Optional)" });
             view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open" , StyleType= GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight=10 });
-
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }
-
         private void AddNewDB(object sender, RoutedEventArgs e)
         {
             Database db = new Database();

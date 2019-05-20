@@ -216,7 +216,7 @@
                                                     </Label.Content>
                                                 </Label>
                                             </StackPanel>
-                                            <DockPanel HorizontalAlignment="Right" Margin="0 0 10 0">
+                                            <DockPanel x:Name="xBusinessFlowsListOperationsPnl" HorizontalAlignment="Right" Margin="0 0 10 0">
                                                 <TextBox x:Name="SearchTextblock" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" FontSize="15"   Visibility="Collapsed" Width="201"></TextBox>
                                                 <usercontrols:ucButton x:Name="xBusinessflowsActiveBtn" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xBusinessflowsActive_Click">
                                                     <usercontrols:ucButton.ToolTip>
