@@ -19,9 +19,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;
 
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting {0} Automatic Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} execution UI elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                          
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                          
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
@@ -89,15 +89,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
-            if (mCLIHelper.ProcessArgs(WorkSpace.Instance.RunsetExecutor))
+            
+            if (mCLIHelper.LoadSolution())
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Executing based on Run Configurations...");
-                Execute();
+                if(mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+                {
+                    if (mCLIHelper.PrepareRunsetForExecution())
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                        Execute();
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-                mCLIHelper.CloseSolution();
+                        Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+                        mCLIHelper.CloseSolution();
+                    }
+                }
             }            
         }
 
@@ -108,23 +113,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
                 mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
+
                 stopwatch.Stop();
                 Reporter.ToLog(eLogLevel.DEBUG, "Execution Elapsed time: " + stopwatch.Elapsed);
 
                 if (WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus == Execution.eRunStatus.Passed)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, ">> Run Set executed and passed, exit code: 0");
+                    Reporter.ToLog(eLogLevel.INFO, string.Format(">> {0} executed and passed, exit code: 0", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     Environment.ExitCode = 0; //success                    
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, ">> No indication found for successful execution, exit code: 1");
+                    Reporter.ToLog(eLogLevel.WARN, string.Format(">> No indication found for successful {0} execution, exit code: 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     Environment.ExitCode = 1; //failure
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured during execution", ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected exception occured during {0} execution, exit code 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 Environment.ExitCode = 1; //failure
             }
         }

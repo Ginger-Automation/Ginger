@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger;
+using Ginger.AnalyzerLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
@@ -68,29 +69,71 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         RunsetExecutor mRunsetExecutor;
         //UserProfile WorkSpace.Instance.UserProfile;
-        RunSetConfig runSetConfig;
+        RunSetConfig mRunSetConfig;
 
-        public bool ProcessArgs(RunsetExecutor runsetExecutor)
+        public bool LoadSolution()
         {
             try
             {
-                mRunsetExecutor = runsetExecutor;
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
                 // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
-                if (OpenSolution())
-                {
-                    SelectEnv();
-                    SelectRunset();
-                    SetRunAnalyzer();
-                    HandleAutoRunWindow();
-                    return true;
-                }
-
-                return false;
+                return OpenSolution();
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while processing the Run Configurations", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
+                return false;
+            }
+        }
+
+        public bool LoadRunset(RunsetExecutor runsetExecutor)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                mRunsetExecutor = runsetExecutor;
+                SelectRunset();
+                SelectEnv();
+                mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
+                HandleAutoRunWindow();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred while loading the {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+                return false;
+            }
+        }
+
+        public bool PrepareRunsetForExecution()
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+
+                if (!ShowAutoRunWindow)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    mRunsetExecutor.InitRunners();
+                }
+
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    AnalyzerUtils analyzerUtils = new AnalyzerUtils();
+                    if (analyzerUtils.AnalyzeRunset(mRunSetConfig, true))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Stopping {0} execution due to Analyzer issues", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred while preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 return false;
             }
         }
@@ -104,59 +147,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if(ShowAutoRunWindow)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Showing RunSet AutoRunWindow");
+                Reporter.ToLog(eLogLevel.DEBUG, "Showing AutoRunWindow");
                 RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
             }
             else
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Not Showing RunSet AutoRunWindow");
+                Reporter.ToLog(eLogLevel.DEBUG, "Not Showing AutoRunWindow");
             }
         }
 
-        private void SetRunAnalyzer()
-        {
-            // TODO: once analyzer moved to GingerCoreNET we can run it here 
-            try
-            {
-                runSetConfig.RunWithAnalyzer = RunAnalyzer;
-
-                //// Return true if there are analyzer issues
-                //private bool RunAnalyzer()
-                //{
-                //    //Running Runset Analyzer to look for issues
-                //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //    try
-                //    {
-                //        //run analyzer
-                //        int analyzeRes = runsetExecutor.RunRunsetAnalyzerBeforeRunSync(true);
-                //        if (analyzeRes == 1)
-                //        {
-                //            Reporter.ToLog(eLogLevel.ERROR, string.Format("{0} Analyzer found critical issues with the {0} configurations, aborting execution.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //            return true;//cancel run because issues found
-                //        }
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed Running {0} Analyzer, still continue execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
-                //        return true;
-                //    }
-                //    return false;
-                //}
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.CannotRunShortcut, ex.Message);
-            }
-        }
 
         private void SelectRunset()
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
-            if (runSetConfig != null)
+            mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
+            if (mRunSetConfig != null)
             {
-                mRunsetExecutor.RunSetConfig = runSetConfig;
+                mRunsetExecutor.RunSetConfig = mRunSetConfig;
             }
             else
             {
