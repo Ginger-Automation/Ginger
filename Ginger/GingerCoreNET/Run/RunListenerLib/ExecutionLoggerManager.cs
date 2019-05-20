@@ -21,9 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -33,7 +31,6 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
-using GingerCore.Variables;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -161,7 +158,7 @@ namespace Ginger.Run
             mJsonSerializer = new JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
-            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 mExecutionLogger = new LiteDBRepository();
             }
