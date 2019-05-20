@@ -234,6 +234,12 @@ namespace Ginger.Run
                     pageGrid.IsEnabled = false;
                 }
             }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xRunnerItemButtons.Visibility = Visibility.Collapsed;
+                xRunnerItemMenu.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void RunnerItem_ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -329,13 +335,13 @@ namespace Ginger.Run
             if (isExpand)
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(30);
-                xRunnerItemButtons.Visibility = Visibility.Visible;
+               // xRunnerItemButtons.Visibility = Visibility.Visible;
                 xDetailView.ButtonImageType = eImageType.Collapse;
             }
             else
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(0);
-                xRunnerItemButtons.Visibility = Visibility.Collapsed;
+               // xRunnerItemButtons.Visibility = Visibility.Collapsed;
                 xDetailView.ButtonImageType = eImageType.Expand;
             }
         }

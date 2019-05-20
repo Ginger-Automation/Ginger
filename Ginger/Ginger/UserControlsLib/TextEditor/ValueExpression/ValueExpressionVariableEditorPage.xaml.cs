@@ -48,15 +48,23 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 lst.Add(v.Name);
             }
 
-            foreach (VariableBase v in mContext.BusinessFlow.Variables)
+            if(mContext.BusinessFlow!=null)
             {
-                lst.Add(v.Name);
-            }
+                foreach (VariableBase v in mContext.BusinessFlow.Variables)
+                {
+                    lst.Add(v.Name);
+                }
 
-            foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
-            {
-                lst.Add(v.Name);
+                if(mContext.BusinessFlow.CurrentActivity!=null)
+                {
+                    foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
+                    {
+                        lst.Add(v.Name);
+                    }
+                }
+               
             }
+           
 
 
             VarsList.ItemsSource = lst;

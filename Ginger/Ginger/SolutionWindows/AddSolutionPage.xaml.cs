@@ -101,8 +101,8 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
-                
-                App.SetSolution(mSolution.Folder);
+
+                WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
@@ -110,7 +110,7 @@ namespace Ginger.SolutionWindows
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

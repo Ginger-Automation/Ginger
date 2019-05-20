@@ -70,7 +70,7 @@ namespace Ginger.SourceControl
                  WorkSpace.Instance.UserProfile.SourceControlURL = "";
             }
 
-            SourceControlClassComboBox.Init( WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), false, SourceControlClassComboBox_SelectionChanged);
+            SourceControlClassComboBox.Init( WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.
@@ -277,7 +277,7 @@ namespace Ginger.SourceControl
             string SoFileName = CheckForSolutionFileName(Path);
             if (System.IO.File.Exists(SoFileName))
             {
-                App.SetSolution(System.IO.Path.GetDirectoryName(SoFileName));
+                WorkSpace.Instance.OpenSolution(System.IO.Path.GetDirectoryName(SoFileName));
             }
             else
             {

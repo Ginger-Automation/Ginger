@@ -31,7 +31,7 @@ using System.Xml;
 
 namespace GingerCore.Drivers.InternalBrowserLib
 {
-    public class InternalBrowser : DriverBase, IWindowExplorer
+    public class InternalBrowser : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {        
         private InternalBrowserWindow mFrmBrowser;
         private WebBrowser mBrowserControl;
@@ -1302,10 +1302,27 @@ namespace GingerCore.Drivers.InternalBrowserLib
             aw.Title = "Current Window";
             return aw;
         }
-        
+
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+
+        }
+
         public override void StartRecording()
         {
 
+        }
+
+        public override void StopRecording()
+        {
+            
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)

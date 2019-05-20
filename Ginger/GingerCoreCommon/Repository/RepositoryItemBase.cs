@@ -525,7 +525,7 @@ namespace Amdocs.Ginger.Repository
             {
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
-                GingerVersion = GingerVersion.GetCurrentVersion(),
+                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
                 Version= 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
@@ -537,7 +537,7 @@ namespace Amdocs.Ginger.Repository
         public void UpdateHeader()
         {
             RepositoryItemHeader.Version++;
-            RepositoryItemHeader.GingerVersion = GingerVersion.GetCurrentVersion();
+            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion;
             RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
@@ -655,7 +655,7 @@ namespace Amdocs.Ginger.Repository
 
         public virtual string RelativeFilePath { get; set; }
 
-        internal void UpdateBeforeSave()
+        public virtual void UpdateBeforeSave()
         {            
             this.ClearBackup();
         }

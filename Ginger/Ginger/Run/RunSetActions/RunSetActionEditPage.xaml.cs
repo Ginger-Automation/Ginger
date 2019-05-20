@@ -37,7 +37,7 @@ namespace Ginger.Run.RunSetActions
             mRunSetAction = RunSetAction;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
-            RunAtComboBox.Init(mRunSetAction, mRunSetAction.GetRunOptions(), RunSetActionBase.Fields.RunAt);
+            RunAtComboBox.Init(mRunSetAction, RunSetActionBase.Fields.RunAt,mRunSetAction.GetRunOptions());
 
             GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, RunSetActionBase.Fields.Condition);
@@ -51,7 +51,9 @@ namespace Ginger.Run.RunSetActions
             ActionEditPageFrame.Content = p;
 
             if (mRunSetAction.SupportRunOnConfig)
+            {
                 RunActionBtn.Visibility = Visibility.Visible;
+            }
         }
 
         public Page GetEditPage(string R)
@@ -79,7 +81,7 @@ namespace Ginger.Run.RunSetActions
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            mRunSetAction.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+            mRunSetAction.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunSetAction.ExecuteWithRunPageBFES();
         }
     }

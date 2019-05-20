@@ -42,7 +42,7 @@ namespace GingerCore.Drivers.Appium
 {
 
 
-    public class SeleniumAppiumDriver : DriverBase, IWindowExplorer
+    public class SeleniumAppiumDriver : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {
         public override bool IsSTAThread()
         {
@@ -1455,6 +1455,24 @@ namespace GingerCore.Drivers.Appium
         bool IWindowExplorer.AddSwitchWindowAction(string Title)
         {
             return false;
+        }
+
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StartRecording();
+            });
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StopRecording();
+            });
         }
 
         public override void StartRecording()

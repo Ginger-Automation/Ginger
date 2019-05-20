@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -34,103 +36,103 @@ namespace Ginger.Actions
             this.mAct = Act;
              GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
              GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
-            List<GingerCore.General.ComboItem> comboBoxItemsList = GeneratecomboBoxItemsListSendkeys();
-            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true);
+            List<ComboItem> comboBoxItemsList = GeneratecomboBoxItemsListSendkeys();
+            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true, context:Context.GetAsContext(mAct.Context));
         }
 
-        public List<GingerCore.General.ComboItem> GeneratecomboBoxItemsListSendkeys()
+        public List<ComboItem> GeneratecomboBoxItemsListSendkeys()
         {
-            List<GingerCore.General.ComboItem> comboBoxItemsList = new List<GingerCore.General.ComboItem>();
+            List<ComboItem> comboBoxItemsList = new List<ComboItem>();
 
-            GingerCore.General.ComboItem CBI1 = new GingerCore.General.ComboItem();
+            ComboItem CBI1 = new ComboItem();
             CBI1.text = "{BACKSPACE}";
             CBI1.text = "{BACKSPACE}";
 
-            GingerCore.General.ComboItem CBI2 = new GingerCore.General.ComboItem();
+            ComboItem CBI2 = new ComboItem();
             CBI2.text = "{BREAK}";
             CBI2.Value = "{BREAK}";
 
-            GingerCore.General.ComboItem CBI3 = new GingerCore.General.ComboItem();
+            ComboItem CBI3 = new ComboItem();
             CBI3.text = "{DELETE}";
             CBI3.Value = "{DELETE}";
 
-            GingerCore.General.ComboItem CBI4 = new GingerCore.General.ComboItem();
+            ComboItem CBI4 = new ComboItem();
             CBI4.text = "{CAPSLOCK}";
             CBI4.Value = "{CAPSLOCK}";
 
-            GingerCore.General.ComboItem CBI5 = new GingerCore.General.ComboItem();
+            ComboItem CBI5 = new ComboItem();
             CBI5.text = "DOWN ARROW";
             CBI5.Value = "{DOWN}";
 
-            GingerCore.General.ComboItem CBI6 = new GingerCore.General.ComboItem();
+            ComboItem CBI6 = new ComboItem();
             CBI6.text = "{END}";
             CBI6.Value = "{END}";
 
-            GingerCore.General.ComboItem CBI7 = new GingerCore.General.ComboItem();
+            ComboItem CBI7 = new ComboItem();
             CBI7.text = "{ENTER}";
             CBI7.Value = "{ENTER}";
 
-            GingerCore.General.ComboItem CBI8 = new GingerCore.General.ComboItem();
+            ComboItem CBI8 = new ComboItem();
             CBI8.text = "{ESC}";
             CBI8.Value = "{ESC}";
 
-            GingerCore.General.ComboItem CBI9 = new GingerCore.General.ComboItem();
+            ComboItem CBI9 = new ComboItem();
             CBI9.text = "{HELP}";
             CBI9.Value = "{HELP}";
 
-            GingerCore.General.ComboItem CBI10 = new GingerCore.General.ComboItem();
+            ComboItem CBI10 = new ComboItem();
             CBI10.text = "{HOME}";
             CBI10.Value = "{HOME}";
 
-            GingerCore.General.ComboItem CBI11 = new GingerCore.General.ComboItem();
+            ComboItem CBI11 = new ComboItem();
             CBI11.text = "{INSERT}";
             CBI11.Value = "{INSERT}";
 
-            GingerCore.General.ComboItem CBI12 = new GingerCore.General.ComboItem();
+            ComboItem CBI12 = new ComboItem();
             CBI12.text = "{LEFT}";
             CBI12.Value = "{LEFT}";
 
-            GingerCore.General.ComboItem CBI13 = new GingerCore.General.ComboItem();
+            ComboItem CBI13 = new ComboItem();
             CBI13.text = "{HOME}";
             CBI13.Value = "{HOME}";
 
-            GingerCore.General.ComboItem CBI14 = new GingerCore.General.ComboItem();
+            ComboItem CBI14 = new ComboItem();
             CBI14.text = "{NUMLOCK}";
             CBI14.Value = "{NUMLOCK}";
 
-            GingerCore.General.ComboItem CBI15 = new GingerCore.General.ComboItem();
+            ComboItem CBI15 = new ComboItem();
             CBI15.text = "{PGDN}";
             CBI15.Value = "{PGDN}";
 
-            GingerCore.General.ComboItem CBI16 = new GingerCore.General.ComboItem();
+            ComboItem CBI16 = new ComboItem();
             CBI16.text = "PAGE UP";
             CBI16.Value = "{PGUP}";
 
-            GingerCore.General.ComboItem CBI17 = new GingerCore.General.ComboItem();
+            ComboItem CBI17 = new ComboItem();
             CBI17.text = "{RIGHT}";
             CBI17.Value = "{RIGHT}";
 
-            GingerCore.General.ComboItem CBI18 = new GingerCore.General.ComboItem();
+            ComboItem CBI18 = new ComboItem();
             CBI18.text = "{SCROLLLOCK}";
             CBI18.Value = "{SCROLLLOCK}";
 
-            GingerCore.General.ComboItem CBI19 = new GingerCore.General.ComboItem();
+            ComboItem CBI19 = new ComboItem();
             CBI19.text = "{TAB}";
             CBI19.Value = "{TAB}";
 
-            GingerCore.General.ComboItem CBI20 = new GingerCore.General.ComboItem();
+            ComboItem CBI20 = new ComboItem();
             CBI20.text = "{UP}";
             CBI20.Value = "{UP}";
 
-            GingerCore.General.ComboItem CBI21 = new GingerCore.General.ComboItem();
+            ComboItem CBI21 = new ComboItem();
             CBI21.text = "+";
             CBI21.Value = "+";
 
-            GingerCore.General.ComboItem CBI22 = new GingerCore.General.ComboItem();
+            ComboItem CBI22 = new ComboItem();
             CBI22.text = "^";
             CBI22.Value = "^";
 
-            GingerCore.General.ComboItem CBI23 = new GingerCore.General.ComboItem();
+            ComboItem CBI23 = new ComboItem();
             CBI23.text = "%";
             CBI23.Value = "%";
             
