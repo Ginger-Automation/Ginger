@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             BusinessFlowReport BFR = GetBFReportData(businessFlow, environment);
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (offlineMode)
                 {

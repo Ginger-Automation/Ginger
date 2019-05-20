@@ -161,13 +161,13 @@ namespace Ginger.Run
             mJsonSerializer = new JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
-            if(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                mExecutionLogger = new TextFileRepository();
+                mExecutionLogger = new LiteDBRepository();
             }
             else
             {
-                mExecutionLogger = new LiteDBRepository();
+                mExecutionLogger = new TextFileRepository();
             }
             executionLoggerHelper = new ExecutionLoggerHelper();
         }
