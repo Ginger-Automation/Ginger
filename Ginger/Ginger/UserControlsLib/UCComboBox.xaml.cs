@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -151,7 +152,7 @@ namespace Ginger.UserControlsLib
                 Type Etype = comboBoxEnumItemsList[0].GetType();                
                 foreach (object item in comboBoxEnumItemsList)
                 {
-                    GingerCore.General.ComboItem CEI = new GingerCore.General.ComboItem();
+                    ComboItem CEI = new ComboItem();
                     CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
                     CEI.Value = item;
                     ComboBox.Items.Add(CEI);
@@ -204,11 +205,11 @@ namespace Ginger.UserControlsLib
             ComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
         }
 
-        public void UpdateComboItems(List<GingerCore.General.ComboItem> comboBoxItemsList)
+        public void UpdateComboItems(List<ComboItem> comboBoxItemsList)
         {
             ComboBox.Items.Clear();
             ComboBox.SelectedValuePath = "Value";
-            foreach (GingerCore.General.ComboItem item in comboBoxItemsList)
+            foreach (ComboItem item in comboBoxItemsList)
                 ComboBox.Items.Add(item);
         }
     }
