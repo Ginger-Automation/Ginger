@@ -1549,7 +1549,7 @@ public void RemoveCustomView(string viewName)
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(UCValueExpression));
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
-            //factory.SetValue(UCValueExpression.mContextProperty, context); //TODO: need to be fixed
+            factory.SetValue(UCValueExpression.ContextProperty, context); 
             template.VisualTree = factory;
           
 
