@@ -451,6 +451,8 @@ namespace Ginger.AnalyzerLib
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Analyzer" + ex.Message);
+                    //TODO: try to find the failure outside exception
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                     AA.Description = "Action's mapped Page Objects Model or Element is invalid";
                     AA.Details = "Action " + a.ActionDescription + " has invalid mapped Page Objects Model or Element.";

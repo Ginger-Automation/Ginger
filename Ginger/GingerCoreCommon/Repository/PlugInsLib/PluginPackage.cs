@@ -309,10 +309,8 @@ namespace Amdocs.Ginger.Repository
                             }
                         }
 
-
-                        MemberInfo[] members = type.GetMembers();
-                        GingerServiceConfigurationAttribute token = null;
-
+                        MemberInfo[] members = type.GetMembers();  
+                        
                         foreach (MemberInfo mi in members)
                         {
                             if( Attribute.GetCustomAttribute(mi, typeof(GingerServiceConfigurationAttribute), false) is GingerServiceConfigurationAttribute mconfig)
@@ -332,14 +330,9 @@ namespace Amdocs.Ginger.Repository
 
                                 }
                                 pluginServiceInfo.Configs.Add(Config);
-                            }
-
-                          
+                            }                          
                         }
-
-
                         mServices.Add(pluginServiceInfo);
-
                     }                    
                 }
             }            

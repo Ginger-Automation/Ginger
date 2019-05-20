@@ -65,9 +65,7 @@ namespace Ginger.Run
         public Activity mCurrentActivity;
         uint meventtime;
         IValueExpression mVE;
-
-        ProjEnvironment mExecutionEnvironment = null;
-
+        
         int mBusinessFlowCounter { get; set; }
        
         Context mContext;
@@ -226,6 +224,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }

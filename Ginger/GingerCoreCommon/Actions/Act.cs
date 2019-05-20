@@ -810,19 +810,12 @@ namespace GingerCore.Actions
         {
             try
             {
-
-                byte[] bytes = Convert.FromBase64String(Base64String);
-                Image image;
+                byte[] bytes = Convert.FromBase64String(Base64String);                
                 string filePath = GetScreenShotRandomFileName();
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
                 {                                        
-                    fs.Write(bytes, 0, bytes.Length);
-      
+                    fs.Write(bytes, 0, bytes.Length);      
                 }
-
-
-
-
                 ScreenShots.Add(filePath);
                 ScreenShotsNames.Add(Name);
 
