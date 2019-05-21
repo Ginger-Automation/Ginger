@@ -199,7 +199,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
-        private static void ParseActionResult(NewPayLoad RC, Act actPlugin)
+        public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
@@ -249,7 +249,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
         // Move code to the ActPlugIn and make it impl IACtPlug...
-        private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
+        public static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
@@ -317,26 +317,12 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
         }
 
-
-
-
-
-        internal static void RunServiceAction(NewPayLoad ActionPayload, string PluginId, string ServiceID)
-        {
-            GingerNodeInfo GNI = GetGingerNodeInfo(PluginId, ServiceID);
-
-
-
-        }
+                          
 
         public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
-
         {
-
-
-            NewPayLoad PL = new NewPayLoad("ScreenshotAction");
-       
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+           NewPayLoad PL = new NewPayLoad("ScreenshotAction");       
+           List<NewPayLoad> PLParams = new List<NewPayLoad>();
 
            NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
             PLParams.Add(AIVPL);
