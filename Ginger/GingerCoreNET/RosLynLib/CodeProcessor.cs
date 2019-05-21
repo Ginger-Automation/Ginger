@@ -119,10 +119,13 @@ namespace GingerCoreNET.RosLynLib
                     return Conditionparse;
                 }
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
 
             }
+            //TODO: fix me !!!!!  bad double try to recover from exceptopn!? or we can use if else
+
+
             bool result = false;
             try
             {
