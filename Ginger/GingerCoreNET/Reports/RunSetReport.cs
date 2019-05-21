@@ -174,28 +174,35 @@ namespace Ginger.Reports
             get
             {
                 gingerReports = new List<GingerReport>();
-                foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
+                if (LogFolder != null)
                 {
-                    FileAttributes attr = File.GetAttributes(folder);
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
                     {
-                        try
+                        FileAttributes attr = File.GetAttributes(folder);
+                        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                         {
-                            GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
-                            gr.LogFolder = folder;
-                            gingerReports.Add(gr);
+                            try
+                            {
+                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
+                                gr.LogFolder = folder;
+                                gingerReports.Add(gr);
+                            }
+                            catch { }
                         }
-                        catch { }
                     }
                 }
                 return gingerReports;
             }
         }
-
+        private Amdocs.Ginger.CoreNET.Execution.eRunStatus runSetExecutionStatus;
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunSetExecutionStatus
         {
             get
             {
+                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    return runSetExecutionStatus;
+                }
                 if (TotalGingerRunnersFailed > 0)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -217,7 +224,10 @@ namespace Ginger.Reports
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 }
             }
-            set { }
+            set
+            {
+                runSetExecutionStatus = value;
+            }
         }
 
         public void SetLiteDBData(LiteDbRunSet runSet)

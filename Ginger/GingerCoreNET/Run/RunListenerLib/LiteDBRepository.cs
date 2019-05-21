@@ -151,7 +151,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
             runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+            if (ExecutionLoggerManager.RunSetReport != null)
+            {
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+            }
             liteDbBFList.Clear();
         }
 
@@ -163,6 +166,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            if(System.IO.Directory.Exists(runSetReport.LogFolder))
+            {
+                System.IO.Directory.Delete(runSetReport.LogFolder,true);
+            }
         }
     }
 }
