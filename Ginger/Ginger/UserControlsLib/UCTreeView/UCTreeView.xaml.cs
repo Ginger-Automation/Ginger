@@ -735,17 +735,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public void SelectFirstVisibleChildItem(ItemCollection treeItems, List<Type> childTypes)
         {
             foreach (TreeViewItem item in treeItems)
+            {
                 if (item.Visibility == Visibility.Visible)
                 {
-                    if (childTypes.Contains(item.Tag.GetType()))
+                    if (item.Tag != null && childTypes.Contains(item.Tag.GetType()))
                     {
                         item.Focus();
                         return;
                     }
 
                     if (item.HasItems)
+                    {
                         SelectFirstVisibleChildItem(item.Items, childTypes);
+                    }
                 }
+            }
         }
 
         public void DeleteItemAndSelectParent(ITreeViewItem NodeItem)

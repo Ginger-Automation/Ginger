@@ -67,6 +67,7 @@ namespace UnitTests.UITests
             mBF.CurrentActivity.TargetApplication = "WebApp";
             mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
             mDriver.AutoDetect = true;
+            mDriver.HttpServerTimeOut = 60;
             mDriver.StartDriver();
 
             Agent a = new Agent();
