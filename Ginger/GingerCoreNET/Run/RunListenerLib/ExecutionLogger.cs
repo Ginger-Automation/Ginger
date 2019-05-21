@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
@@ -50,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     public abstract class ExecutionLogger 
     {
         static JsonSerializer mJsonSerializer;
-        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
@@ -62,7 +63,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
         ProjEnvironment mExecutionEnvironment = null;
-
         int mBusinessFlowCounter { get; set; }
 
         public ProjEnvironment ExecutionEnvironment
@@ -240,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
             runSetReport.MachineName = Environment.MachineName.ToString();
             runSetReport.ExecutedbyUser = Environment.UserName.ToString();
-            runSetReport.GingerVersion = WorkSpace.AppVersion.ToString();
+            runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
 
     }

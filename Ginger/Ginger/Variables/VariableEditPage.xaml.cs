@@ -338,12 +338,13 @@ namespace Ginger.Variables
             {
                 try
                 {
-                    ActSetVariableValue setValueAct = new ActSetVariableValue();
+                    ActSetVariableValue setValueAct = new ActSetVariableValue();                  
                     setValueAct.VariableName = mVariable.LinkedVariableName;
                     setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
                     setValueAct.RunOnBusinessFlow = mContext.BusinessFlow;
-                    setValueAct.Execute();
+                    setValueAct.Context = mContext;
+                    setValueAct.Execute();                  
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {

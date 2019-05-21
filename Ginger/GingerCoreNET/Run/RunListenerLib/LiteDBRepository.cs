@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public LiteDbManager liteDbManager; 
 
         public List<LiteDbRunSet> liteDbRunSetList = new List<LiteDbRunSet>();
-        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
+        
         public List<LiteDbBusinessFlow> liteDbBFList = new List<LiteDbBusinessFlow>();
         public List<LiteDbActivityGroup> liteDbAGList = new List<LiteDbActivityGroup>();
         public List<LiteDbActivity> liteDbActivityList = new List<LiteDbActivity>();
@@ -148,10 +148,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
-            runner.SetReportData(gingerReport);
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
+            runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            liteDbRunnerList.Add(runner);
+            if (ExecutionLoggerManager.RunSetReport != null)
+            {
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+            }
             liteDbBFList.Clear();
         }
 
@@ -159,10 +162,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbRunSet runSet = new LiteDbRunSet();
             base.SetReportRunSet(runSetReport, logFolder);
+            runSet.RunnersColl.AddRange(ExecutionLoggerManager.RunSetReport.liteDbRunnerList);
             runSet.SetReportData(runSetReport);
-            runSet.RunnersColl.AddRange(liteDbRunnerList);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
-            liteDbRunnerList.Clear();
+            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            if(System.IO.Directory.Exists(runSetReport.LogFolder))
+            {
+                System.IO.Directory.Delete(runSetReport.LogFolder,true);
+            }
         }
     }
 }

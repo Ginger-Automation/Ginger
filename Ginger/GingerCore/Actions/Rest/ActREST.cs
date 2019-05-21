@@ -31,10 +31,12 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.WebServices;
 
 namespace GingerCore.Actions.REST
 {
-    public class ActREST : ActWithoutDriver
+    public class ActREST : ActWithoutDriver, IObsoleteAction
     {
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // We keep a dictionary of each host and cookies
@@ -840,6 +842,64 @@ namespace GingerCore.Actions.REST
 
             }
             return NewReqBody;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if(Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIRest>(); });
+            ActWebAPIRest convertedActWebAPIRest = mapConfigUIElement.CreateMapper().Map<Act, ActWebAPIRest>(this);
+
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Convert.ToString(this.DoNotFailActionOnBadRespose));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Convert.ToString(this.UseLegacyJSONParsing));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, this.URLDomain.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, this.URLUser.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, this.URLPass.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, Convert.ToString(this.SecurityType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, this.RequestBody.Value);
+            
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, Convert.ToString(this.RequestType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, Convert.ToString(this.ResponseContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.CookieMode, Convert.ToString(this.CookieMode));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, Convert.ToString(this.ContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, Convert.ToString(this.ReqHttpVersion));
+           
+            if(this.UseRequestBody)
+            {
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString());
+            }
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, this.TemplateFile.Value);
+            convertedActWebAPIRest.DynamicElements = this.DynamicElements;
+            convertedActWebAPIRest.HttpHeaders = this.HttpHeaders;
+            
+            return convertedActWebAPIRest;
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return typeof(ActWebAPIRest);
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            ActWebAPIRest newActApiRest = new ActWebAPIRest();
+            return newActApiRest.ActionDescription;
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.WebServices;
         }
     }
 }

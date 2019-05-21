@@ -14,6 +14,7 @@ using GingerCore.Activities;
 using Ginger.Reports.GingerExecutionReport;
 using GingerCore.FlowControlLib;
 using Ginger.Reports;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -42,6 +43,26 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public void SetReportData(RepositoryItemBase item)
         { }
+        public string SetStatus<T>(List<T> reportColl)
+        {
+            if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Failed.ToString())))
+            {
+                return eRunStatus.Failed.ToString();
+            }
+            if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Blocked.ToString())))
+            {
+                return eRunStatus.Blocked.ToString();
+            }
+            if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Stopped.ToString())))
+            {
+                return eRunStatus.Stopped.ToString();
+            }
+            if (reportColl.Count(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Passed.ToString()) || (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Skipped.ToString())) == reportColl.Count())
+            {
+                return eRunStatus.Passed.ToString();
+            }
+            return eRunStatus.Pending.ToString();
+        }
     }
     public class LiteDbRunSet : LiteDbReportBase
     {
@@ -66,8 +87,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = runSetReport.Elapsed;
             MachineName = System.Environment.MachineName.ToString();
             ExecutedbyUser = System.Environment.UserName.ToString();
-            GingerVersion = WorkSpace.AppVersion.ToString();
-            RunStatus = runSetReport.RunSetExecutionStatus.ToString();
+            GingerVersion = ApplicationInfo.ApplicationVersion;
+            RunStatus = SetStatus(RunnersColl);
         }
     }
     public class LiteDbRunner : LiteDbReportBase
@@ -90,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             EndTimeStamp = gingerReport.EndTimeStamp;
             Elapsed = gingerReport.Elapsed;
             ApplicationAgentsMappingList = gingerReport.ApplicationAgentsMappingList;
-            RunStatus = gingerReport.GingerExecutionStatus.ToString();
+            RunStatus = SetStatus(BusinessFlowsColl);
         }
     }
     public class LiteDbBusinessFlow : LiteDbReportBase

@@ -120,7 +120,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ActDummy act3 = new ActDummy() { Description = "A3", Active = true };
             a1.Acts.Add(act3);
 
-            //Act            
+            //Act         
             mGR.RunRunner();
 
             //Assert

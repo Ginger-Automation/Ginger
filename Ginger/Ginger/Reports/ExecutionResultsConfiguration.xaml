@@ -15,8 +15,8 @@
             <StackPanel Margin="10,10,0,0" HorizontalAlignment="Left">
                 <Label Content="Execution Logger Result Producing:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
                 <StackPanel x:Name="executionResultSwitchRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="On" Padding="5,0,15,0" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
-                    <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="Off" Padding="5,0,0,0" IsChecked="True" Checked="executionResultOffRadioBtnsPnl_Checked"></RadioButton>
+                    <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="On" Padding="5,0,15,0" IsChecked="True" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
+                    <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="Off" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked"></RadioButton>
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="ExecutionResultFolderPnl" Margin="10,10,0,0" HorizontalAlignment="Left">
