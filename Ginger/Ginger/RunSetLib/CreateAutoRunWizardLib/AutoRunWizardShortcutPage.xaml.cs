@@ -1,21 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -24,8 +13,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// </summary>
     public partial class AutoRunWizardShortcutPage : Page, IWizardPage
     {
-
-        AutoRunWizard mCreateCLIWizard;
+        AutoRunWizard mAutoRunWizard;
 
         public AutoRunWizardShortcutPage()
         {
@@ -38,71 +26,72 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mCreateCLIWizard = (AutoRunWizard)WizardEventArgs.Wizard;
+                    mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
+                    mAutoRunWizard.AutoRunShortcut.CreateShortcut = true;
+                    mAutoRunWizard.AutoRunShortcut.ShortcutFileName = WorkSpace.Instance.Solution.Name + "-" + mAutoRunWizard.RunsetConfig.Name + " Execution";
+                    xExecuterPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ExecuterFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
+                    xShortcutPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
+                    BindingHandler.ObjFieldBinding(xShortcutDescriptionTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFileName));                                       
                     xGingerEXERadioButton.IsChecked = true;
-                    xShortcutDescriptionTextBox.BindControl(mCreateCLIWizard, nameof(AutoRunWizard.ShortcutFileName));
                     xDesktopRadioButton.IsChecked = true;
                     break;
+
                 case EventType.Active:
-                    if (string.IsNullOrEmpty(xShortcutDescriptionTextBox.Text))
-                    {
-                        string description = WorkSpace.Instance.Solution.Name + " " + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + " " + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
-                        xShortcutDescriptionTextBox.Text = description;                        
-                    }
-                    xCLIFileName.Text = mCreateCLIWizard.AutoRunConfigurationFileName;
+                    BindingHandler.ObjFieldBinding(xShortcutContentTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutContent), BindingMode: System.Windows.Data.BindingMode.OneWay);
                     break;
+            }
+        }
+
+        private void XCreateShortCutRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunShortcut.CreateShortcut = true;
+                xShortCutCreationConfigsPnl.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void XDoNotCreateShortCutRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunShortcut.CreateShortcut = false;
+                xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;
             }
         }
 
         private void XGingerEXERadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mAutoRunWizard.SetGingerExecutor();
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerExe;
+            }
         }
 
         private void XGingerConsoleRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mAutoRunWizard.SetGingerConsoleExecutor();
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerConsole;
+            }
         }
 
         private void XDesktopRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.SetCLIFolder();
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunShortcut.ShortcutFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                xShortcutPathTextbox.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void XFolderRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            mCreateCLIWizard.SetCLIFolder(xCLIFolderTextBox.Text);
-        }
-
-        private void XShortcutDescriptionTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //Regex containsABadCharacter = new Regex("["+ Regex.Escape(System.IO.Path.InvalidPathChars) + "]");
-            if (mCreateCLIWizard.AutoRunConfigurationFileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
-           {
-                //xCLIFileName.Text = xCLIFileName.BindingGroup.ValidatesOnNotifyDataError
-            }
-            else
+            if (mAutoRunWizard != null)
             {
-                xCLIFileName.Text = mCreateCLIWizard.AutoRunConfigurationFileName;
+                mAutoRunWizard.AutoRunShortcut.ShortcutFolderPath = string.Empty;
+                xShortcutPathTextbox.Visibility = Visibility.Visible;
             }
-        }
-
-        private void XBrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-            {
-                DialogResult result = folderBrowserDialog.ShowDialog();
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
-                {
-                    xCLIFolderTextBox.Text = folderBrowserDialog.SelectedPath;
-                    
-                }
-            }
-        }
-        
-        private void XCLIFolderTextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-            mCreateCLIWizard.SetCLIFolder(xCLIFolderTextBox.Text);
         }
     }
 }

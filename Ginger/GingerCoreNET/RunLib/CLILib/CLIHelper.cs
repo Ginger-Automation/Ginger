@@ -1,15 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -26,8 +23,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
 
 
-        static bool mShowAutoRunWindow ; // default is false except in ConfigFile which is true to keep backword compatibility
-        
+        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
         public bool ShowAutoRunWindow
         {
             get
@@ -41,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        static bool mDownloadUpgradeSolutionFromSourceControl;
+        bool mDownloadUpgradeSolutionFromSourceControl;
         public bool DownloadUpgradeSolutionFromSourceControl
         {
             get
@@ -55,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         }
 
-        static bool mRunAnalyzer;
+        bool mRunAnalyzer;
         public bool RunAnalyzer {
             get
             {

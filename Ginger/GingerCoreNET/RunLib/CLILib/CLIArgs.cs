@@ -1,19 +1,21 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
     {
+        bool ICLI.IsFileBasedConfig { get { return false; } }
+
         string ICLI.Identifier
         {
             get
             {
-                return "Args";
+                return "--args";
             }
         }
 
@@ -25,11 +27,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string Args = string.Format("--solution {0}", WorkSpace.Instance.Solution.Folder);
+            string Args = string.Format("--solution {0}", solution.Folder);
             Args += string.Format(" --runset {0}", runsetExecutor.RunSetConfig.Name);
-            Args += string.Format(" --environemnt {0}", runsetExecutor.RunsetExecutionEnvironment.Name);
+            Args += string.Format(" --environment {0}", runsetExecutor.RunsetExecutionEnvironment.Name);
 
             // TODO: add all the rest source control, run analyzer...
 

@@ -1,15 +1,17 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger.AnalyzerLib;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.SourceControl;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
-    {        
+    {
+        bool ICLI.IsFileBasedConfig { get { return true; } }
+
         public string Identifier
         {
             get
@@ -32,22 +34,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {               
-                sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
-                sConfig += "SourceControlPassword=" + WorkSpace.Instance.Solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
-                if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
+                sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
+                sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
+                sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
                 {
-                    sConfig += "SourceControlProxyServer=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                    sConfig += "SourceControlProxyPort=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
                 }
             }
-            sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+            sConfig += "Solution=" + solution.Folder + Environment.NewLine;
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
             sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
@@ -58,8 +60,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            
-            CLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
+            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
@@ -101,11 +102,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "RunSet":
                             cliHelper.Runset = value;                            
                             break;
-                        case "ShowAutoRunWindow":                                                        
-                            CLIHelper.ShowAutoRunWindow = bool.Parse(value);
+                        case "ShowAutoRunWindow":
+                            cliHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
-                            CLIHelper.RunAnalyzer = bool.Parse(value);                            
+                            cliHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");

@@ -12,15 +12,20 @@
         <StackPanel Margin="10">
             <Label HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}">General Options:</Label>
 
-            <CheckBox x:Name="xDownloadsolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5" Checked="xDownloadsolutionCheckBox_Checked" IsChecked="false" Unchecked="xDownloadsolutionCheckBox_Unchecked">Download/Update Solution from source control</CheckBox>
+            <CheckBox x:Name="xDownloadsolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">Download/Update Solution from source control</CheckBox>
 
-            <CheckBox x:Name="xGingerRunEXEWindowShow" Margin="5" Checked="xGingerRunEXEWindowShow_Checked" Unchecked="xGingerRunEXEWindowShow_Unchecked" Style="{StaticResource $CeckBoxStyle}">
+            <CheckBox x:Name="xGingerRunEXEWindowShow" Margin="5" Style="{StaticResource $CeckBoxStyle}">
                 <CheckBox.Content>
-                    <GingerCore:ucTextDicResource Text="Show [RunSet] execution window while running (relevent only in case running on Windows)"/>
+                    <GingerCore:ucTextDicResource Text="Show [RunSet] execution window while running (on Windows only)"/>
                 </CheckBox.Content>
             </CheckBox>
+            <!--<Label Style="{StaticResource $LabelStyle}" FontSize="10" Margin="20,0,0,0" Content="(Relevent only in case running on Windows)"/>-->
 
-            <CheckBox x:Name="xRunAnalyzerCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5" Checked="xRunAnalyzerCheckBox_Checked" Unchecked="xRunAnalyzerCheckBox_Unchecked" IsChecked="True" >Run Analyzer before execution</CheckBox>
+            <CheckBox x:Name="xRunAnalyzerCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Run [RunSet] Analyzer before execution"/>
+                </CheckBox.Content>
+            </CheckBox>
 
         </StackPanel>
     </Grid>

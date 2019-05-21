@@ -25,7 +25,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
-            if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            if (args[0].Contains("="))
             {
                 string[] arg1 = args[0].Split('=');
                 param = arg1[0].Trim();

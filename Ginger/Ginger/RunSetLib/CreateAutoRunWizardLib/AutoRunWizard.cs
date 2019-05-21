@@ -1,14 +1,12 @@
-﻿using System;
-using System.IO;
-using amdocs.ginger.GingerCoreNET;
+﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.WizardLib;
 using GingerCore;
-using GingerUtils;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
+using System;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -16,13 +14,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     {
         public override string Title { get { return string.Format("Create {0} Auto Run Configuration", GingerDicser.GetTermResValue(eTermResKey.RunSet)); } }
 
-        public RunSetConfig mRunsetConfig;
+        public RunSetConfig RunsetConfig;
 
         public Context mContext;
 
-        public CLIHelper mCLIHelper;
-
-        public RunSetAutoRunOptions AutoRunOptions;
+        public CLIHelper CliHelper;
 
         public RunSetAutoRunConfiguration AutoRunConfiguration;
 
@@ -31,43 +27,50 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public AutoRunWizard(RunSetConfig runSetConfig, Context context)
         {
-            mRunsetConfig = runSetConfig;
+            RunsetConfig = runSetConfig;
             mContext = context;
-            mCLIHelper = new CLIHelper();
-            AutoRunOptions = new RunSetAutoRunOptions();
-            AutoRunConfiguration = new RunSetAutoRunConfiguration(runSetConfig);
-            AutoRunShortcut = new RunSetAutoRunShortcut();
+            CliHelper = new CLIHelper();           
+            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
+            AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateCLIWizardLib/CreateCLI.md"));
-            AddPage(Name: "Auto Run Options", Title: "Set Auto Run Configuration Options", SubTitle: "Set Auto Run Configuration Options", Page: new AutoRunWizardOptionsPage());                        
-            AddPage(Name: "Auto Run Type", Title: "Set Auto Run Configuration Type", SubTitle: "Set Auto Run Configuration Type", Page: new AutoRunWizardCLITypePage());
-            AddPage(Name: "Auto Run Shortcut", Title: "Create Auto Run Configuration Execution Shortcut", SubTitle: "Create Auto Run Configuration Execution Shortcut", Page: new AutoRunWizardShortcutPage());
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));
+            AddPage(Name: "General Options", Title: "General Options", SubTitle: "Set Auto Run General Options", Page: new AutoRunWizardOptionsPage());                        
+            AddPage(Name: "Configuration Type", Title: "Configuration Type", SubTitle: "Set Auto Run Configuration Type", Page: new AutoRunWizardCLITypePage());
+            AddPage(Name: "Execution Shortcut", Title: "Execution Shortcut", SubTitle: "Create Auto Run Configuration Execution Shortcut", Page: new AutoRunWizardShortcutPage());
         }
 
         public override void Finish()
         {
             try
             {
-                // Write the content file with runset data
-                System.IO.File.WriteAllText(AutoRunConfigurationFileName, AutoRunConfigurationFileContent);
+                // Write Configuration file
+                AutoRunConfiguration.CreateConfigFile();
 
                 // Create windows shortcut
-                WshShell shell = new WshShell();
-                string shortcutAddress = Path.Combine(CLIFolder, ShortcutFileName + ".lnk");
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-                shortcut.Description = ShortcutFileName;
-                shortcut.WorkingDirectory = WorkingDirectory;
-                shortcut.TargetPath = Path.Combine(WorkingDirectory, CLIExecutor);
-                shortcut.Arguments = SelectedCLI.Identifier + "=\"" + AutoRunConfigurationFileName + "\"";
+                if (AutoRunShortcut.CreateShortcut)
+                {
+                    SaveShortcut();
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Auto Run Configuration and Shortcut were created successfully.");
+                    return;
+                }
 
-                shortcut.Save();
-
-                Reporter.ToUser(eUserMsgKey.ShortcutCreated, shortcut.Description);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Auto Run Configuration was created successfully.");
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.ShortcutCreationFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occured while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
             }
+        }
+
+        public void SaveShortcut()
+        {
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
+            shortcut.Description = AutoRunShortcut.ShortcutFileName;
+            shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
+            shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+            shortcut.Save();
         }
 
     }

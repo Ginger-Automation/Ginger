@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,49 +26,23 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 case EventType.Init:
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
-                                       
                     if (WorkSpace.Instance.Solution.SourceControl == null)
                     {
-                        xDownloadsolutionCheckBox.IsChecked = false;
-                        xDownloadsolutionCheckBox.IsEnabled = true;
+                        xDownloadsolutionCheckBox.IsEnabled = false;
+                        mAutoRunWizard.CliHelper.DownloadUpgradeSolutionFromSourceControl = false;
                     }
                     else
                     {
                         xDownloadsolutionCheckBox.IsEnabled = true;
+                        mAutoRunWizard.CliHelper.DownloadUpgradeSolutionFromSourceControl = true;
                     }
+                    mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
+                    mAutoRunWizard.CliHelper.RunAnalyzer = true;
+                    BindingHandler.ObjFieldBinding(xDownloadsolutionCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.DownloadUpgradeSolutionFromSourceControl));
+                    BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
+                    BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
                     break;
             }
-
-        }
-        
-        private void xDownloadsolutionCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.DownloadUpgradeSolutionFromSourceControl = true;
-        }
-
-        private void xDownloadsolutionCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
-        }
-
-        private void xGingerRunEXEWindowShow_Checked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.ShowAutoRunWindow = true;            
-        }
-
-        private void xGingerRunEXEWindowShow_Unchecked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.ShowAutoRunWindow = false;            
-        }
-
-        private void xRunAnalyzerCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.RunAnalyzer = true;
-        }
-
-        private void xRunAnalyzerCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.mCLIHelper.RunAnalyzer = false;
         }
     }
 }

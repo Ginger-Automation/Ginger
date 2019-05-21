@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
+﻿using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicXML : ICLI
     {
+        bool ICLI.IsFileBasedConfig { get { return true; } }
+
         public string Identifier
         {
             get
@@ -25,7 +24,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string xml = DynamicRunSetManager.CreateRunSet(runsetExecutor);
             return xml;            

@@ -645,9 +645,6 @@
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Repository\RepositoryItemFactory.cs" />
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunConfiguration.cs" />
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunOptions.cs" />
-    <Compile Include="RunSetLib\CreateAutoRunWizardLib\RunSetAutoRunShortcut.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
@@ -4492,7 +4489,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Resource>
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
-    <Resource Include="RunSetLib\CreateAutoRunWizardLib\CreateCLI.md" />
+    <Resource Include="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
     <None Include="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
       <SubType>Designer</SubType>
     </None>
