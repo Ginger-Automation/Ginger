@@ -28,6 +28,7 @@ using Ginger.Actions;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowFolder;
 using Ginger.Functionalities;
+using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.RunSetLib.CreateCLIWizardLib;
@@ -1591,19 +1592,10 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-
             if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
-                DeleteFoldersData(Path.Combine(clientAppFolderPath,"assets", "Execution_Data"));
-                DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
-                var result = dbManager.GetRunSetLiteData();
-                List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
-                LiteDbRunSet lightDbRunSet = filterData.Last();
-                PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
-                RunClientApp(json, clientAppFolderPath);
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport();
             }
             else if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
             {
