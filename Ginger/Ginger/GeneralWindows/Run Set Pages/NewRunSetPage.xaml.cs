@@ -1555,7 +1555,7 @@ namespace Ginger.Run
             try
             {
                 string taskCommand = $"{Path.Combine(clientAppFolderPath, "index.html")} --allow-file-access-from-files";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.Json"), json); //TODO - Replace with the real location under Ginger installation
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
                 System.Diagnostics.Process.Start("chrome", taskCommand);
             }
             catch(Exception ec)
@@ -1619,10 +1619,10 @@ namespace Ginger.Run
                             List<string> newScreenShotsList = new List<string>();
                             foreach (string screenshot in liteDbAction.ScreenShots)
                             {
-
-                                string newScreenshotPath = Path.Combine(imageFolderPath, Path.GetFileName(screenshot));
+                                string fileName = Path.GetFileName(screenshot);
+                                string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
                                 System.IO.File.Copy(screenshot, newScreenshotPath,true); //TODO - Replace with the real location under Ginger installation
-                                newScreenShotsList.Add(newScreenshotPath);
+                                newScreenShotsList.Add(fileName);
                             }
                             liteDbAction.ScreenShots = newScreenShotsList;
                         }
