@@ -28,6 +28,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
+using Ginger.Reports;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -332,7 +333,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
-            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
+            RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -341,7 +342,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-            RunListeners.Add(new ExecutionLogger(mContext, ExecutedFrom));
+            RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
         }
 
 
@@ -959,6 +960,10 @@ namespace Ginger.Run
                     {
                         ResetAction(act);
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        {
+                            NotifyActionEnd(act);
+                        }
                         act.ExInfo = "Action is not active.";
                         return;
                     }
@@ -1469,7 +1474,7 @@ namespace Ginger.Run
             if (mStopRun)
             {
                 UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped, st);
-                ExecutionLogger.SetActionFolder(action);
+                ExecutionLoggerManager.SetActionFolder(action);
                 //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                 SetDriverPreviousRunStoppedFlag(true);
                 return;
@@ -3030,6 +3035,10 @@ namespace Ginger.Run
                         {
                             ResetAction(act);
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            {
+                                NotifyActionEnd(act);
+                            }
                             act.ExInfo = "Action is not active.";
                         }
                         if (!activity.Acts.IsLastItem())
@@ -3652,7 +3661,7 @@ namespace Ginger.Run
             }
         }
 
-        public void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLogger executionLogger = null)
+        public void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLoggerManager ExecutionLoggerManager = null)
         {
             if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
             {
@@ -3685,7 +3694,7 @@ namespace Ginger.Run
                                 //{                                    
                                 //    NotifyActivityGroupEnd(currentActivityGroup);
                                 //}
-                                NotifyActivityGroupEnd(currentActivityGroup);
+                                NotifyActivityGroupEnd(currentActivityGroup, offlineMode);
                                 break;
                             case executionLoggerStatus.Finished:
                                 // do nothing
@@ -3782,6 +3791,10 @@ namespace Ginger.Run
                     break;
 
                 if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                {
+                    NotifyActionEnd(act);
+                }
                 if (CurrentBusinessFlow.CurrentActivity.Acts.IsLastItem()) break;
 
                 else
@@ -4031,7 +4044,7 @@ namespace Ginger.Run
                         BFES.ExecutionBFFlowControls = BF.BFFlowControls;
                         BFES.BusinessFlow = BF;
                         BFES.Selected = true;                        
-                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
+                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
 
                         BFESs.Add(BFES);
                     }
@@ -4042,12 +4055,12 @@ namespace Ginger.Run
 
         // !!!!!!!!!!!!! cache use something else pr not here
         // keep in workspace !?
-        public ExecutionLogger ExecutionLogger
+        public ExecutionLoggerManager ExecutionLoggerManager
         {
             get
             {
-                ExecutionLogger executionLogger = (ExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(ExecutionLogger) select x).SingleOrDefault();
-                return executionLogger;
+                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)(from x in mRunListeners where x.GetType() == typeof(ExecutionLoggerManager) select x).SingleOrDefault();
+                return ExecutionLoggerManager;
             }
         }
 
@@ -4452,17 +4465,17 @@ namespace Ginger.Run
             }
         }
 
-        private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup)
+        private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
             activityGroup.EndTimeStamp = eventTime;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLogger"))
+                if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLExecutionLoggerManagerogger"))
                 {
-                    ((Ginger.Run.ExecutionLogger)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
+                    ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }
-                runnerListener.ActivityGroupEnd(eventTime, activityGroup);
+                runnerListener.ActivityGroupEnd(eventTime, activityGroup, offlineMode);
             }
         }
 
@@ -4475,6 +4488,71 @@ namespace Ginger.Run
                 runnerListener.ExecutionContext(eventTime, automationTabContext, CurrentBusinessFlow);
             }
         }
+        public bool SetBFOfflineData(BusinessFlow BF, ExecutionLoggerManager executionLoggerManager, string logFolderPath)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();
+            try
+            {
+                if (System.IO.Directory.Exists(logFolderPath))
+                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CleanDirectory(logFolderPath);
+                else
+                    System.IO.Directory.CreateDirectory(logFolderPath);
+                BF.OffilinePropertiesPrep(logFolderPath);
+                foreach (Activity activity in BF.Activities)
+                {
+                    ActivitiesGroup currentActivityGroup = BF.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    if (currentActivityGroup != null)
+                    {
+                        currentActivityGroup.ExecutionLogFolder = logFolderPath;
+                        switch (currentActivityGroup.ExecutionLoggerStatus)
+                        {
+                            case executionLoggerStatus.NotStartedYet:
+                                executionLoggerManager.ActivityGroupStart(eventTime, currentActivityGroup);
+                                break;
+                        }
+                    }
 
+                    this.CalculateActivityFinalStatus(activity);
+                    if (activity.GetType() == typeof(IErrorHandler))
+                    {
+                        continue;
+                    }
+                    if (activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    {
+                        continue;
+                    }
+                    activity.OfflinePropertiesPrep(BF.ExecutionLogFolder, BF.ExecutionLogActivityCounter, Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(activity.ActivityName));
+                    System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
+                    foreach (Act action in activity.Acts)
+                    {
+                        if (action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored)
+                        {
+                            continue;
+                        }
+                        activity.ExecutionLogActionCounter++;
+                        action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        {
+                            System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
+                        }
+                        executionLoggerManager.mCurrentActivity = activity;
+                        executionLoggerManager.ActionEnd(eventTime, action, true);
+                    }
+                    executionLoggerManager.ActivityEnd(eventTime, activity, true);
+                    BF.ExecutionLogActivityCounter++;
+                }
+                this.SetActivityGroupsExecutionStatus(BF, true);
+                this.CalculateBusinessFlowFinalStatus(BF);
+
+                executionLoggerManager.BusinessFlowEnd(eventTime, BF, true);
+                BF.ExecutionLogFolder = string.Empty;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Offline BusinessFlow Execution Log", ex);
+                return false;
+            }
+        }
     }
 }

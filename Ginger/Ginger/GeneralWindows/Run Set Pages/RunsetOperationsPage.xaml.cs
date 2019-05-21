@@ -198,7 +198,7 @@ namespace Ginger.Run
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationIsEnabled)
+            if (! WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;

@@ -23,6 +23,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 
 namespace Ginger.Reports
 {
@@ -44,6 +45,7 @@ namespace Ginger.Reports
             public static string ExecutedBusinessFlowsDetails = "ExecutedBusinessFlowsDetails";
             public static string ExecutedActivitiesDetails = "ExecutedActivitiesDetails";
             public static string FailuresDetails = "FailuresDetails";
+            public static string DataRepMethod = "DataRepMethod";
         }
 
         public int Seq { get; set; }
@@ -165,7 +167,7 @@ namespace Ginger.Reports
         public string LogFolder { get; set; }
 
         public System.Diagnostics.Stopwatch Watch = new System.Diagnostics.Stopwatch();
-
+        public ExecutionLoggerConfiguration.DataRepositoryMethod DataRepMethod { get; set; }
         private List<GingerReport> gingerReports;
         public List<GingerReport> GingerReports
         {
@@ -214,6 +216,22 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 }
+            }
+            set { }
+        }
+
+        public void SetLiteDBData(LiteDbRunSet runSet)
+        {
+            GUID = runSet._id.ToString();
+            Name = runSet.Name;
+            Description = runSet.Description;
+            StartTimeStamp = runSet.StartTimeStamp;
+            EndTimeStamp = runSet.EndTimeStamp;
+            Elapsed = runSet.Elapsed;
+            Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
+            if(Enum.TryParse(runSet.RunStatus, out myStatus))
+            {
+                RunSetExecutionStatus = myStatus;
             }
         }
 
@@ -300,5 +318,6 @@ namespace Ginger.Reports
                 return (TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed));
             }
         }
+        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
     }
 }

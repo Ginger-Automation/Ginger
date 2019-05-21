@@ -1171,5 +1171,12 @@ namespace GingerCore
                 return nameof(this.Name);
             }
         }       
+        public void OffilinePropertiesPrep(string logFolderPath)
+        {
+            ExecutionLogFolder = logFolderPath;
+            VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            SolutionVariablesBeforeExec = GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            ExecutionLogActivityCounter = 1;
+        }
     }
 }
