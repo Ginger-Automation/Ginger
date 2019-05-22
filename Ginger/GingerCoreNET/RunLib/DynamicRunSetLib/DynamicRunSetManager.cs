@@ -118,11 +118,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             runSetConfig.Name = dynamicRunSet.Name;
             runSetConfig.RunWithAnalyzer = dynamicRunSet.RunAnalyzer;
             runSetConfig.RunModeParallel = dynamicRunSet.RunInParallel;
-
-            ////needed here or already will be done in CLIHelper?
-            //ProjEnvironment projEnvironment = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == dynamicRunSet.Environemnt select x).SingleOrDefault();
-            //// TODO: if null !!!
-            //runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
             
             // Add runners
             foreach (Runner dynamicRunner in dynamicRunSet.Runners)
@@ -155,7 +150,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                 {               
                     BusinessFlowRun businessFlowRun = new BusinessFlowRun();
                     businessFlowRun.BusinessFlowName = dynamicBusinessFlow.Name;
-                    
+                    businessFlowRun.BusinessFlowIsActive = true;
+
                     // set BF Variables
                     foreach (InputVariable dynamicVariabel in dynamicBusinessFlow.InputVariables)
                     {

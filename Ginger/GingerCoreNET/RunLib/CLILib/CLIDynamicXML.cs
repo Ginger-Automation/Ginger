@@ -34,14 +34,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             DynamicRunSet dynamicRunSet =  DynamicRunSetManager.LoadDynamicRunsetFromXML(content);
-            if (string.IsNullOrWhiteSpace(dynamicRunSet.SolutionSourceControlType) == false)
+            if (string.IsNullOrEmpty(dynamicRunSet.SolutionSourceControlType) == false)
             {
                 cliHelper.SetSourceControlType(dynamicRunSet.SolutionSourceControlType);
                 cliHelper.SetSourceControlURL(dynamicRunSet.SolutionSourceControlUrl);
                 cliHelper.SetSourceControlUser(dynamicRunSet.SolutionSourceControlUser);
                 cliHelper.SetSourceControlPassword(dynamicRunSet.SolutionSourceControlPassword);
-                cliHelper.SourceControlProxyServer(dynamicRunSet.SolutionSourceControlProxyServer);
-                cliHelper.SourceControlProxyPort(dynamicRunSet.SolutionSourceControlProxyPort);
+                if (string.IsNullOrEmpty(dynamicRunSet.SolutionSourceControlProxyServer) == false)
+                {
+                    cliHelper.SourceControlProxyServer(dynamicRunSet.SolutionSourceControlProxyServer);
+                    cliHelper.SourceControlProxyPort(dynamicRunSet.SolutionSourceControlProxyPort);
+                }
             }
             cliHelper.Solution = dynamicRunSet.SolutionPath;
             cliHelper.Env = dynamicRunSet.Environemnt;
