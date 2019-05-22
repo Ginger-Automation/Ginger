@@ -1275,6 +1275,10 @@ namespace Ginger
                 }
                 //execute
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
+                if(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner);
+                }
                 this.Dispatcher.Invoke(() =>
                 {
                     AutoLogProxy.UserOperationEnd();
