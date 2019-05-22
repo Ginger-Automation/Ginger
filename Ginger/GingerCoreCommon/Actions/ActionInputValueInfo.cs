@@ -26,9 +26,7 @@ using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Actions
 {
-
-    //TODO:  NullValueHandling.Ignore Not working !!!!!!!!!!!!!!!!!!!
-    [JsonObject(MemberSerialization.OptIn, ItemNullValueHandling = NullValueHandling.Ignore)]   
+   
     public class ActionInputValueInfo
     {
         public Type ParamType { get; set; }

@@ -31,12 +31,7 @@ namespace Amdocs.Ginger.ValidationRules
         }
 
         int mMaxLength;
-
-        public MaxLengthValidationRule()
-        {
-
-        }
-
+       
         public MaxLengthValidationRule(int maxLength, string message = "")
         {
             mMaxLength = maxLength;            
@@ -44,7 +39,7 @@ namespace Amdocs.Ginger.ValidationRules
         }
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (((string)value).Length > mMaxLength)
+            if (value is string && ((string)value).Length > mMaxLength)
             {
                 return new ValidationResult(false, string.Format(Message, mMaxLength));
             }

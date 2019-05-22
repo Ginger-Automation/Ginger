@@ -23,7 +23,7 @@ namespace GingerPluginCoreTest
                             [Browse(true)]
                             [FileType("txt")]
                             [BrowseType(BrowseTypeAttribute.eBrowseType.File)]
-                            string File,
+                            string JavaHomePath,
                             [Browse(true)]
                             [BrowseType(BrowseTypeAttribute.eBrowseType.Folder)]
                             [FolderType(Environment.SpecialFolder.NetworkShortcuts)]

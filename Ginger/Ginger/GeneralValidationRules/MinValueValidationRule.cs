@@ -31,12 +31,7 @@ namespace Amdocs.Ginger.ValidationRules
         }
 
         int mMinValue;        
-
-        public MinValueValidationRule()
-        {
-
-        }
-
+        
         public MinValueValidationRule(int minValue, string message = "")
         {
             mMinValue = minValue;            
@@ -46,7 +41,7 @@ namespace Amdocs.Ginger.ValidationRules
         {
             try
             {
-                if (Convert.ToInt32(value) < mMinValue)
+                if (value is int && Convert.ToInt32(value) < mMinValue)
                 {
                     return new ValidationResult(false, string.Format(Message, mMinValue));
                 }

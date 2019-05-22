@@ -31,12 +31,7 @@ namespace Amdocs.Ginger.ValidationRules
         }
 
         int mMaxValue;        
-
-        public MaxValueValidationRule()
-        {
-
-        }
-
+       
         public MaxValueValidationRule(int maxValue, string message = "")
         {           
             mMaxValue = maxValue;
@@ -47,7 +42,7 @@ namespace Amdocs.Ginger.ValidationRules
         {
             try
             {
-                if (Convert.ToInt32(value) > mMaxValue)
+                if (value is int && Convert.ToInt32(value) > mMaxValue)
                 {
                     return new ValidationResult(false, string.Format(Message, mMaxValue));
                 }

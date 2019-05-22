@@ -31,12 +31,7 @@ namespace Amdocs.Ginger.ValidationRules
         }
 
         int mMinLength;      
-
-        public MinLegthValidationRule()
-        {
-
-        }
-
+        
         public MinLegthValidationRule(int minLength, string message = "")
         {
             mMinLength = minLength;           
@@ -46,7 +41,7 @@ namespace Amdocs.Ginger.ValidationRules
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
 
-            if (((string)value).Length < mMinLength)
+            if (value is string && ((string)value).Length < mMinLength)
             {
                 return new ValidationResult(false, string.Format(Message, mMinLength));
             }

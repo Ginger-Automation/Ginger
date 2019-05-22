@@ -15,11 +15,12 @@ namespace Amdocs.Ginger.Plugin.Core
             Folder
         }
 
-        public eBrowseType Browseype { get; set; }
+        public eBrowseType BrowseType { get; set; }
+
 
         public BrowseTypeAttribute(eBrowseType browseType)
         {
-            Browseype = browseType;
+            BrowseType = browseType;
         }
 
         public BrowseTypeAttribute()

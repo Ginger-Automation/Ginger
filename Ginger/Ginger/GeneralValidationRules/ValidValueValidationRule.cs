@@ -44,11 +44,6 @@ namespace Amdocs.Ginger.ValidationRules
             }
         }
 
-        public ValidValueValidationRule()
-        {
-
-        }
-
         public ValidValueValidationRule(List<int> validValues, string message = "")
         {
             ValidValues.AddRange(validValues);
@@ -59,14 +54,14 @@ namespace Amdocs.Ginger.ValidationRules
         {            
             try
             {                             
-                if (!ValidValues.Contains(Convert.ToInt32(value)))
+                if (value is int && !ValidValues.Contains(Convert.ToInt32(value)))
                 {
-                    return new ValidationResult(false, String.Format(Message, String.Join(",", ValidValues)));
+                    return new ValidationResult(false, String.Format(Message, String.Join(", ", ValidValues)));
                 }
             }
             catch (Exception e)
             {
-                return new ValidationResult(false, String.Format(Message, String.Join(",", ValidValues)));
+                return new ValidationResult(false, String.Format(Message, String.Join(", ", ValidValues)));
             }
             return new ValidationResult(true, null);
 

@@ -56,9 +56,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             mActionParamProperties = actionParamProperties;
 
             ResetControls();
-
-            mLabel = char.ToUpper(mActInputValue.Param[0]) +  mActInputValue.Param.Substring(1);   // capitilize first letter only of the param name
-
+            
+            mLabel = Regex.Replace(Regex.Replace(Regex.Replace(mActInputValue.Param, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"(\P{Ll}\p{Ll})", m => m.ToString().ToLower());
+            mLabel = char.ToUpper(mLabel[0]) + mLabel.Substring(1);
             SetParamLayout();
             SetControlToInputValue();
             SetParamValidations();
@@ -70,9 +70,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 return;
             }
-
+            
             foreach (Attribute attr in mActionParamProperties)
-            {             
+            {               
                 if (attr.GetType() == typeof(MandatoryAttribute))
                 {
                     xTextBoxInputPnl.Background = Brushes.Orange;
@@ -97,26 +97,26 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 }
                 else if(attr.GetType() == typeof(InvalidValueAttribute))
                 {
-                    InvalidValueValidationRule IVR = (InvalidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(InvalidValueValidationRule));                   
-                    if(IVR is null)
+                    InvalidValueValidationRule invalidValueValidationRule = (InvalidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(InvalidValueValidationRule));                   
+                    if(invalidValueValidationRule is null)
                     {
                         xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new InvalidValueValidationRule(((InvalidValueAttribute)attr).InvalidValue));
                     }
                     else
                     {
-                        IVR.InvalidValue.AddRange(((InvalidValueAttribute)attr).InvalidValue);
+                        invalidValueValidationRule.InvalidValue.AddRange(((InvalidValueAttribute)attr).InvalidValue);
                     }
                 }
                 else if (attr.GetType() == typeof(ValidValueAttribute))
                 {
-                    ValidValueValidationRule VVR = (ValidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(ValidValueValidationRule));
-                    if (VVR is null)
+                    ValidValueValidationRule validValueValidationRule = (ValidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(ValidValueValidationRule));
+                    if (validValueValidationRule is null)
                     {
                         xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new ValidValueValidationRule(((ValidValueAttribute)attr).ValidValue));
                     }
                     else
                     {
-                        VVR.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
+                        validValueValidationRule.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
                     }
                 }                
             }
@@ -133,8 +133,8 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             foreach (Attribute attr in mActionParamProperties)
             {
                 if (attr.GetType() == typeof(LabelAttribute))
-                {
-                    mLabel = Regex.Replace(Regex.Replace(Regex.Replace(((LabelAttribute)attr).Label, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"\b\w", (Match match) => match.ToString().ToUpper());
+                {                    
+                    mLabel = ((LabelAttribute)attr).Label;
                 }
                 else if (attr.GetType() == typeof(TooltipAttribute))
                 {
@@ -150,7 +150,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 }
                 else if (attr.GetType() == typeof(BrowseTypeAttribute))
                 {
-                    if (((BrowseTypeAttribute)attr).Browseype.ToString() == Ginger.Activities.UCValueExpression.eBrowserType.File.ToString())
+                    if (((BrowseTypeAttribute)attr).BrowseType.ToString() == Ginger.Activities.UCValueExpression.eBrowserType.File.ToString())
                     {
                         mBrowseType = Ginger.Activities.UCValueExpression.eBrowserType.File;
                     }
@@ -191,7 +191,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
                 xTextBoxInputLabel.Content = mLabel;                                
-                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value),isBrowseNeeded : mBrowseNeeded, browserType : mBrowseType, fileType : mFileType, specialFolder: mFolderType);
+                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value),isBrowseNeeded : mBrowseNeeded, browserType : mBrowseType, fileType : mFileType, rootFolder: mFolderType);
                 return;
             }           
 
@@ -245,24 +245,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             throw new System.Exception("unknown param type to create control: " + mActInputValue.ParamType.FullName);
 
-        }
-
-        //private string GetInputFieldformatedName()
-        //{
-            
-            //// Make first letter upper case
-            //string formatedName = char.ToUpper(mActInputValue.Param[0]) + mActInputValue.Param.Substring(1);
-
-            ////split by Uper case
-            //string[] split = Regex.Split(formatedName, @"(?<!^)(?=[A-Z])");
-            //formatedName = string.Empty;
-            //foreach (string str in split)
-            //{
-            //    formatedName += str + " ";
-            //}
-
-            //return (formatedName.Trim());
-        //}
+        }        
 
         #region List Grid Handlers
 

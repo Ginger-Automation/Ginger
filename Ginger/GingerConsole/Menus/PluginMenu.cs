@@ -39,9 +39,7 @@ namespace Amdocs.Ginger.GingerConsole
             //StartServiceMenuItem = new MenuItem(ConsoleKey.D3, "Load Plugin and run Action", () => LoadPluginAndRunAction(), true);
             CreatePluginServicesinfojsonMenuItem = new MenuItem(ConsoleKey.D4, "Create Plugin Services info json", () => CreatePluginServicesinfojson(), true);
             CreatePluginPackageMenuItem = new MenuItem(ConsoleKey.D5, "Create Plugin Package", () => CreatePluginPackage(), true);
-            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");
-            // GingerGridMenu.SubItems.Add(LoadPluginMenuItem);
-            // GingerGridMenu.SubItems.Add(StartServiceMenuItem);
+            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");           
             GingerGridMenu.SubItems.Add(CreatePluginServicesinfojsonMenuItem);
             GingerGridMenu.SubItems.Add(CreatePluginPackageMenuItem);
             return GingerGridMenu;

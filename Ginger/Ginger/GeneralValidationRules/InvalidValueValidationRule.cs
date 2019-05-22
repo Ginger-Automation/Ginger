@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.ValidationRules
             {
                 foreach (int val in InvalidValue)
                 {
-                    if (val == Convert.ToInt32(value))
+                    if (value is int && val == Convert.ToInt32(value))
                     {
                         return new ValidationResult(false, Message);
                     }

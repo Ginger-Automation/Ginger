@@ -50,37 +50,7 @@ namespace Ginger.ActionLib
             //ParamsDataGrid.ItemsSource = mAct.InputValues;
             //mAct.UpdateInputParamsType();
             //AutoCreateEditPage();
-        }
-
-
-        // !!!!!!!!!!!!!!!! cleanup
-        // private void AutoCreateEditPage()
-        // {
-            //int rows = mAct.InputValues.Count;
-            //for (int i =0;i<rows; i++)
-            //{
-            //    ActionConfigGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(35)});
-            //}
-
-            //ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Star) });
-            //ActionConfigGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70, GridUnitType.Star) });
-
-            //int rnum = 0;
-            //foreach (ActInputValue param in mAct.InputValues)
-            //{
-            //    Label l = new Label() { Content = param.Param };
-            //    ActionConfigGrid.Children.Add(l);
-            //    l.Style = App.GetStyle("@InputFieldLabelStyle");                
-            //    Grid.SetRow(l, rnum);
-
-            //    ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);             
-            //    actionInputValueUserControl.Margin = new Thickness(5);
-            //    ActionConfigGrid.Children.Add(actionInputValueUserControl);
-            //    Grid.SetRow(actionInputValueUserControl, rnum);
-            //    Grid.SetColumn(actionInputValueUserControl, 1);
-            //    rnum++;
-            //}
-        // }
+        }       
 
         private void LoadXamlWithoutCode()
         {
