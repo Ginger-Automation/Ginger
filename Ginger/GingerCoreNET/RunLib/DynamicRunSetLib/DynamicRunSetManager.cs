@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             runSetConfig.Name = dynamicRunSet.Name;
             runSetConfig.RunWithAnalyzer = dynamicRunSet.RunAnalyzer;
             runSetConfig.RunModeParallel = dynamicRunSet.RunInParallel;
-            
+
             // Add runners
             foreach (Runner dynamicRunner in dynamicRunSet.Runners)
             {
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                 gingerRunner.Name = dynamicRunner.Name;
 
                 if (!string.IsNullOrEmpty(dynamicRunner.RunMode))
-                {                    
+                {
                     gingerRunner.RunOption = (eRunOptions)Enum.Parse(typeof(eRunOptions), dynamicRunner.RunMode, true);
                 }
 
@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 
                 // Add BFs
                 foreach (BusinessFlow dynamicBusinessFlow in dynamicRunner.BusinessFlows)
-                {               
+                {
                     BusinessFlowRun businessFlowRun = new BusinessFlowRun();
                     businessFlowRun.BusinessFlowName = dynamicBusinessFlow.Name;
                     businessFlowRun.BusinessFlowIsActive = true;
@@ -155,12 +155,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                     // set BF Variables
                     foreach (InputVariable dynamicVariabel in dynamicBusinessFlow.InputVariables)
                     {
-                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { ParentType = dynamicVariabel.VariableParentType, ParentName = dynamicVariabel.VariableParentName, Name = dynamicVariabel.VariableName, Value = dynamicVariabel.VariableValue });                        
+                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(new VariableString() { ParentType = dynamicVariabel.VariableParentType, ParentName = dynamicVariabel.VariableParentName, Name = dynamicVariabel.VariableName, Value = dynamicVariabel.VariableValue });
                     }
                     gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                 }
                 runSetConfig.GingerRunners.Add(gingerRunner);
-            }            
+            }
+
+            //Add mail Report handling
+            if (dynamicRunSet.MailReport != null)
+            {
+                //TODO create mail report runset operation
+            }
 
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;

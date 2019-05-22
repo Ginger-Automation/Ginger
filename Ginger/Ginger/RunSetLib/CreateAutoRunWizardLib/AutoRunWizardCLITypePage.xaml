@@ -19,10 +19,10 @@
                 <ColumnDefinition Width="300*"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <RadioButton x:Name="xConfigRadioButton" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config File</RadioButton>
-                <RadioButton x:Name="xDynamicRadioButton" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic XML</RadioButton>
-                <RadioButton x:Name="xScriptRadioButton" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Script File</RadioButton>
-                <RadioButton x:Name="xParametersRadioButton" Checked="XParametersRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Command Arguments</RadioButton>
+                <RadioButton x:Name="xConfigRadioButton" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>
+                <RadioButton x:Name="xDynamicRadioButton" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic</RadioButton>
+                <RadioButton x:Name="xScriptRadioButton" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Script</RadioButton>
+                <RadioButton x:Name="xParametersRadioButton" Checked="XParametersRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Arguments</RadioButton>
                 <!--<RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>-->
             </StackPanel>
             <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0.5" Grid.Column="1">

@@ -54,11 +54,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
             else if (xDynamicRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("XML file which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'DynamicXML=%XMLFilePath%', Example: Ginger.exe DynamicXML=\"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("XML file which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic=%XMLFilePath%', Example: Ginger.exe Dynamic=\"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xScriptRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ScriptFile=%ScriptFilePath%', Example: Ginger.exe ScriptFile=\"C:\\Ginger\\FeatureBTesting.Ginger.AutoRunConfigs.txt\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Script=%ScriptFilePath%', Example: Ginger.exe Script=\"C:\\Ginger\\FeatureBTesting.Ginger.AutoRunConfigs.script\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xParametersRadioButton.IsChecked == true)
             {

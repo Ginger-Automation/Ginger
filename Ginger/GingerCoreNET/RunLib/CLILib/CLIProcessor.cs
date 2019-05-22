@@ -62,13 +62,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler = new CLIConfigFile();                   
                     PerformLoadAndExecution(ReadFile(value));
                     break;
+                case "Script":
                 case "--scriptfile":
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
                     mCLIHandler = new CLIScriptFile();
                     PerformLoadAndExecution(ReadFile(value), false);
                     break;
                 case "--dynamicfile":
-                case "DynamicXML":
+                case "Dynamic":
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
                     mCLIHandler = new CLIDynamicXML();
                     PerformLoadAndExecution(ReadFile(value));
