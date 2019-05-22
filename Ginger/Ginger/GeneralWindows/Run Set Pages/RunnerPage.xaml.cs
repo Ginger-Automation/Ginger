@@ -183,6 +183,12 @@ namespace Ginger.Run
             mRunnerPageListener = new RunnerPageListener();
             mRunnerPageListener.UpdateStat = HandleUpdateStat;
             runner.RunListeners.Add(mRunnerPageListener);
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void HandleUpdateStat(object sender, EventArgs e)
@@ -194,7 +200,7 @@ namespace Ginger.Run
         {
             RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);           
             ri.ItemName = bf.Name;
-            ri.ItemTitleTooltip = System.IO.Path.Combine(bf.ContainingFolder, bf.Name);
+            ri.ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
             {
                 ri.xItemSeparator.Visibility = Visibility.Collapsed;              
@@ -205,23 +211,26 @@ namespace Ginger.Run
             }                
             ri.ItemDescription = bf.Description;
             ri.ItemGuid = bf.Guid;
-            ri.xautomateBusinessflow.Visibility = ri.xconfig.Visibility = Visibility.Visible;
-            ri.xBusinessflowActive.Visibility = Visibility.Visible;
-            ri.Click += BusinessflowConfig_Click;
-            ri.ClickAutomate += Businessflow_ClickAutomate;
-            ri.ClickActive += Businessflow_ClickActive;
-            ri.xGenerateReport.Visibility = Visibility.Visible;
-            ri.ClickGenerateReport += Businessflow_ClickGenerateReport;
-            ri.xViewRunnerItem.Visibility = Visibility.Visible;
-            ri.DuplicateClick += Businessflow_DuplicateClick;
-            ri.RemoveClick += Businessflow_RemoveClick;
-            ri.ResetBusinessFlowStatus += BusinessFlow_ResetStatus;
-            ri.xRunnerItemMenu.Visibility = Visibility.Visible;
-            ri.xremoveBusinessflow.Visibility = Visibility.Visible;            
-            ri.pageGrid.RowDefinitions[1].Height = new GridLength(30);
-            ri.xRunnerItemButtons.Visibility = Visibility.Visible;
-            ri.xDetailView.ButtonImageType = eImageType.Collapse;
-            ri.xDetailView.ToolTip = "Expand / Collapse " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                ri.xautomateBusinessflow.Visibility = ri.xconfig.Visibility = Visibility.Visible;
+                ri.xBusinessflowActive.Visibility = Visibility.Visible;
+                ri.Click += BusinessflowConfig_Click;
+                ri.ClickAutomate += Businessflow_ClickAutomate;
+                ri.ClickActive += Businessflow_ClickActive;
+                ri.xGenerateReport.Visibility = Visibility.Visible;
+                ri.ClickGenerateReport += Businessflow_ClickGenerateReport;
+                ri.xViewRunnerItem.Visibility = Visibility.Visible;
+                ri.DuplicateClick += Businessflow_DuplicateClick;
+                ri.RemoveClick += Businessflow_RemoveClick;
+                ri.ResetBusinessFlowStatus += BusinessFlow_ResetStatus;
+                ri.xRunnerItemMenu.Visibility = Visibility.Visible;
+                ri.xremoveBusinessflow.Visibility = Visibility.Visible;
+                ri.pageGrid.RowDefinitions[1].Height = new GridLength(30);
+                ri.xRunnerItemButtons.Visibility = Visibility.Visible;
+                ri.xDetailView.ButtonImageType = eImageType.Collapse;
+                ri.xDetailView.ToolTip = "Expand / Collapse " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            }
             ri.Context = new Context() { BusinessFlow = bf, Runner = mRunner, Environment = GetEnvForContext() };
             return ri;
         }
@@ -299,7 +308,7 @@ namespace Ginger.Run
             if (CheckCurrentRunnerIsNotRuning()) return;
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
@@ -307,7 +316,7 @@ namespace Ginger.Run
                 string reportsResultFolder = string.Empty;
                 if (!string.IsNullOrEmpty(reportpath))
                 {
-                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(reportpath), false, null, currentConf.HTMLReportsFolder + Ginger.Run.ExecutionLogger.defaultRunTabBFName + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(bf.Name));
+                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(reportpath), false, null, currentConf.HTMLReportsFolder + Ginger.Run.ExecutionLoggerManager.defaultRunTabBFName + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(bf.Name));
                 }                
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -335,7 +344,7 @@ namespace Ginger.Run
             }
             else
             {
-                ExecutionLogger.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
+                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
@@ -671,7 +680,7 @@ namespace Ginger.Run
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             string reportsResultFolder = "";
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase,ISolution
+    public class Solution : RepositoryItemBase, ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -102,15 +102,11 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null && lastSavedSolution.ExecutionLoggerConfigurationSetList.Count!=0)
+                    if (ExecutionLoggerConfigurationSetList != null)
                     {
-                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                        if (ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                         {
-                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
-                                bldExtraChangedItems.Append("Execution Logger configuration, ");
-                                break;
-                            }
+                            bldExtraChangedItems.Append("Execution Logger configuration, ");
                         }
                     }
                 }
@@ -288,15 +284,13 @@ namespace Ginger.SolutionGeneral
         public void SetReportsConfigurations()
         {
             try {
-                if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
+                if (this.ExecutionLoggerConfigurationSetList == null || ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
-                    this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
-                    ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
-                    ExecutionLoggerConfiguration.IsSelected = true;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                    ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
+                    this.ExecutionLoggerConfigurationSetList = new ExecutionLoggerConfiguration();
+                    ExecutionLoggerConfigurationSetList.IsSelected = true;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled = true;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
@@ -312,7 +306,7 @@ namespace Ginger.SolutionGeneral
 
 
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList;
 
 
                 // !!!!!!!!!!!!! FIXME
@@ -475,7 +469,7 @@ namespace Ginger.SolutionGeneral
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
+        public ExecutionLoggerConfiguration ExecutionLoggerConfigurationSetList { get; set; } = new ExecutionLoggerConfiguration();
 
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
@@ -542,7 +536,9 @@ namespace Ginger.SolutionGeneral
                 this.Name = value;
             }
         }
-        
+
+        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
 

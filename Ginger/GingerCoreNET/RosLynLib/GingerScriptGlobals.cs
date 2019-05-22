@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         private void RunFlow(BusinessFlow businessFlow)
         {
             GingerRunner gingerRunner = new GingerRunner();
-            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            ExecutionLoggerManager ex = (ExecutionLoggerManager)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
 
 
             //!!!!!!!!!!!

@@ -16,14 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.UserControls;
+using GingerCore.GeneralLib;
+using GingerWPF.WizardLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.UserControls;
-using GingerCore;
-using GingerWPF.WizardLib;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -49,7 +50,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 15, ReadOnly = true });
             
-            List<GingerCore.General.ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
+            List<ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
             GridColView GCWUploadType = new GridColView()
             {
                 Field = nameof(UploadItemSelection.ItemUploadType),

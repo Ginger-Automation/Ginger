@@ -16,24 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Help;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using GingerCore;
-using GingerCore.GeneralFunctions;
-using Ginger.Help;
-using System.Windows.Forms;
 using System.Windows.Threading;
-using System.Drawing;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger
 {

@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public NewPayLoad SendRequest(NewPayLoad payload)
         {
             // get stuck when Ginger close
-            while (false &&mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
+            while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
             {
                 Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
             }            

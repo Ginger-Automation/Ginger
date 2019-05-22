@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static GingerCore.General;
 
 namespace GingerWPFUnitTest.POMs
 {

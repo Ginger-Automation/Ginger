@@ -29,6 +29,7 @@ using Ginger.Functionalties;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
@@ -205,8 +206,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public bool OpenSolution(string solutionFolder)
-        {
-            mPluginsManager = null;            
+        {                      
             try
             {               
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
@@ -366,21 +366,35 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public void CloseAllEnvironments()
+        {
+            if (SolutionRepository != null)
+            {
+                foreach(ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                {
+                    env.CloseEnvironment();
+                }
+            }
+        }
+
 
         public void CloseSolution()
         {
-            if (WorkSpace.Instance.SolutionRepository != null)
+            //Do cleanup
+            if (SolutionRepository != null)
             {
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                CloseAllRunningAgents();
+                CloseAllEnvironments();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+                if (!RunningInExecutionMode)
+                {
+                    AppSolutionAutoSave.SolutionAutoSaveEnd();
+                }
             }
 
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
-            }
-
-            CloseAllRunningAgents();
-
+            //Reset values
+            mPluginsManager = null;
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;

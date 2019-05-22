@@ -18,7 +18,7 @@ namespace GingerCoreNETUnitTest.RunListeners
     public class ExecutionListenerTest
     {
         static GingerRunner mGingerRunner;
-        static ExecutionLogger mExecutionLogger;
+        static ExecutionLoggerManager mExecutionLogger;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -31,7 +31,7 @@ namespace GingerCoreNETUnitTest.RunListeners
             //mExecutionLogger.ExecutionLogfolder = @"c:\temp\koko1";
             //mExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true; // !!!!!!!!!!!!!!!!!!!!! remove this flag            
             //mGingerRunner.RunListeners.Add(mExecutionLogger);
-            mExecutionLogger = (ExecutionLogger)mGingerRunner.RunListeners.Where(x=>x.GetType()==typeof(ExecutionLogger)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
+            mExecutionLogger = (ExecutionLoggerManager)mGingerRunner.RunListeners.Where(x=>x.GetType()==typeof(ExecutionLoggerManager)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
         }
 
         [ClassCleanup]
