@@ -58,11 +58,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                    //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
-                    System.IO.Directory.CreateDirectory(logsFolder);
-
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
+                    {
+                        //If the path configured by user in the logger is not accessible, we set the logger path to default path
+                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
+                        System.IO.Directory.CreateDirectory(logsFolder);
+                        WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    }
                 }
             }
             catch (Exception ex)

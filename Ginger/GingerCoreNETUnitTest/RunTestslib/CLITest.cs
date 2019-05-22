@@ -2,10 +2,13 @@
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace GingerCoreNETUnitTest.RunTestslib
@@ -133,7 +136,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "--args ", args });
+            CLI.ExecuteArgs(new string[] { "--args", args });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
@@ -146,6 +149,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         }
 
+        [Ignore]
         [TestMethod]
         public void RunFlow()
         {
@@ -196,7 +200,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
-
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
             // Create script file
@@ -294,6 +297,89 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(args[1].ArgValue, "Env1");
         }
 
+        [TestMethod]
+        public void TestRunsetAutoRunConfigSettings()
+        {
+            // Arrange
+            Solution sol = new Solution();
+            sol.Folder = Path.Combine(Path.GetTempPath(), "CliTest" + DateTime.Now.ToString("_dd-MMM-yy_HH-mm"));
+            Directory.CreateDirectory(sol.Folder);
+            sol.Name = "TestSolution";
+            RunsetExecutor executer = new RunsetExecutor();
+            executer.RunsetExecutionEnvironment = new GingerCore.Environments.ProjEnvironment() { Name = "TestEnv" };
+            RunSetConfig runsetConfig = new RunSetConfig();
+            runsetConfig.Name = "TestRunset";
+            executer.RunSetConfig = runsetConfig;
+            CLIHelper cliHelp = new CLIHelper();
+            RunSetAutoRunConfiguration autoRunConfig = new RunSetAutoRunConfiguration(sol, executer, cliHelp);
 
+            // Act
+            autoRunConfig.SelectedCLI = new CLIConfigFile();
+
+
+            Assert.AreEqual(autoRunConfig.ConfigFileFolderPath, Path.Combine(sol.Folder, @"Documents\RunSetShortCuts\"));
+            Assert.AreEqual(autoRunConfig.ConfigFileName, "TestSolution-TestRunset.Ginger.AutoRunConfigs.Config");
+            Assert.AreEqual(autoRunConfig.ConfigFileFullPath, Path.Combine(sol.Folder, @"Documents\RunSetShortCuts\", "TestSolution-TestRunset.Ginger.AutoRunConfigs.Config"));
+        }
+
+        [TestMethod]
+        public void TestRunsetAutoRunConfigCreation()
+        {
+            // Arrange
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.RunningFromUnitTest = true;
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            Solution sol = new Solution();
+            sol.Folder = Path.Combine(Path.GetTempPath(), "CliTest" + DateTime.Now.ToString("_dd-MMM-yy_HH-mm"));
+            Directory.CreateDirectory(sol.Folder);
+            sol.Name = "TestSolution";
+            RunsetExecutor executer = new RunsetExecutor();
+            executer.RunsetExecutionEnvironment = new GingerCore.Environments.ProjEnvironment() { Name = "TestEnv" };
+            RunSetConfig runsetConfig = new RunSetConfig();
+            runsetConfig.Name = "TestRunset";
+            executer.RunSetConfig = runsetConfig;
+            CLIHelper cliHelp = new CLIHelper();
+            RunSetAutoRunConfiguration autoRunConfig = new RunSetAutoRunConfiguration(sol, executer, cliHelp);
+
+            // Act
+            autoRunConfig.SelectedCLI = new CLIConfigFile();
+            autoRunConfig.CreateConfigFile();
+
+            Assert.AreEqual(File.Exists(autoRunConfig.ConfigFileFullPath), true);
+        }
+
+        [TestMethod]
+        public void TestRunsetAutoRunConfigCreationContent()
+        {
+            // Arrange
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.RunningFromUnitTest = true;
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            Solution sol = new Solution();
+            sol.Folder = Path.Combine(Path.GetTempPath(), "CliTest" + DateTime.Now.ToString("_dd-MMM-yy_HH-mm"));
+            Directory.CreateDirectory(sol.Folder);
+            sol.Name = "TestSolution";            
+            RunsetExecutor executer = new RunsetExecutor();
+            executer.RunsetExecutionEnvironment = new GingerCore.Environments.ProjEnvironment() { Name = "TestEnv" };
+            RunSetConfig runsetConfig = new RunSetConfig();
+            runsetConfig.Name = "TestRunset";
+            executer.RunSetConfig = runsetConfig;
+            CLIHelper cliHelp = new CLIHelper();
+            RunSetAutoRunConfiguration autoRunConfig = new RunSetAutoRunConfiguration(sol, executer, cliHelp);
+
+            // Act
+            cliHelp.RunAnalyzer = true;
+            autoRunConfig.SelectedCLI = new CLIConfigFile();
+            autoRunConfig.CreateConfigFile();
+            string content = File.ReadAllText(autoRunConfig.ConfigFileFullPath);
+
+            Assert.AreEqual(content.Contains("Solution=" + sol.Folder), true);
+            Assert.AreEqual(content.Contains("RunSet=TestRunset"), true);
+            Assert.AreEqual(content.Contains("Env=TestEnv"), true);
+            Assert.AreEqual(content.Contains("RunAnalyzer=True"), true);
+            Assert.AreEqual(content.Contains("ShowAutoRunWindow=False"), true);
+        }
     }
 }
