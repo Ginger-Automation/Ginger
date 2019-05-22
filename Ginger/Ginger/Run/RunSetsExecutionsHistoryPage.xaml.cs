@@ -176,44 +176,18 @@ namespace Ginger.Run
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
-                    //if(runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                    //{
-                    //    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
-                    //    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-                    //    //var checkQuery = dbConnector.FilterCollection(rsLiteColl, Query.Where()
-                    //    var getAll = rsLiteColl.IncludeAll().Find(rs => rs._id.ToString() == runSetReport.GUID);
-                    //    List<LiteDbRunSet> allrsdata = rsLiteColl.IncludeAll().FindAll().ToList();
-                    //    var setget = getAll.Select(rs => rs._id.ToString() == runSetReport.GUID);
-                    //    var getlist = getAll.SelectMany(rr => rr.RunnersColl).ToList().Select(rid=>rid._id);
-                    //    var getRunners = dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
-                    //    foreach (var item in getlist)
-                    //    {
-                    //        dbConnector.DeleteCollectionItems(dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>()), Query.In("_id",item));
-                    //    }
-                    //    foreach (LiteDbRunner itemRunner in allrsdata[0].RunnersColl)
-                    //    {
-                    //        foreach (LiteDbBusinessFlow itemBF in itemRunner.BusinessFlowsColl)
-                    //        {
-                    //            foreach(LiteDbActivityGroup itemAG in itemBF.ActivitiesGroupsColl)
-                    //            {
-
-                    //            }
-                    //            foreach (LiteDbActivity itemActivity in itemBF.ActivitiesColl)
-                    //            {
-                    //                foreach (LiteDbAction itemAction in itemActivity.ActionsColl)
-                    //                {
-
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //    //var getsperunners = getRunners.Find(Query.In("_id",
-                    //    //var getRunners = rsLiteColl.Include(rs => rs.RunnersColl).FindAll();
-                    //    //var getRunners = dbConnector.FilterCollection<LiteDbRunner>(rsLiteColl.Include(rs=>rs.RunnersColl).FindAll(),Query.All())
-                    //    rsLiteColl.Delete(x => x._id.Equals(runSetReport.GUID));
-                    //    //dbConnector.DeleteCollectionItems<LiteDbRunner>()
-                    //    break;
-                    //}
+                    if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                    {
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+                        var getdata = rsLiteColl.IncludeAll().FindAll();
+                        var getRunSetData = rsLiteColl.IncludeAll().Find(x => x._id.ToString() == runSetReport.GUID);
+                        LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                        var result = dbManager.GetRunSetLiteData();
+                        result.EnsureIndex("_id");
+                        //List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.Where("_id",));
+                        break;
+                    }
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
