@@ -46,16 +46,16 @@ namespace GingerCoreNETUnitTest.RunListeners
         {
             //Arrange
             DynamicRunSet dynamicRunSet = new DynamicRunSet() { Name = "Dyn 1", Environemnt = "UAT" };
-            AddRunner runner1 = new AddRunner() { Name = "Runner 1" };
-            runner1.Agents.Add(new SetAgent() { TargetApplication = "App1", Agent = "Chrome 1" });
-            runner1.Agents.Add(new SetAgent() { TargetApplication = "App2", Agent = "PB 1" });
+            Runner runner1 = new Runner() { Name = "Runner 1" };
+            runner1.Agents.Add(new Agent() { ApplicationName = "App1", AgentName = "Chrome 1" });
+            runner1.Agents.Add(new Agent() { ApplicationName = "App2", AgentName = "PB 1" });
             dynamicRunSet.Runners.Add(runner1);
-            runner1.BusinessFlows.Add(new AddBusinessFlow() { Name = "BF 1" });
-            runner1.BusinessFlows.Add(new AddBusinessFlow() { Name = "BF 2" });
+            runner1.BusinessFlows.Add(new BusinessFlow() { Name = "BF 1" });
+            runner1.BusinessFlows.Add(new BusinessFlow() { Name = "BF 2" });
 
-            AddBusinessFlow BF3 = new AddBusinessFlow() { Name = "BF 3" };
-            BF3.Variables = new List<SetBusinessFlowVariable>();
-            BF3.Variables.Add(new SetBusinessFlowVariable() { Name = "v1", Value = "abc" });
+            BusinessFlow BF3 = new BusinessFlow() { Name = "BF 3" };
+            BF3.InputVariables = new List<InputVariable>();
+            BF3.InputVariables.Add(new InputVariable() { VariableName = "v1", VariableValue = "abc" });
             runner1.BusinessFlows.Add(BF3);
 
             //Act            

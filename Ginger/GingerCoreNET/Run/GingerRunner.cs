@@ -960,7 +960,7 @@ namespace Ginger.Run
                     {
                         ResetAction(act);
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                         {
                             NotifyActionEnd(act);
                         }
@@ -3035,7 +3035,7 @@ namespace Ginger.Run
                         {
                             ResetAction(act);
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                             {
                                 NotifyActionEnd(act);
                             }
@@ -3791,7 +3791,7 @@ namespace Ginger.Run
                     break;
 
                 if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
-                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
                 }
@@ -4531,7 +4531,7 @@ namespace Ginger.Run
                         }
                         activity.ExecutionLogActionCounter++;
                         action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
                         }
