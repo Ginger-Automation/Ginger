@@ -113,30 +113,25 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [Timeout(60000)]
         public void StartX3LocalDriverFromPlugin()
         {
-            ////Arrange  
-
-            //string PluginPackageFolder = GetSeleniumPluginFolder();
-            //PluginsManager PM = new PluginsManager(SR);
-            //PM.AddPluginPackage(PluginPackageFolder);
-
-            //Agent a1 = new Agent() { Name = "a1", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM };
-            //Agent a2 = new Agent() { Name = "a2", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM };
-            //Agent a3 = new Agent() { Name = "a3", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM };
+            //Arrange  
+            Agent a1 = new Agent() { Name = "a1", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService"};
+            Agent a2 = new Agent() { Name = "a2", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService" };
+            Agent a3 = new Agent() { Name = "a3", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService" };
 
 
-            ////Act
-            //a1.StartDriver();
-            //a2.StartDriver();
-            //a3.StartDriver();
+            //Act
+            a1.StartDriver();
+            a2.StartDriver();
+            a3.StartDriver();
+            
+            a1.Close();
+            a2.Close();
+            a3.Close();
 
-            //a1.CloseDriver();
-            //a2.CloseDriver();
-            //a3.CloseDriver();
+            ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
-            //ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
-
-            ////Assert
-            //Assert.AreEqual(list.Count, 0);
+            //Assert
+            Assert.AreEqual(list.Count, 0);
         }
 
         [Priority(9)]
