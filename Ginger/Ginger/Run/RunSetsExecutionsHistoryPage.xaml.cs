@@ -34,6 +34,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
+using Ginger.Logger;
 using System.Collections.Generic;
 
 namespace Ginger.Run
@@ -286,26 +287,37 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
 
-            string runSetFolder = executionLoggerHelper.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
-
-            string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-
-            if (reportsResultFolder == string.Empty)
+            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                return;
+                var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid);
             }
             else
             {
-                Process.Start(reportsResultFolder);
-                Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+              
+
+                string runSetFolder = executionLoggerHelper.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
+
+                string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+
+                if (reportsResultFolder == string.Empty)
+                {
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                    return;
+                }
+                else
+                {
+                    Process.Start(reportsResultFolder);
+                    Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+                }
             }
         }
     }
