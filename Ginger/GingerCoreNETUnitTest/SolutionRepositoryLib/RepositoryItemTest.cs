@@ -33,11 +33,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {
-            //mWorkSpace = new WorkSpace();
-            //mWorkSpace.EventHandler = WSEH;
-            //mWorkSpace.InitClassTypesDictionary();
-
+        {            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
