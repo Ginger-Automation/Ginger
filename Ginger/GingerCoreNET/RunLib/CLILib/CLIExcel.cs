@@ -15,7 +15,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateContent(RunsetExecutor runsetExecutor)
         {
-            //zzz
+            //zzz !!!!!!
             func1(@"C:\Yaron\AQE 2019\Ginger\DynamicRunSet.xlsx", "2 lines");
             return "aaa";
         }
@@ -31,9 +31,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         void func1(string fileName, string sheetName)
-        {
-            int rowIndex = 0;
-            int colIndex = 0;
+        {            
             List<string> list = new List<string>();
 
             // Open the spreadsheet document for read-only access.

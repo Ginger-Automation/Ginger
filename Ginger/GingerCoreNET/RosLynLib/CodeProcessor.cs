@@ -121,7 +121,8 @@ namespace GingerCoreNET.RosLynLib
             }
             catch (Exception Ex)
             {
-
+                Console.WriteLine("Error EvalCondition: " + condition + Ex.Message);
+                // !!!!!!!!!!!!! throw; check next stmt !!!
             }
             //TODO: fix me !!!!!  bad double try to recover from exceptopn!? or we can use if else
 
