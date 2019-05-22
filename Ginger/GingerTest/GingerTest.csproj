@@ -228,7 +228,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\GingerSolutionRepositoryTest.cs" />
     <Compile Include="Repository\GingerSolutionRepositorySyncTest.cs" />
-    <Compile Include="Scenarios.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
     <Compile Include="VariablesLib\VariablesTest.cs" />
