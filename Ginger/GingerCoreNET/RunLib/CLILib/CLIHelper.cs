@@ -89,7 +89,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mRunsetExecutor = runsetExecutor;
-                SelectRunset();
+                if (mRunsetExecutor.RunSetConfig == null)
+                {
+                    SelectRunset();
+                }
+                else
+                {
+                    mRunSetConfig = mRunsetExecutor.RunSetConfig;
+                }
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
@@ -315,22 +322,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private bool OpenSolution()
         {
-            //Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + Solution + "'");
             try
             {
-                //if (WorkSpace.Instance.OpenSolution(Solution) == false)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                //    // TODO: throw
-                //    return;
-                //}
                 return WorkSpace.Instance.OpenSolution(Solution);
             }
             catch (Exception ex)
             {
-                //Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                // TODO: throw
                 return false;
             }
         }

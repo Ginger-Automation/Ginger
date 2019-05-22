@@ -5,11 +5,11 @@ using System.Xml.Serialization;
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 {
     
-    public class AddBusinessFlow
+    public class BusinessFlow
     {        
         [XmlAttribute]
         public string Name { get; set; }
 
-        public List<SetBusinessFlowVariable> Variables { get; set; } = new List<SetBusinessFlowVariable>();
+        public List<InputVariable> InputVariables { get; set; } = new List<InputVariable>();
     }
 }

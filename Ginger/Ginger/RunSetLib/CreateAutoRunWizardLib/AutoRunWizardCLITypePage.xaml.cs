@@ -50,19 +50,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             if (xConfigRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile = %ConfigFilePath%', Example: Ginger.exe ConfigFile = \"C:\\Ginger\\Regression1.txt\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile=%ConfigFilePath%', Example: Ginger.exe ConfigFile=\"C:\\Ginger\\Regression1.Ginger.AutoRunConfigs.Config\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xDynamicRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("XML file which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'DynamicXML = %XMLFilePath%', Example: Ginger.exe DynamicXML = \"C:\\Ginger\\FeatureATesting.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("XML file which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'DynamicXML=%XMLFilePath%', Example: Ginger.exe DynamicXML=\"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xScriptRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ScriptFile = %ScriptFilePath%', Example: Ginger.exe ScriptFile = \"C:\\Ginger\\FeatureBTesting.txt\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ScriptFile=%ScriptFilePath%', Example: Ginger.exe ScriptFile=\"C:\\Ginger\\FeatureBTesting.Ginger.AutoRunConfigs.txt\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xParametersRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("Command line arguments only without any file for triggering existing {0} execution" + GetRowDown() + "Executed by triggering Ginger executer with the switchers, Example: Ginger.exe --solution --solution \"c:\\ginger\\solutions\\sol1\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("Command line arguments only without any file for triggering existing {0} execution" + GetRowDown() + "Executed by triggering Ginger executer with the switchers, Example: Ginger.exe --args --solution \"c:\\ginger\\solutions\\sol1\" --runset Regression", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
 
             xCLITypeHelpTextBlock.Text = helpContent;
