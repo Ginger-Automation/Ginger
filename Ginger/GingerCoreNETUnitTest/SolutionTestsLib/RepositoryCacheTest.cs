@@ -42,7 +42,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         {
 
         }
-        
+
 
         [TestMethod]
         [Timeout(60000)]
@@ -74,7 +74,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             //Act
             RC[key] = BF;
             BF = null; // release
-            
+
             BusinessFlow BF2 = (BusinessFlow)RC[key];
 
             //Assert            
