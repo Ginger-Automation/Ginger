@@ -231,6 +231,8 @@ namespace GingerCore
             throw new Exception("GetUpdatedRepoItem() was not implemented for this Item type");
         }
 
+
+        //TODO: not OO style code remove from here !!!!!!!!!!!
         public virtual Type GetTypeOfItemParts()
         {
             if (this is Activity)
