@@ -28,6 +28,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
@@ -35,9 +36,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
-    {
-
-        static BusinessFlow mBF;
+    {        
         static GingerRunner mGR;
 
         Mutex mGingerMutex = new Mutex();
@@ -45,15 +44,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-            // Create a simple BF with simple Actions
-            mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF Test Flow Control";
-            mBF.Active = true;
-            Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
 
             mGR = new GingerRunner();
             Agent a = new Agent();
@@ -63,8 +54,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
-            AutoLogProxy.Init("UT Build");
-            mGR.BusinessFlows.Add(mBF);
+            AutoLogProxy.Init("UT Build");            
         }
 
         [TestInitialize]
@@ -82,11 +72,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestMethod]
         [Timeout(60000)]
-        public void Simple_All_Actions_Active()
+        public void SimpleAllActionsActive()
         {
             //Arrange
-
-            ResetBusinessFlow();
+            BusinessFlow mBF = CreateBusinessFlow();
 
             Activity a1 = new Activity();
             a1.Active = true;
@@ -104,7 +93,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Act            
-            mGR.RunRunner();
+            Run();
 
             //Assert
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
@@ -116,11 +105,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestMethod]
         [Timeout(60000)]
-        public void Simple_One_Action_NotActive()
+        public void SimpleOneActionNotActive()
         {
 
             //Arrange
-            ResetBusinessFlow();
+            BusinessFlow mBF = CreateBusinessFlow();
 
             Activity a1 = new Activity();
             a1.Active = true;
@@ -137,23 +126,23 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             a1.Acts.Add(act3);
 
             //Act         
-            mGR.RunRunner();
+            Run();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act2.Status, eRunStatus.Skipped);
-            Assert.AreEqual(act3.Status, eRunStatus.Passed);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, a1.Status);
+            Assert.AreEqual(eRunStatus.Passed, act1.Status);
+            Assert.AreEqual(eRunStatus.Skipped, act2.Status);
+            Assert.AreEqual(eRunStatus.Passed, act3.Status);
         }
 
         [TestMethod]
         [Timeout(60000)]
-        public void FlowControlTestFor_IfFailed_StopRunner()
+        public void FlowControlTestForIfFailedStopRunner()
         {
 
             //Arrange
-            ResetBusinessFlow();
+            BusinessFlow mBF = CreateBusinessFlow();
 
             Activity a1 = new Activity();
             a1.Active = true;
@@ -173,25 +162,39 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             ActDummy act4 = new ActDummy() { Description = "A2", Active = true };
             a1.Acts.Add(act4);
+
             //Act           
-            mGR.ResetRunnerExecutionDetails();
-            mGR.RunRunner();
+            Run();                        
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Stopped);
-            Assert.AreEqual(a1.Status, eRunStatus.Stopped);
-            Assert.AreEqual(act1.Status, eRunStatus.Passed);
-            Assert.AreEqual(act2.Status, eRunStatus.Skipped);
-            Assert.AreEqual(act3.Status, eRunStatus.Stopped);
-            Assert.AreEqual(act4.Status, eRunStatus.Pending);
+            Assert.AreEqual(eRunStatus.Stopped, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Stopped, a1.Status);
+            Assert.AreEqual(eRunStatus.Passed, act1.Status);
+            Assert.AreEqual(eRunStatus.Skipped, act2.Status);
+            Assert.AreEqual(eRunStatus.Stopped, act3.Status);
+            Assert.AreEqual(eRunStatus.Pending, act4.Status);
         }
 
-
-
-        private void ResetBusinessFlow()
+        private void Run()
         {
-            mBF.Activities.Clear();
-            mBF.RunStatus = eRunStatus.Pending;
+            mGR.BusinessFlows[0].Reset();
+            mGR.RunRunner();
+        }
+
+        private BusinessFlow CreateBusinessFlow()
+        {
+            BusinessFlow businessFlow = new BusinessFlow();
+            mGR.BusinessFlows.Clear();
+            mGR.BusinessFlows.Add(businessFlow);
+            businessFlow.RunStatus = eRunStatus.Pending;
+
+            businessFlow.Name = "BF Test Flow Control";
+            businessFlow.Active = true;
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            businessFlow.TargetApplications.Add(new TargetApplication() { AppName = "App1" });
+
+            return businessFlow;
         }
 
 
