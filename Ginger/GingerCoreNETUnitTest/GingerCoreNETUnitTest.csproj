@@ -17,6 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <EmbeddedResource Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <None Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TestResources\JSON\Request JSON.TXT" />
     <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
     <None Remove="TestResources\XML\createPaymentRequest2.xml" />
@@ -74,10 +80,8 @@
 
   <ItemGroup>
     <Folder Include="Drivers\" />
+    <Folder Include="SolutionUpgrade\" />
     <Folder Include="TestResources\Conversion\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Variables\" />
     <Folder Include="TestResources\Solutions\CLI\" />
   </ItemGroup>
 
@@ -87,6 +91,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\GingerPluginCore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\System.Reflection.DispatchProxy.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Reports\Activity.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

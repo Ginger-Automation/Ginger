@@ -101,20 +101,27 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // New incoming Ginger Client
         public void AcceptCallback(IAsyncResult ar)
         {
-            // Signal the main thread to continue.  
-            allDone.Set();
+            try
+            {
+                // Signal the main thread to continue.  
+                allDone.Set();
 
-            // Get the socket that handles the client request.  
-            Socket listener = (Socket)ar.AsyncState;
-            Socket socket = listener.EndAccept(ar);
-            
-            // Create the state object - one per Ginger client
-            GingerSocketInfo gingerSocketInfo = new GingerSocketInfo();
-            gingerSocketInfo.Socket = socket;
-            gingerSocketInfo.SessionID = Guid.NewGuid();  // Create new session id
-            gingerSocketInfo.MessageHandler = MessageHandler;
-            gingerSocketInfo.Receive();
-            Clients.Add(gingerSocketInfo);                        
+                // Get the socket that handles the client request.  
+                Socket listener = (Socket)ar.AsyncState;
+                Socket socket = listener.EndAccept(ar);
+
+                // Create the state object - one per Ginger client
+                GingerSocketInfo gingerSocketInfo = new GingerSocketInfo();
+                gingerSocketInfo.Socket = socket;
+                gingerSocketInfo.SessionID = Guid.NewGuid();  // Create new session id
+                gingerSocketInfo.MessageHandler = MessageHandler;
+                gingerSocketInfo.Receive();
+                Clients.Add(gingerSocketInfo);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("AcceptCallback Error: " + ex.Message);
+            }
         }
 
         // Sending a Payload from server to client expecting an answer, server initiated the request

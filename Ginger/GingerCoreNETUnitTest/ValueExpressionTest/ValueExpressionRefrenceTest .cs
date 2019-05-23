@@ -21,9 +21,6 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using GingerCoreNET.RosLynLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -43,24 +40,24 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         }
 
 
-    
-        [TestMethod]    
+
+        [TestMethod]
         public void LoadandTestFile()
         {
-            if(WorkSpace.Instance==null)
+            if (WorkSpace.Instance == null)
             {
                 ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
                 WorkSpace.Init(consoleWorkspaceEventHandler);
-    
+
             }
-           foreach(ValueExpressionReference ver in  WorkSpace.Instance.VERefrences.Refrences)
+            foreach (ValueExpressionReference ver in WorkSpace.Instance.VERefrences.Refrences)
             {
                 if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
                 {
                     string actualResult = CodeProcessor.GetResult(ver.Expression);
-                  
-                        Assert.AreEqual(ver.ExpressionResult, actualResult);
-                    
+
+                    Assert.AreEqual(ver.ExpressionResult, actualResult);
+
                 }
 
             }

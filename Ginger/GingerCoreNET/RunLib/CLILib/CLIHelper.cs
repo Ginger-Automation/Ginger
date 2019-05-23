@@ -7,6 +7,7 @@ using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -328,6 +329,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                // TODO: throw
                 return false;
             }
         }

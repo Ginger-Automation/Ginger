@@ -656,7 +656,11 @@ namespace Amdocs.Ginger.Repository
 
 
 
-
+        /// <summary>
+        /// Create new solution folders 
+        /// path must be to empty folder
+        /// </summary>
+        /// <param name="path"></param>
         public void CreateRepository(string path)
         {
             if (System.IO.Directory.Exists(path))

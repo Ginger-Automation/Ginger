@@ -316,9 +316,9 @@ namespace Ginger.SolutionGeneral
             }
             catch(Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
-            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
