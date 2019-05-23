@@ -41,7 +41,6 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         MainFrame,
         //Android,
         AndroidDevice,  // rename to Android, join with Android
-        IOS,
         Service
     }
 

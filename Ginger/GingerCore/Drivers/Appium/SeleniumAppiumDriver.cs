@@ -114,6 +114,7 @@ namespace GingerCore.Drivers.Appium
         [UserConfiguredDescription("The device type, set it to 'Phone' or 'Tablet'")]
         public String DeviceType { get; set; }
 
+
         [UserConfigured]
         [UserConfiguredDescription("The absolute local path or remote http URL to an .ipa (iOS) or .apk (Android) file, or a .zip containing one of these. Appium will attempt to install this app on the appropriate device first")]
         public String AppInstallerPath { get; set; }
@@ -225,7 +226,9 @@ namespace GingerCore.Drivers.Appium
                 //Setting capabilities
                 DriverOptions driverOptions = this.GetCapabilities();
 
-                foreach(DriverConfigParam UserCapability in AdvanceDriverConfigurations)
+                driverOptions.AddAdditionalCapability("newCommandTimeout", INIT_TIMEOUT_SEC.TotalSeconds);
+
+                foreach (DriverConfigParam UserCapability in AdvanceDriverConfigurations)
                 {
                  
                     driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
