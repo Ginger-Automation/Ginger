@@ -7,6 +7,7 @@ using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
