@@ -876,7 +876,7 @@
 }
 
 .layout-wrapper .layout-topbar .headerMsg
- {width:400px;box-sizing: border-box;display: inline-block;text-align: center;position: relative;left: 30px;color: #ffffff;font-size: 30px;top: -10px;}
+ {width:400px;box-sizing: border-box;display: inline-block;text-align: left;position: relative;left: 30px;color: #ffffff;font-size: 30px;top: -10px;}
 
 
 .exception-body .exception-topbar {
@@ -905,7 +905,8 @@
       left: 0px;
       color: #ffffff;
       font-size: 30px;
-      top: -10px;
+      top: -11px;
+      width: 17%;
   }
 
 .exception-body .exception-topbar .logo {
@@ -1342,14 +1343,15 @@ body a {
 }
 
 .layout-wrapper .layout-topbar .headerMsg {
-box-sizing: border-box;
-    display: inline-block;
-    text-align: center;
-    position: relative;
-    left: 70px;
-    color: #ffffff;
-    font-size: 30px;
-    top: -10px;
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: left;
+  position: relative;
+  left: 80px;
+  color: #ffffff;
+  font-size: 30px;
+  top: -11px;
+  width: 38%;
 }
 
 .layout-wrapper .layout-topbar .logo {
@@ -1372,7 +1374,7 @@ box-sizing: border-box;
   margin: 0;
   text-align: center;
   position: relative;
-  bottom: 7px;
+  bottom: 11px;
 }
 .layout-wrapper .layout-topbar .usermenu a {
   position: relative;
