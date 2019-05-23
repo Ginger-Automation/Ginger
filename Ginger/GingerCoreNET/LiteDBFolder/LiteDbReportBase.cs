@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             MachineName = System.Environment.MachineName.ToString();
             ExecutedbyUser = System.Environment.UserName.ToString();
             GingerVersion = ApplicationInfo.ApplicationVersion;
-            RunStatus = SetStatus(RunnersColl);
+            RunStatus = (runSetReport.RunSetExecutionStatus == eRunStatus.Automated) ? eRunStatus.Automated.ToString() : SetStatus(RunnersColl);
         }
     }
     public class LiteDbRunner : LiteDbReportBase
