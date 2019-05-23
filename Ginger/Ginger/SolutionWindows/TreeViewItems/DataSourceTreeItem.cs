@@ -336,8 +336,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 return;
             }
             //TODO: use Path.Combine instead of string concat
-            dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
-            dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\"+ dsDetailsCopy.Name + ".mdb";
+
+            string dsName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(dsDetailsCopy.Name);
+
+            dsDetailsCopy.FilePath = System.IO.Path.Combine(DSDetails.ContainingFolder, dsName + ".mdb");
+            dsDetailsCopy.FileFullPath = System.IO.Path.Combine(DSDetails.ContainingFolderFullPath, dsName + ".mdb");
 
             if (File.Exists(dsDetailsCopy.FileFullPath))
             { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
