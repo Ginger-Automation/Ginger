@@ -2056,7 +2056,18 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
-    <Resource Include="WebReportApp\Ginger-Web-Client\3rdpartylicenses.txt" />
+    <Content Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\Index.mht">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\SearchIndex.mht">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\Import_From_ASAP.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\%40GingerByAmdocsLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\BeatLogo.png" />
@@ -2074,9 +2085,6 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_icon.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_old.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\images\bars.svg" />
-    <Resource Include="WebReportApp\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_060755_1.png" />
-    <Resource Include="WebReportApp\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_060755_2.png" />
-    <Resource Include="WebReportApp\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_060755_3.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\color.c7a33805ffda0d32bd2a.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\favicon.ico" />
@@ -2085,37 +2093,13 @@
     <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.3752d734b928d04a8221.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.570f8d098299d789556b.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.e156f56f282d9d50f900.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\styles.c77db239a1dbff874057.css" />
-    <Content Include="StaticDrivers\selenium-server-standalone.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Index.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\SearchIndex.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Import_From_ASAP.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
-    <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
-    <None Include="ALMRESTConfiguration\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
-    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
-    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
-    <None Include="Ginger.ruleset" />
-    <None Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.json" />
-    <None Include="WebReportApp\Ginger-Web-Client\assets\images\desktop.ini" />
     <None Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.scss" />
     <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.eot" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.ttf" />
@@ -2177,6 +2161,15 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\primeicons.473e2a746d3c151d7dca.ttf" />
     <None Include="WebReportApp\Ginger-Web-Client\primeicons.71bb3d79dcf18b45ae84.woff" />
     <None Include="WebReportApp\Ginger-Web-Client\primeicons.b8eccb1059ea5faaf6d8.eot" />
+    <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
+    <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
+    <None Include="ALMRESTConfiguration\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
+    <None Include="Ginger.ruleset" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -4668,8 +4661,8 @@
     <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
-    <Folder Include="WebReportApp\Ginger-Web-Client\assets\layout\images\landing\" />
-    <Folder Include="WebReportApp\Ginger-Web-Client\assets\layout\images\special\" />
+    <Folder Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\" />
+    <Folder Include="WebReportApp\Ginger-Web-Client\assets\screenshots\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>
   <ItemGroup>
