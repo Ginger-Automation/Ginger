@@ -1,15 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -26,9 +23,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
 
 
-        static bool mShowAutoRunWindow ; // default is false except in ConfigFile which is true to keep backword compatibility
-        
-        public static bool ShowAutoRunWindow
+        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
+        public bool ShowAutoRunWindow
         {
             get
             {
@@ -41,22 +37,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        static bool mDownloadSolutionFromSourceControl;
-        public static bool DownloadSolutionFromSourceControlBool
+        bool mDownloadUpgradeSolutionFromSourceControl;
+        public bool DownloadUpgradeSolutionFromSourceControl
         {
             get
             {
-                return mDownloadSolutionFromSourceControl;
+                return mDownloadUpgradeSolutionFromSourceControl;
             }
             set
             {
-                mDownloadSolutionFromSourceControl = value;
+                mDownloadUpgradeSolutionFromSourceControl = value;
             }
 
         }
 
-        static bool mRunAnalyzer;
-        public static bool RunAnalyzer {
+        bool mRunAnalyzer;
+        public bool RunAnalyzer {
             get
             {
                 return mRunAnalyzer;
@@ -93,7 +89,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mRunsetExecutor = runsetExecutor;
-                SelectRunset();
+                if (mRunsetExecutor.RunSetConfig == null)
+                {
+                    SelectRunset();
+                }
+                else
+                {
+                    mRunSetConfig = mRunsetExecutor.RunSetConfig;
+                }
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
@@ -319,15 +322,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private bool OpenSolution()
         {
-            //Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + Solution + "'");
             try
             {
-                //if (WorkSpace.Instance.OpenSolution(Solution) == false)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                //    // TODO: throw
-                //    return;
-                //}
                 return WorkSpace.Instance.OpenSolution(Solution);
             }
             catch (Exception ex)

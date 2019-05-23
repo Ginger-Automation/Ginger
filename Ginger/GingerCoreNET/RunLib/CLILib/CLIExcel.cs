@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIExcel : ICLI
     {
+        bool ICLI.IsFileBasedConfig { get { return true; } }
+
         public string Identifier => throw new NotImplementedException();
 
         public string FileExtension => throw new NotImplementedException();
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             //zzz !!!!!!
             func1(@"C:\Yaron\AQE 2019\Ginger\DynamicRunSet.xlsx", "2 lines");

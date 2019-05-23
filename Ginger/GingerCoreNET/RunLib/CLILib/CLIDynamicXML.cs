@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
+﻿using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicXML : ICLI
     {
+        bool ICLI.IsFileBasedConfig { get { return true; } }
+
         public string Identifier
         {
             get
             {
-                return "DynamicXML";
+                return "Dynamic";
             }
         }
 
@@ -25,21 +24,39 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string xml = DynamicRunSetManager.CreateRunSet(runsetExecutor);
+            string xml = DynamicRunSetManager.CreateDynamicRunSetXML(solution, runsetExecutor, cliHelper);
             return xml;            
+        }
+
+
+        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        {
+            DynamicRunSet dynamicRunSet =  DynamicRunSetManager.LoadDynamicRunsetFromXML(content);
+            if (string.IsNullOrEmpty(dynamicRunSet.SolutionSourceControlType) == false)
+            {
+                cliHelper.SetSourceControlType(dynamicRunSet.SolutionSourceControlType);
+                cliHelper.SetSourceControlURL(dynamicRunSet.SolutionSourceControlUrl);
+                cliHelper.SetSourceControlUser(dynamicRunSet.SolutionSourceControlUser);
+                cliHelper.SetSourceControlPassword(dynamicRunSet.SolutionSourceControlPassword);
+                if (string.IsNullOrEmpty(dynamicRunSet.SolutionSourceControlProxyServer) == false)
+                {
+                    cliHelper.SourceControlProxyServer(dynamicRunSet.SolutionSourceControlProxyServer);
+                    cliHelper.SourceControlProxyPort(dynamicRunSet.SolutionSourceControlProxyPort);
+                }
+            }
+            cliHelper.Solution = dynamicRunSet.SolutionPath;
+            cliHelper.Env = dynamicRunSet.Environemnt;
+            cliHelper.ShowAutoRunWindow = dynamicRunSet.ShowAutoRunWindow;
+            cliHelper.RunAnalyzer = dynamicRunSet.RunAnalyzer;
+
+            DynamicRunSetManager.LoadRealRunSetFromDynamic(runsetExecutor, dynamicRunSet);
         }
 
         public void Execute(RunsetExecutor runsetExecutor)
         {
             runsetExecutor.RunRunset();
-        }
-
-        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {
-            DynamicRunSet dynamicRunSet =  DynamicRunSetManager.LoadContent(content);
-            DynamicRunSetManager.LoadRunSet(runsetExecutor, dynamicRunSet);
         }
     }
 }
