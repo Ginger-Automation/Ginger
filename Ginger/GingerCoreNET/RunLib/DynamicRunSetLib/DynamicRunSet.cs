@@ -24,6 +24,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 
         public List<Runner> Runners { get; set; } = new List<Runner>();  
         
-        public MailReport MailReport { get; set; }
+        public List<RunsetOperationBase> RunsetOperations { get; set; } = new List<RunsetOperationBase>();
     }
 }

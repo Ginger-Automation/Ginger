@@ -1,7 +1,9 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
+using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -80,16 +82,50 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                 dynamicRunSet.Runners.Add(addRunner);
             }
 
-            dynamicRunSet.MailReport = new MailReport();
-            dynamicRunSet.MailReport.MailFrom = "a@aaa.com";
-            dynamicRunSet.MailReport.MailTo = "b@bbb.com";
-            dynamicRunSet.MailReport.Subject = "Ginger Execution Report";
-            dynamicRunSet.MailReport.ReportTemplateName = "Defualt";
-            dynamicRunSet.MailReport.SmtpServer = "111.222.333";
-            dynamicRunSet.MailReport.SmtpPort = "25";
-            dynamicRunSet.MailReport.SmtpUser = "";
-            dynamicRunSet.MailReport.SmtpPassword = "";
+            foreach (RunSetActionBase runSetAction in runsetExecutor.RunSetConfig.RunSetActions)
+            {
+                if (runSetAction is RunSetActionHTMLReportSendEmail)
+                {
+                    RunSetActionHTMLReportSendEmail runsetMailReport = (RunSetActionHTMLReportSendEmail)runSetAction;
+                    MailReport dynamicMailReport = new MailReport();
+                    dynamicMailReport.Condition = runsetMailReport.Condition.ToString();
+                    dynamicMailReport.RunAt = runsetMailReport.RunAt.ToString();
 
+                    dynamicMailReport.MailFrom = runsetMailReport.MailFrom;
+                    dynamicMailReport.MailTo = runsetMailReport.MailTo;
+                    dynamicMailReport.MailCC = runsetMailReport.MailCC;
+
+                    dynamicMailReport.Subject = runsetMailReport.Subject;
+                    dynamicMailReport.Comments = runsetMailReport.Comments;
+
+                    if (runsetMailReport.Email.EmailMethod == GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK)
+                    {
+                        dynamicMailReport.SendViaOutlook = true;
+                    }
+                    else
+                    {
+                        dynamicMailReport.SmtpServer = runsetMailReport.Email.SMTPMailHost;
+                        dynamicMailReport.SmtpPort = runsetMailReport.Email.SMTPPort.ToString();
+                        dynamicMailReport.SmtpEnableSSL = runsetMailReport.Email.EnableSSL.ToString();
+                        if (runsetMailReport.Email.ConfigureCredential)
+                        {
+                            dynamicMailReport.SmtpUser = runsetMailReport.Email.SMTPUser;
+                            dynamicMailReport.SmtpPassword = runsetMailReport.Email.SMTPPass;
+                        }
+                    }
+
+                    if(runsetMailReport.EmailAttachments.Where(x=>x.IsReport==true).FirstOrDefault() != null)
+                    {
+                        dynamicMailReport.IncludeAttachmentReport = true;
+                    }
+                    else
+                    {
+                        dynamicMailReport.IncludeAttachmentReport = false;
+                    }
+
+                    dynamicRunSet.RunsetOperations.Add(dynamicMailReport);
+                }
+            }
             string content = ConvertDynamicRunsetToXML(dynamicRunSet);
             return content;
         }
@@ -163,9 +199,56 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             }
 
             //Add mail Report handling
-            if (dynamicRunSet.MailReport != null)
+            foreach (RunsetOperationBase dynamicOperation in dynamicRunSet.RunsetOperations)
             {
-                //TODO create mail report runset operation
+                if (dynamicOperation is MailReport)
+                {
+                    MailReport dynamicMailOperation = (MailReport)dynamicOperation;
+                    RunSetActionHTMLReportSendEmail mailOperation = new RunSetActionHTMLReportSendEmail();
+                    mailOperation.MailFrom = dynamicMailOperation.MailFrom;
+                    mailOperation.MailTo = dynamicMailOperation.MailTo;
+                    mailOperation.MailCC = dynamicMailOperation.MailCC;
+
+                    mailOperation.Subject = dynamicMailOperation.Subject;
+                    mailOperation.Comments = dynamicMailOperation.Comments;
+                    //mailOperation.Comments = string.Format("Dynamic {0} Execution Report" + GingerDicser.GetTermResValue(eTermResKey.RunSet));
+
+                    mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                    mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
+
+                    mailOperation.Email.IsBodyHTML = true;
+                    mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.SMTP;
+                    mailOperation.Email.MailFrom = dynamicMailOperation.MailFrom;
+                    mailOperation.Email.MailTo = dynamicMailOperation.MailTo;
+                    mailOperation.Email.Subject = dynamicMailOperation.Subject;
+                    if (dynamicMailOperation.SendViaOutlook)
+                    {
+                        mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
+                    }
+                    else
+                    {
+                        mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.SMTP;
+                        mailOperation.Email.SMTPMailHost = dynamicMailOperation.SmtpServer;
+                        mailOperation.Email.SMTPPort = int.Parse(dynamicMailOperation.SmtpPort);
+                        mailOperation.Email.EnableSSL = bool.Parse(dynamicMailOperation.SmtpEnableSSL);
+                        if (string.IsNullOrEmpty(dynamicMailOperation.SmtpUser) == false)
+                        {
+                            mailOperation.Email.ConfigureCredential = true;
+                            mailOperation.Email.SMTPUser = dynamicMailOperation.SmtpUser;
+                            mailOperation.Email.SMTPPass = dynamicMailOperation.SmtpPassword;
+                        }
+                    }
+
+                    if (dynamicMailOperation.IncludeAttachmentReport)
+                    {
+                        EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
+                        reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
+                        reportAttachment.ZipIt = true;
+                        mailOperation.EmailAttachments.Add(reportAttachment);
+                    }
+
+                    runSetConfig.RunSetActions.Add(mailOperation);
+                }
             }
 
             // Set config
