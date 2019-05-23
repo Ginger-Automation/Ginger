@@ -34,7 +34,7 @@ namespace GingerCore.NoSqlBase
         public abstract List<string> GetTableList(string Keyspace);
         public abstract List<string> GetKeyspaceList();
         public abstract List<string> GetColumnList(string table);
-        public abstract List<eNoSqlOperations> GetSupportedActions();
+        
         public abstract void PerformDBAction();
     }
 }

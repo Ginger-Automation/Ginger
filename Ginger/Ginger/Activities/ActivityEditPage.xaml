@@ -88,7 +88,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical">
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Run Description:</Label>
-                    <Activities:UCValueExpression x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" HideVEBusinessFlowAndActivityVariables="True" Margin="0,-13,0,0"/>
+                    <Activities:UCValueExpression x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" Margin="0,-13,0,0"/>
                 </StackPanel>
             </StackPanel>
         </DockPanel>

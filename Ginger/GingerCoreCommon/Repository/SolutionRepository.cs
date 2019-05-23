@@ -162,13 +162,15 @@ namespace Amdocs.Ginger.Repository
             repositoryItem.FilePath = filePath;
             repositoryItem.RefreshSourceControlStatus();
             RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
+            repositoryItem.CreateBackup();
         }      
 
         public void Close()
         {
-            StopAllRepositoryFolderWatchers(SolutionRootFolders);
+            StopAllRepositoryFolderWatchers();
 
             mRepositorySerializer = null;
             mSolutionFolderPath = null;
@@ -176,9 +178,9 @@ namespace Amdocs.Ginger.Repository
             mSolutionRepositoryItemInfoDictionary = null;
         }
 
-        private void StopAllRepositoryFolderWatchers(List<RepositoryFolderBase> folders)
+        public void StopAllRepositoryFolderWatchers()
         {
-            foreach (RepositoryFolderBase RF in folders)
+            foreach (RepositoryFolderBase RF in SolutionRootFolders)
             {
                 RF.StopFileWatcherRecursive();
             }
@@ -239,28 +241,13 @@ namespace Amdocs.Ginger.Repository
         /// Refresh source control status of all parent folders
         /// </summary>
         /// <param name="folderPath"></param>
-        public void RefreshParentFoldersSoucerControlStatus(string folderPath, bool pullParentFolder = false)
+        public void RefreshParentFoldersSoucerControlStatus(string folderPath)
         {
-            if (pullParentFolder)
-            {
-                FileAttributes attr;
-                attr = File.GetAttributes(folderPath);
-
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    folderPath = Directory.GetParent(folderPath).FullName;
-                }
-                else
-                {
-                    folderPath = Path.GetDirectoryName(folderPath);
-                }
-            }
-
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
-                repoFolder.RefreshFolderSourceControlStatus();
-                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath).FullName);
+                repoFolder.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath)?.FullName);
             }
         }
 
@@ -335,6 +322,24 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
+        /// Get first cached Repository Item from provided Repository Item Type (if list is empty then null will be returned)
+        /// </summary>
+        /// <typeparam name="T">Repository Item Type</typeparam>
+        /// <returns></returns>
+        public dynamic GetFirstRepositoryItem<T>()
+        {
+            SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
+            if (SRII.GetAllItemsCache().Count > 0)
+            {
+                return (SRII.GetAllItemsCache()[0]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Convert relative path to full path - for example: '~/BusinessFlow' will convert to 'C:\abc\sol1\BusinessFlow'
         /// </summary>
         /// <param name="Folder"></param>
@@ -369,16 +374,21 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertSolutionRelativePath(string relativePath)
         {
-            if (relativePath.TrimStart().StartsWith("~"))
+            try
             {
-                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                return fullPath;
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                    return fullPath;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return relativePath;
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
+
+            return relativePath;
         }
 
         /// <summary>

@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Actions
 {
@@ -34,15 +35,16 @@ namespace Ginger.Actions
         private string fileType;
         eBrowserType mBrowserType;
 
-        public enum eBrowserType { File, Folder }
+                
+        public static DependencyProperty ContextProperty =DependencyProperty.Register("Context", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(ContextChanged));
+  
 
-
-        public static readonly DependencyProperty HideVEBusinessFlowAndActivityVariablesProperty =DependencyProperty.Register("HideVEBusinessFlowAndActivityVariables", typeof(bool), typeof(UCValueExpression),new PropertyMetadata(false));
-
-        public bool HideVEBusinessFlowAndActivityVariables
+        public Context mContext
         {
             get; set;
         }
+
+        public enum eBrowserType { File, Folder }
 
         public UCValueExpression()
         {
@@ -57,23 +59,33 @@ namespace Ginger.Actions
             if (e.NewValue.GetType() == typeof(ValueExpression))
             {
                 ValueExpression ve = (ValueExpression)e.NewValue;
-                Init(ve.Obj, ve.ObjAttr);
+                Init(mContext, ve.Obj, ve.ObjAttr);
             }
         }
+        private static void ContextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is UCValueExpression ucVE)
+            {
+                ucVE.mContext = (Context)e.NewValue;
+            }
 
-        public void Init(object obj, string AttrName)
+        }
+
+        public void Init(Context context, object obj, string AttrName)
         {
             // If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
+            mContext = context;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
         }
 
-        public void Init(object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
+        public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
         {
             this.obj = obj;
             this.AttrName = AttrName;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
+            mContext = context;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
             {
@@ -104,12 +116,13 @@ namespace Ginger.Actions
         /// <param name="browserType">Can be eBrowserType.File or eBrowserType.Folder</param>
         /// <param name="fileType">Type of the files for filter the Browser Dialog</param>
         /// <param name="extraBrowserSelectionHandler">To be used whenever extra functionality is needed after clicking OK or cancel at the Dialog window</param>
-        public void Init(ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
+        public void Init(Context context, ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler= null)
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
             this.AttrName = ActInputValue.Fields.Value;
-            GingerCore.General.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
+            mContext = context;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 
             if (isBrowseNeeded)
             {
@@ -133,8 +146,7 @@ namespace Ginger.Actions
 
         private void OpenExpressionEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            HideVEBusinessFlowAndActivityVariables = (bool)this.GetValue(HideVEBusinessFlowAndActivityVariablesProperty);
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, HideVEBusinessFlowAndActivityVariables);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, mContext);
             w.ShowAsWindow();
         }
 

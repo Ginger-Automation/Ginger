@@ -30,10 +30,10 @@ namespace Ginger.Variables
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableSequence.Min));
-            App.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableSequence.Max));
-            App.ObjFieldBinding(txtInterval, TextBox.TextProperty, var, nameof(VariableSequence.Interval));
-            App.ObjFieldBinding(cbInteger, CheckBox.IsCheckedProperty, var, nameof(VariableSequence.IsInteger));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableSequence.Min));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableSequence.Max));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInterval, TextBox.TextProperty, var, nameof(VariableSequence.Interval));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbInteger, CheckBox.IsCheckedProperty, var, nameof(VariableSequence.IsInteger));
         }
     }
 }

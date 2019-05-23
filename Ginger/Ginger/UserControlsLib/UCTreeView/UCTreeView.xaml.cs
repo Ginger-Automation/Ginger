@@ -45,9 +45,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public bool TreeItemDoubleClicked = false;
         public bool TreeChildFolderOnly { get; set; }
 
-        public Tuple<string, string> TreeNodesFilterByField { get; set; } 
+        public Tuple<string, string> TreeNodesFilterByField { get; set; }
 
-        
+        eFilteroperationType mFilterType = eFilteroperationType.Equals;
+        public eFilteroperationType FilterType
+        {
+            get { return mFilterType; }
+            set { mFilterType = value; }
+        }
+
+        public enum eFilteroperationType
+        {
+            Equals,
+            Contains
+        }
         
 
         public TreeViewItem  LastSelectedTVI
@@ -267,8 +278,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (treeItemToCheckObject is RepositoryFolderBase)
             {
                 return true;
-            }            
-                
+            }
+
             //get the object to filter by
             List<string> filterByfieldHierarchyList = TreeNodesFilterByField.Item1.ToString().Split('.').ToList();
             object filterByObject = treeItemToCheckObject;
@@ -286,9 +297,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             //compare the value
-            string filterbyValue = TreeNodesFilterByField.Item2.ToString();
+            string filterbyValue = Convert.ToString(TreeNodesFilterByField.Item2);
             if (filterByObject.ToString() == filterbyValue)
+            {
                 return true;
+            }
+
+            if(FilterType == eFilteroperationType.Contains)
+            {
+                if(Convert.ToString(filterByObject).Contains(filterbyValue))
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
@@ -714,17 +735,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public void SelectFirstVisibleChildItem(ItemCollection treeItems, List<Type> childTypes)
         {
             foreach (TreeViewItem item in treeItems)
+            {
                 if (item.Visibility == Visibility.Visible)
                 {
-                    if (childTypes.Contains(item.Tag.GetType()))
+                    if (item.Tag != null && childTypes.Contains(item.Tag.GetType()))
                     {
                         item.Focus();
                         return;
                     }
 
                     if (item.HasItems)
+                    {
                         SelectFirstVisibleChildItem(item.Items, childTypes);
+                    }
                 }
+            }
         }
 
         public void DeleteItemAndSelectParent(ITreeViewItem NodeItem)

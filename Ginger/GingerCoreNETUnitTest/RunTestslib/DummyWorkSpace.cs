@@ -17,28 +17,21 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.SolutionGeneral;
 using System;
+using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class DummyWorkSpace : IWorkSpaceEventHandler
     {
-        public void AddApplication()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public void AutomateBusinessFlow(BusinessFlow BF)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        
         public void OpenAddAPIModelWizard()
         {
             throw new NotImplementedException();
         }
 
-        public void OpenContainingFolder(string folderPath)
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
             throw new NotImplementedException();
         }
@@ -48,10 +41,20 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        //public void SolutionChanged(Solution solution)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public void ShowDebugConsole(bool visible = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SolutionClosed()
         {

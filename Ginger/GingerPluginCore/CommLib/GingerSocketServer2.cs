@@ -123,7 +123,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             GingerSocketInfo c = (from x in Clients where x.SessionID == sessionID select x).SingleOrDefault();
             if (c == null)
             {
-                throw new Exception("SendPayLoad, SessionId not found: " + sessionID);
+                throw new InvalidOperationException("SendPayLoad, SessionId not found: " + sessionID);
             }
             pL.PaylodType = NewPayLoad.ePaylodType.RequestPayload;            
             return c.SendRequest(pL);            

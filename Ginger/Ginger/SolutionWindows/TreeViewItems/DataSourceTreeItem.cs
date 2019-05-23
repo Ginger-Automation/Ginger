@@ -249,7 +249,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel();
             DSEE.ShowAsWindow();
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.ExcelPath;
             string sSheetName = DSEE.SheetName;
 
@@ -360,7 +360,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 //if (DSDetails.FilePath.StartsWith("~"))
                 //{
                 //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, DSDetails.FileFullPath);
+                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, DSDetails.FileFullPath);
                 //}
                 DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
 

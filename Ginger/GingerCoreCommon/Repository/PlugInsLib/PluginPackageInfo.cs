@@ -28,12 +28,14 @@ namespace Amdocs.Ginger.Repository
         public static string cInfoFile = "Ginger.PluginPackage.json";
 
         public string Id { get; set; }
-        public string Version { get; set; }    
+        public string Version { get; set; }
         public string ProjectUrl { get; set; }
-        public string  Description { get; set; }
+        public string Description { get; set; }
         public string Summary { get; set; }
         public string StartupDLL { get; set; }
         public string UIDLL { get; set; }
+
+        public List<string> Implementations{get;set;}
 
         
 

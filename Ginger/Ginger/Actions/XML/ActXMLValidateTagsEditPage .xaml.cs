@@ -40,13 +40,13 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLTagValidation)act;
 
             //// Bind Controls
-            App.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
       
-            App.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
 
             xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType));
      
-            XMLFileTextBox.Init(mAct.InputFile);
+            XMLFileTextBox.Init(Context.GetAsContext(mAct.Context), mAct.InputFile);
       
             SetGridView();
 
@@ -76,7 +76,7 @@ namespace Ginger.Actions.XML
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value);
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
              VEEW.ShowAsWindow();
          }
 
@@ -94,7 +94,7 @@ namespace Ginger.Actions.XML
                 dlg.Filter = "JSON Template File (*.json)|*.json|All Files (*.*)|*.*";
             }
 
-            string SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {

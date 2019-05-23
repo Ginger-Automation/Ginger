@@ -125,7 +125,7 @@ namespace Ginger.WindowExplorer.Common
                 Row.Items.Add(i.ToString());
             }
             ActTableElement ACJT = new ActTableElement();
-            App.FillComboFromEnumVal(RunActionOn,ACJT.RunActionOn);
+            GingerCore.General.FillComboFromEnumObj(RunActionOn,ACJT.RunActionOn);
         }
       
         private void Colomn_SelectionChanged(object sender, SelectionChangedEventArgs e)

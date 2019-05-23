@@ -127,8 +127,8 @@ namespace GingerTest.APIModelLib
             ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
 
             //Assert  
-            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 19, "POM.MappedUIElements.Count check");
-            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 100, "POM.UnMappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 25, "POM.MappedUIElements.Count check");
+            Assert.AreEqual(mLearnedPOM.UnMappedUIElements.Count, 94, "POM.UnMappedUIElements.Count check");
             Assert.IsNotNull(EI1, "POM.Element learned check");
             Assert.IsNotNull(EI2, "POM.Element learned check");
         }
@@ -142,18 +142,18 @@ namespace GingerTest.APIModelLib
             ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
 
             //Assert  
-            Assert.AreEqual(ButtonEI.Properties.Count, 12, "POM.properties check");
+            Assert.AreEqual(ButtonEI.Properties.Count, 14, "POM.properties check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "input"),"POM.property 0 check");
             //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[19]/input[1]"), "POM.property 2 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='submit1']"), "POM.property 3 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[1]/input[1]"), "POM.property 2 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='button1']"), "POM.property 3 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Height", "21"), "POM.property 4 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Width", "95"), "POM.property 5 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"X", "8"), "POM.property 6 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Y", "744"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"id", "submit1"), "POM.property 9 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "name", "submit1"), "POM.property 10 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "submit"), "POM.property 11 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Width", "64"), "POM.property 5 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"X", "346"), "POM.property 6 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Y", "67"), "POM.property 7 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"id", "button1"), "POM.property 9 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "name", "btnnnnn1"), "POM.property 10 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "button"), "POM.property 11 check");
 
             Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "select"), "POM.property 0 check");
@@ -225,10 +225,10 @@ namespace GingerTest.APIModelLib
 
             //Assert
             Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.Locators check");
-            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators,eLocateBy.ByID, "submit1"), "POM.Locator 0 .LocateBy check");
-            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByName, "submit1"), "POM.Locator 1 .LocateBy check");
-            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='submit1']"), "POM.Locator 2 .LocateBy check");
-            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[19]/input[1]"), "POM.Locator 3 .LocateBy check");
+            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators,eLocateBy.ByID, "button1"), "POM.Locator 0 .LocateBy check");
+            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByName, "btnnnnn1"), "POM.Locator 1 .LocateBy check");
+            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='button1']"), "POM.Locator 2 .LocateBy check");
+            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[1]/input[1]"), "POM.Locator 3 .LocateBy check");
 
             Assert.AreEqual(ComboBoxEI.Locators.Count, 4, "POM.Locators check");
             Assert.IsTrue(IsLocatorExist(ComboBoxEI.Locators, eLocateBy.ByID, "sel1"), "POM.Locator 0 .LocateBy check");
@@ -250,19 +250,19 @@ namespace GingerTest.APIModelLib
 
             ElementLocator elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByID);
             int locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
-            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByID, "submit1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByID, "button1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
 
             elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByName);
             locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
-            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByName, "submit1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByName, "btnnnnn1", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
 
             elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByRelXPath);
             locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
-            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='submit1']", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='button1']", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
 
             elemLoc = prioritizedLocatorsList.Find(x => x.LocateBy == eLocateBy.ByXPath);
             locatorIndex = prioritizedLocatorsList.IndexOf(elemLoc);
-            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[19]/input[1]", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
+            Assert.IsTrue(CheckLocatorPriority(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[1]/input[1]", elemLoc.Active, locatorIndex), "POM.LocatorPriority " + elemLoc.LocateBy.ToString() + " not indexed at '" + locatorIndex + "' check");
             #endregion
 
             # region Assert #2 Element : ComboBoxEI | POM.LocatorsPriority Check

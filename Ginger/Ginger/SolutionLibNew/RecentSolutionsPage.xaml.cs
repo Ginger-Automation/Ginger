@@ -54,8 +54,7 @@ namespace GingerWPF.SolutionLib
         }
 
         private void recentSolutionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            WorkSpace.Instance.CloseSolution();
+        {            
             string folder = ((Solution)recentSolutionsListBox.SelectedItem).Folder;
             WorkSpace.Instance.OpenSolution(folder);
         }

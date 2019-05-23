@@ -523,19 +523,18 @@ namespace GingerCore
             }
 
             act.Active = true;
+
+            int selectedActIndex = -1;
+            if (CurrentActivity.Acts.CurrentItem != null)
+            {
+                selectedActIndex = CurrentActivity.Acts.IndexOf((Act)CurrentActivity.Acts.CurrentItem);
+            }
+
             CurrentActivity.Acts.Add(act);
 
-            if (setAfterCurrentAction)
+            if (setAfterCurrentAction && CurrentActivity.Acts.Count > 2 && selectedActIndex >= 0)
             {
-                int selectedActIndex = -1;
-                if (CurrentActivity.Acts.CurrentItem != null)
-                {
-                    selectedActIndex = CurrentActivity.Acts.IndexOf((Act)CurrentActivity.Acts.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
-                }
+                CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
             }
         }
 
@@ -1172,5 +1171,12 @@ namespace GingerCore
                 return nameof(this.Name);
             }
         }       
+        public void OffilinePropertiesPrep(string logFolderPath)
+        {
+            ExecutionLogFolder = logFolderPath;
+            VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            SolutionVariablesBeforeExec = GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            ExecutionLogActivityCounter = 1;
+        }
     }
 }

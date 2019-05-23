@@ -18,13 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
+using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,7 @@ namespace Ginger.Actions
             grdTableData.btnRefresh.Visibility = Visibility.Visible;
             grdTableData.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshTable));
 
-            ValueUC.Init(mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
+            ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
 
             ControlActionPanel.Visibility = Visibility.Visible;
             ActionRow.Height = new GridLength(55);            
@@ -204,10 +205,8 @@ namespace Ginger.Actions
                     p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
                 }
                 if(p.IndexOf("EP=") == 0)
-                {
-                    ExcelFilePath.ValueTextBox.Text = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ") - 3);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    ExcelSheetName.ValueTextBox.Text = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
+                {                    
+                    p = p.Substring(p.TrimStart().IndexOf(" ES=")).Trim();                    
                 }
                 else if (p.IndexOf("KEY=") == 0)
                 {
@@ -416,8 +415,8 @@ namespace Ginger.Actions
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(cmbDataSourceName, mDSNames);
             
-            GingerCore.General.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSName);
-            GingerCore.General.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
 
             if(mActDSTblElem == null || (mActDSTblElem.DSName ==null && mActDSTblElem.DSTableName == null) || (mActDSTblElem.DSName == "" && mActDSTblElem.DSTableName == "" ))
             {
@@ -431,10 +430,10 @@ namespace Ginger.Actions
             
             GetTableDetails();
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
-            GingerCore.General.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            ExcelFilePath.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
-            ExcelSheetName.Init(mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
+            ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
+            ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             ExcelSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             ExcelFilePath.ValueTextBox.LostFocus += ExcelFilePathTextBox_LostFocus;
@@ -1008,7 +1007,7 @@ namespace Ginger.Actions
 
         private void RowSelectorValueVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.LocateRowValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.LocateRowValue, Context.GetAsContext(mActDSTblElem.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             RowSelectorValue.Text = mActDSTblElem.LocateRowValue;           
         }
@@ -1021,7 +1020,7 @@ namespace Ginger.Actions
         //}
         private void QueryValVE_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.QueryValue);
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mActDSTblElem, ActDSTableElement.Fields.QueryValue, Context.GetAsContext(mActDSTblElem.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             QueryVal.Text = mActDSTblElem.QueryValue;
         }
@@ -1135,8 +1134,8 @@ namespace Ginger.Actions
             grdCondition.SetTitleLightStyle = true;
             grdCondition.ShowViewCombo = Visibility.Collapsed;
 
-            List<GingerCore.General.ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
-            List<GingerCore.General.ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
+            List<ComboEnumItem> lstCond = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eCondition));
+            List<ComboEnumItem> lstOper = GingerCore.General.GetEnumValuesForCombo(typeof(ActDSConditon.eOperator));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -1257,7 +1256,7 @@ namespace Ginger.Actions
                     //if (ds.FilePath.StartsWith("~"))
                     //{
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\","").Replace("~", "");
-                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, ds.FileFullPath);
+                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
@@ -1623,7 +1622,7 @@ namespace Ginger.Actions
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActDSConditon ADSC = (ActDSConditon)grdCondition.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ADSC, ActDSConditon.Fields.wValue);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(ADSC, ActDSConditon.Fields.wValue, Context.GetAsContext(mActDSTblElem.Context));
             VEEW.ShowAsWindow();
         }
 

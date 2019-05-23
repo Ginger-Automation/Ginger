@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerWPF.BindingLib;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
+using GingerCore.Actions;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common.Enums;
-using GingerCore.Actions;
 
 namespace Ginger.UserControlsLib.VisualFlow
 {
@@ -72,7 +70,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         {
             this.ElementType = ElementType;
             Init(left, top);
-            ControlsBinding.ObjFieldBinding(CaptionLabel, ContentProperty, obj, prop, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CaptionLabel, ContentProperty, obj, prop, BindingMode.OneWay);
         }
         public FlowElement(eElementType ElementType, Page f,double left, double top,double width,double height)
         {
@@ -134,7 +132,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         public void BindStatusLabel(object obj, string prop)
         {
-            ControlsBinding.ObjFieldBinding(StatusLabel, ContentProperty, obj, prop, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusLabel, ContentProperty, obj, prop, BindingMode.OneWay);
         }
 
         public void SetImage(System.Drawing.Image img)

@@ -50,13 +50,17 @@ namespace Ginger
 
         double mPageOriginalWidth = -1;
         double mPageOriginalHeight = -1;
+        private bool OwnerWindowClosing = false;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
                                 Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
         {
             InitializeComponent();   
             this.Owner = Owner;
-
+            if (this.Owner != null)
+            {
+                this.Owner.Closing += Owner_Closing;
+            }
             CurrentWindow = this;
 
             //set style
@@ -206,6 +210,11 @@ namespace Ginger
             }            
         }
 
+        private void Owner_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            OwnerWindowClosing = true;
+        }
+
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             Window parentWindow = Window.GetWindow((Button)sender);
@@ -343,7 +352,7 @@ namespace Ginger
             //to make sure the parent window will be showen
             if (this.Owner != null)
             {
-                if (!this.Owner.IsVisible)
+                if (!this.Owner.IsVisible & !OwnerWindowClosing)
                 {
                     this.Owner.Show();
                 }

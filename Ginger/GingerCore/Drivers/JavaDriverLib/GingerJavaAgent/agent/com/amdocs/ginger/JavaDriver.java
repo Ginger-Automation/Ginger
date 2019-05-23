@@ -1400,6 +1400,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 
 		Component comp=mSwingHelper.FindElement(LocateBy,LocateValue);
 		
+		if(mSwingHelper.getCurrentWindow()==null)
+		{
+			return null;
+		}
+		
 		boolean bStopWaiting=false;
 		long start = System.currentTimeMillis();
 		long elapsed = System.currentTimeMillis() - start;
@@ -1414,7 +1419,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			
 			if(comp==null)
 			{
-				comp=mSwingHelper.FindElement(LocateBy, LocateValue);			
+				comp=mSwingHelper.FindElement(LocateBy, LocateValue);				
 			}
 			else if (comp.isVisible() && comp.isEnabled() && comp.isShowing())
 			{				
@@ -1439,16 +1444,16 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			String controlAction, String Value, String ValueToSelect, String XCoordinate, String YCoordinate) 
 	{	
 
-		Component c=null;
-		//If the action is for IsEnabled or IsVisible property then no need of sync		
-		if (IsImplicitSyncRequired(controlAction, Value, ValueToSelect)) 
-		{
-			c = FindElementWithImplicitSync(locateBy, locateValue);
-		} 
-		else 
-		{
-			c = mSwingHelper.FindElement(locateBy, locateValue);
-		}	
+		Component c=null;		
+			//If the action is for IsEnabled or IsVisible property then no need of sync		
+			if (IsImplicitSyncRequired(controlAction, Value, ValueToSelect)) 
+			{
+				c = FindElementWithImplicitSync(locateBy, locateValue);
+			} 
+			else 
+			{
+				c = mSwingHelper.FindElement(locateBy, locateValue);
+			}	
 					
 		// Handle Text Field		
 		if (c!= null)
@@ -1711,23 +1716,28 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 		
 		TreePath matchingNodePath=null;
+		TreePath parentNodePath=null;
 		int row =0;
 		int i=0;
 		String node;
 		while(i<nodes.size())
 		{
 			node=nodes.get(i);
-			tree.expandRow(row);		
+			tree.expandRow(row);	
 			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
-			
+
 			if(matchingNodePath==null)
 			{
 				searchResult.append("Node: "+ node +" was not found");
 				break;
 			}
-			else if(tree.getRowForPath(matchingNodePath)<row)
-			{	
-				searchResult.append("Node: "+ node +" was not found");
+			else if(parentNodePath!=null && !matchingNodePath.getParentPath().equals(parentNodePath))
+			{
+				/* 
+				  	if current node parent is not matched with previous node 
+				  	for example: us/Ontario where Ontario is not child of us node.
+				 */
+				searchResult.append("Node: "+ node +" was not found under: " + parentNodePath);
 				return null;
 			}
 			
@@ -1739,20 +1749,26 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			{			
 				nodeText=mASCFHelper.GetNodeText(matchingNode);
 			}
-			else
+			else if(matchingNode instanceof DefaultMutableTreeNode)
 			{
 				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
+			}
+			else
+			{
+				nodeText = matchingNode.toString();
 			}
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
-				row= tree.getRowForPath(matchingNodePath);				
+				row= tree.getRowForPath(matchingNodePath);		
+				parentNodePath= matchingNodePath;
 				i++;
 			}
 			else
 			{
 				row= tree.getRowForPath(matchingNodePath)+1;				
 			}
+			
 		}	
 
 		return matchingNodePath;
@@ -2650,7 +2666,6 @@ private PayLoad GetComponentState(Component c)
 			GingerAgent.WriteLog("c instanceof JTree");
 			
 			StringBuilder searchResultMessage=new  StringBuilder();
-			
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
 			{

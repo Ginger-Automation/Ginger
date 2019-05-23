@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
@@ -26,9 +27,10 @@ using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionAutoSaveAndRecover;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -45,16 +47,16 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
-using GingerCore.Variables;
+using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
@@ -94,46 +96,28 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-
- 
-        //public ObservableList<IDatabase> GetDatabaseList()
-        //{
-        //    return new ObservableList<IDatabase>();
-        //}
-
-        //public ObservableList<DataSourceBase> GetDatasourceList()
-        //{
-        //    return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-        //}
-
-
-        //public ObservableList<IAgent> GetAllIAgents()
-        //{
-        //    return new ObservableList<IAgent>( WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().ListItems.ConvertAll(x => (IAgent)x));
-        //}
   
-        public void StartAgentDriver(IAgent agent)
+        public void StartAgentDriver(IAgent IAgent)
         {
-            Agent zAgent = (Agent)agent;
-            BusinessFlow BusinessFlow = zAgent.BusinessFlow;
-            ProjEnvironment ProjEnvironment = zAgent.ProjEnvironment;
-            bool Remote = zAgent.Remote;
+            Agent agent = (Agent)IAgent;
+            BusinessFlow BusinessFlow = agent.BusinessFlow;
+            ProjEnvironment ProjEnvironment = agent.ProjEnvironment;
+            bool Remote = agent.Remote;
             
             DriverBase Driver = null; 
-            zAgent.mIsStarting = true;
-            zAgent.OnPropertyChanged(Fields.Status);
+            agent.mIsStarting = true;
+            agent.OnPropertyChanged(Fields.Status);
             try
             {
                 try
                 {
                     if (Remote)
                     {
-                        throw new Exception("Remote is Obsolete, use GingerGrid");
-                        //We pass the agent info
+                        throw new Exception("Remote is Obsolete, use GingerGrid");                        
                     }
                     else
                     {
-                        switch (zAgent.DriverType)
+                        switch (agent.DriverType)
                         {
                             case eDriverType.InternalBrowser:
                                 Driver = new InternalBrowser(BusinessFlow);
@@ -150,24 +134,24 @@ namespace Ginger.Repository
                             case eDriverType.SeleniumRemoteWebDriver:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.RemoteWebDriver);
                                 // set capabilities
-                                if (zAgent.DriverConfiguration == null) zAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                                ((SeleniumDriver)Driver).RemoteGridHub = zAgent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
-                                ((SeleniumDriver)Driver).RemoteBrowserName = zAgent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
-                                ((SeleniumDriver)Driver).RemotePlatform = zAgent.GetParamValue(SeleniumDriver.RemotePlatformParam);
-                                ((SeleniumDriver)Driver).RemoteVersion = zAgent.GetParamValue(SeleniumDriver.RemoteVersionParam);
+                                if (agent.DriverConfiguration == null) agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                                ((SeleniumDriver)Driver).RemoteGridHub = agent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
+                                ((SeleniumDriver)Driver).RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
+                                ((SeleniumDriver)Driver).RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
+                                ((SeleniumDriver)Driver).RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
                                 break;
                             case eDriverType.SeleniumEdge:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
                                 break;
                             case eDriverType.ASCF:
-                                Driver = new ASCFDriver(BusinessFlow, zAgent.Name);
+                                Driver = new ASCFDriver(BusinessFlow, agent.Name);
                                 break;
                             case eDriverType.DOSConsole:
                                 Driver = new DOSConsoleDriver(BusinessFlow);
                                 break;
                             case eDriverType.UnixShell:
                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
-                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\sh\"));
+                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(agent.SolutionFolder, @"Documents\sh\"));
                                 break;
                             case eDriverType.MobileAppiumAndroid:
                                 Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.Android, BusinessFlow);
@@ -216,10 +200,10 @@ namespace Ginger.Repository
                                 Driver = new MainFrameDriver(BusinessFlow);
                                 break;
                             case eDriverType.AndroidADB:
-                                string DeviceConfigFolder = zAgent.GetOrCreateParam("DeviceConfigFolder").Value;
+                                string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
                                 if (!string.IsNullOrEmpty(DeviceConfigFolder))
                                 {
-                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
+                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
                                 }
                                 else
                                 {
@@ -239,25 +223,24 @@ namespace Ginger.Repository
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
                     return;
                 }
-
-                if (zAgent.AgentType == eAgentType.Service)
+                
+                if (agent.AgentType == eAgentType.Service)
                 {
-                    zAgent.StartPluginService();
-                    zAgent.OnPropertyChanged(Fields.Status);
+                    throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
                 }
                 else
                 {
-                    zAgent.Driver = Driver;
-                    Driver.BusinessFlow = zAgent.BusinessFlow;
-                    zAgent.SetDriverConfiguration();
+                    agent.Driver = Driver;
+                    Driver.BusinessFlow = agent.BusinessFlow;
+                    agent.SetDriverConfiguration();
 
                     //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
                     if (Driver.IsSTAThread())
                     {
-                        zAgent.CTS = new CancellationTokenSource();
+                        agent.CTS = new CancellationTokenSource();
 
-                        zAgent.MSTATask = new Task(() => { Driver.StartDriver(); }, zAgent.CTS.Token, TaskCreationOptions.LongRunning);
-                        zAgent.MSTATask.Start();
+                        agent.MSTATask = new Task(() => { Driver.StartDriver(); }, agent.CTS.Token, TaskCreationOptions.LongRunning);
+                        agent.MSTATask.Start();
                     }
                     else
                     {
@@ -267,9 +250,9 @@ namespace Ginger.Repository
             }
             finally
             {
-                if (zAgent.AgentType == eAgentType.Service)
+                if (agent.AgentType == eAgentType.Service)
                 {
-                    zAgent.mIsStarting = false;
+                    agent.mIsStarting = false;
                 }
                 else
                 {
@@ -278,12 +261,12 @@ namespace Ginger.Repository
                         // Give the driver time to start            
                         Thread.Sleep(500);
                         Driver.IsDriverRunning = true;
-                        Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
+                        Driver.driverMessageEventHandler += agent.driverMessageEventHandler;
                     }
 
-                    zAgent.mIsStarting = false;
-                    zAgent.OnPropertyChanged(Fields.Status);
-                    zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
+                    agent.mIsStarting = false;
+                    agent.OnPropertyChanged(Fields.Status);
+                    agent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                 }
             }
         }
@@ -343,45 +326,38 @@ namespace Ginger.Repository
             }
         }
         
-
-    
-
-        public async Task<int> AnalyzeRunset(object a, bool runInSilentMode)
-        {
-            try
+        AutoRunWindow mAutoRunWindow;
+        public void ShowAutoRunWindow()
+        {            
+            // Run the AutoRunWindow on its own thread 
+            Thread mGingerThread = new Thread(() =>
             {
-                AnalyzerPage analyzerPage = new AnalyzerPage();
-                Dispatcher.CurrentDispatcher.Invoke(() => 
-                {
-                    RunSetConfig runSetConfig = (RunSetConfig)a;
-                    analyzerPage.Init( WorkSpace.UserProfile.mSolution, runSetConfig);
-                });
-                await analyzerPage.AnalyzeWithoutUI();
+                mAutoRunWindow = new AutoRunWindow();
+                mAutoRunWindow.Show();
 
+                GingerCore.General.DoEvents();                
+                SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+                Dispatcher.Run();                                
+            });
 
-                if (analyzerPage.TotalHighAndCriticalIssues > 0)
-                {
-                    if (!runInSilentMode)
-                    {
-                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
-                        analyzerPage.ShowAsWindow();
-                    }
-                    return 1;
-                }
-            }
-            finally
+            // Makes the thread support message pumping 
+            // Configure the thread            
+            mGingerThread.SetApartmentState(ApartmentState.STA);
+            mGingerThread.IsBackground = true;
+            mGingerThread.Start();
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (mAutoRunWindow == null && stopwatch.ElapsedMilliseconds < 5000) // max 5 seconds
             {
-                Reporter.HideStatusMessage();
+                Thread.Sleep(100);
             }
-            return 0;
-        }
-
-        public void RunRunSetFromCommandLine()
-        {
-            App.MainWindow.Hide();
-            App.AppSplashWindow.Close();
-            AutoRunWindow RP = new AutoRunWindow();
-            RP.Show();
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                mAutoRunWindow.Dispatcher.Invoke(() =>
+                {
+                    Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
+            });
+            }
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
@@ -609,150 +585,7 @@ namespace Ginger.Repository
             return ReportTemplate.GenerateReport(templatename, reportInfo);
         }
 
-        public bool ProcessCommandLineArgs(string[] lines)
-        {
-            string scURL = null;
-            string scUser = null;
-            string scPswd = null;
-
-            foreach (string arg in lines)
-            {
-                int i = arg.IndexOf('=');
-                string param = arg.Substring(0, i).Trim();
-                string value = arg.Substring(i + 1).Trim();
-
-                switch (param)
-                {
-                    case "SourceControlType":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
-                        if (value.Equals("GIT"))
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;
-                        else if (value.Equals("SVN"))
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
-                        else
-                             WorkSpace.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.None;
-                        break;
-
-                    case "SourceControlUrl":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-                        {
-                            if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
-                                value = value + "svn/";
-                            if (!value.ToUpper().EndsWith("/"))
-                                value = value + "/";
-                        }
-                         WorkSpace.UserProfile.SourceControlURL = value;
-                        scURL = value;
-                        break;
-
-                    case "SourceControlUser":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
-                            value = "Test";
-                         WorkSpace.UserProfile.SourceControlUser = value;
-                        scUser = value;
-                        break;
-
-                    case "SourceControlPassword":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
-                         WorkSpace.UserProfile.SourceControlPass = value;
-                        scPswd = value;
-                        break;
-
-                    case "PasswordEncrypted":
-                        Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
-                        string pswd =  WorkSpace.UserProfile.SourceControlPass;
-                        if (value == "Y")
-                            pswd = EncryptionHandler.DecryptwithKey( WorkSpace.UserProfile.SourceControlPass, App.ENCRYPTION_KEY);
-                        if ( WorkSpace.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-                            pswd = "Test";
-                         WorkSpace.UserProfile.SourceControlPass = pswd;
-                        break;
-
-                    case "SourceControlProxyServer":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
-                        if (value == "")
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
-                        else
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-                            value = "http://" + value;
-                         WorkSpace.UserProfile.SolutionSourceControlProxyAddress = value;
-                        break;
-
-                    case "SourceControlProxyPort":
-                        if (value == "")
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = false;
-                        else
-                             WorkSpace.UserProfile.SolutionSourceControlConfigureProxy = true;
-                        Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
-                         WorkSpace.UserProfile.SolutionSourceControlProxyPort = value;
-                        break;
-
-                    case "Solution":
-                        if (scURL != null && scUser != "" && scPswd != null)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                            if (value.IndexOf(".git") != -1)
-                                App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                            else
-                                App.DownloadSolution(value);
-                        }
-                        Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + value + "'");
-                        try
-                        {
-                            if (App.SetSolution(value) == false)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                                return false;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                            return false;
-                        }
-                        break;
-
-                    case "Env":
-                        Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + value + "'");
-                        ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                        if (env != null)
-                        {
-                           App.RunsetExecutor.RunsetExecutionEnvironment = env;
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                            return false;
-                        }
-                        break;
-
-                    case "RunSet":
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), value));
-                        ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                        RunSetConfig runSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == value.ToLower().Trim()).FirstOrDefault();
-                        if (runSetConfig != null)
-                        {
-                            WorkSpace.RunsetExecutor.RunSetConfig = runSetConfig;
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find matching {0} in the Solution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                            return false;
-                        }
-                        break;
-
-                    default:
-                        Reporter.ToLog(eLogLevel.ERROR, "Un Known argument: '" + param + "'");
-                        return false;
-                }
-               
-            }
-            return true;
-        }
+       
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
@@ -770,7 +603,7 @@ namespace Ginger.Repository
                 {
                     if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
                     {
-                        WorkSpace.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
                     }
                 }
             }
@@ -860,6 +693,107 @@ namespace Ginger.Repository
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
+        }
+        
+
+        
+        public void DownloadSolution(string SolutionFolder)
+        {
+            SourceControlBase mSourceControl;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                mSourceControl = new GITSourceControl();
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = new SVNSourceControl();
+            }
+            else
+            {
+                mSourceControl = new SVNSourceControl();
+            }
+
+            if (mSourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                mSourceControl.SolutionFolder = SolutionFolder;
+
+                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.supressMessage = true;
+            }
+
+            if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
+            }
+            if (SolutionFolder.EndsWith("\\"))
+            {
+                SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
+            }
+
+            SolutionInfo sol = new SolutionInfo();
+            sol.LocalFolder = SolutionFolder;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else
+            {
+                sol.ExistInLocaly = false;
+            }
+
+            sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf("\\") + 1);
+
+            if (sol == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
+                return;
+            }
+
+            string ProjectURI = string.Empty;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+            }
+            else
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+            }
+            bool getProjectResult = true;
+            getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
+            if (getProjectResult != true)
+            {
+                return;
+            }
+
+            if (sol.ExistInLocaly == true)
+            {
+                mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+                SourceControlIntegration.GetLatest(sol.LocalFolder, mSourceControl);
+            }
+            else
+            {
+                getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+            }
+        }
+
+        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        {
+            RecoverPage recoverPage = new RecoverPage(recovredItems);
+            recoverPage.ShowAsWindow();
+
         }
     }
     

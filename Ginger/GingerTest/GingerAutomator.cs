@@ -17,6 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.ReporterLib;
+using Ginger.Repository;
+using GingerWPF.WorkSpaceLib;
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Reflection;
@@ -76,12 +79,10 @@ namespace GingerTest
       
 
         private void StartGinger()
-        {            
-            Ginger.SplashWindow splash = null;
+        {                        
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
-
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
 
                 // we need sample class - Dummy
@@ -89,18 +90,14 @@ namespace GingerTest
                 Assembly asm1 = d.GetType().Assembly;                
                 // Set the app resources to Ginger so image an other will be locally to Ginger
                 Application.ResourceAssembly = asm1;
-
+                
                 app = new Ginger.App();
-                Ginger.App.RunningFromUnitTest = true;
-                splash = new Ginger.SplashWindow();
-                splash.Show();                
-                //Ginger. WorkSpace.UserProfile.AutoLoadLastSolution = false;                
-
-                while (!app.IsReady && splash.IsVisible)
-                {
-                    Thread.Sleep(100);
-                }
-
+                WorkSpace.Init(new WorkSpaceEventHandler());
+                WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+                WorkSpace.Instance.RunningFromUnitTest = true;                
+                
+                app.StartGingerUI();
+                
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
                 //Ginger.App.MainWindow.Closed += (sender1, e1) => 
@@ -122,15 +119,11 @@ namespace GingerTest
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
-                    Thread.Sleep(100);
+                Thread.Sleep(100);
                 i++;
             }
 
-
-            while (splash.IsVisible)
-            {
-                Thread.Sleep(100);
-            }            
+            
             // Here Ginger is live and visible
             isReady = true;
         }
@@ -244,7 +237,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.SetSolution(folder);                
+                WorkSpace.Instance.OpenSolution(folder);                
             });
         }
 
@@ -253,8 +246,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                Ginger.App.CloseSolution();
-
+                WorkSpace.Instance.CloseSolution();
             });
 
         }
@@ -271,7 +263,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path =  WorkSpace.UserProfile.Solution.ContainingFolderFullPath;
+            string path =  WorkSpace.Instance.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

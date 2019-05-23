@@ -41,8 +41,7 @@ namespace Ginger.Actions.ActionConversion
     public class ActionsConversionWizard : WizardBase
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
-        public BusinessFlow BusinessFlow;
-        public Solution Solution;
+        public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
 
         public bool NewActivityChecked { get; set; }
@@ -79,10 +78,9 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
-        public ActionsConversionWizard()
+        public ActionsConversionWizard(Context context)
         {
-            BusinessFlow = App.BusinessFlow;
-            Solution = WorkSpace.UserProfile.Solution;
+            Context = context;
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
@@ -110,7 +108,7 @@ namespace Ginger.Actions.ActionConversion
                 try
                 {
                     Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, BusinessFlow.Name);
+                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, Context.BusinessFlow.Name);
 
                     // create a new converted activity
                     ActionConversionUtils utils = new ActionConversionUtils();
@@ -119,7 +117,7 @@ namespace Ginger.Actions.ActionConversion
                     utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
                     utils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
                     utils.ActUIElementClassName = nameof(ActUIElement);
-                    utils.ConvertToActions(NewActivityChecked, BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);                    
+                    utils.ConvertToActions(NewActivityChecked, Context.BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);                    
                 }
                 catch (Exception ex)
                 {
@@ -142,8 +140,8 @@ namespace Ginger.Actions.ActionConversion
         private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
         {
             // fetch list of existing platforms in the business flow
-            List<ePlatformType> lstExistingPlatform = Solution.ApplicationPlatforms
-                                                      .Where(x => BusinessFlow.TargetApplications
+            List<ePlatformType> lstExistingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms
+                                                      .Where(x => Context.BusinessFlow.TargetApplications
                                                       .Any(a => a.Name == x.AppName))
                                                       .Select(x => x.Platform).ToList();
 

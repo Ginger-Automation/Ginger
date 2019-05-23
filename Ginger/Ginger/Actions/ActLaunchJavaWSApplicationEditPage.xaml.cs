@@ -56,20 +56,20 @@ namespace Ginger.Actions
 
         private void DoBinding()
         {
-            JavaPathTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.JavaWSEXEPath);
+            JavaPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.JavaWSEXEPath);
 
-            App.ObjFieldBinding(LaunchJavaApplicationChkbox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.LaunchJavaApplication);
-            JavaApplicationPathTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.URL);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LaunchJavaApplicationChkbox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.LaunchJavaApplication);
+            JavaApplicationPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.URL);
 
-            App.ObjFieldBinding(JavaApplicationLaunchWaitForWinTitleChckBox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowWhenDoingLaunch);
-            WaitForWindowTitleTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowTitle);
-            WaitForWindowTitleMaxTimeTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowTitleMaxTime);
-            App.ObjFieldBinding(BlockingWindowChkbox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.BlockingJavaWindow);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(JavaApplicationLaunchWaitForWinTitleChckBox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowWhenDoingLaunch);
+            WaitForWindowTitleTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowTitle);
+            WaitForWindowTitleMaxTimeTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.WaitForWindowTitleMaxTime);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BlockingWindowChkbox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.BlockingJavaWindow);
 
-            App.ObjFieldBinding(LaunchWithAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.LaunchWithAgent);
-            AgentPathTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.JavaAgentPath);
-            JavaAgentPortTextBox.Init(mAct, ActLaunchJavaWSApplication.Fields.Port);
-            App.ObjFieldBinding(ShowAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.ShowAgent);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LaunchWithAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.LaunchWithAgent);
+            AgentPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.JavaAgentPath);
+            JavaAgentPortTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.Port);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.ShowAgent);
             
             rbGroupPortConfig.Init(typeof(ActLaunchJavaWSApplication.ePortConfigType), RadioButtonPanel, mAct.GetOrCreateInputParam(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString()), new RoutedEventHandler(PortConfigRB_Click));
             UpdateAgentPortTextBoxEnabledStatus();

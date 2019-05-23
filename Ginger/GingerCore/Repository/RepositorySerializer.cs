@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.Actions;
@@ -27,7 +28,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -79,7 +79,7 @@ namespace GingerCore.Repository
                         xml.WriteStartDocument();
 
                         xml.WriteWhitespace("\n");
-                        xml.WriteComment("Ginger Repository Item created with version: " + GetCurrentGingerVersion());
+                        xml.WriteComment("Ginger Repository Item created with version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
                         xml.WriteWhitespace("\n");
 
                         xmlwriteObject(xml, ri);
@@ -94,28 +94,7 @@ namespace GingerCore.Repository
                 return string.Empty;
         }
 
-        public static string GetCurrentGingerVersion()
-        {
-            if (string.IsNullOrEmpty(mGingerVersion))
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                mGingerVersion = fvi.FileVersion;
-            }
-            return mGingerVersion;
-        }
-
-        public static long GetCurrentGingerVersionAsLong()
-        {
-            if (mGingerVersionAsLong == 0)
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                mGingerVersionAsLong = fvi.FileMajorPart * 1000000 + fvi.FileMinorPart * 10000 + fvi.FileBuildPart * 100 + fvi.FilePrivatePart;
-
-            }
-            return mGingerVersionAsLong;
-        }
+       
 
         //TODO: later on get back this function it is more organize, but causing saving problems  -to be fixed later
         private void xmlwriteObject(XmlTextWriter xml, RepositoryItemBase ri)
@@ -984,7 +963,7 @@ namespace GingerCore.Repository
             switch (EventArgs.EventType)
             {
                 case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serialzier is calling Old Serialzier for loading the file: '{0}'", EventArgs.FilePath));
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serializer is calling Old Serializer for loading the file: '{0}'", EventArgs.FilePath));
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }
 

@@ -35,12 +35,14 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
     public partial class ActionInputValueUserControl : UserControl
     {
         ActInputValue mActInputValue;
+        Context mContext;
 
-        public ActionInputValueUserControl(ActInputValue actInputValue)
+        public ActionInputValueUserControl(Context context, ActInputValue actInputValue)
         {
             InitializeComponent();
 
             mActInputValue = actInputValue;
+            mContext = context;
 
             ResetControls();
 
@@ -62,7 +64,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
                 xTextBoxInputLabel.Content = string.Format("{0}:", GetInputFieldformatedName());
-                xTextBoxInputTextBox.Init(mActInputValue, nameof(ActInputValue.Value));
+                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
@@ -158,7 +160,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             //get name of relevent field
             int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
             object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString());
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString(), mContext);
             VEEW.ShowAsWindow();
             UpdateListValues();
         }

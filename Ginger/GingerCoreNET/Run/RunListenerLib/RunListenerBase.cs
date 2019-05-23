@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.Run
             
         }
 
-        public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
+        public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
 
         }

@@ -27,6 +27,7 @@ namespace  Amdocs.Ginger.Plugin.Core
     /// </summary>
     public interface IServiceSession
     {        
+
         void StartSession();
         void StopSession();
     }

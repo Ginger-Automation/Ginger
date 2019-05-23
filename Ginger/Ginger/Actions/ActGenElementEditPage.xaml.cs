@@ -18,6 +18,7 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 
 namespace Ginger.Actions
@@ -35,11 +36,11 @@ namespace Ginger.Actions
 
             this.mAct = Act;
 
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.GenElementAction);                     
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GenElementAction);                     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
 
-            Xoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
-            Yoffset.Init(mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
+            Xoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
+            Yoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
         }
 
         private void ActionNameSelectionChanged(object sender, SelectionChangedEventArgs e)

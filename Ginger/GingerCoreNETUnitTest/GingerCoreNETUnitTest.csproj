@@ -11,6 +11,9 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RuntimeFrameworkVersion>2.2</RuntimeFrameworkVersion>
     <IsPackable>false</IsPackable>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -75,6 +78,7 @@
     <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
     <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
     <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Variables\" />
+    <Folder Include="TestResources\Solutions\CLI\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -222,6 +226,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\Variables\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">

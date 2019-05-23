@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));            
         }
 
-        public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup)
+        public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));
         }
@@ -86,12 +86,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void ActionStart(uint eventTime, Act action)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", action.Description, new ActionReport(action));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", action.Description, new ActionReport(action, null));
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action));
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action, null));
         }
 
         public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)

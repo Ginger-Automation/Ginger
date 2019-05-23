@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Run;
 using GingerWPF.TreeViewItemsLib;
@@ -86,9 +87,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (base.DeleteTreeItem(mRunSetConfig, deleteWithoutAsking, refreshTreeAfterDelete))
             {
-                if (App.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Equals(mRunSetConfig))//update Run tab in case the loaded run set was deleted
                 {
-                    App.RunsetExecutor.RunSetConfig = null;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig = null;
                 }
 
                 return true;

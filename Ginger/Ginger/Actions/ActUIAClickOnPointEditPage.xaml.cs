@@ -32,8 +32,8 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             currentAct = Act;
-            App.FillComboFromEnumVal(ActionNameComboBox, Act.ActUIAClickOnPointAction);
-            App.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActUIAClickOnPointAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.ActUIAClickOnPointAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActUIAClickOnPointAction"); 
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -29,12 +29,15 @@ namespace Ginger.ApiModelsFolder
 {
     public class AddApiModelActionWizardPage : WizardBase
     {
+        public Context Context;
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
 
-        ObservableList<IAct> mActions = App.BusinessFlow.CurrentActivity.Acts;
+        ObservableList<IAct> mActions;
 
-        public AddApiModelActionWizardPage()
+        public AddApiModelActionWizardPage(Context context)
         {
+            Context = context;
+            mActions = Context.BusinessFlow.CurrentActivity.Acts;
             AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage());
             AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
         }
@@ -79,7 +82,7 @@ namespace Ginger.ApiModelsFolder
                 aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
                 aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
                 aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder =  WorkSpace.UserProfile.Solution.Folder.ToUpper();
+                aNew.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
 
                 mActions.Add(aNew);

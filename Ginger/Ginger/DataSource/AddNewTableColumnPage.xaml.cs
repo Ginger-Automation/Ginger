@@ -37,7 +37,7 @@ namespace Ginger.DataSource
         {
             InitializeComponent();
 
-            App.ObjFieldBinding(DSColumnName, TextBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColumnName, TextBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
         }
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

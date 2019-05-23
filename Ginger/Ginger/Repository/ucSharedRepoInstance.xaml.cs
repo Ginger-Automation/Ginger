@@ -42,6 +42,7 @@ namespace Ginger
         BusinessFlow mBusinessFlow = null;
         bool mLinkIsByExternalID = false;
         bool mLinkIsByParentID = false;
+        Context mContext = new Context();
 
         public ucSharedRepoInstance()
         {
@@ -55,6 +56,7 @@ namespace Ginger
         {
             mItem = item;
             mBusinessFlow = containingBusinessFlow;
+            mContext.BusinessFlow = mBusinessFlow;
             SetRepoLinkStatus();
         }
 
@@ -114,11 +116,11 @@ namespace Ginger
             if (mLinkedRepoItem is Activity)
                 (new BusinessFlowWindows.ActivityEditPage((Activity)mLinkedRepoItem, General.RepositoryItemPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is VariableBase)
-                (new VariableEditPage((VariableBase)mLinkedRepoItem, false, VariableEditPage.eEditMode.SharedRepository)).ShowAsWindow(eWindowShowStyle.Dialog, startupLocationWithOffset: true);
+                (new VariableEditPage((VariableBase)mLinkedRepoItem, null, false, VariableEditPage.eEditMode.SharedRepository)).ShowAsWindow(eWindowShowStyle.Dialog, startupLocationWithOffset: true);
             else if (mLinkedRepoItem is Act)
                 (new ActionEditPage((Act)mLinkedRepoItem, General.RepositoryItemPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity())).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is GingerCore.Activities.ActivitiesGroup)
-                (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
+                (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, null, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
         }
 
         private void LinkStatusImageBtn_Click(object sender, RoutedEventArgs e)
@@ -137,17 +139,15 @@ namespace Ginger
                 }
             }
             else
-            {
-                //App.LocalRepository.AddItemToRepositoryWithPreChecks(mItem, mBusinessFlow);
-                Repository.SharedRepositoryOperations.AddItemToRepository(mItem);
+            {                
+                (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
                 SetRepoLinkStatus();            
             }
         }
 
         private void UpdateRepoBtn_Click(object sender, RoutedEventArgs e)
         {
-            //App.LocalRepository.AddItemToRepositoryWithPreChecks(mItem, mBusinessFlow);
-            Repository.SharedRepositoryOperations.AddItemToRepository(mItem);
+            (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
             SetRepoLinkStatus();
         }
     }

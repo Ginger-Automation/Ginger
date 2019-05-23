@@ -21,20 +21,17 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions;
-using Ginger.GeneralValidationRules;
-using GingerCore;
-using GingerWPF.BindingLib;
+using Ginger.Agents;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.ComponentModel;
-using GingerCore.Actions.Common;
-using Ginger.Agents;
 
 namespace Ginger
 {
@@ -71,19 +68,19 @@ namespace Ginger
                 {
                     // if it's string like in Excel Sheet name combo then do binding to the text
                     // or we can ask for function call to return list of values - TODO: later if we need Val/text
-                    GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.TextProperty, obj, Field, BindingMode.TwoWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, obj, Field, BindingMode.TwoWay);
                 }
                 else
                 {
-                    App.FillComboFromEnumVal(ComboBox, CurrentFieldEnumValue);
-                    GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+                    GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
                 }
             }
 
             // Bind Combo for enum type, but provide the subset list of enums/valid values to show
             public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
             {
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
                 List<object> l = new List<object>();
                 foreach (var v in enumslist)
                 {
@@ -94,18 +91,18 @@ namespace Ginger
                 PropertyInfo PI = obj.GetType().GetProperty(Field);
                 object CurrentFieldEnumValue = PI.GetValue(obj);                
 
-                App.FillComboFromEnumVal(ComboBox, CurrentFieldEnumValue, l);                 
+                GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, l);                 
             }
 
             // Bind Combo for enum type, but provide the subset list of enums/valid values to show
             // also using grouping on results, according to 
             public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
             {
-                GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-                List<GingerCore.General.ComboGroupedEnumItem> l = new List<GingerCore.General.ComboGroupedEnumItem>();
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+                List<ComboGroupedEnumItem> l = new List<ComboGroupedEnumItem>();
                 foreach (var v in enumslist)
                 {
-                    GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
+                    ComboGroupedEnumItem item = new ComboGroupedEnumItem();
                     item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
                     item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); 
                     item.Value = v;
@@ -121,7 +118,7 @@ namespace Ginger
                 lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
                 lcv.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
                 
-                App.FillComboFromEnumVal(ComboBox, CurrentFieldEnumValue, null, true, lcv);
+                GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, null, true, lcv);
             }
 
         /// <summary>
@@ -141,7 +138,7 @@ namespace Ginger
             ComboBox.SelectedValuePath = SelectedValuePath;
 
             //ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);   
-            GingerCore.General.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
         }
      
         // ------------------------------------------------------------
@@ -199,16 +196,16 @@ namespace Ginger
                     l.Add(v);
                 }
                 // Get yhe current value so it will be sleected in the combo after the list created
-                App.FillComboFromEnumVal(ComboBox, l[0], l);
+                GingerCore.General.FillComboFromEnumObj(ComboBox, l[0], l);
         }
         public static void BindControl(this TextBox TextBox, Object obj, string Field, BindingMode bm = BindingMode.TwoWay)
         {
-            GingerCore.General.ObjFieldBinding(TextBox, TextBox.TextProperty, obj, Field, bm);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextBox, TextBox.TextProperty, obj, Field, bm);
         }
 
         public static void BindControl(this TreeView TreeView, Object obj, string Field, BindingMode bm = BindingMode.TwoWay)
         {
-            GingerCore.General.ObjFieldBinding(TreeView, TreeView.SelectedValuePathProperty, obj, Field, bm);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TreeView, TreeView.SelectedValuePathProperty, obj, Field, bm);
         }
 
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
@@ -265,18 +262,18 @@ namespace Ginger
         // UCValue Expression
         // ------------------------------------------------------------
 
-        public static void BindControl(this UCValueExpression UCValueExpression, Object obj, string Field)
-            {
-                GingerCore.General.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
-                UCValueExpression.Init(obj, Field);                
-            }
+        public static void BindControl(this UCValueExpression UCValueExpression, Context context, Object obj, string Field)
+        {
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UCValueExpression, TextBox.TextProperty, obj, "Value");
+            UCValueExpression.Init(context, obj, Field);
+        }
 
         // ------------------------------------------------------------
         // check box
         // ------------------------------------------------------------
         public static void BindControl(this CheckBox checkBox, Object obj, string field)
         {
-            GingerCore.General.ObjFieldBinding(checkBox, CheckBox.IsCheckedProperty, obj,  field);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(checkBox, CheckBox.IsCheckedProperty, obj,  field);
             
         }
 
@@ -287,7 +284,7 @@ namespace Ginger
 
         public static void BindControl(this Label Label, Object obj, string Field)
         {
-            ControlsBinding.ObjFieldBinding(Label, Label.ContentProperty, obj, Field, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Label, Label.ContentProperty, obj, Field, BindingMode.OneWay);
         }
 
 
@@ -297,7 +294,7 @@ namespace Ginger
         // ------------------------------------------------------------
         public static void BindControl(this ImageMakerControl Label, Object obj, string Field)
         {
-            ControlsBinding.ObjFieldBinding(Label, ImageMakerControl.ImageTypeProperty, obj, Field, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Label, ImageMakerControl.ImageTypeProperty, obj, Field, BindingMode.OneWay);
         }
 
 

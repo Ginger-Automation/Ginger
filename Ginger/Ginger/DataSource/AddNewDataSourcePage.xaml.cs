@@ -60,9 +60,9 @@ namespace Ginger.DataSource
             GingerCore.General.FillComboFromEnumType(DSTypeComboBox, typeof(DataSourceBase.eDSType));
             DSTypeComboBox.SelectionChanged += DSTypeComboBox_SelectionChanged;
             
-            GingerCore.General.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath);
-            GingerCore.General.ObjFieldBinding(DSName, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
-            GingerCore.General.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSName, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType);            
         }
         
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -79,12 +79,12 @@ namespace Ginger.DataSource
             if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
             else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
 
-            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.UserProfile.Solution.Folder);
+            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.Instance.Solution.Folder);
 
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
             { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
 
-            mDSDetails.FilePath = mDSDetails.FilePath.Replace( WorkSpace.UserProfile.Solution.Folder, "~");//Pending                       
+            mDSDetails.FilePath = mDSDetails.FilePath.Replace( WorkSpace.Instance.Solution.Folder, "~");//Pending                       
             
            
 
@@ -95,10 +95,10 @@ namespace Ginger.DataSource
             
             okClicked = true;           
             
-            if (File.Exists(mDSDetails.FileFullPath.Replace("~", WorkSpace.UserProfile.Solution.Folder)) == false)
+            if (File.Exists(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder)) == false)
             {
                 byte[] obj = Properties.Resources.GingerDataSource;
-                System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~",  WorkSpace.UserProfile.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~",  WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
                 fs.Write(obj, 0, obj.Count());
                 fs.Close();
                 fs.Dispose();
@@ -124,12 +124,12 @@ namespace Ginger.DataSource
         // Handles browsing of Script File from user desktop
         private void FileBrowse_Click(object sender, RoutedEventArgs e)
         {
-            string path = FilePathTextBox.Text.Replace("~",  WorkSpace.UserProfile.Solution.Folder);
+            string path = FilePathTextBox.Text.Replace("~",  WorkSpace.Instance.Solution.Folder);
             var dlg = new System.Windows.Forms.OpenFileDialog();
             if (path != "")
                 dlg.InitialDirectory = Path.GetDirectoryName(path);
             else
-                dlg.InitialDirectory = System.IO.Path.Combine( WorkSpace.UserProfile.Solution.Folder, "DataSources");
+                dlg.InitialDirectory = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, "DataSources");
             dlg.Title = "Select DB File";
             if(mFileType != "")
                 dlg.Filter = mFileType.ToUpper() + " Files (*." + mFileType + ")|*." + mFileType + "|All Files (*.*)|*.*";

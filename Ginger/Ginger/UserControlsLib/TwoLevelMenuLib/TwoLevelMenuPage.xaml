@@ -10,7 +10,7 @@
 
     <DockPanel  Background="{StaticResource $BackgroundColor_LightGray}">
         <!--Main Navigation Panel-->
-        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="40" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" >
+        <ListView x:Name="xMainNavigationListView" DockPanel.Dock="Top" Height="50" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xMainNavigationListView_SelectionChanged" Loaded="xMainNavigationListView_Loaded" >
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -27,7 +27,7 @@
         </ListView>
 
         <!--Sub Navigation Panel-->
-        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed">
+        <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="45" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>

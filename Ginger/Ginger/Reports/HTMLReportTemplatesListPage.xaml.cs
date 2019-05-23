@@ -42,7 +42,7 @@ namespace Ginger.Reports
             
             SetGridView();
             SetGridData();
-            _selectedHTMLReportConfiguration =  WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         private void SetGridView()

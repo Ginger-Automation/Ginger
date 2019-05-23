@@ -268,11 +268,9 @@ namespace Amdocs.Ginger.Repository
         
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {
-            // TODO: Cache
+        {            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            pluginPackage.LoadServicesFromJSON();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
             return pluginServiceInfo.IsSession;
         }
 
@@ -284,7 +282,7 @@ namespace Amdocs.Ginger.Repository
             GetPackages();
             if (mPluginPackages != null && mPluginPackages.Count > 0)
             {                
-                if (WorkSpace.RunningInExecutionMode)
+                if ( WorkSpace.Instance.RunningInExecutionMode)
                 {                    
                     DownloadMissingPlugins(); //need to download it before execution starts
                 }
@@ -316,10 +314,17 @@ namespace Amdocs.Ginger.Repository
                         }
 
                         OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+                        if (OnlinePlugin == null)
+                        {
+                            continue;
+                        }
 
                         OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
 
-                        OnlinePlugin.InstallPluginPackage(OPR);
+                        if (OPR != null)
+                        {
+                            OnlinePlugin.InstallPluginPackage(OPR);
+                        }
 
                         //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
                     }

@@ -16,23 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Help;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using GingerCore;
-using GingerCore.GeneralFunctions;
-using Ginger.Help;
-using System.Windows.Forms;
 using System.Windows.Threading;
-using System.Drawing;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -61,7 +60,7 @@ namespace Ginger
         public static string ConvertSolutionRelativePath(string fileName)
         {
             //string s = fileName;
-            //s= s.ToUpper().Replace( WorkSpace.UserProfile.Solution.Folder.ToUpper(), @"~\");
+            //s= s.ToUpper().Replace( WorkSpace.Instance.Solution.Folder.ToUpper(), @"~\");
             //return s;
             return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
@@ -71,7 +70,7 @@ namespace Ginger
             //string s = filename;
             //if (s.StartsWith(@"~\"))
             //{
-            //    s = s.Replace(@"~\",  WorkSpace.UserProfile.Solution.Folder);
+            //    s = s.Replace(@"~\",  WorkSpace.Instance.Solution.Folder);
             //}
             //return s;
             return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
@@ -246,18 +245,19 @@ namespace Ginger
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());          
             TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0)};
-            if(typ==0)
-            {
-                App.RunsetBFTextbox = txt;
-            }
-           else if(typ==1)
-            {
-                App.RunsetActivityTextbox = txt;
-            }
-            else
-            {
-                App.RunsetActionTextbox = txt;
-            }        
+            // if(typ==0)
+            // {
+            //     App.RunsetBFTextbox = txt;
+            // }
+            //else if(typ==1)
+            // {
+            //     App.RunsetActivityTextbox = txt;
+            // }
+            // else
+            // {
+            //     App.RunsetActionTextbox = txt;
+            // }        
+            txt.Text = count.ToString();
             grd.Children.Add(txt);        
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
@@ -475,6 +475,28 @@ namespace Ginger
             {
                 return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
             }
+        }
+
+        public static string GetTagsListAsString(ObservableList<Guid> tagsIDsList)
+        {
+            string tagsDesc = string.Empty;
+
+            if (tagsIDsList != null)
+            {
+                if (tagsIDsList.Count > 0)
+                {
+                    foreach (Guid tagID in tagsIDsList)
+                    {
+                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
+                        if (tag != null)
+                        {
+                            tagsDesc += "#" + tag.Name;
+                        }
+                    }
+                }
+            }
+
+            return tagsDesc;
         }
     }         
 }

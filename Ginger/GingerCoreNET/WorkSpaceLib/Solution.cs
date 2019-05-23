@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Utils;
-
 using Ginger.Reports;
-using Ginger.Run;
 using GingerCore;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -40,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
-    public class Solution : RepositoryItemBase,ISolution
+    public class Solution : RepositoryItemBase, ISolution
     {
         public SourceControlBase SourceControl { get; set; }
 
@@ -104,15 +102,11 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null && lastSavedSolution.ExecutionLoggerConfigurationSetList.Count!=0)
+                    if (ExecutionLoggerConfigurationSetList != null)
                     {
-                        foreach (ExecutionLoggerConfiguration config in ExecutionLoggerConfigurationSetList)
+                        if (ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                         {
-                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
-                                bldExtraChangedItems.Append("Execution Logger configuration, ");
-                                break;
-                            }
+                            bldExtraChangedItems.Append("Execution Logger configuration, ");
                         }
                     }
                 }
@@ -290,15 +284,13 @@ namespace Ginger.SolutionGeneral
         public void SetReportsConfigurations()
         {
             try {
-                if ((this.ExecutionLoggerConfigurationSetList == null) || (this.ExecutionLoggerConfigurationSetList.Count == 0))
+                if (this.ExecutionLoggerConfigurationSetList == null || ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
-                    this.ExecutionLoggerConfigurationSetList = new ObservableList<ExecutionLoggerConfiguration>();
-                    ExecutionLoggerConfiguration ExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
-                    ExecutionLoggerConfiguration.IsSelected = true;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
-                    ExecutionLoggerConfigurationSetList.Add(ExecutionLoggerConfiguration);
+                    this.ExecutionLoggerConfigurationSetList = new ExecutionLoggerConfiguration();
+                    ExecutionLoggerConfigurationSetList.IsSelected = true;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled = true;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
@@ -314,7 +306,7 @@ namespace Ginger.SolutionGeneral
 
 
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList;
 
 
                 // !!!!!!!!!!!!! FIXME
@@ -349,6 +341,16 @@ namespace Ginger.SolutionGeneral
                 }
             }
         }       
+
+        public ObservableList<TargetBase> GetSolutionTargetApplications()
+        {
+            ObservableList<TargetBase> solTargetApplications = new ObservableList<TargetBase>();
+            foreach (ApplicationPlatform app in ApplicationPlatforms)
+            {
+                solTargetApplications.Add(new TargetApplication() { AppName = app.AppName, Guid = app.Guid });
+            }
+            return solTargetApplications;
+        }
 
         MRUManager mRecentUsedBusinessFlows;
 
@@ -410,7 +412,7 @@ namespace Ginger.SolutionGeneral
             //add Solution.xml
             fileEntries.Add(Path.Combine(solutionFolder, "Ginger.Solution.xml"));
 
-            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "RunSetConfigs", "SharedRepository" };
+            string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
                     // Get each main folder sub folder all levels
@@ -428,8 +430,8 @@ namespace Ginger.SolutionGeneral
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {            
-
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*Ginger.*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
+            //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {               
                     CB.Add(file);                
@@ -467,7 +469,7 @@ namespace Ginger.SolutionGeneral
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
+        public ExecutionLoggerConfiguration ExecutionLoggerConfigurationSetList { get; set; } = new ExecutionLoggerConfiguration();
 
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
@@ -534,7 +536,9 @@ namespace Ginger.SolutionGeneral
                 this.Name = value;
             }
         }
-        
+
+        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
 

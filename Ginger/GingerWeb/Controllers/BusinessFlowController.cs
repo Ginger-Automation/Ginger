@@ -129,7 +129,7 @@ namespace GingerWeb.Controllers
 
 
             //ExecutionLoggerConfiguration executionLoggerConfiguration = new ExecutionLoggerConfiguration();
-            //// HTMLReportsConfiguration currentConf = WorkSpace.UserProfile.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //// HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             ////get logger files
             //string exec_folder = @"c:\temp\hh"; // Ginger.Run.ExecutionLogger.GetLoggerDirectory(executionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\";
             //string templatesFolder = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\Ginger\Reports\GingerExecutionReport\";
@@ -158,8 +158,8 @@ namespace GingerWeb.Controllers
         //ExecutionLogger executionLogger;
         void RunFlow(BusinessFlow businessFlow)
         {
-            GingerRunner gingerRunner = new GingerRunner();            
-            ExecutionLogger ex = (ExecutionLogger)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            GingerRunner gingerRunner = new GingerRunner();
+            ExecutionLoggerManager ex = (ExecutionLoggerManager)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
             ex.ExecutionLogfolder = jsonDumpFolder;
             ex.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             //ex.exec

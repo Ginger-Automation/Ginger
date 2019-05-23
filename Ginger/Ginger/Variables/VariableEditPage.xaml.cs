@@ -57,8 +57,10 @@ namespace Ginger.Variables
         }
 
         public eEditMode editMode { get; set; }
-                
-        public VariableEditPage(VariableBase v, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
+
+        Context mContext;
+
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
         {
             InitializeComponent();
            
@@ -67,13 +69,13 @@ namespace Ginger.Variables
             mVariable.SaveBackup();
             editMode = mode;
             mParent = parent;
-
-            App.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
-            App.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
-            App.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
-            App.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
-            App.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
-            App.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
+            mContext = context;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
             if (mode ==eEditMode.Global)
             {
@@ -106,7 +108,10 @@ namespace Ginger.Variables
 
             if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
             {
-                SharedRepoInstanceUC.Init(mVariable, App.BusinessFlow);
+                if (mContext != null && mContext.BusinessFlow != null)
+                {
+                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
+                }
             }
             else
             {
@@ -122,7 +127,17 @@ namespace Ginger.Variables
                 if (mVariable.VariableEditPage != null)
                 {
                     Type t = Assembly.GetExecutingAssembly().GetType("Ginger.Variables." + mVariable.VariableEditPage);
-                    Page varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
+                    Page varTypeConfigsPage = null;
+                    if (t!= typeof(VariableDynamicPage))
+                    {
+                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
+                    }
+                    else
+                    {
+                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable, mContext);
+                    }
+
+                    
                     if (varTypeConfigsPage != null)
                     {              
                         frmVarTypeInfo.Content = varTypeConfigsPage;
@@ -283,16 +298,16 @@ namespace Ginger.Variables
 
         private void SetLinkedVarCombo()
         {
-            App.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
             List<string> varsList = new List<string>();
             linkedvariableCombo.ItemsSource = varsList;
             varsList.Add(string.Empty); //added to allow unlinking of variable
 
             //get all similar variables from upper level to link to
-            if (App.BusinessFlow != null)
+            if (mContext != null && mContext.BusinessFlow != null)
             {
-                foreach (VariableBase variable in App.BusinessFlow.GetAllHierarchyVariables())
+                foreach (VariableBase variable in mContext.BusinessFlow.GetAllHierarchyVariables())
                 {
                     if (variable.GetType() == mVariable.GetType() && variable.Name != mVariable.Name)
                     {
@@ -323,12 +338,13 @@ namespace Ginger.Variables
             {
                 try
                 {
-                    ActSetVariableValue setValueAct = new ActSetVariableValue();
+                    ActSetVariableValue setValueAct = new ActSetVariableValue();                  
                     setValueAct.VariableName = mVariable.LinkedVariableName;
                     setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
-                    setValueAct.RunOnBusinessFlow = App.BusinessFlow;
-                    setValueAct.Execute();
+                    setValueAct.RunOnBusinessFlow = mContext.BusinessFlow;
+                    setValueAct.Context = mContext;
+                    setValueAct.Execute();                  
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {

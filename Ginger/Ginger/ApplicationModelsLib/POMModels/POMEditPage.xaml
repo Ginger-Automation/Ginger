@@ -7,13 +7,16 @@
       xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib"
       xmlns:agents="clr-namespace:Ginger.Agents"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:UserControl="clr-namespace:Ginger.BusinessFlowWindows"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="POMEditPage">
 
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="230"/>
+            <RowDefinition Height="235"/>
             <RowDefinition Name="SecondRow" Height="100*"/>
         </Grid.RowDefinitions>
 
@@ -30,30 +33,47 @@
                 </StackPanel>
 
                 <Grid Margin="5,10,5,0" >
+                    <Grid.Resources>
+                        <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
+                    </Grid.Resources>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
                         <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
-                        <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" VerticalAlignment="Top" Width="250"></UserControlsLib1:UCComboBox>
+                        <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" VerticalAlignment="Top" Width="250" ></ComboBox>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
-                        <Label Content="Page URL:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="NoWrap" Width="250" Margin="45,0,0,0"/>
-                        <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
-                    </StackPanel>
+                    <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" Grid.Row="0" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
 
-                    <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Grid.Column="0" Margin="0,30,0,0" HorizontalAlignment="Left" >
+                            <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <RadioButton x:Name="xPageUrlRadioBtn" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
+                            <RadioButton x:Name="xBusinessFlowRadioBtn" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="xRadioBtn_Checked" >
+                                <RadioButton.Content>
+                                    <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+                                </RadioButton.Content>
+                            </RadioButton>
+                        </StackPanel>
+
+                        <StackPanel VerticalAlignment="Top"  Margin="10,47,0,0" Orientation="Horizontal" >
+                            <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
+                                <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="NoWrap" Width="250" Margin="10,0,0,0"/>
+                                <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
+                            </StackPanel>
+                            <Frame VerticalAlignment="Top" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" Margin="0,10" HorizontalAlignment="Left" BorderBrush="Transparent"/>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
-        
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
 
-        <TabControl x:Name="xPomTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
+
+        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -68,7 +88,7 @@
                     </Style.Triggers>
                 </Style>
             </TabControl.Resources>
-            
+
             <TabItem >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

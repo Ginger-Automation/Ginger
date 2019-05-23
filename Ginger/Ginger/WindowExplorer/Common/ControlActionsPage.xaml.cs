@@ -17,22 +17,20 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.Reports;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Platforms;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Actions;
-using Ginger.UserControls;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
-using GingerCore.Platforms;
-using Ginger.Reports;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -49,9 +47,10 @@ namespace Ginger.WindowExplorer
         ElementInfo mElementInfo = null;        
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
+        Context mContext;
 
         // when launching from Window explore we get also available actions to choose so user can add
-        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues)
+        public ControlActionsPage(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues, Context context)
         {
             InitializeComponent();
 
@@ -60,8 +59,9 @@ namespace Ginger.WindowExplorer
             mActInputValues = actInputValues;
             mActions = Actions;
             mLocators = mWindowExplorerDriver.GetElementLocators(mElementInfo);
-            mDataPage = DataPage;          
-            
+            mDataPage = DataPage;
+            mContext = context;
+
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
@@ -168,18 +168,9 @@ namespace Ginger.WindowExplorer
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             SetActionDetails(act);
-            App.BusinessFlow.AddAct(act);
-
-            int selectedActIndex = -1;
-            ObservableList<IAct> actsList = App.BusinessFlow.CurrentActivity.Acts;
-            if (actsList.CurrentItem != null)
-            {
-                selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-            }
+            act.Context = mContext;
+            mContext.BusinessFlow.AddAct(act, true);
+           
             ActionEditPage AEP = new ActionEditPage(act);
             AEP.ShowAsWindow();
         }
@@ -233,11 +224,11 @@ namespace Ginger.WindowExplorer
             }
 
             SetActionDetails(act);
-            App.AutomateTabGingerRunner.PrepActionValueExpression(act);
-            ApplicationAgent ag =(ApplicationAgent) App.AutomateTabGingerRunner.ApplicationAgents.Where(x => x.AppName == App.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            mContext.Runner.PrepActionValueExpression(act);
+            ApplicationAgent ag =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
-                App.AutomateTabGingerRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
                ((Agent) ag.Agent).RunAction(act);
             }
             
