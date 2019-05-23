@@ -195,6 +195,16 @@ namespace Ginger.Reports
             }
         }
         private Amdocs.Ginger.CoreNET.Execution.eRunStatus runSetExecutionStatus;
+
+        public void SetDataForAutomateTab()
+        {
+            Name = "Automate Run Set";
+            GUID = Guid.NewGuid().ToString();
+            StartTimeStamp = DateTime.Now.ToUniversalTime();
+            RunSetExecutionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated;
+            DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+        }
+
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunSetExecutionStatus
         {
             get

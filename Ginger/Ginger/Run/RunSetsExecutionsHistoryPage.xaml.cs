@@ -179,14 +179,13 @@ namespace Ginger.Run
                 {
                     if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                     {
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
-                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-                        var getdata = rsLiteColl.IncludeAll().FindAll();
-                        var getRunSetData = rsLiteColl.IncludeAll().Find(x => x._id.ToString() == runSetReport.GUID);
                         LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
                         var result = dbManager.GetRunSetLiteData();
-                        result.EnsureIndex("_id");
-                        //List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.Where("_id",));
+                        List<LiteDbRunSet> filterData = null;
+                        filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetReport.GUID).ToList();
+                        
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                         break;
                     }
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);

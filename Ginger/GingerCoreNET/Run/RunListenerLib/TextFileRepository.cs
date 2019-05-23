@@ -19,12 +19,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     class TextFileRepository: ExecutionLogger
     {
-        static JsonSerializer mJsonSerializer;
+        static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()
         {
-            mJsonSerializer = new JsonSerializer();
+            mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
         }
+
+        public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
         {
             //TODO: for speed we can do it async on another thread...
@@ -149,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SaveObjToReporsitory(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
         }
 
-        internal override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             base.SetReportRunSet(runSetReport, logFolder);
             if (logFolder == null)
