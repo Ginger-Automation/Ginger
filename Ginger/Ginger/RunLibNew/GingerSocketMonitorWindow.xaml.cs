@@ -102,7 +102,7 @@ namespace Ginger.Drivers.CommunicationProtocol
 
         public void CloseMonitor()
         {
-            DelayedClose()            
+            DelayedClose();            
         }
     }
 }
