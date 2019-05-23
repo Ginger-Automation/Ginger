@@ -35,6 +35,7 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
 using Ginger.Logger;
+using System.Collections.Generic;
 
 namespace Ginger.Run
 {
@@ -176,6 +177,18 @@ namespace Ginger.Run
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
+                    if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                    {
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+                        var getdata = rsLiteColl.IncludeAll().FindAll();
+                        var getRunSetData = rsLiteColl.IncludeAll().Find(x => x._id.ToString() == runSetReport.GUID);
+                        LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                        var result = dbManager.GetRunSetLiteData();
+                        result.EnsureIndex("_id");
+                        //List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.Where("_id",));
+                        break;
+                    }
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
