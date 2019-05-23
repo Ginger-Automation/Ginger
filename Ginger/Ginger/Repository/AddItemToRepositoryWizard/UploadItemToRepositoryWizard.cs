@@ -171,7 +171,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
         public override void Finish()
         {
-            mWizardWindow.Close();
+            mWizardWindow.CloseMonitor();
         }
     }
 }

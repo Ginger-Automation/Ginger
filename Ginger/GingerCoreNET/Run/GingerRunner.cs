@@ -1780,13 +1780,8 @@ namespace Ginger.Run
 
                                         // NewPayLoad ActionPayload = PluginAction.GetActionPayload();
 
-
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                                        
-
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
-                                        
-
+                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
+                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
                                     }
 
                                 }
@@ -1821,8 +1816,6 @@ namespace Ginger.Run
                                 errorMessage += ex.Message;
                                 act.Error = errorMessage;
                             }
-
-                            
 
 
                             break;                        

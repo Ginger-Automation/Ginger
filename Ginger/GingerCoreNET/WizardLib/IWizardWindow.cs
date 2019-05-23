@@ -26,7 +26,7 @@ namespace GingerWPF.WizardLib
     {
         void ProcessStarted();
         void ProcessEnded();
-        void Close();
+        void CloseMonitor();
         // void ShowDialog(int width = 800);
         void NextButton(bool isEnabled);
     }

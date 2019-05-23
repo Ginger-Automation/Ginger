@@ -20,7 +20,7 @@ using System;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
-    public class NewGingerSocketLog
+    public class GingerSocketLog
     {
         public DateTime TimeStamp {get; set;}
         public string LogType {get; set;}
@@ -30,7 +30,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public long Elapsed { get; set; }
         public NewPayLoad PayLoad { get; set; }
 
-        public NewGingerSocketLog()
+        public GingerSocketLog()
         {
             TimeStamp = DateTime.Now;
         }

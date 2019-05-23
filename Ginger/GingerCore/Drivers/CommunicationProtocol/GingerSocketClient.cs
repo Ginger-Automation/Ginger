@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace GingerCore.Drivers.CommunicationProtocol
 {
@@ -40,14 +40,15 @@ namespace GingerCore.Drivers.CommunicationProtocol
     // TODO: remove it from ASCF driver    
     // TODO: remove it from QCConnector
 
+
+        // OLD DELETE ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public class GingerSocketClient
     {
         NetworkStream mNetworkStream;        
         TcpClient mClientSocket;
         IPEndPoint mServerAddress;
 
-        bool IsGingerSocketLogging = false;
-        GingerSocketMonitorWindow mGingerSocketMonitorWindow;
+        bool IsGingerSocketLogging = false;        
 
         public ObservableList<GingerSocketLog> GingerSocketLogs;
 
@@ -55,27 +56,27 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public delegate void MessageEventHandler(object sender, MessageEventArgs e);
 
-        public void SetGingerSocketLogging(bool b)
-        {
-            IsGingerSocketLogging = b;
+        //public void SetGingerSocketLogging(bool b)
+        //{
+        //    IsGingerSocketLogging = b;
 
-            if (IsGingerSocketLogging)
-            {                
-                    GingerSocketLogs = new ObservableList<GingerSocketLog>();
+        //    if (IsGingerSocketLogging)
+        //    {                
+        //            GingerSocketLogs = new ObservableList<GingerSocketLog>();
 
-                    mGingerSocketMonitorWindow = new GingerSocketMonitorWindow(this);
-                    mGingerSocketMonitorWindow.Show();
-                    Thread.Sleep(100);                
-            }
-            else
-            {            
-                if (mGingerSocketMonitorWindow != null)
-                {
-                    GingerSocketLogs = null;
-                    mGingerSocketMonitorWindow.Close();
-                }
-            }
-        }
+        //            mGingerSocketMonitorWindow = new GingerSocketMonitorWindow(this);
+        //            mGingerSocketMonitorWindow.Show();
+        //            Thread.Sleep(100);                
+        //    }
+        //    else
+        //    {            
+        //        if (mGingerSocketMonitorWindow != null)
+        //        {
+        //            GingerSocketLogs = null;
+        //            mGingerSocketMonitorWindow.Close();
+        //        }
+        //    }
+        //}
 
         public void OnMessage(GingerSocket.eProtocolMessageType MessageType, object obj = null)
         {
@@ -115,13 +116,13 @@ namespace GingerCore.Drivers.CommunicationProtocol
         [MethodImpl(MethodImplOptions.Synchronized)]
         public PayLoad SendPayLoad(PayLoad pl)
         {
-            if (IsGingerSocketLogging)
-            {
-                GingerSocketLog GSL = new GingerSocketLog();                
-                GSL.LogType = "Send";
-                GSL.SetPayLoad(pl);
-                GingerSocketLogs.Add(GSL);
-            }
+            //if (IsGingerSocketLogging)
+            //{
+            //    GingerSocketLog GSL = new GingerSocketLog();                
+            //    GSL.LogType = "Send";
+            //    GSL.SetPayLoad(pl);
+            //    GingerSocketLogs.Add(GSL);
+            //}
 
             try
             {                
@@ -131,15 +132,15 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 PayLoad plrc = GingerSocket.ReadPayLoad(mClientSocket);
                 st.Stop();
 
-                if (IsGingerSocketLogging)
-                {
-                    GingerSocketLog GSL = new GingerSocketLog();                    
-                    GSL.SetPayLoad(plrc);
-                    GSL.LogType = "Recv";                    
-                    GSL.Elapsed = st.ElapsedMilliseconds;
+                //if (IsGingerSocketLogging)
+                //{
+                //    GingerSocketLog GSL = new GingerSocketLog();                    
+                //    GSL.SetPayLoad(plrc);
+                //    GSL.LogType = "Recv";                    
+                //    GSL.Elapsed = st.ElapsedMilliseconds;
 
-                    GingerSocketLogs.Add(GSL);
-                }
+                //    GingerSocketLogs.Add(GSL);
+                //}
 
                 return plrc;
             }
@@ -159,14 +160,14 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 PayLoad PL = new PayLoad("GingerSocket", "Disconnect");
                 SendPayLoad(PL);
             }
-            if (mGingerSocketMonitorWindow != null)
-            {
+            //if (mGingerSocketMonitorWindow != null)
+            //{
                
-                mGingerSocketMonitorWindow.Dispatcher.Invoke(() =>
-                {
-                    mGingerSocketMonitorWindow.DelayedClose();
-                });
-            }
+            //    mGingerSocketMonitorWindow.Dispatcher.Invoke(() =>
+            //    {
+            //        mGingerSocketMonitorWindow.DelayedClose();
+            //    });
+            //}
             
             mClientSocket.Close();
         }

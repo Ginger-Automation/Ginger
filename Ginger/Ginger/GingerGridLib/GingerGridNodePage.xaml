@@ -15,8 +15,10 @@
         </Grid.RowDefinitions>
         <Label x:Name="GingerNodeNameLabel">Ginger Node Name</Label>
         <Frame x:Name="ScreenShotViewFrame" Content="Frame" Grid.Row="2" BorderThickness="3" BorderBrush="Yellow" />
-        <Button x:Name="ScreenShotButton" Click="ScreenShotButton_Click" Content="Screen shot" HorizontalAlignment="Left" Height="20" Margin="10,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87"/>
-        <Button x:Name="StartDriverButton" Click="StartDriverButton_Click" Content="Start Driver" HorizontalAlignment="Left" Height="20" Margin="120,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="65"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="ScreenShotButton" Click="ScreenShotButton_Click" Content="Screen shot" />
+            <Button x:Name="StartDriverButton" Click="StartDriverButton_Click" Content="Start Driver" />
+        </StackPanel>
 
     </Grid>
 </Page>

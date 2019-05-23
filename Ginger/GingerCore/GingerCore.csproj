@@ -105,7 +105,7 @@
     <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
-	<Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+    <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
@@ -443,10 +443,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -684,10 +680,6 @@
     <Compile Include="Drivers\Common\XPathHelper.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocket.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocketClient.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketLog.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml.cs">
-      <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
     <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />

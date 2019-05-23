@@ -382,8 +382,7 @@ namespace GingerCore
             // TODO: add by which agent to GNI
 
             // Keep GNP on agent
-            GingerNodeProxy = new GingerNodeProxy(mGingerNodeInfo);
-            GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+            GingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(mGingerNodeInfo);            
             GingerNodeProxy.StartDriver();
         }
 

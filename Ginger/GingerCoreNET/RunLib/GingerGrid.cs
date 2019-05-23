@@ -20,18 +20,20 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
     public class GingerGrid
-    {
-        // Maybe better ASP.NET - with web pages and rest API to communicate
+    {        
         GingerSocketServer2 mGingerSocketServer;
 
         ObservableList<GingerNodeInfo> mGingerNodeInfo = new ObservableList<GingerNodeInfo>();
 
         int mPort;
+
+        static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = new Dictionary<GingerNodeInfo, GingerNodeProxy>();
 
         public GingerGrid(int Port)
         {
@@ -178,6 +180,19 @@ namespace GingerCoreNET.RunLib
             //    NodeList.Remove(GNI);
             //}
             //}
+        }
+
+        public GingerNodeProxy GetNodeProxy(GingerNodeInfo gingerNodeInfo)
+        {
+            GingerNodeProxy gingerNodeProxy = null;
+            bool b = GingerNodeProxyDictionary.TryGetValue(gingerNodeInfo, out gingerNodeProxy);
+            if (!b)            
+            {
+                gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo);
+                gingerNodeProxy.GingerGrid = this; 
+                GingerNodeProxyDictionary.Add(gingerNodeInfo, gingerNodeProxy);
+            }
+            return gingerNodeProxy;
         }
     }
 }
