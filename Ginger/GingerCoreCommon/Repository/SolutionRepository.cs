@@ -165,6 +165,7 @@ namespace Amdocs.Ginger.Repository
 
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
+            repositoryItem.CreateBackup();
         }      
 
         public void Close()
