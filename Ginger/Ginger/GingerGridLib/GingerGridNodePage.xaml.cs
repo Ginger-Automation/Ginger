@@ -50,7 +50,9 @@ namespace Ginger.GingerGridLib
             {
                 mGingerNodeAgent.Reserve();
             }
-            mGingerNodeAgent.StartDriver();
+#warning Gingernodepagexaml.cs
+
+            //mGingerNodeAgent.StartDriver();
         }
     }
 }

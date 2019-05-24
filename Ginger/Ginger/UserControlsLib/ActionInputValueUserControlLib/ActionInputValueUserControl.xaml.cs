@@ -107,18 +107,19 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                         invalidValueValidationRule.InvalidValue.AddRange(((InvalidValueAttribute)attr).InvalidValue);
                     }
                 }
-                else if (attr.GetType() == typeof(ValidValueAttribute))
-                {
-                    ValidValueValidationRule validValueValidationRule = (ValidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(ValidValueValidationRule));
-                    if (validValueValidationRule is null)
-                    {
-                        xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new ValidValueValidationRule(((ValidValueAttribute)attr).ValidValue));
-                    }
-                    else
-                    {
-                        validValueValidationRule.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
-                    }
-                }                
+                //TODO: implement valid value attribute validation
+                //else if (attr.GetType() == typeof(ValidValueAttribute))
+                //{
+                //    ValidValueValidationRule validValueValidationRule = (ValidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(ValidValueValidationRule));
+                //    if (validValueValidationRule is null)
+                //    {
+                //        xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new ValidValueValidationRule(((ValidValueAttribute)attr).ValidValue));
+                //    }
+                //    else
+                //    {
+                //        validValueValidationRule.ValidValues.AddRange(((ValidValueAttribute)attr).ValidValue);
+                //    }
+                //}                
             }
         }
 

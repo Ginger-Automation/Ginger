@@ -27,6 +27,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.Attributes;
 using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
@@ -329,24 +330,25 @@ namespace Amdocs.Ginger.Repository
 
 
                         MemberInfo[] members = type.GetMembers();
-                        GingerServiceConfigurationAttribute token = null;
+                        ServiceConfigurationAttribute token = null;
 
                         foreach (MemberInfo mi in members)
                         {
-                            if( Attribute.GetCustomAttribute(mi, typeof(GingerServiceConfigurationAttribute), false) is GingerServiceConfigurationAttribute mconfig)
+                            if( Attribute.GetCustomAttribute(mi, typeof(ServiceConfigurationAttribute), false) is ServiceConfigurationAttribute mconfig)
                             {
                                 PluginServiceConfigInfo Config =new  PluginServiceConfigInfo();
                                 Config.Name = mconfig.Name;
                                 Config.Description = mconfig.Description;
-                                Config.Type = mconfig.Type.Name;
-                                Config.DefaultValue = mconfig.DefaultValue?.ToString();
-                               
-                                if (mconfig.OptionalValues!=null)
+                                Config.Type = mconfig.GetType().Name;
+                                // Config.DefaultValue = mconfig.DefaultValue?.ToString();
+
+                                if (Attribute.GetCustomAttribute(mi, typeof(ValidValueAttribute), false) is ValidValueAttribute validValues)
                                 {
-                                    foreach (var val in mconfig.OptionalValues)
-                                    {
-                                        Config.OptionalValues.Add(val.ToString());
-                                    }
+                                    
+                                        foreach (var val in validValues.ValidValue)
+                                        {
+                                            Config.OptionalValues.Add(val.ToString());
+                                        }
 
                                 }
                                 pluginServiceInfo.Configs.Add(Config);

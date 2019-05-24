@@ -20,6 +20,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
+using Amdocs.Ginger.Plugin.Core.Attributes;
 using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
@@ -164,7 +165,7 @@ namespace GingerCoreNET.DriversLib
                     gingerSocketInfo.Response = RunPlatformAction(pl);
                     break;
                 case "StartDriver":
-                    gingerSocketInfo.Response = StartDriver();
+                    gingerSocketInfo.Response = StartDriver(pl);
                     break;
                 case "CloseDriver":
                     gingerSocketInfo.Response = CloseDriver();
@@ -501,15 +502,67 @@ namespace GingerCoreNET.DriversLib
             return PLRC;            
         }
 
-        private NewPayLoad StartDriver()
+        private NewPayLoad StartDriver(NewPayLoad pl)
         {
-            Console.WriteLine("Payload - Start Session");
-            ((IServiceSession)mService).StartSession();
-            NewPayLoad PLRC = new NewPayLoad("OK");
-            PLRC.ClosePackage();
-            return PLRC;
-            
+            try
+            {
+                List<NewPayLoad> FieldsandParams = pl.GetListPayLoad();
+
+                Dictionary<string, string> InputParams = new Dictionary<string, string>();
+                foreach (NewPayLoad Np in FieldsandParams)
+                {
+                    string Name = Np.GetValueString();
+
+                    string Value = Np.GetValueString();
+                    if (!InputParams.ContainsKey(Name))
+                    {
+                        InputParams.Add(Name, Value);
+                    }
+                }
+
+
+                ConfigureServiceParams(mService, InputParams);
+                Console.WriteLine("Payload - Start Session");
+                ((IServiceSession)mService).StartSession();
+                NewPayLoad PLRC = new NewPayLoad("OK");
+                PLRC.ClosePackage();
+                return PLRC;
+            }
+            catch(Exception ex)
+            {
+                return NewPayLoad.Error(ex.Message);
+            }
         }
+
+        private void ConfigureServiceParams(object Service, Dictionary<string, string> Configs)
+        {
+            try
+            {
+                PropertyInfo[] members = Service.GetType().GetProperties();
+
+
+                foreach (PropertyInfo propertyInfo in members)
+                {
+                    if (Attribute.GetCustomAttribute(propertyInfo, typeof(ServiceConfigurationAttribute), false) is ServiceConfigurationAttribute mconfig)
+                    {
+                        if (Configs.ContainsKey(mconfig.Name))
+                        {
+
+                            propertyInfo.SetValue(Service, Convert.ChangeType(Configs[mconfig.Name], propertyInfo.PropertyType), null);
+                        }
+                    }
+
+
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+        }
+         
+        
 
         public static List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
         {

@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
@@ -36,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID)
+        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID, ObservableList<DriverConfigParam> DriverConfiguration=null)
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
@@ -113,7 +114,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             if (DoStartSession)
             {
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-                GNP.StartDriver();
+                GNP.StartDriver(DriverConfiguration);
                 dic.Add(key, gingerNodeInfo);
             }
 

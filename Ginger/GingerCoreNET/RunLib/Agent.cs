@@ -384,7 +384,7 @@ namespace GingerCore
             // Keep GNP on agent
             GingerNodeProxy = new GingerNodeProxy(mGingerNodeInfo);
             GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-            GingerNodeProxy.StartDriver();
+            GingerNodeProxy.StartDriver(DriverConfiguration);
         }
 
         public void driverMessageEventHandler(object sender, DriverMessageEventArgs e)
