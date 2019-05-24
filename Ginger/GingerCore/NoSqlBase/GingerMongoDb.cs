@@ -305,7 +305,30 @@ namespace GingerCore.NoSqlBase
                         string col = Act.Column;
                         string where = Act.Where;
                         var coll = DB.GetCollection<BsonDocument>(table);
-                        var filter = "{" + col + ":\"" + where + "\"}";
+                        string filter = "";
+                        var isNumeric = double.TryParse(where, out double n);
+
+                        //Simply matches on specific column type int
+                        //For ex where contains any int value
+                        if (isNumeric)
+                        {
+                            filter = "{" + col + ":" + where + "}";
+                        }
+                        else 
+                        {
+                            //Equality matches on the whole embedded document require an exact match of the specified <value> document, including the field order
+                            //For ex where contains value = {field1:_value1,field2:_value2,field3:"_value3",...}
+                            if (where.Contains(","))
+                            {
+                                filter = "{" + col + ":" + where + "}";
+                            }
+                            //Simply matches on specific column
+                            //For ex where contains any string value
+                            else
+                            {
+                                filter = "{" + col + ":\"" + where + "\"}";
+                            }
+                        }
                         var resultSimpleSQLOne = coll.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
                         Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
                         break;
