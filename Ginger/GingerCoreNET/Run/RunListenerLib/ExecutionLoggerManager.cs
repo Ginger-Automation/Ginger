@@ -31,6 +31,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
+using LiteDB;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace Ginger.Run
         public static string defaultRunTabBFName = "RunTab_BusinessFlowLastExecution";
         public static string defaultRunTabRunConsolidatedName = "RunTab_ConsolidatedReportLastExecution";
         public static string defaultRunTabLogName = "DefaultRunSet";
-        static JsonSerializer mJsonSerializer;
+        static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
@@ -155,7 +156,7 @@ namespace Ginger.Run
         public ExecutionLoggerManager(Context context, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             mContext = context;
-            mJsonSerializer = new JsonSerializer();
+            mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
             if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
@@ -806,6 +807,11 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.ERROR, "Execution Logger Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
             }
+        }
+
+        public void RunnerRunUpdate(ObjectId RunnerLiteDbId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -54,7 +54,6 @@ namespace GingerCore.NoSqlBase
                         return false;
                     }
                     mMongoClient = new MongoClient(connectionString);
-                    
                 }
                 else
                 {
@@ -111,7 +110,15 @@ namespace GingerCore.NoSqlBase
                     }
 
                 }
-                return true;
+                //check dbname is present in the dblist
+                if (GetDatabaseList().Contains(DbName))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -136,6 +143,10 @@ namespace GingerCore.NoSqlBase
         public override List<string> GetKeyspaceList()
         {
             return null;
+        }
+        public List<string> GetDatabaseList()
+        {
+            return mMongoClient.ListDatabaseNames().ToList();
         }
         public override List<string> GetTableList(string dbName)
         {

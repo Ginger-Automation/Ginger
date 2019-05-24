@@ -2963,10 +2963,10 @@ namespace Ginger.Run
 
             //Run the Activity Actions
             st.Start();
-
+            Act act = null;
             try
             {
-                Act act = null;
+                
 
                 // if it is not continue mode then goto first Action
                 if (!doContinueRun)
@@ -3056,10 +3056,16 @@ namespace Ginger.Run
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // temporary handling of exception
-                SetNextActionsBlockedStatus();
+                act.Error += ex.Message;
+                CalculateActionFinalStatus(act);
+                if (!activity.Acts.IsLastItem())
+                {
+                    GotoNextAction();
+                    SetNextActionsBlockedStatus();
+                }               
+               
                 // ExecutionLogger.ActivityEnd(CurrentBusinessFlow, activity);
                 //NotifyActivityEnd(activity);
 

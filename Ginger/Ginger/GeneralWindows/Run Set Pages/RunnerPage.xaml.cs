@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.UserControls;
+using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.UserControlsLib.PieChart;
@@ -306,8 +307,17 @@ namespace Ginger.Run
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-
+            
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                //mRunner.SetBFOfflineDataLiteDB();
+                ////var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
+                //WebReportGenerator webReporterRunner = new WebReportGenerator();
+                //webReporterRunner.GenerateBFReport(bf);
+                return;
+            }
+
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
