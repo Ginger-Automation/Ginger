@@ -2322,9 +2322,10 @@ namespace GingerCore.Drivers
                     if (AE != null)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "In Accept Dialog:");
-                        UIAElementInfo EI = new UIAElementInfo();
-
-                        EI.ElementObject = AE;
+                        UIAElementInfo EI = new UIAElementInfo
+                        {
+                            ElementObject = AE
+                        };
                         List<ElementInfo> lstElem = GetElementChildren(EI);
                         foreach (ElementInfo elemInfo in lstElem)
                         {
@@ -4730,9 +4731,11 @@ namespace GingerCore.Drivers
         
         public override string GetElementAbsoluteXPath(object obj)
         {
-            UIAElementInfo EI = new UIAElementInfo(); //Create small simple EI
-            EI.ElementObject = obj;
-            EI.WindowExplorer = WindowExplorer;
+            UIAElementInfo EI = new UIAElementInfo
+            {
+                ElementObject = obj,
+                WindowExplorer = WindowExplorer
+            }; //Create small simple EI
             string XPath = mXPathHelper.GetElementXpathAbsulote(EI);
             return XPath;
 
