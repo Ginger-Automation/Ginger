@@ -264,14 +264,35 @@ namespace GingerCore.NoSqlBase
                 switch (Action)
                 {
                     case Actions.ActDBValidation.eDBValidationType.FreeSQL:
-                        var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
+
+                        if (SQLCalculated.Contains("insertOne"))
+                        {
+                            BsonDocument insertDocumnet = BsonDocument.Parse(GetUpdateQueryParams(SQLCalculated));
+                            collection.InsertOne(insertDocumnet);
+                        }
+                        else if (SQLCalculated.Contains("insertMany"))
+                        {
+                            //need to find way to use insertMany()
+                            string queryParam = GetUpdateQueryParams(SQLCalculated).ToString();
+                            Newtonsoft.Json.Linq.JArray a = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
+                            foreach (Newtonsoft.Json.Linq.JObject obj in a.Children<Newtonsoft.Json.Linq.JObject>())
+                            {
+                                string str = obj.ToString();
+                                BsonDocument insertDocumnet = BsonDocument.Parse(obj.ToString());
+                                collection.InsertOne(insertDocumnet);
+                            }
+                        }
+                        else
+                        {
+                            var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
                             Project(Builders<BsonDocument>.Projection.Exclude("_id").Exclude(GetQueryParamater(SQLCalculated, "projection"))).
                             Sort(BsonDocument.Parse(GetQueryParamater(SQLCalculated, "sort"))).
                             Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
                             ToList();
 
-                        var obj =  result.ToJson();
-                        Act.ParseJSONToOutputValues(obj.ToString(), 1);
+                            var obj = result.ToJson();
+                            Act.ParseJSONToOutputValues(obj.ToString(), 1);
+                        }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.RecordCount:
                         var count = collection.Count(new BsonDocument());
