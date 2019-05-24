@@ -42,7 +42,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
 
         // OLD DELETE ME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public class GingerSocketClient
+    public class GingerSocketClient // OLD DELETE me !!!!!!!!!!!!
     {
         NetworkStream mNetworkStream;        
         TcpClient mClientSocket;

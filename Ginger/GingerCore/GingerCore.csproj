@@ -681,7 +681,6 @@
     <Compile Include="Drivers\CommunicationProtocol\GingerSocket.cs" />
     <Compile Include="Drivers\CommunicationProtocol\GingerSocketClient.cs" />
     <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">

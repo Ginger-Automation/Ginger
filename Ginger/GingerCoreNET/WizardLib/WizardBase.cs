@@ -258,7 +258,7 @@ namespace GingerWPF.WizardLib
             // all went OK!            
             Finish();
             Pages.Clear();
-            mWizardWindow.CloseMonitor();
+            mWizardWindow.Close();
             mWizardWindow = null;
             // GC.Collect();            
         }
