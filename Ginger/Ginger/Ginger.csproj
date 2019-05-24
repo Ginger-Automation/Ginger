@@ -2093,6 +2093,7 @@
     <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.2c0e1d7eb578e07b954e.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\main.e156f56f282d9d50f900.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />

@@ -129,6 +129,8 @@ namespace Ginger.Logger
                             List<string> newScreenShotsList = new List<string>();
                             if (liteDbAction.Elapsed.HasValue)
                                 liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value, 2);
+                            if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
+                                liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
                             foreach (string screenshot in liteDbAction.ScreenShots)
                             {
                                 string fileName = Path.GetFileName(screenshot);
