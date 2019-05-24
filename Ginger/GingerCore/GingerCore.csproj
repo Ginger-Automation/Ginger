@@ -105,7 +105,7 @@
     <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
-	<Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+    <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
@@ -487,10 +487,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Reporter\BotDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UserControls\ucTextDicResource.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -762,7 +758,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\GingerHelperEventArgs.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2060000_to_V2070000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v2070000_to_V3000000.cs" />
     <Compile Include="SourceControl\GITSourceControl.cs" />
@@ -808,7 +803,6 @@
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
     <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
@@ -817,9 +811,6 @@
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Reporter\BotDialog.xaml.cs">
-      <DependentUpon>BotDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\XMLViewer.xaml.cs">
       <DependentUpon>XMLViewer.xaml</DependentUpon>
