@@ -737,7 +737,6 @@
     <Compile Include="GeneralLib\ComboItem.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
-    <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
