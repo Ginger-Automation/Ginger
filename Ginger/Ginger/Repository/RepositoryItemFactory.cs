@@ -744,8 +744,16 @@ namespace Ginger.Repository
             {
                 sol.ExistInLocaly = true;
             }
-            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
+                if (!sol.LocalFolder.EndsWith(".git"))
+                {
+                    Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git"));
+                }
+                else
+                {
+                    Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder));
+                }
                 sol.ExistInLocaly = true;
             }
             else
