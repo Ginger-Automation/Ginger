@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         // Deep backup keep obj ref and all prop, restore to real original situation
-        private void CreateBackup(bool isLocalBackup = false)
+        public void CreateBackup(bool isLocalBackup = false)
         {
             if (!isLocalBackup)
             {

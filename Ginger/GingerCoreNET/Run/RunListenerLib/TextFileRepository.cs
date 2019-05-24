@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportActivity(Activity activity, Context context, bool offlineMode)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
-            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (offlineMode)
                     // use Path.combine !!!!

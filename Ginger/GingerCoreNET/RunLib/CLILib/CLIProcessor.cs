@@ -25,7 +25,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
-            if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            if (args[0].Contains("="))
             {
                 string[] arg1 = args[0].Split('=');
                 param = arg1[0].Trim();
@@ -61,13 +62,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler = new CLIConfigFile();                   
                     PerformLoadAndExecution(ReadFile(value));
                     break;
+                case "Script":
                 case "--scriptfile":
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
                     mCLIHandler = new CLIScriptFile();
                     PerformLoadAndExecution(ReadFile(value), false);
                     break;
                 case "--dynamicfile":
-                case "DynamicXML":
+                case "Dynamic":
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
                     mCLIHandler = new CLIDynamicXML();
                     PerformLoadAndExecution(ReadFile(value));
