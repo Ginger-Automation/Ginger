@@ -80,7 +80,15 @@ namespace Ginger.Environments
         {
             try
             {
-                Database db = (Database)grdAppDbs.grdMain.CurrentItem;
+                Database db;
+                if ((Database)grdAppDbs.grdMain.CurrentItem != null)
+                {
+                     db = (Database)grdAppDbs.grdMain.CurrentItem;
+                }
+                else
+                {
+                    db = (Database)grdAppDbs.grdMain.Items[0];
+                }
                 if (db == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
