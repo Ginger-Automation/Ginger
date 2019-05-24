@@ -351,7 +351,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         [TestMethod]
         public void TestRunsetAutoRunConfigCreationContent()
-        {
+         {
             // Arrange
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
@@ -368,7 +368,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             executer.RunSetConfig = runsetConfig;
             CLIHelper cliHelp = new CLIHelper();
             RunSetAutoRunConfiguration autoRunConfig = new RunSetAutoRunConfiguration(sol, executer, cliHelp);
-
+            WorkSpace.Instance.Solution = sol;
             // Act
             cliHelp.RunAnalyzer = true;
             autoRunConfig.SelectedCLI = new CLIConfigFile();

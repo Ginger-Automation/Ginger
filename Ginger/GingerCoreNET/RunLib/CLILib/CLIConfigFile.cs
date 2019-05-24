@@ -37,26 +37,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
-            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-            {               
-                sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
-                sConfig += "SourceControlPassword=" + WorkSpace.Instance.Solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
-                if (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress != null)
+            if (WorkSpace.Instance.Solution != null)
+            {
+                if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
                 {
-                    if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true"))
+                    sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlPassword=" + WorkSpace.Instance.Solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
+                    if (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress != null)
                     {
-                        sConfig += "SourceControlProxyServer=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                        sConfig += "SourceControlProxyPort=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                        if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true"))
+                        {
+                            sConfig += "SourceControlProxyServer=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
+                            sConfig += "SourceControlProxyPort=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                        }
                     }
                 }
+                sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+                sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
+                sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
+                sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+                sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
             }
-            sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
-            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
-            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             return sConfig;
         }
