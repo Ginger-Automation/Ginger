@@ -62,6 +62,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LiteDB;
+using Ginger.Logger;
 
 namespace Ginger
 {
@@ -159,21 +160,18 @@ namespace Ginger
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
-                if (!isAutoRunSetExists)
+                if (ExecutionLoggerManager.RunSetReport == null)
                 {
                     ExecutionLoggerManager.RunSetReport = new RunSetReport();
                     ExecutionLoggerManager.RunSetReport.SetDataForAutomateTab();
-                    mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner);
-                    mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
-                    AutoRunSetDocumentExistsInLiteDB();
-                }
-                else
-                {
-
-                }
-                if(mBusinessFlow != businessFlowToLoad)
-                {
-                    DeleteRunSetBFRefData();
+                    if (!isAutoRunSetExists)
+                    {
+                        mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
+                        mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner);
+                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                        isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
+                        return;
+                    }
                 }
             }
         }
@@ -199,7 +197,7 @@ namespace Ginger
             if(isExist)
             {
                 runSetLiteDbId = filterData[0]._id;
-                runnerLiteDbId = filterData[0].RunnersColl[0]._id;
+                runnerLiteDbId = filterData[0].RunnersColl[0]._id ;
             }
             return isExist;
         }
@@ -1018,6 +1016,11 @@ namespace Ginger
 
                     UpdateRunnerAgentsUsedBusinessFlow();
                 }
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                }
             }
         }
 
@@ -1264,6 +1267,11 @@ namespace Ginger
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
             }
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+            }
         }        
 
         private void DisableGridSelectedItemChangeOnClick(ucGrid UCGrid)
@@ -1470,7 +1478,12 @@ namespace Ginger
             {
                 ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
             }
-
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.ActivityEnd(0, mCurrentActivity);
+                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+            }
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -1584,6 +1597,11 @@ namespace Ginger
 
         private void GenerateLastExecutedItemReport()
         {
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -1613,9 +1631,22 @@ namespace Ginger
                 }
             }
         }
-
+        private void CreateLiteDBReport()
+        {
+            if (runSetLiteDbId != null)
+            {
+                var selectedGuid = runSetLiteDbId;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+            }
+        }
         private void btnOfflineExecutionHTMLReport_click(object sender, RoutedEventArgs e)
         {
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {

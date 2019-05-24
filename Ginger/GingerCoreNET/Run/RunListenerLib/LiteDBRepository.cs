@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Ginger.Reports;
 using Ginger.Run;
@@ -113,9 +114,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
             AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
+            if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            {
+                AGR._id = activityGroup.LiteDbId;
+            }
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
+            if (ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            {
+                activityGroup.LiteDbId = AGR._id;
+            }
             return AGR;
         }
 
@@ -212,12 +221,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runner.EndTimeStamp = gingerRunner.BusinessFlows[0].EndTimeStamp;
                 runner.Elapsed = gingerRunner.BusinessFlows[0].Elapsed;
             }
+            runner.RunStatus = (liteDbBFList.Count > 0) ? liteDbBFList[0].RunStatus : eRunStatus.Automated.ToString();
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
             liteDbBFList.Clear();
             LiteDbRunSet runSet = new LiteDbRunSet();
             runSet._id = runSetLiteDbId;
             base.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
             runSet.SetReportData(ExecutionLoggerManager.RunSetReport);
+            runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
         }
     }
