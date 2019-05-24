@@ -758,8 +758,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2060000_to_V2070000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2070000_to_V3000000.cs" />
     <Compile Include="SourceControl\GITSourceControl.cs" />
     <Compile Include="SourceControl\SVNSourceControl.cs" />
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
@@ -803,10 +801,6 @@
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
     <Compile Include="GeneralLib\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
@@ -833,19 +827,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1090000_to_V2000000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1080000_to_V1090000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1070000_to_V1080000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1060000_to_V1070000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2040000_to_V2050000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2030000_to_V2040000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2020000_to_V2030000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2050000_to_V2060000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\XMLConverterBase.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\XMLUpgrade.cs" />
     <Compile Include="XPathParser\IXpathBuilder.cs" />
     <Compile Include="XPathParser\XPathAxis.cs" />
     <Compile Include="XPathParser\XPathOperator.cs" />
