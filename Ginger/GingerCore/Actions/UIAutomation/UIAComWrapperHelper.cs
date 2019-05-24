@@ -3369,9 +3369,9 @@ namespace GingerCore.Drivers
                                                           SelectionItemPattern.Pattern) as SelectionItemPattern;
                 sPat.Select();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::" + ex.Message);
                 throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
             }
         }
