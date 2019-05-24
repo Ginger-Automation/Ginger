@@ -77,17 +77,25 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
-            if (mode ==eEditMode.Global)
+            if (mode ==eEditMode.Global || mode==eEditMode.SharedRepository)
             {
                 cbSetAsInputValue.Visibility = Visibility.Hidden;
                 cbSetAsOutputValue.Visibility = Visibility.Hidden;
+                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
             else
             {              
                 cbSetAsInputValue.Visibility=Visibility.Visible;
                 cbSetAsOutputValue.Visibility = Visibility.Visible;
+                if (mContext != null && mContext.BusinessFlow != null)
+                {
+                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
+                }
+
             }
-            if(setGeneralConfigsAsReadOnly)
+     
+            if (setGeneralConfigsAsReadOnly)
             {
                 txtVarName.IsReadOnly = true;
                 txtVarDescritpion.IsReadOnly = true;
@@ -106,18 +114,7 @@ namespace Ginger.Variables
             }
             TagsViewer.Init(mVariable.Tags);
 
-            if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
-            {
-                if (mContext != null && mContext.BusinessFlow != null)
-                {
-                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
-                }
-            }
-            else
-            {
-                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
-                SharedRepoInstanceUC_Col.Width = new GridLength(0);
-            }
+           
         }
 
         private void LoadVarPage()
