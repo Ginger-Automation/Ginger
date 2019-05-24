@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -53,7 +54,49 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             return result;
         }
-
+        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
+        {
+            bool result = true;
+            var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+            var runnerssLiteColl = GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
+            foreach (LiteDbRunner ldbRunner in liteDbRunSet.RunnersColl)
+            {
+                var businessFlowsLiteColl = GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
+                foreach (LiteDbBusinessFlow ldbBF in ldbRunner.BusinessFlowsColl)
+                {
+                    var activitiesLiteColl = GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
+                    var activitiesGroupsLiteColl = GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
+                    foreach (LiteDbActivityGroup ldbAG in ldbBF.ActivitiesGroupsColl)
+                    {
+                        activitiesGroupsLiteColl.Delete(ldbAG._id);
+                    }
+                    foreach (LiteDbActivity ldbActivity in ldbBF.ActivitiesColl)
+                    {
+                        var actionsLiteColl = GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
+                        foreach (LiteDbAction ldbAction in ldbActivity.ActionsColl)
+                        {
+                            actionsLiteColl.Delete(ldbAction._id);
+                        }
+                        activitiesLiteColl.Delete(ldbActivity._id);
+                    }
+                    businessFlowsLiteColl.Delete(ldbBF._id);
+                }
+                if (executedFrom == eExecutedFrom.Run)
+                {
+                    runnerssLiteColl.Delete(ldbRunner._id);
+                }
+            }
+            if (executedFrom == eExecutedFrom.Run)
+            {
+                runSetLiteColl.Delete(liteDbRunSet._id);
+            }
+            return result;
+        }
+        public string NameInDb<T>()
+        {
+            var name = typeof(T).Name + "s";
+            return name;
+        }
         public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
         {
             return baseColl.IncludeAll().Find(query).ToList();

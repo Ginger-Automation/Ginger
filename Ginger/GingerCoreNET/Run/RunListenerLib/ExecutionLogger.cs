@@ -234,14 +234,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
         }
-        internal virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
             runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
-            runSetReport.MachineName = Environment.MachineName.ToString();
-            runSetReport.ExecutedbyUser = Environment.UserName.ToString();
+            runSetReport.MachineName = Environment.MachineName;
+            runSetReport.ExecutedbyUser = Environment.UserName;
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
-
+        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner);
     }
 }
