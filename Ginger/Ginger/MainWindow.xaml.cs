@@ -744,7 +744,7 @@ namespace Ginger
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
         {
             string newName =  WorkSpace.Instance.Solution.Name;
-            if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
+            if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName))
             {
                  WorkSpace.Instance.Solution.Name = newName;
             }
