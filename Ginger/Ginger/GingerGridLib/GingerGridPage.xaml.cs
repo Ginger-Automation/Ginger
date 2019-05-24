@@ -71,6 +71,10 @@ namespace Ginger.GingerGridLib
 
         private void ShowSocketMonitor()
         {
+            if (mGingerGrid == null)
+            {
+                return;
+            }
             //Check all nodes and create new Monitor if not exist
             foreach (GingerNodeInfo ff in mGingerGrid.NodeList)
             {
