@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private eExecutedFrom ExecutedFrom;
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
-        uint meventtime;
+        // uint meventtime;
         public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
         ProjEnvironment mExecutionEnvironment = null;        
