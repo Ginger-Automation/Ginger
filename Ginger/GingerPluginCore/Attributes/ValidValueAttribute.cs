@@ -6,7 +6,7 @@ namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = true)]
 
-    public class ValidValueAttribute : Attribute, IActionParamProperty
+    public class ValidValueAttribute : Attribute, IParamProperty
     {
         public string PropertyName => "ValidValue";
 

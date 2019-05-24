@@ -11,7 +11,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
     // Can set multiple times per param
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = true)]
-    public class InvalidValueAttribute : Attribute, IActionParamProperty
+    public class InvalidValueAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
         public string PropertyName => "InvalidValue";

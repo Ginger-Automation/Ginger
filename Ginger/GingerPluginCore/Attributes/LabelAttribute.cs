@@ -5,19 +5,19 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class TooltipAttribute : Attribute, IActionParamProperty
+    public class LabelAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
-        public string PropertyName => "Tooltip";
+        public string PropertyName => "Label";
 
-        public string Tooltip { get; set; }
+        public string Label { get; set; }
 
-        public TooltipAttribute(string tooltip)
+        public LabelAttribute(string label)
         {
-            Tooltip = tooltip;
+            Label = label;
         }
 
-        public TooltipAttribute()
+        public LabelAttribute()
         {
         }
     }

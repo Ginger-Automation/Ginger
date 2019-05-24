@@ -5,21 +5,20 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class DefaultAttribute : Attribute, IActionParamProperty
+    public class MinLengthAttribute: Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
-        public string PropertyName => "Default";
+        public string PropertyName => "MinLength";
 
-        public object DefaultValue { get; set; }
+        public int MinLength { get; set; }
 
-        public DefaultAttribute(object defaultValue)
+        public MinLengthAttribute(int minLength)
         {
-            DefaultValue = defaultValue;
+            MinLength = minLength;
         }
 
-        public DefaultAttribute()
+        public MinLengthAttribute()
         {
         }
     }
-  
 }

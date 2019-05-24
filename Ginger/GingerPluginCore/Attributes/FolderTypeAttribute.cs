@@ -5,7 +5,7 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class FolderTypeAttribute : Attribute, IActionParamProperty
+    public class FolderTypeAttribute : Attribute, IParamProperty
     {
         public string PropertyName => "FolderType";
 

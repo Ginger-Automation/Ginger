@@ -5,7 +5,7 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class FileTypeAttribute : Attribute, IActionParamProperty
+    public class FileTypeAttribute : Attribute, IParamProperty
     {
         public string PropertyName => "FileType";
 

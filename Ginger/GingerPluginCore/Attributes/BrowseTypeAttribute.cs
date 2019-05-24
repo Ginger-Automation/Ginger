@@ -5,7 +5,7 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class BrowseTypeAttribute : Attribute, IActionParamProperty
+    public class BrowseTypeAttribute : Attribute, IParamProperty
     {
         public string PropertyName => "BrowseType";
 

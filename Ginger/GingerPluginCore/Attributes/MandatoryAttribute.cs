@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.Plugin.Core
     // [Mandatory] 
 
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class MandatoryAttribute : Attribute, IActionParamProperty
+    public class MandatoryAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
         public string PropertyName => "Mandatory";

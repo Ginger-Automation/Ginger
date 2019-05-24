@@ -5,7 +5,7 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter , AllowMultiple = false)]
-    public class MaxLengthAttribute : Attribute, IActionParamProperty
+    public class MaxLengthAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
         public string PropertyName => "MaxLength";

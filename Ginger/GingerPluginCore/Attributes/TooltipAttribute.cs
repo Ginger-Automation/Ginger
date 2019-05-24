@@ -5,19 +5,19 @@ using System.Text;
 namespace Amdocs.Ginger.Plugin.Core
 {
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
-    public class MinLengthAttribute: Attribute, IActionParamProperty
+    public class TooltipAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:
-        public string PropertyName => "MinLength";
+        public string PropertyName => "Tooltip";
 
-        public int MinLength { get; set; }
+        public string Tooltip { get; set; }
 
-        public MinLengthAttribute(int minLength)
+        public TooltipAttribute(string tooltip)
         {
-            MinLength = minLength;
+            Tooltip = tooltip;
         }
 
-        public MinLengthAttribute()
+        public TooltipAttribute()
         {
         }
     }

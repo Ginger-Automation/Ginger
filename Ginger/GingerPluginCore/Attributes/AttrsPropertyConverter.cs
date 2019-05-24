@@ -110,14 +110,14 @@ namespace Amdocs.Ginger.Plugin.Core
         private void CreateAttrTypeDictionary()
         {
             mAttrTypeDictionary = new Dictionary<string, Type>();
-            Assembly assembly = typeof(IActionParamProperty).Assembly;
+            Assembly assembly = typeof(IParamProperty).Assembly;
             var actionParamPropertyAttributeTypes = from type in assembly.GetTypes()
-                                                    where typeof(IActionParamProperty).IsAssignableFrom(type) && type.IsInterface == false
+                                                    where typeof(IParamProperty).IsAssignableFrom(type) && type.IsInterface == false
                                                     select type;
 
             foreach (Type t in actionParamPropertyAttributeTypes)
             {                
-                IActionParamProperty attr = (IActionParamProperty)Activator.CreateInstance(t);
+                IParamProperty attr = (IParamProperty)Activator.CreateInstance(t);
                 mAttrTypeDictionary.Add(attr.PropertyName, t);                
             }
         }
@@ -144,13 +144,13 @@ namespace Amdocs.Ginger.Plugin.Core
                 writer.WriteStartObject();
                 // First write property name so it will be first in the list
                 writer.WritePropertyName("Property");
-                IActionParamProperty actionParamProperty = (IActionParamProperty)attr;
+                IParamProperty actionParamProperty = (IParamProperty)attr;
                 string propertyName = actionParamProperty.PropertyName;                
                 serializer.Serialize(writer, propertyName);
 
                 foreach (var property in properties)
                 {
-                    if (property.Name == nameof(Attribute.TypeId) || property.Name == nameof(IActionParamProperty.PropertyName))
+                    if (property.Name == nameof(Attribute.TypeId) || property.Name == nameof(IParamProperty.PropertyName))
                     {
                         continue;
                     }
