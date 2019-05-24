@@ -312,7 +312,10 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad RunAction(NewPayLoad pl)
         {
-            ScanService();
+            if (mServiceActions == null)
+            {
+                ScanServiceAndCache();
+            }            
 
             Console.WriteLine(">>> Payload - Run Ginger Action");
             string ActionID = pl.GetValueString();
@@ -454,13 +457,9 @@ namespace GingerCoreNET.DriversLib
 
         
         List<ActionHandler> mServiceActions = null;
-        private void ScanService()
+        private void ScanServiceAndCache()
         {
-            // Scan once and cache
-            if (mServiceActions != null)
-            {
-                return;
-            }
+            // Scan once and cache            
             Console.WriteLine("Scanning Service: " + mService.GetType().FullName) ;
             mServiceActions = new List<ActionHandler>();
 
