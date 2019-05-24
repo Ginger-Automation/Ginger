@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3">
       <PrivateAssets>all</PrivateAssets>
@@ -52,6 +53,12 @@
     <Folder Include="Repository\ExecLib\" />
     <Folder Include="Repository\ReportsLib\" />
     <Folder Include="WorkspaceLib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="LiteDB">
+      <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
