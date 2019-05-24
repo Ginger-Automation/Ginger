@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
-{
-    
-    public class BusinessFlow
-    {        
+{    
+    public class AddBusinessFlow
+    {
         [XmlAttribute]
         public string Name { get; set; }
 
-        public List<InputVariable> InputVariables { get; set; } = new List<InputVariable>();
+        public List<InputVariable> InputVariables { get; set; } 
     }
 }

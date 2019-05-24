@@ -5,12 +5,13 @@ using System.Xml.Serialization;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 {
-    public class Agent
+    [XmlInclude(typeof(MailReport))]
+    public class AddRunsetOperation
     {
         [XmlAttribute]
-        public string ApplicationName { get; set; }
+        public string Condition { get; set; } = "AlwaysRun";
 
         [XmlAttribute]
-        public string AgentName { get; set; }
+        public string RunAt { get; set; } = "ExecutionEnd";
     }
 }

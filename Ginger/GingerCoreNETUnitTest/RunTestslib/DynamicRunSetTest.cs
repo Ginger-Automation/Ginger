@@ -41,32 +41,32 @@ namespace GingerCoreNETUnitTest.RunListeners
         }
 
 
-        [TestMethod]
-        public void CreateDynamicRunSet()
-        {
-            //Arrange
-            DynamicRunSet dynamicRunSet = new DynamicRunSet() { Name = "Dyn 1", Environemnt = "UAT" };
-            Runner runner1 = new Runner() { Name = "Runner 1" };
-            runner1.Agents.Add(new Agent() { ApplicationName = "App1", AgentName = "Chrome 1" });
-            runner1.Agents.Add(new Agent() { ApplicationName = "App2", AgentName = "PB 1" });
-            dynamicRunSet.Runners.Add(runner1);
-            runner1.BusinessFlows.Add(new BusinessFlow() { Name = "BF 1" });
-            runner1.BusinessFlows.Add(new BusinessFlow() { Name = "BF 2" });
+        //[TestMethod]
+        //public void CreateDynamicRunSet()
+        //{
+        //    //Arrange
+        //    DynamicGingerExecution dynamicRunSet = new DynamicGingerExecution() { Name = "Dyn 1", Environemnt = "UAT" };
+        //    AddRunner runner1 = new AddRunner() { Name = "Runner 1" };
+        //    runner1.SetAgents.Add(new AgentMap() { ApplicationName = "App1", AgentName = "Chrome 1" });
+        //    runner1.SetAgents.Add(new AgentMap() { ApplicationName = "App2", AgentName = "PB 1" });
+        //    dynamicRunSet.Runners.Add(runner1);
+        //    runner1.AddBusinessFlows.Add(new AddBusinessFlow() { Name = "BF 1" });
+        //    runner1.AddBusinessFlows.Add(new AddBusinessFlow() { Name = "BF 2" });
 
-            BusinessFlow BF3 = new BusinessFlow() { Name = "BF 3" };
-            BF3.InputVariables = new List<InputVariable>();
-            BF3.InputVariables.Add(new InputVariable() { VariableName = "v1", VariableValue = "abc" });
-            runner1.BusinessFlows.Add(BF3);
+        //    AddBusinessFlow BF3 = new AddBusinessFlow() { Name = "BF 3" };
+        //    BF3.InputVariables = new List<InputVariable>();
+        //    BF3.InputVariables.Add(new InputVariable() { VariableName = "v1", VariableValue = "abc" });
+        //    runner1.AddBusinessFlows.Add(BF3);
 
-            //Act            
-            string fileName = TestResources.GetTempFile("dynflow.xml");
-            DynamicRunSetManager.Save(dynamicRunSet, fileName);
+        //    //Act            
+        //    string fileName = TestResources.GetTempFile("dynflow.xml");
+        //    DynamicRunSetManager.Save(dynamicRunSet, fileName);
 
 
-            //Assert
-            // Assert.IsTrue(Directory.Exists(BFDir), "BF directory exist");
+        //    //Assert
+        //    // Assert.IsTrue(Directory.Exists(BFDir), "BF directory exist");
 
-        }
+        //}
 
         //[TestMethod]
         //public void LoadDynamicRunSet()
