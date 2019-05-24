@@ -292,12 +292,26 @@ namespace GingerCore.NoSqlBase
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            if (SQLCalculated.Contains("updateMany"))
+                            {
+                                collection.UpdateMany(filterDocumnet, paramDocumnet);
+                            }
+                            else 
+                            {
+                                collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            }
                             session.CommitTransaction();
                         }
                         else
                         {
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            if (SQLCalculated.Contains("updateMany"))
+                            {
+                                collection.UpdateMany(filterDocumnet, paramDocumnet);
+                            }
+                            else
+                            {
+                                collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            }
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
