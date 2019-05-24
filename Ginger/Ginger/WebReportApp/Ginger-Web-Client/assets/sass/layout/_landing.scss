@@ -1,0 +1,365 @@
+.landing-wrapper {
+    * {
+        @include border-box();
+    }
+    #header {
+        .header-top {
+            min-height: 60px;
+            background-color: #ffffff;
+            padding: 0 150px;
+            .logo {
+                padding-top: 10px;
+                display: inline-block;
+                img {
+                    height: 40px;
+                }
+            }
+            .header-menu {
+                text-decoration: none;
+                padding: 0;
+                float: right;
+                height: 60px;
+                margin: 0;
+                li {
+                    display: inline-block;
+                    a {
+                        display: inline-block;
+                        padding: 19px;
+                        color: #5b616b;
+                        border-bottom: 4px solid transparent;
+                        &:hover {
+                            border-color: #0071bc;
+                        }
+                    }
+                }
+            }
+        }
+        .header-content {
+            background: url("../../layout/images/landing/bg-slider.jpg");
+            height: 390px;
+            background-size: cover;
+            padding: 80px 150px 0 150px;
+            .header-content-panel {
+                padding: 20px 25px;
+                background-color: #122e51;
+                text-align: left;
+                width: 300px;
+                h1 {
+                    color: #ffffff;
+                    margin: 0;
+                    font-weight: 100;
+                }
+                p {
+                    color: #00bfe7;
+                    margin-bottom: 20px;
+                }
+                .ui-button {
+                    margin: 0;
+                    padding: 5px 10px;
+                    span {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+    }
+    .features {
+        padding: 75px 150px;
+        .learn-more {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e31c3d;
+        }
+        h2 {
+            color: #e31c3d;
+            text-align: left;
+            font-weight: 100;
+            font-size: 28px;
+        }
+        h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #212121;
+        }
+        p {
+            color: #212121;
+            margin: 14px 0;
+            padding-right: 100px;
+        }
+        i {
+            color: #e31c3d;
+            margin-left: 5px;
+        }
+        img {
+            width: 100%;
+        }
+        .ui-g-9 {
+            padding-left: 10px;
+        }
+    }
+    .premium {
+        background: url("../../layout/images/landing/image-demo.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 350px;
+        .premium-content {
+            padding: 75px 150px;
+            h1 {
+                color: #ffffff;
+                margin: 0;
+                font-weight: 100;
+            }
+            p {
+                color: #ffffff;
+                padding-bottom: 30px;
+                margin-bottom: 0;
+                max-width: 400px;
+            }
+            .ui-button {
+                margin: 0;
+            }
+        }
+    }
+    .news {
+        padding: 75px 150px;
+        span {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e31c3d;
+        }
+        h2 {
+            color: #e31c3d;
+            text-align: left;
+            font-weight: 100;
+            font-size: 28px;
+        }
+        h3 {
+            margin-top: 0;
+            color: #323a44;
+        }
+        p {
+            color: #323a44;
+        }
+        i {
+            color: #e31c3d;
+            margin-left: 5px;
+        }
+        .news-icon {
+            img {
+                width: 100%;
+            }
+        }
+    }
+    .pricing {
+        padding: 75px 150px;
+        background-color: #205493;
+        border-top: 10px solid #00a6d2;
+        h2 {
+            color: #ffffff;
+            text-align: left;
+            font-weight: 100;
+            font-size: 28px;
+        }
+        .pricing-box {
+            text-align: center;
+            .pricing-header {
+                color: #ffffff;
+                background-color: #122e51;
+                letter-spacing: 2px;
+                font-weight: 600;
+                padding: 12px 0px;
+            }
+            .pricing-subheader {
+                background-color: #efefef;
+            }
+            .price {
+                display: block;
+                font-size: 32px;
+                font-weight: 600;
+                color: #122e51;
+            }
+            .duration {
+                display: block;
+                font-size: 18px;
+                font-weight: 600;
+                color: #4773aa;
+            }
+            .pricing-content {
+                background-color: #ffffff;
+                min-height: 250px;
+                padding-top: 20px;
+                span {
+                    text-align: center;
+                    display: block;
+                    padding: 2px 0;
+                }
+            }
+            .ui-button {
+                position: relative;
+                top: -55px;
+            }
+            &.pricing-basic {
+                .pricing-header {
+                    background-color: #00a6d2;
+                }
+                .price {
+                    color: #00a6d2;
+                }
+                .duration {
+                    color: #00a6d2;
+                }
+            }
+        }
+    }
+    .media {
+        padding: 75px 150px;
+        h2 {
+            color: #e31c3d;
+            text-align: left;
+            font-weight: 100;
+            font-size: 28px;
+            margin: 0 0 14px 0;
+        }
+        p {
+            margin: 0;
+            font-size: 16px;
+            text-align: left;
+            color: #212121;
+        }
+        .video-container {
+            margin-top: 50px;
+        }
+    }
+    .footer {
+        background-color: #122e51;
+        border-top: 10px solid #00a6d2;
+        padding: 50px 150px;
+        .appname {
+            font-size: 24px;
+            font-weight: 500;
+            text-align: left;
+            color: #ffffff;
+            margin: 0 0 14px 0;
+        }
+        p {
+            margin: 0;
+            color: #ffffff;
+        }
+        a {
+            color: #9faebf;
+            font-size: 14px;
+            display: block;
+            opacity: 0.9;
+            &:hover {
+                color: #ffffff;
+            }
+            i {
+                padding: 5px 15px 0px 0px;
+                line-height: 24px;
+                font-size: 24px;
+            }
+        }
+        .header {
+            color: #9faebf;
+            font-size: 14px;
+            display: block;
+            opacity: 0.9;
+            line-height: 35px;
+            font-weight: 700;
+        }
+        .footer-social {
+            a {
+                display: inline-block;
+            }
+        }
+    }
+}
+
+@media (max-width: $mobileBreakPoint+1) {
+    .landing-wrapper {
+        #header {
+            .header-top {
+                padding: 0;
+                text-align: center;
+                .header-menu {
+                    float: none;
+                    li {
+                        a {
+                            padding: 19px 5px;
+                        }
+                    }
+                }
+            }
+            .header-content {
+                padding: 85px 0;
+                .header-content-panel {
+                    text-align: center;
+                    width: 320px;
+                    margin: 0 auto;
+                }
+            }
+        }
+        .features {
+            padding: 75px 50px;
+            text-align: center;
+            h2 {
+                text-align: center;
+            }
+            img {
+                width: 130px;
+            }
+            .ui-g-9 {
+                padding-left: 0;
+            }
+            .ui-g>.ui-g-12 {
+                padding-top: 32px;
+            }
+            p {
+                text-align: center;
+                padding-right: 0;
+            }
+        }
+        .premium {
+            background: url("../../layout/images/landing/image-demo-mobile.jpg");
+            .premium-content {
+                padding: 75px 50px;
+                text-align: center;
+                p {
+                    max-width: 700px;
+                }
+            }
+        }
+        .news {
+            padding: 75px 50px;
+            text-align: center;
+            .ui-g>.ui-g-12 {
+                padding-top: 32px;
+            }
+        }
+        .pricing {
+            padding: 75px 50px;
+            text-align: center;
+            .ui-g>.ui-g-12 {
+                padding-top: 32px;
+            }
+        }
+        .media {
+            padding: 75px 50px;
+            .video-container {
+                iframe {
+                    width: 100%;
+                }
+            }
+        }
+        .footer {
+            padding: 75px 50px;
+            text-align: center;
+            .appname {
+                text-align: center;
+            }
+            .ui-g>.ui-g-12 {
+                padding-top: 32px;
+            }
+        }
+    }
+}
