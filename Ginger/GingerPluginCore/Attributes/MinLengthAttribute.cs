@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
+    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
     public class MinLengthAttribute: Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:

@@ -106,16 +106,16 @@ namespace GingerCoreNET.RunLib
             {
                 foreach (DriverConfigParam DC in driverConfiguration)
                 {
-                    NewPayLoad FieldPL = new NewPayLoad("Config",DC.Parameter, DC.Value==null?" " : DC.Value);
-      
+                    NewPayLoad FieldPL = new NewPayLoad("Config", DC.Parameter, DC.Value == null ? " " : DC.Value);
+
                     DriverConfigs.Add(FieldPL);
                 }
             }
             PL.AddListPayLoad(DriverConfigs);
             PL.ClosePackage();
-    NewPayLoad plss=      SendRequestPayLoad(PL);
+            NewPayLoad plss = SendRequestPayLoad(PL);
 
-            if(plss.IsErrorPayLoad())
+            if (plss.IsErrorPayLoad())
             {
                 throw new KeyNotFoundException();
             }

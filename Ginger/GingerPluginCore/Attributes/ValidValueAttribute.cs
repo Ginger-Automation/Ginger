@@ -28,6 +28,10 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             ValidValue.AddRange(validValues.Cast<object>());
         }
-       
+        public ValidValueAttribute(bool[] validValues)
+        {
+            ValidValue.AddRange(validValues.Cast<object>());
+        }
+
     }
 }
