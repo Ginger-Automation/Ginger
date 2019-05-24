@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
 
             //New Automate
-            mFeatures.Add(new BetaFeature() { Group = "Automnate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
+            mFeatures.Add(new BetaFeature() { Group = "Automate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
 
 
             //hook prop change

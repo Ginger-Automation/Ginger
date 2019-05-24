@@ -36,7 +36,6 @@ using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;

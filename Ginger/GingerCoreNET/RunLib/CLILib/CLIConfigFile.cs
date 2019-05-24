@@ -1,15 +1,17 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger.AnalyzerLib;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCoreNET.SourceControl;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public class CLIConfigFile : ICLI
-    {        
+    {
+        bool ICLI.IsFileBasedConfig { get { return true; } }
+
         public string Identifier
         {
             get
@@ -32,10 +34,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        public string CreateContent(RunsetExecutor runsetExecutor)
+        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
-            if (CLIHelper.DownloadSolutionFromSourceControlBool == true)
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {               
                 sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
                 sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
@@ -53,18 +55,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + CLIHelper.RunAnalyzer.ToString() + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + CLIHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
-
-            // TODO: add source control and all other options !!!!!!!!!!!
+            sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             return sConfig;
         }
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            
-            CLIHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
+            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
@@ -106,11 +105,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "RunSet":
                             cliHelper.Runset = value;                            
                             break;
-                        case "ShowAutoRunWindow":                                                        
-                            CLIHelper.ShowAutoRunWindow = bool.Parse(value);
+                        case "ShowAutoRunWindow":
+                            cliHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
-                            CLIHelper.RunAnalyzer = bool.Parse(value);                            
+                            cliHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");

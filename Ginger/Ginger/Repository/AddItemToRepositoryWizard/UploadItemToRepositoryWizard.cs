@@ -98,7 +98,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         {
             if (item is Activity)
             {
-                return typeof(eItemParts);
+                return typeof(eItemParts);   // !!!!!! Activity.eItemParts  ??  is it mistake?
             }
             else if (item is Act)
             {

@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
@@ -40,7 +39,6 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -960,7 +958,7 @@ namespace Ginger.Run
                     {
                         ResetAction(act);
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                         {
                             NotifyActionEnd(act);
                         }
@@ -1496,13 +1494,15 @@ namespace Ginger.Run
                 if (typeof(ActPlugIn).IsAssignableFrom(action.GetType()))
                 {
                     ActExecutorType = eActionExecutorType.RunOnPlugIn;
-                    
-                    
                 }
                 else if (typeof(ActWithoutDriver).IsAssignableFrom(action.GetType()))
+                {
                     ActExecutorType = eActionExecutorType.RunWithoutDriver;
+                }
                 else
+                {
                     ActExecutorType = eActionExecutorType.RunOnDriver;
+                }
             }
 
             
@@ -1800,28 +1800,7 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            GingerNodeInfo GNI = null;
-                            try
-                            {
-                                GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
-                                if (GNI != null)
-                                {
-                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                string errorMessage = "";
-                                if (GNI == null)
-                                {
-                                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
-                                }
-                                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
-                                errorMessage += ex.Message;
-                                act.Error = errorMessage;
-                            }
-
+                            ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act);
                             
 
 
@@ -3035,7 +3014,7 @@ namespace Ginger.Run
                         {
                             ResetAction(act);
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                             {
                                 NotifyActionEnd(act);
                             }
@@ -3791,7 +3770,7 @@ namespace Ginger.Run
                     break;
 
                 if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
-                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
                 }
@@ -4531,7 +4510,7 @@ namespace Ginger.Run
                         }
                         activity.ExecutionLogActionCounter++;
                         action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
                         }

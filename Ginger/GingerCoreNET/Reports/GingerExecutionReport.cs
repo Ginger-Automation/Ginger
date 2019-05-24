@@ -2965,9 +2965,12 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
-                System.IO.Directory.CreateDirectory(logsFolder);
-                WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
+                {
+                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
+                    System.IO.Directory.CreateDirectory(logsFolder);
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                }
             }
 
             return logsFolder;

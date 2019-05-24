@@ -64,9 +64,9 @@
                                     <GingerCore:ucTextDicResource Text="Find in [RunSet]"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xCLIButton"  ButtonType="ImageButton" ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="CLI"  Click="XCLIButton_Click">
+                            <usercontrols:ucButton x:Name="xAutoRunButton"  ButtonType="ImageButton" ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="CLI"  Click="XAutoRunButton_Click">
                                 <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run"/>
+                                    <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run Configuration"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
 

@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
-using GingerCore.Platforms;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using Newtonsoft.Json.Linq;
@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using GingerCoreNET.GeneralLib;
 
 namespace Ginger
 {
@@ -134,7 +133,7 @@ namespace Ginger
                     }
                 }
 
-                //clean resent solutions list from duplications caused due to bug
+                //clean recent solutions list from duplications caused due to bug
                 for (int i = 0; i < RecentSolutions.Count; i++)
                 {
                     for (int j = i + 1; j < RecentSolutions.Count; j++)
@@ -203,14 +202,14 @@ namespace Ginger
             return;
         }
 
-        public void AddSolutionToRecent(Solution loadedSolution)
+        public void AddSolutionToRecent(Solution solution)
         {
             //remove existing similar folder path
-            string solPath = RecentSolutions.Where(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+            string solPath = RecentSolutions.Where(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
             if (solPath != null)
             {
                 RecentSolutions.Remove(solPath);
-                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(loadedSolution.Folder)).FirstOrDefault();
+                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
                 if (sol != null)
                 {
                     mRecentSolutionsAsObjects.Remove(sol);
@@ -218,8 +217,16 @@ namespace Ginger
             }
 
             // Add it in first place 
-            RecentSolutions.Insert(0, loadedSolution.Folder);
-            mRecentSolutionsAsObjects.AddToFirstIndex(loadedSolution);
+            if (RecentSolutions.Count == 0)
+            {
+                RecentSolutions.Add(solution.Folder);
+            }
+            else
+            {
+                RecentSolutions.Insert(0, solution.Folder);
+            }
+            
+            RecentSolutionsAsObjects.AddToFirstIndex(solution);
 
             while (RecentSolutions.Count > 10)//to keep list of 10
             {
