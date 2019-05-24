@@ -956,7 +956,6 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
     <Folder Include="Plugins\Jenkins\" />
-    <Folder Include="Themes\Theme1\Images\Logo\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />
@@ -995,20 +994,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\console16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\bot.png" />
-    <Resource Include="Themes\Theme1\Images\Reporter\hover.png" />
-    <Resource Include="Themes\Theme1\Images\Reporter\MessageBoard.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\greyCog.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\Cancel24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\CancelHover24.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Vbs16x16.png" />
