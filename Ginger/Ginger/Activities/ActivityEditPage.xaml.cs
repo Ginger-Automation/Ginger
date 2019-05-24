@@ -115,13 +115,13 @@ namespace Ginger.BusinessFlowWindows
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View, mContext);
                 SetViewMode();
             }
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext,General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child, mContext);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
