@@ -1,0 +1,20 @@
+{
+  "solution": {
+    "path": "Ginger.sln",
+    "projects": [
+      "GingerAutoPilot\\GingerAutoPilot.csproj",
+      "GingerConsole\\GingerConsole.csproj",
+      "GingerControls\\GingerControls.csproj",
+      "GingerCoreCommon\\GingerCoreCommon.csproj",
+      "GingerCoreNET\\GingerCoreNET.csproj",
+      "GingerCore\\GingerCore.csproj",
+      "GingerHelper\\GingerHelper.csproj",
+      "GingerPlugIns\\GingerPlugIns.csproj",
+      "GingerPluginCore\\GingerPluginCore.csproj",
+      "GingerUtilsTest\\GingerUtilsTest.csproj",
+      "GingerUtils\\GingerUtils.csproj",
+      "Ginger\\Ginger.csproj",
+      "UIAComWrapper\\UIAComWrapper\\UIAComWrapper.csproj"
+    ]
+  }
+}
