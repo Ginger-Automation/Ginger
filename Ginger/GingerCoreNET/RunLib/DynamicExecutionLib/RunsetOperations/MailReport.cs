@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -16,25 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
-
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class InputVariable
+    public class MailReport : AddRunsetOperation
     {
-        [XmlAttribute]
-        public string VariableParentType;
+        public string MailFrom { get; set; }
+        public string MailTo { get; set; }
+        public string MailCC { get; set; }
 
-        [XmlAttribute]
-        public string VariableParentName;
+        public string Subject { get; set; }
+        public string Comments { get; set; }
 
-        [XmlAttribute]
-        public string VariableName;
+        public bool SendViaOutlook { get; set; }
 
-        [XmlAttribute]
-        public string VariableValue;
+        public SmtpDetails SmtpDetails { get; set; }
+
+        public bool IncludeAttachmentReport { get; set; } = true;
     }
 }

@@ -1,10 +1,5 @@
-﻿using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
-using Ginger.Run;
-using GingerTestHelper;
+﻿using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.RunListeners
 {

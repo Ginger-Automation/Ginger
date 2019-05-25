@@ -16,26 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
-using GingerCore;
-using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Serialization;
-using static Ginger.Run.GingerRunner;
 
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class DynamicRunSetManager
+    public class DynamicExecutionManager
     {
 
         public static string CreateDynamicRunSetXML(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
@@ -65,6 +60,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             addRunset.Name = "Dynamic_" + runsetExecutor.RunSetConfig.Name;
             addRunset.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
             addRunset.RunAnalyzer = cliHelper.RunAnalyzer;
+            addRunset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
             {
@@ -197,7 +193,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 
                 if (!string.IsNullOrEmpty(addRunner.RunMode))
                 {
-                    gingerRunner.RunOption = (eRunOptions)Enum.Parse(typeof(eRunOptions), addRunner.RunMode, true);
+                    gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), addRunner.RunMode, true);
                 }
 
                 if (!string.IsNullOrEmpty(addRunner.Environment))
