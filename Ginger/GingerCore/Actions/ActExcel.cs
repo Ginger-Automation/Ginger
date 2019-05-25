@@ -710,7 +710,7 @@ namespace GingerCore.Actions
                 }
                 catch (Exception ex)
                 {
-                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Wrting into excel got error " + ex.Message);
+                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Writing into excel got error " + ex.Message);
                     this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
                 }
                 finally

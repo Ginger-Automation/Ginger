@@ -961,7 +961,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR,"Error while exporting Parameters to File", ex);
             }
 
             return filePath;
@@ -1364,7 +1364,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error while exporting Paramters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while exporting Parameters to File", ex);
             }
         }
 

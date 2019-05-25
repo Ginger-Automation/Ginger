@@ -41,7 +41,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To perform a drop down action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property"+ 
-            "that you set in Locate By type.Then select Action Type, e.g- ClearSelectedValue,getFocus,getCSS etc and then enter the page url in value textbox and run the action.");
+            " that you set in Locate By type.Then select Action Type, e.g- ClearSelectedValue,getFocus,getCSS etc and then enter the page url in value textbox and run the action.");
         }        
 
         public override string ActionEditPage { get { return "ActDropDownListEditPage"; } }

@@ -321,7 +321,7 @@ namespace Ginger.Repository
                     return (typeof(PerfectoDriver));
                     
                 default:
-                    throw new Exception("GetDriverType: Unknow Driver type " + zAgent.DriverType);
+                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
                     
             }
         }

@@ -42,7 +42,7 @@ namespace Ginger.ReporterLib
             else
             {
                 //not showing pop up message because running from config file and not wanting to get stuck
-                ToLog(eLogLevel.WARN, string.Format("Not showing the User Message: '{0}' because application loaded in execution mode. Returning defualt selection value: '{1}'", messageText, defualtResault.ToString()));
+                ToLog(eLogLevel.WARN, string.Format("Not showing the User Message: '{0}' because application loaded in execution mode. Returning default selection value: '{1}'", messageText, defualtResault.ToString()));
             }
 
             return result;

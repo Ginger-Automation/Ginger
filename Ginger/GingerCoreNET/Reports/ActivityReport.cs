@@ -338,7 +338,7 @@ namespace Ginger.Reports
                             }
                             catch (Exception ECx)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error Deserializing ActivityReport", ECx);
+                                Reporter.ToLog(eLogLevel.ERROR, "Error De-serializing ActivityReport", ECx);
 
 
                             }
