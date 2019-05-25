@@ -18,17 +18,15 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
-{
-    public class Agent
+{    
+    public class AddBusinessFlow
     {
         [XmlAttribute]
-        public string ApplicationName { get; set; }
+        public string Name { get; set; }
 
-        [XmlAttribute]
-        public string AgentName { get; set; }
+        public List<InputVariable> InputVariables { get; set; } 
     }
 }
