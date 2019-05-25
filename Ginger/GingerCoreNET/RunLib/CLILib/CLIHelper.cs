@@ -28,6 +28,11 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
+    public enum eCLIType
+    {
+        Config,Dynamic,Script,Arguments
+    }
+
     public class CLIHelper
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
@@ -39,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourcecontrolUser;
         public string sourceControlPass;
         public eAppReporterLoggingLevel AppLoggingLevel;
-
+        public eCLIType CLIType;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
         public bool ShowAutoRunWindow
