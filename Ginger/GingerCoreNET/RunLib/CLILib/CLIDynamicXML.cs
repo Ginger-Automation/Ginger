@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib;
+using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 
@@ -44,14 +44,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string xml = DynamicRunSetManager.CreateDynamicRunSetXML(solution, runsetExecutor, cliHelper);
+            string xml = DynamicExecutionManager.CreateDynamicRunSetXML(solution, runsetExecutor, cliHelper);
             return xml;            
         }
 
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            DynamicGingerExecution dynamicExecution =  DynamicRunSetManager.LoadDynamicExecutionFromXML(content);
+            DynamicGingerExecution dynamicExecution =  DynamicExecutionManager.LoadDynamicExecutionFromXML(content);
             if (dynamicExecution.SolutionDetails.SourceControlDetails != null)
             {
                 cliHelper.SetSourceControlType(dynamicExecution.SolutionDetails.SourceControlDetails.Type);
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             cliHelper.Env = addRunset.Environment;            
             cliHelper.RunAnalyzer = addRunset.RunAnalyzer;
 
-            DynamicRunSetManager.CreateRealRunSetFromDynamic(runsetExecutor, addRunset);
+            DynamicExecutionManager.CreateRealRunSetFromDynamic(runsetExecutor, addRunset);
         }
 
         public void Execute(RunsetExecutor runsetExecutor)
