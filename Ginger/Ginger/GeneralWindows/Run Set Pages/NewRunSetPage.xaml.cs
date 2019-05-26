@@ -1859,6 +1859,7 @@ namespace Ginger.Run
 
                 mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
 
+                mCurrentActivityRunnerItem.Context.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
                 mContext.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
             }
             else
