@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void SolutionClosed()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
