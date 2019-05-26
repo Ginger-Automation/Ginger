@@ -111,7 +111,7 @@
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{DynamicResource @DarkBlue}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
     </Style>
 
     <Style TargetType="TextBlock"  x:Key="$DetailsTextBlockStyle" >
