@@ -163,6 +163,6 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-        public override string Type { get { return "Send Free Text Email"; } }
+        public override string Type { get { return "Send Text Email"; } }
     }
 }
