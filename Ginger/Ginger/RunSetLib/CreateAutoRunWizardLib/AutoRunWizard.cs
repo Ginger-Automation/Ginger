@@ -25,6 +25,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
+using System.IO;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -86,8 +87,22 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
             shortcut.Description = AutoRunShortcut.ShortcutFileName;
             shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
-            shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            if (AutoRunShortcut.ExecutorType == RunSetAutoRunShortcut.eExecutorType.GingerConsole)
+            {
+                //@"C:\Program Files\dotnet\dotnet.exe"
+                //shortcut.TargetPath =  string.Format("{0} {1}", "dotnet", AutoRunShortcut.ExecuterFullPath);
+                shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            }
+            else
+            {
+                shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            }
             shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+            string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
+            if (System.IO.File.Exists(iconPath))
+            {
+                shortcut.IconLocation = iconPath;
+            }
             shortcut.Save();
         }
 

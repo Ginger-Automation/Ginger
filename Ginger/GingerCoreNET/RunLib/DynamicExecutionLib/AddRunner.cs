@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -16,17 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
-{    
-    public class AddBusinessFlow
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
+{
+    public class AddRunner
     {
         [XmlAttribute]
         public string Name { get; set; }
 
-        public List<InputVariable> InputVariables { get; set; } 
+        public string Environment { get; set; }
+
+        public string RunMode{ get; set; }        
+
+        public List<SetAgent> SetAgents { get; set; } = new List<SetAgent>();
+
+        public List<AddBusinessFlow> AddBusinessFlows { get; set; } = new List<AddBusinessFlow>();
     }
 }
