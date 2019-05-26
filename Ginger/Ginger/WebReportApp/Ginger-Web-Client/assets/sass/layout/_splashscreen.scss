@@ -1,0 +1,23 @@
+.splash-screen {
+    min-height: 100%;
+    &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:#122e51;
+}
+
+    .splash-screen-bars {
+        width: 135px;
+        height: 140px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-top: -60px;
+        margin-left: -40px;
+        background: url('../../layout/images/bars.svg');
+    }
+}
