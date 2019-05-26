@@ -77,7 +77,7 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
-            if (mode ==eEditMode.Global || mode==eEditMode.SharedRepository)
+            if (mode ==eEditMode.Global)
             {
                 cbSetAsInputValue.Visibility = Visibility.Hidden;
                 cbSetAsOutputValue.Visibility = Visibility.Hidden;
@@ -85,7 +85,12 @@ namespace Ginger.Variables
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
             else
-            {              
+            {       
+                if(mode == eEditMode.SharedRepository)
+                {
+                    SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                    SharedRepoInstanceUC_Col.Width = new GridLength(0);
+                }
                 cbSetAsInputValue.Visibility=Visibility.Visible;
                 cbSetAsOutputValue.Visibility = Visibility.Visible;
                 if (mContext != null && mContext.BusinessFlow != null)

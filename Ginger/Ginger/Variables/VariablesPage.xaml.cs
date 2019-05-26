@@ -368,7 +368,7 @@ namespace Ginger.Variables
             VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
             selectedVarb.NameBeforeEdit = selectedVarb.Name;
             VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
-            if (mContext.BusinessFlow == null)
+            if (mContext!=null && mContext.BusinessFlow == null)
             {
                 editMode = VariableEditPage.eEditMode.SharedRepository;
             }
