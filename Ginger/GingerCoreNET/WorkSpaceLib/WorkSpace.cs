@@ -165,14 +165,33 @@ namespace amdocs.ginger.GingerCoreNET
 
         private void CheckWebReportFolder()
         {
-            string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
-            string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
-            if (Directory.Exists(clientAppFolderPath))
+            try
             {
-                string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
-                if (Directory.Exists(rootUserFolder))
-                    Directory.Delete(rootUserFolder);
-                CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
+                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                if (Directory.Exists(clientAppFolderPath))
+                {
+                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
+                    if (Directory.Exists(rootUserFolder))
+                        TryFolderDelete(rootUserFolder);
+                    CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
+        private void TryFolderDelete(string rootUserFolder)
+        {
+            try
+            {
+                Directory.Delete(rootUserFolder,true);
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
