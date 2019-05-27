@@ -1380,13 +1380,6 @@ namespace Ginger.Run
 
                 ResetALMDefectsSuggestions();
 
-                //check runner is not empty
-                if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mCurrentSelectedRunner.Name + "' to start run.");
-                    return;
-                }
-
                 //run analyzer
                 if (mRunSetConfig.RunWithAnalyzer)
                 {
