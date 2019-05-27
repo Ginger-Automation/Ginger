@@ -312,6 +312,11 @@ namespace Ginger.SourceControl
                     AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
                 }
             }
+            //refresh parent folders
+            foreach (string folder in parentFolders)
+            {
+                WorkSpace.Instance.SolutionRepository.RefreshParentFoldersSoucerControlStatus(folder);
+            }
         }
 
         /// <summary>
