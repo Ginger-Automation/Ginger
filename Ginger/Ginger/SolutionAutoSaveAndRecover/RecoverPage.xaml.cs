@@ -16,29 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowFolder;
-using Ginger.Repository;
 using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.SolutionAutoSaveAndRecover
 {
@@ -48,11 +40,10 @@ namespace Ginger.SolutionAutoSaveAndRecover
     public partial class RecoverPage : Page
     {
         GenericWindow _pageGenericWin = null;
-       
-        ObservableList<RecoveredItem> mRecoveredItems;       
+
+        ObservableList<RecoveredItem> mRecoveredItems;
         bool selected = false;
-        bool mRecoverwasDone = false;
-        
+
         public RecoverPage(ObservableList<RecoveredItem> recoveredItems)
         {
             InitializeComponent();
@@ -61,7 +52,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-           
+
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, closeEventHandler: closeEventHandler);
 
         }
@@ -72,7 +63,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status!=eRecoveredItemStatus.Deleted && x.Status != eRecoveredItemStatus.Recovered)).ToList();
+            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status != eRecoveredItemStatus.Deleted && x.Status != eRecoveredItemStatus.Recovered)).ToList();
 
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
@@ -80,8 +71,8 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "delete");
                 return;
             }
-            
-            foreach(RecoveredItem Ri in SelectedFiles)
+
+            foreach (RecoveredItem Ri in SelectedFiles)
             {
                 try
                 {
@@ -93,12 +84,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     Ri.Status = eRecoveredItemStatus.DeleteFailed;
                 }
             }
-           
+
         }
-        
+
         private void RecoverButton_Click(object sender, RoutedEventArgs e)
         {
-            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status ==eRecoveredItemStatus.PendingRecover || x.Status== eRecoveredItemStatus.RecoveredFailed)).ToList();
+            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status == eRecoveredItemStatus.PendingRecover || x.Status == eRecoveredItemStatus.RecoveredFailed)).ToList();
 
             if (SelectedFiles == null || SelectedFiles.Count == 0)
             {
@@ -111,7 +102,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 RepositoryItemBase originalItem = null;
 
                 try
-                {                    
+                {
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
                         ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
@@ -124,18 +115,16 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     }
                     if (originalItem == null)
                     {
-                        ri.Status =  eRecoveredItemStatus.RecoveredFailed;
+                        ri.Status = eRecoveredItemStatus.RecoveredFailed;
                         return;
                     }
                     File.Delete(originalItem.FileName);
                     File.Move(ri.RecoveredItemObject.FileName, originalItem.FileName);
-                    
+
 
                     ri.Status = eRecoveredItemStatus.Recovered;
-
-                    mRecoverwasDone = true;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ri.Status = eRecoveredItemStatus.RecoveredFailed;
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to recover the original file '{0}' with the recovered file '{1}'", originalItem.FileName, ri.RecoveredItemObject.FileName), ex);
@@ -149,16 +138,16 @@ namespace Ginger.SolutionAutoSaveAndRecover
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            
-            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Selected), WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox} );
-            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverDate), Header = "Recovered DateTime", WidthWeight = 3, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly=true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoveredItemType), Header = "Item Type", WidthWeight = 10, AllowSorting = true , BindingMode=BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true , BindingMode=BindingMode.OneWay , ReadOnly = true });            
-            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverPath), Header = "Item Original Path", WidthWeight = 15, AllowSorting = true, BindingMode=BindingMode.OneWay , ReadOnly = true });
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Selected), WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverDate), Header = "Recovered DateTime", WidthWeight = 3, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoveredItemType), Header = "Item Type", WidthWeight = 10, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.RecoverPath), Header = "Item Original Path", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
 
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();

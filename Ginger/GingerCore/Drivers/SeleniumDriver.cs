@@ -7248,6 +7248,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
                     }
                 }
             }

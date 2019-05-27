@@ -160,8 +160,7 @@ namespace GingerCore.Drivers.MainFrame
                     return Brushes.Red;
                 }
                 return DefaultBursh;
-            }
-            return DefaultBursh;
+            }            
         }
 
         public static void SetupMainframeDriverComponents(MainFrameDriver mDriver, MainFrameDriverWindow MFDW, Canvas ConsoleCanvas)
