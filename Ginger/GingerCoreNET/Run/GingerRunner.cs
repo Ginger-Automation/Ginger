@@ -582,7 +582,7 @@ namespace Ginger.Run
                         // ExecutionLogger.GingerEnd();                    
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
-                    else if(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                    else if(WorkSpace.Instance?.Solution?.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                     {
                         NotifyRunnerRunEnd();
                         if(ExecutionLoggerManager.RunSetReport == null)
