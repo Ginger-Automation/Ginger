@@ -63,7 +63,7 @@ namespace Ginger.Logger
                     pageDataSb.Append(openObject.Guid);
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\" --allow-file-access-from-files";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json);
                 System.Diagnostics.Process.Start("chrome", taskCommand);
                 response = true;
             }
