@@ -29,6 +29,10 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
+    /// <summary>
+    /// A class tohold the info of available services from a specific driver. 
+    /// A lsit of driver info will be created during agent creation which will hold all the available drivers/services from different plugins 
+    /// </summary>
     public class DriverInfo
     {
 
@@ -92,7 +96,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         DI.services.Add(PI.ServiceId);
                     
                     }
-                    PlatformServices.Add(DI);
+                    if (DI.services.Count > 0)
+                    {
+                        PlatformServices.Add(DI);
+                    }
                 }
 
             }
