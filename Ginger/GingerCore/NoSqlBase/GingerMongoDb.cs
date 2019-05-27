@@ -272,15 +272,15 @@ namespace GingerCore.NoSqlBase
                         }
                         else if (SQLCalculated.Contains("insertMany"))
                         {
-                            //need to find way to use insertMany()
                             string queryParam = GetUpdateQueryParams(SQLCalculated).ToString();
-                            Newtonsoft.Json.Linq.JArray a = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
-                            foreach (Newtonsoft.Json.Linq.JObject obj in a.Children<Newtonsoft.Json.Linq.JObject>())
+                            Newtonsoft.Json.Linq.JArray jsonArray = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
+                            List<BsonDocument> documents = new List<BsonDocument>();
+                            foreach (Newtonsoft.Json.Linq.JObject obj in jsonArray.Children<Newtonsoft.Json.Linq.JObject>())
                             {
-                                string str = obj.ToString();
-                                BsonDocument insertDocumnet = BsonDocument.Parse(obj.ToString());
-                                collection.InsertOne(insertDocumnet);
+                                BsonDocument document = BsonDocument.Parse(obj.ToString());
+                                documents.Add(document);
                             }
+                            collection.InsertMany(documents);
                         }
                         else
                         {
