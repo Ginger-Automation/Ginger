@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Ginger.Logger
 {
@@ -52,13 +53,16 @@ namespace Ginger.Logger
             try
             {
                 StringBuilder pageDataSb = new StringBuilder();
+                pageDataSb.Append("file:///");
+                pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
+                pageDataSb.Append("/");
                 pageDataSb.Append("index.html");
                 if (openObject != null)
                 {
-                    pageDataSb.Append("?Routed_Guid=");
+                    pageDataSb.Append("#/?Routed_Guid=");
                     pageDataSb.Append(openObject.Guid);
                 }
-                string taskCommand = $"\"{Path.Combine(clientAppFolderPath, pageDataSb.ToString())}\" --allow-file-access-from-files";
+                string taskCommand = $"\"{pageDataSb.ToString()}\" --allow-file-access-from-files";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
                 System.Diagnostics.Process.Start("chrome", taskCommand);
                 response = true;
