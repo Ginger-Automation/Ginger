@@ -2075,6 +2075,7 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\CustomerLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger_by_amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
@@ -2086,6 +2087,7 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_icon.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_old.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\images\bars.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\screenshots\dummy.txt" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\color.c7a33805ffda0d32bd2a.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\favicon.ico" />
@@ -4663,8 +4665,6 @@
     <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
-    <Folder Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\" />
-    <Folder Include="WebReportApp\Ginger-Web-Client\assets\screenshots\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>
   <ItemGroup>
@@ -4801,7 +4801,7 @@
   <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.74.0.3729.6\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.74.0.3729.6\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /E /Y  "$(ProjectDir)WebReportApp" "Reports\"
+    <PostBuildEvent>xcopy /e /y  "$(ProjectDir)WebReportApp" "Reports\"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
