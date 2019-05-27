@@ -363,11 +363,11 @@ namespace Ginger.Run
             List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
 
             LiteDbRunSet runSetLast = filterData.Last();
-            runSetLast._id = new ObjectId();
+            //runSetLast._id = new ObjectId();
 
             LiteDbRunner runnerFilter = runSetLast.RunnersColl.Find(r => r.GUID.ToString() == mRunner.Guid.ToString());
-            runnerFilter._id = new ObjectId();
-            runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
+            //runnerFilter._id = new ObjectId();
+            //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
 
             LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
             if (bfFilter == null)
@@ -375,20 +375,21 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
                 return;
             }
-            runnerFilter.RunStatus = bfFilter.RunStatus;
-            runSetLast.RunStatus = runnerFilter.RunStatus;
-            runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
+            //runnerFilter.RunStatus = bfFilter.RunStatus;
+            //runSetLast.RunStatus = runnerFilter.RunStatus;
+            //runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
 
-            dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
-            dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
+            //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
+            //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
+
 
             WebReportGenerator webReporterRunner = new WebReportGenerator();
-            webReporterRunner.RunNewHtmlReport();
+            webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() } );
 
-            var newRSData = dbManager.GetRunSetLiteData();
-            newRSData.Delete(runSetLast._id);
-            var newRunnerData = dbManager.GetRunnerLiteData();
-            newRunnerData.Delete(runnerFilter._id);
+            //var newRSData = dbManager.GetRunSetLiteData();
+            //newRSData.Delete(runSetLast._id);
+            //var newRunnerData = dbManager.GetRunnerLiteData();
+            //newRunnerData.Delete(runnerFilter._id);
         }
 
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)

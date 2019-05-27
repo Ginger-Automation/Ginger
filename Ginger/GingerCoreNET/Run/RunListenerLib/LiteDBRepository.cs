@@ -210,10 +210,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
             runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            if (ExecutionLoggerManager.RunSetReport != null)
+            if (ExecutionLoggerManager.RunSetReport == null)
             {
-                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+                ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
             }
+            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
             liteDbBFList.Clear();
         }
 
