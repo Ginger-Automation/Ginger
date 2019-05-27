@@ -314,9 +314,9 @@ namespace Ginger.SolutionGeneral
                 // executionLogger.Configuration = executionLoggerConfiguration;
               
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -352,7 +352,7 @@ namespace Ginger.SolutionGeneral
             return solTargetApplications;
         }
 
-        MRUManager mRecentUsedBusinessFlows;
+        // MRUManager mRecentUsedBusinessFlows;
 
         //public MRUManager RecentlyUsedBusinessFlows
         //{

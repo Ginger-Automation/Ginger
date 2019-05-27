@@ -17,8 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Drivers\**" />
+    <Compile Remove="SolutionUpgrade\**" />
     <Compile Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <EmbeddedResource Remove="Drivers\**" />
+    <EmbeddedResource Remove="SolutionUpgrade\**" />
     <EmbeddedResource Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <None Remove="Drivers\**" />
+    <None Remove="SolutionUpgrade\**" />
     <None Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
   </ItemGroup>
 
@@ -79,8 +85,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Drivers\" />
-    <Folder Include="SolutionUpgrade\" />
     <Folder Include="TestResources\Conversion\" />
     <Folder Include="TestResources\Solutions\CLI\" />
   </ItemGroup>
