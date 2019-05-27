@@ -90,7 +90,7 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-        public override string Type { get { return "Execute Script"; } }
+        public override string Type { get { return "Run Script"; } }
         
     }
 }
