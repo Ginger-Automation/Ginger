@@ -55,6 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
+            bool isActExsits = false;
             string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
             LiteDbAction liteDbAction = new LiteDbAction();
             liteDbAction.SetReportData(GetActionReportData(action, context, executedFrom));
@@ -95,7 +96,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                 }
                 liteDbAction.ScreenShots = action.ScreenShots;
-                liteDbActionList.Add(liteDbAction);
+
+            isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
+            if (isActExsits)
+            {
+                liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
+            }
+            liteDbActionList.Add(liteDbAction);
             //}
             //else
             //{

@@ -18,7 +18,9 @@ namespace Ginger.Logger
             bool response = false;
             try
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
+                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                if (!Directory.Exists(clientAppFolderPath))
+                    return false;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
@@ -56,7 +58,7 @@ namespace Ginger.Logger
                     pageDataSb.Append("?Routed_Guid=");
                     pageDataSb.Append(openObject.Guid);
                 }
-                string taskCommand = $"{Path.Combine(clientAppFolderPath, pageDataSb.ToString())} --allow-file-access-from-files";
+                string taskCommand = $"\"{Path.Combine(clientAppFolderPath, pageDataSb.ToString())}\" --allow-file-access-from-files";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
                 System.Diagnostics.Process.Start("chrome", taskCommand);
                 response = true;
