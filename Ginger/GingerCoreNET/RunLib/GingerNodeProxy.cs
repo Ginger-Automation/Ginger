@@ -96,7 +96,7 @@ namespace GingerCoreNET.RunLib
             
         }
 
-        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration)
+        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
         {
             //TODO: get return code - based on it set status if running OK
             NewPayLoad PL = new NewPayLoad("StartDriver");
