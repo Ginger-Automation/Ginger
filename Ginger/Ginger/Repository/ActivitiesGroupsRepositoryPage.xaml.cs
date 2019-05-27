@@ -73,6 +73,7 @@ namespace Ginger.Repository
         {
             mBusinessFlow = bf;
             mContext.BusinessFlow = mBusinessFlow;
+            xActivitiesGroupsRepositoryGrid.ClearFilters();
         }
 
         private void SetActivitiesRepositoryGridView()

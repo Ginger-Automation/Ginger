@@ -155,6 +155,13 @@ namespace Ginger
             }
         }
 
+        public void ClearFilters()
+        {
+            txtSearch.Text = string.Empty;
+            Tags.Clear();
+        }
+
+
         string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
