@@ -650,8 +650,13 @@ namespace Ginger.Run
             WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             WorkSpace.Instance.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
+            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                WorkSpace.Instance.RunsetExecutor.SetRunnersExecutionLoggerConfigs();
+                mRunner.ExecutionLoggerManager.RunSetStart("", WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize, DateTime.UtcNow);
+            }
             await mRunner.RunRunnerAsync();
-            GingerCore.General.DoEvents();   //needed?                 
+            GingerCore.General.DoEvents();   //needed?  
         }
         public void UpdateRunnerInfo()
         {

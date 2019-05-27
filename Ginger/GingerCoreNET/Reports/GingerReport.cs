@@ -123,22 +123,24 @@ namespace Ginger.Reports
             get
             {
                 businessFlowReports = new List<BusinessFlowReport>();
-                foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
+                if (System.IO.Directory.Exists(LogFolder))
                 {
-                    FileAttributes attr = File.GetAttributes(folder);
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
                     {
-                        try
+                        FileAttributes attr = File.GetAttributes(folder);
+                        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                         {
-                            BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(folder + @"\BusinessFlow.txt", typeof(BusinessFlowReport));
-                            br.LogFolder = folder;
-                            br.ExecutionLoggerIsEnabled = true;
-                            businessFlowReports.Add(br);
+                            try
+                            {
+                                BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(folder + @"\BusinessFlow.txt", typeof(BusinessFlowReport));
+                                br.LogFolder = folder;
+                                br.ExecutionLoggerIsEnabled = true;
+                                businessFlowReports.Add(br);
+                            }
+                            catch { }
                         }
-                        catch { }
                     }
                 }
-
                 if (_showAllIterationsElements)
                 {
                     var businessFlowSortedBySeq = businessFlowReports.OrderBy(item => item.Seq);
