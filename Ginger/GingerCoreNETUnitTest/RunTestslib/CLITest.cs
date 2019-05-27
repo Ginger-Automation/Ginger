@@ -368,7 +368,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             executer.RunSetConfig = runsetConfig;
             CLIHelper cliHelp = new CLIHelper();
             RunSetAutoRunConfiguration autoRunConfig = new RunSetAutoRunConfiguration(sol, executer, cliHelp);
-            WorkSpace.Instance.Solution = sol;
+            
             // Act
             cliHelp.RunAnalyzer = true;
             autoRunConfig.SelectedCLI = new CLIConfigFile();

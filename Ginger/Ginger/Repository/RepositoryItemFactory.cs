@@ -746,15 +746,20 @@ namespace Ginger.Repository
             }
             else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
+                string SolFolder;
+                // added if else to check if git solution is from github or gitlab
                 if (!sol.LocalFolder.EndsWith(".git"))
                 {
-                    Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git"));
+                     SolFolder = sol.LocalFolder + @"\.git";
                 }
                 else
                 {
-                    Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder));
+                    SolFolder = sol.LocalFolder;
                 }
-                sol.ExistInLocaly = true;
+                if (Directory.Exists(PathHelper.GetLongPath(SolFolder)))
+                {
+                    sol.ExistInLocaly = true;
+                }  
             }
             else
             {

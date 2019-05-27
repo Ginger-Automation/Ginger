@@ -37,24 +37,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
-            if (WorkSpace.Instance.Solution != null)
+            if (solution != null)
             {
                 if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
                 {
-                    sConfig = "SourceControlType=" + WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                    sConfig += "SourceControlUrl=" + WorkSpace.Instance.Solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
-                    sConfig += "SourceControlUser=" + WorkSpace.Instance.Solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
-                    sConfig += "SourceControlPassword=" + WorkSpace.Instance.Solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
-                    if (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress != null)
+                    sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
+                    sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
+                    if (solution.SourceControl.SourceControlProxyAddress != null)
                     {
-                        if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && (WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true"))
+                        if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                         {
-                            sConfig += "SourceControlProxyServer=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                            sConfig += "SourceControlProxyPort=" + WorkSpace.Instance.Solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                            sConfig += "SourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
+                            sConfig += "SourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
                         }
                     }
                 }
-                sConfig += "Solution=" + WorkSpace.Instance.Solution.Folder + Environment.NewLine;
+                sConfig += "Solution=" + solution.Folder + Environment.NewLine;
                 sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
                 sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
                 sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
