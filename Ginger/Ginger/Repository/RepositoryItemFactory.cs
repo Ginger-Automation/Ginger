@@ -744,22 +744,23 @@ namespace Ginger.Repository
             {
                 sol.ExistInLocaly = true;
             }
-            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
             {
-                string SolFolder;
-                // added if else to check if git solution is from github or gitlab
-                if (!sol.LocalFolder.EndsWith(".git"))
-                {
-                     SolFolder = sol.LocalFolder + @"\.git";
-                }
-                else
-                {
-                    SolFolder = sol.LocalFolder;
-                }
-                if (Directory.Exists(PathHelper.GetLongPath(SolFolder)))
-                {
-                    sol.ExistInLocaly = true;
-                }  
+                //string SolFolder;
+                //// added if else to check if git solution is from github or gitlab
+                //if (!sol.LocalFolder.EndsWith(".git"))
+                //{
+                //     SolFolder = sol.LocalFolder + @"\.git";
+                //}
+                //else
+                //{
+                //    SolFolder = sol.LocalFolder;
+                //}
+                //if (Directory.Exists(PathHelper.GetLongPath(SolFolder)))
+                //{
+                //    sol.ExistInLocaly = true;
+                //}  
+                sol.ExistInLocaly = true;
             }
             else
             {
