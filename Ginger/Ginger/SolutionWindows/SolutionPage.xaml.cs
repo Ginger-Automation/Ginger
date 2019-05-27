@@ -19,15 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.SolutionGeneral;
-using Ginger.TagsLib;
-using Ginger.UserControls;
-using Ginger.Variables;
-using GingerCore;
-using GingerCore.Platforms;
-using GingerCore.Variables;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -39,8 +30,7 @@ namespace Ginger.SolutionWindows
     public partial class SolutionPage : Page
     {
         GenericWindow _pageGenericWin;
-        Solution mSolution;
-        ucGrid ApplicationGrid;
+        Solution mSolution;        
 
         public SolutionPage()
         {
