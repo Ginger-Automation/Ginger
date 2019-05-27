@@ -577,12 +577,12 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    if (doContinueRun == false && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod != DataRepositoryMethod.LiteDB)
+                    if (doContinueRun == false && WorkSpace.Instance != null && WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod != DataRepositoryMethod.LiteDB)
                     {
                         // ExecutionLogger.GingerEnd();                    
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
-                    if(WorkSpace.Instance?.Solution?.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                    if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                     {
                         NotifyRunnerRunEnd();
                         if(ExecutionLoggerManager.RunSetReport == null)
