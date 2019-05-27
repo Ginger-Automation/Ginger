@@ -217,7 +217,7 @@ namespace Ginger.Actions
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
-            if (EditMode == General.RepositoryItemPageViewMode.Automation || EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            if (EditMode == General.RepositoryItemPageViewMode.Automation)
             {
                 SharedRepoInstanceUC.Init(mAction, null);
             }
