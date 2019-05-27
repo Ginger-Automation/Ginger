@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.Common
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
         LoseChangesWarn,
-
+        BFNotExistInDB,
         // Merged from GingerCore        
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
@@ -191,7 +191,7 @@ namespace Amdocs.Ginger.Common
             #endregion General Application Messages
 
             #region Settings
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SettingsChangeRequireRestart, new UserMsg(eUserMsgType.INFO, "Settings Change", "For the settings change to take affect you must restart Ginger.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SettingsChangeRequireRestart, new UserMsg(eUserMsgType.INFO, "Settings Change", "For the settings change to take affect you must '{0}' restart Ginger.", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Settings
 
             #region Repository
@@ -486,6 +486,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.HTMLReportAttachment, new UserMsg(eUserMsgType.WARN, "HTML Report Attachment", "HTML Report Attachment already exists, please delete existing one.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 30 Kb", eUserMsgOption.OK, eUserMsgSelection.None));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run Business Flow", "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Reports
 

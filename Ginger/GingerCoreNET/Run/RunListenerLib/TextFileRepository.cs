@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
@@ -19,12 +37,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     class TextFileRepository: ExecutionLogger
     {
-        static JsonSerializer mJsonSerializer;
+        static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()
         {
-            mJsonSerializer = new JsonSerializer();
+            mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
         }
+
+        public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
         {
             //TODO: for speed we can do it async on another thread...
@@ -80,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportActivity(Activity activity, Context context, bool offlineMode)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (offlineMode)
                     // use Path.combine !!!!
@@ -149,7 +173,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SaveObjToReporsitory(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
         }
 
-        internal override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             base.SetReportRunSet(runSetReport, logFolder);
             if (logFolder == null)

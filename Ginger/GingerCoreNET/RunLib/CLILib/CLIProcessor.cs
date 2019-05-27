@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -25,7 +43,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             string param;
             string value = null;
-            if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
+            if (args[0].Contains("="))
             {
                 string[] arg1 = args[0].Split('=');
                 param = arg1[0].Trim();
@@ -57,22 +76,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     break;
                 case "ConfigFile":
                 case "--configfile":
+                    mCLIHelper.CLIType = eCLIType.Config;
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", value));
                     mCLIHandler = new CLIConfigFile();                   
                     PerformLoadAndExecution(ReadFile(value));
                     break;
+                case "Script":
                 case "--scriptfile":
+                    mCLIHelper.CLIType = eCLIType.Script;
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
                     mCLIHandler = new CLIScriptFile();
-                    PerformLoadAndExecution(ReadFile(value), false);
+                    PerformLoadAndExecution(ReadFile(value));
                     break;
                 case "--dynamicfile":
-                case "DynamicXML":
+                case "Dynamic":
+                    mCLIHelper.CLIType = eCLIType.Dynamic;
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
                     mCLIHandler = new CLIDynamicXML();
                     PerformLoadAndExecution(ReadFile(value));
                     break;
                 case "--args":
+                    mCLIHelper.CLIType = eCLIType.Arguments;
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
                     mCLIHandler = new CLIArgs();
                     PerformLoadAndExecution(value);
@@ -85,25 +109,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        private void PerformLoadAndExecution(string configurations, bool runCLIHelper = true)
+        private void PerformLoadAndExecution(string configurations)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-            
-            if (mCLIHelper.LoadSolution())
-            {
-                if(mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
-                {
-                    if (mCLIHelper.PrepareRunsetForExecution())
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                        Execute();
 
-                        Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-                        mCLIHelper.CloseSolution();
-                    }
+            if (mCLIHelper.CLIType != eCLIType.Script)
+            {
+                if (!mCLIHelper.LoadSolution())
+                {
+                    return;//failed to load Solution;
                 }
-            }            
+
+                if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+                {
+                    return;//failed to load Run set
+                }
+
+                if (!mCLIHelper.PrepareRunsetForExecution())
+                {
+                    return; //Failed to perform execution perperations
+                }
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
+            Execute();
+
+            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+            mCLIHelper.CloseSolution();
         }
 
         void Execute()

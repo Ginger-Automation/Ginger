@@ -163,7 +163,7 @@ namespace Ginger.Run
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
-                    this.Context.Activity = ac;
+                    this.Context.BusinessFlow = (BusinessFlow)ItemObject; 
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
@@ -186,6 +186,7 @@ namespace Ginger.Run
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
                     RunnerItemPage ri = new RunnerItemPage(act);
+                    this.Context.Activity = (Activity)ItemObject;
                     ri.Context = this.Context;
                     act.Context = this.Context;
                     ri.xItemSeparator.Visibility = Visibility.Collapsed;

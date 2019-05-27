@@ -73,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mVariableEditPage == null)
             {
-                mVariableEditPage = new VariableEditPage(mVariableBase, null);
+                mVariableEditPage = new VariableEditPage(mVariableBase, null, false, VariableEditPage.eEditMode.SharedRepository);
             }
             return mVariableEditPage;
         }

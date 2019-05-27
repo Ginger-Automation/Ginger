@@ -33,19 +33,25 @@ namespace Ginger.Actions
         private ActSetVariableValue mAct;
         private ObservableList<VariableBase> mVars;
 
+        Context mContext;
+
         public ActSetVariableValuePage(ActSetVariableValue act)
         {
             InitializeComponent();
             mAct = act;
+            if (mAct.Context != null)
+            {
+                mContext = Context.GetAsContext(mAct.Context);
+            }
             SetComboListsValues(); 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
         }
 
         private void SetComboListsValues()
         {
-            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
-            {
-                mVars = (Context.GetAsContext(mAct.Context)).BusinessFlow.GetAllHierarchyVariables();
+            if (mContext != null && mContext.BusinessFlow != null)
+            {                
+                mVars = mContext.BusinessFlow.GetAllVariables(mContext.Activity);
             }
             else
             {
