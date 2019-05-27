@@ -16,26 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
-using GingerCore;
-using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
 using System;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Serialization;
-using static Ginger.Run.GingerRunner;
 
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class DynamicRunSetManager
+    public class DynamicExecutionManager
     {
 
         public static string CreateDynamicRunSetXML(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
@@ -43,9 +38,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
             DynamicGingerExecution dynamicExecution = new DynamicGingerExecution();
-
+            dynamicExecution.SolutionDetails = new SolutionDetails();
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-            {
+            {                
                 dynamicExecution.SolutionDetails.SourceControlDetails = new SourceControlDetails();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Type = solution.SourceControl.GetSourceControlType.ToString();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
@@ -56,8 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
                 }
-            }
-            dynamicExecution.SolutionDetails = new SolutionDetails();
+            }            
             dynamicExecution.SolutionDetails.Path = solution.Folder;
             dynamicExecution.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
 
@@ -65,6 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
             addRunset.Name = "Dynamic_" + runsetExecutor.RunSetConfig.Name;
             addRunset.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
             addRunset.RunAnalyzer = cliHelper.RunAnalyzer;
+            addRunset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
             {
@@ -197,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
 
                 if (!string.IsNullOrEmpty(addRunner.RunMode))
                 {
-                    gingerRunner.RunOption = (eRunOptions)Enum.Parse(typeof(eRunOptions), addRunner.RunMode, true);
+                    gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), addRunner.RunMode, true);
                 }
 
                 if (!string.IsNullOrEmpty(addRunner.Environment))

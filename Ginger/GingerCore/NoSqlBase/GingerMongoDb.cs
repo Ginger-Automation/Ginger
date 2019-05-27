@@ -264,40 +264,53 @@ namespace GingerCore.NoSqlBase
                 switch (Action)
                 {
                     case Actions.ActDBValidation.eDBValidationType.FreeSQL:
-                        var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
+
+                        if (SQLCalculated.Contains("insertOne"))
+                        {
+                            BsonDocument insertDocumnet = BsonDocument.Parse(GetUpdateQueryParams(SQLCalculated));
+                            collection.InsertOne(insertDocumnet);
+                        }
+                        else if (SQLCalculated.Contains("insertMany"))
+                        {
+                            string queryParam = GetUpdateQueryParams(SQLCalculated).ToString();
+                            Newtonsoft.Json.Linq.JArray jsonArray = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
+                            List<BsonDocument> documents = new List<BsonDocument>();
+                            foreach (Newtonsoft.Json.Linq.JObject obj in jsonArray.Children<Newtonsoft.Json.Linq.JObject>())
+                            {
+                                BsonDocument document = BsonDocument.Parse(obj.ToString());
+                                documents.Add(document);
+                            }
+                            collection.InsertMany(documents);
+                        }
+                        else
+                        {
+                            var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
                             Project(Builders<BsonDocument>.Projection.Exclude("_id").Exclude(GetQueryParamater(SQLCalculated, "projection"))).
                             Sort(BsonDocument.Parse(GetQueryParamater(SQLCalculated, "sort"))).
                             Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
                             ToList();
 
-                        var obj =  result.ToJson();
-                        Act.ParseJSONToOutputValues(obj.ToString(), 1);
+                            var obj = result.ToJson();
+                            Act.ParseJSONToOutputValues(obj.ToString(), 1);
+                        }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.RecordCount:
                         var count = collection.Count(new BsonDocument());
                         Act.AddOrUpdateReturnParamActual("Record Count", count.ToString());
                         break;
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
-                        string updateQueryParams = GetUpdateQueryParams(SQLCalculated);
-                        var updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
-                        //set filter
-                        var filterString = updateQueryParamsStrings[0];
-                        //set param
-                        var paramString = updateQueryParamsStrings[1];
-                        BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
-                        BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
-
+                        
                         //do commit
                         if (Act.CommitDB_Value == true)
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            UpdateCollection(SQLCalculated, collection);
                             session.CommitTransaction();
                         }
                         else
                         {
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            UpdateCollection(SQLCalculated, collection);
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
@@ -348,6 +361,26 @@ namespace GingerCore.NoSqlBase
             }
 
 
+        }
+        void UpdateCollection(string query, IMongoCollection<BsonDocument> collection)
+        {
+            string updateQueryParams = GetUpdateQueryParams(query);
+            var updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
+            //set filter
+            var filterString = updateQueryParamsStrings[0];
+            //set param
+            var paramString = updateQueryParamsStrings[1];
+            BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
+            BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
+
+            if (query.Contains("updateMany"))
+            {
+                collection.UpdateMany(filterDocumnet, paramDocumnet);
+            }
+            else
+            {
+                collection.UpdateOne(filterDocumnet, paramDocumnet);
+            }
         }
     }
 }
