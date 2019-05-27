@@ -56,6 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
             foreach (GingerRunner runner in mRunsetExecutor.Runners)
             {
                 Runners.Total++;
+                Runners.Parallel = mRunsetExecutor.RunSetConfig.RunModeParallel;
                 AddBusinessFlows(runner.BusinessFlows);                
             }
         }

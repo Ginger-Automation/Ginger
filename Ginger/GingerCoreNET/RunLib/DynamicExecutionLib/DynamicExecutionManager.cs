@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -148,6 +149,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
 
                     addRunset.AddRunsetOperations.Add(dynamicMailReport);
+                }
+                else if (runSetOperation is RunSetActionJSONSummary)
+                {
+                    JsonReport dynamicJsonReport = new JsonReport();
+                    addRunset.AddRunsetOperations.Add(dynamicJsonReport);
                 }
             }
             dynamicExecution.AddRunsets.Add(addRunset);
@@ -289,6 +295,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
 
                     runSetConfig.RunSetActions.Add(mailOperation);
+                }
+                else if (addOperation is JsonReport)
+                {
+                    JsonReport dynamicJsonReport = (JsonReport)addOperation;
+                    RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
+
+                    jsonReportOperation.Name = "Dynamic Json Report";
+                    jsonReportOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), dynamicJsonReport.Condition, true);
+                    jsonReportOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), dynamicJsonReport.RunAt, true);
+                    jsonReportOperation.Active = true;
+
+                    runSetConfig.RunSetActions.Add(jsonReportOperation);
                 }
             }
 
