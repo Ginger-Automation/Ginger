@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
-        private LiteCollection<LiteDbRunner> GetRunnerLiteData()
+        public LiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
         }
