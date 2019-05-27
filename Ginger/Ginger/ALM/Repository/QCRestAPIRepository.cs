@@ -133,8 +133,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Count() > 0)
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
-                bool bfsWereDeleted = false;
+                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();                
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -144,8 +143,7 @@ namespace Ginger.ALM.Repository
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
-                            File.Delete(testSetItem.MappedBusinessFlow.FileName);
-                            bfsWereDeleted = true;
+                            File.Delete(testSetItem.MappedBusinessFlow.FileName);                            
                             testSetsItemsToImport.Add(testSetItem);
                         }
                     }

@@ -62,7 +62,7 @@ namespace Ginger.Run
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         uint meventtime;
-        IValueExpression mVE;
+        //IValueExpression mVE;
         ProjEnvironment mExecutionEnvironment = null;
 
         int mBusinessFlowCounter { get; set; }

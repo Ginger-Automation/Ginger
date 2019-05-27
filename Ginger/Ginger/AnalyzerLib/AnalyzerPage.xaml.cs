@@ -61,7 +61,7 @@ namespace Ginger.AnalyzerLib
         private Solution mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
-        ObservableList<DataSourceBase> DSList;
+        // ObservableList<DataSourceBase> DSList;
 
         public bool BusyInProcess = false;
 

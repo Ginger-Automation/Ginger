@@ -1665,9 +1665,9 @@ namespace Ginger.Run
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.Json"), json); //TODO - Replace with the real location under Ginger installation
                 System.Diagnostics.Process.Start("chrome", taskCommand);
             }
-            catch(Exception ec)
+            catch(Exception ex)
             {
-
+                Console.WriteLine("RunClientApp Error - " + ex.Message);
             }
         }
 

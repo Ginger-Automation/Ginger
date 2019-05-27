@@ -90,6 +90,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception ex)
             {
+                Console.WriteLine("CheckOrCreateDirectory - " + ex.Message);
                 return false;
             }
         }
