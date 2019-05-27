@@ -857,7 +857,7 @@ namespace Ginger
             //delete all shown Log options sub menu items
             for (int i = 0; i < xUserOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
+                if ((string)((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
                 {
                     xUserOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
@@ -917,7 +917,7 @@ namespace Ginger
             //delete all Support options Sub menu items
             for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Support")
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Support")
                 {
                     xExtraOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
@@ -955,7 +955,7 @@ namespace Ginger
             //delete all Support options Sub menu items
             for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Contact")
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Contact")
                 {
                     xExtraOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;

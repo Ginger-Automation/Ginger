@@ -328,10 +328,8 @@ namespace Amdocs.Ginger.Repository
                             }
                         }
 
-
-                        MemberInfo[] members = type.GetMembers();
-                        ServiceConfigurationAttribute token = null;
-
+                        MemberInfo[] members = type.GetMembers();  
+                        
                         foreach (MemberInfo mi in members)
                         {
                             if( Attribute.GetCustomAttribute(mi, typeof(ServiceConfigurationAttribute), false) is ServiceConfigurationAttribute mconfig)
@@ -352,14 +350,9 @@ namespace Amdocs.Ginger.Repository
 
                                 }
                                 pluginServiceInfo.Configs.Add(Config);
-                            }
-
-                          
+                            }                          
                         }
-
-
                         mServices.Add(pluginServiceInfo);
-
                     }                    
                 }
             }            
@@ -417,7 +410,8 @@ namespace Amdocs.Ginger.Repository
                 string fileName = PluginPackageServicesInfoFileName();
                 if (!File.Exists(fileName))
                 {
-                    throw new Exception("PluginPackage Services info file not found: " + fileName);
+                    // Auto create if not exist                
+                    CreateServicesInfo();
                 }
                 string txt = File.ReadAllText(fileName);
                 mServices = JsonConvert.DeserializeObject<ObservableList<PluginServiceInfo>>(txt);                            

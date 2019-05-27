@@ -58,8 +58,8 @@ namespace GingerCore.Repository
 
     public class RepositorySerializer : IRepositorySerializer
     {
-        static string mGingerVersion;
-        static long mGingerVersionAsLong = 0;        
+        // static string mGingerVersion;
+        // static long mGingerVersionAsLong = 0;        
 
         public void SaveToFile(RepositoryItemBase ri, string FileName)
         {
