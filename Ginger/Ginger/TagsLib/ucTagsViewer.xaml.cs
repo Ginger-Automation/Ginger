@@ -141,6 +141,19 @@ namespace Ginger
             return tagsGuid;
         }
 
+        public void ClearSelectedTags()
+        {
+            if(mItemTagsGUID != null)
+            {
+                mItemTagsGUID.Clear();
+            }
+
+            if (mItemTagsKey != null)
+            {
+                mItemTagsKey.Clear(); 
+            }
+        }
+
         private void MItemTags_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             LoadItemTagsToView();
@@ -176,15 +189,15 @@ namespace Ginger
 
         //Load saved tags on BF
         private void LoadItemTagsToView()
-        {      
+        {
             TagsStackPanl.Children.Clear();
             IEnumerable<RepositoryItemTag> ttg = mFullTagsList.ItemsAsEnumerable();
 
-            for (int i=0;i< GetItemTagsCount(); i++)
+            for (int i = 0; i < GetItemTagsCount(); i++)
             {
                 // Get the Name for solution tags.
                 RepositoryItemTag t = null;
-                if(mItemTagsType == eItemTagsType.Guid)
+                if (mItemTagsType == eItemTagsType.Guid)
                     t = (from x in ttg where x.Guid == (Guid)mItemTagsGUID[i] select x).FirstOrDefault();
                 else
                     t = (from x in ttg where x.Guid == ((RepositoryItemKey)mItemTagsKey[i]).Guid select x).FirstOrDefault();
@@ -194,7 +207,7 @@ namespace Ginger
                     // add saved tags
                     ucTag tag = new ucTag(t);
                     tag.xDeleteTagBtn.Click += XDeleteTagBtn_Click;
-                    TagsStackPanl.Children.Add(tag);                    
+                    TagsStackPanl.Children.Add(tag);
                 }
                 else
                 {

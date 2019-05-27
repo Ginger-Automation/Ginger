@@ -41,13 +41,14 @@ namespace Ginger.Variables
 
         Context mContext = new Context();
 
-        public AddVariablePage(eVariablesLevel variablesLevel, object variablesParentObj)
+        public AddVariablePage(eVariablesLevel variablesLevel, object variablesParentObj,Context context)
         {
             InitializeComponent();
 
             this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 
             mVariablesLevel = variablesLevel;
+            mContext = context;
             mVariablesParentObj = variablesParentObj;
             if(variablesLevel == eVariablesLevel.BusinessFlow)
             { 
@@ -121,9 +122,15 @@ namespace Ginger.Variables
                 return;
             }
 
-            VariableEditPage varEditPage = new VariableEditPage(newVar, mContext);
+            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
+            if (mVariablesLevel == eVariablesLevel.Solution)
+            {
+                editMode = VariableEditPage.eEditMode.Global;
+            }
+            VariableEditPage varEditPage = new VariableEditPage(newVar, mContext, false, editMode);
             _pageGenericWin.Close();
             varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
+          
 
             //make sure name is unique
             switch (mVariablesLevel)

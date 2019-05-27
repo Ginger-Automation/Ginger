@@ -91,6 +91,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (mAutoRunWizard != null)
             {
                 mAutoRunWizard.AutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerConsole;
+                mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
             }
         }
 

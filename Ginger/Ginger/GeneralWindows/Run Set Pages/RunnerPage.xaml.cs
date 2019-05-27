@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Logger;
@@ -31,6 +32,7 @@ using GingerCore.Environments;
 using GingerCore.Helpers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -307,14 +309,10 @@ namespace Ginger.Run
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                //mRunner.SetBFOfflineDataLiteDB();
-                ////var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
-                //WebReportGenerator webReporterRunner = new WebReportGenerator();
-                //webReporterRunner.GenerateBFReport(bf);
+                GenerateBFReport(bf);
                 return;
             }
 
@@ -357,6 +355,50 @@ namespace Ginger.Run
                 mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
+
+        private void GenerateBFReport(BusinessFlow bf)
+        {
+            try
+            {
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                var result = dbManager.GetRunSetLiteData();
+                List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
+
+                LiteDbRunSet runSetLast = filterData.Last();
+                //runSetLast._id = new ObjectId();
+
+                LiteDbRunner runnerFilter = runSetLast.RunnersColl.Find(r => r.GUID.ToString() == mRunner.Guid.ToString());
+                //runnerFilter._id = new ObjectId();
+                //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
+
+                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
+                if (bfFilter == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
+                    return;
+                }
+                //runnerFilter.RunStatus = bfFilter.RunStatus;
+                //runSetLast.RunStatus = runnerFilter.RunStatus;
+                //runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
+
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
+
+
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
+
+                //var newRSData = dbManager.GetRunSetLiteData();
+                //newRSData.Delete(runSetLast._id);
+                //var newRunnerData = dbManager.GetRunnerLiteData();
+                //newRunnerData.Delete(runnerFilter._id);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
@@ -616,8 +658,13 @@ namespace Ginger.Run
             WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             WorkSpace.Instance.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
+            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                WorkSpace.Instance.RunsetExecutor.SetRunnersExecutionLoggerConfigs();
+                mRunner.ExecutionLoggerManager.RunSetStart("", WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize, DateTime.UtcNow);
+            }
             await mRunner.RunRunnerAsync();
-            GingerCore.General.DoEvents();   //needed?                 
+            GingerCore.General.DoEvents();   //needed?  
         }
         public void UpdateRunnerInfo()
         {

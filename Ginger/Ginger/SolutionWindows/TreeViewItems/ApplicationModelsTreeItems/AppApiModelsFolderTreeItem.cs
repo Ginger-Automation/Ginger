@@ -158,7 +158,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         private void AddSingleAPIModel(ApplicationAPIUtils.eWebApiType type)
         {
             string apiName = string.Empty; ;
-            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API",type.ToString()), "API Name:", ref apiName, System.IO.Path.GetInvalidPathChars()))
+            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API",type.ToString()), "API Name:", ref apiName))
             {
                 ApplicationAPIModel newApi = new ApplicationAPIModel();
                 newApi.APIType = type;

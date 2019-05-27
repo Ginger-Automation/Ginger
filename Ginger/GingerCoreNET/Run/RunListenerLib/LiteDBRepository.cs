@@ -55,6 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
+            bool isActExsits = false;
             string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
             LiteDbAction liteDbAction = new LiteDbAction();
             liteDbAction.SetReportData(GetActionReportData(action, context, executedFrom));
@@ -95,7 +96,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                 }
                 liteDbAction.ScreenShots = action.ScreenShots;
-                liteDbActionList.Add(liteDbAction);
+
+            isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
+            if (isActExsits)
+            {
+                liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
+            }
+            liteDbActionList.Add(liteDbAction);
             //}
             //else
             //{
@@ -122,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             liteDbActivityList.Add(AR);
             SaveObjToReporsitory(AR, liteDbManager.NameInDb<LiteDbActivity>());
             liteDbActionList.Clear();
-            if (ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 activity.LiteDbId = AR._id;
             }
@@ -139,7 +146,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
-            if (ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 activityGroup.LiteDbId = AGR._id;
             }
@@ -203,10 +210,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
             runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            if (ExecutionLoggerManager.RunSetReport != null)
+            if (ExecutionLoggerManager.RunSetReport == null)
             {
-                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+                ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
             }
+            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
             liteDbBFList.Clear();
         }
 
