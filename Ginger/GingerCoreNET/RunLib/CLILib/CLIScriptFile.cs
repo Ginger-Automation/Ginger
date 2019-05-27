@@ -48,13 +48,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string txt = string.Format("OpenSolution({0})", solution.Folder) + Environment.NewLine;
-            txt += string.Format("OpenRunSet(\"{0}\",\"{1}\")", runsetExecutor.RunSetConfig.Name, runsetExecutor.RunsetExecutionEnvironment.Name) + Environment.NewLine;
-            txt += "CreateExecutionSummaryJSON(\"FILENAME\")" + Environment.NewLine;
-            txt += "if (Pass)" + Environment.NewLine;
-            txt += "{" + Environment.NewLine;
-            txt += "SendEmail()" + Environment.NewLine;
-            txt += "}" + Environment.NewLine;
+            string txt = string.Format("OpenSolution(@\"{0}\");", solution.Folder) + Environment.NewLine;
+            txt += string.Format("OpenRunSet(\"{0}\",\"{1}\");", runsetExecutor.RunSetConfig.Name, runsetExecutor.RunsetExecutionEnvironment.Name) + Environment.NewLine;
+            txt += "CreateExecutionSummaryJSON(\"FILENAME\");" + Environment.NewLine;
+            //txt += "if (Pass)" + Environment.NewLine;
+            //txt += "{" + Environment.NewLine;
+            //txt += "SendEmail()" + Environment.NewLine;
+            //txt += "}" + Environment.NewLine;
             return txt;
         }
 

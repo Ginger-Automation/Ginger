@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -16,22 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Xml.Serialization;
 
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    public class MailReport
+    [XmlInclude(typeof(MailReport))]
+    public class AddRunsetOperation
     {
-        public string MailFrom { get; set; }
-        public string MailTo { get; set; }
-        public string Subject { get; set; }       
-        public string ReportTemplateName { get; set; }
+        [XmlAttribute]
+        public string Condition { get; set; } = "AlwaysRun";
 
-        public string SmtpPort { get; set; }
-        public string SmtpServer { get; set; }
-        public string SmtpUser { get; set; }
-        public string SmtpPassword { get; set; }
+        [XmlAttribute]
+        public string RunAt { get; set; } = "ExecutionEnd";
     }
 }

@@ -132,7 +132,7 @@ namespace GingerCore.GeneralLib
             this.Close();
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed, bool isMultiline = false)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
         {
             bool returnWindow = OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -140,7 +140,7 @@ namespace GingerCore.GeneralLib
             {
                 resultValue = resultValue.Trim();
                 if (string.IsNullOrEmpty(resultValue.Trim()))
-                {                                        
+                {
                     Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot be empty");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
