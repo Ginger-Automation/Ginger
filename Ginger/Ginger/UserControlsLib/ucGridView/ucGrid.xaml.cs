@@ -156,9 +156,12 @@ namespace Ginger
         }
 
         public void ClearFilters()
-        {
-            txtSearch.Text = string.Empty;
-            Tags.Clear();
+        {            
+            this.Dispatcher.Invoke(() =>
+            {
+                txtSearch.Text = string.Empty;
+                Tags.Clear();
+            });
         }
 
 
@@ -344,8 +347,15 @@ namespace Ginger
             grdMain.CancelEdit();
             this.Dispatcher.Invoke(() =>
             {
-                CollectFilterData();
-                mCollectionView.Refresh();
+                try
+                {
+                    CollectFilterData();
+                    mCollectionView.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while Tags Stack Panl Changed event", ex);
+                }
             });
         }
 
