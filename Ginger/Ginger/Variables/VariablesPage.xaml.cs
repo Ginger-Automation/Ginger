@@ -62,14 +62,14 @@ namespace Ginger.Variables
         /// </summary>
         /// <param name="variablesLevel">Type of Variables parent object</param>
         /// <param name="variablesParentObj">Actual Variables parent object, if not provided then the Current Business Flow / Activity will be used</param>       
-        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, Context context, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
         {
             InitializeComponent();
 
             mVariablesLevel = variablesLevel;
             mVariablesParentObj = variablesParentObj;
             mEditMode = editMode;
-
+            mContext = context;
             SetVariablesParentObj(variablesParentObj);                      
             SetVariablesGridView();            
 
@@ -367,8 +367,16 @@ namespace Ginger.Variables
         {
             VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
             selectedVarb.NameBeforeEdit = selectedVarb.Name;
-
-            VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false);
+            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
+            if (mContext!=null && mContext.BusinessFlow == null)
+            {
+                editMode = VariableEditPage.eEditMode.SharedRepository;
+            }
+            if (mVariablesLevel == eVariablesLevel.Solution)
+            {
+                editMode = VariableEditPage.eEditMode.Global;
+            }
+            VariableEditPage w = new VariableEditPage(selectedVarb, mContext, false, editMode);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
 
             if (selectedVarb.NameBeforeEdit != selectedVarb.Name)
@@ -379,10 +387,10 @@ namespace Ginger.Variables
         {
             ((Solution)mVariablesParentObj).SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
         }
-
+        
         private void AddVar(object sender, RoutedEventArgs e)
         {
-            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, mVariablesParentObj);
+            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, mVariablesParentObj,mContext);
             addVarPage.ShowAsWindow();
 
             RefreshGrid(sender, e);
