@@ -11,7 +11,7 @@
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
 
         <StackPanel>
-            <Label>Summary JSON will be saved in solution ExecutionResults folder</Label>
+            <Label HorizontalAlignment="Left">Note: The JSON Summary Report will be saved under the Solution "ExecutionResults" folder</Label>
             <!--<Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Target JSON summary folder:</Label>
             <StackPanel Orientation="Horizontal" >
                 <TextBox x:Name="TargetFolderTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>

@@ -333,6 +333,11 @@ namespace GingerCore.Variables
                     {
                         try
                         {
+                            if((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
+                            {
+                                usedVariables.Add(value.ToString());
+                            }
+
                             if (PI.CanWrite)
                             {
                                 //TODO: Use nameof !!!!!

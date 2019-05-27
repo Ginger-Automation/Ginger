@@ -150,7 +150,8 @@ namespace GingerCore.ALM.QCRestAPI
                                 {
                                     //get activities in group
                                     List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
-                                    string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
+                                    //Changed this because tsTest.Name is null. string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
+                                    string TestCaseName = PathHelper.CleanInValidPathChars(activGroup.Name);
                                     if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
                                     {
                                         String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -230,7 +231,12 @@ namespace GingerCore.ALM.QCRestAPI
                                     foreach (QCRunStep runStep in runSteps)
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
-                                        string stepName = runStep.Name;
+                                        //Removing this because runStep.Name is null string stepName = runStep.Name;
+                                        //Adding this as runSteps has extra element which is not required. 
+                                        if (runStep.ElementsField.Count==0)
+                                        {
+                                            break;
+                                        }
                                         Activity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
                                         if (matchingActivity != null)
                                         {
@@ -283,14 +289,16 @@ namespace GingerCore.ALM.QCRestAPI
                                     //get all execution status for all steps
                                     ObservableList<string> stepsStatuses = new ObservableList<string>();
                                     foreach (QCRunStep runStep in runSteps)
-                                        stepsStatuses.Add(runStep.Status);
+                                        //condition to avoid that extra element present in the runSteps
+                                        if (runStep.ElementsField.Count > 0)
+                                        stepsStatuses.Add(runStep.ElementsField["status"].ToString());//removed runStep.Status which is null
 
                                     //update the TC general status based on the activities status collection.                                
                                     if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
                                         currentRun.Status = "Failed";
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count-1 || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
                                         currentRun.Status = "No Run";
-                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count-1 || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
                                         currentRun.ElementsField["status"] = "Passed";
                                     else
                                         currentRun.ElementsField["status"] = "Not Completed";

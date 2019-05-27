@@ -38,9 +38,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
             DynamicGingerExecution dynamicExecution = new DynamicGingerExecution();
-
+            dynamicExecution.SolutionDetails = new SolutionDetails();
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-            {
+            {                
                 dynamicExecution.SolutionDetails.SourceControlDetails = new SourceControlDetails();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Type = solution.SourceControl.GetSourceControlType.ToString();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
@@ -51,8 +51,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
                 }
-            }
-            dynamicExecution.SolutionDetails = new SolutionDetails();
+            }            
             dynamicExecution.SolutionDetails.Path = solution.Folder;
             dynamicExecution.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
 

@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             get { return true; }
         }
 
-        public override string Type { get { return "Save JSON Summary"; } }
+        public override string Type { get { return "Produce JSON Summary Report"; } }
 
         public override void Execute(ReportInfo RI)
         {
