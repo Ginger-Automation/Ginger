@@ -960,7 +960,7 @@ namespace Ginger.Run
                     {
                         ResetAction(act);
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                         {
                             NotifyActionEnd(act);
                         }
@@ -2639,11 +2639,11 @@ namespace Ginger.Run
 
                     case eOperator.Contains:
                         status = ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "Does not Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " Does not Contains " + ARC.ExpectedCalculated;
                         break;
                     case eOperator.DoesNotContains:
                         status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " Contains " + ARC.ExpectedCalculated;
                         break;
                     case eOperator.Equals:
                         status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
@@ -2662,7 +2662,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not greater than " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not greater than " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.GreaterThanEquals:
@@ -2675,7 +2675,7 @@ namespace Ginger.Run
                         {
                             Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
 
-                            ErrorInfo = ARC.Actual + "is not greater than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not greater than equals to " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.LessThan:
@@ -2687,7 +2687,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not less than " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not less than " + ARC.ExpectedCalculated;
 
                         }
                         break;
@@ -2700,12 +2700,12 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not less than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not less than equals to " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.NotEquals:
                         status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "is equals to " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " is equals to " + ARC.ExpectedCalculated;
                         break;
                     default:
                         ErrorInfo = "Not Supported Operation";
@@ -2963,10 +2963,10 @@ namespace Ginger.Run
 
             //Run the Activity Actions
             st.Start();
-
+            Act act = null;
             try
             {
-                Act act = null;
+                
 
                 // if it is not continue mode then goto first Action
                 if (!doContinueRun)
@@ -3035,7 +3035,7 @@ namespace Ginger.Run
                         {
                             ResetAction(act);
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                             {
                                 NotifyActionEnd(act);
                             }
@@ -3056,10 +3056,16 @@ namespace Ginger.Run
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // temporary handling of exception
-                SetNextActionsBlockedStatus();
+                act.Error += ex.Message;
+                CalculateActionFinalStatus(act);
+                if (!activity.Acts.IsLastItem())
+                {
+                    GotoNextAction();
+                    SetNextActionsBlockedStatus();
+                }               
+               
                 // ExecutionLogger.ActivityEnd(CurrentBusinessFlow, activity);
                 //NotifyActivityEnd(activity);
 
@@ -3791,7 +3797,7 @@ namespace Ginger.Run
                     break;
 
                 if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
-                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
                 }
@@ -4531,7 +4537,7 @@ namespace Ginger.Run
                         }
                         activity.ExecutionLogActionCounter++;
                         action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
                         }

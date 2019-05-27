@@ -1,19 +1,40 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public class CLIHelper
+    public enum eCLIType
+    {
+        Config,Dynamic,Script,Arguments
+    }
+
+    public class CLIHelper : INotifyPropertyChanged
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
 
@@ -24,11 +45,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourcecontrolUser;
         public string sourceControlPass;
         public eAppReporterLoggingLevel AppLoggingLevel;
+        public eCLIType CLIType;
 
-
-        static bool mShowAutoRunWindow ; // default is false except in ConfigFile which is true to keep backword compatibility
-        
-        public static bool ShowAutoRunWindow
+        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
+        public bool ShowAutoRunWindow
         {
             get
             {
@@ -37,26 +57,28 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mShowAutoRunWindow = value;
-                //Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+                OnPropertyChanged(nameof(ShowAutoRunWindow));
             }
         }
 
-        static bool mDownloadSolutionFromSourceControl;
-        public static bool DownloadSolutionFromSourceControlBool
+        bool mDownloadUpgradeSolutionFromSourceControl;
+        public bool DownloadUpgradeSolutionFromSourceControl
         {
             get
             {
-                return mDownloadSolutionFromSourceControl;
+                return mDownloadUpgradeSolutionFromSourceControl;
             }
             set
             {
-                mDownloadSolutionFromSourceControl = value;
+                mDownloadUpgradeSolutionFromSourceControl = value;
+                OnPropertyChanged(nameof(DownloadUpgradeSolutionFromSourceControl));
             }
 
         }
 
-        static bool mRunAnalyzer;
-        public static bool RunAnalyzer {
+        bool mRunAnalyzer;
+        public bool RunAnalyzer
+        {
             get
             {
                 return mRunAnalyzer;
@@ -64,6 +86,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mRunAnalyzer = value;
+                OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
 
@@ -93,7 +116,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mRunsetExecutor = runsetExecutor;
-                SelectRunset();
+                if (mRunsetExecutor.RunSetConfig == null)
+                {
+                    SelectRunset();
+                }
+                else
+                {
+                    mRunSetConfig = mRunsetExecutor.RunSetConfig;
+                }
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
@@ -319,22 +349,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private bool OpenSolution()
         {
-            //Reporter.ToLog(eLogLevel.DEBUG, "Loading the Solution: '" + Solution + "'");
             try
             {
-                //if (WorkSpace.Instance.OpenSolution(Solution) == false)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                //    // TODO: throw
-                //    return;
-                //}
                 return WorkSpace.Instance.OpenSolution(Solution);
             }
             catch (Exception ex)
             {
-                //Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
-                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                // TODO: throw
                 return false;
             }
         }
@@ -348,6 +368,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             catch (Exception ex)
             { 
                 Reporter.ToLog(eLogLevel.ERROR, "Unexpected Error occurred while closing the Solution", ex);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
     }
