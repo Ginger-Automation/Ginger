@@ -155,6 +155,7 @@ namespace Ginger.Variables
             {
                 LoadGridData();
             }
+            grdVariables.ClearFilters();
         }
 
         public void UpdateActivity(Activity activity)
@@ -166,6 +167,7 @@ namespace Ginger.Variables
                 ((Activity)mVariablesParentObj).PropertyChanged += Activity_PropertyChanged;//Hook to catch Activity Variables changes
                 LoadGridData();
             }
+            grdVariables.ClearFilters();
         }
 
         private void LoadGridData()
