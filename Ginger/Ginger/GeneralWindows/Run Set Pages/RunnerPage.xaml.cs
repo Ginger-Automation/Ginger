@@ -358,38 +358,45 @@ namespace Ginger.Run
 
         private void GenerateBFReport(BusinessFlow bf)
         {
-            LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
-            var result = dbManager.GetRunSetLiteData();
-            List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
-
-            LiteDbRunSet runSetLast = filterData.Last();
-            //runSetLast._id = new ObjectId();
-
-            LiteDbRunner runnerFilter = runSetLast.RunnersColl.Find(r => r.GUID.ToString() == mRunner.Guid.ToString());
-            //runnerFilter._id = new ObjectId();
-            //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
-
-            LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
-            if (bfFilter == null)
+            try
             {
-                Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
-                return;
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                var result = dbManager.GetRunSetLiteData();
+                List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
+
+                LiteDbRunSet runSetLast = filterData.Last();
+                //runSetLast._id = new ObjectId();
+
+                LiteDbRunner runnerFilter = runSetLast.RunnersColl.Find(r => r.GUID.ToString() == mRunner.Guid.ToString());
+                //runnerFilter._id = new ObjectId();
+                //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
+
+                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
+                if (bfFilter == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
+                    return;
+                }
+                //runnerFilter.RunStatus = bfFilter.RunStatus;
+                //runSetLast.RunStatus = runnerFilter.RunStatus;
+                //runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
+
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
+
+
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
+
+                //var newRSData = dbManager.GetRunSetLiteData();
+                //newRSData.Delete(runSetLast._id);
+                //var newRunnerData = dbManager.GetRunnerLiteData();
+                //newRunnerData.Delete(runnerFilter._id);
             }
-            //runnerFilter.RunStatus = bfFilter.RunStatus;
-            //runSetLast.RunStatus = runnerFilter.RunStatus;
-            //runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
+            catch(Exception ex)
+            {
 
-            //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
-            //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
-
-
-            WebReportGenerator webReporterRunner = new WebReportGenerator();
-            webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() } );
-
-            //var newRSData = dbManager.GetRunSetLiteData();
-            //newRSData.Delete(runSetLast._id);
-            //var newRunnerData = dbManager.GetRunnerLiteData();
-            //newRunnerData.Delete(runnerFilter._id);
+            }
         }
 
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
