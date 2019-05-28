@@ -304,26 +304,18 @@ namespace GingerCore.NoSqlBase
                         Act.AddOrUpdateReturnParamActual("Record Count", count.ToString());
                         break;
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
-                        string updateQueryParams = GetUpdateQueryParams(SQLCalculated);
-                        var updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
-                        //set filter
-                        var filterString = updateQueryParamsStrings[0];
-                        //set param
-                        var paramString = updateQueryParamsStrings[1];
-                        BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
-                        BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
-
+                        
                         //do commit
                         if (Act.CommitDB_Value == true)
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            UpdateCollection(SQLCalculated, collection);
                             session.CommitTransaction();
                         }
                         else
                         {
-                            collection.UpdateOne(filterDocumnet, paramDocumnet);
+                            UpdateCollection(SQLCalculated, collection);
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
@@ -374,6 +366,26 @@ namespace GingerCore.NoSqlBase
             }
 
 
+        }
+        void UpdateCollection(string query, IMongoCollection<BsonDocument> collection)
+        {
+            string updateQueryParams = GetUpdateQueryParams(query);
+            var updateQueryParamsStrings = updateQueryParams.Split(new char[] { ',' }, 2);
+            //set filter
+            var filterString = updateQueryParamsStrings[0];
+            //set param
+            var paramString = updateQueryParamsStrings[1];
+            BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
+            BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
+
+            if (query.Contains("updateMany"))
+            {
+                collection.UpdateMany(filterDocumnet, paramDocumnet);
+            }
+            else
+            {
+                collection.UpdateOne(filterDocumnet, paramDocumnet);
+            }
         }
     }
 }

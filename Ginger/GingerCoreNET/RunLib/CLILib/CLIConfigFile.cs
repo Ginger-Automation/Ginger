@@ -61,10 +61,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
                 sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
                 sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    sConfig += "SourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                    sConfig += "SourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                    if (solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                    {
+                        sConfig += "SourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
+                        sConfig += "SourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
+                    }
                 }
             }
             sConfig += "Solution=" + solution.Folder + Environment.NewLine;

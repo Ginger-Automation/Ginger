@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
@@ -42,8 +41,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
-using IWshRuntimeLibrary;
-using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -237,6 +234,7 @@ namespace Ginger.Run
                 xRunnersCanvasControls.Visibility = Visibility.Collapsed;
                 xRunnersExecutionControls.Visibility = Visibility.Collapsed;
                 xBusinessFlowsListOperationsPnl.Visibility = Visibility.Collapsed;
+                xMiniRunnerExecutionPanel.Visibility = Visibility.Collapsed;
             }
 
             //load Run Set
@@ -596,23 +594,23 @@ namespace Ginger.Run
                     xDescTextBlockHelper.AddLineBreak();
                 }
 
-                //Target apps been tested in Run set
-                List<string> targetsList = new List<string>();
-                foreach(GingerRunner runner in mRunSetConfig.GingerRunners )
-                {                    
-                    foreach(IApplicationAgent appAgent in runner.ApplicationAgents)
-                    {
-                        if (targetsList.Contains(appAgent.AppName) == false)
-                            targetsList.Add(appAgent.AppName);
-                    }
-                }
-                string targetsLbl = "Target/s: ";
-                foreach (string appName in targetsList)
-                {
-                    targetsLbl += appName + ", ";
-                }
-                targetsLbl= targetsLbl.TrimEnd(new char[] { ' ', ',' });
-                xDescTextBlockHelper.AddText(targetsLbl);
+                ////Target apps been tested in Run set
+                //List<string> targetsList = new List<string>();
+                //foreach(GingerRunner runner in mRunSetConfig.GingerRunners )
+                //{                    
+                //    foreach(IApplicationAgent appAgent in runner.ApplicationAgents)
+                //    {
+                //        if (targetsList.Contains(appAgent.AppName) == false)
+                //            targetsList.Add(appAgent.AppName);
+                //    }
+                //}
+                //string targetsLbl = "Target/s: ";
+                //foreach (string appName in targetsList)
+                //{
+                //    targetsLbl += appName + ", ";
+                //}
+                //targetsLbl= targetsLbl.TrimEnd(new char[] { ' ', ',' });
+                //xDescTextBlockHelper.AddText(targetsLbl);
             });
         }
 
@@ -1382,13 +1380,6 @@ namespace Ginger.Run
 
                 ResetALMDefectsSuggestions();
 
-                //check runner is not empty
-                if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mCurrentSelectedRunner.Name + "' to start run.");
-                    return;
-                }
-
                 //run analyzer
                 if (mRunSetConfig.RunWithAnalyzer)
                 {
@@ -1859,6 +1850,7 @@ namespace Ginger.Run
 
                 mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
 
+                mCurrentActivityRunnerItem.Context.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
                 mContext.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
             }
             else

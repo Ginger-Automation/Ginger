@@ -135,6 +135,6 @@ namespace Ginger.Run.RunSetActions
             //return new RunSetActionAutomatedALMDefectsEditPage(this);
             return  "RunSetActionAutomatedALMDefectsEditPage";
         }
-        public override string Type { get { return "Automated ALM Defect’s Opening"; } }
+        public override string Type { get { return "Open ALM Defects"; } }
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Amdocs.Ginger.CoreNET.RunLib.DynamicRunSetLib
+namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    
-    public class BusinessFlow
-    {        
+    [XmlInclude(typeof(MailReport))]    
+    [XmlInclude(typeof(JsonReport))]
+    public class AddRunsetOperation
+    {
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Condition { get; set; } = "AlwaysRun";
 
-        public List<InputVariable> InputVariables { get; set; } = new List<InputVariable>();
+        [XmlAttribute]
+        public string RunAt { get; set; } = "ExecutionEnd";
     }
 }

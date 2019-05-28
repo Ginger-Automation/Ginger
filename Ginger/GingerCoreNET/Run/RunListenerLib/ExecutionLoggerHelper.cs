@@ -36,14 +36,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-            if (isCleanFile)
+            if (System.IO.Directory.Exists(folderName) && isCleanFile)
+            {
                 foreach (System.IO.FileInfo file in di.GetFiles())
                 {
                     file.Delete();
                 }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
         public void CreateTempDirectory()

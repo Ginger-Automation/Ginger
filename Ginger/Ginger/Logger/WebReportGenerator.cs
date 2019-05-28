@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Ginger.Logger
 {
@@ -18,7 +19,9 @@ namespace Ginger.Logger
             bool response = false;
             try
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
+                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                if (!Directory.Exists(clientAppFolderPath))
+                    return false;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
@@ -50,14 +53,17 @@ namespace Ginger.Logger
             try
             {
                 StringBuilder pageDataSb = new StringBuilder();
+                pageDataSb.Append("file:///");
+                pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
+                pageDataSb.Append("/");
                 pageDataSb.Append("index.html");
                 if (openObject != null)
                 {
-                    pageDataSb.Append("?Routed_Guid=");
+                    pageDataSb.Append("#/?Routed_Guid=");
                     pageDataSb.Append(openObject.Guid);
                 }
-                string taskCommand = $"{Path.Combine(clientAppFolderPath, pageDataSb.ToString())} --allow-file-access-from-files";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
+                string taskCommand = $"\"{pageDataSb.ToString()}\" --allow-file-access-from-files";
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json);
                 System.Diagnostics.Process.Start("chrome", taskCommand);
                 response = true;
             }
