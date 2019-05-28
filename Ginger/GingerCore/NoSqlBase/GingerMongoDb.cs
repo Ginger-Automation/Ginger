@@ -259,9 +259,16 @@ namespace GingerCore.NoSqlBase
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;
-
+            string collectionName = "";
+            if (Action== Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
+            {
+                collectionName = Act.Table;
+            }
+            else
+            {
+                collectionName = GetCollectionName(SQLCalculated);
+            }
             var DB = mMongoClient.GetDatabase(DbName);
-            string collectionName = GetCollectionName(SQLCalculated);
             var collection = DB.GetCollection<BsonDocument>(collectionName);
 
             try
@@ -319,10 +326,8 @@ namespace GingerCore.NoSqlBase
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
-                        string table = Act.Table;
                         string col = Act.Column;
                         string where = Act.Where;
-                        var coll = DB.GetCollection<BsonDocument>(table);
                         string filter = "";
                         var isNumeric = double.TryParse(where, out double n);
 
@@ -347,7 +352,7 @@ namespace GingerCore.NoSqlBase
                                 filter = "{" + col + ":\"" + where + "\"}";
                             }
                         }
-                        var resultSimpleSQLOne = coll.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
+                        var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
                         Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
                         break;
                     default:                        
