@@ -61,7 +61,7 @@ namespace Ginger.Drivers.CommunicationProtocol
 
         private void ResendButton_Click(object sender, RoutedEventArgs e)
         {
-            GingerSocketLog GSL = (GingerSocketLog)MainGrid.SelectedItem;
+            GingerSocketLog GSL = (GingerSocketLog)MainListView.SelectedItem;
             mGingerNodeProxy.SendRequestPayLoad(GSL.PayLoad);
         }
 
@@ -89,7 +89,7 @@ namespace Ginger.Drivers.CommunicationProtocol
         public void ShowMonitor(GingerNodeProxy gingerNodeProxy)
         {
             GingerSocketLogs = new ObservableList<GingerSocketLog>();
-            MainGrid.ItemsSource = GingerSocketLogs;            
+            MainListView.ItemsSource = GingerSocketLogs;            
             this.Show();
         }
 
@@ -103,6 +103,12 @@ namespace Ginger.Drivers.CommunicationProtocol
         public void CloseMonitor()
         {
             DelayedClose();            
+        }
+
+        private void MainListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            GingerSocketLog GSL = (GingerSocketLog)MainListView.SelectedItem;
+            PacketInfoTextBlock.Text = GSL.Info;
         }
     }
 }
