@@ -30,6 +30,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Amdocs.Ginger.Common.GeneralLib;
 using System.Linq;
 using System.Text;
 
@@ -46,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
@@ -184,6 +185,32 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 SaveObjToReporsitory(runSetReport, logFolder + @"\RunSet.txt");
             }
+        }
+
+        internal override void CreateNewDirectory(string logFolder)
+        {
+            System.IO.Directory.CreateDirectory(logFolder);
+        }
+
+        internal override void EndRunSet()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        {
+            if (!offline)
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder + "\\" + executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+            else
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
+            DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(ExecutionLoggerManager.RunSetReport.LogFolder, maxFolderSize);
+
+            executionLoggerHelper.CreateTempDirectory();
+        }
+
+        internal override void StartRunSet()
+        {
+            return;
         }
     }
 }

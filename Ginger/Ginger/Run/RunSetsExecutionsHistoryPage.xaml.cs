@@ -116,14 +116,14 @@ namespace Ginger.Run
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
             await Task.Run(() => {
-                if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null)
+                if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null)
                 {
                     mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
-                    foreach (string runSetFile in runSetsfiles)
+                    try
                     {
-                        try
+                        foreach (string runSetFile in runSetsfiles)
                         {
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
@@ -142,20 +142,21 @@ namespace Ginger.Run
                             else
                                 mExecutionsHistoryList.Add(runSetReport);
                         }
-                        catch { }
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+
+                        var runSetDataColl = rsLiteColl.FindAll();
+                        foreach (var runSet in runSetDataColl)
+                        {
+                            RunSetReport runSetReport = new RunSetReport();
+                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                            runSetReport.SetLiteDBData(runSet);
+                            mExecutionsHistoryList.Add(runSetReport);
+                        }
                     }
-                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
-                    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-                    
-                    var runSetDataColl = rsLiteColl.FindAll();
-                    foreach (var runSet in runSetDataColl)
-                    {
-                        RunSetReport runSetReport = new RunSetReport();
-                        runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                        runSetReport.SetLiteDBData(runSet);
-                        mExecutionsHistoryList.Add(runSetReport);
-                    }
+                    catch { }
                 }
+                
             });
 
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();

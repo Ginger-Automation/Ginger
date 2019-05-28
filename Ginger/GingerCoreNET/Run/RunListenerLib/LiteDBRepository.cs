@@ -258,5 +258,48 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
         }
+
+        internal override void CreateNewDirectory(string logFolder)
+        {
+            return;
+        }
+
+        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        {
+            return;
+        }
+
+        internal override void StartRunSet()
+        {
+            if (ExecutionLoggerManager.RunSetReport == null)
+            {
+                ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+
+                ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+                ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+                ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+                ExecutionLoggerManager.RunSetReport.Watch.Start();
+            }
+        }
+
+        internal override void EndRunSet()
+        {
+            if (ExecutionLoggerManager.RunSetReport != null)
+            {
+                SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                
+                if (WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus = ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = ExecutionLoggerManager.RunSetReport.LogFolder;
+                }
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, ExecutionLoggerManager.RunSetReport);
+                ExecutionLoggerManager.RunSetReport = null;
+            }
+        }
     }
 }
