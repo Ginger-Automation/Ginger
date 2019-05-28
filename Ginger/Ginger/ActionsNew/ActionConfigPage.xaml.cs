@@ -84,24 +84,25 @@ namespace Ginger.ActionLib
         {
         }
 
-        private void LoadXamlWithCode()
-        {
-            // temp - get from plugin the correct dll location !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Assembly a = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\SeleniumPluginWPF\bin\Debug\SeleniumPluginWPF.dll");
+        //!!! DO NOT DELETE - will reuse when we need action edit page with Xaml
+        //private void LoadXamlWithCode()
+        //{
+        //    // temp - get from plugin the correct dll location !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //    Assembly a = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\SeleniumPluginWPF\bin\Debug\SeleniumPluginWPF.dll");
 
-            string EditPage = "SeleniumPluginWPF.SpeedTestEditPage";
-            UIElement uc = (UIElement)a.CreateInstance(EditPage);
-            if (uc != null)
-            {
-                Page p1 = (Page)uc;
-                MainFrame.Content = p1;
-                BindControlsToAction((Grid)p1.Content);
-            }
-            else
-            {
-                MainFrame.Content = "ERROR: Cannot create action EditPage - " + EditPage;
-            }
-        }
+        //    string EditPage = "SeleniumPluginWPF.SpeedTestEditPage";
+        //    UIElement uc = (UIElement)a.CreateInstance(EditPage);
+        //    if (uc != null)
+        //    {
+        //        Page p1 = (Page)uc;
+        //        MainFrame.Content = p1;
+        //        BindControlsToAction((Grid)p1.Content);
+        //    }
+        //    else
+        //    {
+        //        MainFrame.Content = "ERROR: Cannot create action EditPage - " + EditPage;
+        //    }
+        //}
 
         private void BindControlsToAction(Panel container)
         {
