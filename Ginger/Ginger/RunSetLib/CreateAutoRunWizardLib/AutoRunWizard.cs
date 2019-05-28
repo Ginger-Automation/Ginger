@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
@@ -7,6 +25,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
+using System.IO;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -68,8 +87,23 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
             shortcut.Description = AutoRunShortcut.ShortcutFileName;
             shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
-            shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
-            shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+            if (AutoRunShortcut.ExecutorType == RunSetAutoRunShortcut.eExecutorType.GingerConsole)
+            {                
+                shortcut.TargetPath = "dotnet";//@"C:\Program Files\dotnet\dotnet.exe"
+                shortcut.Arguments = string.Format("\"{0}\" {1}", AutoRunShortcut.ExecuterFullPath, AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\""); 
+            }
+            else
+            {
+                shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+                shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+            }
+            
+            string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
+            if (System.IO.File.Exists(iconPath))
+            {
+                shortcut.IconLocation = iconPath;
+            }
+
             shortcut.Save();
         }
 

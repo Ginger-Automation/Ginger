@@ -112,7 +112,7 @@ namespace Ginger.MenusLib
 
         private static Page GetGlobalVariabelsPage()
         {
-            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.Instance.Solution));
+            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.Instance.Solution,null));
         }
 
         private static Page SharedActivitiesGroups()

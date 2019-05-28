@@ -83,7 +83,6 @@ namespace Ginger.ReporterLib
                         log.Info(messageToLog, exceptionToLog);
                         break;
                 }                
-                //Console.WriteLine(logLevel.ToString() + ": " + messageToLog, exceptionToLog);
             }
             catch (Exception ex)
             {
