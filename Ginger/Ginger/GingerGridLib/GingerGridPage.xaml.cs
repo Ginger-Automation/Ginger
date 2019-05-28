@@ -61,7 +61,7 @@ namespace Ginger.GingerGridLib
             this.Dispatcher.Invoke(()=> {
                 ShowNodes();
 
-                if (ShowSocketMonitorCheckBox.IsChecked == true)
+                if (WorkSpace.Instance.BetaFeatures.ShowSocketMonitor)
                 {
                     ShowSocketMonitor();                    
                 }
@@ -76,34 +76,32 @@ namespace Ginger.GingerGridLib
                 return;
             }
             //Check all nodes and create new Monitor if not exist
-            foreach (GingerNodeInfo ff in mGingerGrid.NodeList)
+            foreach (GingerNodeInfo gingerNodeInfo in mGingerGrid.NodeList)
             {
-                GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(ff);
+                GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(gingerNodeInfo);
                 if (gingerNodeProxy.Monitor == null)
                 {
                     gingerNodeProxy.Monitor = new GingerSocketMonitorWindow(gingerNodeProxy);
-                    gingerNodeProxy.StartRecording();
+                    gingerNodeProxy.StartRecordingSocketTraffic();
                 }
             }
         }
 
-        private void ShowSocketMonitorCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            ShowSocketMonitor();            
-        }
 
-        private void ShowSocketMonitorCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            foreach (GingerNodeInfo ff in mGingerGrid.NodeList)
-            {
-                GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(ff);
-                if (gingerNodeProxy.Monitor != null)
-                {
-                    gingerNodeProxy.Monitor.CloseMonitor();;
-                    gingerNodeProxy.Monitor = null;
-                }
-            }
-        }
+        // TODO: enable close monitors
+
+        //private void ShowSocketMonitorCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (GingerNodeInfo ff in mGingerGrid.NodeList)
+        //    {
+        //        GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(ff);
+        //        if (gingerNodeProxy.Monitor != null)
+        //        {
+        //            gingerNodeProxy.Monitor.CloseMonitor();;
+        //            gingerNodeProxy.Monitor = null;
+        //        }
+        //    }
+        // }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {

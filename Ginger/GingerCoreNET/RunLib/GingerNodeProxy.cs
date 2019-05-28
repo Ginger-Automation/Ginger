@@ -29,8 +29,8 @@ namespace GingerCoreNET.RunLib
         public GingerGrid GingerGrid { get; set; }
 
         GingerNodeInfo mGingerNodeInfo;
-
-        bool mRecording = false;
+        
+        bool mRecordingSocketTraffic = false;
 
         private bool mIsConnected = false;
         // This is the socket connected or not - doesn't mean if the driver is started or closed
@@ -47,9 +47,9 @@ namespace GingerCoreNET.RunLib
             mGingerNodeInfo = GNI;
         }
 
-        public void StartRecording()
+        public void StartRecordingSocketTraffic()
         {
-            mRecording = true;
+            mRecordingSocketTraffic = true;
             Monitor.ShowMonitor(this);
         }
 
@@ -96,7 +96,7 @@ namespace GingerCoreNET.RunLib
 
         public NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
-            if (!mRecording)
+            if (!mRecordingSocketTraffic)
             {
                 return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
             }

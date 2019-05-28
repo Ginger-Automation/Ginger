@@ -24,7 +24,6 @@
             <UserControls:ucButton x:Name="xClearButton" ToolTip="Clear"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Delete" Click="xClearButton_Click"/>
             <UserControls:ucButton x:Name="xPingButton" ToolTip="Ping"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="Ping" Click="xPingButton_Click"/>
             <Label x:Name="StatusLabel">Status</Label>
-            <CheckBox x:Name="ShowSocketMonitorCheckBox" Margin="10" IsChecked="True" Checked="ShowSocketMonitorCheckBox_Checked" Unchecked="ShowSocketMonitorCheckBox_Unchecked">Show socket monitor</CheckBox>
         </StackPanel>
         
         

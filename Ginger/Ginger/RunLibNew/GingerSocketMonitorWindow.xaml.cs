@@ -43,7 +43,7 @@ namespace Ginger.Drivers.CommunicationProtocol
 
         private void StartRecording()
         {
-            mGingerNodeProxy.StartRecording();                        
+            mGingerNodeProxy.StartRecordingSocketTraffic();                        
         }
       
 
