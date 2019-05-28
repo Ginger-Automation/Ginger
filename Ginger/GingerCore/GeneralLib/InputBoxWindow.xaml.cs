@@ -144,16 +144,19 @@ namespace GingerCore.GeneralLib
                     Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot be empty");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
-                if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
+                if (CharsNotAllowed != null)
                 {
-                    System.Text.StringBuilder builder = new System.Text.StringBuilder();
-                    foreach (char value in CharsNotAllowed)
+                    if (!(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                     {
-                        builder.Append(value);
-                        builder.Append(" ");
+                        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+                        foreach (char value in CharsNotAllowed)
+                        {
+                            builder.Append(value);
+                            builder.Append(" ");
+                        }
+                        Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot contain characters like: " + builder);
+                        return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                     }
-                    Reporter.ToUser(eUserMsgKey.ValueIssue, "Value cannot contain characters like: " + builder);
-                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }
             return returnWindow;
