@@ -293,8 +293,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
-
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
@@ -302,7 +301,7 @@ namespace Ginger.Run
             }
             else
             {
-              
+
 
                 string runSetFolder = executionLoggerHelper.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
 
