@@ -1052,7 +1052,6 @@
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationProcessTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationVersionTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
