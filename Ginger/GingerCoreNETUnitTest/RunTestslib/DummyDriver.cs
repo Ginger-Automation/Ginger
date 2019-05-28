@@ -25,54 +25,41 @@ namespace GingerCoreNETUnitTests.RunTestslib
     [GingerService(Id : "DummyService", Description: "Dummy Service")]
     public class DummyDriver : IServiceSession
     {
-        public List<string> Platforms => throw new NotImplementedException();
-
-        // public override string Name { get { return "DummyDriver"; } }
-
-        //public override void Stop()
-        //{
-        //    Console.WriteLine("CloseDriver");
-        //}
-
-        //public override void Start()
-        //{
-        //    Console.WriteLine("StartDriver");
-        //}
-
-
-
-        //[GingerAction("A1", "A1 desc")]
-        //public void A1(GingerAction act)
-        //{
-        //    Console.WriteLine("A1");
-        //    act.ExInfo = "A1 Result";
-        //}
-
-
-        //[GingerAction("A2", "A2 desc")]
-        //public void A2(GingerAction act)
-        //{
-        //    Console.WriteLine("A2");
-        //    act.ExInfo = "A2 Result";
-        //}
-
         public void StartSession()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Dummy Driver Session Started");
         }
 
         public void StopSession()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Dummy Driver Session Ended");
         }
 
-        //[GingerAction("Time", "Get current driver time")]
-        //public void Time(GingerAction act)
-        //{
-        //    Console.WriteLine("Echo");
-        //    act.Output.Values.Add(new ActionOutputValue() { Param = "CurrentTime", ValueString = DateTime.Now.ToString() });
-        //    act.ExInfo = "Echo Result";
-        //}
+
+        [GingerAction("A1", "A1 desc")]
+        public void A1(IGingerAction act)
+        {
+            Console.WriteLine("A1");
+            act.AddExInfo("A1 Result");
+        }
+
+
+        [GingerAction("A2", "A2 desc")]
+        public void A2(GingerAction act)
+        {
+            Console.WriteLine("A2");
+            act.AddExInfo("A2 Result");
+        }
+
+        
+
+        [GingerAction("Echo", "Echo string as output")]
+        public void Echo(GingerAction act, string text)
+        {
+            Console.WriteLine("Echo");
+            act.AddOutput("echo", text);
+            act.AddExInfo("Echo - " + text);
+        }
 
 
 

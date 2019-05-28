@@ -30,12 +30,12 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
             string txt = caption + Environment.NewLine;
             txt += messageText;
             // TODO: change console color
-            switch (buttonsType )
-            {
+            // switch (buttonsType )
+            // {
                 // TODO: !!!!!!!!!!!!!!!!!!!!!!
                 // show buttons [Ok] - O
                 // Y, N, C
-            }
+            // }
             Console.WriteLine(txt);
 
             Console.ReadKey();

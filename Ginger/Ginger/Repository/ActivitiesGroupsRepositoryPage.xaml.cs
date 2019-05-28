@@ -39,8 +39,7 @@ namespace Ginger.Repository
     public partial class ActivitiesGroupsRepositoryPage : Page
     {
         readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
-        BusinessFlow mBusinessFlow;
-        bool TreeInitDone = false;
+        BusinessFlow mBusinessFlow;        
         bool mInTreeModeView = false;
 
         Context mContext = new Context();
