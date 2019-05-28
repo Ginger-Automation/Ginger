@@ -339,6 +339,7 @@ namespace amdocs.ginger.GingerCoreNET
                 solution.SetReportsConfigurations();
                 Solution = solution;
                 UserProfile.LoadRecentAppAgentMapping();
+
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
