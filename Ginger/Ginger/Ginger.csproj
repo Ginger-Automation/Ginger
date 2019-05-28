@@ -2056,26 +2056,14 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
-    <Resource Include="Images\%40AddFile_16x16.png" />
-    <Content Include="StaticDrivers\selenium-server-standalone.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Index.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\SearchIndex.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Import_From_ASAP.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\%40GingerByAmdocsLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\BeatLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\CustomerLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger_by_amdocs.png" />
-    <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
@@ -2096,8 +2084,7 @@
     <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.2c0e1d7eb578e07b954e.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.e156f56f282d9d50f900.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.3bacd6129aa8eff40478.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
@@ -2165,6 +2152,19 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\primeicons.473e2a746d3c151d7dca.ttf" />
     <None Include="WebReportApp\Ginger-Web-Client\primeicons.71bb3d79dcf18b45ae84.woff" />
     <None Include="WebReportApp\Ginger-Web-Client\primeicons.b8eccb1059ea5faaf6d8.eot" />
+    <Resource Include="Images\%40AddFile_16x16.png" />
+    <Content Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\Index.mht">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\SearchIndex.mht">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\Import_From_ASAP.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
     <None Include="ALMRESTConfiguration\appsettings.json">
