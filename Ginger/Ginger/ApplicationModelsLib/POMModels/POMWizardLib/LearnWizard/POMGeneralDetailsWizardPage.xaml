@@ -31,20 +31,22 @@
                     <TextBox x:Name="xDescriptionTextBox" TextWrapping="Wrap" AutomationProperties.AutomationId="Description POMID" Text="" Style="{StaticResource $TextBoxStyle}" Height="50"/>
                     <Ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" Margin="-5,0,0,0"/>
                 </StackPanel>
-                <StackPanel Margin="-5,0,0,0" Orientation="Horizontal">
-                    <StackPanel Margin="0,0,0,0" HorizontalAlignment="Left" >
-                        <Label Margin="0,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <RadioButton x:Name="xPageUrlRadioBtn" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" Margin="5,5,0,0" />
-                        <RadioButton x:Name="xBusinessFlowRadioBtn" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="5,5,0,0" Checked="xRadioBtn_Checked" >
+
+                <StackPanel Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" >
+                        <Label Style="{StaticResource $LabelStyle}" Content="Page Loading Option:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        <RadioButton x:Name="xPageUrlRadioBtn"  Content="URL"  Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />
+                        <RadioButton x:Name="xBusinessFlowRadioBtn" Tag="radPageURL" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="xRadioBtn_Checked" >
                             <RadioButton.Content>
                                 <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
                             </RadioButton.Content>
                         </RadioButton>
                     </StackPanel>
-                
-                    <StackPanel Margin="10,25,0,0" x:Name="xPageUrlStackPanel" >
-                        <TextBox x:Name="xURLTextBox" AutomationProperties.AutomationId="PageURL POMID" Width="400" HorizontalAlignment="Left" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold"  />
-                        <Frame VerticalAlignment="Top" x:Name="xFrameBusinessFlowControl" Margin="0,-18,0,0" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
+                    <StackPanel Margin="0,0,0,0">
+                        <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
+                            <TextBox x:Name="xURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" FontWeight="Bold" TextWrapping="NoWrap" Height="20" Width="330" Margin="0,0,0,0"/>
+                        </StackPanel>
+                        <Frame VerticalAlignment="Top" Margin="-2,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
