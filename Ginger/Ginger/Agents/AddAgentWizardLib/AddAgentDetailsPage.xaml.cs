@@ -70,9 +70,18 @@ namespace Ginger.Agents.AddAgentWizardLib
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverInfo));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
-                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
-                    xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
-       
+                    if (xDriverTypeComboBox.Items.Count > 0)
+                    {
+                        xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
+                    }
+
+
+                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+
+                    xDriverTypeComboBox.Visibility = Visibility.Visible;
+
+
+
                     break;               
             }
 
@@ -93,34 +102,30 @@ namespace Ginger.Agents.AddAgentWizardLib
 
             if (xDriverTypeComboBox.Items.Count > 0)
             {
+                //mWizard.Agent.DriverInfo = DriversforPlatform[0];
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
             }
 
-            if (xDriverTypeComboBox.Items.Count > 1)
-            {
-                xDriverTypeStackPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
-            }
+      
         }
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {           
+        {
+            xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
             xDriverSubTypeComboBox.Items.Clear();
             xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
             if (xDriverTypeComboBox.SelectedItem!=null)
             {
-                xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
+                
                 if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
                 {
-                    mWizard.Agent.DriverInfo = DI;
+                  mWizard.Agent.DriverInfo = DI;
                     foreach (var service in mWizard.Agent.DriverInfo.services)
                     {
                         xDriverSubTypeComboBox.Items.Add(service);
                     }
-
+                        xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
+                    xDriverSubTypeComboBox.SelectedItem = xDriverSubTypeComboBox.Items[0];
                     if (DI.isDriverPlugin)
                     {
                         mWizard.Agent.AgentType = Agent.eAgentType.Service;
@@ -131,13 +136,14 @@ namespace Ginger.Agents.AddAgentWizardLib
                         mWizard.Agent.AgentType = Agent.eAgentType.Driver;
                     }
 
-                    xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
+          
                    if(DI.services.Count==0)
                     {
                         mWizard.Agent.InitDriverConfigs();
                     }
                 }
             }
+        
         }
 
         private void XDriverSubTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -145,10 +151,10 @@ namespace Ginger.Agents.AddAgentWizardLib
             if (xDriverTypeComboBox.SelectedItem is DriverInfo DI && xDriverSubTypeComboBox != null)
             {
                 mWizard.Agent.DriverInfo = DI;
-                foreach (var service in mWizard.Agent.DriverInfo.services)
-                {
-                    xDriverSubTypeComboBox.Items.Add(service);
-                }
+                //foreach (var service in mWizard.Agent.DriverInfo.services)
+                //{
+                //    xDriverSubTypeComboBox.Items.Add(service);
+                //}
                 string SubdriverType = xDriverSubTypeComboBox.SelectedItem.ToString();
                 if (DI.isDriverPlugin)
                 {
