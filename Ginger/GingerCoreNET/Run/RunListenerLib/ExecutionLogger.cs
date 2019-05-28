@@ -16,39 +16,26 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Run;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.FlowControlLib;
-using GingerCore.Variables;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     // Each ExecutionLogger instance should be added to GingerRunner Listeneres
     // Create new ExecutionLogger for each run 
 
-    public abstract class ExecutionLogger 
+    public abstract class ExecutionLogger
     {
         static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
@@ -59,11 +46,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private eExecutedFrom ExecutedFrom;
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
-        uint meventtime;
+        // uint meventtime;
         public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
-        ProjEnvironment mExecutionEnvironment = null;
-        int mBusinessFlowCounter { get; set; }
+        ProjEnvironment mExecutionEnvironment = null;        
 
         public ProjEnvironment ExecutionEnvironment
         {

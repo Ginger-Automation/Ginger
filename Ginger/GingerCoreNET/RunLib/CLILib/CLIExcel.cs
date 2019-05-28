@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
             return value;
         }

@@ -961,9 +961,6 @@
     <Compile Include="GeneralWindows\Run Set Pages\StatusItem.xaml.cs">
       <DependentUpon>StatusItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml.cs">
-      <DependentUpon>AddPluginPackageToSolutionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageWizard.cs" />
     <Compile Include="PluginsLibNew\AddPluginWizardLib\PluginPackageInfoPage.xaml.cs">
       <DependentUpon>PluginPackageInfoPage.xaml</DependentUpon>
@@ -3040,10 +3037,6 @@
     <Page Include="Imports\CDL\ImportCDLWizardProcessPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageToSolutionPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="PluginsLibNew\AddPluginWizardLib\PluginPackageInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>

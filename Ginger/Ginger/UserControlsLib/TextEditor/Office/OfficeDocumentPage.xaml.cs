@@ -27,9 +27,7 @@ namespace Ginger.UserControlsLib.TextEditor.Office
     /// Interaction logic for OfficeDocumentPage.xaml
     /// </summary>
     public partial class OfficeDocumentPage : System.Windows.Controls.Page, ITextEditorPage 
-    {
-        private static Microsoft.Office.Interop.Word.Application appWord = null;
-
+    {        
         string mFileName;
 
         public OfficeDocumentPage()

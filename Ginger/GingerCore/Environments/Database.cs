@@ -413,8 +413,10 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
                         }
-                        else { return false; }
-                        break;
+                        else
+                        {
+                            return false;
+                        }                        
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
                         bool isConnectionCB;
@@ -424,8 +426,11 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
                         }
-                        else { return false; }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
+                        
 
                     case eDBTypes.MySQL:
                         oConn = new MySqlConnection();
@@ -441,8 +446,10 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
                         }
-                        else { return false; }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
                 }
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
                 {

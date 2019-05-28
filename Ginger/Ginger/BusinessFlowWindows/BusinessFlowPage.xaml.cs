@@ -44,7 +44,7 @@ namespace Ginger.BusinessFlowFolder
     public partial class BusinessFlowPage : Page
     {
         BusinessFlow mBusinessFlow;
-        RepositoryPage mReposiotryPage;
+        // RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
         ActivitiesPage mActivitiesPage;
