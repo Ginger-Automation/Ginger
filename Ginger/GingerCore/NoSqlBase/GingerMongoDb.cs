@@ -234,7 +234,12 @@ namespace GingerCore.NoSqlBase
                 int endIndex = inputSQL.IndexOf(")", startIndex);
                 queryParameterValue = inputSQL.Substring(startIndex, endIndex - startIndex);
             }
-            if (param.Equals("sort")&& string.IsNullOrEmpty(queryParameterValue))
+            queryParameterValue = queryParameterValue.Replace(param + "(", "");
+            if (param.Equals("find") && string.IsNullOrEmpty(queryParameterValue))
+            {
+                return "{}";
+            }
+            if (param.Equals("sort") && string.IsNullOrEmpty(queryParameterValue))
             {
                 return "{ _id:-1 }";
             }
@@ -242,7 +247,7 @@ namespace GingerCore.NoSqlBase
             {
                 return "0";
             }
-            return queryParameterValue.Replace(param + "(", "");
+            return queryParameterValue;
         }
         public override void PerformDBAction()
         {
@@ -254,9 +259,16 @@ namespace GingerCore.NoSqlBase
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;
-
+            string collectionName = "";
+            if (Action== Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
+            {
+                collectionName = Act.Table;
+            }
+            else
+            {
+                collectionName = GetCollectionName(SQLCalculated);
+            }
             var DB = mMongoClient.GetDatabase(DbName);
-            string collectionName = GetCollectionName(SQLCalculated);
             var collection = DB.GetCollection<BsonDocument>(collectionName);
 
             try
@@ -265,12 +277,7 @@ namespace GingerCore.NoSqlBase
                 {
                     case Actions.ActDBValidation.eDBValidationType.FreeSQL:
 
-                        if (SQLCalculated.Contains("insertOne"))
-                        {
-                            BsonDocument insertDocumnet = BsonDocument.Parse(GetUpdateQueryParams(SQLCalculated));
-                            collection.InsertOne(insertDocumnet);
-                        }
-                        else if (SQLCalculated.Contains("insertMany"))
+                        if (SQLCalculated.Contains("insertMany"))
                         {
                             string queryParam = GetUpdateQueryParams(SQLCalculated).ToString();
                             Newtonsoft.Json.Linq.JArray jsonArray = Newtonsoft.Json.Linq.JArray.Parse(queryParam);
@@ -281,6 +288,11 @@ namespace GingerCore.NoSqlBase
                                 documents.Add(document);
                             }
                             collection.InsertMany(documents);
+                        }
+                        else if (SQLCalculated.Contains("insertOne") || SQLCalculated.Contains("insert"))
+                        {
+                            BsonDocument insertDocumnet = BsonDocument.Parse(GetUpdateQueryParams(SQLCalculated));
+                            collection.InsertOne(insertDocumnet);
                         }
                         else
                         {
@@ -314,10 +326,8 @@ namespace GingerCore.NoSqlBase
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue:
-                        string table = Act.Table;
                         string col = Act.Column;
                         string where = Act.Where;
-                        var coll = DB.GetCollection<BsonDocument>(table);
                         string filter = "";
                         var isNumeric = double.TryParse(where, out double n);
 
@@ -342,7 +352,7 @@ namespace GingerCore.NoSqlBase
                                 filter = "{" + col + ":\"" + where + "\"}";
                             }
                         }
-                        var resultSimpleSQLOne = coll.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
+                        var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
                         Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
                         break;
                     default:                        

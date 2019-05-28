@@ -156,9 +156,12 @@ namespace Ginger
         }
 
         public void ClearFilters()
-        {
-            txtSearch.Text = string.Empty;
-            Tags.Clear();
+        {            
+            this.Dispatcher.Invoke(() =>
+            {
+                txtSearch.Text = string.Empty;
+                Tags.Clear();
+            });
         }
 
 
@@ -339,14 +342,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {
-            grdMain.CommitEdit();
-            grdMain.CancelEdit();
+        {            
             this.Dispatcher.Invoke(() =>
             {
+                grdMain.CommitEdit();
+                grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();
-            });
+                mCollectionView.Refresh();               
+            });            
         }
 
 
