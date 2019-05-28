@@ -34,7 +34,7 @@ namespace Ginger.Reports
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
-
+        bool isControlsSet = false;
         //private static ExecutionResultsConfiguration mInstance;
         
         //public static ExecutionResultsConfiguration Instance
@@ -59,6 +59,7 @@ namespace Ginger.Reports
             _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
+            isControlsSet = true;
         }
 
         private void SetControls()
@@ -172,7 +173,10 @@ namespace Ginger.Reports
                 ExecutionResultFolderPnl.IsEnabled = true;
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
-                Reporter.ToUser(eUserMsgKey.SettingsChangeRequireRestart, "Save and");
+                if (isControlsSet)
+                {
+                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
+                }
             }
         }
         private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
@@ -182,7 +186,10 @@ namespace Ginger.Reports
                 ExecutionResultFolderPnl.IsEnabled = true;
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
-                Reporter.ToUser(eUserMsgKey.SettingsChangeRequireRestart, "Save and");
+                if (isControlsSet)
+                {
+                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
+                }
             }
         }
     }

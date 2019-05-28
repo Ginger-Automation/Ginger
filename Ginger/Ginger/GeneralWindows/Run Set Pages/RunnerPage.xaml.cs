@@ -639,13 +639,14 @@ namespace Ginger.Run
             UpdateBusinessFlowGrid();
         }
 
-        private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e)
+        private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e) 
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
+            mRunner.RunLevel = eRunLevel.Runner;
             RunRunner();
         }
         public async void RunRunner()
@@ -658,11 +659,6 @@ namespace Ginger.Run
             WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
             mRunner.ResetRunnerExecutionDetails();
             WorkSpace.Instance.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-            {
-                WorkSpace.Instance.RunsetExecutor.SetRunnersExecutionLoggerConfigs();
-                mRunner.ExecutionLoggerManager.RunSetStart("", WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize, DateTime.UtcNow);
-            }
             await mRunner.RunRunnerAsync();
             GingerCore.General.DoEvents();   //needed?  
         }

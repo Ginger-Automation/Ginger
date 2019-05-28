@@ -71,7 +71,12 @@ namespace Ginger.Run
         SpecificActivity,
         SpecificBusinessFlow
     }
-
+    public enum eRunLevel
+    {
+        NA,
+        Runner,
+        BusinessFlow
+    }
 
     public class GingerRunner : RepositoryItemBase
     {
@@ -158,13 +163,13 @@ namespace Ginger.Run
         }        
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
-        public eExecutedFrom ExecutedFrom;        
+        public eExecutedFrom ExecutedFrom;
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
 
 
-        
-        
+
+        public eRunLevel RunLevel { get; set; }
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
@@ -457,7 +462,10 @@ namespace Ginger.Run
                 {
                     return;
                 }
-
+                if (RunLevel == eRunLevel.Runner)
+                {
+                    ExecutionLoggerManager.mExecutionLogger.StartRunSet();
+                }
                 if (doContinueRun == false)
                 {
                     NotifyRunnerRunstart();
@@ -575,20 +583,15 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    if (doContinueRun == false && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod != DataRepositoryMethod.LiteDB)
+                    if (doContinueRun == false)
                     {
                         // ExecutionLogger.GingerEnd();                    
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
-                    if(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                    if(RunLevel == eRunLevel.Runner)
                     {
-                        NotifyRunnerRunEnd();
-                        if(ExecutionLoggerManager.RunSetReport == null)
-                        {
-                            ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                        }
-                        ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
-                        ExecutionLoggerManager.RunSetEnd();
+                        ExecutionLoggerManager.mExecutionLogger.EndRunSet();
+                        RunLevel = eRunLevel.NA;
                     }
                 }   
                 else
@@ -3300,10 +3303,13 @@ namespace Ginger.Run
             }
 
             if (continueLevel == eContinueLevel.Runner)
+            {
                 RunRunner(true);
+            }
             else
+            {
                 RunBusinessFlow(null, true, true);
-
+            }
             return true;
         }
         
