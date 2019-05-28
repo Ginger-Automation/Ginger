@@ -58,6 +58,7 @@ namespace Ginger.Repository
         {
             mBusinessFlow = bf;
             mContext.BusinessFlow = mBusinessFlow;
+            xVariablesGrid.ClearFilters();
         }
 
         private void SetGridAndTreeData()

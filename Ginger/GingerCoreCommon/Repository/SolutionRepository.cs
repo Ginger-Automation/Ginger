@@ -165,6 +165,7 @@ namespace Amdocs.Ginger.Repository
 
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
+            repositoryItem.CreateBackup();
         }      
 
         public void Close()
@@ -203,7 +204,12 @@ namespace Amdocs.Ginger.Repository
         public RepositoryItemBase GetRepositoryItemByPath(string filePath)
         {
             RepositoryItemBase repoItem = null;
-            ObservableList<RepositoryItemBase> repoItemList = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath)).GetFolderRepositoryItems();
+            ObservableList<RepositoryItemBase> repoItemList = new ObservableList<RepositoryItemBase>();
+            RepositoryFolderBase repositoryFolderBase = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath));
+            if(repositoryFolderBase != null)
+            {
+                repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
+            }             
             repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
             return repoItem;
         }
