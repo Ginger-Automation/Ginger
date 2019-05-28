@@ -342,21 +342,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {
-            grdMain.CommitEdit();
-            grdMain.CancelEdit();
+        {            
             this.Dispatcher.Invoke(() =>
             {
-                try
-                {
-                    CollectFilterData();
-                    mCollectionView.Refresh();
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while Tags Stack Panl Changed event", ex);
-                }
-            });
+                grdMain.CommitEdit();
+                grdMain.CancelEdit();
+                CollectFilterData();
+                mCollectionView.Refresh();               
+            });            
         }
 
 
