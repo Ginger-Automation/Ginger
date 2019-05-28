@@ -192,7 +192,7 @@ namespace Amdocs.Ginger.Common
 
             #region Settings
             Reporter.UserMsgsPool.Add(eUserMsgKey.SettingsChangeRequireRestart, new UserMsg(eUserMsgType.INFO, "Settings Change", "For the settings change to take affect you must '{0}' restart Ginger.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangesRequireRestart, new UserMsg(eUserMsgType.INFO, "Restart to apply", "The changes will be applied only after save and restart Ginger’", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangesRequireRestart, new UserMsg(eUserMsgType.INFO, "Restart to apply", "The changes will be applied only after save and restart Ginger", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Settings
 
             #region Repository
