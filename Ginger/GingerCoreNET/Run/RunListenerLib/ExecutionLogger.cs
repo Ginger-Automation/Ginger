@@ -41,8 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
-        DateTime mCurrentExecutionDateTime;
-        int BFCounter = 0;
+        DateTime mCurrentExecutionDateTime;        
         private eExecutedFrom ExecutedFrom;
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
