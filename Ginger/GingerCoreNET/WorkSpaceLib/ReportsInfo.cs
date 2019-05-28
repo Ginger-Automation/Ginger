@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
 {
@@ -28,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
         {
             get
             {
-                return System.IO.Path.GetDirectoryName(System.IO.Path.GetTempFileName()) + "\\Ginger_Email_Reports";
+                return Path.Combine(Path.GetDirectoryName(Path.GetTempFileName()) + "Ginger_Email_Reports");
             }
         }
     }
