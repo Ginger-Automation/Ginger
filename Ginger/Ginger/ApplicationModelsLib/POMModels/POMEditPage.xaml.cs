@@ -273,7 +273,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AgentStartedHandler()
         {
-            GoToPageURL();
+            if (string.IsNullOrEmpty(mPOM.PageURL) == false && mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
+            {
+                GoToPageURL();
+            }
         }
 
         private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)

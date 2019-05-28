@@ -456,10 +456,12 @@ namespace Ginger.Run
 
         public void RunRunner(bool doContinueRun = false)
         {
+            bool runnerExecutionSkipped = false;
             try
             {
-                if (!Active)
+                if (Active == false || BusinessFlows.Count == 0)
                 {
+                    runnerExecutionSkipped = true;
                     return;
                 }
                 if (RunLevel == eRunLevel.Runner)
@@ -569,7 +571,7 @@ namespace Ginger.Run
                 //Post execution items to do
                 SetPendingBusinessFlowsSkippedStatus();
                 
-                if (Active)
+                if (!runnerExecutionSkipped)
                 {
                     if (!mStopRun)//not on stop run
                     {

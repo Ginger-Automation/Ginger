@@ -229,7 +229,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (SourceControlURL.IndexOf(".git") != -1)
                 {
                     // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL.Substring(0, SourceControlURL.IndexOf(".git") + 4));
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
                 }
                 else
                 {

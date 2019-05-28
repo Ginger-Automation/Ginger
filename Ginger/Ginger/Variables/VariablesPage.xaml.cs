@@ -155,6 +155,7 @@ namespace Ginger.Variables
             {
                 LoadGridData();
             }
+            grdVariables.ClearFilters();
         }
 
         public void UpdateActivity(Activity activity)
