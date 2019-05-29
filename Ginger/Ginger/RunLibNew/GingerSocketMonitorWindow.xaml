@@ -28,7 +28,7 @@
 
 
         <ListView x:Name="MainListView" Grid.Row="1" HorizontalContentAlignment="Stretch" SelectionChanged="MainListView_SelectionChanged">
-            <ListBox.ItemTemplate>
+            <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="4">
                         <Grid.ColumnDefinitions>
@@ -100,7 +100,7 @@
                         <UserControls:ImageMakerControl Grid.Column="3" ImageType="{Binding StatusIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" Text="{Binding Name}" Foreground="Black"/>
-                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Text="{Binding Info}" Foreground="Black"/>
+                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Text="{Binding ascii}" Foreground="Black"/>
                         <TextBlock Grid.Column="6" VerticalAlignment="Center" Text="{Binding Len}" ToolTip="Actual packet length" HorizontalAlignment="Right" Foreground="Black"/>
                         <TextBlock Grid.Column="7" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseconds" HorizontalAlignment="Right" Foreground="Black"/>
 
@@ -110,7 +110,7 @@
 
                     </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
+            </ListView.ItemTemplate>
 
         </ListView>
 

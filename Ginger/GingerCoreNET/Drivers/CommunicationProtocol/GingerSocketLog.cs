@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Text;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
@@ -41,6 +42,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             Info = pl.ToString();
             Len = pl.PackageLen();
             PayLoad = pl;
+        }
+
+        public string ascii { get {
+                byte[] bytes = PayLoad.GetPackage();
+                string asciiString = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                return asciiString;
+            }
         }
     }
 }
