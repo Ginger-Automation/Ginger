@@ -319,7 +319,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             ApplicationAPIModel AAMBDuplicate = SetAPIModelData(AAMB, actWebAPIModel);
 
-            //Initilizing Act Properties
+            //Initializing Act Properties
             actWebAPIBase.AddNewReturnParams = actWebAPIModel.AddNewReturnParams;
             actWebAPIBase.SolutionFolder = actWebAPIModel.SolutionFolder;
             actWebAPIBase.SupportSimulation = actWebAPIModel.SupportSimulation;
@@ -440,7 +440,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             SoapUIUtils soapUIUtils = new SoapUIUtils(act, SoapUIDirectoryPath, SoapUIExecutionOutputsDirectoryPath, SoapUISettingFile, SoapUISettingFilePassword, SoapUIProjectPassword, RunSoapUIProcessAsAdmin, SoapUIProcessRedirectStandardError, SoapUIProcessRedirectStandardOutput, SoapUIProcessUseShellExecute, SoapUIProcessWindowStyle, SoapUIProcessCreateNoWindow);
             string command = string.Empty;
 
-            //return the command string and checking if it been populated succesfully
+            //return the command string and checking if it been populated successfully
             if (soapUIUtils.Command(ref command))
                 //checking if the process got started successfully
                 if (soapUIUtils.StartProcess(command))

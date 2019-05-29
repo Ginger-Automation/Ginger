@@ -77,7 +77,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occured while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
             }
         }
 
