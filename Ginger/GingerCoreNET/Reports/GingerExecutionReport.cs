@@ -2969,7 +2969,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
                     System.IO.Directory.CreateDirectory(logsFolder);
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                    WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
                 }
             }
 

@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
                         logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
                         System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                     }
                 }
             }
