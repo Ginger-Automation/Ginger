@@ -895,7 +895,7 @@ namespace GingerCore.Actions.REST
 
             if (convertedActWebAPIRest.ReturnValues != null && convertedActWebAPIRest.ReturnValues.Count != 0)
             {
-                //Old rest action add response as --> Respose
+                //Old rest action add response as --> Response
                 //And new adds it as Response:
                 // so we update it when converting from old action to new
                 ActReturnValue ARC = convertedActWebAPIRest.ReturnValues.Where(x => x.Param == "Respose").FirstOrDefault();

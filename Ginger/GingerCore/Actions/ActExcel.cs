@@ -634,7 +634,7 @@ namespace GingerCore.Actions
                             Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
                             string txt = Value;
 
-                            //keeping the translation of vars to support prevoius implementation
+                            //keeping the translation of vars to support previous implementation
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
                             {                                
@@ -673,7 +673,7 @@ namespace GingerCore.Actions
                             Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
                             string txt = Value;
 
-                            //keeping the translation of vars to support prevoius implementation
+                            //keeping the translation of vars to support previous implementation
                             VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                             if (var != null)
                             {
