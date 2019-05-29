@@ -20,6 +20,11 @@ namespace Amdocs.Ginger.Plugin.Core
         public DefaultAttribute()
         {
         }
+
+        public override string ToString()
+        {
+          return  DefaultValue.ToString();
+        }
     }
   
 }

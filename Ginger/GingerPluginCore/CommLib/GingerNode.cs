@@ -558,6 +558,7 @@ namespace GingerCoreNET.DriversLib
             catch(Exception ex)
             {
                 Console.WriteLine("Failure when setting value in Service {0} ", ex.Message);
+                throw ex;
             }
 
         }

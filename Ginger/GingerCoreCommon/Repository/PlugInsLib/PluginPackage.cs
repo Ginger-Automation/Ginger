@@ -349,6 +349,12 @@ namespace Amdocs.Ginger.Repository
                                         }
 
                                 }
+                                if (Attribute.GetCustomAttribute(mi, typeof(DefaultAttribute), false) is DefaultAttribute DefaultValue)
+                                {
+
+                                    Config.DefaultValue = DefaultValue == null ? string.Empty : DefaultValue.ToString();
+                                }
+                              
                                 pluginServiceInfo.Configs.Add(Config);
                             }                          
                         }

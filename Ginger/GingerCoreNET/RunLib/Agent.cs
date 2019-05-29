@@ -344,6 +344,9 @@ namespace GingerCore
         }
 
 
+
+
+
         System.Diagnostics.Process mProcess;
         Mutex mutex = new Mutex();
         // TODO: move to ExecuteOnPlugin
@@ -648,6 +651,10 @@ namespace GingerCore
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                         GingerNodeProxy.CloseDriver();
+
+                        gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                      
+                   
                         if (mProcess != null)
                         {
                             // mProcess.Kill();
