@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 SaveObjToReporsitory(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
             }
-            else
+            else if (ExecutionLogfolder != null && businessFlow.ExecutionLogFolder != null)
             {
                 SaveObjToReporsitory(AGR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);

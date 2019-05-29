@@ -627,11 +627,11 @@ namespace Ginger.Run
             }
         }
         //Move to GingerRunnerLogger
-        public void GenerateBusinessFlowOfflineReport(ProjEnvironment environment, string reportsResultFolder, BusinessFlow BusinessFlow, string RunsetName = null)
+        public void GenerateBusinessFlowOfflineReport(Context context, string reportsResultFolder, string RunsetName = null)
         {
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             string exec_folder = string.Empty;
-            exec_folder = GenerateBusinessflowOfflineExecutionLogger(environment, BusinessFlow, RunsetName);
+            exec_folder = GenerateBusinessflowOfflineExecutionLogger(context, RunsetName);
             if (string.IsNullOrEmpty(exec_folder))
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
@@ -659,13 +659,12 @@ namespace Ginger.Run
         }
         public string GenerateBusinessFlowOfflineFolder(string executionLoggerConfFolder, string businessFlowName, string RunsetName = null)
         { 
-            string BFExtention = mContext.BusinessFlow.Name + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss");
+            string BFExtention = businessFlowName + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss");
             string exec_folder = (string.IsNullOrEmpty(RunsetName)) ? BFExtention : folderNameNormalazing(RunsetName) + "_" + BFExtention;
             exec_folder = executionLoggerHelper.GetLoggerDirectory(executionLoggerConfFolder + "\\" + exec_folder);
             return exec_folder;
         }
-        //Move to GingerRunnerLogger
-        public string GenerateBusinessflowOfflineExecutionLogger(ProjEnvironment environment, BusinessFlow BusinessFlow, string RunsetName = null)
+        public string GenerateBusinessflowOfflineExecutionLogger(Context context, string RunsetName = null)
         {
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -673,12 +672,11 @@ namespace Ginger.Run
                 return string.Empty;
             }
             string exec_folder = string.Empty;
-            exec_folder = GenerateBusinessFlowOfflineFolder(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, BusinessFlow.Name, RunsetName);
+            exec_folder = GenerateBusinessFlowOfflineFolder(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, context.BusinessFlow.Name, RunsetName);
             Configuration.ExecutionLoggerConfigurationIsEnabled = true;
-            mContext.Runner.SetBFOfflineData(BusinessFlow, (mContext.Runner.RunListeners[0] as ExecutionLoggerManager), exec_folder);
+            context.Runner.SetBFOfflineData(context.BusinessFlow, (context.Runner.RunListeners[0] as ExecutionLoggerManager), exec_folder);
             return exec_folder;
         }
-        //Move to GingerRunnerLogger
         public bool OfflineRunnerExecutionLog(GingerRunner runner, string logFolderPath, int runnerCount = 0)
         {
             try
