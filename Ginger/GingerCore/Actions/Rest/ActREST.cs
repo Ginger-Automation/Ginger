@@ -594,7 +594,7 @@ namespace GingerCore.Actions.REST
                 }
 
 
-                AddOrUpdateReturnParamActual("Response", resp);
+                AddOrUpdateReturnParamActual("Respose", resp);
                 if(  String.IsNullOrEmpty(resp))
                 {
                     return;
