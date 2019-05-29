@@ -535,6 +535,9 @@ namespace GingerCore.Drivers.WindowsLib
                         else
                             actWC.Error="Unable to Click Element";
                         break;
+                    case ActWindowsControl.eControlAction.Expand:
+                        mUIAutomationHelper.ExpandComboboxByUIA(AE);
+                        break;
                     default:
                         actWC.Error = "Unknown Action  - " + actWC.ControlAction;
                         break;

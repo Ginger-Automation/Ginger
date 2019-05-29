@@ -3377,6 +3377,35 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// This method is used to expand the combobox
+        /// </summary>
+        /// <param name="element"></param>
+        public override bool ExpandComboboxByUIA(object element)
+        {
+            bool isExpanded = false;
+            try
+            {
+                AutomationElement autoElement = (AutomationElement)element;
+                ExpandCollapsePattern exPat = autoElement.GetCurrentPattern(ExpandCollapsePattern.Pattern)
+                                                                              as ExpandCollapsePattern;
+
+                if (exPat == null)
+                {
+                    throw new ApplicationException("Unable to expand the combobox");
+                }
+
+                exPat.Expand();
+                isExpanded = true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::" + ex.Message);
+                throw new Exception("Element doesn't support Expand method, make sure locator is finding the correct element");
+            }
+            return isExpanded;
+        }
+
         private bool ComparePBActualExpected(string actual,string exp)
         {
             return false;
