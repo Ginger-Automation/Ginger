@@ -262,12 +262,15 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.AsyncClick);
              //       list.Add(ActUIElement.eTableAction.WinClick);
                     list.Add(ActUIElement.eTableAction.Toggle);
+                    list.Add(ActUIElement.eTableAction.RightClick);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);
                     break;
                 case ActUIElement.eElementAction.TableAction:
                     list.Add(ActUIElement.eTableAction.GetRowCount);
+                    list.Add(ActUIElement.eTableAction.SelectAllRows);
+                    //list.Add(ActUIElement.eTableAction.RightClick);
                     break;
                 case ActUIElement.eElementAction.Unknown:
                     list.Add(ActUIElement.eTableAction.IsCellEnabled);

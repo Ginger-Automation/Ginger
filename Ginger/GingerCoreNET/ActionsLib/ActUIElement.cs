@@ -692,7 +692,11 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Double Click")]
             DoubleClick,
             [EnumValueDescription("Set Focus")]
-            SetFocus
+            SetFocus,
+            [EnumValueDescription("Select All Rows")]
+            SelectAllRows,
+           [EnumValueDescription("Right Click")]
+            RightClick
         }
 
         // TODO: move Locate Value to here and remove from Act.cs
