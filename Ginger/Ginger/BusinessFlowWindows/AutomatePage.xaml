@@ -147,7 +147,7 @@
                 </RibbonGroup>
                 <RibbonGroup x:Name="Reports" Header="Reports"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" SmallImageSource="{StaticResource @Report2_16x16}">
                     <RibbonButton x:Name="SummeryReportButton"  ContextMenu="{x:Null}" ToolTip="View Summary Report" Click="SummeryReportButton_Click"  Label="Execution Summary" LargeImageSource="{StaticResource @Report_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
-                    <RibbonButton x:Name="TimeLineReportButton" Visibility="Collapsed"  ToolTip="View executio n in time line report" Click="TimeLineReportButton_Click"  Label="Timeline view" LargeImageSource="{StaticResource @Report_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
+                    <RibbonButton x:Name="TimeLineReportButton" Visibility="Collapsed"  ToolTip="View execution in time line report" Click="TimeLineReportButton_Click"  Label="Timeline view" LargeImageSource="{StaticResource @Report_32x32 }" SmallImageSource="{StaticResource @Report_16x16}" />
 
                     <RibbonMenuButton Label="Generate Report"  ContextMenu="{x:Null}" LargeImageSource="{StaticResource @Report2_32x32.png}" ToolTip="Generate execution report" SmallImageSource="{StaticResource @Report2_16x16}">
                         <RibbonMenuItem x:Name="btnLastExecutionHTMLReport"  Click="btnLastExecutionHTMLReport_click"  Header="Generate Last Executed Item Report" />

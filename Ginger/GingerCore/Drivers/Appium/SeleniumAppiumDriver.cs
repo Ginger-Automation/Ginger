@@ -349,7 +349,7 @@ namespace GingerCore.Drivers.Appium
                     try {
                         File.Delete(currFileName);
                     }catch(Exception e) {
-                        //Could't delete log file
+                        //Couldn't delete log file
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
@@ -732,7 +732,7 @@ namespace GingerCore.Drivers.Appium
                                     {
                                         //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
                                         ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
-                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 charachter
+                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
                                         ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
                                     }
                                 }
@@ -1242,7 +1242,7 @@ namespace GingerCore.Drivers.Appium
             pageSourceXml.LoadXml(pageSourceString);
 
 
-            //Get all elements but onlyy clickable elements= user can interact with them
+            //Get all elements but only clickable elements= user can interact with them
             XmlNodeList nodes = pageSourceXml.SelectNodes("//*");  
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -1387,7 +1387,7 @@ namespace GingerCore.Drivers.Appium
             //Only by Resource ID
             string resid = GetAttrValue(AEI.XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
-            if (residXpath != AEI.XPath) // We show by res id when it is differnet then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            if (residXpath != AEI.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
             {
             list.Add(new ElementLocator()
             {
@@ -1425,7 +1425,7 @@ namespace GingerCore.Drivers.Appium
         }
 
         // Get the data of the element
-        // For Combo box: will return all valid values - options avaialble - List<ComboBoxElementItem>
+        // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
         // For Table: will return list of rows data: List<TableElementItem>        
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
