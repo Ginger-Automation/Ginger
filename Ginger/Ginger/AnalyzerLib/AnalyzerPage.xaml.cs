@@ -252,7 +252,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while sorting the Analyzer issues", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while sorting the Analyzer issues", ex);
             }
         }
 

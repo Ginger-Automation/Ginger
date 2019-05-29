@@ -62,7 +62,7 @@
         Name="cbRegex" Content="Regular Expression" />
         <CheckBox Grid.Row="2" Grid.Column="1" Margin="10,2" 
 
-        Name="cbWildcards" Content="Wildcards" />
+        Name="cbWildcards" Content="Wild-cards" />
         <CheckBox Grid.Row="3" Grid.Column="1" Margin="10,2" 
 
         Name="cbSearchUp" Content="Search up" />

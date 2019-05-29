@@ -49,10 +49,10 @@ public class WebServiceXML {
         }
         else
         {
-            //customized for ATT D2 Architechture to Pass Network Credentials
+            //customized for ATT D2 Architecture to Pass Network Credentials
             req.UseDefaultCredentials = false;
             req.Credentials = networkCreds;
-            //customized for ATT D2 Architechture
+            //customized for ATT D2 Architecture
         }
 
         byte[] reqBytes = new UTF8Encoding().GetBytes(xmlRequest);

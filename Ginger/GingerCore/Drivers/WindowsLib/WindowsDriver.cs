@@ -152,7 +152,7 @@ namespace GingerCore.Drivers.WindowsLib
                     case "ActScreenShot":
                         try
                         {
-                            //TODO: When capturing all windows, we do showwindow. for few applications show window is causing applicaiton to minimize
+                            //TODO: When capturing all windows, we do showwindow. for few applications show window is causing application to minimize
                             //Disabling the capturing all windows for Windows driver until we fix show window issue
                             
                             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
