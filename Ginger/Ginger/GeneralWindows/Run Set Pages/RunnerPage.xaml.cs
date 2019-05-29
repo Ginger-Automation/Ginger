@@ -352,7 +352,11 @@ namespace Ginger.Run
             }
             else
             {
-                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
+                Context context = new Context();
+                context.BusinessFlow = bf;
+                context.Runner = mRunner;
+                context.Environment = mRunner.ProjEnvironment;
+                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(context, currentConf.HTMLReportsFolder + bf.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
 

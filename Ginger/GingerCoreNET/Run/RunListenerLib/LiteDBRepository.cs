@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return liteDbAction;
         }
 
-        public override object SetReportActivity(Activity activity,Context context, bool offlineMode = false)
+        public override object SetReportActivity(Activity activity,Context context, bool offlineMode = false, bool isConfEnable = false)
         {
             LiteDbActivity AR = new LiteDbActivity();
             AR.SetReportData(GetActivityReportData(activity,context, offlineMode));
@@ -153,7 +153,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
             BFR.SetReportData(GetBFReportData(businessFlow, environment));
