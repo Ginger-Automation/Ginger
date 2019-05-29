@@ -24,7 +24,7 @@ namespace Ginger.Logger
                     return false;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = null;
                 if (!string.IsNullOrEmpty(runSetGuid))

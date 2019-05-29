@@ -271,7 +271,7 @@ namespace Ginger.Run
 
         public void SetRunnersExecutionLoggerConfigs()
         {
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
             if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -448,7 +448,7 @@ namespace Ginger.Run
         public void CreateGingerExecutionReportAutomaticly()
         {
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
             if ((mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
