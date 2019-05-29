@@ -234,6 +234,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
         }
+
+        internal abstract void CreateNewDirectory(string logFolder);
+
         public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
@@ -243,5 +246,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
         public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner);
+        internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
+        internal abstract void StartRunSet();
+        internal abstract void EndRunSet();
     }
 }
