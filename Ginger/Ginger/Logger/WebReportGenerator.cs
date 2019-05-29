@@ -52,6 +52,7 @@ namespace Ginger.Logger
 
             try
             {
+                json = $"window.runsetData={json}";
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
                 pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
@@ -63,7 +64,7 @@ namespace Ginger.Logger
                     pageDataSb.Append(openObject.Guid);
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\" --allow-file-access-from-files";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json);
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.js"), json);
                 System.Diagnostics.Process.Start("chrome", taskCommand);
                 response = true;
             }

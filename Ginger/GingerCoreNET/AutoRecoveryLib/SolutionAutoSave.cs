@@ -77,7 +77,10 @@ namespace Ginger.Functionalties
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            DoAutoSave();
+            if (mAutoSaveFolderPath != null)//meaning solution is loaded
+            {
+                DoAutoSave();
+            }
         }
 
         public void DoAutoSave()
