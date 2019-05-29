@@ -137,7 +137,7 @@ namespace Ginger.Run
             runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
-            runner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            //runner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
         }
 
         public void InitRunners()
