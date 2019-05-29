@@ -1549,14 +1549,8 @@ namespace Ginger.Actions
         {
             if (mDSTable == null)
                 return;
-            if (mDSTable.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-            {
-                mDSTable.DataTable = mDSTable.DSC.GetQueryOutput("db." + mDSTable.Name + ".find");
-            }
-            else
-            {
-                mDSTable.DataTable = mDSTable.DSC.GetQueryOutput("Select * from " + mDSTable.Name);
-            }
+                mDSTable.DataTable = mDSTable.DSC.GetTable(mDSTable.Name);
+            
             grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
             {
                 Source = mDSTable.DataTable

@@ -23,6 +23,7 @@ using System.Data;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.Actions;
 
 namespace GingerCore.DataSource
 {    
@@ -123,6 +124,13 @@ namespace GingerCore.DataSource
         public abstract List<string> GetColumnList(string tableName);
 
         public abstract DataTable GetQueryOutput(string query);
+
+        public abstract void InitConnection();
+        public abstract void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails);
+
+        public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
+        
+        public abstract DataTable GetTable(string TableName);
 
         public abstract void RunQuery(string query);
 

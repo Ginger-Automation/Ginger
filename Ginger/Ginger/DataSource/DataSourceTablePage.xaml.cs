@@ -264,9 +264,8 @@ namespace Ginger.DataSource
 
         private void SetGridData()
         {
-            if ((mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase))
-            {
-                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput(mDSTableDetails.Name);
+            
+                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name);
 
                 grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
                 {
@@ -274,16 +273,7 @@ namespace Ginger.DataSource
                 });
                 mDSTableDetails.DataTable.DefaultView.Sort = "GINGER_ID";
                 grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
-            }
-            else
-            {
-                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput("Select * from " + mDSTableDetails.Name);
-                grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
-                {
-                    Source = mDSTableDetails.DataTable
-                });
-                grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
-            }
+           
         }
         public void RefreshGrid()
         {
@@ -298,48 +288,9 @@ namespace Ginger.DataSource
 
         private void AddRow(object sender, RoutedEventArgs e)
         {
-            DataRow dr = mDSTableDetails.DataTable.NewRow();
-            if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-            {
-                dr[0] = Guid.NewGuid();
-            }
-            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
-            foreach (string sColName in mColumnNames)
-            {
-                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                {
-                    if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-                    {
-                        if (sColName == "GINGER_USED")
-                        {
-                            dr[sColName] = "False";
-                        }
-                    }
-                    else
-                    {
-                        dr[sColName] = "";
-                    }
-                }
-                else if (sColName == "GINGER_ID")
-                {
-                    if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
-                    {
-                        dr[sColName] = System.DBNull.Value;
-                    }
-                    else
-                    {
-                        //foreach (object oRow in grdTableData.Grid.SelectedItems)
-                        //{
-                        //    dr[sColName] = grdTableData.GetDataGridRow(oRow).GetIndex();
-                        //}
-                        int count = mDSTableDetails.DataTable.Rows.Count;
-                        dr[sColName] = count + 1;
-                    }
-
-                }
-
-            }
-            mDSTableDetails.DataTable.Rows.Add(dr);             
+            mDSTableDetails.DSC.AddRow(mColumnNames, mDSTableDetails);
+           
+                        
         }
 
         private void DeleteRow(object sender, RoutedEventArgs e)
@@ -380,53 +331,8 @@ namespace Ginger.DataSource
                 return;
             }
             List<object> SelectedItemsList = grdTableData.Grid.SelectedItems.Cast<object>().ToList();
-            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
-            foreach (object o in SelectedItemsList)
-            {
-                DataRow row = (((DataRowView)o).Row);
-                DataRow dr = mDSTableDetails.DataTable.NewRow();
-                foreach (string sColName in mColumnNames)
-                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                    {
-                        if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-                        {
-                            if (sColName == "GINGER_USED")
-                            {
-                                object a =row[sColName].GetType();
-                                if (a.ToString().Contains("System.DBNull"))
-                                {
-                                    dr[sColName] = "False";
-                                }
-                                else
-                                {
-                                    dr[sColName] = row[sColName];
-                                }
-                            }
-                        }
-                        else
-                        {
-                            dr[sColName] = row[sColName];
-                        }
-                    }
-                    else
-                    {
-                        if (mDSTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-                        {
-                                dr[0] = Guid.NewGuid();
-                            
-                            if (sColName == "GINGER_ID")
-                            {
-                                int count = mDSTableDetails.DataTable.Rows.Count;
-                                dr[sColName] = count + 1;
-                            }
-                        }
-                        else
-                        {
-                            dr[sColName] = System.DBNull.Value;
-                        }
-                    }
-                mDSTableDetails.DataTable.Rows.Add(dr);              
-            }                 
+            mDSTableDetails.DSC.DuplicateRow(mColumnNames, SelectedItemsList, mDSTableDetails);
+                             
         }
         
         private void AddColumn(object sender, RoutedEventArgs e)

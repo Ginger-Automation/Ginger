@@ -25,6 +25,7 @@ using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 using System.Reflection;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.DataSource
 {
@@ -454,6 +455,59 @@ namespace GingerCore.DataSource
                         sheetData.AppendChild(newRow);
                     }
             workbook.Close();
+        }
+
+        public override DataTable GetTable(string TableName)
+        {
+            return GetQueryOutput("Select * from " + TableName);
+        }
+
+        public override void AddRow( List<string> mColumnNames, DataSourceTable mDSTableDetails)
+        {
+            DataRow dr = mDSTableDetails.DataTable.NewRow();
+            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            foreach (string sColName in mColumnNames)
+            {
+                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                {
+                        dr[sColName] = "";
+                }
+                else if (sColName == "GINGER_ID")
+                {
+                        dr[sColName] = System.DBNull.Value;
+                }
+            }
+            mDSTableDetails.DataTable.Rows.Add(dr);
+        }
+
+        public override void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList, DataSourceTable mDSTableDetails)
+        {
+            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            foreach (object o in SelectedItemsList)
+            {
+                DataRow row = (((DataRowView)o).Row);
+                DataRow dr = mDSTableDetails.DataTable.NewRow();
+                foreach (string sColName in mColumnNames)
+                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                    {
+                        dr[sColName] = row[sColName];
+                    }
+                    else
+                    {
+                        dr[sColName] = System.DBNull.Value;
+                    }
+                mDSTableDetails.DataTable.Rows.Add(dr);
+            }
+        }
+
+        public override void InitConnection()
+        {
+            DataSourceBase ADC;
+            ADC = new AccessDataSource();
+            FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+
+            ADC.Init(FileFullPath);
+            DSC = ADC;
         }
     }
 }

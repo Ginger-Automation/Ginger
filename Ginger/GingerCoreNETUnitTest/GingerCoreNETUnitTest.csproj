@@ -221,6 +221,9 @@
     <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

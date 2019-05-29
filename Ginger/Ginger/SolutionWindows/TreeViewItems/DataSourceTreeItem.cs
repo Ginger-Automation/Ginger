@@ -373,17 +373,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     return;
                 }
-                if (dsDetailsCopy.DSType==DataSourceBase.eDSType.MSAccess)
-                {
-                    //TODO: use Path.Combine instead of string concat
-                    dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
-                    dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
-                }
-                else if (dsDetailsCopy.DSType==DataSourceBase.eDSType.LiteDataBase)
-                {
                     dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".db";
                     dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".db";
-                }
 
                 if (File.Exists(dsDetailsCopy.FileFullPath))
                 { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
@@ -400,32 +391,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         private void InitDSConnection()
         {
-            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                DataSourceBase ADC;
-                ADC = new AccessDataSource();
-                //if (DSDetails.FilePath.StartsWith("~"))
-                //{
-                //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, DSDetails.FileFullPath);
-                //}
-                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
-
-                ADC.Init(DSDetails.FileFullPath);
-                DSDetails.DSC = ADC;
-            }
-
-            if (DSDetails.DSType == DataSourceBase.eDSType.LiteDataBase)
-            {
-                DataSourceBase ADC;
-                ADC = new GingerLiteDB();
-                ADC.DSType = DataSourceBase.eDSType.LiteDataBase;
-              
-                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
-
-                ADC.Init(DSDetails.FileFullPath);
-                DSDetails.DSC = ADC;
-            }
+            DSDetails.InitConnection();
+           
         }
     }
 }
