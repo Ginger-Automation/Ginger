@@ -20,7 +20,7 @@ using System;
 
 namespace GingerCore.Drivers.CommunicationProtocol
 {
-    public class MessageEventArgs : EventArgs
+    public class MessageEventArgs : EventArgs  // OLD DELETE me !!!!!!!!!!!!
     {
         GingerSocket.eProtocolMessageType mMessageType;
         object mObj;

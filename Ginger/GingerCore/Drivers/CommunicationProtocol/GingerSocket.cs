@@ -23,7 +23,7 @@ using System.Threading;
 namespace GingerCore.Drivers.CommunicationProtocol
 {
     //Common items for GingerSocket Client/Server
-    public static class GingerSocket
+    public static class GingerSocket   // OLD DELETE me !!!!!!!!!!!!
     {
         public enum eProtocolMessageType
         {

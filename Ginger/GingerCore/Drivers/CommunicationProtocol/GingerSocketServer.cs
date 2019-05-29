@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Linq;
 using System.Net;
@@ -27,7 +28,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 {
     // Ginger server can handle many clients in parallel 
     // each client is running on separate thread
-    public class GingerSocketServer
+    public class GingerSocketServer    // OLD DELETE ME !!!!!!!!!!!!!!!!!!!!!!
     {
         private TcpListener tcpListener;
         private Thread listenThread;
