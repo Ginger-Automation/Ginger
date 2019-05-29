@@ -25,13 +25,13 @@ using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
-    public class GingerGrid
+    public class GingerGrid 
     {        
         GingerSocketServer2 mGingerSocketServer;
 
         ObservableList<GingerNodeInfo> mGingerNodeInfo = new ObservableList<GingerNodeInfo>();
 
-        int mPort;
+        int mPort;        
 
         static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = new Dictionary<GingerNodeInfo, GingerNodeProxy>();
 
@@ -52,9 +52,16 @@ namespace GingerCoreNET.RunLib
 
         public void Start()
         {
-            mGingerSocketServer = new GingerSocketServer2();
-            mGingerSocketServer.StartServer(mPort);
-            mGingerSocketServer.MessageHandler = GingerSocketServerMessageHandler;
+            try
+            {
+                mGingerSocketServer = new GingerSocketServer2();
+                mGingerSocketServer.StartServer(mPort);
+                mGingerSocketServer.MessageHandler = GingerSocketServerMessageHandler;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error - Unable to start GingerGrid:" + ex.Message);
+            }
         }
 
         private void GingerSocketServerMessageHandler(GingerSocketInfo gingerSocketInfo)
@@ -138,12 +145,23 @@ namespace GingerCoreNET.RunLib
 
         public string Status
         {
-            get {
+            get
+            {                
                 if (HostIP == null)
                 {
                     HostIP = SocketHelper.GetLocalHostIP();
                 }
-                return HostIP + " Port: " + mPort;
+                string st = HostIP + " Port: " + mPort;
+                if (mGingerSocketServer.isReady)
+                {
+                    st += " Ready";
+                }
+                else
+                {
+                    st += "!!! NOT Ready !!!";
+                }
+                
+                return st; 
             }  // TODO: add status enum 
         }
 
@@ -194,5 +212,7 @@ namespace GingerCoreNET.RunLib
             }
             return gingerNodeProxy;
         }
+
+       
     }
 }

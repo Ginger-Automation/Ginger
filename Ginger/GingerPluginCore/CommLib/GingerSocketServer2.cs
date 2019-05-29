@@ -56,6 +56,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
         }
 
+        bool isClosing = false;
+
         void DoStartServer(int port)
         {
             mPort = port;
@@ -74,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 mServerSocketlistener.Bind(localEndPoint); // TODO: Add Endpoint, config - can bind several IPs on same machine
                 mServerSocketlistener.Listen(100);
                 isReady = true;
-                while (true)
+                while (!isClosing)
                 {
                     // Set the event to nonsignaled state.  
                     allDone.Reset();
@@ -87,6 +89,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     Thread.Sleep(250);
                 }
             }
+            catch(ObjectDisposedException ex)
+            {
+                // ignore 
+            }
             catch (Exception ex)
             {
                 throw ex;
@@ -95,6 +101,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void Shutdown()
         {
+            isClosing = true;
+            allDone.Reset();
+            mServerSocketlistener.Close();
+             
             //TODO: send message to all clients of shut down
         }
         
