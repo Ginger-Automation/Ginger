@@ -567,7 +567,7 @@ namespace Ginger.Run
                 exec_folder = executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + exec_folder);
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = exec_folder;
                 int RunnerCount = 1;
-
+                RunSetStart(exec_folder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, CurrentExecutionDateTime, true);
                 foreach (GingerRunner gingerrunner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
                     string folder = exec_folder + "\\" + RunnerCount.ToString() + " " + gingerrunner.Name + "\\";
@@ -584,7 +584,7 @@ namespace Ginger.Run
                     {
                         continue;
                     }
-                    RunSetStart(exec_folder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, CurrentExecutionDateTime, true);
+                    gingerReport = new GingerReport();
                     Configuration.ExecutionLoggerConfigurationIsEnabled = true;
                     OfflineRunnerExecutionLog(gingerrunner, folder, RunnerCount);
                     RunnerCount++;
