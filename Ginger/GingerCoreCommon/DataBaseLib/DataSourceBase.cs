@@ -131,9 +131,14 @@ namespace GingerCore.DataSource
         public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
         
         public abstract DataTable GetTable(string TableName);
+        
+        public abstract string AddNewCustomizedTableQuery();
 
+        public abstract string GetExtension();
+        public abstract string AddNewKeyValueTableQuery();
         public abstract void RunQuery(string query);
 
+        public abstract int GetRowCount(string TableName);
         public abstract void AddTable(string tableName, string columnList = "");
 
         public abstract void AddColumn(string tableName, string columnName, string columnType);

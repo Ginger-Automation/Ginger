@@ -509,5 +509,26 @@ namespace GingerCore.DataSource
             ADC.Init(FileFullPath);
             DSC = ADC;
         }
+
+        public override string AddNewCustomizedTableQuery()
+        {
+            return "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text";
+        }
+
+        public override int GetRowCount(string TableName)
+        {
+            return GetQueryOutput("Select * from " + TableName).Rows.Count;
+        }
+
+        public override string AddNewKeyValueTableQuery()
+        {
+            return "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text";
+        }
+
+        public override string GetExtension()
+        {
+            return ".mdb";
+        }
+        
     }
 }

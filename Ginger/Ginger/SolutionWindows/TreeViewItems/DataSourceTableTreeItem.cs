@@ -88,7 +88,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                       
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh", RefreshItems,null, eImageType.Refresh);
             TV.AddToolbarTool(eImageType.Refresh, "Refresh", new RoutedEventHandler(RefreshItems));
 
@@ -103,12 +103,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", DeleteTable,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(DeleteTable));
-            if (DSTableDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
 
-            }
+            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)

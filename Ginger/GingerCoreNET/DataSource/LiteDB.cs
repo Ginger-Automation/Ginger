@@ -174,7 +174,7 @@ namespace GingerCoreNET.DataSource
                 {
                     var CopyTable = db.GetCollection(CopyTableName);
                     var table = db.GetCollection(tableName);
-                    
+
                     DataTable dtChange = new DataTable(CopyTableName);
                     dtChange = datatable(tableName, CopyTableName);
                     SaveTable(dtChange);
@@ -471,7 +471,7 @@ namespace GingerCoreNET.DataSource
                                         if (jt.HasValues )
                                         {
                                             string name = (jt as JProperty).Name;
-                                                var aa = jt as JProperty;
+                                            var aa = jt as JProperty;
                                             aa.Value = "";
                                         }
                                         jo2.Add(jt);
@@ -497,7 +497,7 @@ namespace GingerCoreNET.DataSource
             return dataTable;
         }
 
-        
+
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
         {
             string tablename = dtTable.TableName;
@@ -521,11 +521,11 @@ namespace GingerCoreNET.DataSource
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.GingerKeyValue;
             else
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.Customized;
-           
+
             sTableDetail.DSC = this;
             return sTableDetail;
         }
-        
+
         public override ObservableList<DataSourceTable> GetTablesList()
         {
             DataTable Datatable = new DataTable();
@@ -535,26 +535,26 @@ namespace GingerCoreNET.DataSource
                 IEnumerable<string> Tables = db.GetCollectionNames();
                 foreach (string table in Tables)
                 {
-                        var results = db.GetCollection(table).Find(Query.All(), 0).ToList();
-                        var dt = new LiteDataTable(results.ToString());
-                        foreach (var doc in results)
+                    var results = db.GetCollection(table).Find(Query.All(), 0).ToList();
+                    var dt = new LiteDataTable(results.ToString());
+                    foreach (var doc in results)
+                    {
+                        var dr = dt.NewRow() as LiteDataRow;
+                        if (dr != null)
                         {
-                            var dr = dt.NewRow() as LiteDataRow;
-                            if (dr != null)
+                            dr.UnderlyingValue = doc;
+                            foreach(var property in doc.RawValue)
                             {
-                                dr.UnderlyingValue = doc;
-                                foreach(var property in doc.RawValue)
+                                if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
                                 {
-                                    if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
+                                    if (!dt.Columns.Contains(property.Key))
                                     {
-                                        if (!dt.Columns.Contains(property.Key))
-                                        {
-                                            dt.Columns.Add(property.Key, typeof(string));
-                                        }
-                                        dr[property.Key] = property.Value.AsString;
+                                        dt.Columns.Add(property.Key, typeof(string));
                                     }
+                                    dr[property.Key] = property.Value.AsString;
                                 }
-                                dt.Rows.Add(dr);
+                            }
+                            dt.Rows.Add(dr);
                         }
                         Datatable = dt;
                         Datatable.TableName = table;
@@ -625,7 +625,7 @@ namespace GingerCoreNET.DataSource
                 DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
                 row = datatble.Rows[LocateRowValue];
                 string rowID = row["GINGER_ID"].ToString();
-               
+
                 query = query + " and GINGER_ID= \"" + rowID + "\"";
                 GetQueryOutput(query);
 
@@ -640,12 +640,12 @@ namespace GingerCoreNET.DataSource
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
                 {
-                     GetQueryOutput(query);
+                    GetQueryOutput(query);
 
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1] );
-                    
+
                     row = dt.Rows[0];
                 }
                 else if (query.Contains("where"))
@@ -658,10 +658,10 @@ namespace GingerCoreNET.DataSource
             if (MarkUpdate)
             {
                 string rowID = row["GINGER_ID"].ToString();
-                
+
                 GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"");
             }
-            
+
         }
 
         public object GetResult (string query)
@@ -703,7 +703,7 @@ namespace GingerCoreNET.DataSource
 
                 DataTable changed = dataTable.GetChanges();
                 DataTable dtChange = dataTable;
-                
+
                 table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
                 if (!(dtChange == null))
@@ -713,10 +713,10 @@ namespace GingerCoreNET.DataSource
                         dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
                         dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
                         var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
-                       
+
                         var mapper = new BsonMapper();
                         var sd = mapper.ToDocument(dictionary);
-                       
+
                         var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
 
                         batch.Add(new BsonDocument(sd));
@@ -730,7 +730,7 @@ namespace GingerCoreNET.DataSource
                 {
                     table.Upsert(batch);
                 }
-                
+
                 var rea = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
             }
         }
@@ -754,15 +754,15 @@ namespace GingerCoreNET.DataSource
             {
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                 {
-                        if (sColName == "GINGER_USED")
-                        {
-                            dr[sColName] = "False";
-                        }
+                    if (sColName == "GINGER_USED")
+                    {
+                        dr[sColName] = "False";
+                    }
                 }
                 else if (sColName == "GINGER_ID")
                 {
-                        int count = mDSTableDetails.DataTable.Rows.Count;
-                        dr[sColName] = count + 1;
+                    int count = mDSTableDetails.DataTable.Rows.Count;
+                    dr[sColName] = count + 1;
                 }
             }
             mDSTableDetails.DataTable.Rows.Add(dr);
@@ -974,6 +974,27 @@ namespace GingerCoreNET.DataSource
             ADC.Init(FileFullPath);
             DSC = ADC;
         }
+
+        public override string AddNewCustomizedTableQuery()
+        {
+            return "GINGER_ID, GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME";
+        }
+
+        public override int GetRowCount(string TableName)
+        {
+            return GetQueryOutput("db." + TableName + ".find").Rows.Count;
+        }
+
+        public override string AddNewKeyValueTableQuery()
+        {
+            return "GINGER_ID, GINGER_KEY_NAME, GINGER_KEY_VALUE, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME";
+        }
+
+        public override string GetExtension()
+        {
+            return ".db";
+        }
+        
     }
 }
 

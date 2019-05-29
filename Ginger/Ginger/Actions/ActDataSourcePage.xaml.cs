@@ -653,14 +653,9 @@ namespace Ginger.Actions
                 return;
             }
             mColNames = mDSTable.DSC.GetColumnList(mDSTable.Name);
-            if (mDSTable.DSC.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                mRowCount = mDSTable.DSC.GetQueryOutput("Select * from " + mDSTable.Name).Rows.Count;
-            }
-            else
-            {
-                mRowCount = mDSTable.DSC.GetQueryOutput("db." + mDSTable.Name+".find").Rows.Count;
-            }
+
+            mRowCount = mDSTable.DSC.GetRowCount(mDSTable.Name);
+            
         }
      
 

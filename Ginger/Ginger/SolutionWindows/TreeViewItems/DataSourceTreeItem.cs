@@ -117,7 +117,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                        
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh", RefreshItems, null, eImageType.Refresh);
             TV.AddToolbarTool(eImageType.Refresh, "Refresh", RefreshItems);
 
@@ -128,7 +128,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Customized Table", AddNewCustomizedTable, null, "@Add_16x16.png");
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Key Value Table", AddNewKeyValueTable, null, "@Add_16x16.png");
-            
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll,null, "@Commit_16x16.png");
             TV.AddToolbarTool("@Commit_16x16.png", "Commit All", new RoutedEventHandler(CommitAll));
 
@@ -137,14 +137,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
-
-            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
-
-                TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
-            }
+            
+            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -184,14 +179,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-                    {
-                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
-                    }
-                    else
-                    {
-                        CreateTable(name, "GINGER_ID, GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME", DataSourceTable.eDSTableType.Customized);
-                    }
+                    CreateTable(name, DSDetails.AddNewCustomizedTableQuery(), DataSourceTable.eDSTableType.Customized);
                 }
             }
             catch (Exception ex)
@@ -216,14 +204,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-                    {
-                        CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.GingerKeyValue);
-                    }
-                    else
-                    {
-                        CreateTable(name, "GINGER_ID, GINGER_KEY_NAME, GINGER_KEY_VALUE, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME", DataSourceTable.eDSTableType.GingerKeyValue);
-                    }
+                    CreateTable(name, DSDetails.AddNewKeyValueTableQuery(), DataSourceTable.eDSTableType.GingerKeyValue);
+                   
                 }
             }
             catch (Exception ex)
