@@ -17,8 +17,10 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Ginger;
+using GingerCore.Helpers;
 using System;
 using System.IO;
 using System.Text;
@@ -36,20 +38,27 @@ namespace GingerWPF
     public partial class DebugConsoleWindow : Page
     {
         //TODO: why we need to cosoletextwriter?
-        public ConsoleTextWriter output;
-        public ConsoleTextWriter errors;
+        public ConsoleTextWriter mOutput;
+        public ConsoleTextWriter mErrors;
 
         GenericWindow mConsoleWindow;
+
         public DebugConsoleWindow()
         {
             InitializeComponent();
-            output = new ConsoleTextWriter(ConsoleTextBlock);
-            errors = new ConsoleTextWriter(ConsoleTextBlock, Brushes.Red);
+
+            mOutput = new ConsoleTextWriter(xConsoleTextBlock);
+            mErrors = new ConsoleTextWriter(xConsoleTextBlock, Brushes.Red);           
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
-        {            
-            ConsoleTextBlock.Inlines.Clear();
+        {
+            ClearConsole();
+        }
+
+        public void ClearConsole()
+        {
+            xConsoleTextBlock.Inlines.Clear();
         }
 
         private void OnTopButton_Click(object sender, RoutedEventArgs e)
@@ -59,9 +68,8 @@ namespace GingerWPF
 
         public void ShowAsWindow()
         {
-
-            Console.SetOut(this.output);
-            Console.SetError(this.errors);
+            Console.SetOut(this.mOutput);
+            Console.SetError(this.mErrors);
 
             Button CopyToClipboradBtn = new Button();
             CopyToClipboradBtn.Content = "Copy to Clipboard";
@@ -71,42 +79,47 @@ namespace GingerWPF
             clearConsoleButton.Content = "Clear";
             clearConsoleButton.Click += new RoutedEventHandler(ClearButton_Click);
 
-           
-
             Button onTopButton = new Button();
             onTopButton.Content = "Pin on Top";
             onTopButton.Click += new RoutedEventHandler(OnTopButton_Click);
 
             Amdocs.Ginger.Common.ObservableList<Button> winButtons = new Amdocs.Ginger.Common.ObservableList<Button>();
-            
-                       
+                                   
             winButtons.Add(onTopButton);
             winButtons.Add(clearConsoleButton);
             winButtons.Add(CopyToClipboradBtn);
 
-
             this.Width = 800;
             this.Height = 600;
-            GingerCore.General.LoadGenericWindow(ref mConsoleWindow, App.MainWindow, eWindowShowStyle.Free, "Ginger - Smart Console", this, winButtons);
+            GingerCore.General.LoadGenericWindow(ref mConsoleWindow, App.MainWindow, eWindowShowStyle.Free, "Ginger - Smart Console", this, winButtons, closeEventHandler: CloseWindow);
         }
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(output.GetText()+"\n"+ errors.GetText());
+            // Clipboard.SetText(output.GetText()+"\n"+ errors.GetText());
+            Clipboard.SetText(xConsoleTextBlock.Text);
         }
-     
+
+        private void CloseWindow(object sender, EventArgs e)
+        {
+            Reporter.ReportAllAlsoToConsole = false;
+
+            mConsoleWindow.Close();
+        }
     }
 
 
     //TODO: Move to separate class
     public class ConsoleTextWriter : TextWriter
-    {
+    {        
+        TextBlockHelper mTextBlockHelper;
         TextBlock mTextBlock = null;
         int ErrorsCounter = 0;
 
         public ConsoleTextWriter(TextBlock output, Brush brush = null)
         {
             mTextBlock = output;
+            mTextBlockHelper = new TextBlockHelper(mTextBlock);
         }
 
         public string GetText()
@@ -118,7 +131,6 @@ namespace GingerWPF
         {
             base.WriteLine(value);
 
-
             mTextBlock.Dispatcher.BeginInvoke(new Action(() =>
             {
                 //TODO: add expander make it cooler
@@ -126,23 +138,30 @@ namespace GingerWPF
                 //exp.Content = ...
                 //mTextBlock.Inlines.Add(exp);
 
-
-                if (value.Contains("Error"))
+                if (value.Contains("ERROR") || value.Contains("FATAL"))
                 {
-                    Label l = new Label() { Content = "=======>", Foreground = Brushes.Red };
-                    mTextBlock.Inlines.Add(l);
+                    //Label l = new Label() { Foreground = Brushes.Red };
+                    //mTextBlock.Inlines.Add(l);
+                    mTextBlockHelper.AddFormattedText(value.ToString() + Environment.NewLine, txtColor: Brushes.Red, isBold: true);
                     ErrorsCounter++;
                 }
-
-                if (value.Contains("INFO"))
+                else if (value.Contains("INFO"))
                 {
-                    System.Windows.Shapes.Ellipse e = new System.Windows.Shapes.Ellipse() { Width = 10, Height = 10, Stroke = Brushes.Yellow, StrokeThickness = 2 };
-                    mTextBlock.Inlines.Add(e);
+                    //System.Windows.Shapes.Ellipse e = new System.Windows.Shapes.Ellipse() { Width = 10, Height = 10, Stroke = Brushes.Yellow, StrokeThickness = 2 };
+                    //Label l = new Label() { Foreground = Brushes.Cyan };                    
+                    //mTextBlock.Inlines.Add(l);
+                    mTextBlockHelper.AddFormattedText(value.ToString() + Environment.NewLine, txtColor: Brushes.Cyan, isBold: false);
+                }
+                else if (value.Contains("WARN"))
+                {
+                    mTextBlockHelper.AddFormattedText(value.ToString() + Environment.NewLine, txtColor: Brushes.Orange, isBold: false);
+                }
+                else
+                {
+                    mTextBlockHelper.AddText(value.ToString() + Environment.NewLine);
                 }
 
-
-
-                mTextBlock.Inlines.Add(value.ToString() + Environment.NewLine);
+                //mTextBlock.Inlines.Add(value.ToString() + Environment.NewLine);
                 ((ScrollViewer)mTextBlock.Parent).ScrollToEnd();
             }));
         }

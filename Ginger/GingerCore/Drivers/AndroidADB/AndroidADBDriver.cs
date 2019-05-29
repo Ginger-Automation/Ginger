@@ -835,7 +835,7 @@ namespace GingerCore.Drivers.AndroidADB
             List<ElementInfo> list = new List<ElementInfo>();
 
             UpdatePageSource();
-            //Get all elements but onlyy clickable elements= user can interact with them
+            //Get all elements but only clickable elements= user can interact with them
             XmlNodeList nodes = mPageSourceXml.SelectNodes("//*");
             for (int i = 0; i < nodes.Count; i++)
             {

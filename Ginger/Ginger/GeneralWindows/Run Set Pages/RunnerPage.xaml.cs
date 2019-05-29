@@ -316,7 +316,7 @@ namespace Ginger.Run
                 return;
             }
 
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
@@ -352,7 +352,11 @@ namespace Ginger.Run
             }
             else
             {
-                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
+                Context context = new Context();
+                context.BusinessFlow = bf;
+                context.Runner = mRunner;
+                context.Environment = mRunner.ProjEnvironment;
+                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(context, currentConf.HTMLReportsFolder + bf.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
 
@@ -360,7 +364,7 @@ namespace Ginger.Run
         {
             try
             {
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
 
@@ -733,7 +737,7 @@ namespace Ginger.Run
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             string reportsResultFolder = "";
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

@@ -102,10 +102,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivity(Activity activity, Context context, bool offlineMode)
+        public override object SetReportActivity(Activity activity, Context context, bool offlineMode, bool isConfEnable)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
-            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (isConfEnable)
             {
                 if (offlineMode)
                     // use Path.combine !!!!
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 SaveObjToReporsitory(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
             }
-            else
+            else if (ExecutionLogfolder != null && businessFlow.ExecutionLogFolder != null)
             {
                 SaveObjToReporsitory(AGR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
@@ -134,10 +134,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             BusinessFlowReport BFR = GetBFReportData(businessFlow, environment);
-            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (isConfEnable)
             {
                 if (offlineMode)
                 {
@@ -194,7 +194,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void EndRunSet()
         {
-            throw new NotImplementedException();
+            return;
         }
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)

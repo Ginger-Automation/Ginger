@@ -56,7 +56,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
             isControlsSet = true;
@@ -162,7 +162,7 @@ namespace Ginger.Reports
 
             // validate the paths of inserted folders
             //GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder);
 
             //App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
