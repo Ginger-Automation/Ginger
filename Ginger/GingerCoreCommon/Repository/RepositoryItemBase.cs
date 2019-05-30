@@ -856,7 +856,22 @@ namespace Amdocs.Ginger.Repository
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
             DirtyStatus = eDirtyStatus.Modified;
-            // RaiseDirtyChangedEvent();
+
+            // if item added set tracking too
+            foreach (object obj in e.NewItems)
+            {
+                if (obj is RepositoryItemBase)
+                {
+                    RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                    repositoryItemBase.StartDirtyTracking();
+                    repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                }
+                else
+                {
+                    // not RI no tracking...
+                }
+                
+            }
         }
 
         List<string> DirtyTrackingFields;
