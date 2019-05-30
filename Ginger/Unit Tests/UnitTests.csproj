@@ -309,7 +309,6 @@
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerFlowControlTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerTest.cs" />
     <Compile Include="NonUITests\GingersMultiRunTest.cs" />
-    <Compile Include="NonUITests\GingerSocketTest.cs" />
     <Compile Include="UITests\IEBrowserWindowTest.cs" />
     <Compile Include="UITests\JavaDriverTest.cs" />
     <Compile Include="NonUITests\JSPayloadTest.cs" />

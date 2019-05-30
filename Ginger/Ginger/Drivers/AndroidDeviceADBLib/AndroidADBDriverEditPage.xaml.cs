@@ -224,18 +224,18 @@ namespace Ginger.Drivers
 
         void InstallApplication(string DeviceSerial, string APKFileName, bool reinstall = false)
         {
-            //FIXME not working
-            string p = "-s " + DeviceSerial + " install -r " + APKFileName;
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = AndroidADBDriver.GetADBFileName(),
-                    Arguments = p
-                }
-            };
-            process.Start();
-            process.WaitForExit();
+            ////FIXME not working
+            //string p = "-s " + DeviceSerial + " install -r " + APKFileName;
+            //var process = new Process
+            //{
+            //    StartInfo = new ProcessStartInfo
+            //    {
+            //        FileName = AndroidADBDriver.GetADBFileName(),
+            //        Arguments = p
+            //    }
+            //};
+            //process.Start();
+            //process.WaitForExit();
         }
 
         private void InstallGingerAPKButton_Click(object sender, RoutedEventArgs e)

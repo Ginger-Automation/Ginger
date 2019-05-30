@@ -60,9 +60,9 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
 
         private void RefreshConnectedDevices()
         {
-            AdbServer srv = AndroidADBDriver.GetADBServer();
-            var devices = AdbClient.Instance.GetDevices();
-            DevicesGrid.ItemsSource = devices;
+            //AdbServer srv = AndroidADBDriver.GetADBServer();
+            //var devices = AdbClient.Instance.GetDevices();
+            //DevicesGrid.ItemsSource = devices;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
