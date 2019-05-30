@@ -1,4 +1,22 @@
-﻿using System;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Amdocs.Ginger.Common;
@@ -14,9 +32,12 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
 {
     public class ExecutionSummary
     {
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public TimeSpan Elapsed { get; set; }
+       public string SummaryCreationTime { get; set; }
+
+        //public DateTime StartTime { get; set; } //we missing that data currently- will be added later
+        //public DateTime EndTime { get; set; }
+        public string ExecutionElapsed { get; set; }
+
         public Runners Runners { get;  } = new Runners();
         public BusinessFlowsSummary BusinessFlowsSummary { get; } = new BusinessFlowsSummary();
         public ActivitiesSummary ActivitiesSummary { get; } = new ActivitiesSummary();
@@ -25,8 +46,10 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
         RunsetExecutor mRunsetExecutor;
         public string Create(RunsetExecutor runsetExecutor)
         {
-            Elapsed = runsetExecutor.Elapsed;            
+            SummaryCreationTime = DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss");
+            ExecutionElapsed = runsetExecutor.Elapsed.ToString(@"hh\:mm\:ss");            
             mRunsetExecutor = runsetExecutor;
+
             AddRunners();
 
             string json = JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -38,6 +61,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
             foreach (GingerRunner runner in mRunsetExecutor.Runners)
             {
                 Runners.Total++;
+                Runners.Parallel = mRunsetExecutor.RunSetConfig.RunModeParallel;
                 AddBusinessFlows(runner.BusinessFlows);                
             }
         }

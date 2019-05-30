@@ -114,13 +114,13 @@ namespace Ginger.BusinessFlowWindows
             ActionsPage actionsPage;
             if (editMode == General.RepositoryItemPageViewMode.View)
             {
-                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.View);
+                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext, General.RepositoryItemPageViewMode.View);
                 actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View, mContext);
                 SetViewMode();
             }
             else
             {
-                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, General.RepositoryItemPageViewMode.Child);
+                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext,General.RepositoryItemPageViewMode.Child);
                 actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child, mContext);
             }
 
