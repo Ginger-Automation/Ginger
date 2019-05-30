@@ -67,20 +67,20 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void DeviceViewPage_Swipe(object sender, DeviceViewPage.SwipeEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            mAndroidADBDriver.SwipeScreen((int)e.X, (int)e.Y, (int)e.XE, (int)e.YE, e.Steps);
+            //mAndroidADBDriver.SwipeScreen((int)e.X, (int)e.Y, (int)e.XE, (int)e.YE, e.Steps);
 
-            Mouse.OverrideCursor = null;
+            //Mouse.OverrideCursor = null;
 
-            if (IsRecording)
-            {
-                //ActGenElement act = IdentifyClickedElement(e.Left, e.Top);
-                //act.GenElementAction = ActGenElement.eGenElementAction.Click;
-                //// If not element found use X,Y
-                //// ActGenElement act = new ActGenElement() { Description = "Tap X,Y", GenElementAction = ActGenElement.eGenElementAction.Click, Value = e.Left + "," + e.Top };
-                //mAndroidADBDriver.BusinessFlow.AddAct(act);
-            }
+            //if (IsRecording)
+            //{
+            //    //ActGenElement act = IdentifyClickedElement(e.Left, e.Top);
+            //    //act.GenElementAction = ActGenElement.eGenElementAction.Click;
+            //    //// If not element found use X,Y
+            //    //// ActGenElement act = new ActGenElement() { Description = "Tap X,Y", GenElementAction = ActGenElement.eGenElementAction.Click, Value = e.Left + "," + e.Top };
+            //    //mAndroidADBDriver.BusinessFlow.AddAct(act);
+            //}
         }
 
         private void InitDeviceActions()
@@ -97,53 +97,53 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void DeviceViewPage_OnButtonClick(object sender, DeviceViewPage.ButtonEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            DeviceButton DB = e.DeviceButton;
+            //DeviceButton DB = e.DeviceButton;
 
-            if (IsRecording)
-            {
-                ActDeviceButton act = new ActDeviceButton();
-                act.Description = DB.SendCommand;
-                act.Value = DB.SendCommand;
-                mAndroidADBDriver.BusinessFlow.AddAct(act);
-            }
+            //if (IsRecording)
+            //{
+            //    ActDeviceButton act = new ActDeviceButton();
+            //    act.Description = DB.SendCommand;
+            //    act.Value = DB.SendCommand;
+            //    mAndroidADBDriver.BusinessFlow.AddAct(act);
+            //}
 
             
-            if (DB.SendCommand.StartsWith("Press "))
-            {
-                string key = DB.SendCommand.Replace("Press ", "");
-                mAndroidADBDriver.Press(key);                
-            }
-                // Change to PressKeyCode
-            else if (DB.SendCommand.StartsWith("PressKey "))
-            {
-                string key = DB.SendCommand.Replace("PressKey ", "");
-                int KeyCode = int.Parse(key);
-                mAndroidADBDriver.PressKeyCode(KeyCode);                
-            }
-            else
-            {
-                //Remove from here and create special action
-                // we assume it is shell command
-                string result = mAndroidADBDriver.ExecuteShellCommand(DB.SendCommand);
-            }
+            //if (DB.SendCommand.StartsWith("Press "))
+            //{
+            //    string key = DB.SendCommand.Replace("Press ", "");
+            //    mAndroidADBDriver.Press(key);                
+            //}
+            //    // Change to PressKeyCode
+            //else if (DB.SendCommand.StartsWith("PressKey "))
+            //{
+            //    string key = DB.SendCommand.Replace("PressKey ", "");
+            //    int KeyCode = int.Parse(key);
+            //    mAndroidADBDriver.PressKeyCode(KeyCode);                
+            //}
+            //else
+            //{
+            //    //Remove from here and create special action
+            //    // we assume it is shell command
+            //    string result = mAndroidADBDriver.ExecuteShellCommand(DB.SendCommand);
+            //}
             
-            Mouse.OverrideCursor = null;
+            //Mouse.OverrideCursor = null;
         }
 
         private void DeviceViewPage_TouchXY(object sender, GingerCore.Drivers.Common.DeviceViewPage.TouchXYEventArgs e)
         {            
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            if (IsRecording)
-            {
-                ActUIElement act = mAndroidADBDriver.GetActionForClickedElement(e.Left, e.Top);
-                mAndroidADBDriver.BusinessFlow.AddAct(act);
-            }
+            //if (IsRecording)
+            //{
+            //    ActUIElement act = mAndroidADBDriver.GetActionForClickedElement(e.Left, e.Top);
+            //    mAndroidADBDriver.BusinessFlow.AddAct(act);
+            //}
           
-            mAndroidADBDriver.ClickXY((int)e.Left, (int)e.Top);
-            Mouse.OverrideCursor = null;
+            //mAndroidADBDriver.ClickXY((int)e.Left, (int)e.Top);
+            //Mouse.OverrideCursor = null;
         }
         
         #region Events
@@ -171,11 +171,11 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
-            if (BI != null)  // it can be null if screen didn't changed
-            {
-                mDeviceViewPage.UpdateDeviceScreenShot(BI);
-            }
+            //BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
+            //if (BI != null)  // it can be null if screen didn't changed
+            //{
+            //    mDeviceViewPage.UpdateDeviceScreenShot(BI);
+            //}
         }
      
         private void InspectBtn_Click(object sender, RoutedEventArgs e)
@@ -313,59 +313,59 @@ namespace GingerCore.Drivers.AndroidADB
         
         public void StartLiveRefresh()
         {
-            // if (LiveRefreshCheckBox.IsChecked == true) return;
+            //// if (LiveRefreshCheckBox.IsChecked == true) return;
 
-            //BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
-            //mDeviceViewPage.UpdateDeviceScreenShot(BI);
+            ////BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
+            ////mDeviceViewPage.UpdateDeviceScreenShot(BI);
 
-            // Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //// Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            DateTime dt = DateTime.Now;
-            Task t = Task.Factory.StartNew(() =>
-            {
-                int counter = 0;
-                int LastSecond = DateTime.Now.Second;
-                // update the screen for the next 60 seconds
-                // remove this - or not!!!???
-                while (mLiveRefresh)
-                {                    
-                    DeviceViewFrame.Dispatcher.Invoke(() =>
-                    {
-                        int Currsec = DateTime.Now.Second;
-                        if (Currsec == LastSecond)
-                        {
-                            counter++;
-                        }
-                        else
-                        {
-                            LastSecond = Currsec;
-                            int FrameRate = counter;
-                            FrameRateLabel.Content = FrameRate;
-                            counter = 0;
-                        }
+            //DateTime dt = DateTime.Now;
+            //Task t = Task.Factory.StartNew(() =>
+            //{
+            //    int counter = 0;
+            //    int LastSecond = DateTime.Now.Second;
+            //    // update the screen for the next 60 seconds
+            //    // remove this - or not!!!???
+            //    while (mLiveRefresh)
+            //    {                    
+            //        DeviceViewFrame.Dispatcher.Invoke(() =>
+            //        {
+            //            int Currsec = DateTime.Now.Second;
+            //            if (Currsec == LastSecond)
+            //            {
+            //                counter++;
+            //            }
+            //            else
+            //            {
+            //                LastSecond = Currsec;
+            //                int FrameRate = counter;
+            //                FrameRateLabel.Content = FrameRate;
+            //                counter = 0;
+            //            }
 
-                        BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
+            //            BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
                               
-                        if (BI != null)  // it can be null if screen didn't changed
-                        {
-                            mDeviceViewPage.UpdateDeviceScreenShot(BI);
-                            Thread.Sleep(5);  //enable user command to go in
-                        }
-                        else
-                        {
-                            Thread.Sleep(100);  // no need to update/check the screen more than 10 times per second, if there is no change, so sleep a bit more
-                        }
-                        General.DoEvents();
+            //            if (BI != null)  // it can be null if screen didn't changed
+            //            {
+            //                mDeviceViewPage.UpdateDeviceScreenShot(BI);
+            //                Thread.Sleep(5);  //enable user command to go in
+            //            }
+            //            else
+            //            {
+            //                Thread.Sleep(100);  // no need to update/check the screen more than 10 times per second, if there is no change, so sleep a bit more
+            //            }
+            //            General.DoEvents();
                         
-                    });
-                }
+            //        });
+            //    }
 
-                FrameRateLabel.Dispatcher.Invoke(() =>
-                {
-                    FrameRateLabel.Content = "0";
-                });
+            //    FrameRateLabel.Dispatcher.Invoke(() =>
+            //    {
+            //        FrameRateLabel.Content = "0";
+            //    });
 
-            });            
+            //});            
         }
 
         //public void ShowActionEfect(bool wait = false, Int32 waitingTimeInMiliSeconds = 2000)
@@ -501,57 +501,57 @@ namespace GingerCore.Drivers.AndroidADB
         //TODO: fixme
         private void DesignSourceTabContent()
         {
-            string XML = mAndroidADBDriver.GetPageSource();
+            //string XML = mAndroidADBDriver.GetPageSource();
 
-            XmlDocument PageSourceXml = new XmlDocument();
-            PageSourceXml.LoadXml(XML);
+            //XmlDocument PageSourceXml = new XmlDocument();
+            //PageSourceXml.LoadXml(XML);
 
-            pageSourceXMLViewer.xmlDocument = PageSourceXml;
-            pageSourceTextViewer.Text = XML;
+            //pageSourceXMLViewer.xmlDocument = PageSourceXml;
+            //pageSourceTextViewer.Text = XML;
 
-            if(sourceXMLRadioBtn.IsChecked == true)
-            {
-                //if (pageSourceXMLViewer == null || pageSourceTextViewer == null)
-                //    return;
+            //if(sourceXMLRadioBtn.IsChecked == true)
+            //{
+            //    //if (pageSourceXMLViewer == null || pageSourceTextViewer == null)
+            //    //    return;
 
-                //show XML
-                try
-                {
-                    if (pageSourceXMLViewer.xmlDocument != null)
-                    {
-                        //if (pageSourceXMLViewer.xmlDocument != pageSourceXml)
-                        //    pageSourceXMLViewer.xmlDocument = pageSourceXml;
-                        pageSourceXMLViewer.Visibility = System.Windows.Visibility.Visible;
-                        sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
-                        pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        //failed to load the XML view
-                        sourceLbl.Content = "XML View Failure";
-                        sourceLbl.Visibility = System.Windows.Visibility.Visible;
-                        pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-                        pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    }
-                }
-                catch(Exception ex)
-                {
-                    //failed to load the XML view
-                    sourceLbl.Content = "XML View Failure";
-                    sourceLbl.Visibility = System.Windows.Visibility.Visible;
-                    pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-            }
-            else
-            {
-                //show text
-                //pageSourceTextViewer.Text = pageSourceString;
-                pageSourceTextViewer.Visibility = System.Windows.Visibility.Visible;
-                sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
-                pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-            }
+            //    //show XML
+            //    try
+            //    {
+            //        if (pageSourceXMLViewer.xmlDocument != null)
+            //        {
+            //            //if (pageSourceXMLViewer.xmlDocument != pageSourceXml)
+            //            //    pageSourceXMLViewer.xmlDocument = pageSourceXml;
+            //            pageSourceXMLViewer.Visibility = System.Windows.Visibility.Visible;
+            //            sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
+            //            pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //        }
+            //        else
+            //        {
+            //            //failed to load the XML view
+            //            sourceLbl.Content = "XML View Failure";
+            //            sourceLbl.Visibility = System.Windows.Visibility.Visible;
+            //            pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //            pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //        }
+            //    }
+            //    catch(Exception ex)
+            //    {
+            //        //failed to load the XML view
+            //        sourceLbl.Content = "XML View Failure";
+            //        sourceLbl.Visibility = System.Windows.Visibility.Visible;
+            //        pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //        pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            //    }
+            //}
+            //else
+            //{
+            //    //show text
+            //    //pageSourceTextViewer.Text = pageSourceString;
+            //    pageSourceTextViewer.Visibility = System.Windows.Visibility.Visible;
+            //    sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
+            //    pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
+            //}
         }
 
         private void RemoveXmlNode(ref string xml, string nodeName, int searchStartIndx)
@@ -884,28 +884,28 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            //TODO: check e.key and do keyevent for delete backspace etc..., or send text for simple char
-            // Create amp and handle key event
-            // meanwhile we send the text...
-            if (!mSendKeyboardKeys) return;
+            ////TODO: check e.key and do keyevent for delete backspace etc..., or send text for simple char
+            //// Create amp and handle key event
+            //// meanwhile we send the text...
+            //if (!mSendKeyboardKeys) return;
 
 
-            string AndroidKey = GetAndroidKey(e.Key);
+            //string AndroidKey = GetAndroidKey(e.Key);
 
             
-            if (AndroidKey != null)
-            {
-                if (IsRecording)
-                {
-                    ActDeviceButton act = new ActDeviceButton();
-                    act.Description = "Press Key '" + AndroidKey + "'";
-                    act.Value = AndroidKey;
-                    mBusinessFlow.AddAct(act);
-                }
+            //if (AndroidKey != null)
+            //{
+            //    if (IsRecording)
+            //    {
+            //        ActDeviceButton act = new ActDeviceButton();
+            //        act.Description = "Press Key '" + AndroidKey + "'";
+            //        act.Value = AndroidKey;
+            //        mBusinessFlow.AddAct(act);
+            //    }
 
-                // TODO: check if we use UIAutomation PressKey with some keys maps if it is faster then shell command
-                string result = mAndroidADBDriver.ExecuteShellCommand("input text " + AndroidKey);
-            }
+            //    // TODO: check if we use UIAutomation PressKey with some keys maps if it is faster then shell command
+            //    string result = mAndroidADBDriver.ExecuteShellCommand("input text " + AndroidKey);
+            //}
         }
 
         string GetAndroidKey(Key k)
@@ -940,23 +940,23 @@ namespace GingerCore.Drivers.AndroidADB
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
-            string cmd = ADBCommandTextBox.Text;
+            //string cmd = ADBCommandTextBox.Text;
 
-            if (IsRecording)
-            {
-                ActShell act = new ActShell();
-                act.Description = "Run Shell Command '" + cmd + "'";
-                act.Value = cmd;
-                mBusinessFlow.AddAct(act);
-            }
+            //if (IsRecording)
+            //{
+            //    ActShell act = new ActShell();
+            //    act.Description = "Run Shell Command '" + cmd + "'";
+            //    act.Value = cmd;
+            //    mBusinessFlow.AddAct(act);
+            //}
 
-            Stopwatch st = new Stopwatch();
-            st.Start();
+            //Stopwatch st = new Stopwatch();
+            //st.Start();
             
-            string rc = mAndroidADBDriver.ExecuteShellCommand(cmd);
-            st.Stop();            
-            OutputTextBlock.Text = rc;
-            ElapsedLabel.Content = "Elapsed: " + st.ElapsedMilliseconds + " ms";            
+            //string rc = mAndroidADBDriver.ExecuteShellCommand(cmd);
+            //st.Stop();            
+            //OutputTextBlock.Text = rc;
+            //ElapsedLabel.Content = "Elapsed: " + st.ElapsedMilliseconds + " ms";            
 
             
         }
@@ -1058,7 +1058,7 @@ namespace GingerCore.Drivers.AndroidADB
                         
 
                         // a.Value = SendKeysTextBox.Text;
-                        mAndroidADBDriver.RunAction(a);
+                        //mAndroidADBDriver.RunAction(a);  // !!!!!!!!!!!!!!!!
 
 
                         if (IsRecording)

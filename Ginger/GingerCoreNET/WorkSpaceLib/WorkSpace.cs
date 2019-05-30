@@ -58,6 +58,15 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
+
+            mWorkSpace.InitLocalGrid();
+            
+        }
+
+        private void InitLocalGrid()
+        {
+            mLocalGingerGrid = new GingerGrid();
+            mLocalGingerGrid.Start();
         }
 
         public SolutionRepository SolutionRepository;
@@ -413,12 +422,7 @@ namespace amdocs.ginger.GingerCoreNET
         public GingerGrid LocalGingerGrid
         {
             get
-            {
-                if (mLocalGingerGrid == null)
-                {                    
-                    mLocalGingerGrid = new GingerGrid();   
-                    mLocalGingerGrid.Start();
-                }
+            {                
                 return mLocalGingerGrid;
             }
         }

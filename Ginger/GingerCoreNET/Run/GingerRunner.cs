@@ -1780,13 +1780,8 @@ namespace Ginger.Run
 
                                         // NewPayLoad ActionPayload = PluginAction.GetActionPayload();
 
-
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                                        
-
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
-                                        
-
+                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
+                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
                                     }
 
                                 }
@@ -1800,8 +1795,27 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act);
-                            
+                            GingerNodeInfo GNI = null;
+                            try
+                            {
+                                GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
+                                if (GNI != null)
+                                {
+                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                                string errorMessage = "";
+                                if (GNI == null)
+                                {
+                                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
+                                }
+                                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                                errorMessage += ex.Message;
+                                act.Error = errorMessage;
+                            }
 
 
                             break;                        

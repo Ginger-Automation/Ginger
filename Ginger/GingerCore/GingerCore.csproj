@@ -446,10 +446,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -681,14 +677,6 @@
     <Compile Include="Drivers\Common\HTMLElementInfo.cs" />
     <Compile Include="Drivers\Common\IXPath.cs" />
     <Compile Include="Drivers\Common\XPathHelper.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocket.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketClient.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketLog.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml.cs">
-      <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
@@ -770,7 +758,6 @@
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketServer.cs" />
     <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
       <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
     </Compile>
@@ -817,8 +804,6 @@
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\QTPConnector.cs" />
-    <Compile Include="Drivers\QTPDriver.cs" />
     <Compile Include="Drivers\SeleniumDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

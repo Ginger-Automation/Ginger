@@ -863,10 +863,7 @@ namespace Ginger.Run
 
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
-
-                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+                
 
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
@@ -2467,8 +2464,7 @@ namespace Ginger.Run
         }
 
         private void XAutoRunButton_Click(object sender, RoutedEventArgs e)
-        {
-            // pass mRunSetConfig + env !!!!!!!!!!!
+        {            
             WizardWindow.ShowWizard(new AutoRunWizard(mRunSetConfig, mContext));
             
         }

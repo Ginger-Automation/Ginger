@@ -125,8 +125,8 @@ namespace GingerCore
             PerfectoMobileIOS,
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
-            [Description("Android ADB")]
-            AndroidADB,
+            //[Description("Android ADB")]
+            //AndroidADB,
 
             //MF
             [Description("MainFrame 3270")]
@@ -385,8 +385,9 @@ namespace GingerCore
                 // TODO: add by which agent to GNI
 
                 // Keep GNP on agent
-                GingerNodeProxy = new GingerNodeProxy(gingerNodeInfo);
-                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                GingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);
+ 
+ //TODO: Ginger Grid  CHeck if required                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                 GingerNodeProxy.StartDriver(DriverConfiguration);
             }
             catch(Exception ex)
@@ -810,8 +811,8 @@ namespace GingerCore
                     return ePlatformType.Java;
                 case eDriverType.MainFrame3270:
                     return ePlatformType.MainFrame;
-                case eDriverType.AndroidADB:
-                    return ePlatformType.AndroidDevice;               
+                //case eDriverType.AndroidADB:
+                //    return ePlatformType.AndroidDevice;               
                 default:
                     return ePlatformType.NA;
             }                
@@ -875,10 +876,10 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.WebServices);
             }
 
-            else if (platformType == ePlatformType.AndroidDevice.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.AndroidADB);
-            }
+            //else if (platformType == ePlatformType.AndroidDevice.ToString())
+            //{
+            //    driverTypes.Add(Agent.eDriverType.AndroidADB);
+            //}
             else if (platformType == ePlatformType.ASCF.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.ASCF);

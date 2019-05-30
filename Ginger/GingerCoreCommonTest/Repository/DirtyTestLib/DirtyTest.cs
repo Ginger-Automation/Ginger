@@ -120,7 +120,7 @@ namespace GingerCoreCommonTest.Repository
         public void AddChildToList()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem();            
             item.Name = "abc";
             item.childs = new ObservableList<MyComplextRepositoryItemChild>();                        
             item.StartDirtyTracking();

@@ -105,8 +105,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid
 
             Console.WriteLine("Checking for DoStartSession..");
 
@@ -169,23 +168,22 @@ namespace Amdocs.Ginger.CoreNET.Run
             ParseActionResult(RC, (Act)actPlugin);
         }
 
+        
 
         // Use for Actions which run without agent and are of the generic type ActPlugin - 
-        internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin)
+        internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
-            GingerNodeInfo gingerNodeInfo = null;
             try
             {
-                gingerNodeInfo = ExecuteOnPlugin.GetGingerNodeInfoForPluginAction(actPlugin);
-
                 // first verify we have service ready or start service
-                Stopwatch st = Stopwatch.StartNew();
 
-                GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-                GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+                Stopwatch st = Stopwatch.StartNew();
+                GingerNodeProxy gingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);  // FIXME for remote grid
+
+                //!!!!!!!!!!!!! TODO: check if null set err
 
                 NewPayLoad p = CreateActionPayload(actPlugin);
-                NewPayLoad RC = GNP.RunAction(p);
+                NewPayLoad RC = gingerNodeProxy.RunAction(p);
 
                 // release the node as soon as the result came in
                 bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
@@ -214,9 +212,6 @@ namespace Amdocs.Ginger.CoreNET.Run
                 errorMessage += ex.Message;
                 actPlugin.Error = errorMessage;
             }
-
-
-
 
         }
 

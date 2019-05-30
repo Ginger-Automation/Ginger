@@ -370,6 +370,9 @@ namespace Ginger
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
                 }
             }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+
             CW.Close();
         }
 

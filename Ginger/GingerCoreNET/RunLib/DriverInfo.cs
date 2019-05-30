@@ -146,10 +146,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 DI.services.Add(Agent.eDriverType.WebServices);
             }
 
-            else if (platformType == ePlatformType.AndroidDevice.ToString())
-            {
-                DI.services.Add(Agent.eDriverType.AndroidADB);
-            }
+            //else if (platformType == ePlatformType.AndroidDevice.ToString())
+            //{
+            //    DI.services.Add(Agent.eDriverType.AndroidADB);
+            //}
             else if (platformType == ePlatformType.ASCF.ToString())
             {
                 DI.services.Add(Agent.eDriverType.ASCF);
