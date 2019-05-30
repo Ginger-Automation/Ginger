@@ -1,13 +1,10 @@
 #region License
 /*
 Copyright © 2014-2019 European Support Limited
-
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
-
 http://www.apache.org/licenses/LICENSE-2.0 
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -876,23 +873,11 @@ namespace GingerCore.Drivers.AndroidADB
         //    return AEI;
         //}
 
-            UpdatePageSource();
-            //Get all elements but only clickable elements= user can interact with them
-            XmlNodeList nodes = mPageSourceXml.SelectNodes("//*");
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                //Show only clickable elements
-                if (nodes[i].Attributes != null)
-                {
-                    var cattr = nodes[i].Attributes["clickable"];
-                    if (cattr != null)
-                    {
-                        if (cattr.Value == "false") continue;
-                    }
-                }
-                AndroidElementInfo AEI = GetElementInfoforXmlNode(nodes[i]);
-                list.Add(AEI);
-            }
+        //private string GetNodeXPath(XmlNode xmlNode)
+        //{
+        //    string XPath = GetXPathToNode(xmlNode);
+        //    return XPath;
+        //}
 
 
         ///// Gets the X-Path to a given Node
