@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -18,14 +36,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-            if (isCleanFile)
+            if (System.IO.Directory.Exists(folderName) && isCleanFile)
+            {
                 foreach (System.IO.FileInfo file in di.GetFiles())
                 {
                     file.Delete();
                 }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
         public void CreateTempDirectory()
@@ -63,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
                         logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
                         System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                     }
                 }
             }

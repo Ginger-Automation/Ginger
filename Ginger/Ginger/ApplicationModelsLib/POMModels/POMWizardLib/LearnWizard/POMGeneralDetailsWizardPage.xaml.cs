@@ -132,13 +132,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
                 xURLTextBox.Visibility = Visibility.Visible;
-                xFrameBusinessFlowControl.Visibility = Visibility.Hidden; 
+                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed; 
             }
             else
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
                 xFrameBusinessFlowControl.Visibility = Visibility.Visible;
-                xURLTextBox.Visibility = Visibility.Hidden;
+                xURLTextBox.Visibility = Visibility.Collapsed;
             }
         }
     }

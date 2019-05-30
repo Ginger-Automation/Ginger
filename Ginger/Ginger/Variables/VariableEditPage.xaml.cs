@@ -81,13 +81,26 @@ namespace Ginger.Variables
             {
                 cbSetAsInputValue.Visibility = Visibility.Hidden;
                 cbSetAsOutputValue.Visibility = Visibility.Hidden;
+                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
             else
-            {              
+            {       
+                if(mode == eEditMode.SharedRepository)
+                {
+                    SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                    SharedRepoInstanceUC_Col.Width = new GridLength(0);
+                }
                 cbSetAsInputValue.Visibility=Visibility.Visible;
                 cbSetAsOutputValue.Visibility = Visibility.Visible;
+                if (mContext != null && mContext.BusinessFlow != null)
+                {
+                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
+                }
+
             }
-            if(setGeneralConfigsAsReadOnly)
+     
+            if (setGeneralConfigsAsReadOnly)
             {
                 txtVarName.IsReadOnly = true;
                 txtVarDescritpion.IsReadOnly = true;
@@ -106,18 +119,7 @@ namespace Ginger.Variables
             }
             TagsViewer.Init(mVariable.Tags);
 
-            if (editMode == eEditMode.BusinessFlow || editMode == eEditMode.Activity)
-            {
-                if (mContext != null && mContext.BusinessFlow != null)
-                {
-                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
-                }
-            }
-            else
-            {
-                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
-                SharedRepoInstanceUC_Col.Width = new GridLength(0);
-            }
+           
         }
 
         private void LoadVarPage()

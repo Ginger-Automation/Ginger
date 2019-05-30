@@ -457,7 +457,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (itemToCopy is RepositoryItemBase)
             {
                 string newName = ((RepositoryItemBase)itemToCopy).ItemName + "_Copy";
-                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
+                if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName))
                 {
                     RepositoryItemBase itemCopy = ((RepositoryItemBase)itemToCopy).CreateCopy();
                     itemCopy.ItemName = newName;

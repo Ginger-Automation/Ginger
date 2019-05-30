@@ -2851,7 +2851,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 context.Runner = new Run.GingerRunner();
                 context.Environment = environment;
                 Run.ExecutionLoggerManager executionLoggerManager = new Run.ExecutionLoggerManager(context);
-                exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context.Environment, BF);
+                exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context);
                 if (string.IsNullOrEmpty(exec_folder))
                 {
                     return string.Empty;
@@ -2969,7 +2969,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
                     System.IO.Directory.CreateDirectory(logsFolder);
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                    WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
                 }
             }
 

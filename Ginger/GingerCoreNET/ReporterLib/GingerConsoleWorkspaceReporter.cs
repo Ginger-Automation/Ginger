@@ -44,13 +44,13 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
 
         public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
-            Console.WriteLine(statusText);
+           /// Console.WriteLine(statusText); //write to Console already been done by Reporter
         }
         
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            Console.WriteLine("[" + logLevel + "]" + messageToLog);
+           // Console.WriteLine("[" + logLevel + "]" + messageToLog); //need to implment real write to log instead of this console write which causing duplicate console lines. 
         }
         
         // TODO: override WriteToConsole with color and...        

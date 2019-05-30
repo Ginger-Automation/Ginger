@@ -140,13 +140,29 @@ namespace Ginger
             return tagsGuid;
         }
 
+        public void ClearSelectedTags()
+        {
+            if(mItemTagsGUID != null)
+            {
+                mItemTagsGUID.Clear();
+            }
+
+            if (mItemTagsKey != null)
+            {
+                mItemTagsKey.Clear(); 
+            }
+        }
+
         private void MItemTags_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            LoadItemTagsToView();
-            if (TagsStackPanlChanged != null)
+            this.Dispatcher.Invoke(() =>
             {
-                TagsStackPanlChanged.Invoke(sender, new EventArgs());
-            }
+                LoadItemTagsToView();
+                if (TagsStackPanlChanged != null)
+                {
+                    TagsStackPanlChanged.Invoke(sender, new EventArgs());
+                }
+            });
         }
 
         private void mFullTagsList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
