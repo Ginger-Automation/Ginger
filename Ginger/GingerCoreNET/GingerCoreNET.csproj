@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
   </PropertyGroup>
@@ -57,9 +57,11 @@
 
   <ItemGroup>
   
+    <PackageReference Include="LiteDB" Version="4.1.4" />
+  
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
   
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

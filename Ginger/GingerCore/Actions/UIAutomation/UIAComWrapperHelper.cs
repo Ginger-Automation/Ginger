@@ -86,7 +86,7 @@ namespace GingerCore.Drivers
         private AutomationElement lastFocusedElement;
         
         /// <summary>
-        /// Determines if element is a content element used for searching elements that content is presented to user (non pheriphal elements)
+        /// Determines if element is a content element used for searching elements that content is presented to user (non peripheral elements)
         /// </summary>
         private static readonly PropertyCondition ConditionContent = new PropertyCondition(AutomationElement.IsContentElementProperty, true);
 
@@ -278,7 +278,7 @@ namespace GingerCore.Drivers
             {
                 if (lastFocusedElement != null)
                 {
-                    // check that the element still exisi or it will go to execption
+                    // check that the element still exist or it will go to exception
                     string value = getAECurrentValue(lastFocusedElement);
                     if ((lastFocusedElement.Current.LocalizedControlType == "edit") && !(string.IsNullOrEmpty(value)))
                     {
@@ -821,14 +821,14 @@ namespace GingerCore.Drivers
                                 int firstindex = locateValue.IndexOf("(");
                                 string controlType = locateValue.Substring(0, firstindex).Trim();
                                 string automationId = locateValue.Substring(firstindex + 1, lastIndex - firstindex - 1);
-                                //Anding conditio to find element by LocalizedControlType & Automation Id
+                                //Anding condition to find element by LocalizedControlType & Automation Id
                                 AndCondition andConditn = new AndCondition(
                                 new PropertyCondition(AutomationElementIdentifiers.AutomationIdProperty, automationId),
                                 new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, controlType));
                                 element = CurrentWindow.FindFirst(TreeScope.Subtree, andConditn);
                             }
 
-                            //For old compativity where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
+                            //For old compatibility where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
                             if (element == null && mPlatform == ePlatform.PowerBuilder)
                             {
                                 element = GetElementByText(CurrentWindow, locateValue);
@@ -1018,7 +1018,7 @@ namespace GingerCore.Drivers
                 txt = GetElementTitle(AE);
                 if (txt == locateValue) return AE;
 
-                //Try children, drill down recursivley
+                //Try children, drill down recursively
                 AutomationElement AE1= GetElementByText(AE, locateValue);
                 if (AE1 != null)
                 {
@@ -1233,7 +1233,7 @@ namespace GingerCore.Drivers
                             // We have index so move next till the item we want
                             
                             AutomationElementCollection AEC = AE.FindAll(TreeScope.Children, CurCond2);
-                            if ((int)index2 < AEC.Count - 1)  // make sure we don't try to get elem out of boundries
+                            if ((int)index2 < AEC.Count - 1)  // make sure we don't try to get elem out of boundaries
                             {
                                 AE = AEC[(int)index2];
                             }
@@ -1786,14 +1786,14 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction clickType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
             {
-                act.Error = "Unkown Click Type";
+                act.Error = "Unknown Click Type";
                 return "false";
             }
             
             ActUIElement.eElementAction validationType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
             {
-                act.Error = "Unkown Validation Type";
+                act.Error = "Unknown Validation Type";
                 return "false";
             }
             string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
@@ -1801,7 +1801,7 @@ namespace GingerCore.Drivers
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
             {
-                act.Error = "Unkown Validation Element Locate By";
+                act.Error = "Unknown Validation Element Locate By";
                 return "false";
             }
 
@@ -1914,7 +1914,7 @@ namespace GingerCore.Drivers
             {   
                 if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.HandleElementLocateBy).ToString(), out handleElementLocateby) == false)
                 {
-                    act.Error = "Unkown Handle Element Locate By";
+                    act.Error = "Unknown Handle Element Locate By";
                     return "false";
                 }
                 handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
@@ -1924,7 +1924,7 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction validationType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
             {
-                act.Error = "Unkown Validation Type";
+                act.Error = "Unknown Validation Type";
                 return "false";
             }
             string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
@@ -1932,7 +1932,7 @@ namespace GingerCore.Drivers
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
             {
-                act.Error = "Unkown Validation Element Locate By";
+                act.Error = "Unknown Validation Element Locate By";
                 return "false";
             }
             string validattionElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.ValidationElementLocatorValue);
@@ -2028,7 +2028,7 @@ namespace GingerCore.Drivers
             {
                 if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.HandleElementLocateBy).ToString(), out handleElementLocateby) == false)
                 {
-                    act.Error = "Unkown Handle Element Locate By";
+                    act.Error = "Unknown Handle Element Locate By";
                     return "false";
                 }
                 handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
@@ -2039,7 +2039,7 @@ namespace GingerCore.Drivers
             eLocateBy subElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.SubElementLocateBy).ToString(), out subElementLocateby) == false)
             {
-                act.Error = "Unkown Validation Element Locate By";
+                act.Error = "Unknown Validation Element Locate By";
                 return "false";
             }
             string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);            
@@ -2145,7 +2145,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            return "Error Occured while selecting :" + Value;
+                            return "Error Occurred while selecting :" + Value;
                         }
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane);
@@ -2322,9 +2322,10 @@ namespace GingerCore.Drivers
                     if (AE != null)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "In Accept Dialog:");
-                        UIAElementInfo EI = new UIAElementInfo();
-
-                        EI.ElementObject = AE;
+                        UIAElementInfo EI = new UIAElementInfo
+                        {
+                            ElementObject = AE
+                        };
                         List<ElementInfo> lstElem = GetElementChildren(EI);
                         foreach (ElementInfo elemInfo in lstElem)
                         {
@@ -2848,7 +2849,7 @@ namespace GingerCore.Drivers
             AutomationElement element = (AutomationElement)obj;
             if (element.Current.ClassName == "PBTabControl32_100")
             {
-                //TOOD: Find a way to hanlde with UI Automation instead of Win API action
+                //TOOD: Find a way to handle with UI Automation instead of Win API action
                 status = SelectTab(element, value, true);
                 if (!status)
                 {
@@ -2976,7 +2977,7 @@ namespace GingerCore.Drivers
                                     {
                                         //TODO: one day try to work without win apu and moving the cursor
                                         //something like below, didn't work
-                                        // It did fine the edit text box but value disapear...
+                                        // It did fine the edit text box but value disappear...
                                         //element.SetFocus();
                                         //Thread.Sleep(1);
                                         //AutomationElement parentElement2 = TreeWalker.ContentViewWalker.GetParent(element);
@@ -3011,7 +3012,7 @@ namespace GingerCore.Drivers
                         }
                         break;
                     case "combo box":
-                        //Catching the exception here will pass the action without error. For expection action should be failed and it is handled inside driver.
+                        //Catching the exception here will pass the action without error. For exception action should be failed and it is handled inside driver.
                         Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box ::");
                         if (mPlatform == ePlatform.PowerBuilder)
                         {
@@ -3216,7 +3217,7 @@ namespace GingerCore.Drivers
                         //Tab Control handling for PB
                         else if (element.Current.ClassName == "PBTabControl32_100")
                         {
-                            //TOOD: Find a way to hanlde with UI Automation instead of Win API action
+                            //TOOD: Find a way to handle with UI Automation instead of Win API action
                             Boolean status = SelectTab(element, value);
                             if (!status)
                             {
@@ -3369,9 +3370,9 @@ namespace GingerCore.Drivers
                                                           SelectionItemPattern.Pattern) as SelectionItemPattern;
                 sPat.Select();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::" + ex.Message);
                 throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
             }
         }
@@ -3913,7 +3914,7 @@ namespace GingerCore.Drivers
                 }
                 if (string.IsNullOrEmpty(value))
                 {
-                    // In some cases the name is the actual control value, wierd but exist...maybe there is no developer name
+                    // In some cases the name is the actual control value, weird but exist...maybe there is no developer name
                     value = element.Current.Name;
                 }
                 return value;
@@ -4258,7 +4259,7 @@ namespace GingerCore.Drivers
         }
         public void setFocus(AutomationElement ae)
         {
-            try { ae.SetFocus(); } //TODO set window focuse using runtime services. http://blog.coderdowhat.com/2010/02/automationelementsetfocus-is-unreliable.html
+            try { ae.SetFocus(); } //TODO set window focus using runtime services. http://blog.coderdowhat.com/2010/02/automationelementsetfocus-is-unreliable.html
             catch { }
         }
         
@@ -4672,7 +4673,7 @@ namespace GingerCore.Drivers
             return lastFocusedElement;
         }
         
-        //Will get all visibile control including recursive drill down, for AE which have invoke method
+        //Will get all visible control including recursive drill down, for AE which have invoke method
         public override List<ElementInfo> GetVisibleControls()
         {
             List<ElementInfo> list = new List<ElementInfo>();
@@ -4707,7 +4708,7 @@ namespace GingerCore.Drivers
                 else if (!ei.XPath.Contains(IEElementXpath))
                 {
                     //TODO: Here we check if automation element is child of IE browser element 
-                    // If yes then we skip it becuse we already have HTML element for this
+                    // If yes then we skip it because we already have HTML element for this
                     // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
                     // Need to find a better way to speed up
                     list.Add(ei);
@@ -4730,9 +4731,11 @@ namespace GingerCore.Drivers
         
         public override string GetElementAbsoluteXPath(object obj)
         {
-            UIAElementInfo EI = new UIAElementInfo(); //Create small simple EI
-            EI.ElementObject = obj;
-            EI.WindowExplorer = WindowExplorer;
+            UIAElementInfo EI = new UIAElementInfo
+            {
+                ElementObject = obj,
+                WindowExplorer = WindowExplorer
+            }; //Create small simple EI
             string XPath = mXPathHelper.GetElementXpathAbsulote(EI);
             return XPath;
 
@@ -5457,7 +5460,7 @@ namespace GingerCore.Drivers
                     //TODO: make support SetText Table action by Row Number and Column Number.
                     if (!actGrid.LocateRowType.Equals("Where") || (actGrid.WhereColSelector.Equals(ActTableElement.eRunColSelectorValue.ColNum)) || (actGrid.ColSelectorValue.Equals(ActTableElement.eRunColSelectorValue.ColNum)))
                     {
-                        actGrid.Error = "SetText Table Actoin is currenly supported only by ColumnTitle with Where Option. Other available options are not supported yet";
+                        actGrid.Error = "SetText Table Action is currently supported only by ColumnTitle with Where Option. Other available options are not supported yet";
                         break;
                     }
 
@@ -5525,7 +5528,7 @@ namespace GingerCore.Drivers
                     parentDictionary.Add(AE, dictionary);
                 }
 
-                // TODO : support grid with Scroled elements. if elements are taking by location
+                // TODO : support grid with Scrolled elements. if elements are taking by location
 
                 List<string> keys = dictionary.Keys.ToList();
                 int maxcount = 0, tempcount = 0;
@@ -5835,7 +5838,7 @@ namespace GingerCore.Drivers
                         list.Add(WEI);
                         //elementNode = TreeWalker.ControlViewWalker.GetNextSibling(elementNode);
                         elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
-                        //Added this condition to show less elements in exploerer for table
+                        //Added this condition to show less elements in explorer for table
                         if (AE.Current.LocalizedControlType == "pane" && AE.Current.ClassName.StartsWith("pbdw"))
                         {
                             if (list.Count > 500)

@@ -31,6 +31,7 @@ namespace GingerTest
 {
     [TestClass]
     [Level3]
+    [Ignore]
     public class AgentsTest
     {
         static GingerWPF.WorkSpaceLib.WorkSpaceEventHandler WSEH = new GingerWPF.WorkSpaceLib.WorkSpaceEventHandler();
@@ -115,7 +116,8 @@ namespace GingerTest
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
         
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        //[Timeout(60000)]
         public void RenameAgent()
         {
             //Arrange     

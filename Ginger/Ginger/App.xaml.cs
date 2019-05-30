@@ -24,15 +24,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.Repository;
-using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.GeneralLib;
-using GingerCore.Platforms;
 using GingerCore.Repository;
-using GingerCore.SourceControl;
-using GingerCoreNET.SourceControl;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
@@ -113,10 +107,12 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-           
-            
+
+
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
 
             NewRepositorySerializer.AddClasses(list);
         }
@@ -251,7 +247,7 @@ namespace Ginger
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console      
+                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
 
             //write Ginger start to log + console

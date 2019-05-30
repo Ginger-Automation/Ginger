@@ -71,8 +71,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassCleanup()
         {
             foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
-            {
-                GingerNodeProxy proxy = new GingerNodeProxy(GNI);                    
+            {            
+                ///  TODO: fixme
                 // proxy.Shutdown();
             }
             

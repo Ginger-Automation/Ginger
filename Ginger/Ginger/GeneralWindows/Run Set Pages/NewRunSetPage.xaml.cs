@@ -20,14 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowFolder;
 using Ginger.Functionalities;
+using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.RunSetLib.CreateCLIWizardLib;
@@ -41,7 +41,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
-using IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -193,7 +192,7 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {                
                 Init();
 
@@ -221,14 +220,23 @@ namespace Ginger.Run
             mEditMode = editMode;
             if (mEditMode == eEditMode.View)
             {
-                xResetRunsetBtn.IsEnabled = false;
-                xRunRunsetBtn.IsEnabled = false;
-                xStopRunsetBtn.IsEnabled = false;
-                xContinueRunsetBtn.IsEnabled = false;
-                xRunnersControlPnl.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
+                xRunnersCanvasControls.IsEnabled = false;
+                xRunnersExecutionControls.IsEnabled = false;
+                xBusinessFlowsListOperationsPnl.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
+                return;
             }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+                xRunnersCanvasControls.Visibility = Visibility.Collapsed;
+                xRunnersExecutionControls.Visibility = Visibility.Collapsed;
+                xBusinessFlowsListOperationsPnl.Visibility = Visibility.Collapsed;
+                xMiniRunnerExecutionPanel.Visibility = Visibility.Collapsed;
+            }
+
             //load Run Set
             if (runSetConfig != null)
             {
@@ -237,7 +245,6 @@ namespace Ginger.Run
             else
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                //TODO: hide all pages elements
             }           
         }
 
@@ -587,23 +594,23 @@ namespace Ginger.Run
                     xDescTextBlockHelper.AddLineBreak();
                 }
 
-                //Target apps been tested in Run set
-                List<string> targetsList = new List<string>();
-                foreach(GingerRunner runner in mRunSetConfig.GingerRunners )
-                {                    
-                    foreach(IApplicationAgent appAgent in runner.ApplicationAgents)
-                    {
-                        if (targetsList.Contains(appAgent.AppName) == false)
-                            targetsList.Add(appAgent.AppName);
-                    }
-                }
-                string targetsLbl = "Target/s: ";
-                foreach (string appName in targetsList)
-                {
-                    targetsLbl += appName + ", ";
-                }
-                targetsLbl= targetsLbl.TrimEnd(new char[] { ' ', ',' });
-                xDescTextBlockHelper.AddText(targetsLbl);
+                ////Target apps been tested in Run set
+                //List<string> targetsList = new List<string>();
+                //foreach(GingerRunner runner in mRunSetConfig.GingerRunners )
+                //{                    
+                //    foreach(IApplicationAgent appAgent in runner.ApplicationAgents)
+                //    {
+                //        if (targetsList.Contains(appAgent.AppName) == false)
+                //            targetsList.Add(appAgent.AppName);
+                //    }
+                //}
+                //string targetsLbl = "Target/s: ";
+                //foreach (string appName in targetsList)
+                //{
+                //    targetsLbl += appName + ", ";
+                //}
+                //targetsLbl= targetsLbl.TrimEnd(new char[] { ' ', ',' });
+                //xDescTextBlockHelper.AddText(targetsLbl);
             });
         }
 
@@ -855,10 +862,7 @@ namespace Ginger.Run
 
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
-
-                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+                
 
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
@@ -1254,16 +1258,15 @@ namespace Ginger.Run
 
         internal void SaveRunSetConfig()
         {
-            //Do Runset Save Preperations
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            try
             {
-                GR.UpdateBusinessFlowsRunList();
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
-
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
-            
-
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, GingerDicser.GetTermResValue(eTermResKey.RunSet) + " was saved successfully");
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
         internal void AddNewRunSetConfig()
@@ -1374,16 +1377,12 @@ namespace Ginger.Run
 
                 ResetALMDefectsSuggestions();
 
-                //check runner is not empty
-                if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mCurrentSelectedRunner.Name + "' to start run.");
-                    return;
-                }
-
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
@@ -1420,8 +1419,11 @@ namespace Ginger.Run
                 }
 
                 //run analyzer
-                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-                if (analyzeRes == 1) return;//cancel run because issues found
+                if (mRunSetConfig.RunWithAnalyzer)
+                {
+                    int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                    if (analyzeRes == 1) return;//cancel run because issues found
+                }
 
                 //continue run            
                 await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync(true);//doing continue run
@@ -1578,49 +1580,145 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                
-                string reportsResultFolder = string.Empty;
-                if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport();
+            }
+            else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 {
-                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
-                    return;
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
-                {
-                    string runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
-                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.ExecutionsResultsNotExists);
-                    return;
-                }
-                if (reportsResultFolder == string.Empty)
-                {
-                    Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
-                    return;
-                }
-                else
-                {
-                    foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
+                    ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
+                    HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
+                    string reportsResultFolder = string.Empty;
+                    if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
                     {
-                        string fileName = System.IO.Path.GetFileName(txt_file);
-                        if (fileName.Contains(".html"))
+                        Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
+                        return;
+                    }
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                    {
+                        string runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
+                        reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null);
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.ExecutionsResultsNotExists);
+                        return;
+                    }
+                    if (reportsResultFolder == string.Empty)
+                    {
+                        Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);
+                        return;
+                    }
+                    else
+                    {
+                        foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
                         {
-                            System.Diagnostics.Process.Start(reportsResultFolder);
-                            System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                            string fileName = System.IO.Path.GetFileName(txt_file);
+                            if (fileName.Contains(".html"))
+                            {
+                                System.Diagnostics.Process.Start(reportsResultFolder);
+                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                            }
                         }
                     }
                 }
+                else
+                {
+                    GingerRunner gr = new GingerRunner();
+                    gr.ExecutionLoggerManager.GenerateRunSetOfflineReport();
+                }
+
             }
-            else
-                ExecutionLogger.GenerateRunSetOfflineReport();
+            
 
         }
+
+        private void RunClientApp(string json,string clientAppFolderPath)
+        {
+            try
+            {
+                string taskCommand = $"{Path.Combine(clientAppFolderPath, "index.html")} --allow-file-access-from-files";
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
+                System.Diagnostics.Process.Start("chrome", taskCommand);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("RunClientApp Error - " + ex.Message);
+            }
+        }
+
+        private void DeleteFoldersData(string clientAppFolderPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
+
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+        }
+
+        //TODO move it to utils class
+        private void PopulateMissingFields(LiteDbRunSet liteDbRunSet,string clientAppPath)
+        {
+            string imageFolderPath = Path.Combine(clientAppPath,"assets","screenshots");
+ 
+             int totalRunners = liteDbRunSet.RunnersColl.Count;
+            int totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
+            int totalExecuted = totalRunners -  liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
+
+            liteDbRunSet.ExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
+            liteDbRunSet.PassRate = (totalPassed * 100 / totalRunners).ToString();
+
+            foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
+            {
+
+                int totalBFs = liteDbRunner.BusinessFlowsColl.Count;
+                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
+                int totalExecutedBFs = totalBFs -  liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString()).Count();
+
+                liteDbRunner.ExecutionRate = (totalExecutedBFs * 100 / totalBFs).ToString();
+                liteDbRunner.PassRate = (totalPassedBFs * 100 / totalExecutedBFs).ToString();
+
+                foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
+                {
+                    int totalActivities = liteDbBusinessFlow.ActivitiesColl.Count;
+                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
+                    int totalExecutedActivities = totalActivities -  liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+
+                    liteDbBusinessFlow.ExecutionRate = (totalExecutedActivities * 100 / totalActivities).ToString();
+                    liteDbBusinessFlow.PassRate = (totalPassedActivities * 100 / totalExecutedActivities).ToString();
+
+                    foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
+                    {
+                        int totalActions = liteDbActivity.ActionsColl.Count;
+                        int totalPassedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
+                        int totalExecutedActions = totalActions -  liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+
+                        liteDbActivity.ExecutionRate = (totalExecutedActions * 100 / totalActions).ToString();
+                        liteDbActivity.PassRate = (totalPassedActions * 100 / totalExecutedActions).ToString();
+
+                        foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
+                        {
+                            List<string> newScreenShotsList = new List<string>();
+                            foreach (string screenshot in liteDbAction.ScreenShots)
+                            {
+                                string fileName = Path.GetFileName(screenshot);
+                                string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
+                                System.IO.File.Copy(screenshot, newScreenshotPath,true); //TODO - Replace with the real location under Ginger installation
+                                newScreenShotsList.Add(fileName);
+                            }
+                            liteDbAction.ScreenShots = newScreenShotsList;
+                        }
+                    }
+
+                }
+            }
+        }
+
         private void HideAllborders()
         {
             RunnerBorder.BorderBrush = null;
@@ -1632,11 +1730,8 @@ namespace Ginger.Run
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            AutoLogProxy.UserOperationStart("SaveRunConfigButton_Click");
-
-            SaveRunSetConfig();
-
-            AutoLogProxy.UserOperationEnd();
+            
+            SaveRunSetConfig();           
         }
         
         private void SetExecutionModeIcon()
@@ -1752,6 +1847,7 @@ namespace Ginger.Run
 
                 mCurrentActivityRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
 
+                mCurrentActivityRunnerItem.Context.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
                 mContext.Activity = (Activity)mCurrentActivityRunnerItem.ItemObject;
             }
             else
@@ -2351,10 +2447,9 @@ namespace Ginger.Run
             mContext.Environment = (ProjEnvironment)xRunsetEnvironmentCombo.SelectedItem;
         }
 
-        private void XCLIButton_Click(object sender, RoutedEventArgs e)
-        {
-            // pass mRunSetConfig + env !!!!!!!!!!!
-            WizardWindow.ShowWizard(new CreateCLIWizard());
+        private void XAutoRunButton_Click(object sender, RoutedEventArgs e)
+        {            
+            WizardWindow.ShowWizard(new AutoRunWizard(mRunSetConfig, mContext));
             
         }
     }

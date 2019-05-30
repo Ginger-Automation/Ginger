@@ -299,6 +299,7 @@ namespace GingerCore.Actions
         public string LocateRowValue { get; set; }
 
         string mExcelPath;
+        [IsSerializedForLocalRepository]
         public string ExcelPath
         {
             get { return mExcelPath;  }
@@ -313,6 +314,7 @@ namespace GingerCore.Actions
         }
 
         string mExcelSheetName;
+        [IsSerializedForLocalRepository]
         public string ExcelSheetName
         {
             get { return mExcelSheetName; }

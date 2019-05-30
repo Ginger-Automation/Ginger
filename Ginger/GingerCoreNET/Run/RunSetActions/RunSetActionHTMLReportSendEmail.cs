@@ -179,7 +179,8 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                runSetFolder = ExecutionLogger.GetRunSetLastExecutionLogFolderOffline();
+                GingerRunner gr = new GingerRunner();
+                runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                 AutoLogProxy.UserOperationStart("Offline Report");
             }
 
@@ -403,6 +404,10 @@ namespace Ginger.Run.RunSetActions
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
+            if (currentTemplate == null && selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
+            {
+                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault(); 
+            }
             RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");

@@ -16,12 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
 using Ginger.Actions._Common;
-using Ginger.Actions.UserControls;
-using GingerWPF.DragDropLib;
+using Ginger.Extensions;
+using Ginger.Help;
 using Ginger.UserControls;
-using GingerCore;
+using Ginger.UserControlsLib;
+using GingerCore.GeneralLib;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,20 +43,11 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using Ginger.UserControlsLib;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Ginger.Extensions;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.UIElement;
-using Ginger.Help;
+using System.Windows.Media.Imaging;
 
 namespace Ginger
 {
@@ -154,6 +154,16 @@ namespace Ginger
                 return mObjList;
             }
         }
+
+        public void ClearFilters()
+        {            
+            this.Dispatcher.Invoke(() =>
+            {
+                txtSearch.Text = string.Empty;
+                Tags.Clear();
+            });
+        }
+
 
         string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
@@ -332,14 +342,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {
-            grdMain.CommitEdit();
-            grdMain.CancelEdit();
+        {            
             this.Dispatcher.Invoke(() =>
             {
+                grdMain.CommitEdit();
+                grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();
-            });
+                mCollectionView.Refresh();               
+            });            
         }
 
 
@@ -730,6 +740,7 @@ namespace Ginger
                 foreach (object o in SelectedItemsList)
                 {
                     mObjList.Remove(o);
+                    RemoveFromLiteDB(o);
                 }
             }
             finally
@@ -737,6 +748,21 @@ namespace Ginger
                 Mouse.OverrideCursor = null;
             }
         }
+
+        private void RemoveFromLiteDB(object o)
+        {
+            //if (o is RepositoryItemBase && (o as RepositoryItemBase).LiteDbId != null)
+            //{
+            //    string o.
+            //    LiteDbManager dbManager = new LiteDbManager();
+            //    var result = dbManager.GetRunSetLiteData();
+            //    List<LiteDbRunSet> filterData = null;
+            //    filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
+            //    //LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+            //    //dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+            //}
+        }
+
         private void btnClearSearchText_Click(object sender, RoutedEventArgs e)
         {
             txtSearch.Text = "";
@@ -1289,10 +1315,10 @@ public void RemoveCustomView(string viewName)
                             case GridColView.eGridColStyleType.ComboBox:
                                 gridCol = new DataGridComboBoxColumn();
                                 // We can get a list which was converted from enum value and contains value and text CEI style
-                                if (colView.CellValuesList is List<GingerCore.General.ComboEnumItem>)
+                                if (colView.CellValuesList is List<ComboEnumItem>)
                                 {
-                                    ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = GingerCore.General.ComboEnumItem.Fields.text;
-                                    ((DataGridComboBoxColumn)gridCol).SelectedValuePath = GingerCore.General.ComboEnumItem.Fields.Value;
+                                    ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = ComboEnumItem.Fields.text;
+                                    ((DataGridComboBoxColumn)gridCol).SelectedValuePath = ComboEnumItem.Fields.Value;
                                     ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = binding;
                                 }
                                 else
@@ -1414,15 +1440,15 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        public static DataTemplate GetGridComboBoxTemplate(List<GingerCore.General.ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
+        public static DataTemplate GetGridComboBoxTemplate(List<ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
                                         string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
 
             combo.SetValue(ComboBox.ItemsSourceProperty, valuesList);
-            combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(GingerCore.General.ComboEnumItem.text));
-            combo.SetValue(ComboBox.SelectedValuePathProperty,nameof(GingerCore.General.ComboEnumItem.Value)); 
+            combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
+            combo.SetValue(ComboBox.SelectedValuePathProperty,nameof(ComboEnumItem.Value)); 
 
             Binding selectedValueBinding = new Binding(selectedValueField);
             selectedValueBinding.Mode = BindingMode.TwoWay;
@@ -1509,9 +1535,11 @@ public void RemoveCustomView(string viewName)
 
             if (mAppGlobalParamList != null)
             {
-                ObservableList<GingerCoreNET.GeneralLib.General.ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<GingerCoreNET.GeneralLib.General.ComboItem>();
+                ObservableList<ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<ComboItem>();
                 foreach (GlobalAppModelParameter param in mAppGlobalParamList)
-                    appModelGlobalParamsComboItemsList.Add(new GingerCoreNET.GeneralLib.General.ComboItem() { text = param.PlaceHolder, Value = param.Guid });
+                {
+                    appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid });
+                }
 
                 Storeto.SetValue(UCStoreTo.ItemsSourceGlobalParamProperty, appModelGlobalParamsComboItemsList);
             }
@@ -1548,7 +1576,7 @@ public void RemoveCustomView(string viewName)
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(UCValueExpression));
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
-            //factory.SetValue(UCValueExpression.mContextProperty, context); //TODO: need to be fixed
+            factory.SetValue(UCValueExpression.ContextProperty, context); 
             template.VisualTree = factory;
           
 
@@ -1773,10 +1801,10 @@ public void RemoveCustomView(string viewName)
             comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             comboBox.Width = 100;
-            List<GingerCore.General.ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
+            List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
-                GingerCore.General.ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
                 if (existingDefaultItem != null)
                 {
                     comboBox.ItemsSource = itemsList;
@@ -1784,10 +1812,10 @@ public void RemoveCustomView(string viewName)
                 }
                 else
                 {
-                    GingerCore.General.ComboEnumItem newDefaultItem = new GingerCore.General.ComboEnumItem() { text = defaultOptionText, Value = null };
-                    List<GingerCore.General.ComboEnumItem> itemsListWithNewDefaultText = new List<GingerCore.General.ComboEnumItem>();
+                    ComboEnumItem newDefaultItem = new ComboEnumItem() { text = defaultOptionText, Value = null };
+                    List<ComboEnumItem> itemsListWithNewDefaultText = new List<ComboEnumItem>();
                     itemsListWithNewDefaultText.Add(newDefaultItem);
-                    foreach (GingerCore.General.ComboEnumItem CEI in itemsList)
+                    foreach (ComboEnumItem CEI in itemsList)
                     {
                         itemsListWithNewDefaultText.Add(CEI);
                     }

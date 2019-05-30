@@ -17,7 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.Plugin.Core.DriversLib;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Diagnostics;
 
@@ -28,6 +29,8 @@ namespace GingerCoreNET.RunLib
         public GingerGrid GingerGrid { get; set; }
 
         GingerNodeInfo mGingerNodeInfo;
+        
+        bool mRecordingSocketTraffic = false;
 
         private bool mIsConnected = false;
         // This is the socket connected or not - doesn't mean if the driver is started or closed
@@ -44,7 +47,12 @@ namespace GingerCoreNET.RunLib
             mGingerNodeInfo = GNI;
         }
 
-        // C#
+        public void StartRecordingSocketTraffic()
+        {
+            mRecordingSocketTraffic = true;
+            Monitor.ShowMonitor(this);
+        }
+
 
         public string Description
         {
@@ -62,10 +70,11 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        
+        public IGingerNodeMonitor Monitor { get; set; }
 
         public void Reserve()
         {
+            /// !!!! FIXME for remoe grid
             //// if GingerGrid is local - we can do direct communication
             //if (GingerGrid != null)
             //{
@@ -82,16 +91,39 @@ namespace GingerCoreNET.RunLib
         public NewPayLoad RunAction(NewPayLoad newPayLoad)
         {
             NewPayLoad RC = SendRequestPayLoad(newPayLoad);
-            return RC;           
+            return RC;
         }
 
-        private NewPayLoad SendRequestPayLoad(NewPayLoad payload)
+        public NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
-            
-            // if local grid use
-            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
-            // else use remote grid
-            
+            if (!mRecordingSocketTraffic)
+            {
+                return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+            }
+            else
+            {
+                GingerSocketLog gingerSocketLog = new GingerSocketLog();
+                gingerSocketLog.SetPayLoad(payload);
+                gingerSocketLog.LogType = "Send";
+                Monitor.Add(gingerSocketLog);
+
+                Stopwatch st = Stopwatch.StartNew();
+
+                // if local grid use !!!!!!!!!!!!!!
+                NewPayLoad responsePayload = GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+                // else use remote grid
+
+                st.Stop();
+
+                GingerSocketLog rc = new GingerSocketLog();
+                rc.SetPayLoad(responsePayload);
+                rc.LogType = "Recv";
+                rc.Elapsed = st.ElapsedMilliseconds;
+                Monitor.Add(rc);
+
+                return responsePayload;
+            }
+
         }
 
         public void StartDriver()
@@ -145,6 +177,6 @@ namespace GingerCoreNET.RunLib
             SendRequestPayLoad(PL);
         }
 
-        
+
     }
 }

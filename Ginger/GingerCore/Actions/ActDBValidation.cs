@@ -135,7 +135,7 @@ namespace GingerCore.Actions
             get
             {try
                 {
-                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase)
+                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb)
                         return eDatabaseTye.NoSQL;
                     else return eDatabaseTye.Relational;
                 }
@@ -161,11 +161,11 @@ namespace GingerCore.Actions
         public enum eDBValidationType
         {
             [EnumValueDescription("Free SQL")]
-            FreeSQL = 1,                // SQL which result in one row one column value to be exctracted
+            FreeSQL = 1,                // SQL which result in one row one column value to be extracted
             [EnumValueDescription("Record Count")]
-            RecordCount = 2,           // providing Table, and where clouse return how many records
+            RecordCount = 2,           // providing Table, and where clause return how many records
             [EnumValueDescription("Simple SQL One Value")]
-            SimpleSQLOneValue = 3,     // provide table, lookupield, lookupvalue, outfield,  Like: select cutomerType from TBCustomer WHERE cutomser id=123    
+            SimpleSQLOneValue = 3,     // provide table, lookupield, lookupvalue, outfield,  Like: select cutomerType from TBCustomer WHERE customer id=123    
             [EnumValueDescription("Update DB")]
             UpdateDB = 4,     // Run SQL/PL procedure 
         }
@@ -281,12 +281,17 @@ namespace GingerCore.Actions
                     NoSqlDriver.PerformDBAction();
 
                     break;
+                case Database.eDBTypes.MongoDb:
+                    NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+                    NoSqlDriver.PerformDBAction();
+
+                    break;
             }
         }
 
         private bool SetDBConnection()
         {
-            //TODO: add on null or not found throw execption so it will fail            
+            //TODO: add on null or not found throw exception so it will fail            
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)

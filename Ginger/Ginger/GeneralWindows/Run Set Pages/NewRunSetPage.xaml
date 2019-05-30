@@ -64,9 +64,9 @@
                                     <GingerCore:ucTextDicResource Text="Find in [RunSet]"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xCLIButton"  ButtonType="ImageButton" ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="CLI"  Click="XCLIButton_Click">
+                            <usercontrols:ucButton x:Name="xAutoRunButton"  ButtonType="ImageButton" ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="CLI"  Click="XAutoRunButton_Click">
                                 <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run"/>
+                                    <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run Configuration"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
 
@@ -88,6 +88,14 @@
                                             <DockPanel>
                                                 <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
                                                 <GingerCore:ucTextDicResource Text="Export Execution Result to ALM"  FontSize="15" Margin="5 5 0 0"/>
+                                            </DockPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem x:Name="xReloadRunsetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRunSetReload_Click">
+                                        <MenuItem.Header >
+                                            <DockPanel>
+                                                <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
+                                                <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="15" Margin="5 5 0 0"/>
                                             </DockPanel>
                                         </MenuItem.Header>
                                     </MenuItem>
@@ -181,7 +189,7 @@
                             <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
                                 <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
                                 <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel">
-                                    <DockPanel x:Name="xRunnerButtonsDocPanel">
+                                    <DockPanel x:Name="xMiniRunnerExecutionPanel">
                                         <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Play" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
@@ -216,7 +224,7 @@
                                                     </Label.Content>
                                                 </Label>
                                             </StackPanel>
-                                            <DockPanel HorizontalAlignment="Right" Margin="0 0 10 0">
+                                            <DockPanel x:Name="xBusinessFlowsListOperationsPnl" HorizontalAlignment="Right" Margin="0 0 10 0">
                                                 <TextBox x:Name="SearchTextblock" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" FontSize="15"   Visibility="Collapsed" Width="201"></TextBox>
                                                 <usercontrols:ucButton x:Name="xBusinessflowsActiveBtn" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xBusinessflowsActive_Click">
                                                     <usercontrols:ucButton.ToolTip>

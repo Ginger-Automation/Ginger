@@ -535,7 +535,7 @@ namespace GingerCore.Drivers
             }
         }
       
-        //TODO: move to seperate class
+        //TODO: move to separate class
         [ComVisible(true), ClassInterface(ClassInterfaceType.AutoDispatch)]
         public class DomEventHandler
         {
@@ -671,7 +671,7 @@ namespace GingerCore.Drivers
             {
                 // mshtml.HTMLAnchorElement ela = (mshtml.HTMLAnchorElement)el;    
                 LocateBy = eLocateBy.ByHref;
-                //for HREF we use path name since it is partial url, the full HREF conatins http://... which is not the href in the html, this way we can also move env with no change
+                //for HREF we use path name since it is partial url, the full HREF contains http://... which is not the href in the html, this way we can also move env with no change
                 LocateValue = GetRealHREFfromOuterHTML(el.outerHTML); 
                 return;
             }
@@ -1464,7 +1464,7 @@ namespace GingerCore.Drivers
                     
                          var AllDocElems = mDocument.all as IEnumerable;      
 
-                          //TODOL: cureently getting input element, need to handle also other type
+                          //TODOL: currently getting input element, need to handle also other type
                          var inputs = AllDocElems.OfType<mshtml.HTMLInputElement>();
                            //TODO: check performance
                            
@@ -2361,7 +2361,7 @@ namespace GingerCore.Drivers
         /// <param name="e">Some additional information</param>
         public static void OnAutoScrollToEndChanged(DependencyObject s, DependencyPropertyChangedEventArgs e)
         {
-            //Commented due to issue - when openning flow and going to automate page it goes to last act
+            //Commented due to issue - when opening flow and going to automate page it goes to last act
             // Need to run one stepm and have IB open
             // TODO: fix me
 

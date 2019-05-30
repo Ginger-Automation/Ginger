@@ -20,18 +20,20 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
-    public class GingerGrid
-    {
-        // Maybe better ASP.NET - with web pages and rest API to communicate
+    public class GingerGrid 
+    {        
         GingerSocketServer2 mGingerSocketServer;
 
         ObservableList<GingerNodeInfo> mGingerNodeInfo = new ObservableList<GingerNodeInfo>();
 
-        int mPort;
+        int mPort;        
+
+        static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = new Dictionary<GingerNodeInfo, GingerNodeProxy>();
 
         public GingerGrid(int Port)
         {
@@ -50,9 +52,16 @@ namespace GingerCoreNET.RunLib
 
         public void Start()
         {
-            mGingerSocketServer = new GingerSocketServer2();
-            mGingerSocketServer.StartServer(mPort);
-            mGingerSocketServer.MessageHandler = GingerSocketServerMessageHandler;
+            try
+            {
+                mGingerSocketServer = new GingerSocketServer2();
+                mGingerSocketServer.StartServer(mPort);
+                mGingerSocketServer.MessageHandler = GingerSocketServerMessageHandler;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error - Unable to start GingerGrid:" + ex.Message);
+            }
         }
 
         private void GingerSocketServerMessageHandler(GingerSocketInfo gingerSocketInfo)
@@ -136,12 +145,23 @@ namespace GingerCoreNET.RunLib
 
         public string Status
         {
-            get {
+            get
+            {                
                 if (HostIP == null)
                 {
                     HostIP = SocketHelper.GetLocalHostIP();
                 }
-                return HostIP + " Port: " + mPort;
+                string st = HostIP + " Port: " + mPort;
+                if (mGingerSocketServer.isReady)
+                {
+                    st += " Ready";
+                }
+                else
+                {
+                    st += "!!! NOT Ready !!!";
+                }
+                
+                return st; 
             }  // TODO: add status enum 
         }
 
@@ -179,5 +199,20 @@ namespace GingerCoreNET.RunLib
             //}
             //}
         }
+
+        public GingerNodeProxy GetNodeProxy(GingerNodeInfo gingerNodeInfo)
+        {
+            GingerNodeProxy gingerNodeProxy = null;
+            bool b = GingerNodeProxyDictionary.TryGetValue(gingerNodeInfo, out gingerNodeProxy);
+            if (!b)            
+            {
+                gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo);
+                gingerNodeProxy.GingerGrid = this; 
+                GingerNodeProxyDictionary.Add(gingerNodeInfo, gingerNodeProxy);
+            }
+            return gingerNodeProxy;
+        }
+
+       
     }
 }

@@ -105,8 +105,11 @@
     <Reference Include="Couchbase.NetClient, Version=2.7.3.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <HintPath>..\packages\CouchbaseNetClient.2.7.3\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.8.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
-      <HintPath>..\packages\DocumentFormat.OpenXml.2.8.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+      <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.CV, Version=2.4.2.1773, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.1.18.0\lib\net35\Emgu.CV.dll</HintPath>
@@ -209,6 +212,15 @@
     <Reference Include="MigraDoc.RtfRendering-WPF">
       <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\MigraDoc.RtfRendering-WPF.dll</HintPath>
     </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.8.0\lib\net452\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.2.8.0\lib\net452\MongoDB.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.8.0\lib\net452\MongoDB.Driver.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Posix">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
     </Reference>
@@ -219,8 +231,8 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql, Version=3.2.2.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.2.2\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=4.0.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.4.0.7\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -315,8 +327,8 @@
       <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
@@ -361,6 +373,9 @@
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows" />
@@ -431,10 +446,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -472,10 +483,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GeneralLib\InputBoxWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Reporter\BotDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -556,7 +563,6 @@
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Communication\ActeMail.cs" />
-    <Compile Include="Actions\ActBrowserElement.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
@@ -671,14 +677,6 @@
     <Compile Include="Drivers\Common\HTMLElementInfo.cs" />
     <Compile Include="Drivers\Common\IXPath.cs" />
     <Compile Include="Drivers\Common\XPathHelper.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocket.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketClient.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketLog.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketMonitorWindow.xaml.cs">
-      <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\CommunicationProtocol\MessageEventArgs.cs" />
-    <Compile Include="Drivers\CommunicationProtocol\ObjectReflectionHelper.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
@@ -721,15 +719,18 @@
     <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
+    <Compile Include="GeneralLib\ComboEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboItem.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
-    <Compile Include="GeneralLib\StringCompressor.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
+    <Compile Include="NoSqlBase\GingerMongoDb.cs" />
     <Compile Include="NoSqlBase\GingerCouchbase.cs" />
     <Compile Include="NoSqlBase\GingerUDTMap.cs" />
     <Compile Include="NoSqlBase\GingerCassandra.cs" />
@@ -748,9 +749,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Reporter\GingerHelperEventArgs.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2060000_to_V2070000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2070000_to_V3000000.cs" />
     <Compile Include="SourceControl\GITSourceControl.cs" />
     <Compile Include="SourceControl\SVNSourceControl.cs" />
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
@@ -760,7 +758,6 @@
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\CommunicationProtocol\GingerSocketServer.cs" />
     <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
       <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
     </Compile>
@@ -794,18 +791,10 @@
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Platforms\ApplicationPlatform.cs" />
-    <Compile Include="Reporter\GingerHelperMsgsPool.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1050000_to_V1060000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1040000_to_V1050000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1030000_to_V1040000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v10203_TO_v1020000.cs" />
     <Compile Include="GeneralLib\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
       <DependentUpon>InputBoxWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Reporter\BotDialog.xaml.cs">
-      <DependentUpon>BotDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\XMLViewer.xaml.cs">
       <DependentUpon>XMLViewer.xaml</DependentUpon>
@@ -815,8 +804,6 @@
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\QTPConnector.cs" />
-    <Compile Include="Drivers\QTPDriver.cs" />
     <Compile Include="Drivers\SeleniumDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -828,19 +815,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Repository\RepositoryItem.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1020000_to_V1030000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2010000_to_V2020000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2000000_to_V2010000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1090000_to_V2000000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1080000_to_V1090000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1070000_to_V1080000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v1060000_to_V1070000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2040000_to_V2050000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2030000_to_V2040000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2020000_to_V2030000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\v2050000_to_V2060000.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\XMLConverterBase.cs" />
-    <Compile Include="Repository\UpgradeLib\XML Upgrade\XMLUpgrade.cs" />
     <Compile Include="XPathParser\IXpathBuilder.cs" />
     <Compile Include="XPathParser\XPathAxis.cs" />
     <Compile Include="XPathParser\XPathOperator.cs" />
@@ -970,7 +944,6 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
     <Folder Include="Plugins\Jenkins\" />
-    <Folder Include="Themes\Theme1\Images\Logo\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Const.png" />
@@ -1009,20 +982,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\console16x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\bot.png" />
-    <Resource Include="Themes\Theme1\Images\Reporter\hover.png" />
-    <Resource Include="Themes\Theme1\Images\Reporter\MessageBoard.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\greyCog.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\Cancel24.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Themes\Theme1\Images\Reporter\CancelHover24.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Vbs16x16.png" />

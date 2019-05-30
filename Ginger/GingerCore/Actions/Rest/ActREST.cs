@@ -31,10 +31,12 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.WebServices;
 
 namespace GingerCore.Actions.REST
 {
-    public class ActREST : ActWithoutDriver
+    public class ActREST : ActWithoutDriver, IObsoleteAction
     {
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
         // We keep a dictionary of each host and cookies
@@ -303,7 +305,7 @@ namespace GingerCore.Actions.REST
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
                 default:
-                    throw new NotSupportedException("The Configured secutrity type is not supported");
+                    throw new NotSupportedException("The Configured security type is not supported");
 
             }
 
@@ -840,6 +842,85 @@ namespace GingerCore.Actions.REST
 
             }
             return NewReqBody;
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if(Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPIRest>(); });
+            ActWebAPIRest convertedActWebAPIRest = mapConfigUIElement.CreateMapper().Map<Act, ActWebAPIRest>(this);
+
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Convert.ToString(this.DoNotFailActionOnBadRespose));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Convert.ToString(this.UseLegacyJSONParsing));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, this.URLDomain.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, this.URLUser.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, this.URLPass.Value);
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, Convert.ToString(this.SecurityType));
+
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, Convert.ToString(this.RequestType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, Convert.ToString(this.ResponseContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.CookieMode, Convert.ToString(this.CookieMode));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, Convert.ToString(this.ContentType));
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, Convert.ToString(this.ReqHttpVersion));
+
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+
+            if (this.UseTemplateFile)
+            {
+                //Note:Don't confuse with field names. Use Template file is binded to Free text radio button in old Rest Action. 
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, this.RequestBody.Value);
+            }
+            else if (this.UseRequestBody)
+            {
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString());
+                convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, this.TemplateFile.Value);
+            }
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            convertedActWebAPIRest.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+
+            convertedActWebAPIRest.DynamicElements = this.DynamicElements;
+            convertedActWebAPIRest.HttpHeaders = this.HttpHeaders;
+
+            if (convertedActWebAPIRest.ReturnValues != null && convertedActWebAPIRest.ReturnValues.Count != 0)
+            {
+                //Old rest action add response as --> Respose
+                //And new adds it as Response:
+                // so we update it when converting from old action to new
+                ActReturnValue ARC = convertedActWebAPIRest.ReturnValues.Where(x => x.Param == "Respose").FirstOrDefault();
+                if (ARC != null)
+                {
+                    ARC.Param = "Response:";
+                }
+            }
+            return convertedActWebAPIRest;
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return typeof(ActWebAPIRest);
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            ActWebAPIRest newActApiRest = new ActWebAPIRest();
+            return newActApiRest.ActionDescription;
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.WebServices;
         }
     }
 }

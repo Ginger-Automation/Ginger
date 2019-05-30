@@ -28,7 +28,7 @@ using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -255,7 +255,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
 
-            List<GingerCore.General.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
+            List<ComboEnumItem> ElementTypeList = GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
@@ -381,10 +381,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             HandelElementSelectionChange();
         }
 
-        bool disabeledElementMsgShown;
+        // bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description))
+            if ((string)e.Column.Header == "Name" || (string)e.Column.Header == nameof(ElementInfo.Description))
             {
                 return;
             }
@@ -453,9 +453,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            List<GingerCore.General.ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+            List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
 
-            GingerCore.General.ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
             if (comboItem != null)
                 locateByList.Remove(comboItem);
 

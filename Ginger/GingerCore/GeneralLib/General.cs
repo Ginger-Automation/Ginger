@@ -17,10 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerCore.GeneralFunctions;
-using Newtonsoft.Json.Linq;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,8 +27,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -37,9 +36,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml;
-using GingerCore.DataSource;
-using System.Reflection;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore
 {
@@ -295,37 +291,9 @@ namespace GingerCore
             }
         }
 
-        // TODO: move to sperate class
-        public class ComboEnumItem
-        {
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
+       
 
-            public override String ToString()
-            {
-                return text;
-            }
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
-
-        public class ComboGroupedEnumItem
-        {
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "text";
-                public static string Category = "Value";
-            }
-
-            public object text { get; set; }
-            public object Value { get; set; }
-            public string Category { get; set; }
-        }
+       
 
         public class XmlNodeItem
         {
@@ -353,23 +321,7 @@ namespace GingerCore
             public string path { get; set; }
         }
 
-        public class ComboItem
-        {
-
-            public static class Fields
-            {
-                public static string text = "text";
-                public static string Value = "Value";
-            }
-
-            public override String ToString()
-            {
-                return text;
-            }
-
-            public string text { get; set; }
-            public object Value { get; set; }
-        }
+       
         #endregion ENUM
 
         public static string CorrectJSON(string WrongJson)
@@ -580,12 +532,12 @@ namespace GingerCore
 
         
 
-        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForCombo(Type Etype)
+        public static List<ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
-            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            List<ComboEnumItem> list = new List<ComboEnumItem>();
             foreach (object item in Enum.GetValues(Etype))
             {
-                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                ComboEnumItem CEI = new ComboEnumItem();
                 CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
                 CEI.Value = item;
 
@@ -595,12 +547,12 @@ namespace GingerCore
         }
 
 
-        public static List<GingerCore.General.ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
         {
-            List<GingerCore.General.ComboEnumItem> list = new List<GingerCore.General.ComboEnumItem>();
+            List<ComboEnumItem> list = new List<ComboEnumItem>();
             foreach (object item in Items)
             {
-                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                ComboEnumItem CEI = new ComboEnumItem();
                 CEI.text = GingerCore.General.GetEnumValueDescription(Etype, item);
                 CEI.Value = item;
 

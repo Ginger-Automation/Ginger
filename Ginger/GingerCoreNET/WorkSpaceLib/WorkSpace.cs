@@ -29,13 +29,13 @@ using Ginger.Functionalties;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -58,6 +58,15 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
+
+            mWorkSpace.InitLocalGrid();
+            
+        }
+
+        private void InitLocalGrid()
+        {
+            mLocalGingerGrid = new GingerGrid();
+            mLocalGingerGrid.Start();
         }
 
         public SolutionRepository SolutionRepository;
@@ -159,9 +168,78 @@ namespace amdocs.ginger.GingerCoreNET
             Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
             AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
             AutoLogProxy.LogAppOpened();
+            CheckWebReportFolder();
         }
 
-       
+        private void CheckWebReportFolder()
+        {
+            try
+            {
+                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
+                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                if (Directory.Exists(clientAppFolderPath))
+                {
+                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
+                    if (Directory.Exists(rootUserFolder))
+                        TryFolderDelete(rootUserFolder);
+                    CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
+        private void TryFolderDelete(string rootUserFolder)
+        {
+            try
+            {
+                Directory.Delete(rootUserFolder,true);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void CopyFolderRec(string sourceFolder, string destinationFolder, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceFolder);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceFolder);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            if (!Directory.Exists(destinationFolder))
+            {
+                Directory.CreateDirectory(destinationFolder);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = Path.Combine(destinationFolder, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destinationFolder, subdir.Name);
+                    CopyFolderRec(subdir.FullName, temppath, copySubDirs);
+                }
+            }
+        }
 
         private static void SetLoadingInfo(string text)
         {
@@ -206,8 +284,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public bool OpenSolution(string solutionFolder)
-        {
-            mPluginsManager = null;            
+        {                      
             try
             {               
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
@@ -270,6 +347,7 @@ namespace amdocs.ginger.GingerCoreNET
                 solution.SetReportsConfigurations();
                 Solution = solution;
                 UserProfile.LoadRecentAppAgentMapping();
+
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -367,21 +445,35 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public void CloseAllEnvironments()
+        {
+            if (SolutionRepository != null)
+            {
+                foreach(ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                {
+                    env.CloseEnvironment();
+                }
+            }
+        }
+
 
         public void CloseSolution()
         {
-            if (WorkSpace.Instance.SolutionRepository != null)
+            //Do cleanup
+            if (SolutionRepository != null)
             {
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                CloseAllRunningAgents();
+                CloseAllEnvironments();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+                if (!RunningInExecutionMode)
+                {
+                    AppSolutionAutoSave.SolutionAutoSaveEnd();
+                }
             }
 
-            if (!WorkSpace.Instance.RunningInExecutionMode)
-            {
-                AppSolutionAutoSave.SolutionAutoSaveEnd();
-            }
-
-            CloseAllRunningAgents();
-
+            //Reset values
+            mPluginsManager = null;
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;
@@ -400,12 +492,7 @@ namespace amdocs.ginger.GingerCoreNET
         public GingerGrid LocalGingerGrid
         {
             get
-            {
-                if (mLocalGingerGrid == null)
-                {                    
-                    mLocalGingerGrid = new GingerGrid();   
-                    mLocalGingerGrid.Start();
-                }
+            {                
                 return mLocalGingerGrid;
             }
         }

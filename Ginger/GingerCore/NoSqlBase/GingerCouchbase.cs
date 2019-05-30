@@ -34,13 +34,7 @@ namespace GingerCore.NoSqlBase
         Cluster clusterCB = null;     
         ActDBValidation Act = null;
         
-        public override List<eNoSqlOperations> GetSupportedActions()
-        {
-            List<eNoSqlOperations> SupportedActions = new List<eNoSqlOperations>();
-
-            SupportedActions.Add(eNoSqlOperations.freesql);
-            return SupportedActions;
-        }
+     
 
         public bool Connect()
         {

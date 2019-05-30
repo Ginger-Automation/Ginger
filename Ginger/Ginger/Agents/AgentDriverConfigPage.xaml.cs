@@ -126,14 +126,14 @@ namespace Ginger.Agents
                 DriverConfigurationFrame.Content = p;
             }
             // Android Edit Page
-            else if (mAgent.DriverType == Agent.eDriverType.AndroidADB)
-            {
-                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
-                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
+            //else if (mAgent.DriverType == Agent.eDriverType.AndroidADB)
+            //{
+            //    DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
+            //    DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
 
-                Page p = new AndroidADBDriverEditPage(mAgent);
-                DriverConfigurationFrame.Content = p;
-            }
+            //    Page p = new AndroidADBDriverEditPage(mAgent);
+            //    DriverConfigurationFrame.Content = p;
+            //}
             //Default Edit Page
             else
             {
