@@ -11,7 +11,7 @@ namespace Ginger.Plugin.Platform.Web
     [GingerInterface("IWebPlatform", "Web Platform driver")]
     public interface IWebPlatform: IPlatformService
     {
-       
+        bool AutomaticallyShiftIframe { get; set; }
         IBrowserActions BrowserActions { get;  }
 
         ILocateWebElement LocateWebElement { get;  }

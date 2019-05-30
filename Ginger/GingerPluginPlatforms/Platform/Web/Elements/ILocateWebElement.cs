@@ -38,6 +38,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
 
        IGingerWebElement LocateElementByPartiallinkText(eElementType elementType,string LocateValue);
        IGingerWebElement LocateElementByTag(eElementType elementType,string LocateValue);
+        IGingerWebElement LocateElementByName(eElementType elementType, string locateByValue);
 
 
         /*

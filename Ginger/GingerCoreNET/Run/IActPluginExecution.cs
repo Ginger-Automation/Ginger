@@ -9,5 +9,7 @@ namespace Amdocs.Ginger.CoreNET.Run
     {
 
         NewPayLoad GetActionPayload();
+
+        string GetName();
     }
 }
