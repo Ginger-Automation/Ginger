@@ -16,22 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.GeneralLib;
-using GingerCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amdocs.Ginger.Common.GeneralLib;
+using GingerCore;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common
 {
-    
-    [JsonObject(MemberSerialization.OptIn)]    
+
+    [JsonObject(MemberSerialization.OptIn)]
     public class BetaFeatures : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -43,6 +40,10 @@ namespace Amdocs.Ginger.Common
 
         [JsonProperty]
         public bool ShowDebugConsole { get; set; }
+
+        [JsonProperty]
+        public bool ShowSocketMonitor { get; set; }
+
         [JsonProperty]
         public bool ShowTimings { get; set; }
 
@@ -56,8 +57,10 @@ namespace Amdocs.Ginger.Common
         public bool BFExportToJava { get { return GetFeature(nameof(BFExportToJava)).Selected; } set { UpdateFeature(nameof(BFExportToJava), value); } }
         public bool BFPageActivitiesHookOnlyNewActivities { get { return GetFeature(nameof(BFPageActivitiesHookOnlyNewActivities)).Selected; } set { UpdateFeature(nameof(BFPageActivitiesHookOnlyNewActivities), value); } }
 
+
+
         // POM
-        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }       
+        public bool ShowPOMInWindowExplorer { get { return GetFeature(nameof(ShowPOMInWindowExplorer)).Selected; } set { UpdateFeature(nameof(ShowPOMInWindowExplorer), value); } }
 
 
         // ALM
@@ -65,7 +68,7 @@ namespace Amdocs.Ginger.Common
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
-                
+
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
@@ -73,7 +76,7 @@ namespace Amdocs.Ginger.Common
         // CDL
         public bool ShowNewautomate { get { return GetFeature(nameof(ShowNewautomate)).Selected; } set { UpdateFeature(nameof(ShowNewautomate), value); } }
 
-        
+
 
         public BetaFeatures()
         {
@@ -81,20 +84,20 @@ namespace Amdocs.Ginger.Common
             // mFeatures.Add(new BetaFeature() { Group = "Environments", Description= "Show new environments Page in Reosurce tab",   ID = nameof(ShowNewEnvironmentPage), Warning = "Using Solution Repository", Selected = false });
             // Temp comment when ready 
             // mFeatures.Add(new BetaFeature() { Group = "Environments",Description = "Save Environment Using SR2",   ID = nameof(SaveEnvironmentUsingSR2), Warning = "zzz" });            
-            
+
             //BFs
-            
-            mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = "Export BF to Java menu item", ID = nameof(BFExportToJava)});
+
+            mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = "Export BF to Java menu item", ID = nameof(BFExportToJava) });
             mFeatures.Add(new BetaFeature() { Group = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), Description = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "page hook only new " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "- speed", ID = nameof(BFPageActivitiesHookOnlyNewActivities) });
 
             // POM
-            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer)});           
+            mFeatures.Add(new BetaFeature() { Group = "POM", Description = "Show POM in Window Explorer", ID = nameof(ShowPOMInWindowExplorer) });
 
             //ALM
-            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });           
+            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
 
             //Gherkin
-            mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd)});
+            mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd) });
 
             //Repository
             // mFeatures.Add(new BetaFeature() { Group = "Repository", Description = "Use Solution Repository instead of LocalRepository", ID = nameof(Use Solution Repository instead of LocalRepository), Warning = "Will reload solution" });
@@ -104,7 +107,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
 
             //New Automate
-            mFeatures.Add(new BetaFeature() { Group = "Automnate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
+            mFeatures.Add(new BetaFeature() { Group = "Automate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
 
 
             //hook prop change
@@ -120,19 +123,19 @@ namespace Amdocs.Ginger.Common
             OnPropertyChanged(nameof(IsUsingBetaFeatures));
         }
 
-        
+
 
         BetaFeature GetFeature(string name)
-        {            
-            BetaFeature f = (from x in mFeatures where x.ID == name select x).SingleOrDefault();            
+        {
+            BetaFeature f = (from x in mFeatures where x.ID == name select x).SingleOrDefault();
             return f;
         }
 
         void UpdateFeature(string name, bool value)
         {
-            BetaFeature f = (from x in mFeatures where x.ID == name select x).SingleOrDefault();                        
+            BetaFeature f = (from x in mFeatures where x.ID == name select x).SingleOrDefault();
             f.Selected = value;
-            OnPropertyChanged(nameof(name));            
+            OnPropertyChanged(nameof(name));
         }
 
 
@@ -140,17 +143,17 @@ namespace Amdocs.Ginger.Common
         {
             get
             {
-                foreach(BetaFeature f in mFeatures)
+                foreach (BetaFeature f in mFeatures)
                 {
                     if (f.Selected)
                     {
                         return true;
                     }
-                }                
-                return false;                
+                }
+                return false;
             }
         }
-     
+
 
         public IEnumerable Features { get { return mFeatures; } }
 
@@ -166,7 +169,7 @@ namespace Amdocs.Ginger.Common
         {
             // always create new so we get latest beta features to select from
             BetaFeatures betaFeatures = new BetaFeatures();
-            
+
             if (System.IO.File.Exists(UserBetaFeaturesConfigFilePath))
             {
                 // Read user selection and merge with updated feature list
@@ -175,6 +178,7 @@ namespace Amdocs.Ginger.Common
 
                 betaFeatures.ShowDebugConsole = bUser.ShowDebugConsole;
                 betaFeatures.ShowTimings = bUser.ShowTimings;
+                betaFeatures.ShowSocketMonitor = bUser.ShowSocketMonitor;
 
                 foreach (BetaFeature f in bUser.mFeatures)
                 {
@@ -184,8 +188,8 @@ namespace Amdocs.Ginger.Common
                         bf.Selected = f.Selected;
                     }
                 }
-                
-            }            
+
+            }
             return betaFeatures;
         }
 
@@ -211,11 +215,12 @@ namespace Amdocs.Ginger.Common
 
             Console.WriteLine("ShowDebugConsole=" + ShowDebugConsole);
             Console.WriteLine("ShowTimings=" + ShowTimings);
+            Console.WriteLine("ShowSocketMonitor=" + ShowSocketMonitor);
             foreach (BetaFeature f in mFeatures)
             {
                 Console.WriteLine(f.Description + " = " + f.Selected);
             }
-            
+
             Console.WriteLine("-------------------------------------------------------------------------------");
         }
     }

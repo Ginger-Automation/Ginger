@@ -1,0 +1,8 @@
+{
+  "Id": "Memo",
+  "Version": "v1.0",
+  "ProjectUrl": "git\\...",
+  "Description": "Memo Driver ",
+  "Summary": "Can store/retrieve key/value",
+  "StartupDLL": "PluginDriverExample4.dll"
+}

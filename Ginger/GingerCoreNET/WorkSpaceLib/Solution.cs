@@ -314,11 +314,11 @@ namespace Ginger.SolutionGeneral
                 // executionLogger.Configuration = executionLoggerConfiguration;
               
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
-            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -352,7 +352,7 @@ namespace Ginger.SolutionGeneral
             return solTargetApplications;
         }
 
-        MRUManager mRecentUsedBusinessFlows;
+        // MRUManager mRecentUsedBusinessFlows;
 
         //public MRUManager RecentlyUsedBusinessFlows
         //{

@@ -49,8 +49,7 @@ namespace Ginger.Functionalties
         string RecoverFolderContianerWithTS = null;
 
         string mSolutionFolderPath;
-
-        ObservableList<SolutionAutoSaveAndRecover.RecoveredItem> mFiles;
+        
         public void SolutionInit(string solutionFolderPath)
         {
             mSolutionFolderPath = solutionFolderPath;

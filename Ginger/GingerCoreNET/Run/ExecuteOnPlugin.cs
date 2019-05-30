@@ -122,8 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid
 
             Console.WriteLine("Checking for DoStartSession..");
 
@@ -186,38 +185,54 @@ namespace Amdocs.Ginger.CoreNET.Run
             ParseActionResult(RC, (Act)actPlugin);
         }
 
+        
 
         // Use for Actions which run without agent and are of the generic type ActPlugin - 
         internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
-            // first verify we have service ready or start service
-            Stopwatch st = Stopwatch.StartNew();
-            
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
-
-            NewPayLoad p = CreateActionPayload(actPlugin);
-            NewPayLoad RC = GNP.RunAction(p);
-
-            // release the node as soon as the result came in
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
-            if (!IsSessionService)
+            try
             {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                // first verify we have service ready or start service
+
+                Stopwatch st = Stopwatch.StartNew();
+                GingerNodeProxy gingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);  // FIXME for remote grid
+
+                //!!!!!!!!!!!!! TODO: check if null set err
+
+                NewPayLoad p = CreateActionPayload(actPlugin);
+                NewPayLoad RC = gingerNodeProxy.RunAction(p);
+
+                // release the node as soon as the result came in
+                bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
+                if (!IsSessionService)
+                {
+                    // standalone plugin action release the node
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                }
+                ParseActionResult(RC, actPlugin);
+
+                gingerNodeInfo.IncreaseActionCount();
+
+                st.Stop();
+                long millis = st.ElapsedMilliseconds;
+                actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                string errorMessage = "";
+                if (gingerNodeInfo == null)
+                {
+                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)actPlugin).PluginId + ", Service " + ((ActPlugIn)actPlugin).ServiceId + Environment.NewLine;
+                }
+                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                errorMessage += ex.Message;
+                actPlugin.Error = errorMessage;
             }
 
-            ParseActionResult(RC, actPlugin);
-            
-
-            gingerNodeInfo.IncreaseActionCount();
-
-            st.Stop();
-            long millis = st.ElapsedMilliseconds;
-            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
-        private static void ParseActionResult(NewPayLoad RC, Act actPlugin)
+        public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
@@ -267,7 +282,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
         // Move code to the ActPlugIn and make it impl IACtPlug...
-        private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
+        public static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
@@ -335,26 +350,12 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
         }
 
-
-
-
-
-        internal static void RunServiceAction(NewPayLoad ActionPayload, string PluginId, string ServiceID)
-        {
-            GingerNodeInfo GNI = GetGingerNodeInfo(PluginId, ServiceID);
-
-
-
-        }
+                          
 
         public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
-
         {
-
-
-            NewPayLoad PL = new NewPayLoad("ScreenshotAction");
-       
-            List<NewPayLoad> PLParams = new List<NewPayLoad>();
+           NewPayLoad PL = new NewPayLoad("ScreenshotAction");       
+           List<NewPayLoad> PLParams = new List<NewPayLoad>();
 
            NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
             PLParams.Add(AIVPL);

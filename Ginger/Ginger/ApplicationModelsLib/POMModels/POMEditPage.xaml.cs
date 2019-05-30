@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
         
-        ScreenShotViewPage pd;
+        // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
