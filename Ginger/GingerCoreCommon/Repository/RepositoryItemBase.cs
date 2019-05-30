@@ -858,19 +858,21 @@ namespace Amdocs.Ginger.Repository
             DirtyStatus = eDirtyStatus.Modified;
 
             // if item added set tracking too
-            foreach (object obj in e.NewItems)
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                if (obj is RepositoryItemBase)
+                foreach (object obj in e.NewItems)
                 {
-                    RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
-                    repositoryItemBase.StartDirtyTracking();
-                    repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                    if (obj is RepositoryItemBase)
+                    {
+                        RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                        repositoryItemBase.StartDirtyTracking();
+                        repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                    }
+                    else
+                    {
+                        // not RI no tracking...
+                    }
                 }
-                else
-                {
-                    // not RI no tracking...
-                }
-                
             }
         }
 
