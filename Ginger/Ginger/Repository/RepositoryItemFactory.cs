@@ -199,18 +199,18 @@ namespace Ginger.Repository
                             case eDriverType.MainFrame3270:
                                 Driver = new MainFrameDriver(BusinessFlow);
                                 break;
-                            case eDriverType.AndroidADB:
-                                string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
-                                if (!string.IsNullOrEmpty(DeviceConfigFolder))
-                                {
-                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
-                                }
-                                else
-                                {
-                                    //TODO: Load create sample folder/device, or start the wizard
-                                    throw new Exception("Please set device config folder");
-                                }
-                                break;
+                            //case eDriverType.AndroidADB:
+                            //    string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
+                            //    if (!string.IsNullOrEmpty(DeviceConfigFolder))
+                            //    {
+                            //        Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
+                            //    }
+                            //    else
+                            //    {
+                            //        //TODO: Load create sample folder/device, or start the wizard
+                            //        throw new Exception("Please set device config folder");
+                            //    }
+                            //    break;
                             default:
                                 {
                                     throw new Exception("Matching Driver was not found.");
@@ -312,8 +312,8 @@ namespace Ginger.Repository
                     return (typeof(JavaDriver));                    
                 case Agent.eDriverType.MainFrame3270:
                     return (typeof(MainFrameDriver));                    
-                case Agent.eDriverType.AndroidADB:
-                    return (typeof(AndroidADBDriver));                    
+                //case Agent.eDriverType.AndroidADB:
+                //    return (typeof(AndroidADBDriver));                    
                 case Agent.eDriverType.PerfectoMobileAndroid:
                 case Agent.eDriverType.PerfectoMobileAndroidWeb:
                 case Agent.eDriverType.PerfectoMobileIOS:

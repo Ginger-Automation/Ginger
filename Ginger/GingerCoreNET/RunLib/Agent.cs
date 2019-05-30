@@ -125,8 +125,8 @@ namespace GingerCore
             PerfectoMobileIOS,
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
-            [Description("Android ADB")]
-            AndroidADB,
+            //[Description("Android ADB")]
+            //AndroidADB,
 
             //MF
             [Description("MainFrame 3270")]
@@ -803,8 +803,8 @@ namespace GingerCore
                     return ePlatformType.Java;
                 case eDriverType.MainFrame3270:
                     return ePlatformType.MainFrame;
-                case eDriverType.AndroidADB:
-                    return ePlatformType.AndroidDevice;               
+                //case eDriverType.AndroidADB:
+                //    return ePlatformType.AndroidDevice;               
                 default:
                     return ePlatformType.NA;
             }                
@@ -868,10 +868,10 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.WebServices);
             }
 
-            else if (platformType == ePlatformType.AndroidDevice.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.AndroidADB);
-            }
+            //else if (platformType == ePlatformType.AndroidDevice.ToString())
+            //{
+            //    driverTypes.Add(Agent.eDriverType.AndroidADB);
+            //}
             else if (platformType == ePlatformType.ASCF.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.ASCF);
