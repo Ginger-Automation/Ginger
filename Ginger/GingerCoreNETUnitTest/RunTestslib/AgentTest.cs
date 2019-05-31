@@ -87,7 +87,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-        [Ignore]
+    
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
