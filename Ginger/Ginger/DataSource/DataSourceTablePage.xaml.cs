@@ -73,25 +73,11 @@ namespace Ginger.DataSource
                 grdTableData.AddToolbarTool("@Copy_16x16.png", "Duplicate Row", new RoutedEventHandler(DuplicateRow));
                 grdTableData.AddToolbarTool("@Trash_16x16.png", "Delete All Rows", new RoutedEventHandler(DeleteAll));
 
+
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
                 {
-                    if (dsTableDetails.DSC.DSType == DataSourceBase.eDSType.LiteDataBase)
-                    {
-                        if (!(dsTableDetails.Name == "MyKeyValueDataTable"))
-                        {
-                            grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
-                            grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
-                        }
-                        else
-                        {
-                            dsTableDetails.DSTableType = DataSourceTable.eDSTableType.GingerKeyValue;
-                        }
-                    }
-                    else
-                    {
-                        grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
-                        grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
-                    }
+                    grdTableData.AddToolbarTool("@AddTableColumn_16x16.png", "Add Table Column", new RoutedEventHandler(AddColumn));
+                    grdTableData.AddToolbarTool("@DeleteTableColumn_16x16.png", "Remove Table Column", new RoutedEventHandler(RemoveColumn));
                 }               
                 grdTableData.AddToolbarTool("@Commit_16x16.png", "Commit", new RoutedEventHandler(SaveTable));
                 grdTableData.Grid.LostFocus += Grid_LostFocus;                         
@@ -289,7 +275,6 @@ namespace Ginger.DataSource
         private void AddRow(object sender, RoutedEventArgs e)
         {
             mDSTableDetails.DSC.AddRow(mColumnNames, mDSTableDetails);
-           
                         
         }
 
@@ -317,10 +302,11 @@ namespace Ginger.DataSource
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
-                foreach (object o in AllItemsList)
-                {
-                    ((DataRowView)o).Delete();
-                }
+                mDSTableDetails.DSC.DeleteAll(AllItemsList);
+                //foreach (object o in AllItemsList)
+                //{
+                //    ((DataRowView)o).Delete();
+                //}
             }            
         }
         private void DuplicateRow(object sender, RoutedEventArgs e)

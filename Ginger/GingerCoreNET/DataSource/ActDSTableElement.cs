@@ -313,10 +313,14 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public bool ByWhere { get; set; }
-
+        [IsSerializedForLocalRepository]
+        public bool IsKeyValueTable { get; set; }
         public bool MarkUpdate { get; set; }
         //[IsSerializedForLocalRepository]
         public eRunColSelectorValue WhereColSelector { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public bool BySelectedCell { get; set; }
 
         //[IsSerializedForLocalRepository]
         public string WhereColumnTitle { get; set; }

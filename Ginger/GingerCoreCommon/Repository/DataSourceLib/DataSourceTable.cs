@@ -49,7 +49,7 @@ namespace GingerCore.DataSource
 
         [IsSerializedForLocalRepository]
         public eDSTableType DSTableType { get; set; }
-        
+
         public DataSourceBase DSC { get; set; }
 
         DataTable mDataTable;

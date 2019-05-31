@@ -529,6 +529,18 @@ namespace GingerCore.DataSource
         {
             return ".mdb";
         }
-        
+
+        public override DataTable GetKeyName(string mDSTableName)
+        {
+            return GetQueryOutput("Select GINGER_KEY_NAME from " + mDSTableName + " WHERE GINGER_KEY_NAME is not null and Trim(GINGER_KEY_NAME) <> ''");
+        }
+
+        public override void DeleteAll(List<object> AllItemsList)
+        {
+            foreach (object o in AllItemsList)
+            {
+                ((DataRowView)o).Delete();
+            }
+        }
     }
 }

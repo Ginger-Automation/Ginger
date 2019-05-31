@@ -1181,8 +1181,61 @@ namespace Ginger.Actions
                         mActDSTblElem.ValueExp = TBH.GetText();
                         return;
                     }
+                    if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
+                    {
+                        TBH.AddText(" Query QUERY=");
+                        TBH.AddText("db." + mDSTable.Name);
+                        mActDSTblElem.IsKeyValueTable = true;
+                        if (ControlActionComboBox.SelectedValue.ToString() == "GetValue")
+                        {
+                            if (cmbKeyName.SelectedItem == null)
+                            {
+                                TBH.AddText(".select GINGER_KET_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                            }
+                            else
+                            {
+                                TBH.AddText(".select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                            }
+                        }
+                        else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
+                        {
+                            if (cmbKeyName.SelectedItem == null)
+                            {
+                                TBH.AddText(".update GINGER_KET_VALUE = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                            }
+                            else
+                            {
+                                TBH.AddText(".update GINGER_KEY_VALUE = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                            }
+                        }
+                        else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                        {
+                            if (cmbKeyName.SelectedItem == null)
+                            {
+                                TBH.AddBoldText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                            }
+                            else
+                            {
+                                TBH.AddText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                            }
+                            
+                        }
+                        else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
+                        {
+                            TBH.AddBoldText(".count");
+                            TBH.AddText("}");
+                            mActDSTblElem.ValueExp = TBH.GetText();
+
+                            return;
+                        }
+                        
+                        TBH.AddText("}");
+                        mActDSTblElem.ValueExp = TBH.GetText();
+                        return;
+                    }
                     else if (Customized.IsChecked == true)
                     {
+                        mActDSTblElem.IsKeyValueTable = false;
                         TBH.AddText(" Cust ICOLVAL=");
                         if (cmbColumnValue.SelectedIndex != -1)
                             TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString());
@@ -1203,7 +1256,7 @@ namespace Ginger.Actions
                             TBH.AddUnderLineText("NxtAvail");
                         }
                         TBH.AddText(" Query QUERY=");
-                        
+
                         TBH.AddText("db." + mDSTable.Name);
                         //Get ColunmNA
                         if (cmbColumnValue.SelectedIndex != -1)
@@ -1239,7 +1292,7 @@ namespace Ginger.Actions
                                 TBH.AddBoldText(".count");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
-                                
+
                                 return;
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
@@ -1259,7 +1312,7 @@ namespace Ginger.Actions
                                 TBH.AddBoldText(".delete");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
-                    
+
                                 return;
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed")
@@ -1267,7 +1320,7 @@ namespace Ginger.Actions
                                 TBH.AddBoldText(".update GINGER_USED= \"False\" ");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
-                 
+
                                 return;
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
@@ -1275,10 +1328,10 @@ namespace Ginger.Actions
                                 TBH.AddBoldText(".update GINGER_USED= \"True\"");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
-                                
+
                                 return;
                             }
-                   
+
                             // next where / other condition
                             if (Customized.IsChecked == true)
                             {
@@ -1392,6 +1445,7 @@ namespace Ginger.Actions
                     else if (SelectedCell.IsChecked == true)
                     {
                         TBH.AddText(" Query QUERY=");
+                        mActDSTblElem.BySelectedCell = true;
                         List<object> SelectedItemsList = new List<object>();
                         if (grdTableData.Grid.SelectedCells.Count == 0)
                         {
@@ -1849,7 +1903,7 @@ namespace Ginger.Actions
                 CustomizedGrid.Visibility = Visibility.Collapsed;
                 KeyGrid.Visibility = Visibility.Visible;
 
-                DataTable dTable = mDSTable.DSC.GetQueryOutput("Select GINGER_KEY_NAME from " + mDSTable.Name + " WHERE GINGER_KEY_NAME is not null and Trim(GINGER_KEY_NAME) <> ''");
+                DataTable dTable = mDSTable.DSC.GetKeyName(mDSTable.Name);
                 List<string> mKeyNames = new List<string>();
                 if (dTable != null)
                 {

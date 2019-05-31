@@ -128,6 +128,9 @@ namespace GingerCore.DataSource
         public abstract void InitConnection();
         public abstract void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails);
 
+        public abstract void DeleteAll(List<object> AllItemsList);
+        public abstract DataTable GetKeyName(string mDSTableName);
+
         public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
         
         public abstract DataTable GetTable(string TableName);

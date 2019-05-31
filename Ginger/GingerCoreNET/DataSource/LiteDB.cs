@@ -517,7 +517,7 @@ namespace GingerCoreNET.DataSource
                 else if (column.ToString() == "GINGER_LAST_UPDATE_DATETIME" || column.ToString() == "GINGER_LAST_UPDATED_BY")
                     iUpdateCount++;
             }
-            if (iCount == 2 && dtTable.Columns.Count == 2 + iIdCount + iUpdateCount)
+            if (iCount == 2 && dtTable.Columns.Count == 3 + iIdCount + iUpdateCount)
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.GingerKeyValue;
             else
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.Customized;
@@ -664,7 +664,25 @@ namespace GingerCoreNET.DataSource
 
         }
 
-        public object GetResult (string query)
+        public string GetResultString(string query)
+        {
+            string result = null;
+            using (LiteDatabase db = new LiteDatabase(mFilePath))
+            {
+                var resultdxs = db.Engine.Run(query);
+                foreach (BsonValue bs in resultdxs)
+                {
+                    BsonDocument aa = bs.AsDocument;
+                    foreach (KeyValuePair<string , BsonValue> keyval in aa.RawValue)
+                    {
+                        result = keyval.Value.AsString;
+                    }
+                }
+            }
+            return result;
+        }
+
+            public object GetResult (string query)
         {
             object result = null;
             using (LiteDatabase db = new LiteDatabase(mFilePath))
@@ -677,6 +695,7 @@ namespace GingerCoreNET.DataSource
             }
             return result;
         }
+        
 
         public string GetResut(string query, string DSTableName, bool MarkUpdate)
         {
@@ -775,6 +794,8 @@ namespace GingerCoreNET.DataSource
             {
                 DataRow row = (((DataRowView)o).Row);
                 DataRow dr = mDSTableDetails.DataTable.NewRow();
+                dr[0] = Guid.NewGuid();
+
                 foreach (string sColName in mColumnNames)
                     if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     {
@@ -790,14 +811,21 @@ namespace GingerCoreNET.DataSource
                                 dr[sColName] = row[sColName];
                             }
                         }
+                        else
+                        {
+                            dr[sColName] = row[sColName];
+                        }
                     }
                     else
                     {
-                        dr[0] = Guid.NewGuid();
                         if (sColName == "GINGER_ID")
                         {
                             int count = mDSTableDetails.DataTable.Rows.Count;
                             dr[sColName] = count + 1;
+                        }
+                        else
+                        {
+                            dr[sColName] = row[sColName];
                         }
                     }
                 mDSTableDetails.DataTable.Rows.Add(dr);
@@ -808,7 +836,7 @@ namespace GingerCoreNET.DataSource
         {
             int DSCondition = actDSTable.ActDSConditions.Count;
             DataTable dt = new DataTable();
-
+            
             switch (actDSTable.ControlAction)
             {
                 case ActDSTableElement.eControlAction.GetValue:
@@ -817,7 +845,12 @@ namespace GingerCoreNET.DataSource
                     {
                         string col = actDSTable.LocateColTitle;
                         bool nextavail = actDSTable.ByNextAvailable;
-                        if (nextavail)
+                        if (actDSTable.IsKeyValueTable)
+                        {
+                           string result= GetResultString(Query);
+                            actDSTable.AddOrUpdateReturnParamActual("Output", result);
+                        }
+                        else if (nextavail)
                         {
                             string op = GetQueryOutput(Query, col, 0, actDSTable.MarkUpdate, actDSTable.DSTableName);
                             actDSTable.AddOrUpdateReturnParamActual(col, op);
@@ -846,7 +879,7 @@ namespace GingerCoreNET.DataSource
                         }
                     }
                     // By Selected Cell
-                    else
+                    else 
                     {
                         dt = GetQueryOutput(Query);
                         dt.TableName = actDSTable.DSTableName;
@@ -868,7 +901,12 @@ namespace GingerCoreNET.DataSource
 
                 case eControlAction.MarkAsDone:
                 case eControlAction.SetValue:
-                    if (actDSTable.ByRowNum)
+                    if (actDSTable.IsKeyValueTable)
+                    {
+                        RunQuery(Query);
+                        actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                    }
+                    else if (actDSTable.ByRowNum)
                     {
                         RunQuery(Query, Int32.Parse(actDSTable.LocateRowValue), actDSTable.DSTableName, actDSTable.MarkUpdate);
                         actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
@@ -906,9 +944,14 @@ namespace GingerCoreNET.DataSource
 
                     break;
                 case eControlAction.DeleteRow:
-                    if (actDSTable.ByRowNum)
+                    if (actDSTable.IsKeyValueTable)
                     {
-                        if (actDSTable.IsSelectableAction)
+                        RunQuery(Query);
+                        actDSTable.AddOrUpdateReturnParamActual("Deleted Record", "1");
+                    }
+                    else if (actDSTable.ByRowNum)
+                    {
+                        if (actDSTable.BySelectedCell)
                         {
                             string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
                             RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);
@@ -932,7 +975,7 @@ namespace GingerCoreNET.DataSource
                         GetResult(query);
                         actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     }
-                    else if (actDSTable.IsSelectableAction)
+                    else if (actDSTable.BySelectedCell)
                     {
                         string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
                         RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);
@@ -994,7 +1037,19 @@ namespace GingerCoreNET.DataSource
         {
             return ".db";
         }
-        
+
+        public override DataTable GetKeyName(string mDSTableName)
+        {
+            return GetQueryOutput("db."+mDSTableName +".select GINGER_KEY_NAME where GINGER_KEY_NAME != null");
+        }
+
+        public override void DeleteAll(List<object> AllItemsList)
+        {
+            foreach (object o in AllItemsList)
+            {
+                ((DataRowView)o).Delete();
+            }
+        }
     }
 }
 
