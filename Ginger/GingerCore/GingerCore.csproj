@@ -109,7 +109,7 @@
       <HintPath>..\packages\CouchbaseNetClient.2.7.7\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
     <Reference Include="CssParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eyes.Sdk.2.22.0\lib\net45\CssParser.dll</HintPath>
+      <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\CssParser.dll</HintPath>
     </Reference>
     <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
@@ -120,8 +120,8 @@
     <Reference Include="Eyes.Images.DotNet, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.2.4.0\lib\net45\Eyes.Images.DotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Eyes.Sdk.DotNet, Version=2.22.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eyes.Sdk.2.22.0\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
+    <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
     </Reference>
     <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
