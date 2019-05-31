@@ -36,42 +36,45 @@
                     <Grid.Resources>
                         <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
                     </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                         <ColumnDefinition Width="50*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="5,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal">
                         <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
                         <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" VerticalAlignment="Top" Width="250" ></ComboBox>
                     </StackPanel>
 
-                    <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" Grid.Row="0" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
+                    <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="1" Grid.RowSpan="2" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Right" Width="350" VerticalAlignment="Top" Margin="0,-5,0,0" ></agents:ucAgentControl>
 
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Grid.Column="0" Margin="0,30,0,0" HorizontalAlignment="Left" >
-                            <Label Margin="5,0,0,0" Style="{StaticResource $LabelStyle}" Content="Page Load Flow:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                            <RadioButton x:Name="xPageUrlRadioBtn" Height="20" Content="Page URL"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" Margin="10,5,0,0" />
-                            <RadioButton x:Name="xBusinessFlowRadioBtn" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radPageURL" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="xRadioBtn_Checked" >
+                    <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" Margin="0,-20,0,0">
+                        <StackPanel Orientation="Horizontal" >
+                            <Label Style="{StaticResource $LabelStyle}" Content="Page Loading Option:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xPageUrlRadioBtn"  Content="URL"  Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />
+                            <RadioButton x:Name="xBusinessFlowRadioBtn" Tag="radPageURL" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="xRadioBtn_Checked" >
                                 <RadioButton.Content>
                                     <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
                                 </RadioButton.Content>
                             </RadioButton>
                         </StackPanel>
-
-                        <StackPanel VerticalAlignment="Top"  Margin="10,47,0,0" Orientation="Horizontal" >
+                        <StackPanel Margin="0,0,0,0">
                             <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
-                                <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" TextWrapping="NoWrap" Width="250" Margin="10,0,0,0"/>
-                                <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page"/>
+                                <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" TextWrapping="NoWrap" Height="20" Width="310"/>
+                                <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page" Margin="0,0,0,0"/>
                             </StackPanel>
-                            <Frame VerticalAlignment="Top" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" Margin="0,10" HorizontalAlignment="Left" BorderBrush="Transparent"/>
+                            <Frame VerticalAlignment="Top" Margin="-2,5,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
 
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,5,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightGray" BorderThickness="1" />
 
         <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
             <TabControl.Resources>

@@ -167,7 +167,7 @@ namespace GingerCore.Drivers
         public bool TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments seperated with ; sign")]
+        [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
 
 
@@ -462,7 +462,7 @@ namespace GingerCore.Drivers
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities());
                             // TODO: make Sauce lab driver/config
 
-                            //TODO: For sauce lab - externalzie - try without amdocs proxy hot spot works then it is proxy issue
+                            //TODO: For sauce lab - externalize - try without amdocs proxy hot spot works then it is proxy issue
                             break;
                         }
                         else
@@ -796,7 +796,7 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
-            // if alert exist then any action on driver throwing excepion and dismissing the pop up
+            // if alert exist then any action on driver throwing exception and dismissing the pop up
             // so keeping handle browswer as first step.
             if (act.GetType() == typeof(ActHandleBrowserAlert))
             {
@@ -1178,7 +1178,7 @@ namespace GingerCore.Drivers
                             e.SendKeys(actTextBox.GetInputParamCalculatedValue("Value"));
                         else
                             //TODO: How do we check for errors? do negative UT check for below
-                            // + Why FF is different? what happend?
+                            // + Why FF is different? what happened?
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, actTextBox.GetInputParamCalculatedValue("Value"));
                     }
                     break;
@@ -3751,7 +3751,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlElemNode.Name), ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to learn the Web Element '{0}'", htmlElemNode.Name), ex);
                     }
                 }
             }
@@ -4673,7 +4673,7 @@ namespace GingerCore.Drivers
             {
                 dt.Columns.Add(cell.Text);
             }
-            //Cretae the data rows
+            //Create the data rows
             ReadOnlyCollection<IWebElement> allRows = table.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr"));
             foreach (IWebElement row in allRows)
             {
@@ -5385,13 +5385,13 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
                     }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
             }
         }
 
@@ -5448,7 +5448,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording - while reading element", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording - while reading element", ex);
                 }
             }
 
@@ -5633,7 +5633,7 @@ namespace GingerCore.Drivers
             bool BFound = false;
             Stopwatch St = new Stopwatch();
             string searchedWinTitle = GetSearchedWinTitle(act);
-            // retry mechanims for 20 seconds waiting for the window to open, 500ms intervals                  
+            // retry mechanism for 20 seconds waiting for the window to open, 500ms intervals                  
 
             St.Reset();
 
@@ -5755,7 +5755,7 @@ namespace GingerCore.Drivers
                 return GetPayLoadfromList(list);
 
             }
-            else//for chrome and IE execute is retunring a list of object
+            else//for chrome and IE execute is returning a list of object
             {
                 //TODO: find faster way to do it
                 ReadOnlyCollection<object> la = (ReadOnlyCollection<object>)rc2;
@@ -6277,7 +6277,7 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embbeded in the script so make sure you use the 'arguments[0]' place holder for it.";
+                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embedded in the script so make sure you use the 'arguments[0]' place holder for it.";
                         }
                         break;
 
@@ -6538,7 +6538,7 @@ namespace GingerCore.Drivers
                                 break;
 
                         }
-                        //TODO: Add validation to verify if Drag and drop is perfromed or not and fail the action if needed
+                        //TODO: Add validation to verify if Drag and drop is performed or not and fail the action if needed
                     }
                 }
                 else
@@ -6604,7 +6604,7 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction clickType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
             {
-                act.Error = "Unkown Click Type";
+                act.Error = "Unknown Click Type";
                 return false;
             }
 
@@ -6612,7 +6612,7 @@ namespace GingerCore.Drivers
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
             {
-                act.Error = "Unkown Validation Element Locate By";
+                act.Error = "Unknown Validation Element Locate By";
                 return false;
             }
 
@@ -6623,7 +6623,7 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction validationType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
             {
-                act.Error = "Unkown Validation Type";
+                act.Error = "Unknown Validation Type";
                 return false;
             }
 
@@ -6684,7 +6684,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenuim WebDriver Browser Page Screenshot", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenium WebDriver Browser Page Screenshot", ex);
                 return null;
             }
         }

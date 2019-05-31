@@ -97,7 +97,7 @@ namespace Ginger.BusinessFlowFolder
                 BfActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
                 if (mBusinessFlow.ActivitiesGroups.Count == 0) ActivitiesGroupsExpander.IsExpanded = false;
 
-                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
+                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext, mEditMode);
                 mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfVariablesFrame.Content = mVariablesPage;
                 if (mBusinessFlow.Variables.Count == 0) VariablesExpander.IsExpanded = false;
