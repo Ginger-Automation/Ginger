@@ -155,14 +155,17 @@ namespace Ginger.Agents
 
         private void SelectedAgent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (((Agent)sender) == SelectedAgent)
+            this.Dispatcher.Invoke(() =>
             {
-                if (e.PropertyName == nameof(Agent.Status))
+                if (((Agent)sender) == SelectedAgent)
                 {
-                    SetAgentStatusView();
-                    UpdateAgentWindows();
+                    if (e.PropertyName == nameof(Agent.Status))
+                    {
+                        SetAgentStatusView();
+                        UpdateAgentWindows();
+                    }
                 }
-            }
+            });
         }
 
         private void SetAgentStatusView()

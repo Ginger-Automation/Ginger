@@ -23,7 +23,7 @@
 
             <CheckBox x:Name="xRunAnalyzerCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
                 <CheckBox.Content>
-                    <GingerCore:ucTextDicResource Text="Run [RunSet] Analyzer before execution"/>
+                    <GingerCore:ucTextDicResource Text="Run Analyzer before execution"/>
                 </CheckBox.Content>
             </CheckBox>
 

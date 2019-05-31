@@ -219,7 +219,7 @@ namespace Ginger.ALM.Repository
 
             if ( WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no pre-difined values for RQM's mandatory fieds. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
             }
 

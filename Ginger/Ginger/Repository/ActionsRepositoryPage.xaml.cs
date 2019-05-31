@@ -59,6 +59,7 @@ namespace Ginger.Repository
         {
             mBusinessFlow = bf;
             mContext.BusinessFlow = mBusinessFlow;
+            xActionsGrid.ClearFilters();
         }
 
 

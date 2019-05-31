@@ -571,7 +571,7 @@ namespace GingerCore.Actions.WebAPI
                 if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams())
-                        jsonParsinFailed = true;//will try XML parsin instead
+                        jsonParsinFailed = true;//will try XML parsing instead
                     else
                         return true;
                 }

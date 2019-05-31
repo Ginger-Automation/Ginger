@@ -133,11 +133,11 @@ namespace GingerCore.ALM.Rally
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        foreach (RallyTestParameter param in tc.Parameters)   // Params taken from TestScriptLevel only!!!! Also exists parapameters at TestCase, to check if them should be taken!!!
+                        foreach (RallyTestParameter param in tc.Parameters)   // Params taken from TestScriptLevel only!!!! Also exists parameters at TestCase, to check if them should be taken!!!
                         {                                                               
                             bool? isflowControlParam = null;
 
-                            //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+                            //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
                             if (param.Value.ToString().StartsWith("$$_"))
                             {
                                 isflowControlParam = false;
@@ -275,7 +275,7 @@ namespace GingerCore.ALM.Rally
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while stripping the HTML from Rally TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from Rally TC Step Description/Expected", ex);
                 return HTMLText;
             }
         }

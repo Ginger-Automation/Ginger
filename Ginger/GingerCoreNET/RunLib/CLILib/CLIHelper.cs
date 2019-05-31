@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
@@ -6,12 +24,18 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public class CLIHelper
+    public enum eCLIType
+    {
+        Config,Dynamic,Script,Arguments
+    }
+
+    public class CLIHelper : INotifyPropertyChanged
     {
         static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
 
@@ -22,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourcecontrolUser;
         public string sourceControlPass;
         public eAppReporterLoggingLevel AppLoggingLevel;
-
+        public eCLIType CLIType;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
         public bool ShowAutoRunWindow
@@ -34,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mShowAutoRunWindow = value;
-                //Reporter.ToLog(eLogLevel.DEBUG, string.Format("ShowAutoRunWindow {0}", value));
+                OnPropertyChanged(nameof(ShowAutoRunWindow));
             }
         }
 
@@ -48,12 +72,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mDownloadUpgradeSolutionFromSourceControl = value;
+                OnPropertyChanged(nameof(DownloadUpgradeSolutionFromSourceControl));
             }
 
         }
 
         bool mRunAnalyzer;
-        public bool RunAnalyzer {
+        public bool RunAnalyzer
+        {
             get
             {
                 return mRunAnalyzer;
@@ -61,6 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             set
             {
                 mRunAnalyzer = value;
+                OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
 
@@ -203,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (SourceControlURL.IndexOf(".git") != -1)
                 {
                     // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL.Substring(0, SourceControlURL.IndexOf(".git") + 4));
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
                 }
                 else
                 {
@@ -345,6 +372,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             catch (Exception ex)
             { 
                 Reporter.ToLog(eLogLevel.ERROR, "Unexpected Error occurred while closing the Solution", ex);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
     }
