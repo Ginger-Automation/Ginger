@@ -133,6 +133,6 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-        public override string Type { get { return "Generate TestNG Report"; } }
+        public override string Type { get { return "Produce TestNG Summary Report"; } }
     }
 }

@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -153,6 +154,16 @@ namespace Ginger
                 return mObjList;
             }
         }
+
+        public void ClearFilters()
+        {            
+            this.Dispatcher.Invoke(() =>
+            {
+                txtSearch.Text = string.Empty;
+                Tags.Clear();
+            });
+        }
+
 
         string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
@@ -331,14 +342,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {
-            grdMain.CommitEdit();
-            grdMain.CancelEdit();
+        {            
             this.Dispatcher.Invoke(() =>
             {
+                grdMain.CommitEdit();
+                grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();
-            });
+                mCollectionView.Refresh();               
+            });            
         }
 
 
@@ -729,6 +740,7 @@ namespace Ginger
                 foreach (object o in SelectedItemsList)
                 {
                     mObjList.Remove(o);
+                    RemoveFromLiteDB(o);
                 }
             }
             finally
@@ -736,6 +748,21 @@ namespace Ginger
                 Mouse.OverrideCursor = null;
             }
         }
+
+        private void RemoveFromLiteDB(object o)
+        {
+            //if (o is RepositoryItemBase && (o as RepositoryItemBase).LiteDbId != null)
+            //{
+            //    string o.
+            //    LiteDbManager dbManager = new LiteDbManager();
+            //    var result = dbManager.GetRunSetLiteData();
+            //    List<LiteDbRunSet> filterData = null;
+            //    filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
+            //    //LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+            //    //dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+            //}
+        }
+
         private void btnClearSearchText_Click(object sender, RoutedEventArgs e)
         {
             txtSearch.Text = "";

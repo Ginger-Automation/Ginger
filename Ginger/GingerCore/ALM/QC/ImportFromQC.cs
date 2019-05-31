@@ -427,7 +427,7 @@ namespace GingerCore.ALM.QC
                                 }
                             }
 
-                            //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+                            //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
                             if (paramSelectedValue.StartsWith("$$_"))
                             {
                                 isflowControlParam = false;
@@ -534,7 +534,7 @@ namespace GingerCore.ALM.QC
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldn't be null
                             Activity act = (Activity)actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -547,7 +547,7 @@ namespace GingerCore.ALM.QC
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
                                         tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
-                                    continue;//activity which not originaly came from the TC
+                                    continue;//activity which not originally came from the TC
                                 numOfSeenSteps++;
 
                                 if (numOfSeenSteps >= stepIndx) break;
@@ -720,7 +720,7 @@ namespace GingerCore.ALM.QC
                             }
                         }
 
-                        //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+                        //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
                         if (paramSelectedValue.StartsWith("$$_"))
                         {
                             isflowControlParam = false;
@@ -826,7 +826,7 @@ namespace GingerCore.ALM.QC
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
                         ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldn't be null
                         Activity act = (Activity)actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -839,7 +839,7 @@ namespace GingerCore.ALM.QC
                             groupIndx++;
                             if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
                                     tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
-                                continue;//activity which not originaly came from the TC
+                                continue;//activity which not originally came from the TC
                             numOfSeenSteps++;
 
                             if (numOfSeenSteps >= stepIndx) break;
@@ -971,7 +971,7 @@ namespace GingerCore.ALM.QC
                             }
                         }
 
-                        //detrmine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
+                        //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
                         if (paramSelectedValue.StartsWith("$$_"))
                         {
                             isflowControlParam = false;
@@ -1077,7 +1077,7 @@ namespace GingerCore.ALM.QC
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
                         ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldn't be null
                         Activity act = (Activity)actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -1090,7 +1090,7 @@ namespace GingerCore.ALM.QC
                             groupIndx++;
                             if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
                                     tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
-                                continue;//activity which not originaly came from the TC
+                                continue;//activity which not originally came from the TC
                             numOfSeenSteps++;
 
                             if (numOfSeenSteps >= stepIndx) break;
@@ -1151,7 +1151,7 @@ namespace GingerCore.ALM.QC
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from QC TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
             }
         }
 

@@ -34,6 +34,8 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
+using Ginger.Logger;
+using System.Collections.Generic;
 
 namespace Ginger.Run
 {
@@ -91,7 +93,7 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Elapsed, Header = "Execution Duration (Seconds)", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.RunSetExecutionStatus, Header = "Execution Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Visible = false, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Header = "Type", Visible = true, ReadOnly = true, WidthWeight = 5, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Generate Report", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] });
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
@@ -114,14 +116,14 @@ namespace Ginger.Run
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
             await Task.Run(() => {
-                if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null)
+                if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
                 {
-                    mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+                    mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
-                    foreach (string runSetFile in runSetsfiles)
+                    try
                     {
-                        try
+                        foreach (string runSetFile in runSetsfiles)
                         {
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
@@ -140,20 +142,21 @@ namespace Ginger.Run
                             else
                                 mExecutionsHistoryList.Add(runSetReport);
                         }
-                        catch { }
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
+
+                        var runSetDataColl = rsLiteColl.FindAll();
+                        foreach (var runSet in runSetDataColl)
+                        {
+                            RunSetReport runSetReport = new RunSetReport();
+                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                            runSetReport.SetLiteDBData(runSet);
+                            mExecutionsHistoryList.Add(runSetReport);
+                        }
                     }
-                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
-                    var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-                    
-                    var runSetDataColl = rsLiteColl.FindAll();
-                    foreach (var runSet in runSetDataColl)
-                    {
-                        RunSetReport runSetReport = new RunSetReport();
-                        runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                        runSetReport.SetLiteDBData(runSet);
-                        mExecutionsHistoryList.Add(runSetReport);
-                    }
+                    catch { }
                 }
+                
             });
 
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
@@ -175,6 +178,17 @@ namespace Ginger.Run
             {
                 foreach (RunSetReport runSetReport in grdExecutionsHistory.Grid.SelectedItems)
                 {
+                    if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                    {
+                        LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                        var result = dbManager.GetRunSetLiteData();
+                        List<LiteDbRunSet> filterData = null;
+                        filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetReport.GUID).ToList();
+                        
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
+                        break;
+                    }
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
@@ -232,9 +246,9 @@ namespace Ginger.Run
 
         private void GetExecutionResultsFolder(object sender, RoutedEventArgs e)
         {
-            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList != null)
+            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(executionLoggerHelper.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder));
+                Process.Start(executionLoggerHelper.GetLoggerDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder));
             }
             else
                 return;
@@ -273,26 +287,36 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
                 return;
             }
-
-            string runSetFolder = executionLoggerHelper.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
-
-            string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-
-            if (reportsResultFolder == string.Empty)
+            if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                return;
+                var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid);
             }
             else
             {
-                Process.Start(reportsResultFolder);
-                Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+
+
+                string runSetFolder = executionLoggerHelper.GetLoggerDirectory(((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder);
+
+                string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+
+                if (reportsResultFolder == string.Empty)
+                {
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                    return;
+                }
+                else
+                {
+                    Process.Start(reportsResultFolder);
+                    Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+                }
             }
         }
     }

@@ -181,9 +181,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
         }
 
-        public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false);
+        public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false);
 
-        public abstract object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run);
+        public abstract object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
         public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
         public virtual void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
@@ -219,14 +219,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
         }
-        internal virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+
+        internal abstract void CreateNewDirectory(string logFolder);
+
+        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
             runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
-            runSetReport.MachineName = Environment.MachineName.ToString();
-            runSetReport.ExecutedbyUser = Environment.UserName.ToString();
+            runSetReport.MachineName = Environment.MachineName;
+            runSetReport.ExecutedbyUser = Environment.UserName;
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
-
+        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner);
+        internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
+        internal abstract void StartRunSet();
+        internal abstract void EndRunSet();
     }
 }

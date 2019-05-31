@@ -97,7 +97,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
 
-                view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
+                view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 80, AllowSorting = true });
 
                 xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));                

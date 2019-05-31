@@ -247,7 +247,7 @@ namespace Ginger
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console      
+                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
 
             //write Ginger start to log + console

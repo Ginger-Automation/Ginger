@@ -64,6 +64,12 @@ namespace Ginger.GeneralLib
             xScrollViewer.ScrollToBottom();
         }
 
+        public void Refresh()
+        {
+            FillLogData();
+            xScrollViewer.ScrollToBottom();
+        }
+
         private void XLogTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
@@ -154,7 +160,7 @@ namespace Ginger.GeneralLib
             }
             else if (log.Contains("| " + eLogLevel.DEBUG.ToString()))
             {
-                return Brushes.Purple;
+                return Brushes.Black;
             }
             else if (log.Contains("| " + eLogLevel.WARN.ToString()))
             {
@@ -166,7 +172,7 @@ namespace Ginger.GeneralLib
             }
             else if (log.Contains("| " + eLogLevel.FATAL.ToString()))
             {
-                return Brushes.DarkRed;
+                return Brushes.Red;
             }
             else
             {

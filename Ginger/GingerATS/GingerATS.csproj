@@ -74,6 +74,11 @@
     <None Include="GingerATS.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpSvn.1.8-x86">
+      <Version>1.8019.4006.503</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

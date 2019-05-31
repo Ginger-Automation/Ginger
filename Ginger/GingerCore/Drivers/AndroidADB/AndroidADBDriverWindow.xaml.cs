@@ -306,7 +306,7 @@ namespace GingerCore.Drivers.AndroidADB
             //}
             //catch (Exception ex)
             //{
-            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occured while designing the Mobile window initial look", ex);
+            //    Reporter.ToLog(eAppReporterLogLevel.ERROR, "Error occurred while designing the Mobile window initial look", ex);
             //}
         }
 
