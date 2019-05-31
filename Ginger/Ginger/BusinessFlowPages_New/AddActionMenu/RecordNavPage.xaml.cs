@@ -153,23 +153,31 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
         {
-            IsRecording = !IsRecording;
-            if (xWinGridUC.comboBoxSelectedValue != null)
+            bool isAgentRunning = AgentHelper.Instance.CheckIfAgentIsRunning(mContext);
+            if (isAgentRunning)
             {
-                if (IsRecording)
-                {                   
-                    StartRecording();                    
+                IsRecording = !IsRecording;
+                if (xWinGridUC.comboBoxSelectedValue != null)
+                {
+                    if (IsRecording)
+                    {
+                        StartRecording();
+                    }
+                    else
+                    {
+                        StopRecording();
+                    }
                 }
                 else
                 {
-                    StopRecording();
+                    Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
                 }
+                SetRecordingButtonText();
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
+                InitMethods();
             }
-            SetRecordingButtonText();
         }
 
         private void StartAgentButton_Click(object sender, RoutedEventArgs e)
