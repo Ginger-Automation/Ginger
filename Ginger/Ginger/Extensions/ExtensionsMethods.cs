@@ -423,5 +423,18 @@ namespace Ginger
             // }
         }
 
+        public static ValidationRule GetValidationRule(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty, Type type)
+        {
+            BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
+            foreach(ValidationRule vr in bd.ParentBinding.ValidationRules)
+            {
+                if(vr.GetType() == type)
+                {
+                    return vr;
+                }                
+            }
+            return null;
+        }
+
     }
 }

@@ -211,15 +211,41 @@ namespace GingerCore.Actions
                 }
             }
 
+            foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
+            {
+                string Name = FI.Name;
+                string Value = GetOrCreateInputParam(Name).ValueForDriver;
+
+                if (string.IsNullOrEmpty(Value))
+                {
+                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
+
+                    if (Output != null)
+                    {
+                        Value = Output.ToString();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Value))
+                {
+                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
+                    PLParams.Add(FieldPL);
+                }
+            }
+
 
             foreach (ActInputValue AIV in this.InputValues)
             {
-                if (!string.IsNullOrEmpty(AIV.Value))
+                if (!string.IsNullOrEmpty(AIV.ValueForDriver))
                 {
                     NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
                     PLParams.Add(AIVPL);
                 }
             }
+
+
+
+
             PL.AddListPayLoad(PLParams);
             PL.ClosePackage();
 
