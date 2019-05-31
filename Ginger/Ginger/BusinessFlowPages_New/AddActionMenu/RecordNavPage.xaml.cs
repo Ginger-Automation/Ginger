@@ -5,11 +5,13 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Ginger.Agents;
 using Ginger.BusinessFlowPages_New;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -31,18 +33,68 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         RecordingManager RecordingMngr;
 
-        public RecordNavPage(Context context, IWindowExplorer windowExplorerDriver)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context"></param>
+        public RecordNavPage(Context context)
         {
             InitializeComponent();
             mContext = context;
-            mWindowExplorerDriver = windowExplorerDriver;
-            xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
             xWinGridUC.mContext = mContext;
             xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
 
+            InitMethods();
+            context.PropertyChanged += Context_PropertyChanged;
+        }
+
+        private void InitMethods()
+        {
             SetPOMControlsVisibility(false);
             SetControlsDefault();
             SetMultiplePropertiesGridView();
+            SetDefault(mContext);
+        }
+
+        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e != null && e.PropertyName == nameof(BusinessFlow))
+            {
+                mContext = (Context)sender;
+                xWinGridUC.mContext = mContext;
+                InitMethods();
+                if (IsRecording)
+                {
+                    IsRecording = !IsRecording;
+                    StopRecording();
+                    SetRecordingButtonText();
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method will set the page to default
+        /// </summary>
+        /// <param name="context"></param>
+        public void SetDefault(Context context)
+        {
+            if(mActParentActivity != context.BusinessFlow.CurrentActivity)
+            {                
+                xWinGridUC.UpdateWindowsList();
+                xIntegratePOM.IsChecked = false;
+            }
+            mActParentActivity = context.BusinessFlow.CurrentActivity;
+
+            if (AgentHelper.Instance.CheckIfAgentIsRunning(context))
+            {
+                mWindowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
+                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                xStartAgentButton.IsEnabled = false;
+            }
+            else
+            {
+                xStartAgentButton.IsEnabled = true;
+            }
         }
 
         public void SetMultiplePropertiesGridView()
@@ -73,16 +125,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetControlsDefault()
         {
-            if ((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
-            {
-                UpdateUI(true);
-            }
-            else
-            {
-                UpdateUI(false);
-            }
+            SetRecordingButtonText();
 
-            if (mContext.BusinessFlow.Applications.Contains("Web"))
+            if (mContext.BusinessFlow.Applications.Contains(ePlatformType.Web.ToString()))
             {
                 xPOMPanel.Visibility = Visibility.Visible; 
             }
@@ -109,23 +154,33 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
         {
             IsRecording = !IsRecording;
-            UpdateUI(true);
-
             if (xWinGridUC.comboBoxSelectedValue != null)
             {
                 if (IsRecording)
                 {                   
-                    StartRecording();
+                    StartRecording();                    
                 }
                 else
                 {
                     StopRecording();
-                    UpdateUI(false);
                 }
             }
             else
             {
                 Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
+            }
+            SetRecordingButtonText();
+        }
+
+        private void StartAgentButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool isStarted = AgentHelper.Instance.StartAgent(mContext);
+            if(isStarted)
+            {
+                mWindowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
+                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                xStartAgentButton.IsEnabled = false;
+                SetRecordingButtonText();
             }
         }
 
@@ -157,29 +212,36 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (RecordingMngr != null)
             {
                 RecordingMngr.StopRecording();
-                UpdateUI(false);
             }
         }
 
-        private void UpdateUI(bool isEnabled)
+        private void SetRecordingButtonText()
         {
-            xRecordingButton.IsEnabled = isEnabled;
-            if (isEnabled)
+            if (AgentHelper.Instance.CheckIfAgentIsRunning(mContext) &&
+                (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
             {
-                if (IsRecording)
-                {
-                    xRecordingButton.ButtonText = "Stop Recording";
-                    xRecordingButton.ToolTip = "Stop Recording";
-                    xRecordingButton.ButtonImageType = eImageType.Stop;
-                }
-                else
-                {
-                    xRecordingButton.ButtonText = "Start Recording";
-                    xRecordingButton.ToolTip = "Start Recording";
-                    xRecordingButton.ButtonImageType = eImageType.Play;
-                }
-                xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                xRecordingButton.IsEnabled = true;
+                xStartAgentButton.IsEnabled = false;
             }
+            else
+            {
+                xRecordingButton.IsEnabled = false;
+                xStartAgentButton.IsEnabled = true;
+            }
+
+            if (IsRecording)
+            {
+                xRecordingButton.ButtonText = "Stop Recording";
+                xRecordingButton.ToolTip = "Stop Recording";
+                xRecordingButton.ButtonImageType = eImageType.Stop;
+            }
+            else
+            {
+                xRecordingButton.ButtonText = "Start Recording";
+                xRecordingButton.ToolTip = "Start Recording";
+                xRecordingButton.ButtonImageType = eImageType.Play;
+            }
+            xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");            
         }
 
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
@@ -239,15 +301,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppWindow AW = (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem;
-            if (AW == null)
-            {
-                UpdateUI(false);
-            }
-            else
-            {
-                UpdateUI(true);
-            }
+            SetRecordingButtonText();
         }
     }    
 }

@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.Agents;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
 using GingerCore.DataSource;
@@ -37,6 +38,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             IsAgentStarted = false;
         }
 
+        public void SetDefaultPage(Context context, string targetApplication)
+        {
+            mContext = context;
+            TargetApplication = targetApplication;
+        }
+
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
         {
             if ((sender as Frame).Content == null)
@@ -68,11 +75,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
         {
-            if(mWindowExplorerDriver == null)
+            if (RecordPage == null)
             {
-                StartAgent();
+                RecordPage = new RecordNavPage(mContext);
             }
-            RecordPage = new RecordNavPage(mContext, mWindowExplorerDriver);
+            else
+            {                
+                RecordPage.SetDefault(mContext);
+            }
+
             LoadActionFrame(RecordPage, "Record", eImageType.Camera);
         }
 
@@ -113,68 +124,68 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        public void StartAgent()
-        {
-            IsAgentStarted = false;
-            xRecordItemBtn.IsEnabled = false;
-            if (mContext == null)
-                return;
+        //public void StartAgent()
+        //{
+        //    IsAgentStarted = false;
+        //    xRecordItemBtn.IsEnabled = false;
+        //    if (mContext == null)
+        //        return;
 
-            @AppAgentAct:
-            Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
-            if (string.IsNullOrEmpty(mActParentActivity.TargetApplication))
-            {
-                if (mContext.BusinessFlow.TargetApplications.Count() == 1)
-                {
-                    mActParentActivity.TargetApplication = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName; 
-                }
-            }            
-            ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+        //    @AppAgentAct:
+        //    Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
+        //    if (string.IsNullOrEmpty(mActParentActivity.TargetApplication))
+        //    {
+        //        if (mContext.BusinessFlow.TargetApplications.Count() == 1)
+        //        {
+        //            mActParentActivity.TargetApplication = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName; 
+        //        }
+        //    }            
+        //    ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
 
-            if (appAgent == null)
-            {
-                mContext.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                mContext.Runner.UpdateApplicationAgents();
-                goto AppAgentAct;
-            }
+        //    if (appAgent == null)
+        //    {
+        //        mContext.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+        //        mContext.Runner.UpdateApplicationAgents();
+        //        goto AppAgentAct;
+        //    }
 
-            PlatformInfoBase platform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
+        //    PlatformInfoBase platform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
 
-            ObservableList<DataSourceBase> dSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            if (appAgent != null)
-            {
-                if (appAgent.Agent.Driver == null)
-                {
-                    appAgent.Agent.DSList = dSList;
-                    appAgent.Agent.StartDriver();
-                    xRecordItemBtn.IsEnabled = true;
-                    IsAgentStarted = true;
-                }
-                else if (!appAgent.Agent.Driver.IsRunning())
-                {
-                    if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
-                    {
-                        appAgent.Agent.StartDriver();
-                        xRecordItemBtn.IsEnabled = true;
-                        IsAgentStarted = true;
-                    }
-                    else
-                    {
-                        IsAgentStarted = false;
-                        return;
-                    }
-                }
-                DriverBase driver = appAgent.Agent.Driver;
-                if (driver is IWindowExplorer)
-                {
-                    mWindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
-                }
-            }
-            else
-            {
-                IsAgentStarted = false;
-            }         
-        }
+        //    ObservableList<DataSourceBase> dSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+        //    if (appAgent != null)
+        //    {
+        //        if (appAgent.Agent.Driver == null)
+        //        {
+        //            appAgent.Agent.DSList = dSList;
+        //            appAgent.Agent.StartDriver();
+        //            xRecordItemBtn.IsEnabled = true;
+        //            IsAgentStarted = true;
+        //        }
+        //        else if (!appAgent.Agent.Driver.IsRunning())
+        //        {
+        //            if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
+        //            {
+        //                appAgent.Agent.StartDriver();
+        //                xRecordItemBtn.IsEnabled = true;
+        //                IsAgentStarted = true;
+        //            }
+        //            else
+        //            {
+        //                IsAgentStarted = false;
+        //                return;
+        //            }
+        //        }
+        //        DriverBase driver = appAgent.Agent.Driver;
+        //        if (driver is IWindowExplorer)
+        //        {
+        //            mWindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        IsAgentStarted = false;
+        //    }         
+        //}
 
         public void StopRecording()
         {

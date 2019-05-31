@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.Locators.ASCF;
+using Ginger.Agents;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.Drivers.Windows;
 using Ginger.WindowExplorer.Android;
@@ -206,59 +207,28 @@ namespace Ginger.UserControlsLib
         }
 
         public void UpdateWindowsList()
-        {
-            //if (mContext == null)
-            //    return;
-
-            //@AppAgentAct:
-            //Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
-            //ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-
-            //if(appAgent == null)
-            //{
-            //    mContext.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            //    mContext.Runner.UpdateApplicationAgents();
-            //    goto AppAgentAct;
-            //}
-
-            //mPlatform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
-
-            //mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            //if (appAgent != null)
-            //{
-            //    if (appAgent.Agent.Driver == null)
-            //    {
-            //        appAgent.Agent.DSList = mDSList;
-            //        appAgent.Agent.StartDriver();
-            //    }
-            //    else if(!appAgent.Agent.Driver.IsRunning())
-            //    {
-            //        if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
-            //        {
-            //            appAgent.Agent.StartDriver();
-            //        }
-            //        else
-            //            return;
-            //    }
-            //    DriverBase driver = appAgent.Agent.Driver;
-            //    if (driver is IWindowExplorer)
-            //    {
-            //        mWindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
-            //    }
-            //}
+        {            
             try
             {
-                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
-                WindowsComboBox.ItemsSource = list;
-                WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-                //TODO: If no selection then select the first if only one window exist in list
-                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                if (mWindowExplorerDriver == null && AgentHelper.Instance.WindowExplorerDriver != null)
                 {
-                    if (WindowsComboBox.Items.Count == 1)
+                    windowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
+                }
+
+                if (mWindowExplorerDriver != null)
+                {
+                    List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                    WindowsComboBox.ItemsSource = list;
+                    WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                    //TODO: If no selection then select the first if only one window exist in list
+                    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
-                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                    }
+                        if (WindowsComboBox.Items.Count == 1)
+                        {
+                            WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
+                        }
+                    } 
                 }
             }
             catch (Exception ex)

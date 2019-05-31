@@ -146,11 +146,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
                 xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
                 xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
-                xAddActionSectionSpliter.IsEnabled = true;
-                if(MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
-                {
-                    MainNavigationPage.StartAgent();
-                }
+                xAddActionSectionSpliter.IsEnabled = true;                
             }
             else
             {
@@ -251,7 +247,14 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();
-                    MainNavigationPage = new MainAddActionsNavigationPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication);
+                    if (MainNavigationPage == null)
+                    {
+                        MainNavigationPage = new MainAddActionsNavigationPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication); 
+                    }
+                    else
+                    {
+                        MainNavigationPage.SetDefaultPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication);
+                    }
                     xAddActionMenuFrame.Content = MainNavigationPage;
                 }
             }
@@ -260,11 +263,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
-            mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
-            if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add && MainNavigationPage != null && !MainNavigationPage.IsAgentStarted)
-            {
-                MainNavigationPage.StartAgent();
-            }
+            mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);            
         }
 
         //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
