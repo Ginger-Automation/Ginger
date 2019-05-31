@@ -938,208 +938,7 @@ namespace Ginger.Actions
                 Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
             }
         }
-
-        private void UpdateValueExpressiona()
-        {
-            if (txtValueExpression == null || ControlActionComboBox.SelectedValue == null || ControlActionComboBox.SelectedValue == null)
-                return;
-            try
-            {
-                ErrorLabel.Content = "";
-                txtValueExpression.Text = string.Empty;
-                TextBlockHelper TBH = new TextBlockHelper(txtValueExpression);
-                TBH.AddText("{DS Name=");
-                TBH.AddBoldText(mDataSourceName);
-                TBH.AddText(" DST=");
-                TBH.AddBoldText(mDSTable.Name);
-
-                TBH.AddText(" ACT=");
-                if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
-                    TBH.AddBoldText("DR");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
-                    TBH.AddBoldText("RC");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
-                    TBH.AddBoldText("ARC");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
-                    TBH.AddBoldText("DA");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
-                    TBH.AddBoldText("ETE");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed")
-                    TBH.AddBoldText("NA");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
-                    TBH.AddBoldText("YA");
-                else
-                    TBH.AddBoldText("MASD");
-
-                if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
-                {
-                    TBH.AddBoldText(" EP=");
-                    TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim());
-                    TBH.AddBoldText(" ES=");
-                    TBH.AddBoldText(ExcelSheetName.ValueTextBox.Text.Trim());
-                }
-                else
-                {
-                    if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
-                    {
-                        TBH.AddText(" KEY=");
-                        if (cmbKeyName != null)
-                        {
-                            if (cmbKeyName.SelectedItem == null)
-                                TBH.AddBoldText(cmbKeyName.Text.Replace("'", "''"));
-                            else
-                                TBH.AddBoldText(cmbKeyName.SelectedItem.ToString().Replace("'", "''"));
-                        }
-                    }
-                    else
-                    {
-                        TBH.AddText(" MASD=");
-                        //TBH.AddText("DST=" + mDSTable.Name + " MASD=");
-                        if (MarkAsDone.IsChecked == true)
-                            TBH.AddBoldText("Y");
-                        else
-                            TBH.AddBoldText("N");
-
-                        TBH.AddText(" MR=");
-                        if (MultiRows.IsChecked == true)
-                            TBH.AddBoldText("Y");
-                        else
-                            TBH.AddBoldText("N");
-
-                        TBH.AddText(" IDEN=");
-                        if (SelectedCell.IsChecked == true)
-                        {
-                            List<object> SelectedItemsList = new List<object>();
-                            if (grdTableData.Grid.SelectedCells.Count == 0)
-                            {
-                                ErrorLabel.Content = "Please select a Valid Cell from Table Data for Current Identifier";
-                                ErrorLabel.Foreground = Brushes.Red;
-                                //grdTableData.Grid.SelectedIndex = 0;
-                                //SelectedItemsList = grdTableData.Grid.Items.Cast<object>().ToList();                        
-                            }
-                            else
-                            {
-                                SelectedItemsList = grdTableData.Grid.SelectedCells.Cast<object>().ToList();
-
-                                string selColName = ((DataGridCellInfo)SelectedItemsList[0]).Column.Header.ToString();
-                                selColName = selColName.Replace("__", "_");
-                                string SelCellGingerId = ((DataRowView)((DataGridCellInfo)SelectedItemsList[0]).Item).Row["GINGER_ID"].ToString();
-
-                                TBH.AddText("Query QUERY=Select " + selColName + " from " + mDSTable.Name + " WHERE GINGER_ID=" + SelCellGingerId);
-                            }
-                        }
-                        else if (ByQuery.IsChecked == true)
-                        {
-                            TBH.AddText("Query QUERY=");
-                            TBH.AddBoldText(QueryVal.Text);
-                        }
-                        else
-                        {
-                            //TBH.AddText("Cust ICOL=" + cmbColSelectorValue.SelectedItem.ToString() + " ICOLVAL=");
-                            TBH.AddText("Cust ICOLVAL=");
-                            if (cmbColumnValue.SelectedIndex != -1)
-                                TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString());
-                            else
-                                TBH.AddBoldText(cmbColumnValue.Text);
-                            TBH.AddText(" IROW=");
-                            if (RowNum.IsChecked == true)
-                            {
-                                TBH.AddUnderLineText("RowNum");
-                                TBH.AddText(" ROWNUM=");
-                                if (RowSelectorValue.SelectedIndex != -1)
-                                    TBH.AddBoldText(RowSelectorValue.SelectedItem.ToString());
-                                else
-                                    TBH.AddBoldText(RowSelectorValue.Text);
-                            }
-                            else if (NextAvailable.IsChecked == true)
-                            {
-                                TBH.AddUnderLineText("NxtAvail");
-                                //TBH.AddText("row number");
-                            }
-                            else if (Where.IsChecked == true)
-                            {
-                                TBH.AddUnderLineText("Where");
-                                //TBH.AddText(" WCOL=");
-                                //TBH.AddUnderLineText(WhereColumn.SelectedItem.ToString());
-                                //TBH.AddText(" WCOLVAL=");
-                                //if (WhereColumnTitle.SelectedIndex != -1)
-                                //    TBH.AddBoldText(WhereColumnTitle.SelectedItem.ToString());
-                                //else
-                                //    TBH.AddBoldText(WhereColumnTitle.Text);
-                                //TBH.AddText(" WOPR=");
-                                //TBH.AddUnderLineText(WhereOperator.SelectedItem.ToString());
-                                //TBH.AddText(" WROWVAL=");
-                                ////TBH.AddBoldText(WhereColumnValue.Text);
-                                //TBH.AddBoldText(WhereColumnValue.Text);
-
-                                TBH.AddText(" COND=");
-                                for (int i = 0; i < mActDSTblElem.WhereConditions.Count; i++)
-                                {
-                                    string wQuery = "";
-                                    string wCond = mActDSTblElem.WhereConditions[i].wCondition.ToString();
-                                    string wColVal = "[" + mActDSTblElem.WhereConditions[i].wTableColumn.ToString().Trim() + "]";
-                                    string wOpr = mActDSTblElem.WhereConditions[i].wOperator.ToString();
-                                    string wRowVal = mActDSTblElem.WhereConditions[i].wValue.ToString();
-                                    if (wRowVal.IndexOf("{DS Name") == -1)
-                                        wRowVal = wRowVal.Replace("'", "''");
-
-                                    if (wCond == "EMPTY")
-                                        wCond = "";
-
-                                    if (wOpr == "Equals")
-                                    {
-                                        if (wColVal == "[GINGER_ID]")
-                                        {
-                                            wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal;
-                                        }
-                                        else
-                                        {
-                                            wQuery = wQuery + " " + wCond + " " + wColVal + " = '" + wRowVal + "'";
-                                        }
-                                    }
-                                    else if (wOpr == "NotEquals")
-                                    {
-                                        if (wColVal == "[GINGER_ID]")
-                                        {
-                                            wQuery = wQuery + " " + wCond + " " + wColVal + " <> " + wRowVal;
-                                        }
-                                        else
-                                        {
-                                            wQuery = wQuery + " " + wCond + " " + wColVal + " <> '" + wRowVal + "'";
-                                        }
-                                    }
-                                    else if (wOpr == "Contains")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE " + "'%" + wRowVal + "%'";
-                                    else if (wOpr == "NotContains")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
-                                    else if (wOpr == "StartsWith")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE '" + wRowVal + "%'";
-                                    else if (wOpr == "NotStartsWith")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE '" + wRowVal + "%'";
-                                    else if (wOpr == "EndsWith")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE '%" + wRowVal + "'";
-                                    else if (wOpr == "NotEndsWith")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE '%" + wRowVal + "'";
-                                    else if (wOpr == "IsNull")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " IS NULL";
-                                    else if (wOpr == "IsNotNull")
-                                        wQuery = wQuery + " " + wCond + " " + wColVal + " IS NOT NULL";
-
-                                    TBH.AddBoldText(wQuery);
-                                }
-                            }
-                        }
-                    }
-                }
-                TBH.AddText("}");
-                mActDSTblElem.ValueExp = TBH.GetText();
-            }
-            catch (Exception ex)
-            {
-                mActDSTblElem.ValueExp = "";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed", ex);
-            }
-        }
+        
         private void UpdateValueExpression()
         {
             DataSourceBase DataSource = null;
@@ -1173,6 +972,14 @@ namespace Ginger.Actions
                         TBH.AddBoldText("Y");
                     else
                         TBH.AddBoldText("N");
+                    if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+                    {
+                        TBH.AddText(" Query QUERY=");
+                        TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim()+","+ExcelSheetName.ValueTextBox.Text.Trim());
+                        TBH.AddText("}");
+                        mActDSTblElem.ValueExp = TBH.GetText();
+                        return;
+                    }
                     if (ByQuery.IsChecked == true)
                     {
                         TBH.AddText(" Query QUERY=");
@@ -1181,6 +988,7 @@ namespace Ginger.Actions
                         mActDSTblElem.ValueExp = TBH.GetText();
                         return;
                     }
+                    
                     if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
                     {
                         TBH.AddText(" Query QUERY=");

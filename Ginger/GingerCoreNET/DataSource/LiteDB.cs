@@ -286,7 +286,28 @@ namespace GingerCoreNET.DataSource
 
         public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName)
         {
-            throw new NotImplementedException();
+            DataTable table = GetTable(TableName);
+            //open file
+            string excelFilepath = sExcelPath;
+            excelFilepath = excelFilepath.Replace(@"~", amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder);
+
+            if(File.Exists(excelFilepath))
+            {
+                var file = new FileInfo(excelFilepath);
+                using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
+                {
+                    var ws = xlPackage.Workbook.Worksheets.Add(sSheetName);
+                    ws.Cells["A1"].LoadFromDataTable(table, true);
+
+                    // save
+                    xlPackage.SaveAs(new FileInfo(excelFilepath));
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return true;
         }
 
         public override List<string> GetColumnList(string tableName)
@@ -368,7 +389,6 @@ namespace GingerCoreNET.DataSource
                     }
                 }
                 DataTable aa = dt;
-                //aa.Rows.Add(dt.Rows);
                 aa.TableName = tableName;
 
                 foreach (DataColumn column in aa.Columns)
@@ -763,7 +783,7 @@ namespace GingerCoreNET.DataSource
         {
             return GetQueryOutput(TableName);
         }
-
+        
         public override void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails)
         {
             DataRow dr = mDSTableDetails.DataTable.NewRow();
@@ -941,7 +961,8 @@ namespace GingerCoreNET.DataSource
                     actDSTable.AddOrUpdateReturnParamActual("Count", dt.Rows.Count.ToString());
                     break;
                 case eControlAction.ExportToExcel:
-
+                    string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
+                    ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
                     break;
                 case eControlAction.DeleteRow:
                     if (actDSTable.IsKeyValueTable)
