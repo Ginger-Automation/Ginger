@@ -98,6 +98,9 @@
     <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.Services.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\PluginPackages\PluginDriverExample4\GingerPluginCore.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

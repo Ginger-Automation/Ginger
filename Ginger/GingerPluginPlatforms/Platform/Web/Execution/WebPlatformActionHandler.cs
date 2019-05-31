@@ -67,7 +67,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 Handler.ExecuteAction();
 
 
-                NewPayLoad PLRC = CreateActionResult(exInfo: Handler.ExecutionInfo, error: Handler.Error, Handler.AOVs);
+                NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo,Handler.Error, Handler.AOVs);
                 return PLRC;
             }
 
@@ -85,7 +85,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     Handler.ExecuteAction();
 
-                    NewPayLoad PLRC = CreateActionResult(exInfo: Handler.ExecutionInfo, error:Handler.Error, Handler.AOVs);
+                    NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
                     return PLRC;
      
                 }
