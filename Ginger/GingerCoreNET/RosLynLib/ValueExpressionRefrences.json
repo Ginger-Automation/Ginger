@@ -201,26 +201,6 @@
       "IconImageName": "@Clock_16x16.png"
     },
     {
-      "Category": "Date Time Functions",
-      "Name": "Get # of days between 2 dates",
-      "Expression": "DateDiff(\"d\",\"5-16-2016\",\"6-16-2016\")",
-      "UseCase": null,
-      "Samples": [],
-      "ReturnType": null,
-      "ExpressionResult": null,
-      "IconImageName": "@Clock_16x16.png"
-    },
-    {
-      "Category": "Date Time Functions",
-      "Name": "Check if date is valid",
-      "Expression": "CStr(IsDate(\"5/18/2016\"))",
-      "UseCase": null,
-      "Samples": [],
-      "ReturnType": null,
-      "ExpressionResult": null,
-      "IconImageName": "@Clock_16x16.png"
-    },
-    {
       "Category": "General Operations",
       "Name": "Choose a val from list",
       "Expression": "{CS Exp=new object[] {5,6,7,8}[0]}",
@@ -338,7 +318,6 @@
       "Samples": [],
       "ReturnType": null,
       "ExpressionResult": "ABC",
-      "ExpressionResult": "ABC",
       "IconImageName": "@A_16x16.png"
 
     },
@@ -353,12 +332,12 @@
     },
     {
       "Category": "String Functions",
-      "Name": "Text Contains",
       "Expression": "{CS Exp=@\"abc\".Contains(\"b\")}",
-      "UseCase": "Check if provided text is present in string",
-      "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\")} will return true if b is present in abc" ],
+      "ExpressionResult": "true",
       "IconImageName": "@A_16x16.png",
-      "ExpressionResult": "true"
+      "Name": "Text Contains",
+      "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\")} will return true if b is present in abc" ],
+      "UseCase": "Check if provided text is present in string"
     },
     {
       "Category": "Math",

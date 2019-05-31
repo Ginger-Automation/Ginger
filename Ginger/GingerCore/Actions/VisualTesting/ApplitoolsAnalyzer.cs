@@ -138,11 +138,11 @@ namespace GingerCore.Actions.VisualTesting
             {
                 mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 if (!FailActionOnMistmach)
-                    mAct.ExInfo = "Created new baseline in Applitools or Mismatch between saved baseline and terget checkpoint image";
+                    mAct.ExInfo = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
             }
             else if (response.IsMatch == false)
             {
-                mAct.Error = "Created new baseline in Applitools or Mismatch between saved baseline and terget checkpoint image";
+                mAct.Error = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
             }
         }
 

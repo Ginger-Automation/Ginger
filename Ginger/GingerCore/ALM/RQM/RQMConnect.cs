@@ -361,7 +361,7 @@ namespace GingerCore.ALM.RQM
 
                         // building test cases lists of TestSuits (not on TestPlan)
                         // test suites should be created already by function GetRQMTestPlanByIdByProject()
-                        // this is only enchancment that will add to them test cases and some values like descritpion and so on
+                        // this is only enhancement that will add to them test cases and some values like description and so on
                         XmlNodeList testSuites = responseDataNode.SelectNodes(currentRQMProjectMapping.RQMTestPlanMapping.PathXMLToTestSuitesLists, nsmgrTP);
                         foreach (XmlNode testSuite in testSuites)
                         {

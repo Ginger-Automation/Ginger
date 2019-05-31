@@ -129,6 +129,7 @@ namespace Ginger.BusinessFlowFolder
                     mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
             }
             RefreshActivitiesGrid();
+            grdActivities.ClearFilters();
         }
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)

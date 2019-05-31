@@ -318,7 +318,6 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex);
                     value = null;
                 } 
                 
@@ -333,6 +332,11 @@ namespace GingerCore.Variables
                     {
                         try
                         {
+                            if((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
+                            {
+                                usedVariables.Add(value.ToString());
+                            }
+
                             if (PI.CanWrite)
                             {
                                 //TODO: Use nameof !!!!!
@@ -385,7 +389,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.ERROR, "Failed to get list of used variables", ex); 
+                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used variables", ex); 
                         } 
                     }
                 }

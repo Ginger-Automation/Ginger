@@ -78,8 +78,8 @@
 
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="1.0.5" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
@@ -97,6 +97,9 @@
   <ItemGroup>
     <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.Services.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\PluginPackages\PluginDriverExample4\GingerPluginCore.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
