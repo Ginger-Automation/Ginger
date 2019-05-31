@@ -37,7 +37,7 @@
             </DockPanel>
         
             <Ginger:ucGrid x:Name="gridPOMListItems" Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
-                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="680" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
             
         </StackPanel>
     </Grid>
