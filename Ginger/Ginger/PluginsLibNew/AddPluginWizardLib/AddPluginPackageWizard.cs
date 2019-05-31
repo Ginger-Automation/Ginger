@@ -35,9 +35,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
             AddPage(Name: "Select Plugin Source Type", Title: "Select Plugin Source Type", SubTitle: "Choose ...", Page: new SelectPluginPackageTypePage());
 
-            AddPage(Name: "Select Plugin Folder Page", Title: "Select Plugin Folder Page", SubTitle: "Select Plugin Folder Page ...", Page: new SelectPlugPackageinFolderPage());
+            AddPage(Name: "Select Plugin Folder", Title: "Select Plugin Folder", SubTitle: "Select Plugin Folder...", Page: new SelectPlugPackageinFolderPage());
 
-            AddPage(Name: "Plugin Info Page", Title: "Plugin Info Page", SubTitle: "Plugin Info Page ...", Page: new PlugPackageinInfoPage());            
+            AddPage(Name: "Plugin Info", Title: "Plugin Info", SubTitle: "Plugin Info...", Page: new PlugPackageinInfoPage());            
 
             //AddPage(Name: "Add Plugin to Solution Page", Title: "Add Plugin to Solution Page", SubTitle: "Add Plugin to Solution Page ...", Page: new AddPluginPackageToSolutionPage());
         }
