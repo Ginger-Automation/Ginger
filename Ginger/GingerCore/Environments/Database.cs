@@ -481,6 +481,10 @@ namespace GingerCore.Environments
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
+            finally
+            {
+                oConn?.Dispose();
+            }
         }
 
        //prep for Db edit page
