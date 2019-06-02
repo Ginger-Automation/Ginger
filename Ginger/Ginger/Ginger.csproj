@@ -128,11 +128,11 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.6.13.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.6.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+      <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
@@ -148,20 +148,20 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
-      <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.3.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.13.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.13.1\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=2.10.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.2.10.0\lib\netstandard1.3\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
@@ -182,20 +182,20 @@
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MigraDoc.DocumentObjectModel-WPF">
-      <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\MigraDoc.DocumentObjectModel-WPF.dll</HintPath>
+    <Reference Include="MigraDoc.DocumentObjectModel-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.DocumentObjectModel-wpf.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.Rendering-WPF">
-      <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\MigraDoc.Rendering-WPF.dll</HintPath>
+    <Reference Include="MigraDoc.Rendering-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.Rendering-wpf.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.RtfRendering-WPF">
-      <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\MigraDoc.RtfRendering-WPF.dll</HintPath>
+    <Reference Include="MigraDoc.RtfRendering-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.RtfRendering-wpf.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Posix">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NJsonSchema, Version=9.13.10.0, Culture=neutral, PublicKeyToken=c2f9c3bdfae56102, processorArchitecture=MSIL">
       <HintPath>..\packages\NJsonSchema.9.13.10\lib\net45\NJsonSchema.dll</HintPath>
@@ -213,11 +213,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\Open3270.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp-WPF">
-      <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp-WPF.dll</HintPath>
+    <Reference Include="PdfSharp-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\PdfSharp-wpf.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp.Charting-WPF">
-      <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp.Charting-WPF.dll</HintPath>
+    <Reference Include="PdfSharp.Charting-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\PdfSharp.Charting-wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="QCRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -225,8 +225,8 @@
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
-    <Reference Include="SharpAdbClient">
-      <HintPath>..\packages\SharpAdbClient.2.0.274\lib\net45\SharpAdbClient.dll</HintPath>
+    <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
@@ -234,6 +234,9 @@
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
@@ -287,6 +290,9 @@
       <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
@@ -298,6 +304,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Printing" />
     <Reference Include="System.Reflection.DispatchProxy, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reflection.DispatchProxy.4.5.1\lib\net461\System.Reflection.DispatchProxy.dll</HintPath>
@@ -332,9 +341,8 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Text.Encoding.CodePages, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.4.3.0\lib\net46\System.Text.Encoding.CodePages.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.4.5.1\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -628,7 +636,15 @@
       <DependentUpon>LogDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="GeneralLib\TextBoxFormatter.cs" />
+    <Compile Include="GeneralValidationRules\InvalidValueValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\MaxLengthValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\MaxValueValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\MinLegthValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
+    <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
+    <Compile Include="Logger\WebReportGenerator.cs" />
+    <Compile Include="Logger\WebReportFilter.cs" />
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
@@ -2049,6 +2065,103 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\%40GingerByAmdocsLogo.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\BeatLogo.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\CustomerLogo.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger_by_amdocs.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs2.jpg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs3.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_icon.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\images\amdocs_old.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\images\bars.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\screenshots\dummy.txt" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.css" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\color.c7a33805ffda0d32bd2a.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\favicon.ico" />
+    <Content Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\hue.0614c27197fc3ce572e1.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.eabf48cebb6d4fb19175.js" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\styles.c77db239a1dbff874057.css" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.eot" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.woff" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.woff2" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.eot" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.woff" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.woff2" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.eot" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.woff" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.woff2" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.eot" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.woff" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.woff2" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_content.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_dashboard.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_exception.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_footer.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_landing.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_layout.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_login.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_main.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_megamenu.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_rightsidebar.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_sidebar.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_splashscreen.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_topbar.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_usermenu.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_utils.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\layout\_variables.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\overrides\_layout_styles.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\overrides\_layout_variables.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\overrides\_theme_styles.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\overrides\_theme_variables.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme\_theme.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme\_variables.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_buttons.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_common.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_core.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_data.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_forms.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_menus.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_messages.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_misc.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_mixins.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_overlays.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\theme_core\_panels.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\_fonts.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\_mixins.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\sass\_variables.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.scss" />
+    <None Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.674f50d287a8c48dc19b.eot" />
+    <None Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.af7ae505a9eed503f8b8.woff2" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.b06871f281fee6b241d6.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.fee66e712a8a08eef580.woff" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\primeicons.473e2a746d3c151d7dca.ttf" />
+    <None Include="WebReportApp\Ginger-Web-Client\primeicons.71bb3d79dcf18b45ae84.woff" />
+    <None Include="WebReportApp\Ginger-Web-Client\primeicons.b8eccb1059ea5faaf6d8.eot" />
+    <Resource Include="Images\%40AddFile_16x16.png" />
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4692,6 +4805,10 @@
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.74.0.3729.6\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.74.0.3729.6\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /e /y  "$(ProjectDir)WebReportApp" "Reports\"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

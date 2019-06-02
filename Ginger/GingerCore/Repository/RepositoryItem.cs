@@ -169,7 +169,7 @@ namespace GingerCore
         }
 
         /// <summary>
-        /// Been used for updating the Shared Reporsitiry item instance
+        /// Been used for updating the Shared Repository item instance
         /// </summary>
         public virtual void UpdateInstance(RepositoryItem instanceItem, string itemPartToUpdate, RepositoryItem hostItem = null)
         {

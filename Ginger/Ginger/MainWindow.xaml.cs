@@ -370,6 +370,9 @@ namespace Ginger
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
                 }
             }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+
             CW.Close();
         }
 
@@ -647,10 +650,18 @@ namespace Ginger
             ShowGingerLog();
         }
 
+        LogDetailsPage mLogDetailsPage = null;
         private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
         {
-            LogDetailsPage log = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
-            log.ShowAsWindow();
+            if (mLogDetailsPage == null)
+            {
+                mLogDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
+            }
+            else
+            {
+                mLogDetailsPage.Refresh();
+            }
+            mLogDetailsPage.ShowAsWindow();
         }
 
         private void ShowGingerLog()
@@ -688,10 +699,21 @@ namespace Ginger
             }
         }
 
+        DebugConsoleWindow mDebugConsoleWin = null;
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)
         {
-            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
-            debugConsole.ShowAsWindow();
+            Reporter.ReportAllAlsoToConsole = true;
+
+            if (mDebugConsoleWin == null)
+            {
+                mDebugConsoleWin = new DebugConsoleWindow();
+            }
+            else
+            {
+                mDebugConsoleWin.ClearConsole();
+            }
+
+            mDebugConsoleWin.ShowAsWindow();
         }
 
         private void xBetaFeaturesIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -744,7 +766,7 @@ namespace Ginger
         private void xSolutionEditBtn_Click(object sender, RoutedEventArgs e)
         {
             string newName =  WorkSpace.Instance.Solution.Name;
-            if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
+            if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Solution Rename", "New Solution Name:", ref newName))
             {
                  WorkSpace.Instance.Solution.Name = newName;
             }
@@ -870,9 +892,9 @@ namespace Ginger
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Debug Console", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Screen);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);                
             }
         }
 

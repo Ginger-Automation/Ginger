@@ -69,7 +69,12 @@ namespace Ginger.Run
         SpecificActivity,
         SpecificBusinessFlow
     }
-
+    public enum eRunLevel
+    {
+        NA,
+        Runner,
+        BusinessFlow
+    }
 
     public class GingerRunner : RepositoryItemBase
     {
@@ -156,13 +161,13 @@ namespace Ginger.Run
         }        
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
-        public eExecutedFrom ExecutedFrom;        
+        public eExecutedFrom ExecutedFrom;
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
 
 
-        
-        
+
+        public eRunLevel RunLevel { get; set; }
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
@@ -449,13 +454,18 @@ namespace Ginger.Run
 
         public void RunRunner(bool doContinueRun = false)
         {
+            bool runnerExecutionSkipped = false;
             try
             {
-                if (!Active)
+                if (Active == false || BusinessFlows.Count == 0)
                 {
+                    runnerExecutionSkipped = true;
                     return;
                 }
-
+                if (RunLevel == eRunLevel.Runner)
+                {
+                    ExecutionLoggerManager.mExecutionLogger.StartRunSet();
+                }
                 if (doContinueRun == false)
                 {
                     NotifyRunnerRunstart();
@@ -559,7 +569,7 @@ namespace Ginger.Run
                 //Post execution items to do
                 SetPendingBusinessFlowsSkippedStatus();
                 
-                if (Active)
+                if (!runnerExecutionSkipped)
                 {
                     if (!mStopRun)//not on stop run
                     {
@@ -577,6 +587,11 @@ namespace Ginger.Run
                     {
                         // ExecutionLogger.GingerEnd();                    
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
+                    }
+                    if(RunLevel == eRunLevel.Runner)
+                    {
+                        ExecutionLoggerManager.mExecutionLogger.EndRunSet();
+                        RunLevel = eRunLevel.NA;
                     }
                 }   
                 else
@@ -958,7 +973,7 @@ namespace Ginger.Run
                     {
                         ResetAction(act);
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                         {
                             NotifyActionEnd(act);
                         }
@@ -2632,11 +2647,11 @@ namespace Ginger.Run
 
                     case eOperator.Contains:
                         status = ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "Does not Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " Does not Contains " + ARC.ExpectedCalculated;
                         break;
                     case eOperator.DoesNotContains:
                         status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " Contains " + ARC.ExpectedCalculated;
                         break;
                     case eOperator.Equals:
                         status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
@@ -2655,7 +2670,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not greater than " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not greater than " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.GreaterThanEquals:
@@ -2668,7 +2683,7 @@ namespace Ginger.Run
                         {
                             Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
 
-                            ErrorInfo = ARC.Actual + "is not greater than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not greater than equals to " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.LessThan:
@@ -2680,7 +2695,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not less than " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not less than " + ARC.ExpectedCalculated;
 
                         }
                         break;
@@ -2693,12 +2708,12 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + "is not less than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = ARC.Actual + " is not less than equals to " + ARC.ExpectedCalculated;
                         }
                         break;
                     case eOperator.NotEquals:
                         status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + "is equals to " + ARC.ExpectedCalculated;
+                        ErrorInfo = ARC.Actual + " is equals to " + ARC.ExpectedCalculated;
                         break;
                     default:
                         ErrorInfo = "Not Supported Operation";
@@ -2956,10 +2971,10 @@ namespace Ginger.Run
 
             //Run the Activity Actions
             st.Start();
-
+            Act act = null;
             try
             {
-                Act act = null;
+                
 
                 // if it is not continue mode then goto first Action
                 if (!doContinueRun)
@@ -3028,7 +3043,7 @@ namespace Ginger.Run
                         {
                             ResetAction(act);
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                             {
                                 NotifyActionEnd(act);
                             }
@@ -3049,10 +3064,16 @@ namespace Ginger.Run
                     }
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // temporary handling of exception
-                SetNextActionsBlockedStatus();
+                act.Error += ex.Message;
+                CalculateActionFinalStatus(act);
+                if (!activity.Acts.IsLastItem())
+                {
+                    GotoNextAction();
+                    SetNextActionsBlockedStatus();
+                }               
+               
                 // ExecutionLogger.ActivityEnd(CurrentBusinessFlow, activity);
                 //NotifyActivityEnd(activity);
 
@@ -3277,10 +3298,13 @@ namespace Ginger.Run
             }
 
             if (continueLevel == eContinueLevel.Runner)
+            {
                 RunRunner(true);
+            }
             else
+            {
                 RunBusinessFlow(null, true, true);
-
+            }
             return true;
         }
         
@@ -3784,7 +3808,7 @@ namespace Ginger.Run
                     break;
 
                 if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
-                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
                 }
@@ -4524,7 +4548,7 @@ namespace Ginger.Run
                         }
                         activity.ExecutionLogActionCounter++;
                         action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
                         }

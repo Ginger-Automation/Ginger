@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore.Actions.PlugIns;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,32 +52,21 @@ namespace Ginger.Actions.PlugIns
         {
         }
 
-
         private void SetActionInputsControls()
         {
             List<ActionInputValueInfo> actionInputsDetails = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(mAct.PluginId, mAct.ServiceId, mAct.ActionId);
 
-            foreach (ActionInputValueInfo actionInputValueInfo in actionInputsDetails)
+            foreach (ActInputValue param in mAct.InputValues)
             {
-                ActInputValue actInputValue = (from x in mAct.InputValues where x.Param == actionInputValueInfo.Param select x).SingleOrDefault();
-
-                if (actInputValue == null)
-                {
-                    actInputValue = new ActInputValue();
-                    actInputValue.Param = actionInputValueInfo.Param;
-                    actInputValue.ParamType = actionInputValueInfo.ParamType;
-                    mAct.InputValues.Add(actInputValue);
-                }
-                else
-                {
-                    actInputValue.ParamType = actionInputValueInfo.ParamType;
-                }
-
+                ActionInputValueInfo actionInputValueInfo = (from x in actionInputsDetails where x.Param == param.Param select x).SingleOrDefault();
+                // update the type based on the info json of the plugin
+                param.ParamType = actionInputValueInfo.ParamType;
+                
                 // Add ActionInputValueUserControl for the param value to edit
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), actInputValue);
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param, actionInputValueInfo.ParamAttrs);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
-                actionInputValueUserControl.Margin = new Thickness(0, 10, 0, 0);
-                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);
+                actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
+                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);               
             }
         }
 

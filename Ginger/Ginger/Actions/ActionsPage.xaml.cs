@@ -287,6 +287,7 @@ namespace Ginger.Actions
                 mBusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
             }
             GingerCore.General.DoEvents();
+            grdActions.ClearFilters();
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)

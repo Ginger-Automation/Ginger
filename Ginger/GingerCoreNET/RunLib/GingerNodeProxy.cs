@@ -19,7 +19,9 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.Drivers;
+using GingerCore;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace GingerCoreNET.RunLib
@@ -126,12 +128,29 @@ namespace GingerCoreNET.RunLib
 
         }
 
-        public void StartDriver()
+        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
         {
             //TODO: get return code - based on it set status if running OK
             NewPayLoad PL = new NewPayLoad("StartDriver");
+            List<NewPayLoad> DriverConfigs = new List<NewPayLoad>();
+
+            if (driverConfiguration != null)
+            {
+                foreach (DriverConfigParam DC in driverConfiguration)
+                {
+                    NewPayLoad FieldPL = new NewPayLoad("Config", DC.Parameter, DC.Value == null ? " " : DC.Value);
+
+                    DriverConfigs.Add(FieldPL);
+                }
+            }
+            PL.AddListPayLoad(DriverConfigs);
             PL.ClosePackage();
-            SendRequestPayLoad(PL);
+            NewPayLoad plss = SendRequestPayLoad(PL);
+
+            if (plss.IsErrorPayLoad())
+            {
+                throw new KeyNotFoundException();
+            }
         }
 
         public void CloseDriver()
@@ -139,7 +158,7 @@ namespace GingerCoreNET.RunLib
             NewPayLoad PL = new NewPayLoad("CloseDriver");
             PL.ClosePackage();
             NewPayLoad RC = SendRequestPayLoad(PL);
-        }
+                }
 
         public void Shutdown()
         {
