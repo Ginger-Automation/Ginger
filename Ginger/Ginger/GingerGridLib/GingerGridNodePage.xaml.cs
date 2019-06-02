@@ -50,13 +50,7 @@ namespace Ginger.GingerGridLib
             {
                 mGingerNodeProxy.Reserve();
             }
-            mGingerNodeProxy.StartDriver();
+           
         }
-
-        
-        
-
-
-        
     }
 }
