@@ -96,15 +96,15 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-  
+
         public void StartAgentDriver(IAgent IAgent)
         {
             Agent agent = (Agent)IAgent;
             BusinessFlow BusinessFlow = agent.BusinessFlow;
             ProjEnvironment ProjEnvironment = agent.ProjEnvironment;
             bool Remote = agent.Remote;
-            
-            DriverBase Driver = null; 
+
+            DriverBase Driver = null;
             agent.mIsStarting = true;
             agent.OnPropertyChanged(Fields.Status);
             try
@@ -113,7 +113,7 @@ namespace Ginger.Repository
                 {
                     if (Remote)
                     {
-                        throw new Exception("Remote is Obsolete, use GingerGrid");                        
+                        throw new Exception("Remote is Obsolete, use GingerGrid");
                     }
                     else
                     {
@@ -223,7 +223,7 @@ namespace Ginger.Repository
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
                     return;
                 }
-                
+
                 if (agent.AgentType == eAgentType.Service)
                 {
                     throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service

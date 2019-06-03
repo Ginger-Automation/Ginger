@@ -344,6 +344,9 @@ namespace GingerCore
         }
 
 
+
+
+
         System.Diagnostics.Process mProcess;
         Mutex mutex = new Mutex();
         // TODO: move to ExecuteOnPlugin
@@ -383,8 +386,9 @@ namespace GingerCore
 
                 // Keep GNP on agent
                 GingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);
-                GingerNodeProxy.StartDriver();
-                GingerNodeProxy.StartDriver();
+ 
+ //TODO: Ginger Grid  CHeck if required                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                GingerNodeProxy.StartDriver(DriverConfiguration);
             }
             catch(Exception ex)
             {
@@ -529,7 +533,7 @@ namespace GingerCore
 
             foreach (var config in PSI.Configs)
             {
-                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() != 0)
+                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -648,6 +652,10 @@ namespace GingerCore
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                         GingerNodeProxy.CloseDriver();
+
+                        gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                      
+                   
                         if (mProcess != null)
                         {
                             // mProcess.Kill();

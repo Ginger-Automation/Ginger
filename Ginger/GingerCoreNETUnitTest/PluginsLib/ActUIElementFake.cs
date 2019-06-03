@@ -70,5 +70,10 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             return PL;
         }
+
+        public string GetName()
+        {
+            return "UIElementAction";
+        }
     }
 }

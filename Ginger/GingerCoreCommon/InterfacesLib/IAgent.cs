@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -25,6 +25,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface IAgent
     {
+
         string Name { get; set; }
         ePlatformType Platform { get; }
         bool UsedForAutoMapping { get; set; }
