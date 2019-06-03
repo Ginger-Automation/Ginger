@@ -162,7 +162,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void InitAutomatePageRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
             // Add Listener so we can do GiveUserFeedback            
             AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
@@ -440,8 +440,8 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
         }
 
         public async Task RunAutomatePageAction(bool checkIfActionAllowedToRun = true)
@@ -472,7 +472,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.SetCurrentActivityAgent();
             }
 
-            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
             var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
@@ -500,7 +500,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             try
             {
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
