@@ -17,11 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
-using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActLaunchJavaWSApplication : ActWithoutDriver
@@ -76,7 +75,7 @@ namespace GingerCore.Actions
         public new static partial class Fields
         {
             public static string JavaWSEXEPath = "JavaWSEXEPath"; //contains the Java version path in case user do not want to use JAVA_HOME
-           
+
             public static string LaunchJavaApplication = "LaunchJavaApplication";    //flag to determine if to launch java application        
             public static string URL = "URL"; //the actual Java application path (jar/jnlp url)                    
 
@@ -110,7 +109,7 @@ namespace GingerCore.Actions
         }
 
         //------------------- Launch Java Application args 
-        private bool mLaunchJavaApplication = true;        
+        private bool mLaunchJavaApplication = true;
         [IsSerializedForLocalRepository(true)]
         public bool LaunchJavaApplication //flag to determine if to launch java application
         {
@@ -279,7 +278,7 @@ namespace GingerCore.Actions
         }
 
 
-        ValueExpression mVE = null;
+        // ValueExpression mVE = null;
 
         enum URLExtensionType
         {
@@ -293,10 +292,10 @@ namespace GingerCore.Actions
             [EnumValueDescription("Use explicitly specified port")]
             Manual,
             [EnumValueDescription("Auto detect available port")]
-            AutoDetect    
+            AutoDetect
         }
-        
-        URLExtensionType mURLExtension = URLExtensionType.JNLP;        
+
+        URLExtensionType mURLExtension = URLExtensionType.JNLP;
         private int mJavaApplicationProcessID = -1;
 
         private int mProcessIDForAttach = -1;
@@ -330,19 +329,19 @@ namespace GingerCore.Actions
                     AddOrUpdateReturnParamActual("Port", mPort_Calc);
                 }
             }
-            
-        
+
+
             //Changing the existing param namefrom "Actual" to "Process ID", it Param "Actual" exist, to support Return params configured on old version
             ActReturnValue ARC = (from arc in ReturnValues where arc.Param == "Actual" select arc).FirstOrDefault();
-            if (ARC!=null)
+            if (ARC != null)
             {
                 ARC.Param = "Process ID";
                 ARC.ParamCalculated = "Process ID";
             }
-            
+
             AddOrUpdateReturnParamActual("Process ID", "" + mProcessIDForAttach);
 
-            
+
         }
 
 
@@ -351,7 +350,7 @@ namespace GingerCore.Actions
             //Action created with old version do not have this parameter. 
             //If running the action without opening the edit page, the param will be null
             //So we add the default value to param
-            if(GetInputParamValue(Fields.PortConfigParam)==null)
+            if (GetInputParamValue(Fields.PortConfigParam) == null)
             {
                 AddOrUpdateInputParamValue(Fields.PortConfigParam, ePortConfigType.Manual.ToString());
             }
@@ -363,13 +362,13 @@ namespace GingerCore.Actions
             }
             else
             {
-                mPort_Calc= SocketHelper.GetOpenPort().ToString();
+                mPort_Calc = SocketHelper.GetOpenPort().ToString();
             }
         }
 
         private string CalculateValue(string valueTocalc)
-        {            
-            return ValueExpression.Calculate(valueTocalc).Trim(); 
+        {
+            return ValueExpression.Calculate(valueTocalc).Trim();
         }
 
         private bool CalculateArguments()
@@ -396,7 +395,7 @@ namespace GingerCore.Actions
 
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -405,12 +404,12 @@ namespace GingerCore.Actions
                 return false;
             }
         }
-             
+
         private bool ValidateArguments()
         {
             try
             {
-                if (mLaunchJavaApplication == false &&  mLaunchWithAgent == false)
+                if (mLaunchJavaApplication == false && mLaunchWithAgent == false)
                 {
                     Error = "No action to perform was selected.";
                     return false;
@@ -439,7 +438,7 @@ namespace GingerCore.Actions
                         Error = "Missing valid Java application Window title to search for.";
                         return false;
                     }
-                    
+
                     if (string.IsNullOrEmpty(mWaitForWindowTitleMaxTime_Calc) || int.TryParse(mWaitForWindowTitleMaxTime_Calc, out mWaitForWindowTitleMaxTime_Calc_int) == false)
                     {
                         Error = "Max waiting time for java application window is not valid.";
@@ -455,14 +454,14 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    int mPort_Calc_int=0;
+                    int mPort_Calc_int = 0;
                     if (string.IsNullOrEmpty(mPort_Calc) || int.TryParse(mPort_Calc, out mPort_Calc_int) == false)
                     {
-                        Error = "The Port number '" + mPort_Calc +"' is not valid.";
+                        Error = "The Port number '" + mPort_Calc + "' is not valid.";
                         return false;
                     }
-                }                 
-                
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -471,7 +470,7 @@ namespace GingerCore.Actions
                 return false;
             }
         }
-        
+
 
         private bool SetURLExtensionType(string url)
         {
@@ -502,7 +501,7 @@ namespace GingerCore.Actions
             }
 
         }
-        
+
         private bool PerformLaunchJavaApplication()
         {
             string command = string.Empty;
@@ -511,23 +510,23 @@ namespace GingerCore.Actions
             {
                 //choosing executer
                 bool isJNLP = false;
-                if (URLExtensionType.JNLP== mURLExtension)
+                if (URLExtensionType.JNLP == mURLExtension)
                 {
                     javaExecuter = Path.Combine(mJavaWSEXEPath_Calc, "javaws.exe");
                     isJNLP = true;
                 }
-                else if(URLExtensionType.JAR == mURLExtension)
+                else if (URLExtensionType.JAR == mURLExtension)
                 {
                     javaExecuter = Path.Combine(mJavaWSEXEPath_Calc, "java.exe");
                 }
                 // If extesion is exe then we keep java executer empty
-             
+
                 //arrange java application command params
                 List<string> commandParams = new List<string>();
                 foreach (ActInputValue AIV in this.InputValues)
-                    if (!string.IsNullOrEmpty(AIV.Param) && !string.IsNullOrEmpty(AIV.ValueForDriver) && string.Compare(AIV.Param, "URL", true) != 0 && string.Compare(AIV.Param, "Port", true) != 0 && string.Compare(AIV.Param, "PortConfigParam", true) != 0)                
-                            commandParams.Add(AIV.Param + "=" + AIV.ValueForDriver);
-                   
+                    if (!string.IsNullOrEmpty(AIV.Param) && !string.IsNullOrEmpty(AIV.ValueForDriver) && string.Compare(AIV.Param, "URL", true) != 0 && string.Compare(AIV.Param, "Port", true) != 0 && string.Compare(AIV.Param, "PortConfigParam", true) != 0)
+                        commandParams.Add(AIV.Param + "=" + AIV.ValueForDriver);
+
                 string commandParams_OneLine = string.Empty;
                 if (commandParams.Count > 0)
                 {
@@ -594,15 +593,15 @@ namespace GingerCore.Actions
             string command = string.Empty;
             string javaExecuter = string.Empty;
             try
-            {             
-                    if (WaitForAppWindowTitle() == false)
-                    {
-                        Error = "Failed to find the Java application with title '" + mWaitForWindowTitle_Calc + "' after " + mWaitForWindowTitleMaxTime_Calc + " seconds.";
-                        return false;
-                    }
-               
+            {
+                if (WaitForAppWindowTitle() == false)
+                {
+                    Error = "Failed to find the Java application with title '" + mWaitForWindowTitle_Calc + "' after " + mWaitForWindowTitleMaxTime_Calc + " seconds.";
+                    return false;
+                }
+
                 //choosing executer
-                javaExecuter = Path.Combine(mJavaWSEXEPath_Calc, "java.exe");         
+                javaExecuter = Path.Combine(mJavaWSEXEPath_Calc, "java.exe");
 
                 //arrange java application command params
                 string commandParams_OneLine = string.Empty;
@@ -682,10 +681,10 @@ namespace GingerCore.Actions
                         {
                             continue;
                         }
-                        if (BlockingJavaWindow) 
+                        if (BlockingJavaWindow)
                         {
                             if (CheckForBlockWindow(process))
-                             {
+                            {
                                 matchingProcessList.Add(process);
                             }
                         }
@@ -730,7 +729,7 @@ namespace GingerCore.Actions
             }
 
             return bFound;
-            
+
         }
         private bool CheckForBlockWindow(Process p)
         {
@@ -776,9 +775,9 @@ namespace GingerCore.Actions
         {
             string NoTitleWindow = "no title window";// this was added earlier but not in sync with other drivers.
             string NoTitleWindow_2 = "NoTitleWindow";// In PB we use NoTitleWindow for blank title windows. So adding this to have uniformity across the drivers.
-            if ((mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow)|| mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow_2.ToLower())) && title.Equals(String.Empty))
+            if ((mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow) || mWaitForWindowTitle_Calc.ToLower().Contains(NoTitleWindow_2.ToLower())) && title.Equals(String.Empty))
             {
-                return true;               
+                return true;
             }
 
             else if (title.Contains(mWaitForWindowTitle_Calc.ToLower()))
@@ -790,7 +789,7 @@ namespace GingerCore.Actions
         }
 
         public void ExecuteCommandAsync(List<string> command)
-        {            
+        {
             try
             {
                 //Asynchronously start the Thread to process the Execute command request.

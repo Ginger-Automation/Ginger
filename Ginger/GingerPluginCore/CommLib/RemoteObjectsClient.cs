@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         private void MessageHandler(GingerSocketInfo obj)
         {
             //TODO: handle request from server
-            throw new NotImplementedException();
+           throw new NotImplementedException();
         }
 
         public T GetObject<T>(string id)

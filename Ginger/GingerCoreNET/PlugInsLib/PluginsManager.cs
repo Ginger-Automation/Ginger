@@ -157,6 +157,8 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
+            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!
+
             Console.WriteLine("Starting Service...");
             if (string.IsNullOrEmpty(pluginId))
             {
@@ -189,8 +191,8 @@ namespace Amdocs.Ginger.Repository
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
-                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                procStartInfo.UseShellExecute = true;
+                 procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+                 procStartInfo.UseShellExecute = true;               
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {

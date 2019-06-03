@@ -17,6 +17,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Drivers\**" />
+    <Compile Remove="SolutionUpgrade\**" />
+    <Compile Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <EmbeddedResource Remove="Drivers\**" />
+    <EmbeddedResource Remove="SolutionUpgrade\**" />
+    <EmbeddedResource Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <None Remove="Drivers\**" />
+    <None Remove="SolutionUpgrade\**" />
+    <None Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TestResources\JSON\Request JSON.TXT" />
     <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
     <None Remove="TestResources\XML\createPaymentRequest2.xml" />
@@ -66,18 +78,14 @@
 
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="1.0.5" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Drivers\" />
     <Folder Include="TestResources\Conversion\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Variables\" />
     <Folder Include="TestResources\Solutions\CLI\" />
   </ItemGroup>
 
@@ -87,6 +95,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\GingerPluginCore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\PluginPackages\PluginDriverExample4\System.Reflection.DispatchProxy.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Reports\Activity.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

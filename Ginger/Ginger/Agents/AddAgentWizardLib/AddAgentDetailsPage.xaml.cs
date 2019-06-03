@@ -18,8 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
+using static GingerCore.Agent;
 
 namespace Ginger.Agents.AddAgentWizardLib
 {
@@ -36,11 +39,13 @@ namespace Ginger.Agents.AddAgentWizardLib
     public partial class AddAgentDetailsPage : Page, IWizardPage
     {
         AddAgentWizard mWizard;
-        
-        
+        public readonly ObservableList<PluginPackage> Plugins;
+        private List<DriverInfo> DriversforPlatform = new List<DriverInfo>();
+
         public AddAgentDetailsPage()
         {
             InitializeComponent();
+            Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }        
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -57,105 +62,117 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
                     //Removing ASCF from platform combobox
-                    List<GingerCore.General.ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
+                    List<ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
                   
                     xPlatformTypeComboBox.BindControl(platformList);
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
-                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverType));
+                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverInfo));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
-                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);                    
-                    xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
+                    if (xDriverTypeComboBox.Items.Count > 0)
+                    {
+                        xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
+                    }
 
-                    if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
-                    {
-                        xPluginRadioButton.IsChecked = true;
-                    }
-                    else
-                    {
-                        xDriverRadioButton.IsChecked = true;
-                    }
-                    
-                    break;                
+
+                    xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
+
+                    xDriverTypeComboBox.Visibility = Visibility.Visible;
+
+
+
+                    break;               
             }
 
         }
-        
+
 
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             xDriverTypeComboBox.SelectedItem = null;
-            xDriverTypeComboBox.Items.Clear();
+            xDriverTypeComboBox.Items.Clear();            
+            mWizard.Agent.Platform=(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType) Enum.Parse(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType), xPlatformTypeComboBox.SelectedValue.ToString());
+            DriversforPlatform = DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
 
-            List<object> driverTypeValues = mWizard.Agent.GetDriverTypesByPlatfrom(xPlatformTypeComboBox.SelectedValue.ToString());
-            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mWizard.Agent.DriverType, driverTypeValues, false);
-            if (xDriverTypeComboBox.Items.Count > 0)
-                xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
-
-            if (xDriverTypeComboBox.Items.Count > 1)
+            foreach (DriverInfo driverInfo in DriversforPlatform)
             {
-                xDriverTypeStackPanel.Visibility = Visibility.Visible;                
+                xDriverTypeComboBox.Items.Add(driverInfo);
             }
-            else
+
+            if (xDriverTypeComboBox.Items.Count > 0)
             {
-                xDriverTypeStackPanel.Visibility = Visibility.Collapsed;
-            }            
+                //mWizard.Agent.DriverInfo = DriversforPlatform[0];
+                xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
+            }
+
+      
         }
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mWizard.Agent.InitDriverConfigs();
+            xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
+            xDriverSubTypeComboBox.Items.Clear();
+            xDriverSubTypeStackPanel.Visibility = Visibility.Visible;
+            if (xDriverTypeComboBox.SelectedItem!=null)
+            {
+                
+                if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
+                {
+                  mWizard.Agent.DriverInfo = DI;
+                    foreach (var service in mWizard.Agent.DriverInfo.services)
+                    {
+                        xDriverSubTypeComboBox.Items.Add(service);
+                    }
+                        xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
+                    xDriverSubTypeComboBox.SelectedItem = xDriverSubTypeComboBox.Items[0];
+                    if (DI.isDriverPlugin)
+                    {
+                        mWizard.Agent.AgentType = Agent.eAgentType.Service;
+                        mWizard.Agent.PluginId = DI.Name;
+                    }
+                    else
+                    {
+                        mWizard.Agent.AgentType = Agent.eAgentType.Driver;
+                    }
+
+          
+                   if(DI.services.Count==0)
+                    {
+                        mWizard.Agent.InitDriverConfigs();
+                    }
+                }
+            }
+        
         }
 
-        private void xDriverRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void XDriverSubTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mWizard.Agent.AgentType = Agent.eAgentType.Driver;            
-            ShowConfig();
-        }
-
-        private void xPluginRadioButton_Checked(object sender, RoutedEventArgs e)
-        {            
-            mWizard.Agent.AgentType = Agent.eAgentType.Service;
-            mWizard.Agent.DriverType = Agent.eDriverType.NA;
-            ShowConfig();
+            if (xDriverTypeComboBox.SelectedItem is DriverInfo DI && xDriverSubTypeComboBox != null)
+            {
+                mWizard.Agent.DriverInfo = DI;
+                //foreach (var service in mWizard.Agent.DriverInfo.services)
+                //{
+                //    xDriverSubTypeComboBox.Items.Add(service);
+                //}
+                string SubdriverType = xDriverSubTypeComboBox.SelectedItem.ToString();
+                if (DI.isDriverPlugin)
+                {
+                    mWizard.Agent.ServiceId = SubdriverType;
+                }
+                else
+                {
+                    mWizard.Agent.DriverType = (eDriverType)Enum.Parse(typeof(eDriverType), SubdriverType);
+                }
+                mWizard.Agent.InitDriverConfigs();
+            }
         }
 
         void ShowConfig()
-        {
-            if (mWizard.Agent.AgentType == Agent.eAgentType.Service)
-            {
-                xPluginConfigStackPanel.Visibility = Visibility.Visible;
-                xDriverConfigStackPanel.Visibility = Visibility.Collapsed;
-
-                // Plugin combo
-                xPluginIdComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-                xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginId);                
-                xPluginIdComboBox.BindControl(mWizard.Agent, nameof(Agent.PluginId));
-            }
-            else
-            {
-                xPluginConfigStackPanel.Visibility = Visibility.Collapsed;
-                xDriverConfigStackPanel.Visibility = Visibility.Visible;
-            }
-            
-            
+        {             
+            xDriverConfigStackPanel.Visibility = Visibility.Visible;            
         }
 
-        private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
-            p.LoadServicesFromJSON();
-            xServiceIdComboBox.ItemsSource = p.Services;
-            xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
-            xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
-            xServiceIdComboBox.BindControl(mWizard.Agent, nameof(Agent.ServiceId));
 
-            // auto select if there is only one service in the plugin
-            if (p.Services.Count == 1)
-            {
-                xServiceIdComboBox.SelectedItem = p.Services[0];
-            }
-        }
     }
 }

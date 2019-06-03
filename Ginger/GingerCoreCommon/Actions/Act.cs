@@ -807,6 +807,27 @@ namespace GingerCore.Actions
             }
         }
 
+        public void AddScreenShot(string  Base64String, string Name = "")
+        {
+            try
+            {
+                byte[] bytes = Convert.FromBase64String(Base64String);                
+                string filePath = GetScreenShotRandomFileName();
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                {                                        
+                    fs.Write(bytes, 0, bytes.Length);      
+                }
+                ScreenShots.Add(filePath);
+                ScreenShotsNames.Add(Name);
+
+            }
+            catch (Exception ex)
+            {
+                Error = "Failed to save the screenshot bitmap to temp file. Error= " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, Error, ex);
+            }
+        }
+
 
         public void AddScreenShot(byte[] bytes, string Name)
         {
@@ -1629,8 +1650,7 @@ namespace GingerCore.Actions
             }
         } // end of ParseRC
 
-        
-
+     
 
         public override eImageType ItemImageType
         {

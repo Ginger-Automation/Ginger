@@ -433,7 +433,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             ABPT.AddOrUpdateReturnParamActual("connectStart", ((ulong)PerfObj.connectStart).ToString());
             ABPT.AddOrUpdateReturnParamActual("connectEnd", ((ulong)PerfObj.connectEnd).ToString());
 
-            //TODO: giving err check/fix, meanhwile empty val
+            //TODO: giving err check/fix, meanwhile empty val
             // ABPT.AddOrUpdateReturnParam("secureConnectionStart", ((ulong)PerfObj.secureConnectionStart).ToString());
             ABPT.AddOrUpdateReturnParamActual("secureConnectionStart", "");
 
@@ -1241,7 +1241,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            //TODO: keep old elemnent border and restore it
+            //TODO: keep old element border and restore it
             //string scriptRemoveBorder = "arguments[0].style.border='0px'";
             //if (mCurrentHighlightedElement != null)
             //{

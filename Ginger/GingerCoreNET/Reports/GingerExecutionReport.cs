@@ -2846,7 +2846,12 @@ namespace Ginger.Reports.GingerExecutionReport
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
                 string exec_folder = string.Empty;
-                exec_folder = Ginger.Run.ExecutionLogger.GenerateBusinessflowOfflineExecutionLogger(new Context() { Environment = environment, BusinessFlow = BF});
+                Context context = new Context();
+                context.BusinessFlow = BF;
+                context.Runner = new Run.GingerRunner();
+                context.Environment = environment;
+                Run.ExecutionLoggerManager executionLoggerManager = new Run.ExecutionLoggerManager(context);
+                exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context);
                 if (string.IsNullOrEmpty(exec_folder))
                 {
                     return string.Empty;
@@ -2960,9 +2965,12 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception)
             {
-                logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
-                System.IO.Directory.CreateDirectory(logsFolder);
-                WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
+                {
+                    logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports\");
+                    System.IO.Directory.CreateDirectory(logsFolder);
+                    WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                }
             }
 
             return logsFolder;
@@ -3023,6 +3031,21 @@ namespace Ginger.Reports.GingerExecutionReport
                     template.IsDefault = false;
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(template);
                 }
+        }
+        public static string GetValueForDriverWithoutDescrypting(string value, Context context)
+        {
+            if (context != null)
+            {
+                ValueExpression VE = new ValueExpression(context.Environment, context.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                VE.DecryptFlag = false;
+                VE.Value = value;
+
+                return VE.ValueCalculated;
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }

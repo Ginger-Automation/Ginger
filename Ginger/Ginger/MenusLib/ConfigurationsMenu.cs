@@ -93,8 +93,9 @@ namespace Ginger.ConfigurationsLib
         }
 
         private static Page ExecutionLoggerConfig()
-        {           
-            return ExecutionResultsConfiguration.Instance;
+        {
+            return new ExecutionResultsConfiguration();
+            //return ExecutionResultsConfiguration.Instance;
         }
 
         private static Page AgentsList()

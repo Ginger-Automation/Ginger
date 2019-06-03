@@ -281,16 +281,16 @@ namespace Ginger.Actions
                 }
                 else
                 {
-                    Act aNew = null;
-                    aNew = (Act)selectedAction.CreateCopy();
-                    aNew.Context = mContext;
+                    Act newAction = null;
+                    newAction = (Act)selectedAction.CreateCopy();
+                    newAction.Context = mContext;
                     // copy param ex info
                     for (int i = 0; i < selectedAction.InputValues.Count; i++)
                     {
-                        aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
+                        newAction.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
                     }
 
-                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+                    newAction.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
@@ -299,7 +299,7 @@ namespace Ginger.Actions
                     {
                         selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
                     }
-                    mActionsList.Add(aNew);
+                    mActionsList.Add(newAction);
                     if (selectedActIndex >= 0)
                     {
                         mActionsList.Move(mActionsList.Count - 1, selectedActIndex + 1);
@@ -308,12 +308,12 @@ namespace Ginger.Actions
                     _pageGenericWin.Close();
 
                     //allowing to edit the action
-                    ActionEditPage actedit = new ActionEditPage(aNew);
+                    ActionEditPage actedit = new ActionEditPage(newAction);
                     actedit.ShowAsWindow();
 
-                    if (aNew is ActPlugIn)
+                    if (newAction is ActPlugIn)
                     {
-                        ActPlugIn p = (ActPlugIn)aNew;
+                        ActPlugIn p = (ActPlugIn)newAction;
                         // TODO: add per group or... !!!!!!!!!
 
                         //Check if target already exist else add it

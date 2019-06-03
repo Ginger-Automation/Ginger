@@ -16,25 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
-{   
-    public class ActActivateRow: Act
+{
+    public class ActActivateRow : Act
     {
         public override string ActionDescription { get { return "ASCF Activate Row Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }

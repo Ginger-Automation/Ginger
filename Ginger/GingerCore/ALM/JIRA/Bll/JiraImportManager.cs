@@ -687,7 +687,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("getSelectedFieldValue error: " + ex.Message);
             }
             return valuesList;
         }

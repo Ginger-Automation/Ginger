@@ -89,7 +89,8 @@ namespace GingerCore.Actions.Windows
             Restore,
             Maximize,
             Minimize,
-            Resize
+            Resize,
+            Expand
         }
 
         public enum eControlProperty

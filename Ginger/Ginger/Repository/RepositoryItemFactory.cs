@@ -96,17 +96,17 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-  
-        public void StartAgentDriver(IAgent agent)
+
+        public void StartAgentDriver(IAgent IAgent)
         {
-            Agent zAgent = (Agent)agent;
-            BusinessFlow BusinessFlow = zAgent.BusinessFlow;
-            ProjEnvironment ProjEnvironment = zAgent.ProjEnvironment;
-            bool Remote = zAgent.Remote;
-            
-            DriverBase Driver = null; 
-            zAgent.mIsStarting = true;
-            zAgent.OnPropertyChanged(Fields.Status);
+            Agent agent = (Agent)IAgent;
+            BusinessFlow BusinessFlow = agent.BusinessFlow;
+            ProjEnvironment ProjEnvironment = agent.ProjEnvironment;
+            bool Remote = agent.Remote;
+
+            DriverBase Driver = null;
+            agent.mIsStarting = true;
+            agent.OnPropertyChanged(Fields.Status);
             try
             {
                 try
@@ -114,11 +114,10 @@ namespace Ginger.Repository
                     if (Remote)
                     {
                         throw new Exception("Remote is Obsolete, use GingerGrid");
-                        //We pass the agent info
                     }
                     else
                     {
-                        switch (zAgent.DriverType)
+                        switch (agent.DriverType)
                         {
                             case eDriverType.InternalBrowser:
                                 Driver = new InternalBrowser(BusinessFlow);
@@ -135,24 +134,24 @@ namespace Ginger.Repository
                             case eDriverType.SeleniumRemoteWebDriver:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.RemoteWebDriver);
                                 // set capabilities
-                                if (zAgent.DriverConfiguration == null) zAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                                ((SeleniumDriver)Driver).RemoteGridHub = zAgent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
-                                ((SeleniumDriver)Driver).RemoteBrowserName = zAgent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
-                                ((SeleniumDriver)Driver).RemotePlatform = zAgent.GetParamValue(SeleniumDriver.RemotePlatformParam);
-                                ((SeleniumDriver)Driver).RemoteVersion = zAgent.GetParamValue(SeleniumDriver.RemoteVersionParam);
+                                if (agent.DriverConfiguration == null) agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                                ((SeleniumDriver)Driver).RemoteGridHub = agent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
+                                ((SeleniumDriver)Driver).RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
+                                ((SeleniumDriver)Driver).RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
+                                ((SeleniumDriver)Driver).RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
                                 break;
                             case eDriverType.SeleniumEdge:
                                 Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
                                 break;
                             case eDriverType.ASCF:
-                                Driver = new ASCFDriver(BusinessFlow, zAgent.Name);
+                                Driver = new ASCFDriver(BusinessFlow, agent.Name);
                                 break;
                             case eDriverType.DOSConsole:
                                 Driver = new DOSConsoleDriver(BusinessFlow);
                                 break;
                             case eDriverType.UnixShell:
                                 Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
-                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\sh\"));
+                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(agent.SolutionFolder, @"Documents\sh\"));
                                 break;
                             case eDriverType.MobileAppiumAndroid:
                                 Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.Android, BusinessFlow);
@@ -200,18 +199,18 @@ namespace Ginger.Repository
                             case eDriverType.MainFrame3270:
                                 Driver = new MainFrameDriver(BusinessFlow);
                                 break;
-                            case eDriverType.AndroidADB:
-                                string DeviceConfigFolder = zAgent.GetOrCreateParam("DeviceConfigFolder").Value;
-                                if (!string.IsNullOrEmpty(DeviceConfigFolder))
-                                {
-                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(zAgent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
-                                }
-                                else
-                                {
-                                    //TODO: Load create sample folder/device, or start the wizard
-                                    throw new Exception("Please set device config folder");
-                                }
-                                break;
+                            //case eDriverType.AndroidADB:
+                            //    string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
+                            //    if (!string.IsNullOrEmpty(DeviceConfigFolder))
+                            //    {
+                            //        Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
+                            //    }
+                            //    else
+                            //    {
+                            //        //TODO: Load create sample folder/device, or start the wizard
+                            //        throw new Exception("Please set device config folder");
+                            //    }
+                            //    break;
                             default:
                                 {
                                     throw new Exception("Matching Driver was not found.");
@@ -225,24 +224,23 @@ namespace Ginger.Repository
                     return;
                 }
 
-                if (zAgent.AgentType == eAgentType.Service)
+                if (agent.AgentType == eAgentType.Service)
                 {
-                    zAgent.StartPluginService();
-                    zAgent.OnPropertyChanged(Fields.Status);
+                    throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
                 }
                 else
                 {
-                    zAgent.Driver = Driver;
-                    Driver.BusinessFlow = zAgent.BusinessFlow;
-                    zAgent.SetDriverConfiguration();
+                    agent.Driver = Driver;
+                    Driver.BusinessFlow = agent.BusinessFlow;
+                    agent.SetDriverConfiguration();
 
                     //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
                     if (Driver.IsSTAThread())
                     {
-                        zAgent.CTS = new CancellationTokenSource();
+                        agent.CTS = new CancellationTokenSource();
 
-                        zAgent.MSTATask = new Task(() => { Driver.StartDriver(); }, zAgent.CTS.Token, TaskCreationOptions.LongRunning);
-                        zAgent.MSTATask.Start();
+                        agent.MSTATask = new Task(() => { Driver.StartDriver(); }, agent.CTS.Token, TaskCreationOptions.LongRunning);
+                        agent.MSTATask.Start();
                     }
                     else
                     {
@@ -252,9 +250,9 @@ namespace Ginger.Repository
             }
             finally
             {
-                if (zAgent.AgentType == eAgentType.Service)
+                if (agent.AgentType == eAgentType.Service)
                 {
-                    zAgent.mIsStarting = false;
+                    agent.mIsStarting = false;
                 }
                 else
                 {
@@ -263,12 +261,12 @@ namespace Ginger.Repository
                         // Give the driver time to start            
                         Thread.Sleep(500);
                         Driver.IsDriverRunning = true;
-                        Driver.driverMessageEventHandler += zAgent.driverMessageEventHandler;
+                        Driver.driverMessageEventHandler += agent.driverMessageEventHandler;
                     }
 
-                    zAgent.mIsStarting = false;
-                    zAgent.OnPropertyChanged(Fields.Status);
-                    zAgent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
+                    agent.mIsStarting = false;
+                    agent.OnPropertyChanged(Fields.Status);
+                    agent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
                 }
             }
         }
@@ -314,8 +312,8 @@ namespace Ginger.Repository
                     return (typeof(JavaDriver));                    
                 case Agent.eDriverType.MainFrame3270:
                     return (typeof(MainFrameDriver));                    
-                case Agent.eDriverType.AndroidADB:
-                    return (typeof(AndroidADBDriver));                    
+                //case Agent.eDriverType.AndroidADB:
+                //    return (typeof(AndroidADBDriver));                    
                 case Agent.eDriverType.PerfectoMobileAndroid:
                 case Agent.eDriverType.PerfectoMobileAndroidWeb:
                 case Agent.eDriverType.PerfectoMobileIOS:
@@ -323,7 +321,7 @@ namespace Ginger.Repository
                     return (typeof(PerfectoDriver));
                     
                 default:
-                    throw new Exception("GetDriverType: Unknow Driver type " + zAgent.DriverType);
+                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
                     
             }
         }

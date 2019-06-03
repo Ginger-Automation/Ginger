@@ -213,7 +213,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                             return;
                         }
                     }
-                    //TODO: catch excpetion of socket not all..         
+                    //TODO: catch exception of socket not all..         
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -227,14 +227,14 @@ namespace GingerCore.Drivers.JavaDriverLib
         
         private Boolean Reconnect()
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Trying to reconnent Java Agent");
+            Reporter.ToLog(eLogLevel.DEBUG, "Trying to reconnect Java Agent");
             try
             {
                 clientSocket.Connect(serverAddress);
                 mConnected = true;               
                 return true;
             }
-            //TODO: catch excpetion of socket not all..         
+            //TODO: catch exception of socket not all..         
             catch (Exception)
             {
                 return false;
@@ -316,7 +316,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (s == null)
                 return false;
-            //Keep this part as sometime bad discoonect happend and the below s.connected will still report true!!
+            //Keep this part as sometime bad disconnect happened and the below s.connected will still report true!!
             bool part1 = s.Client.Poll(1000, SelectMode.SelectRead);
             bool part2 = (s.Client.Available == 0);
             if (part1 & part2)
@@ -495,7 +495,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if(!Response.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                         string value = Response.GetValueString();
                         act.AddOrUpdateReturnParamActual("Actual", value);
@@ -510,7 +510,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PLClose.ClosePackage();
                     Response = Send(PLClose);
 
-                    //TODO: Add a separate action to close the driver if closing the applicaiton window
+                    //TODO: Add a separate action to close the driver if closing the application window
                     //if (!(Response.IsErrorPayLoad()))
                     //{
                     //    CloseDriver();                      
@@ -642,7 +642,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!Response1.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                         string val = Response1.GetValueString();
                         actJavaBrowserElement.AddOrUpdateReturnParamActual("Actual", val);
@@ -660,7 +660,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!Response2.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                         string val = Response2.GetValueString();
                         actJavaBrowserElement.AddOrUpdateReturnParamActual("Actual", val);
@@ -678,7 +678,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!Response3.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                         string val = Response3.GetValueString();
                         actJavaBrowserElement.AddOrUpdateReturnParamActual("Actual", val);
@@ -731,7 +731,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PLClick.AddValue(AJTE.LocateValueCalculated);
 
                     //TODO: fixme to remove value - for menu create something else, need to fix on the Java side too
-                    // causing perf issue and wasting string concat for all ops which doens't need it
+                    // causing perf issue and wasting string concat for all ops which doesn't need it
                     
                     //Need this value for Menu click action
                     PLClick.AddValue(AJTE.ValueForDriver);                  
@@ -854,7 +854,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!ResponsePLGetValueByIndex.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
 
                         String val = ResponsePLGetValueByIndex.GetValueString();
@@ -896,7 +896,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!ResponsePLGetItemCount.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
 
                         int val = ResponsePLGetItemCount.GetValueInt();
@@ -920,7 +920,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!Response3.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
 
                         List<String> val = Response3.GetListString();
@@ -946,7 +946,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PayLoad Response4 = Send(PLGetDialogText);
                     if (!Response4.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                         string dialogText = Response4.GetValueString();
                         AJTE.AddOrUpdateReturnParamActual("Actual", dialogText);
@@ -1107,7 +1107,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (!ResponseGetControlProperty.IsErrorPayLoad())
             {
-                //If the response is not error payload then only we retrive value from payload.
+                //If the response is not error payload then only we retrieve value from payload.
                 // if it is error payload then we read the error at the end, during SetActionStatusFromResponse
                 string val = ResponseGetControlProperty.GetValueString();
 
@@ -1151,7 +1151,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!Response2.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse                       
                         String val = Response2.GetValueString();
                         AGE.AddOrUpdateReturnParamActual("Actual", val);
@@ -1199,7 +1199,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!ResponseVisible.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse                     
 
                         String valVisible = ResponseVisible.GetValueString();
@@ -1217,7 +1217,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!ResponseEnabled.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         String valEnabled = ResponseEnabled.GetValueString();
 
@@ -1259,7 +1259,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad resp = null;
             List<String> Locators = new List<string>();
             List<String> vals = null;
-            //New serializer resotring the value to null. So handling it to set it to empy
+            //New serializer restoring the value to null. So handling it to set it to empty
             if (AJTE.LocateColTitle == null)
             {
                 AJTE.LocateColTitle = string.Empty;
@@ -1315,7 +1315,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!resp.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         vals = resp.GetListString();
                         AJTE.AddOrUpdateReturnParamActual("Actual", vals.FirstOrDefault());
@@ -1335,7 +1335,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!resp.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         int val = resp.GetValueInt();
                         AJTE.AddOrUpdateReturnParamActual("Actual",""+ val);
@@ -1351,7 +1351,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!resp.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         int val = resp.GetValueInt();
                         AJTE.AddOrUpdateReturnParamActual("Actual", "" + val);
@@ -1367,7 +1367,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!resp.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         string val = resp.GetValueString();
                         AJTE.AddOrUpdateReturnParamActual("Actual", "" + val);
@@ -1383,7 +1383,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!resp.IsErrorPayLoad())
                     {
-                        //If the response is not error payload then only we retrive value from payload.
+                        //If the response is not error payload then only we retrieve value from payload.
                         // if it is error payload then we read the error at the end, during SetActionStatusFromResponse 
                         string val = resp.GetValueString();
                         AJTE.AddOrUpdateReturnParamActual("Actual", "" + val);
@@ -2844,7 +2844,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         }
 
-        //copy from the act handler temp beacuse I didn't want to mess with the above, TODO: fix both to use shared method
+        //copy from the act handler temp because I didn't want to mess with the above, TODO: fix both to use shared method
         Bitmap GetWindowScreenShot()
         {
             PayLoad Request = new PayLoad("TakeScreenShots", Act.eWindowsToCapture.OnlyActiveWindow.ToString());

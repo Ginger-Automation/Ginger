@@ -189,7 +189,8 @@ namespace Ginger.Help
                 VideoPlayer.Pause();
             }
             catch(Exception ex)
-            {               
+            {
+                Console.WriteLine("Window_Closing error: " + ex.Message);
             }
         }
     }
