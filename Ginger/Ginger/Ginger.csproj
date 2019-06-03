@@ -548,7 +548,6 @@
     <Compile Include="Agents\AgentDriverConfigPage.xaml.cs">
       <DependentUpon>AgentDriverConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Agents\AgentHelper.cs" />
     <Compile Include="Agents\AgentNameValidationRule.cs" />
     <Compile Include="ALM\JIRA\JiraImportReviewPage.xaml.cs">
       <DependentUpon>JiraImportReviewPage.xaml</DependentUpon>

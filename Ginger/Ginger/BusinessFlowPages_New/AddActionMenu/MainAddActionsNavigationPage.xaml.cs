@@ -22,26 +22,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class MainAddActionsNavigationPage : Page
     {
-        string TargetApplication { get; set; }
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
-        RecordNavPage RecordPage = null;
-        public bool IsAgentStarted { get; set; }
+        RecordNavPage mRecordPage = null;
 
-        public MainAddActionsNavigationPage(Context context, string targetApplication)
+        public MainAddActionsNavigationPage(Context context)
         {
             mContext = context;
-            TargetApplication = targetApplication;
             InitializeComponent();
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
-            IsAgentStarted = false;
         }
 
-        public void SetDefaultPage(Context context, string targetApplication)
+        public void SetDefaultPage(Context context)
         {
             mContext = context;
-            TargetApplication = targetApplication;
         }
 
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
@@ -75,16 +70,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
         {
-            if (RecordPage == null)
+            if (mRecordPage == null)
             {
-                RecordPage = new RecordNavPage(mContext);
+                mRecordPage = new RecordNavPage(mContext);
             }
             else
             {                
-                RecordPage.SetDefault(mContext);
+                mRecordPage.SetDefault(mContext);
             }
 
-            LoadActionFrame(RecordPage, "Record", eImageType.Camera);
+            LoadActionFrame(mRecordPage, "Record", eImageType.Camera);
         }
 
         private void XNavActLib_Click(object sender, RoutedEventArgs e)
@@ -123,75 +118,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
             }
         }
-
-        //public void StartAgent()
-        //{
-        //    IsAgentStarted = false;
-        //    xRecordItemBtn.IsEnabled = false;
-        //    if (mContext == null)
-        //        return;
-
-        //    @AppAgentAct:
-        //    Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
-        //    if (string.IsNullOrEmpty(mActParentActivity.TargetApplication))
-        //    {
-        //        if (mContext.BusinessFlow.TargetApplications.Count() == 1)
-        //        {
-        //            mActParentActivity.TargetApplication = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName; 
-        //        }
-        //    }            
-        //    ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-
-        //    if (appAgent == null)
-        //    {
-        //        mContext.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-        //        mContext.Runner.UpdateApplicationAgents();
-        //        goto AppAgentAct;
-        //    }
-
-        //    PlatformInfoBase platform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
-
-        //    ObservableList<DataSourceBase> dSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-        //    if (appAgent != null)
-        //    {
-        //        if (appAgent.Agent.Driver == null)
-        //        {
-        //            appAgent.Agent.DSList = dSList;
-        //            appAgent.Agent.StartDriver();
-        //            xRecordItemBtn.IsEnabled = true;
-        //            IsAgentStarted = true;
-        //        }
-        //        else if (!appAgent.Agent.Driver.IsRunning())
-        //        {
-        //            if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
-        //            {
-        //                appAgent.Agent.StartDriver();
-        //                xRecordItemBtn.IsEnabled = true;
-        //                IsAgentStarted = true;
-        //            }
-        //            else
-        //            {
-        //                IsAgentStarted = false;
-        //                return;
-        //            }
-        //        }
-        //        DriverBase driver = appAgent.Agent.Driver;
-        //        if (driver is IWindowExplorer)
-        //        {
-        //            mWindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        IsAgentStarted = false;
-        //    }         
-        //}
-
+        
         public void StopRecording()
         {
-            if(RecordPage != null && RecordPage.IsRecording)
+            if(mRecordPage != null && mRecordPage.IsRecording)
             {
-                RecordPage.StopRecording();
+                mRecordPage.StopRecording();
             }
         }
     }

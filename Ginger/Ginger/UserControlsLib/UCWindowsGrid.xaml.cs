@@ -20,6 +20,7 @@ using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -210,11 +211,6 @@ namespace Ginger.UserControlsLib
         {            
             try
             {
-                if (mWindowExplorerDriver == null && AgentHelper.Instance.WindowExplorerDriver != null)
-                {
-                    windowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
-                }
-
                 if (mWindowExplorerDriver != null)
                 {
                     List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
@@ -234,29 +230,6 @@ namespace Ginger.UserControlsLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occured while performing Update Window Explorer List", ex);
-            }
-        }
-
-        public void StopStartedAgent()
-        {
-            if (mContext == null)
-                return;
-
-            @AppAgentAct:
-            Activity mActParentActivity = mContext.BusinessFlow.CurrentActivity;
-            ApplicationAgent appAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
-            
-            mPlatform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
-
-            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            if (appAgent != null)
-            {
-                if (appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
-                {
-                    appAgent.Agent.Close();
-                    WindowsComboBox.ItemsSource = new List<Window>();
-                    return;
-                }
             }
         }
 

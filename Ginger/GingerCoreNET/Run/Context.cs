@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.Common
                 if(mRunner != value)
                 {
                     mRunner = value;
-                    OnPropertyChanged(nameof(Context.Runner));
+                    OnPropertyChanged(nameof(Runner));
                 }
             }
         }
@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Common
                 if (mEnvironment != value)
                 {
                     mEnvironment = value;
-                    OnPropertyChanged(nameof(Context.Environment));
+                    OnPropertyChanged(nameof(Environment));
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.Common
                 if (mBusinessFlow != value)
                 {
                     mBusinessFlow = value;
-                    OnPropertyChanged(nameof(Context.BusinessFlow));
+                    OnPropertyChanged(nameof(BusinessFlow));
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.Common
                 if (mActivity != value)
                 {
                     mActivity = value;
-                    OnPropertyChanged(nameof(Context.Activity));
+                    OnPropertyChanged(nameof(Activity));
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.Common
                 if (mTarget != value)
                 {
                     mTarget = value;
-                    OnPropertyChanged(nameof(Context.Target));
+                    OnPropertyChanged(nameof(Target));
                 }
             }
         }

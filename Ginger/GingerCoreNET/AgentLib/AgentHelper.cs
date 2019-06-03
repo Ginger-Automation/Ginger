@@ -1,66 +1,57 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
-using GingerCore.Platforms.PlatformsInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ginger.Agents
+namespace GingerCoreNET
 {
     public class AgentHelper
     {
-        public IWindowExplorer WindowExplorerDriver;
-
         /// <summary>
-        /// Default Constructor
+        /// This methods sets the default target applciation to acitvity
         /// </summary>
-        private AgentHelper()
+        /// <param name="activity"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private static Activity SetDefaultTargetApplication(Activity activity, Context context)
         {
-        }
-
-        /// <summary>
-        /// Single Instance of class
-        /// </summary>
-        private static AgentHelper mInstance;
-        public static AgentHelper Instance
-        {
-            get
+            if(activity != null)
             {
-                if (mInstance == null)
-                {
-                    mInstance = new AgentHelper();
-                }
-                return mInstance;
+                activity.TargetApplication = ((ApplicationAgent)context.Runner.ApplicationAgents[0]).AppName;
             }
+            return activity;
         }
 
         /// <summary>
         /// This method is used to get the app agent
         /// </summary>
+        /// <param name="activity"></param>
+        /// <param name="runner"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private ApplicationAgent GetAppAgent(Context context)
+        private static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
         {
             ApplicationAgent appAgent = null;
             if (context != null && context.BusinessFlow.CurrentActivity != null)
             {
                 @AppAgentAct:
-                Activity mActParentActivity = context.BusinessFlow.CurrentActivity;
-                if (string.IsNullOrEmpty(mActParentActivity.TargetApplication))
+                if (string.IsNullOrEmpty(activity.TargetApplication))
                 {
                     if (context.BusinessFlow.TargetApplications.Count() == 1)
                     {
-                        mActParentActivity.TargetApplication = ((ApplicationAgent)context.Runner.ApplicationAgents[0]).AppName;
+                        activity = SetDefaultTargetApplication(activity, context); 
                     }
                 }
-                appAgent = (ApplicationAgent)context.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+                appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();
                 if (appAgent == null)
                 {
                     context.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
@@ -69,8 +60,6 @@ namespace Ginger.Agents
                 }
                 else
                 {
-                    PlatformInfoBase platform = PlatformInfoBase.GetPlatformImpl(appAgent.Agent.Platform);
-
                     ObservableList<DataSourceBase> dSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                     if (appAgent != null)
                     {
@@ -89,13 +78,14 @@ namespace Ginger.Agents
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public bool CheckIfAgentIsRunning(Context context)
+        public static bool CheckIfAgentIsRunning(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isRunning = false;
-            ApplicationAgent appAgent = GetAppAgent(context);
+            windowExplorerDriver = null;
+            ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
             if (appAgent != null && appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
             {
-                WindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
                 isRunning = true;
             }
             return isRunning;
@@ -104,10 +94,11 @@ namespace Ginger.Agents
         /// <summary>
         /// This method is used to Start the agent
         /// </summary>
-        public bool StartAgent(Context context)
+        public static bool StartAgent(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isAgentStarted = false;
-            ApplicationAgent appAgent = GetAppAgent(context);
+            windowExplorerDriver = null;
+            ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
             if (appAgent != null)
             {
                 if (appAgent.Agent.Driver == null)
@@ -130,7 +121,7 @@ namespace Ginger.Agents
                 DriverBase driver = appAgent.Agent.Driver;
                 if (driver is IWindowExplorer)
                 {
-                    WindowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                    windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
                 }
             }
             else

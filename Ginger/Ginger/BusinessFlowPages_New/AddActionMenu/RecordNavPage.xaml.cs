@@ -11,6 +11,7 @@ using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -31,7 +32,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         IWindowExplorer mWindowExplorerDriver;
         private Activity mActParentActivity = null;
         Context mContext;
-        RecordingManager RecordingMngr;
+        RecordingManager mRecordingMngr;
+        SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
 
         /// <summary>
         /// Constructor
@@ -85,9 +87,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             mActParentActivity = context.BusinessFlow.CurrentActivity;
 
-            if (AgentHelper.Instance.CheckIfAgentIsRunning(context))
+            if (AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, context, out mWindowExplorerDriver))
             {
-                mWindowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
                 xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
                 xStartAgentButton.IsEnabled = false;
             }
@@ -102,8 +103,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             gridPOMListItems.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 120, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "ContainingFolder", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 250, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             gridPOMListItems.btnAdd.Click += BtnAdd_Click;
             gridPOMListItems.SetAllColumnsDefaultView(view);
             gridPOMListItems.InitViewItems();
@@ -115,12 +115,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
             appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
-            mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
-                                                                                SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
-            mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
+            if (mApplicationPOMSelectionPage == null)
+            {
+                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
+                                                                                        SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+                mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone; 
+            }
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
-            AddSelectedBuinessFlows(selectedPOMs);
+            AddSelectedPOM(selectedPOMs);
         }
 
         private void SetControlsDefault()
@@ -153,7 +156,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
         {
-            bool isAgentRunning = AgentHelper.Instance.CheckIfAgentIsRunning(mContext);
+            bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
             if (isAgentRunning)
             {
                 IsRecording = !IsRecording;
@@ -182,10 +185,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void StartAgentButton_Click(object sender, RoutedEventArgs e)
         {
-            bool isStarted = AgentHelper.Instance.StartAgent(mContext);
+            bool isStarted = AgentHelper.StartAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
             if(isStarted)
             {
-                mWindowExplorerDriver = AgentHelper.Instance.WindowExplorerDriver;
                 xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
                 xStartAgentButton.IsEnabled = false;
                 SetRecordingButtonText();
@@ -211,21 +213,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 } 
             }
 
-            RecordingMngr = new RecordingManager(applicationPOMs, bFlow, mContext, record, platformInfo);
-            RecordingMngr.StartRecording();
+            mRecordingMngr = new RecordingManager(applicationPOMs, bFlow, mContext, record, platformInfo);
+            mRecordingMngr.StartRecording();
         }
 
         public void StopRecording()
         {
-            if (RecordingMngr != null)
+            if (mRecordingMngr != null)
             {
-                RecordingMngr.StopRecording();
+                mRecordingMngr.StopRecording();
             }
         }
 
         private void SetRecordingButtonText()
         {
-            if (AgentHelper.Instance.CheckIfAgentIsRunning(mContext) &&
+            if (AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver) &&
                 (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
             {
                 xRecordingButton.IsEnabled = true;
@@ -252,15 +254,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");            
         }
 
-        SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();
         
         private void MAppModelSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
-            AddSelectedBuinessFlows(e.SelectedItems);
+            AddSelectedPOM(e.SelectedItems);
         }
 
-        private void AddSelectedBuinessFlows(List<object> selectedPOMs)
+        private void AddSelectedPOM(List<object> selectedPOMs)
         {
             if (selectedPOMs != null && selectedPOMs.Count > 0)
             {

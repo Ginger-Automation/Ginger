@@ -64,7 +64,7 @@ namespace GingerWPF.BusinessFlowsLib
         VariabelsListViewPage mBfVariabelsPage;
         BusinessFlowConfigurationsPage mBfConfigurationsPage;
         ActivityPage mActivityPage;
-        MainAddActionsNavigationPage MainNavigationPage;
+        MainAddActionsNavigationPage mMainNavigationPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
@@ -247,15 +247,15 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();
-                    if (MainNavigationPage == null)
+                    if (mMainNavigationPage == null)
                     {
-                        MainNavigationPage = new MainAddActionsNavigationPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication); 
+                        mMainNavigationPage = new MainAddActionsNavigationPage(mContext); 
                     }
                     else
                     {
-                        MainNavigationPage.SetDefaultPage(mContext, mBusinessFlow.CurrentActivity.TargetApplication);
+                        mMainNavigationPage.SetDefaultPage(mContext);
                     }
-                    xAddActionMenuFrame.Content = MainNavigationPage;
+                    xAddActionMenuFrame.Content = mMainNavigationPage;
                 }
             }
         }
