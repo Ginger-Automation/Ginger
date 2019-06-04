@@ -1,18 +1,16 @@
 ﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Linq;
+using Amdocs.Ginger.CoreNET.Execution;
 
-namespace Ginger.Logger
+namespace Amdocs.Ginger.CoreNET.Logger
 {
-    internal class WebReportGenerator
+    public class WebReportGenerator
     {
         public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null)
         {
@@ -154,4 +152,5 @@ namespace Ginger.Logger
         }
 
     }
+
 }
