@@ -10,12 +10,15 @@ using Ginger.BusinessFlowPages_New;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
+using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -31,6 +34,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public bool IsRecording = false;
         IWindowExplorer mWindowExplorerDriver;
         private Activity mActParentActivity = null;
+        ePlatformType mActivityPlatform;
         Context mContext;
         RecordingManager mRecordingMngr;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
@@ -43,58 +47,74 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
             mContext = context;
-            xWinGridUC.mContext = mContext;
-            xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
-
-            InitMethods();
             context.PropertyChanged += Context_PropertyChanged;
+            InitMethods();
+        }
+
+        private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Agent.Status) && ((Agent)sender).Status == Agent.eStatus.Running)
+            {
+                SetControlsVisibility();
+            }
         }
 
         private void InitMethods()
         {
-            SetPOMControlsVisibility(false);
+            string targetApp = string.Empty;
+            if (mContext.BusinessFlow.CurrentActivity == null || string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+            {
+                targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
+            }
+
+            mActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                     where x.AppName == targetApp
+                                     select x.Platform).FirstOrDefault();
+            SetControlsVisibility();
             SetControlsDefault();
-            SetMultiplePropertiesGridView();
-            SetDefault(mContext);
+            SetMultiplePropertiesGridView();            
+
+            if (xWinGridUC.mContext == null)
+            {
+                xWinGridUC.mContext = mContext; 
+            }
+
+            if (xWinGridUC.WindowsComboBox != null)
+            {
+                xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
+                xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged; 
+            }
+
+            Agent agent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            if (agent != null)
+            {
+                agent.PropertyChanged -= Agent_PropertyChanged;
+                agent.PropertyChanged += Agent_PropertyChanged; 
+            }
         }
 
+        /// <summary>
+        /// Context Property changed event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e != null && e.PropertyName == nameof(BusinessFlow))
+            if(e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
             {
-                mContext = (Context)sender;
-                xWinGridUC.mContext = mContext;
+                if (e.PropertyName == nameof(BusinessFlow))
+                {
+                    mContext = (Context)sender;
+                    xWinGridUC.mContext = mContext;
+                }
+
                 InitMethods();
                 if (IsRecording)
                 {
                     IsRecording = !IsRecording;
                     StopRecording();
-                    SetRecordingButtonText();
                 }
-            }
-        }
-
-        /// <summary>
-        /// This method will set the page to default
-        /// </summary>
-        /// <param name="context"></param>
-        public void SetDefault(Context context)
-        {
-            if(mActParentActivity != context.BusinessFlow.CurrentActivity)
-            {                
-                xWinGridUC.UpdateWindowsList();
-                xIntegratePOM.IsChecked = false;
-            }
-            mActParentActivity = context.BusinessFlow.CurrentActivity;
-
-            if (AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, context, out mWindowExplorerDriver))
-            {
-                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                xStartAgentButton.IsEnabled = false;
-            }
-            else
-            {
-                xStartAgentButton.IsEnabled = true;
+                SetRecordingButtonText();
             }
         }
 
@@ -140,18 +160,36 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void SetPOMControlsVisibility(bool isVisible)
+        private void SetControlsVisibility()
         {
-            if (isVisible)
-            {
-                gridPOMListItems.Visibility = Visibility.Visible;
-                gridPOMListItems.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                gridPOMListItems.Visibility = Visibility.Hidden;
-                gridPOMListItems.Visibility = Visibility.Hidden;
-            }
+            gridPOMListItems.Visibility = Visibility.Hidden;
+            xIntegratePOM.Visibility = Visibility.Hidden;
+            xWinGridUC.IsEnabled = false;
+            xRecordingButton.IsEnabled = false;
+            xStartAgentMessage.Visibility = Visibility.Visible;
+
+            if (PlatformInfoBase.IsPlatformSupportRecording(mActivityPlatform))
+            {                
+                if (PlatformInfoBase.IsPlatformSupportPOM(mActivityPlatform) && (bool)xIntegratePOM.IsChecked)
+                {
+                    gridPOMListItems.Visibility = Visibility.Visible;
+                    xIntegratePOM.Visibility = Visibility.Visible;
+                }
+
+                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                if(isAgentRunning)
+                {
+                    xStartAgentMessage.Visibility = Visibility.Hidden;
+                }
+
+                if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
+                    && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
+                {
+                    
+                    xWinGridUC.IsEnabled = true;
+                    xRecordingButton.IsEnabled = true;
+                }
+            }        
         }
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
@@ -182,23 +220,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 InitMethods();
             }
         }
-
-        private void StartAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool isStarted = AgentHelper.StartAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-            if(isStarted)
-            {
-                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                xStartAgentButton.IsEnabled = false;
-                SetRecordingButtonText();
-            }
-        }
-
+        
         private void StartRecording()
         {
-            BusinessFlow bFlow = mContext.BusinessFlow;
-            IRecord record = (IRecord)mWindowExplorerDriver;
-            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformTargetApplication(mContext.Activity.TargetApplication);
+            IRecord record = (IRecord)mWindowExplorerDriver;            
+            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mActivityPlatform);
 
             List<ApplicationPOMModel> applicationPOMs = null;
             if (Convert.ToBoolean(xIntegratePOM.IsChecked))
@@ -213,7 +239,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 } 
             }
 
-            mRecordingMngr = new RecordingManager(applicationPOMs, bFlow, mContext, record, platformInfo);
+            mRecordingMngr = new RecordingManager(applicationPOMs, mContext.BusinessFlow, mContext, record, platformInfo);
             mRecordingMngr.StartRecording();
         }
 
@@ -226,19 +252,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
 
         private void SetRecordingButtonText()
-        {
-            if (AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver) &&
-                (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
-            {
-                xRecordingButton.IsEnabled = true;
-                xStartAgentButton.IsEnabled = false;
-            }
-            else
-            {
-                xRecordingButton.IsEnabled = false;
-                xStartAgentButton.IsEnabled = true;
-            }
-
+        {      
             if (IsRecording)
             {
                 xRecordingButton.ButtonText = "Stop Recording";
@@ -300,17 +314,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XIntegratePOM_Checked(object sender, RoutedEventArgs e)
         {
-            SetPOMControlsVisibility(true);
+            SetControlsVisibility();
         }
 
         private void XIntegratePOM_Unchecked(object sender, RoutedEventArgs e)
         {
-            SetPOMControlsVisibility(false);
+            SetControlsVisibility();
         }
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetRecordingButtonText();
+            SetControlsVisibility();
         }
     }    
 }

@@ -43,7 +43,6 @@ namespace GingerCoreNET
             ApplicationAgent appAgent = null;
             if (context != null && context.BusinessFlow.CurrentActivity != null)
             {
-                @AppAgentAct:
                 if (string.IsNullOrEmpty(activity.TargetApplication))
                 {
                     if (context.BusinessFlow.TargetApplications.Count() == 1)
@@ -56,7 +55,6 @@ namespace GingerCoreNET
                 {
                     context.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
                     context.Runner.UpdateApplicationAgents();
-                    goto AppAgentAct;
                 }
                 else
                 {
@@ -89,6 +87,22 @@ namespace GingerCoreNET
                 isRunning = true;
             }
             return isRunning;
+        }
+
+        /// <summary>
+        /// This method is used to check if the agent is running or not
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static Agent GetDriverAgent(Activity activity, GingerRunner runner, Context context)
+        {
+            Agent agent = null;
+            ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
+            if (appAgent != null && appAgent.Agent != null)
+            {
+                agent = appAgent.Agent;
+            }
+            return agent;
         }
 
         /// <summary>

@@ -10,6 +10,8 @@ using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Linq;
 using System.Windows;
@@ -30,13 +32,33 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             mContext = context;
             InitializeComponent();
+            context.PropertyChanged += Context_PropertyChanged;
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
         }
 
-        public void SetDefaultPage(Context context)
+        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            mContext = context;
+            if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
+            {
+                xRecordItemBtn.IsEnabled = false;
+                ePlatformType ePlatformType = ePlatformType.NA;
+
+                string targetApp = string.Empty;
+                if (mContext.BusinessFlow.CurrentActivity == null || string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+                {
+                    targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
+                }
+
+                ePlatformType = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                 where x.AppName == targetApp
+                                 select x.Platform).FirstOrDefault();
+
+                if (PlatformInfoBase.IsPlatformSupportRecording(ePlatformType))
+                {
+                    xRecordItemBtn.IsEnabled = true;
+                }
+            }
         }
 
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
@@ -52,13 +74,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 (sender as Frame).Visibility = Visibility.Visible;
                 xNavigationBarPnl.Visibility = Visibility.Visible;
                 xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
-                //navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
             }
         }
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            //LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
             LoadActionFrame(new SharedRepositoryNavPage(mContext), "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
@@ -73,10 +93,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mRecordPage == null)
             {
                 mRecordPage = new RecordNavPage(mContext);
-            }
-            else
-            {                
-                mRecordPage.SetDefault(mContext);
             }
 
             LoadActionFrame(mRecordPage, "Record", eImageType.Camera);
@@ -117,14 +133,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
             }
-        }
-        
-        public void StopRecording()
-        {
-            if(mRecordPage != null && mRecordPage.IsRecording)
-            {
-                mRecordPage.StopRecording();
-            }
-        }
+        }        
     }
 }

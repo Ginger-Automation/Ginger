@@ -251,10 +251,6 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mMainNavigationPage = new MainAddActionsNavigationPage(mContext); 
                     }
-                    else
-                    {
-                        mMainNavigationPage.SetDefaultPage(mContext);
-                    }
                     xAddActionMenuFrame.Content = mMainNavigationPage;
                 }
             }
@@ -661,10 +657,6 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xGoToBFsTreeBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(xAddActionMenuFrame != null && xAddActionMenuFrame.Content != null && xAddActionMenuFrame.Content.GetType() == typeof(MainAddActionsNavigationPage))
-            {
-                ((MainAddActionsNavigationPage)xAddActionMenuFrame.Content).StopRecording();
-            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, mBusinessFlow);
         }
 

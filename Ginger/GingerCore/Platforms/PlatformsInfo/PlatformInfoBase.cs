@@ -76,26 +76,78 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
         }
 
-        public static PlatformInfoBase GetPlatformTargetApplication(string targetApp)
+        /// <summary>
+        /// This method is used to check if the paltform supports recording
+        /// </summary>
+        /// <param name="Platform"></param>
+        /// <returns></returns>
+        public static bool IsPlatformSupportRecording(ePlatformType Platform)
         {
-            switch (targetApp)
-            {                
-                case "MyJavaApp":
-                    return mJavaPlatform;
-                case "MyWebApp":
-                case "MyNewWebApp":
-                    return mWebPlatform;
-                case "CSM":
-                    return mPowerBuilderPlatform;
-                case "MyWindowsApp":
-                    return mWindowsPlatform;
-                case "MyMobileApp":
-                    return mMobilePlatform;
-                //TODO: add the rest
+            bool support = false;
+            switch (Platform)
+            {
+                case ePlatformType.AndroidDevice:
+                    support = false;
+                    break;
 
-                default:
-                    return null;
+                case ePlatformType.Java:
+                    support = true;
+                    break;
+
+                case ePlatformType.Web:
+                    support = true;
+                    break;
+
+                case ePlatformType.PowerBuilder:
+                    support = false;
+                    break;
+
+                case ePlatformType.Windows:
+                    support = false;
+                    break;
+
+                case ePlatformType.Mobile:
+                    support = false;
+                    break;
             }
+            return support;
+        }
+
+        /// <summary>
+        /// This method is used to check if the paltform supports POM
+        /// </summary>
+        /// <param name="Platform"></param>
+        /// <returns></returns>
+        public static bool IsPlatformSupportPOM(ePlatformType Platform)
+        {
+            bool support = false;
+            switch (Platform)
+            {
+                case ePlatformType.AndroidDevice:
+                    support = false;
+                    break;
+
+                case ePlatformType.Java:
+                    support = false;
+                    break;
+
+                case ePlatformType.Web:
+                    support = true;
+                    break;
+
+                case ePlatformType.PowerBuilder:
+                    support = false;
+                    break;
+
+                case ePlatformType.Windows:
+                    support = false;
+                    break;
+
+                case ePlatformType.Mobile:
+                    support = false;
+                    break;
+            }
+            return support;
         }
 
         public static List<eElementType> GetPlatformUIElementsList(ePlatformType Platform)

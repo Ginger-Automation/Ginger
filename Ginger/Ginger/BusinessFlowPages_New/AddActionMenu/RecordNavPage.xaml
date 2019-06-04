@@ -17,25 +17,22 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="45" />
             <RowDefinition Height="40" />
-            <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>        
         
         <userControl:UCWindowsGrid x:Name="xWinGridUC" Margin="0, 5, 0, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
 
-        <usercontrols:ucButton Grid.Row="1" x:Name="xStartAgentButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Agent" ButtonImageType="Agent" 
-                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Agent" ButtonFontImageSize="15" ButtonImageWidth="10" 
-                               ButtonImageHeight="15" Click="StartAgentButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-
-        <usercontrols:ucButton Grid.Row="2" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Play" 
+        <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Play" 
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="10" 
                                ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
 
-        <StackPanel x:Name="xPOMPanel" Grid.Row="3" Margin="10,5,0,0" HorizontalAlignment="Stretch">
+        <StackPanel x:Name="xPOMPanel" Grid.Row="2" Margin="10,5,0,0" HorizontalAlignment="Stretch">
             <DockPanel x:Name="xPOMSelection" Margin="0,1,0,0" >
                 <CheckBox x:Name="xIntegratePOM" Style="{StaticResource @CheckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate recording with POM's</CheckBox>
             </DockPanel>
-        
+
+            <Label x:Name="xStartAgentMessage" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+            
             <Ginger:ucGrid x:Name="gridPOMListItems" Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
                            ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
             
