@@ -28,6 +28,7 @@ using GingerCore.Helpers;
 using GingerCore.Platforms;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -88,7 +89,19 @@ namespace GingerWPF.BusinessFlowsLib
         private void RemoveBindings()
         {
             mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
-            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;            
+            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
+
+            BindingOperations.ClearBinding(xNameTextBlock, TextBlock.TextProperty);
+            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xTargetApplicationComboBox, CheckBox.IsCheckedProperty);
+            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
+            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);            
         }
 
         private void BindControls()
@@ -119,7 +132,18 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));           
             BindingHandler.ObjFieldBinding(xAutomationStatusCombo, ComboBox.TextProperty, mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
+            if (mContext != null && mContext.BusinessFlow != null)
+            {
+                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;                               
+            }
+            else
+            {
+                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            }
+            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
+          
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -132,16 +156,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xHandlerMappingStack.Visibility = Visibility.Visible;                
                 xHandlerTypeStack.Visibility = Visibility.Collapsed;
             }
-            if (mContext != null && mContext.BusinessFlow != null)
-            {
-                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
-            }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
-            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+
         }
 
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

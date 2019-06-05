@@ -140,7 +140,7 @@ namespace GingerCore.Activities
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
             activity.ActivitiesGroupID = this.Name;
-            activity.ActivitiesGroupColor = this.GroupColor;
+            //activity.ActivitiesGroupColor = this.GroupColor;
             this.ActivitiesIdentifiers.Add(actIdents);
         }
 
@@ -173,24 +173,25 @@ namespace GingerCore.Activities
         public string ExternalID2 { get; set; } // used to store the actual TC ID when importing it from QC in case the TC type is linked TC
 
 
-        public string AutomationPrecentage 
-        { 
+        public string AutomationPrecentage
+        {
             get
             {
                 foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers)
                 {
-                   ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
-                } List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
-                                                                              eActivityAutomationStatus.Automated).ToList();
+                    ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
+                }
+                List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x => x.ActivityAutomationStatus ==
+                                                                            eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecanteg;
                 if (automatedActsInGroup == null || automatedActsInGroup.Count == 0)
                 {
-                    automatedActsPrecanteg=0;
+                    automatedActsPrecanteg = 0;
                 }
                 else
                 {
                     automatedActsPrecanteg = ((double)automatedActsInGroup.Count / (double)ActivitiesIdentifiers.Count);
-                    automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg *100);                    
+                    automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg * 100);
                 }
 
                 return automatedActsPrecanteg.ToString() + "%";
@@ -239,7 +240,7 @@ namespace GingerCore.Activities
                         ((BusinessFlow)hostItem).SetUniqueActivitiesGroupName(newInstance);
                         ((BusinessFlow)hostItem).ActivitiesGroups.Insert(originalIndex, newInstance);
                         ((BusinessFlow)hostItem).AttachActivitiesGroupsAndActivities();
-                        ((BusinessFlow)hostItem).UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
+                        //((BusinessFlow)hostItem).UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
                     }
                     break;
                 case eItemParts.Activities:
@@ -366,24 +367,24 @@ namespace GingerCore.Activities
             }
         }
 
-        private string mGroupColor;
-        [IsSerializedForLocalRepository]
-        public string GroupColor
-        {
-            get { return mGroupColor; }
-            set
-            {
-                if (mGroupColor != value)
-                {
-                    mGroupColor = value;
+        //private string mGroupColor;
+        //[IsSerializedForLocalRepository]
+        //public string GroupColor
+        //{
+        //    get { return mGroupColor; }
+        //    set
+        //    {
+        //        if (mGroupColor != value)
+        //        {
+        //            mGroupColor = value;
 
-                    foreach (ActivityIdentifiers aIdent in ActivitiesIdentifiers)
-                        if (aIdent.IdentifiedActivity != null)
-                            aIdent.IdentifiedActivity.ActivitiesGroupColor = mGroupColor;
+        //            foreach (ActivityIdentifiers aIdent in ActivitiesIdentifiers)
+        //                if (aIdent.IdentifiedActivity != null)
+        //                    aIdent.IdentifiedActivity.ActivitiesGroupColor = mGroupColor;
 
-                    OnPropertyChanged(nameof(GroupColor));
-                }
-            }
-        }
+        //            OnPropertyChanged(nameof(GroupColor));
+        //        }
+        //    }
+        //}
     }
 }
