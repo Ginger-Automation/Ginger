@@ -33,9 +33,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using LiteDB;
-using Ginger.Logger;
 using System.Collections.Generic;
+using Amdocs.Ginger.CoreNET.Logger;
 
 namespace Ginger.Run
 {
