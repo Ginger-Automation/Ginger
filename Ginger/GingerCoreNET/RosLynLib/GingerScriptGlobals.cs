@@ -74,11 +74,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             runsetExecutor.RunSetConfig = runSetConfig;
             runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
-            runsetExecutor.InitRunners();
-            
-            runsetExecutor.RunRunset();
-
-            
+            runsetExecutor.InitRunners();            
+            runsetExecutor.RunRunset();            
         }
 
         /// <summary>
