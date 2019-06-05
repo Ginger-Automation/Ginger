@@ -12,7 +12,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 {
     public class WebReportGenerator
     {
-        private string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+        private string browserPath = "chrome.exe";
         public WebReportGenerator()
         {
 
