@@ -27,6 +27,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
         RecordNavPage mRecordPage = null;
+        SharedRepositoryNavPage mSharedRepositoryNavPage = null;
+        POMNavPage mPOMNavPage = null;
+        ActionsLibraryNavPage mActionsLibraryNavPage = null;
+        LiveSpyNavPage mLiveSpyNavPage = null;
+        WindowsExplorerNavPage mWindowsExplorerNavPage = null;
 
         public MainAddActionsNavigationPage(Context context)
         {
@@ -48,6 +53,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (mContext.BusinessFlow.CurrentActivity == null || string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
                 {
                     targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
+                }
+                else if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+                {
+                    targetApp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
                 }
 
                 ePlatformType = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
@@ -79,13 +88,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new SharedRepositoryNavPage(mContext), "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
+            if(mSharedRepositoryNavPage == null)
+            {
+                mSharedRepositoryNavPage = new SharedRepositoryNavPage(mContext);
+            }
+            LoadActionFrame(mSharedRepositoryNavPage, "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
-            LoadActionFrame(new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM), "Page Objects Model", eImageType.ApplicationPOMModel);
+            if(mPOMNavPage == null)
+            {
+                mPOMNavPage = new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+            }
+            LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
@@ -100,18 +117,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavActLib_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new ActionsLibraryNavPage(mContext), "Actions Library", eImageType.Action);
+            if(mActionsLibraryNavPage == null)
+            {
+                mActionsLibraryNavPage = new ActionsLibraryNavPage(mContext);
+            }
+            LoadActionFrame(mActionsLibraryNavPage, "Actions Library", eImageType.Action);
         }
 
         private void XNavSpy_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new LiveSpyNavPage(mContext), "Live Spy", eImageType.Spy);
+            if (mLiveSpyNavPage == null)
+            {
+                mLiveSpyNavPage = new LiveSpyNavPage(mContext);
+            }
+            LoadActionFrame(mLiveSpyNavPage, "Live Spy", eImageType.Spy);
         }
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(new WindowsExplorerNavPage(mContext), "Windows Explorer", eImageType.Search);
-            ListViewItem lvi = new ListViewItem();
+            if (mLiveSpyNavPage == null)
+            {
+                mWindowsExplorerNavPage = new WindowsExplorerNavPage(mContext);
+            }
+            LoadActionFrame(mWindowsExplorerNavPage, "Windows Explorer", eImageType.Search);
         }
 
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)

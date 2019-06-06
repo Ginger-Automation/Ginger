@@ -259,6 +259,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
+            mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
         }

@@ -66,17 +66,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
             }
+            else if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+            {
+                targetApp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
+            }
 
             mActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
                                      where x.AppName == targetApp
                                      select x.Platform).FirstOrDefault();
             SetControlsVisibility();
-            SetControlsDefault();
+            SetRecordingButtonText();
             SetMultiplePropertiesGridView();            
 
             if (xWinGridUC.mContext == null)
             {
                 xWinGridUC.mContext = mContext; 
+            }
+
+            if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
+            {
+                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
             }
 
             if (xWinGridUC.WindowsComboBox != null)
@@ -145,51 +154,48 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
             AddSelectedPOM(selectedPOMs);
         }
-
-        private void SetControlsDefault()
-        {
-            SetRecordingButtonText();
-
-            if (mContext.BusinessFlow.Applications.Contains(ePlatformType.Web.ToString()))
-            {
-                xPOMPanel.Visibility = Visibility.Visible; 
-            }
-            else
-            {
-                xPOMPanel.Visibility = Visibility.Hidden;
-            }
-        }
-
+        
         private void SetControlsVisibility()
         {
             gridPOMListItems.Visibility = Visibility.Hidden;
             xIntegratePOM.Visibility = Visibility.Hidden;
             xWinGridUC.IsEnabled = false;
             xRecordingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Visible;
+            xStartAgentMessage.Visibility = Visibility.Collapsed;
+            xAgentNotSupportRecording.Visibility = Visibility.Collapsed;
+            xPOMPanel.Visibility = Visibility.Hidden;
 
             if (PlatformInfoBase.IsPlatformSupportRecording(mActivityPlatform))
             {                
-                if (PlatformInfoBase.IsPlatformSupportPOM(mActivityPlatform) && (bool)xIntegratePOM.IsChecked)
+                if (PlatformInfoBase.IsPlatformSupportPOM(mActivityPlatform))
                 {
                     gridPOMListItems.Visibility = Visibility.Visible;
                     xIntegratePOM.Visibility = Visibility.Visible;
+                    xPOMPanel.Visibility = Visibility.Visible;
                 }
 
                 bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if(isAgentRunning)
                 {
                     xStartAgentMessage.Visibility = Visibility.Hidden;
+                    xWinGridUC.IsEnabled = true;
+                    if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
+                    {
+                        xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                    }
                 }
 
                 if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
                     && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
                 {
-                    
-                    xWinGridUC.IsEnabled = true;
                     xRecordingButton.IsEnabled = true;
                 }
-            }        
+            }
+            else
+            {
+                xStartAgentMessage.Visibility = Visibility.Hidden;
+                xAgentNotSupportRecording.Visibility = Visibility.Visible;
+            }
         }
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
