@@ -946,6 +946,12 @@ namespace GingerCore.Actions.Common
 
             return PL;
         }
+
+        public string GetName()
+        {
+            return "UIElementAction";
+        }
+
         public string ElementLocateValueForDriver
         {
             get

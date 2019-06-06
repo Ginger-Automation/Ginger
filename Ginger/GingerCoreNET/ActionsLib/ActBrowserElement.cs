@@ -252,7 +252,10 @@ namespace GingerCore.Actions
             return PL;
         }
 
-        
+        public string GetName()
+        {
+            return "BrowserAction";
+        }
 
         public override String ActionType
         {
@@ -275,5 +278,6 @@ namespace GingerCore.Actions
             }
         }
 
+       
     }
 }

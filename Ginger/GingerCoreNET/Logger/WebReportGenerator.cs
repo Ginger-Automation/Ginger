@@ -1,19 +1,28 @@
 ﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Linq;
+using Amdocs.Ginger.CoreNET.Execution;
 
-namespace Ginger.Logger
+namespace Amdocs.Ginger.CoreNET.Logger
 {
-    internal class WebReportGenerator
+    public class WebReportGenerator
     {
+        private string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+        public WebReportGenerator()
+        {
+
+        }
+
+        public WebReportGenerator(string browserNewPath)
+        {
+            this.browserPath = browserNewPath;
+        }
+
         public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null)
         {
             bool response = false;
@@ -63,9 +72,9 @@ namespace Ginger.Logger
                     pageDataSb.Append("#/?Routed_Guid=");
                     pageDataSb.Append(openObject.Guid);
                 }
-                string taskCommand = $"\"{pageDataSb.ToString()}\" --allow-file-access-from-files";
+                string taskCommand = $"\"{pageDataSb.ToString()}\"";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.js"), json);
-                System.Diagnostics.Process.Start("chrome", taskCommand);
+                System.Diagnostics.Process.Start(@browserPath, taskCommand);
                 response = true;
             }
             catch (Exception ec)
@@ -154,4 +163,5 @@ namespace Ginger.Logger
         }
 
     }
+
 }

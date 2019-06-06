@@ -20,9 +20,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
             Dictionary<string, string> InputParams = new Dictionary<string, string>();
             List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
 
-
-            foreach (NewPayLoad Np in FieldsandParams)
+            NewPayLoad PomPayload=null;
+            int i = 0;
+            if(FieldsandParams[0].Name== "POMPayload")
             {
+                i = 1;
+                PomPayload = FieldsandParams[0];
+            }
+
+            for (; i < FieldsandParams.Count-1; i++)
+            {
+                NewPayLoad Np =FieldsandParams[i];
                 string Name = Np.GetValueString();
 
                 string Value = Np.GetValueString();
@@ -31,17 +39,31 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     InputParams.Add(Name, Value);
                 }
             }
+            //foreach (NewPayLoad Np in FieldsandParams)
+            //{
+            //    string Name = Np.GetValueString();
+
+            //    string Value = Np.GetValueString();
+            //    if (!InputParams.ContainsKey(Name))
+            //    {
+            //        InputParams.Add(Name, Value);
+            //    }
+            //}
             IWebPlatform PlatformService = null;
             if (service is IWebPlatform Mservice)
             {
                 PlatformService = Mservice;
             }
+
+
             if (actionType == "BrowserAction")
             {
 
 
 
                 BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
+
+                
                 Handler.ExecuteAction();
 
 
@@ -58,6 +80,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                  
                     UIELementActionHandler Handler = new UIELementActionHandler(PlatformService,InputParams);
+
+                    Handler.PrepareforExecution(PomPayload);
 
                     Handler.ExecuteAction();
 
@@ -81,8 +105,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             
         }
 
-
-
+     
 
         private NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> outputValues)
         {

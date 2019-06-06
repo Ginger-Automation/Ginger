@@ -44,5 +44,10 @@ namespace GingerCoreNETUnitTest.PluginsLib
             payload.ClosePackage();
             return payload;
         }
+
+        public string GetName()
+        {
+            return "BrowserAction";
+        }
     }
 }
