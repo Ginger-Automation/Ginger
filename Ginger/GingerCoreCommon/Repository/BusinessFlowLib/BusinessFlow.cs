@@ -639,18 +639,18 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<ActivitiesGroup> ActivitiesGroups { get; set; } = new ObservableList<ActivitiesGroup>();
 
-        public void AddActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
+        public ActivitiesGroup AddActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
         {
             if (activitiesGroup == null)
             {                
                 activitiesGroup = new ActivitiesGroup();
-                activitiesGroup.Name = "New " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+                activitiesGroup.Name = "Group";
             }
             SetUniqueActivitiesGroupName(activitiesGroup);
-            if (string.IsNullOrEmpty(activitiesGroup.GroupColor))
-            {
-                SetUniqueGroupColor(activitiesGroup);
-            }            
+            //if (string.IsNullOrEmpty(activitiesGroup.GroupColor))
+            //{
+            //    SetUniqueGroupColor(activitiesGroup);
+            //}            
 
             if ((index != -1) && (ActivitiesGroups.Count > index))
             {
@@ -660,6 +660,8 @@ namespace GingerCore
             {
                 ActivitiesGroups.Add(activitiesGroup);
             }
+
+            return activitiesGroup;
         }
 
         public void SetUniqueActivitiesGroupName(ActivitiesGroup activitiesGroup)
@@ -677,29 +679,29 @@ namespace GingerCore
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
 
-        public void SetUniqueGroupColor(ActivitiesGroup activitiesGroup)
-        {
-            List<eColorName> listOfColors = Enum.GetValues(typeof(eColorName)).Cast<eColorName>().ToList();
-            Random rnd = new Random();            
-            List<int> triedColorIndx = new List<int>();
-            int rndColorIndx = 0;
+        //public void SetUniqueGroupColor(ActivitiesGroup activitiesGroup)
+        //{
+        //    List<eColorName> listOfColors = Enum.GetValues(typeof(eColorName)).Cast<eColorName>().ToList();
+        //    Random rnd = new Random();            
+        //    List<int> triedColorIndx = new List<int>();
+        //    int rndColorIndx = 0;
 
-            while (true)
-            {
-                rndColorIndx = rnd.Next(0, listOfColors.Count);
-                while (triedColorIndx.Contains(rndColorIndx) == true && triedColorIndx.Count < listOfColors.Count)
-                {
-                    rndColorIndx = rnd.Next(0, listOfColors.Count);
-                }
-                triedColorIndx.Add(rndColorIndx);
+        //    while (true)
+        //    {
+        //        rndColorIndx = rnd.Next(0, listOfColors.Count);
+        //        while (triedColorIndx.Contains(rndColorIndx) == true && triedColorIndx.Count < listOfColors.Count)
+        //        {
+        //            rndColorIndx = rnd.Next(0, listOfColors.Count);
+        //        }
+        //        triedColorIndx.Add(rndColorIndx);
                 
-                if (this.ActivitiesGroups.Where(ag => ag.GroupColor == listOfColors[rndColorIndx].ToString()).FirstOrDefault() == null || triedColorIndx.Count >= listOfColors.Count)
-                {
-                    activitiesGroup.GroupColor = listOfColors[rndColorIndx].ToString();
-                    break; 
-                }
-            }
-        }
+        //        if (this.ActivitiesGroups.Where(ag => ag.GroupColor == listOfColors[rndColorIndx].ToString()).FirstOrDefault() == null || triedColorIndx.Count >= listOfColors.Count)
+        //        {
+        //            activitiesGroup.GroupColor = listOfColors[rndColorIndx].ToString();
+        //            break; 
+        //        }
+        //    }
+        //}
 
         public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
         {
@@ -721,7 +723,7 @@ namespace GingerCore
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
-                        actInstance.ActivitiesGroupColor = activitiesGroup.GroupColor;
+                        //actInstance.ActivitiesGroupColor = activitiesGroup.GroupColor;
                         if (keepOriginalTargetApplicationMapping == false)
                         {
                             SetActivityTargetApplication(actInstance);
@@ -755,12 +757,70 @@ namespace GingerCore
 
         public void AttachActivitiesGroupsAndActivities()
         {
+            //Free UnAttached Activities
+            foreach (Activity activity in this.Activities)
+            {
+                ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                if (group != null)
+                {
+                    if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == activity.ActivityName && actidnt.ActivityGuid == activity.Guid).FirstOrDefault()) == null)
+                    {
+                        activity.ActivitiesGroupID = string.Empty;
+                        //act.ActivitiesGroupColor = string.Empty;
+                    }
+                }
+            }
+
+            //Attach un attached Activities in correct order
+            foreach (Activity activity in this.Activities)
+            {
+                if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
+                                || ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault() == null)
+                {
+                    //attach to Activity Group
+                    if (Activities.IndexOf(activity) == 0)
+                    {
+                        ActivitiesGroup group = AddActivitiesGroup(null, 0);                        
+                        group.AddActivityToGroup(activity);
+                    }
+                    else
+                    {
+                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
+                        group.AddActivityToGroup(activity);
+                    }
+                }
+                else
+                {
+                    if (Activities.IndexOf(activity) != 0 &&
+                           activity.ActivitiesGroupID != Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID)
+                    {
+                        bool activityGroupIsOutOfSync = false;
+                        //validate it is attached in correct order
+                        for (int indx = 0; indx < (Activities.IndexOf(activity) - 1); indx++)
+                        {
+                            if (Activities[indx].ActivitiesGroupID == activity.ActivitiesGroupID)
+                            {
+                                activityGroupIsOutOfSync = true;
+                                break;
+                            }
+                        }
+                        if (activityGroupIsOutOfSync)
+                        {
+                            ActivitiesGroup group = AddActivitiesGroup(new ActivitiesGroup() { Name = activity.ActivitiesGroupID + "2" });
+                            group.AddActivityToGroup(activity);
+                        }
+                    }
+
+                }
+            }
+
+
             foreach (ActivitiesGroup group in this.ActivitiesGroups)
             {
-                if (string.IsNullOrEmpty(group.GroupColor))
-                {
-                    SetUniqueGroupColor(group);//added in order to add colors to old activities groups
-                }
+                //if (string.IsNullOrEmpty(group.GroupColor))
+                //{
+                //    SetUniqueGroupColor(group);//added in order to add colors to old activities groups
+                //}
 
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
@@ -778,7 +838,7 @@ namespace GingerCore
                     {
                         actIdentifis.IdentifiedActivity = (Activity)activ;
                         activ.ActivitiesGroupID = group.Name;
-                        activ.ActivitiesGroupColor = group.GroupColor;
+                        //activ.ActivitiesGroupColor = group.GroupColor;
                         indx++;
                     }
                     else
@@ -789,46 +849,46 @@ namespace GingerCore
             }
         }
 
-        public enum eUpdateActivitiesGroupDetailsType { All, ClearUnExistedGroups, FreeUnAttachedActivities }
-        public void UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType updateType)
-        {
-            switch (updateType)
-            {
-                case (eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups):
-                    foreach (Activity act in this.Activities)
-                    {
-                        if (act.ActivitiesGroupID != null && act.ActivitiesGroupID != string.Empty)
-                        {
-                            if ((this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault()) == null)
-                            {
-                                act.ActivitiesGroupID = string.Empty;
-                                act.ActivitiesGroupColor = string.Empty;
-                            }
-                        }
-                    }
-                    break;
+        //public enum eUpdateActivitiesGroupDetailsType { All, ClearUnExistedGroups, FreeUnAttachedActivities }
+        //public void UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType updateType)
+        //{
+        //    switch (updateType)
+        //    {
+        //        case (eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups):
+        //            foreach (Activity act in this.Activities)
+        //            {
+        //                if (act.ActivitiesGroupID != null && act.ActivitiesGroupID != string.Empty)
+        //                {
+        //                    if ((this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault()) == null)
+        //                    {
+        //                        act.ActivitiesGroupID = string.Empty;
+        //                        //act.ActivitiesGroupColor = string.Empty;
+        //                    }
+        //                }
+        //            }
+        //            break;
 
-                case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
-                    foreach (Activity act in this.Activities)
-                    {
-                        ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
-                        if (group != null)
-                        {
-                            if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
-                            {
-                                act.ActivitiesGroupID = string.Empty;
-                                act.ActivitiesGroupColor = string.Empty;
-                            }
-                        }
-                    }
-                    break;
+        //        case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
+        //            foreach (Activity act in this.Activities)
+        //            {
+        //                ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
+        //                if (group != null)
+        //                {
+        //                    if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
+        //                    {
+        //                        act.ActivitiesGroupID = string.Empty;
+        //                        //act.ActivitiesGroupColor = string.Empty;
+        //                    }
+        //                }
+        //            }
+        //            break;
 
-                case (eUpdateActivitiesGroupDetailsType.All):
-                    UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
-                    UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
-                    break;
-            }
-        }
+        //        case (eUpdateActivitiesGroupDetailsType.All):
+        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
+        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
+        //            break;
+        //    }
+        //}
 
 
         public int GetActionsCount()

@@ -237,7 +237,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         //xCurrentActivityFrame.Content = new NewActivityEditPage(mBusinessFlow.CurrentActivity, mContext);  // TODO: use binding? or keep each activity page                        
                     }
-                        SetActivityEditPage();
+                    SetActivityEditPage();
 
                     mRunner.BusinessFlows.Add(mBusinessFlow);
                     mRunner.CurrentBusinessFlow = mBusinessFlow;
@@ -259,7 +259,8 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
-            mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);            
+            // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+            SetActivityEditPage();
         }
 
         //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -298,28 +299,42 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        //private void SetActivityEditPage()
+        //{
+        //    if (mBusinessFlow.CurrentActivity != null)
+        //    {
+        //        //mBusinessFlow.Activities.CurrentItem = mBusinessFlow.Activities[0];
+        //        //mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
+
+        //        if (mActivityPage == null)
+        //        {
+        //            mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+        //            xCurrentActivityFrame.Content = mActivityPage;
+        //        }
+        //        else
+        //        {
+        //            mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        xCurrentActivityFrame.Content = null;
+        //    }           
+        //}
+
         private void SetActivityEditPage()
         {
-            if (mBusinessFlow.CurrentActivity != null)
+            if (mBusinessFlow != null && mBusinessFlow.CurrentActivity != null)
             {
-                //mBusinessFlow.Activities.CurrentItem = mBusinessFlow.Activities[0];
-                //mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
-
-                if (mActivityPage == null)
-                {
-                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
-                    xCurrentActivityFrame.Content = mActivityPage;
-                }
-                else
-                {
-                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
-                }
+                mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
             }
             else
             {
-                xCurrentActivityFrame.Content = null;
-            }           
+                mActivityPage = null;
+            }
+            xCurrentActivityFrame.Content = mActivityPage;
         }
+
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             //if (e.PropertyName == nameof(BusinessFlow.CurrentActivity))

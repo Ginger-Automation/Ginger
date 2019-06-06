@@ -339,18 +339,25 @@ namespace GingerCore
         public String ActivitiesGroupID 
         { 
             get { return mActivitiesGroupID; } 
-            set { mActivitiesGroupID = value; OnPropertyChanged(Fields.ActivitiesGroupID); } 
+            set
+            {
+                if (mActivitiesGroupID != value)
+                {
+                    mActivitiesGroupID = value;
+                    OnPropertyChanged(Fields.ActivitiesGroupID);
+                }
+            } 
         }
 
-        private String mActivitiesGroupColor;
-        /// <summary>
-        /// Used to store the Activities Group color which this Activity is belong to in the Business Flow
-        /// </summary>    
-        public String ActivitiesGroupColor
-        {
-            get { return mActivitiesGroupColor; }
-            set { mActivitiesGroupColor = value; OnPropertyChanged(nameof(ActivitiesGroupColor)); }
-        }
+        //private String mActivitiesGroupColor;
+        ///// <summary>
+        ///// Used to store the Activities Group color which this Activity is belong to in the Business Flow
+        ///// </summary>    
+        //public String ActivitiesGroupColor
+        //{
+        //    get { return mActivitiesGroupColor; }
+        //    set { mActivitiesGroupColor = value; OnPropertyChanged(nameof(ActivitiesGroupColor)); }
+        //}
 
 
         private string mTargetApplication;
@@ -689,7 +696,7 @@ namespace GingerCore
                     newInstance.ParentGuid = activityInstance.ParentGuid;
                     newInstance.ExternalID = activityInstance.ExternalID;
                     newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
-                    newInstance.ActivitiesGroupColor = activityInstance.ActivitiesGroupColor;
+                    //newInstance.ActivitiesGroupColor = activityInstance.ActivitiesGroupColor;
                     newInstance.TargetApplication = activityInstance.TargetApplication;
                     newInstance.Active = activityInstance.Active;
                     newInstance.VariablesDependencies = activityInstance.VariablesDependencies;                   
@@ -847,7 +854,7 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;
-            ActivitiesGroupColor = null;
+            //ActivitiesGroupColor = null;
         }
 
         public ObservableList<VariableBase> GetVariables()

@@ -61,7 +61,8 @@ namespace Ginger.BusinessFlowPages.ListViewItems
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-            return new ListItemUniqueIdentifier() { Color = mActivitiesGroup.GroupColor, Tooltip = mActivitiesGroup.Name };
+            //return new ListItemUniqueIdentifier() { Color = mActivitiesGroup.GroupColor, Tooltip = mActivitiesGroup.Name };
+            return null;
         }
 
         public string GetItemIconField()

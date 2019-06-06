@@ -88,11 +88,11 @@ namespace Ginger.Activities
             GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
             defView2.GridColsView = new ObservableList<GridColView>();
 
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityName, Header = "Name", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityDescription, Header = "Description", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityAutomationStatus, Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityName), Header = "Name", WidthWeight = 30, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 30, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
             if (mEditMode == eEditMode.SharedRepository)
-                defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ExistInRepository, Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
+                defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ExistInRepository), Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
             grdGroupedActivities.SetAllColumnsDefaultView(defView2);
             grdGroupedActivities.InitViewItems();
         }
