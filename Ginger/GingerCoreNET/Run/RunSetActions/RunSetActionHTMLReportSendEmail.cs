@@ -16,35 +16,25 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using System;
-using System.IO;
-using System.Linq;
-
-
-using System.IO.Compression;
-using System.Net.Mime;
-using System.Net.Mail;
-using System.Collections.Generic;
-using System.Text;
-
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Reflection;
-
 using amdocs.ginger.GingerCoreNET;
-
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.GeneralLib;
-using Ginger.Reports;
 using Amdocs.Ginger;
-
-using GingerCore.DataSource;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.GeneralLib;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -55,7 +45,7 @@ namespace Ginger.Run.RunSetActions
             HTMLReport,
             [EnumValueDescription("Free Text")]
             FreeText
-        }       
+        }
 
         public override bool SupportRunOnConfig
         {
@@ -123,7 +113,7 @@ namespace Ginger.Run.RunSetActions
         private string mMailTo;
         [IsSerializedForLocalRepository]
         public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(nameof(MailTo)); } } }
-       
+
         public string MailHost
         {
             get
@@ -134,11 +124,11 @@ namespace Ginger.Run.RunSetActions
             {
                 if (Email.SMTPMailHost != value)
                 {
-                    Email.SMTPMailHost = value;                  
+                    Email.SMTPMailHost = value;
                 }
             }
         }
-       
+
         public string MailUser
         {
             get
@@ -149,7 +139,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (Email.SMTPUser != value)
                 {
-                    Email.SMTPUser = value;                   
+                    Email.SMTPUser = value;
                 }
             }
         }
@@ -175,9 +165,11 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
-            if (!System.IO.Directory.Exists(WorkSpace.EmailReportTempFolder))
-                System.IO.Directory.CreateDirectory(WorkSpace.EmailReportTempFolder);
-            tempFolder = WorkSpace.EmailReportTempFolder;
+            if (!System.IO.Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
+            {
+                System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+            }
+            tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
@@ -187,7 +179,8 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                runSetFolder = ExecutionLogger.GetRunSetLastExecutionLogFolderOffline();
+                GingerRunner gr = new GingerRunner();
+                runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                 AutoLogProxy.UserOperationStart("Offline Report");
             }
 
@@ -411,7 +404,11 @@ namespace Ginger.Run.RunSetActions
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate,tempFolder);
+            if (currentTemplate == null && selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
+            {
+                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault(); 
+            }
+            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
@@ -454,7 +451,7 @@ namespace Ginger.Run.RunSetActions
 
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                           fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
                         }
                         else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
                         {
@@ -496,7 +493,10 @@ namespace Ginger.Run.RunSetActions
                     {
                         string executionStatisticsSection = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetStringBetween(ReportHTML, "<!--ExecutionStatisticsDetails_Start-->", "<!--ExecutionStatisticsDetails_End-->");
                         if (!string.IsNullOrEmpty(executionStatisticsSection))
+                        {
                             ReportHTML = ReportHTML.Replace(executionStatisticsSection, "");
+                        }
+
                         IsExecutionStatistic = false;
                     }
                     else
@@ -545,7 +545,9 @@ namespace Ginger.Run.RunSetActions
                     {
                         string executionStatisticsSection = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetStringBetween(ReportHTML, "<!--ExecutionBusinessFlowsDetails_Start-->", "<!--ExecutionBusinessFlowsDetails_End-->");
                         if (!string.IsNullOrEmpty(executionStatisticsSection))
+                        {
                             ReportHTML = ReportHTML.Replace(executionStatisticsSection, "");
+                        }
                     }
                     else
                     {
@@ -687,7 +689,9 @@ namespace Ginger.Run.RunSetActions
                     {
                         string executionStatisticsSection = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetStringBetween(ReportHTML, "<!--ExecutionActivitiesDetails_Start-->", "<!--ExecutionActivitiesDetails_End-->");
                         if (!string.IsNullOrEmpty(executionStatisticsSection))
+                        {
                             ReportHTML = ReportHTML.Replace(executionStatisticsSection, "");
+                        }
                     }
                     else
                     {
@@ -829,7 +833,9 @@ namespace Ginger.Run.RunSetActions
                     {
                         string failureDetailsSection = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetStringBetween(ReportHTML, "<!--FailuresDetails_Start-->", "<!--FailuresDetails_End-->");
                         if (!string.IsNullOrEmpty(failureDetailsSection))
+                        {
                             ReportHTML = ReportHTML.Replace(failureDetailsSection, "");
+                        }
                     }
                 }
             }
@@ -1059,7 +1065,10 @@ namespace Ginger.Run.RunSetActions
         public byte[] GetImageStream(string path)
         {
             if (!File.Exists(path))
+            {
                 return null;
+            }
+
             System.Drawing.Image img = System.Drawing.Image.FromFile(path);
             byte[] arr;
             using (MemoryStream ms = new MemoryStream())
@@ -1133,7 +1142,7 @@ namespace Ginger.Run.RunSetActions
             return text;
         }
 
-       
+
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();

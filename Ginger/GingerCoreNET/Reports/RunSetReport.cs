@@ -23,6 +23,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 
 namespace Ginger.Reports
 {
@@ -44,6 +45,7 @@ namespace Ginger.Reports
             public static string ExecutedBusinessFlowsDetails = "ExecutedBusinessFlowsDetails";
             public static string ExecutedActivitiesDetails = "ExecutedActivitiesDetails";
             public static string FailuresDetails = "FailuresDetails";
+            public static string DataRepMethod = "DataRepMethod";
         }
 
         public int Seq { get; set; }
@@ -165,35 +167,52 @@ namespace Ginger.Reports
         public string LogFolder { get; set; }
 
         public System.Diagnostics.Stopwatch Watch = new System.Diagnostics.Stopwatch();
-
+        public ExecutionLoggerConfiguration.DataRepositoryMethod DataRepMethod { get; set; }
         private List<GingerReport> gingerReports;
         public List<GingerReport> GingerReports
         {
             get
             {
                 gingerReports = new List<GingerReport>();
-                foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
+                if (LogFolder != null)
                 {
-                    FileAttributes attr = File.GetAttributes(folder);
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    foreach (string folder in System.IO.Directory.GetDirectories(LogFolder))
                     {
-                        try
+                        FileAttributes attr = File.GetAttributes(folder);
+                        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                         {
-                            GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
-                            gr.LogFolder = folder;
-                            gingerReports.Add(gr);
+                            try
+                            {
+                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
+                                gr.LogFolder = folder;
+                                gingerReports.Add(gr);
+                            }
+                            catch { }
                         }
-                        catch { }
                     }
                 }
                 return gingerReports;
             }
+        }
+        private Amdocs.Ginger.CoreNET.Execution.eRunStatus runSetExecutionStatus;
+
+        public void SetDataForAutomateTab()
+        {
+            Name = "Automate Run Set";
+            GUID = Guid.NewGuid().ToString();
+            StartTimeStamp = DateTime.Now.ToUniversalTime();
+            RunSetExecutionStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated;
+            DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
         }
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunSetExecutionStatus
         {
             get
             {
+                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    return runSetExecutionStatus;
+                }
                 if (TotalGingerRunnersFailed > 0)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -214,6 +233,25 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 }
+            }
+            set
+            {
+                runSetExecutionStatus = value;
+            }
+        }
+
+        public void SetLiteDBData(LiteDbRunSet runSet)
+        {
+            GUID = runSet._id.ToString();
+            Name = runSet.Name;
+            Description = runSet.Description;
+            StartTimeStamp = runSet.StartTimeStamp;
+            EndTimeStamp = runSet.EndTimeStamp;
+            Elapsed = runSet.Elapsed;
+            Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
+            if(Enum.TryParse(runSet.RunStatus, out myStatus))
+            {
+                RunSetExecutionStatus = myStatus;
             }
         }
 
@@ -300,5 +338,6 @@ namespace Ginger.Reports
                 return (TotalGingerRunners - (TotalGingerRunnersFailed + TotalGingerRunnersPassed));
             }
         }
+        public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
     }
 }

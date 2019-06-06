@@ -159,6 +159,9 @@ namespace Amdocs.Ginger.Common.Enums
         Approve,
         Reject,
         Warn,
+        HighWarn,
+        MediumWarn,
+        LowWarn,
         EditWindow,
         UserDefined,
         #endregion
@@ -263,6 +266,7 @@ namespace Amdocs.Ginger.Common.Enums
         ListItem,
         Window,
         Text,
+        CLI,
         #endregion
     }
 }

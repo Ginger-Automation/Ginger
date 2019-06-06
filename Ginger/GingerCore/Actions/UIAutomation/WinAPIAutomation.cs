@@ -605,7 +605,7 @@ namespace GingerCore.Drivers
             SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
 
             Thread.Sleep(1000);
-            //Peformed Mouse Left click and hold
+            //Performed Mouse Left click and hold
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTDOWN;
             SendInput(1, ref mouseInput, Marshal.SizeOf(new INPUT()));
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(destX, destY);

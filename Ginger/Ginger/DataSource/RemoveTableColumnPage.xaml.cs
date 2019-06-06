@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.DataSource;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.DataSource;
 
 namespace Ginger.DataSource
 {
@@ -45,7 +44,7 @@ namespace Ginger.DataSource
             if (mColNameList.Contains("GINGER_USED"))
                 mColNameList.Remove("GINGER_USED");           
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, DataSourceTableColumn.Fields.Name);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, nameof(DataSourceTableColumn.Name));
             DSColNameComboBox.ItemsSource = mColNameList;
         }
 

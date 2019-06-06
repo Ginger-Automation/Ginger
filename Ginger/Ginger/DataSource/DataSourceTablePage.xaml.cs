@@ -267,7 +267,7 @@ namespace Ginger.DataSource
         }
         private void MarkUnMarkAllUsed(bool usedStatus)
         {
-            foreach (object oRow in grdTableData.Grid.SelectedItems)
+            foreach (object oRow in grdTableData.Grid.Items)
                 ((DataRowView)oRow).Row["GINGER_USED"] = usedStatus;                          
         }
 

@@ -796,7 +796,10 @@ namespace Ginger
             }
             else if (mObj is JObject)
             {
-                ((JObject)mObj).Property(mAttrName).Value = value;
+                if (((JObject)mObj).Property(mAttrName) != null)
+                {
+                    ((JObject)mObj).Property(mAttrName).Value = value;
+                }
             }
             else
             {

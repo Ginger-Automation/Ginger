@@ -90,7 +90,10 @@ namespace Ginger.Repository
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
                 
                     RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
-                    repositoryFolder.AddRepositoryItem(itemCopy);
+                    if(repositoryFolder !=null)
+                    {
+                       repositoryFolder.AddRepositoryItem(itemCopy);
+                    }                    
                 }
                 else
                 {

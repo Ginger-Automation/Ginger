@@ -18,11 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
-using GingerCore;
 using GingerCore.Repository;
-using GingerCore.XMLConverters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,7 +31,7 @@ using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
-    public enum SolutionUpgradePageViewMode { UpgradeSolution, UpgradeGinger, FailedUpgradeSolution }
+    
 
     /// <summary>
     /// Interaction logic for SolutionUpgradePage.xaml
@@ -66,7 +64,7 @@ namespace Ginger.SolutionWindows
             switch (mViewMode)
             {
                 case SolutionUpgradePageViewMode.UpgradeSolution:
-                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + RepositorySerializer.GetCurrentGingerVersion() + ") before continuing.";
+                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion + ") before continuing.";
 
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
@@ -185,8 +183,8 @@ namespace Ginger.SolutionWindows
                     //first copy to backup folder
                     string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
                     MakeSurePathExistforBakFile(BakFile);
-                    System.IO.File.Copy(filePath, BakFile, true);
-
+                        System.IO.File.Copy(filePath, BakFile, true);
+                    
                     //make sure backup was created
                     if (File.Exists(BakFile) == true)
                     {

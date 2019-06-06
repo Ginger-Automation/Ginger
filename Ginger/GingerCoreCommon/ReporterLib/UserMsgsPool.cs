@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.Common
         SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
         ErrorReadingRepositoryItem,
         EnvNotFound, SelectItemToAdd, CannotAddGinger,
-        ShortcutCreated,
+        ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
         SolutionFileNotFound, PlugInFileNotFound,
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
         MobileConnectionFailed, MobileRefreshScreenShotFailed, MobileShowElementDetailsFailed, MobileActionWasAdded,
@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.Common
         FolderExistsWithName, DownloadedSolutionFromSourceControl, SourceControlFileLockedByAnotherUser,
         SourceControlUpdateFailed, SourceControlCommitFailed, SourceControlChkInSucss, SourceControlChkInConflictHandledFailed, SourceControlGetLatestConflictHandledFailed, SourceControlChkInConflictHandled, SourceControlCheckInLockedByAnotherUser, SourceControlCheckInLockedByMe, SourceControlCheckInUnsavedFileChecked, FailedToUnlockFileDuringCheckIn, SourceControlChkInConfirmtion, SourceControlMissingSelectionToCheckIn, SourceControlResolveConflict, SureWantToDoRevert, SureWantToDoCheckIn,
         NoOptionalAgent, MissingActivityAppMapping,
-        SettingsChangeRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
+        SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
         ShareEnvAppWithAllEnvs, ShareEnvAppParamWithAllEnvs, CtrlSsaveEnvApp, CtrlSMissingItemToSave, FailedToSendEmail, FailedToExportBF,
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, ApplicationAgentNotMapped,
@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.Common
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
         LoseChangesWarn,
-
+        BFNotExistInDB,
         // Merged from GingerCore        
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
@@ -191,7 +191,8 @@ namespace Amdocs.Ginger.Common
             #endregion General Application Messages
 
             #region Settings
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SettingsChangeRequireRestart, new UserMsg(eUserMsgType.INFO, "Settings Change", "For the settings change to take affect you must restart Ginger.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SettingsChangeRequireRestart, new UserMsg(eUserMsgType.INFO, "Settings Change", "For the settings change to take affect you must '{0}' restart Ginger.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangesRequireRestart, new UserMsg(eUserMsgType.INFO, "Restart to apply", "The changes will be applied only after save and restart Ginger", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Settings
 
             #region Repository
@@ -487,6 +488,8 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ImageSize, new UserMsg(eUserMsgType.WARN, "Image Size", "Image Size should be less than 30 Kb", eUserMsgOption.OK, eUserMsgSelection.None));
 
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run Business Flow", "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None));
+
             #endregion Reports
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ApplicationNotFoundInEnvConfig, new UserMsg(eUserMsgType.ERROR, "Application Not Found In EnvConfig", "Application = {0}", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -499,7 +502,11 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CannotAddGinger, new UserMsg(eUserMsgType.ERROR, "Cannot Add Ginger", "Number of Gingers is limited to 12 Gingers.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on desktop - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on selected path - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreationFailed, new UserMsg(eUserMsgType.ERROR, "Shortcut creation Failed", "Cannot create shortcut.Please avoid special characters in the Name/Description. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.CannotRunShortcut, new UserMsg(eUserMsgType.ERROR, "Shortcut Execution Failed", "Cannot execute shortcut. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionFileNotFound, new UserMsg(eUserMsgType.ERROR, "Solution File Not Found", "Cannot find Solution File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 

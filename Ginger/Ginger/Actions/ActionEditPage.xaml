@@ -380,8 +380,6 @@
                 </Grid>
             </TabItem>
 
-
-
             <TabItem x:Name="HelpTab" Margin="32,0,-36,0"  >
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >

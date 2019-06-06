@@ -635,8 +635,7 @@ namespace Ginger.Variables
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
-        {
-            RoutedEventHandler closeHandler = null;
+        {            
             string closeContent = string.Empty;
 
             Button okBtn = new Button();

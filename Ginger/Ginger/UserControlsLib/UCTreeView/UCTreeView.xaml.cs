@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.Repository;
-using GingerWPF.DragDropLib;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -693,7 +692,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     currentItem = o.GetType();
 
-                    if (currentItem == searchItem)
+                    if (currentItem.GetType() == searchItem)
                     {
                         return TVI;
                     }
@@ -735,17 +734,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public void SelectFirstVisibleChildItem(ItemCollection treeItems, List<Type> childTypes)
         {
             foreach (TreeViewItem item in treeItems)
+            {
                 if (item.Visibility == Visibility.Visible)
                 {
-                    if (childTypes.Contains(item.Tag.GetType()))
+                    if (item.Tag != null && childTypes.Contains(item.Tag.GetType()))
                     {
                         item.Focus();
                         return;
                     }
 
                     if (item.HasItems)
+                    {
                         SelectFirstVisibleChildItem(item.Items, childTypes);
+                    }
                 }
+            }
         }
 
         public void DeleteItemAndSelectParent(ITreeViewItem NodeItem)

@@ -57,7 +57,7 @@ namespace Ginger.MenusLib
         {
             TwoLevelMenu twoLevelMenuGet = new TwoLevelMenu();
 
-            TopMenuItem runSetMenu = new TopMenuItem(eImageType.RunSet, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
+            TopMenuItem runSetMenu = new TopMenuItem(eImageType.RunSet, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSets), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
 

@@ -100,15 +100,15 @@ namespace GingerCore.Drivers.Common
             return Xpath;
         }
 
-        //Go up while not unique, try to add attr based on importnat prop and avoid long Xpath, 
-        //Smart = Name='abc' & ControlType=Button & ... small Xpath more props comb but uniqe
+        //Go up while not unique, try to add attr based on important prop and avoid long Xpath, 
+        //Smart = Name='abc' & ControlType=Button & ... small Xpath more props comb but unique
         public string GetElementXpathSmart(ElementInfo EI)
         {
             string SmartXPath = "";
-            // temp for now we return all the importnat properties which have value
+            // temp for now we return all the important properties which have value
             SmartXPath = mDriver.GetElementProperty(EI, mImportnatProperties[0]);
 
-            //TODO: test if uniqe in tree if yes return
+            //TODO: test if unique in tree if yes return
 
             // else  add more properties
             for (int i = 1; i < mImportnatProperties.Count; i++)
@@ -119,7 +119,7 @@ namespace GingerCore.Drivers.Common
                     SmartXPath += "[" + mImportnatProperties[i] + ":" + val + "]";
                 }
 
-                //TODO: test if uniqe in tree if yes return
+                //TODO: test if unique in tree if yes return
             }
             return SmartXPath;
         }
@@ -158,7 +158,7 @@ namespace GingerCore.Drivers.Common
 
                     XPath = XPath.Replace("%INDEX%", SIndex);
 
-                    //TODO: Decide to break if it is uniqe in parent.childs , otherwise add more props
+                    //TODO: Decide to break if it is unique in parent.childs , otherwise add more props
                     // TODO: check for indexes
                     break;
                 }                
@@ -202,7 +202,7 @@ namespace GingerCore.Drivers.Common
                     }
                     EI12 = mDriver.GetNextSibling(EI12);
                 }
-                //no index found so uniqe, no need for [index]
+                //no index found so unique, no need for [index]
             }
             return index;
         }
@@ -234,7 +234,7 @@ namespace GingerCore.Drivers.Common
                     }                   
                     else
                     {
-                        // Need to Find node in all descendent = Find anywhere, Xpath didn't start with '/'
+                        // Need to Find node in all descendant = Find anywhere, Xpath didn't start with '/'
                         EI = mDriver.GetRootElement();
                         EI = FindNodeAnywhere(EI,node);
                         if (EI == null)
@@ -259,8 +259,8 @@ namespace GingerCore.Drivers.Common
         }
 
 
-        // Find the first node in all descendent BaseElement that match the conditions, start search in BaseEleemnt Children, and drill down to children, childrent children etc.
-        // Return the first elemnt found
+        // Find the first node in all descendant BaseElement that match the conditions, start search in BaseEleemnt Children, and drill down to children, childrent children etc.
+        // Return the first element found
         // Scan the full try if needed
         // Recursive function
         private ElementInfo FindNodeAnywhere(ElementInfo BaseElement, string NodePath)
@@ -274,7 +274,7 @@ namespace GingerCore.Drivers.Common
                 EI = FindNode(EIChild, NodePath);
                 if (EI != null) 
                     return EI;
-                // Not found in Base Children let's drill down recursivley
+                // Not found in Base Children let's drill down recursively
                 EI = FindNodeAnywhere(EIChild, NodePath);
                 if (EI != null)
                     return EI;
@@ -331,7 +331,7 @@ namespace GingerCore.Drivers.Common
             //node can be 'Name' or '[LocalizedControlType:button]' or with index '[LocalizedControlType:button[3]]'
             // or multiple attrs, will handle later - [[LocalizedControlType:button][AutomationID:A123]...]
 
-            // Make sure it is like standars Xpath!!!
+            // Make sure it is like standard Xpath!!!
 
             // if no bracket then it is Name or first important property
 

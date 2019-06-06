@@ -240,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertible actions from activities", ex);
             }
             return lst;
         }
@@ -278,7 +278,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertible actions from activities", ex);
             }
             return lst;
         }
