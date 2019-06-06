@@ -211,13 +211,13 @@
                 <DockPanel x:Name="ValueExpression" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0" >
                     <Border Name="VEBorder" BorderThickness="1" BorderBrush="Black">
                         
-                        <TextBlock x:Name="txtValueExpression" TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" Margin="0,0,0,0"></TextBlock>
+                        <TextBlock x:Name="txtValueExpression" TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" Margin="0,0,0,0" ></TextBlock>
                     </Border>
                 </DockPanel>
                 <Label Name="ErrorLabel" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">Error</Label>
             </Grid>
         </StackPanel>        
         <Label Name="ValueLabel"  Grid.Row="7" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value:" Background="{StaticResource $BackgroundColor_LightGray}"/>        
-        <Actions:UCValueExpression x:Name="ValueUC" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
+        <Actions:UCValueExpression x:Name="ValueUC" DataContextChanged="ValueUC_DataContextChanged" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
     </Grid>
 </Page>

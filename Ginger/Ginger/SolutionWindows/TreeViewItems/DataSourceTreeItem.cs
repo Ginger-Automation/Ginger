@@ -373,6 +373,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Rename(object sender, RoutedEventArgs e)
         {
             RenameItem("DataSource Name:", DSDetails, DataSourceBase.Fields.Name);
+           
         }
         private void InitDSConnection()
         {

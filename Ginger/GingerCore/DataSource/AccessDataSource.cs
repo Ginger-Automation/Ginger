@@ -534,8 +534,8 @@ namespace GingerCore.DataSource
         {
             return GetQueryOutput("Select GINGER_KEY_NAME from " + mDSTableName + " WHERE GINGER_KEY_NAME is not null and Trim(GINGER_KEY_NAME) <> ''");
         }
-
-        public override void DeleteAll(List<object> AllItemsList)
+        
+        public override void DeleteAll(List<object> AllItemsList, string TName = null)
         {
             foreach (object o in AllItemsList)
             {

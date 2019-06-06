@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.DataSource
 {    
@@ -128,7 +130,7 @@ namespace GingerCore.DataSource
         public abstract void InitConnection();
         public abstract void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails);
 
-        public abstract void DeleteAll(List<object> AllItemsList);
+        public abstract void DeleteAll(List<object> AllItemsList, string TName=null);
         public abstract DataTable GetKeyName(string mDSTableName);
 
         public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
@@ -186,6 +188,84 @@ namespace GingerCore.DataSource
             get
             {
                 return nameof(this.Name);
+            }
+        }
+
+        public void UpdateDSNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
+        {
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
+
+                //Get the attr value
+                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                dynamic value = null;
+                try
+                {
+                    if (mi.MemberType == MemberTypes.Property)
+                    {
+                        if (PI.CanWrite)
+                        {
+                            value = PI.GetValue(item);
+                        }
+                    }
+                    else if (mi.MemberType == MemberTypes.Field)
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
+                }
+
+                if (value is IObservableList)
+                {
+                    List<dynamic> list = new List<dynamic>();
+                    foreach (object o in value)
+                        UpdateDSNameChangeInItem(o, prevVarName, newVarName, ref namechange);
+                }
+                else
+                {
+                    if (value != null)
+                    {
+                        if (mi.Name == "VariableName")
+                        {
+                            if (value == prevVarName)
+                                PI.SetValue(item, newVarName);
+                            namechange = true;
+                        }
+                        else if (mi.Name == "StoreToValue")
+                        {
+                            if (value == prevVarName)
+                                PI.SetValue(item, newVarName);
+                            else if (value.IndexOf("{Var Name=" + prevVarName + "}") > 0)
+                                PI.SetValue(item, value.Replace("{Var Name=" + prevVarName + "}", "{Var Name=" + newVarName + "}"));
+                            namechange = true;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                if (PI.CanWrite)
+                                {
+                                    string stringValue = value.ToString();
+                                    string variablePlaceHoler = "{Var Name=xx}";
+                                    if (stringValue.Contains(variablePlaceHoler.Replace("xx", prevVarName)))
+                                    {
+                                        PI.SetValue(item, stringValue.Replace(variablePlaceHoler.Replace("xx", prevVarName), variablePlaceHoler.Replace("xx", newVarName)));
+                                        namechange = true;
+                                    }
+                                }
+                            }
+                            catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        }
+                    }
+                }
             }
         }
     }

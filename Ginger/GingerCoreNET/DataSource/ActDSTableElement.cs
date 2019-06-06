@@ -206,8 +206,10 @@ namespace GingerCore.Actions
         public string VarName { get; set; }
 
         public string ValueUC { get; set; }
-        //[IsSerializedForLocalRepository]        
-        public ObservableList<ActDSConditon> WhereConditions = new ObservableList<ActDSConditon>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActDSConditon> WhereConditions { get;
+            set; }
 
         public enum eControlAction
         {
@@ -331,8 +333,9 @@ namespace GingerCore.Actions
         public string LocateColTitle{ get; set; }
         [IsSerializedForLocalRepository]
         public string LocateRowType { get; set; }
-        //[IsSerializedForLocalRepository]
-        public string LocateRowValue { get; set; }
+        [IsSerializedForLocalRepository]
+        public string LocateRowValue { get;
+            set; }
 
         string mExcelPath;
         public string ExcelPath
@@ -395,6 +398,10 @@ namespace GingerCore.Actions
 
         public void UpdateDSConditionColumns(List<string> mColName)
         {
+            if(WhereConditions==null)
+            {
+                WhereConditions = new ObservableList<ActDSConditon>();
+            }
             foreach(ActDSConditon ADSC in WhereConditions)
             {
                 ADSC.PossibleColumnValues = mColName;

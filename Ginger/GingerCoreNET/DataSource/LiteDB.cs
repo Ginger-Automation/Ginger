@@ -427,7 +427,8 @@ namespace GingerCoreNET.DataSource
             DataTable dataTable = new DataTable();
             using (var db = new LiteDatabase(mFilePath))
             {
-                var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
+                var results = db.GetCollection(query).Find(Query.All("GINGER_ID", Query.Ascending), 0).ToList();
+                
                 if (results.Count > 0)
                 {
                     var result = db.GetCollection<BsonDocument>(query);
@@ -458,10 +459,12 @@ namespace GingerCoreNET.DataSource
                                 }
                             }
                             dt.Rows.Add(dr);
+                            dt.DefaultView.Sort = "GINGER_ID";
 
                             DataTable aa = dt;
                             aa.TableName = query;
                             dataTable = aa;
+                            
                         }
                     }
                 }
@@ -618,6 +621,8 @@ namespace GingerCoreNET.DataSource
             {
                 db.RenameCollection(tableName, newTableName);
             }
+            bool changedwasDone = false;
+            this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref changedwasDone);
         }
 
         public override void RunQuery(string query)
@@ -737,6 +742,7 @@ namespace GingerCoreNET.DataSource
         {
             using (LiteDatabase db = new LiteDatabase(mFilePath))
             {
+                dataTable.DefaultView.Sort = "GINGER_ID";
                 var table = db.GetCollection(dataTable.ToString());
                 var doc = BsonMapper.Global.ToDocument(table);
 
@@ -763,7 +769,7 @@ namespace GingerCoreNET.DataSource
                     }
                 }
 
-                var result = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
+                var result = db.GetCollection(table.Name).Find(Query.All("GINGER_ID", Query.Ascending)).ToList();
 
                 if (dataTable.Rows.Count > result.Count)
                 {
@@ -805,6 +811,7 @@ namespace GingerCoreNET.DataSource
                 }
             }
             mDSTableDetails.DataTable.Rows.Add(dr);
+            mDSTableDetails.DataTable.DefaultView.Sort = "GINGER_ID";
         }
 
         public override void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList, DataSourceTable mDSTableDetails)
@@ -1008,16 +1015,18 @@ namespace GingerCoreNET.DataSource
                     }
                     break;
                 case eControlAction.DeleteAll:
-                    dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find");
-                    int c = dt.Rows.Count;
-                    int i = 0;
-                    while (i < c)
-                    {
-                        DataRow row = dt.Rows[i];
-                        string rowValue = row["GINGER_ID"].ToString();
-                        GetResult(Query + " GINGER_ID = \"" + rowValue + "\"");
-                        i++;
-                    }
+                    List<object> AllItemsList = null;
+                    DeleteAll(AllItemsList, actDSTable.DSTableName);
+                    //dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find");
+                    //int c = dt.Rows.Count;
+                    //int i = 0;
+                    //while (i < c)
+                    //{
+                    //    DataRow row = dt.Rows[i];
+                    //    string rowValue = row["GINGER_ID"].ToString();
+                    //    GetResult(Query + " GINGER_ID = \"" + rowValue + "\"");
+                    //    i++;
+                    //}
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
                 default:
@@ -1041,7 +1050,7 @@ namespace GingerCoreNET.DataSource
 
         public override string AddNewCustomizedTableQuery()
         {
-            return "GINGER_ID, GINGER_USED, GINGER_LAST_UPDATED_BY, GINGER_LAST_UPDATE_DATETIME";
+            return "GINGER_ID,GINGER_USED,GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME";
         }
 
         public override int GetRowCount(string TableName)
@@ -1064,11 +1073,23 @@ namespace GingerCoreNET.DataSource
             return GetQueryOutput("db."+mDSTableName +".select GINGER_KEY_NAME where GINGER_KEY_NAME != null");
         }
 
-        public override void DeleteAll(List<object> AllItemsList)
+        public override void DeleteAll(List<object> AllItemsList, string TName = null)
         {
-            foreach (object o in AllItemsList)
+            using (LiteDatabase db = new LiteDatabase(mFilePath))
             {
-                ((DataRowView)o).Delete();
+                var table = db.GetCollection(TName);
+                List<string> ColumnList = GetColumnList(TName);
+                table.Delete(Query.All());
+                List<BsonDocument> batch = new List<BsonDocument>();
+
+                string[] List = AddNewCustomizedTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var doc = new BsonDocument();
+                
+                    for(int i=0; i<ColumnList.Count;i++)
+                    {
+                        doc[List[i]] = "";
+                    }
+                table.Insert(doc);
             }
         }
     }

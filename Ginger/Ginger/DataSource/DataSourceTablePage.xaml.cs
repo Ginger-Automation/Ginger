@@ -250,7 +250,6 @@ namespace Ginger.DataSource
 
         private void SetGridData()
         {
-            
                 mDSTableDetails.DataTable = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name);
 
                 grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
@@ -302,11 +301,8 @@ namespace Ginger.DataSource
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
-                mDSTableDetails.DSC.DeleteAll(AllItemsList);
-                //foreach (object o in AllItemsList)
-                //{
-                //    ((DataRowView)o).Delete();
-                //}
+                mDSTableDetails.DSC.DeleteAll(AllItemsList, mDSTableDetails.Name);
+                RefreshGrid();
             }            
         }
         private void DuplicateRow(object sender, RoutedEventArgs e)

@@ -60,7 +60,8 @@ namespace Ginger.Actions
         bool bGridViewSet = false;
         object mObj;
         string mAttrName;
-
+        
+        
         private enum BaseWindow
         {
             ValueExpression,
@@ -86,6 +87,7 @@ namespace Ginger.Actions
 
             ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
             
+
             ControlActionPanel.Visibility = Visibility.Visible;
             ActionRow.Height = new GridLength(55);            
 
@@ -193,7 +195,7 @@ namespace Ginger.Actions
             string Query = "";
             string rowNum = "0";
             string DSTable = "";
-            mActDSTblElem.WhereConditions.Clear();
+            //mActDSTblElem.WhereConditions.Clear();
             try
             {
                 DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
@@ -418,6 +420,9 @@ namespace Ginger.Actions
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateColTitle);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowSelectorValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateRowValue);
+           
 
             if(mActDSTblElem == null || (mActDSTblElem.DSName ==null && mActDSTblElem.DSTableName == null) || (mActDSTblElem.DSName == "" && mActDSTblElem.DSTableName == "" ))
             {
@@ -446,6 +451,10 @@ namespace Ginger.Actions
             grdTableData.SetTitleLightStyle = true;
             SetConditionGridView();
             SetConditionGridData();
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Where, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByWhere);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NextAvailable, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByNextAvailable);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowNum, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByRowNum);
 
             grdCondition.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddWhereCondition));
             grdCondition.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteWhereCondition));
@@ -548,24 +557,26 @@ namespace Ginger.Actions
                 RowSelectorValue.Items.Add(i.ToString());
             }
             if(mRowCount >0)
-                RowSelectorValue.SelectedIndex = 0;     
-
-            WherePanel.Visibility = Visibility.Collapsed;           
+                RowSelectorValue.SelectedIndex = 0;
+            if (grdCondition.DataSourceList.Count == 0)
+            {
+                WherePanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void setColValList()
         {
             if (mColNames == null)
                 return;
-
-            if (cmbColumnValue.SelectedItem == null || GingerCore.General.CheckComboItems(cmbColumnValue,mColNames)== false)
-            {
-                cmbColumnValue.Items.Clear();
-                GingerCore.General.FillComboFromList(cmbColumnValue, mColNames);                
-                cmbColumnValue.SelectedIndex = 0;
-            }
-
+            string ColumnName = mActDSTblElem.LocateColTitle;
             
+                if (cmbColumnValue.SelectedItem == null || GingerCore.General.CheckComboItems(cmbColumnValue, mColNames) == false)
+                {
+                    cmbColumnValue.Items.Clear();
+                    GingerCore.General.FillComboFromList(cmbColumnValue, mColNames);
+                    cmbColumnValue.SelectedIndex = 0;
+                }
+            cmbColumnValue.Text = ColumnName;
             for (int i = 0; i < mColNames.Count; i++)
             {
                 if ((mColNames[i].ToString() == "GINGER_ID" || mColNames[i].ToString() == "GINGER_LAST_UPDATED_BY" || mColNames[i].ToString() == "GINGER_LAST_UPDATE_DATETIME") && ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() == "SetValue")
@@ -726,6 +737,8 @@ namespace Ginger.Actions
                 mActDSTblElem.AddDSCondition(defaultCond, mColNames[0], ActDSConditon.eOperator.Equals,"",mColNames);
                 UpdateValueExpression();
             }
+
+            int count = mActDSTblElem.WhereConditions.Count;
             UpdateValueExpression();
             SetIdentifierHeight();
         }
@@ -972,13 +985,16 @@ namespace Ginger.Actions
                         TBH.AddBoldText("Y");
                     else
                         TBH.AddBoldText("N");
-                    if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+                    if (ControlActionComboBox.SelectedValue != null)
                     {
-                        TBH.AddText(" Query QUERY=");
-                        TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim()+","+ExcelSheetName.ValueTextBox.Text.Trim());
-                        TBH.AddText("}");
-                        mActDSTblElem.ValueExp = TBH.GetText();
-                        return;
+                        if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+                        {
+                            TBH.AddText(" Query QUERY=");
+                            TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim() + "," + ExcelSheetName.ValueTextBox.Text.Trim());
+                            TBH.AddText("}");
+                            mActDSTblElem.ValueExp = TBH.GetText();
+                            return;
+                        }
                     }
                     if (ByQuery.IsChecked == true)
                     {
@@ -994,15 +1010,18 @@ namespace Ginger.Actions
                         TBH.AddText(" Query QUERY=");
                         TBH.AddText("db." + mDSTable.Name);
                         mActDSTblElem.IsKeyValueTable = true;
-                        if (ControlActionComboBox.SelectedValue.ToString() == "GetValue")
+                        if (ControlActionComboBox.SelectedValue != null)
                         {
-                            if (cmbKeyName.SelectedItem == null)
+                            if (ControlActionComboBox.SelectedValue.ToString() == "GetValue")
                             {
-                                TBH.AddText(".select GINGER_KET_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
-                            }
-                            else
-                            {
-                                TBH.AddText(".select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                if (cmbKeyName.SelectedItem == null)
+                                {
+                                    TBH.AddText(".select GINGER_KET_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                }
+                                else
+                                {
+                                    TBH.AddText(".select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                }
                             }
                         }
                         else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
@@ -1026,7 +1045,7 @@ namespace Ginger.Actions
                             {
                                 TBH.AddText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
                             }
-                            
+
                         }
                         else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
                         {
@@ -1180,6 +1199,7 @@ namespace Ginger.Actions
                                 }
                                 else if (Where.IsChecked == true)
                                 {
+                                    mActDSTblElem.ByWhere = true;
                                     if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
@@ -2028,6 +2048,11 @@ namespace Ginger.Actions
         {
             mActDSTblElem.ByQuery = false;
             UpdateValueExpression();
+        }
+
+        private void ValueUC_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
         }
     }
 }
