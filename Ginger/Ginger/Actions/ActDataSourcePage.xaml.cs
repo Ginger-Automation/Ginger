@@ -1243,14 +1243,14 @@ namespace Ginger.Actions
                                             }
                                             else
                                             {
-                                                wQuery = wQuery + " " + wCond + " " + wColVal + " = \"" + wRowVal + "\"";
+                                                wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal ;
                                             }
                                         }
                                         else if (wOpr == "NotEquals")
                                         {
                                             if (wColVal == "GINGER_ID")
                                             {
-                                                wQuery = wQuery + " " + wCond + " " + wColVal + " != " + wRowVal ;
+                                                wQuery = wQuery + " " + wCond + " " + wColVal + " != \"" + wRowVal + "\"";
                                             }
                                             else
                                             {
