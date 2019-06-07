@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -68,7 +69,7 @@ namespace UnitTests.NonUITests
             mDriver = new WebServicesDriver(mBF);
             mDriver.SaveRequestXML = true;
             mDriver.SavedXMLDirectoryPath = "~\\Documents";
-
+            mDriver.SecurityType = @"None";
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             wsAgent.Driver = mDriver;
@@ -83,14 +84,19 @@ namespace UnitTests.NonUITests
 
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);         
-
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.SolutionRepository = Amdocs.Ginger.CoreNET.Repository.GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
             
+        }
+        [TestCleanup]
+        public void TestMethodCleanUP()
+        {
+            mBF.Activities.ClearAll();
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -435,6 +441,61 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(6, actSoapUi.ActInputValues.Count);
             Assert.AreEqual(xmlFilePath, actSoapUi.ActInputValues[1].Value.ToString());
 
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void LegacyWebServiceToNewWebApiSoap_Converter_Test()
+        {
+            Activity oldActivity = new Activity();
+            oldActivity.Active = true;
+            oldActivity.ActivityName = "Legacy Web Service activity";
+            oldActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(oldActivity);
+
+            ActWebService actLegacyWebService = new ActWebService();
+
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"http://ws.cdyne.com/GetQuickQuote");
+
+            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML\stock.xml");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
+            
+            actLegacyWebService.FileName = "Web Service Action";
+            actLegacyWebService.FilePath = "Web Service Action";
+            actLegacyWebService.Active = true;
+            actLegacyWebService.AddNewReturnParams = true;
+           
+            mBF.Activities[0].Acts.Add(actLegacyWebService);
+            mDriver.StartDriver();
+            mGR.RunRunner();
+
+            Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
+            Assert.AreEqual(0,Convert.ToInt32(actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"GetQuickQuoteResult").Actual));
+
+            //Convert the legacy action
+            Activity newActivity = new Activity() { Active = true };
+            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
+            newActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(newActivity);
+
+            Act newAction = ((IObsoleteAction)actLegacyWebService).GetNewAction();
+            newAction.AddNewReturnParams = true;
+            newAction.Active = true;
+            newAction.ItemName = "Converted webapisoap action";
+            newActivity.Acts.Add((ActWebAPISoap)newAction);
+            mBF.Activities[1].Acts.Add(newAction);
+
+            //Assert converted action
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
+
+            //Run newAction
+            mGR.RunRunner();
+            
+            //assert newaction
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
         }
 
     }
