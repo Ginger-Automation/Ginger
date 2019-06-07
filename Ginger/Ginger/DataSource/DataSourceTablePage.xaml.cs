@@ -256,7 +256,6 @@ namespace Ginger.DataSource
                 {
                     Source = mDSTableDetails.DataTable
                 });
-                mDSTableDetails.DataTable.DefaultView.Sort = "GINGER_ID";
                 grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
            
         }

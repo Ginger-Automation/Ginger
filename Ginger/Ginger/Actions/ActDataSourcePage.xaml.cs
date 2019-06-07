@@ -86,8 +86,8 @@ namespace Ginger.Actions
             grdTableData.btnRefresh.Visibility = Visibility.Visible;
             grdTableData.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshTable));
 
-            ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam(ActInputValue.Fields.Value), true);
             
+            ValueUC.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem.GetOrCreateInputParam("Value"));
 
             ControlActionPanel.Visibility = Visibility.Visible;
             ActionRow.Height = new GridLength(55);            
@@ -98,6 +98,12 @@ namespace Ginger.Actions
             VEBorder.BorderThickness = new Thickness(0);
             if(VEOrg != "")
                 SetDataSourceVEParams(VEOrg);
+            ValueUC.ValueTextBox.TextChanged += ValueChanged;
+        }
+
+        private void ValueChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateValueExpression();
         }
 
         public ActDataSourcePage(SelectedContentArgs selectedContentArgs)
@@ -403,6 +409,10 @@ namespace Ginger.Actions
             }
             catch (Exception e)
             {
+                if (e.Message.Contains("Length cannot be less than zero."))
+                {
+                    return;
+                }
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 return;
             }
@@ -969,7 +979,7 @@ namespace Ginger.Actions
                 {
                     if (ValueUC != null)
                     {
-                        mActDSTblElem.ValueUC = ValueUC.ValueTextBox.Text;
+                        mActDSTblElem.ValueUC = mActDSTblElem.GetInputParamCalculatedValue("Value");
                     }
                     ErrorLabel.Content = "";
                     txtValueExpression.Text = string.Empty;
@@ -1022,39 +1032,39 @@ namespace Ginger.Actions
                                     TBH.AddText(".select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
                                 }
                             }
-                        }
-                        else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
-                        {
-                            if (cmbKeyName.SelectedItem == null)
-                            {
-                                TBH.AddText(".update GINGER_KET_VALUE = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
-                            }
-                            else
-                            {
-                                TBH.AddText(".update GINGER_KEY_VALUE = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
-                            }
-                        }
-                        else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
-                        {
-                            if (cmbKeyName.SelectedItem == null)
-                            {
-                                TBH.AddBoldText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
-                            }
-                            else
-                            {
-                                TBH.AddText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
-                            }
 
-                        }
-                        else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
-                        {
-                            TBH.AddBoldText(".count");
-                            TBH.AddText("}");
-                            mActDSTblElem.ValueExp = TBH.GetText();
+                            else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
+                            {
+                                if (cmbKeyName.SelectedItem == null)
+                                {
+                                    TBH.AddText(".update GINGER_KET_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                }
+                                else
+                                {
+                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                }
+                            }
+                            else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                            {
+                                if (cmbKeyName.SelectedItem == null)
+                                {
+                                    TBH.AddBoldText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                }
+                                else
+                                {
+                                    TBH.AddText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                }
 
-                            return;
+                            }
+                            else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
+                            {
+                                TBH.AddBoldText(".count");
+                                TBH.AddText("}");
+                                mActDSTblElem.ValueExp = TBH.GetText();
+
+                                return;
+                            }
                         }
-                        
                         TBH.AddText("}");
                         mActDSTblElem.ValueExp = TBH.GetText();
                         return;
@@ -1167,12 +1177,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_USED =\"False\"");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\" where GINGER_USED =\"False\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + ValueUC.ValueTextBox.Text + "\" where GINGER_USED =\"False\"");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\" where GINGER_USED =\"False\"");
                                         }
 
                                     }
@@ -1187,12 +1197,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + ValueUC.ValueTextBox.Text + "\"");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + ValueUC.ValueTextBox.Text + "\"");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\"");
                                         }
                                     }
                                 }
@@ -1203,12 +1213,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + ValueUC.ValueTextBox.Text + "\" where");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\" where");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + ValueUC.ValueTextBox.Text + "\" where");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\" where");
                                         }
 
                                     }
@@ -1229,11 +1239,11 @@ namespace Ginger.Actions
                                         {
                                             if (wColVal == "GINGER_ID")
                                             {
-                                                wQuery = wQuery + " " + wCond + " " + wColVal + " = \"" + wRowVal + "\"";
+                                                wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal ;
                                             }
                                             else
                                             {
-                                                wQuery = wQuery + " " + wCond + " " + wColVal + " =  \"" + wRowVal + "\"";
+                                                wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal ;
                                             }
                                         }
                                         else if (wOpr == "NotEquals")
@@ -2049,9 +2059,5 @@ namespace Ginger.Actions
             UpdateValueExpression();
         }
 
-        private void ValueUC_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
     }
 }

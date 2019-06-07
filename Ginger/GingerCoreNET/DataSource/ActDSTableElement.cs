@@ -205,6 +205,7 @@ namespace GingerCore.Actions
         
         public string VarName { get; set; }
 
+        [IsSerializedForLocalRepository]
         public string ValueUC { get; set; }
 
         [IsSerializedForLocalRepository]

@@ -218,6 +218,6 @@
             </Grid>
         </StackPanel>        
         <Label Name="ValueLabel"  Grid.Row="7" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value:" Background="{StaticResource $BackgroundColor_LightGray}"/>        
-        <Actions:UCValueExpression x:Name="ValueUC" DataContextChanged="ValueUC_DataContextChanged" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
+        <Actions:UCValueExpression x:Name="ValueUC" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
     </Grid>
 </Page>
