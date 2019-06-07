@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.REST;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -498,5 +499,63 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void LegacyRestActionToNewWebApiRest_Converter_Test()
+        {
+            Activity oldActivity = new Activity();
+            oldActivity.Active = true;
+            oldActivity.ActivityName = "Legacy Rest Service activity";
+            oldActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(oldActivity);
+
+            ActREST actLegacyRestService = new ActREST();
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.RequestType, ActREST.eRequestType.GET.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.ReqHttpVersion, ActREST.eHttpVersion.HTTPV10.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.ContentType, ActREST.eContentType.JSon.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.CookieMode, ActREST.eCookieMode.None.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.SecurityType, ActREST.eSercurityType.None.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.EndPointURL, @"https://jsonplaceholder.typicode.com/posts/1");
+
+            actLegacyRestService.FileName = "Web Rest Action";
+            actLegacyRestService.FilePath = "Web Rest Action";
+            actLegacyRestService.Active = true;
+            actLegacyRestService.AddNewReturnParams = true;
+
+            mBF.Activities[0].Acts.Add(actLegacyRestService);
+            mDriver.StartDriver();
+            mGR.RunRunner();
+
+            //Assert old action
+            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
+            var expected = actLegacyRestService.ReturnValues.FirstOrDefault(x =>x.Actual == "OK");
+            Assert.AreNotEqual(null, expected);
+
+            //Convert the legacy action
+            Activity newActivity = new Activity() { Active = true };
+            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
+            newActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(newActivity);
+
+            Act newAction = ((IObsoleteAction)actLegacyRestService).GetNewAction();
+            newAction.AddNewReturnParams = true;
+            newAction.Active = true;
+            newAction.ItemName = "Converted webapiRest action";
+            newActivity.Acts.Add((ActWebAPIRest)newAction);
+            mBF.Activities[1].Acts.Add(newAction);
+
+            //Assert converted action
+            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
+            var expected1 = actLegacyRestService.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(null, expected1);
+
+            //Run newAction
+            mGR.RunRunner();
+
+            //assert newaction
+            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
+            var expected2 = actLegacyRestService.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(null, expected2);
+        }
     }
 }
