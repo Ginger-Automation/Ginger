@@ -143,7 +143,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
                 TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
             }
-
+            TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
             AddSourceControlOptions(mContextMenu);
         }
 

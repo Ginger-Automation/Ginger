@@ -72,8 +72,18 @@ namespace GingerCore.Actions
             DataSourceBase DataSource = null;
             string outVal = "";
             foreach (DataSourceBase ds in DSList)
+            {
+                if (DSName == null)
+                {
+                    string[] Token = ValueExp.Split(new[] { "{DS Name=", " " }, StringSplitOptions.None);
+                    DSName = Token[1];
+                }
+
                 if (ds.Name == DSName)
+                {
                     DataSource = ds;
+                }
+            }
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();

@@ -287,6 +287,7 @@ namespace GingerCoreNET.DataSource
         public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName)
         {
             DataTable table = GetTable(TableName);
+            table.Columns.Remove("_id");
             //open file
             string excelFilepath = sExcelPath;
             excelFilepath = excelFilepath.Replace(@"~", amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder);
@@ -425,6 +426,7 @@ namespace GingerCoreNET.DataSource
         {
             List<string> mColumnNames = new List<string>();
             DataTable dataTable = new DataTable();
+            bool duplicate = false;
             using (var db = new LiteDatabase(mFilePath))
             { 
                 var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
@@ -453,6 +455,10 @@ namespace GingerCoreNET.DataSource
                                         {
                                             dr[property.Key] = "";
                                         }
+                                        else if (property.Value.AsString == "System.Data.DataRowCollection" || property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                        {
+                                            duplicate = true;
+                                        }
                                         else
                                         {
                                             dr[property.Key] = property.Value.AsString;
@@ -465,6 +471,10 @@ namespace GingerCoreNET.DataSource
 
                         DataTable aa = dt;
                         bool dosort = true;
+                        if (duplicate)
+                        {
+                            dt.Rows.RemoveAt(dt.Rows.Count - 1);
+                        }
                         DataTable dt2 = dt.Clone();
                         dt2.Columns["GINGER_ID"].DataType = Type.GetType("System.Int32");
 
