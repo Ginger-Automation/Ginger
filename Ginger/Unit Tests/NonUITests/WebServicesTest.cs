@@ -545,16 +545,16 @@ namespace UnitTests.NonUITests
             mBF.Activities[1].Acts.Add(newAction);
 
             //Assert converted action
-            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
-            var expected1 = actLegacyRestService.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            var expected1 = newAction.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
             Assert.AreNotEqual(null, expected1);
 
             //Run newAction
             mGR.RunRunner();
 
             //assert newaction
-            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
-            var expected2 = actLegacyRestService.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            var expected2 = newAction.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
             Assert.AreNotEqual(null, expected2);
         }
     }
