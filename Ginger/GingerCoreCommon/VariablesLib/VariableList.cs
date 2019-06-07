@@ -50,7 +50,12 @@ namespace GingerCore.Variables
 
         public override string GetFormula()
         {
-            return ValueList.Replace("\r\n", ",");
+            string List = null; 
+            if (ValueList != null)
+            {
+                List = ValueList.Replace("\r\n", ",");
+            }
+            return List;
         }
         
         public VariableList(string varb, List<string> lst)
@@ -61,13 +66,16 @@ namespace GingerCore.Variables
         
         public override void ResetValue()
         {
-            string[] listValues = Formula.Split(',');
-            if (listValues.Length == 0)
-                Value = string.Empty;
-            else
+            if (Formula != null)
             {
-                CurrentValueIndex = 0;
-                Value = listValues[CurrentValueIndex];
+                string[] listValues = Formula.Split(',');
+                if (listValues.Length == 0)
+                    Value = string.Empty;
+                else
+                {
+                    CurrentValueIndex = 0;
+                    Value = listValues[CurrentValueIndex];
+                }
             }
         }
 

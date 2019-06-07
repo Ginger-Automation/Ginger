@@ -37,6 +37,10 @@ namespace GingerCore.Variables
 
     public abstract class VariableBase : RepositoryItemBase
     {
+        public VariableBase()
+        {
+            ResetValue();
+        }
 
         public enum eSetValueOptions
         {
@@ -130,7 +134,7 @@ namespace GingerCore.Variables
 
         private string mValue;       
         //TODO: fixme value is temp and should not be serialized
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository]
         public virtual string Value
         {
             get
@@ -156,7 +160,8 @@ namespace GingerCore.Variables
                     if ((this is VariableSelectionList) == false) 
                     {
                             if(mFormula != null)
-                            this.ResetValue();
+                        { }
+                           // this.ResetValue();
                     }        
                     
                     OnPropertyChanged(nameof(Formula));
