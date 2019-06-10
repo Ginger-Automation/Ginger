@@ -757,7 +757,7 @@ namespace GingerCore
 
         public void AttachActivitiesGroupsAndActivities()
         {
-            //Free UnAttached Activities
+            //Free Activities which attached to not exist groups
             foreach (Activity activity in this.Activities)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
@@ -771,7 +771,7 @@ namespace GingerCore
                 }
             }
 
-            //Attach un attached Activities in correct order
+            //Attach Activities 
             foreach (Activity activity in this.Activities)
             {
                 if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
@@ -806,8 +806,23 @@ namespace GingerCore
                         }
                         if (activityGroupIsOutOfSync)
                         {
-                            ActivitiesGroup group = AddActivitiesGroup(new ActivitiesGroup() { Name = activity.ActivitiesGroupID + "2" });
-                            group.AddActivityToGroup(activity);
+                            //remove from previous group
+                            ActivitiesGroup oldGroup = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                            if (oldGroup != null)
+                            {
+                                oldGroup.RemoveActivityFromGroup(activity);
+                            }
+                            //attach to new group which will be with similar name like older one
+                            ActivitiesGroup alreadyAddedGroup = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID + "_2").FirstOrDefault();
+                            if (alreadyAddedGroup != null)
+                            {
+                                alreadyAddedGroup.AddActivityToGroup(activity);
+                            }
+                            else
+                            {
+                                ActivitiesGroup newGroup = AddActivitiesGroup(new ActivitiesGroup() { Name = activity.ActivitiesGroupID + "_2" });
+                                newGroup.AddActivityToGroup(activity);
+                            }
                         }
                     }
 

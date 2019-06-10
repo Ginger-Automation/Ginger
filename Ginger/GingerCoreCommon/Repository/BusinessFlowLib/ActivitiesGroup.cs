@@ -136,7 +136,9 @@ namespace GingerCore.Activities
         public void AddActivityToGroup(Activity activity)
         {
             if (activity == null)
+            {
                 return;
+            }
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
             activity.ActivitiesGroupID = this.Name;
