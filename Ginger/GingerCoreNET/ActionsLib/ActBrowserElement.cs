@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using GingerCore.Helpers;
-
 using Amdocs.Ginger.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace GingerCore.Actions
@@ -95,13 +93,16 @@ namespace GingerCore.Actions
             UrlPOM,
         }
 
-        [IsSerializedForLocalRepository]
+
         public eGotoURLType GotoURLRadioButton
         {
-            get { return gotoURLRadioButton; }
+            get {
+
+                return GetOrCreateInputParam<eGotoURLType>(Fields.GotoURLType);
+            }
             set
             {
-                gotoURLRadioButton = value;
+                GetOrCreateInputParam(Fields.GotoURLType).Value = value.ToString();
             }
         }
         private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
@@ -173,8 +174,19 @@ namespace GingerCore.Actions
         }
 
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction);
+            }
+            set
+            {
+                GetOrCreateInputParam(Fields.ControlAction).Value = value.ToString();
+                OnPropertyChanged(nameof(ControlAction));
+            }
+        }
 
         public override String ToString()
         {
@@ -278,6 +290,6 @@ namespace GingerCore.Actions
             }
         }
 
-       
+
     }
 }
