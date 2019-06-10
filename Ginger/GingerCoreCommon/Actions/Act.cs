@@ -659,6 +659,17 @@ namespace GingerCore.Actions
             return AIV;
         }
 
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        {
+
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+
+            TEnum result;
+            _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+
+            return result;
+
+        }
 
         //YW - removed as it was causing problem - need to rethink better.
         //public ActInputValueEnum GetOrCreateEnumInputParam(string Param, object DefaultValue = null)
