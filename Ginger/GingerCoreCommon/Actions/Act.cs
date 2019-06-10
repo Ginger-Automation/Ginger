@@ -176,32 +176,31 @@ namespace GingerCore.Actions
             }
         }
 
-        private eLocateBy mLocateBy;
-
-        [IsSerializedForLocalRepository]
-        public eLocateBy LocateBy
+        public eLocateBy ControlAction
         {
-            get { return mLocateBy; }
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+            }
             set
             {
-                if (mLocateBy != value)
-                {
-                    mLocateBy = value;
-                    OnPropertyChanged(Fields.LocateBy);
-                    OnPropertyChanged(Fields.Details);
-                }
+                GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
+                OnPropertyChanged(Fields.LocateBy);
+                OnPropertyChanged(Fields.Details);
             }
         }
 
-
-        private string mLocateValue;
-        [IsSerializedForLocalRepository]
+     
+     
         public string LocateValue
         {
-            get { return mLocateValue; }
+            get
+            {
+                return GetOrCreateInputParam(Fields.LocateValue).Value;
+            }
             set
             {
-                mLocateValue = value;
+                GetOrCreateInputParam(Fields.LocateValue).Value = value.ToString();
                 OnPropertyChanged(Fields.LocateValue);
                 OnPropertyChanged(Fields.Details);
             }
