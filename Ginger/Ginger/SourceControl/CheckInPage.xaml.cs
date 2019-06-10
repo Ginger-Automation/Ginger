@@ -292,7 +292,10 @@ namespace Ginger.SourceControl
                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                     {
                         RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
-                        repoFolder.RefreshFolderAndChildElementsSourceControlStatus();
+                        if(repoFolder != null)
+                        {
+                            repoFolder.RefreshFolderAndChildElementsSourceControlStatus();
+                        }                        
 
                         AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
                     }
@@ -312,7 +315,6 @@ namespace Ginger.SourceControl
                     AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
                 }
             }
-
             //refresh parent folders
             foreach (string folder in parentFolders)
             {

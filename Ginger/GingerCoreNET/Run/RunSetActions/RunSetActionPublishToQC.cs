@@ -122,6 +122,6 @@ namespace Ginger.Run.RunSetActions
 
         
 
-        public override string Type { get { return "Publish to ALM"; } }
+        public override string Type { get { return "Publish Execution Results to ALM"; } }
     }
 }

@@ -255,7 +255,10 @@ namespace Ginger.Actions
         {  
             if (e.PropertyName == "CurrentItem")
             {
-                mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
+                if (mContext != null && mContext.Runner != null && grdActions.CurrentItem != null)
+                {
+                    mContext.Runner.HighlightActElement((Act)grdActions.CurrentItem);
+                }
             }            
         }
 
@@ -284,6 +287,7 @@ namespace Ginger.Actions
                 mBusinessFlow.PropertyChanged += BusinessFlowPropertyChanged;
             }
             GingerCore.General.DoEvents();
+            grdActions.ClearFilters();
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)

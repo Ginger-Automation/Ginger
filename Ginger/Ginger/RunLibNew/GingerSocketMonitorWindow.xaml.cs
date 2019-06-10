@@ -16,47 +16,53 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.RunLib;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 
-namespace GingerCore.Drivers.CommunicationProtocol
+namespace Ginger.Drivers.CommunicationProtocol
 {
     /// <summary>
     /// Interaction logic for GingerSocketMonitorWindow.xaml
     /// </summary>
-    public partial class GingerSocketMonitorWindow : Window
+    public partial class GingerSocketMonitorWindow : Window, IGingerNodeMonitor
     {
-        GingerSocketClient2 mGingerSocketClient;
-        public GingerSocketMonitorWindow(GingerSocketClient2 GS)
+        GingerNodeProxy mGingerNodeProxy;
+        public ObservableList<GingerSocketLog> GingerSocketLogs { get; set; }
+
+        public GingerSocketMonitorWindow(GingerNodeProxy gingerNodeProxy)
         {
             InitializeComponent();
             MessageLabel.Visibility = Visibility.Collapsed;
-            mGingerSocketClient = GS;
+            mGingerNodeProxy = gingerNodeProxy;            
         }
 
-        private void GingerSocketLogs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void StartRecording()
         {
+            mGingerNodeProxy.StartRecordingSocketTraffic();                        
         }
+      
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
-        {
+        {             
             NewPayLoad PL = new NewPayLoad(PayLoadNameTextBox.Text);
             PL.ClosePackage();
-            mGingerSocketClient.SendRequestPayLoad(PL);
+            mGingerNodeProxy.SendRequestPayLoad(PL);
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
+            GingerSocketLogs.Clear();
         }
 
         private void ResendButton_Click(object sender, RoutedEventArgs e)
         {
-            NewGingerSocketLog GSL = (NewGingerSocketLog)MainGrid.SelectedItem;            
-                        
-            mGingerSocketClient.SendRequestPayLoad(GSL.PayLoad);
+            GingerSocketLog GSL = (GingerSocketLog)MainListView.SelectedItem;
+            mGingerNodeProxy.SendRequestPayLoad(GSL.PayLoad);
         }
 
         public void ShowMessage(string txt)
@@ -77,6 +83,32 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 Thread.Sleep(100);
             }
             this.Close();
+        }
+        
+
+        public void ShowMonitor(GingerNodeProxy gingerNodeProxy)
+        {
+            GingerSocketLogs = new ObservableList<GingerSocketLog>();
+            MainListView.ItemsSource = GingerSocketLogs;            
+            this.Show();
+        }
+
+        public void Add(GingerSocketLog gingerSocketLog)
+        {
+            Dispatcher.Invoke(() => {
+                GingerSocketLogs.Add(gingerSocketLog);
+            });
+        }
+
+        public void CloseMonitor()
+        {
+            DelayedClose();            
+        }
+
+        private void MainListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            GingerSocketLog GSL = (GingerSocketLog)MainListView.SelectedItem;
+            PacketInfoTextBlock.Text = GSL.Info;
         }
     }
 }

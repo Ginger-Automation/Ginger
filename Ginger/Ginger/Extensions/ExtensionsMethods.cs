@@ -22,6 +22,7 @@ using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.ValidationRules;
 using Ginger.Actions;
 using Ginger.Agents;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,89 +37,89 @@ namespace Ginger
 {
     //TODO: Rename to Controls Extension Methods
     public static class ExtensionMethods
+    {
+        private static Action EmptyDelegate = delegate () { };
+
+        // all Controls of type UIElement
+        public static void Refresh(this UIElement uiElement)
         {
-            private static Action EmptyDelegate = delegate() { };
-
-            // all Controls of type UIElement
-            public static void Refresh(this UIElement uiElement)
+            try
             {
-                try
-                {
-                    uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
-                }
-                catch(Exception ex)
-                {
+                uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
+            }
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
-                }
-
             }
 
-            // ------------------------------------------------------------
-            // Combo Box
-            // ------------------------------------------------------------
-            
-            // Bind ComboBox to enum type field, list of valid values are all enum of the field selected
-            public static void BindControl(this ComboBox ComboBox, Object obj, string Field)
-            {
-                // Get the current value so we can make it selected
-                PropertyInfo PI = obj.GetType().GetProperty(Field);
-                object CurrentFieldEnumValue = PI.GetValue(obj);
-                if (CurrentFieldEnumValue == null || CurrentFieldEnumValue.GetType() == typeof(string))
-                {
-                    // if it's string like in Excel Sheet name combo then do binding to the text
-                    // or we can ask for function call to return list of values - TODO: later if we need Val/text
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, obj, Field, BindingMode.TwoWay);
-                }
-                else
-                {
-                    GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-                }
-            }
+        }
 
-            // Bind Combo for enum type, but provide the subset list of enums/valid values to show
-            public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+        // ------------------------------------------------------------
+        // Combo Box
+        // ------------------------------------------------------------
+
+        // Bind ComboBox to enum type field, list of valid values are all enum of the field selected
+        public static void BindControl(this ComboBox ComboBox, Object obj, string Field)
+        {
+            // Get the current value so we can make it selected
+            PropertyInfo PI = obj.GetType().GetProperty(Field);
+            object CurrentFieldEnumValue = PI.GetValue(obj);
+            if (CurrentFieldEnumValue == null || CurrentFieldEnumValue.GetType() == typeof(string))
             {
+                // if it's string like in Excel Sheet name combo then do binding to the text
+                // or we can ask for function call to return list of values - TODO: later if we need Val/text
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, obj, Field, BindingMode.TwoWay);
+            }
+            else
+            {
+                GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-                List<object> l = new List<object>();
-                foreach (var v in enumslist)
-                {
-                    l.Add(v);
-                }
-                
-                // Get yhe current value so it will be sleected in the combo after the list created
-                PropertyInfo PI = obj.GetType().GetProperty(Field);
-                object CurrentFieldEnumValue = PI.GetValue(obj);                
-
-                GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, l);                 
             }
+        }
 
-            // Bind Combo for enum type, but provide the subset list of enums/valid values to show
-            // also using grouping on results, according to 
-            public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+        // Bind Combo for enum type, but provide the subset list of enums/valid values to show
+        public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+        {
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+            List<object> l = new List<object>();
+            foreach (var v in enumslist)
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
-                List<GingerCore.General.ComboGroupedEnumItem> l = new List<GingerCore.General.ComboGroupedEnumItem>();
-                foreach (var v in enumslist)
-                {
-                    GingerCore.General.ComboGroupedEnumItem item = new GingerCore.General.ComboGroupedEnumItem();
-                    item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
-                    item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v); 
-                    item.Value = v;
-
-                    l.Add(item);
-                }
-
-                // Get yhe current value so it will be sleected in the combo after the list created
-                PropertyInfo PI = obj.GetType().GetProperty(Field);
-                object CurrentFieldEnumValue = PI.GetValue(obj);
-
-                ListCollectionView lcv = new ListCollectionView(l);
-                lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
-                lcv.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
-                
-                GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, null, true, lcv);
+                l.Add(v);
             }
+
+            // Get yhe current value so it will be sleected in the combo after the list created
+            PropertyInfo PI = obj.GetType().GetProperty(Field);
+            object CurrentFieldEnumValue = PI.GetValue(obj);
+
+            GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, l);
+        }
+
+        // Bind Combo for enum type, but provide the subset list of enums/valid values to show
+        // also using grouping on results, according to 
+        public static void BindControlWithGrouping(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+        {
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
+            List<ComboGroupedEnumItem> l = new List<ComboGroupedEnumItem>();
+            foreach (var v in enumslist)
+            {
+                ComboGroupedEnumItem item = new ComboGroupedEnumItem();
+                item.text = GingerCore.General.GetEnumValueDescription(v.GetType(), v);
+                item.Category = GingerCore.General.GetEnumDescription(v.GetType(), v);
+                item.Value = v;
+
+                l.Add(item);
+            }
+
+            // Get yhe current value so it will be sleected in the combo after the list created
+            PropertyInfo PI = obj.GetType().GetProperty(Field);
+            object CurrentFieldEnumValue = PI.GetValue(obj);
+
+            ListCollectionView lcv = new ListCollectionView(l);
+            lcv.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            lcv.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+
+            GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, null, true, lcv);
+        }
 
         /// <summary>
         /// Bind the combo box to ObservableList 
@@ -139,7 +140,7 @@ namespace Ginger
             //ControlsBinding.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);   
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, bindingMode);
         }
-     
+
         // ------------------------------------------------------------
         // Validation rules
         // ------------------------------------------------------------
@@ -189,13 +190,13 @@ namespace Ginger
         // ------------------------------------------------------------
         public static void BindControl(this ComboBox ComboBox, dynamic enumslist)
         {
-                List<object> l = new List<object>();
-                foreach (var v in enumslist)
-                {
-                    l.Add(v);
-                }
-                // Get yhe current value so it will be sleected in the combo after the list created
-                GingerCore.General.FillComboFromEnumObj(ComboBox, l[0], l);
+            List<object> l = new List<object>();
+            foreach (var v in enumslist)
+            {
+                l.Add(v);
+            }
+            // Get yhe current value so it will be sleected in the combo after the list created
+            GingerCore.General.FillComboFromEnumObj(ComboBox, l[0], l);
         }
         public static void BindControl(this TextBox TextBox, Object obj, string Field, BindingMode bm = BindingMode.TwoWay)
         {
@@ -208,7 +209,7 @@ namespace Ginger
         }
 
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
-        {                
+        {
             TextBox.BindControl(AIV, ActInputValue.Fields.Value);
         }
 
@@ -237,13 +238,13 @@ namespace Ginger
         public static void AddValidationRule(this ucAgentControl agentControl, ValidationRule validationRule)
         {
             BindingExpression bd = null;
-            
+
             bd = agentControl.GetBindingExpression(ucAgentControl.SelectedAgentProperty);
             if (bd != null)
             {
                 AddValidation(agentControl, ucAgentControl.SelectedAgentProperty, validationRule);
                 return;
-            }           
+            }
 
             throw new Exception("trying to add rule to AgentControl user control which is not binded - " + agentControl.Name);
         }
@@ -272,8 +273,8 @@ namespace Ginger
         // ------------------------------------------------------------
         public static void BindControl(this CheckBox checkBox, Object obj, string field)
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(checkBox, CheckBox.IsCheckedProperty, obj,  field);
-            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(checkBox, CheckBox.IsCheckedProperty, obj, field);
+
         }
 
 
@@ -366,7 +367,7 @@ namespace Ginger
             }
 
             bd.ParentBinding.NotifyOnValidationError = true;
-          
+
 
             // This Xaml is being created in code
             //
@@ -413,13 +414,26 @@ namespace Ginger
         {
             //try
             //{
-                BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
-                bd.ParentBinding.ValidationRules.Clear();
+            BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
+            bd.ParentBinding.ValidationRules.Clear();
             //}
             //catch (Exception ex)
             //{
             //    Reporter.ToLog(eAppReporterLogLevel.WARN, "Failed to clear control validations", ex, true, true)
             // }
+        }
+
+        public static ValidationRule GetValidationRule(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty, Type type)
+        {
+            BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
+            foreach(ValidationRule vr in bd.ParentBinding.ValidationRules)
+            {
+                if(vr.GetType() == type)
+                {
+                    return vr;
+                }                
+            }
+            return null;
         }
 
     }

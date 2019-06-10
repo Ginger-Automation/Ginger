@@ -67,6 +67,7 @@ namespace UnitTests.UITests
             mBF.CurrentActivity.TargetApplication = "WebApp";
             mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
             mDriver.AutoDetect = true;
+            mDriver.HttpServerTimeOut = 60;
             mDriver.StartDriver();
 
             Agent a = new Agent();
@@ -89,6 +90,13 @@ namespace UnitTests.UITests
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+        }
+
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            mBF.CurrentActivity.Acts.ClearAll();
         }
 
         [TestMethod]
@@ -274,7 +282,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
 
-
+     
         [TestMethod]
         public void CloseTabExceptByTitle()
         {

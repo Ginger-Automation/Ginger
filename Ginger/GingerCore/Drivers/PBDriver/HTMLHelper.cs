@@ -1093,7 +1093,7 @@ namespace GingerCore.Drivers.PBDriver
                 string elementId = getElementId(elem);
                 if (elementId == string.Empty)
                 {
-                    return "Error - Element's id doesn't exsits.";
+                    return "Error - Element's id doesn't exists.";
                 }
                 ((IHTMLElement2)elem).focus();
                 string specialEventScript = GetFireSpecialEventScript("document.getElementById", value, elementId);
@@ -1238,7 +1238,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception in init Frame", ex);
+                Reporter.ToLog(eLogLevel.WARN, "Exception in Init Frame", ex);
                 return "false";
             }
         }
@@ -1968,7 +1968,7 @@ namespace GingerCore.Drivers.PBDriver
                     childNode = (IHTMLDOMNode)obj;
                     if (object.ReferenceEquals(childNode.previousSibling, null)) return null;
                     childNode = childNode.previousSibling;
-                    #region Refering to IFrame Elements
+                    #region Referring to IFrame Elements
                     if (ReferenceEquals(childNode, null))
                         return null;
                     #endregion
@@ -2015,7 +2015,7 @@ namespace GingerCore.Drivers.PBDriver
                     elem23 = (IHTMLDOMNode)obj;
                     if (object.ReferenceEquals(elem23.nextSibling, null)) return null;
                     elem23 = elem23.nextSibling;
-                    #region Refering to IFrame Elements
+                    #region Referring to IFrame Elements
                     if (object.ReferenceEquals(elem23, null))
                         return null;
                     #endregion

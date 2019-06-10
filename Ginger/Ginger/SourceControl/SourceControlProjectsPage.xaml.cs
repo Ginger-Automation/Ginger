@@ -277,7 +277,7 @@ namespace Ginger.SourceControl
             string SoFileName = CheckForSolutionFileName(Path);
             if (System.IO.File.Exists(SoFileName))
             {
-                App.SetSolution(System.IO.Path.GetDirectoryName(SoFileName));
+                WorkSpace.Instance.OpenSolution(System.IO.Path.GetDirectoryName(SoFileName));
             }
             else
             {

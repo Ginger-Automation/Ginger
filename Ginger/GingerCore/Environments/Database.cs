@@ -32,6 +32,8 @@ using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
 using Amdocs.Ginger.Common.InterfacesLib;
+using MongoDB.Bson;
+using MongoDB.Driver;
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase, IDatabase
@@ -47,6 +49,7 @@ namespace GingerCore.Environments
             PostgreSQL,
             MySQL,
             Couchbase,
+            MongoDb,
         }
 
         public enum eConfigType
@@ -273,6 +276,7 @@ namespace GingerCore.Environments
                 {
                     connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + ";PWD=" + deCryptValue;
                 }
+                
             }
 
             return connStr;
@@ -409,8 +413,10 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
                         }
-                        else { return false; }
-                        break;
+                        else
+                        {
+                            return false;
+                        }                        
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
                         bool isConnectionCB;
@@ -420,14 +426,30 @@ namespace GingerCore.Environments
                             LastConnectionUsedTime = DateTime.Now;
                             return true;
                         }
-                        else { return false; }
-                        break;
+                        else
+                        {
+                            return false;
+                        }
+                        
 
                     case eDBTypes.MySQL:
                         oConn = new MySqlConnection();
                         oConn.ConnectionString = connectConnectionString;
                         oConn.Open();
                         break;
+                    case eDBTypes.MongoDb:
+                        bool isConnectionMDB;
+                        GingerMongoDb MongoDriver = new GingerMongoDb(this);
+                        isConnectionMDB = MongoDriver.Connect();
+                        if (isConnectionMDB == true)
+                        {
+                            LastConnectionUsedTime = DateTime.Now;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                 }
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
                 {
@@ -458,6 +480,10 @@ namespace GingerCore.Environments
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
+            }
+            finally
+            {
+                oConn?.Dispose();
             }
         }
 
@@ -497,6 +523,12 @@ namespace GingerCore.Environments
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCouchbase(this);
+                        rc = NoSqlDriver.GetTableList(Keyspace);
+                    }
+                    else if (DBType == Database.eDBTypes.MongoDb)
+                    {
+                        NoSqlBase.NoSqlBase NoSqlDriver = null;
+                        NoSqlDriver = new GingerMongoDb(this);
                         rc = NoSqlDriver.GetTableList(Keyspace);
                     }
                     else
@@ -542,7 +574,7 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra))
+            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
             {
                 return rc;
             }
@@ -555,6 +587,12 @@ namespace GingerCore.Environments
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(this);
+                rc = NoSqlDriver.GetColumnList(table);
+            }
+            else if (DBType == Database.eDBTypes.MongoDb)
+            {
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerMongoDb(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else 

@@ -25,6 +25,8 @@ using System.Reflection;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
+    // Being used by Plugin service code to start the service
+
     public class GingerNodeStarter : IDisposable
     {
 

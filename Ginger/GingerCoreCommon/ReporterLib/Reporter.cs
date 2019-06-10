@@ -20,18 +20,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace Amdocs.Ginger.Common
 {
-    public class Reporter 
-    {        
+    public class Reporter
+    {
         public static WorkSpaceReporterBase WorkSpaceReporter { get; set; }
 
         public static ReporterData ReporterData = new ReporterData();
-                
+
         public static bool ReportAllAlsoToConsole { get; set; }
 
 
@@ -39,7 +37,7 @@ namespace Amdocs.Ginger.Common
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (ReportAllAlsoToConsole) 
+            if (ReportAllAlsoToConsole)
             {
                 ToConsole(logLevel, messageToLog, exceptionToLog);
             }
@@ -53,7 +51,7 @@ namespace Amdocs.Ginger.Common
             {
                 ReporterData.ErrorCounter++;
             }
-           
+
             WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
         }
         #endregion ToLog
@@ -86,8 +84,8 @@ namespace Amdocs.Ginger.Common
                         mess += o.ToString() + " ";
                     }
 
-                    string txt = messageKey.ToString() + " - " + mess + "{Error message key not found!}" ;
-                    WorkSpaceReporter.ToUser(txt, "Ginger",  eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
+                    string txt = messageKey.ToString() + " - " + mess + "{Error message key not found!}";
+                    WorkSpaceReporter.ToUser(txt, "Ginger", eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
 
                     ToLog(eLogLevel.WARN, "The user message with key: '" + messageKey + "' was not found! and won't show to the user!");
                     return eUserMsgSelection.None;
@@ -122,7 +120,7 @@ namespace Amdocs.Ginger.Common
                 {
                     messageText = messageToShow.Message;
                 }
-                                
+
                 if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
                     ToLog(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
@@ -133,7 +131,7 @@ namespace Amdocs.Ginger.Common
                 }
 
                 //show the messege and return user selection
-                eUserMsgSelection userSelection = WorkSpaceReporter.ToUser(messageText, messageToShow.Caption, messageToShow.SelectionOptions, messageImage, messageToShow.DefualtSelectionOption);                
+                eUserMsgSelection userSelection = WorkSpaceReporter.ToUser(messageText, messageToShow.Caption, messageToShow.SelectionOptions, messageImage, messageToShow.DefualtSelectionOption);
 
                 if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
@@ -156,9 +154,9 @@ namespace Amdocs.Ginger.Common
                 {
                     ToConsole(eLogLevel.ERROR, txt, ex);
                 }
-                
+
                 WorkSpaceReporter.ToUser(txt, "Ginger", eUserMsgOption.OK, eUserMsgIcon.Information, eUserMsgSelection.OK);
-                
+
                 return eUserMsgSelection.None;
             }
         }
@@ -171,10 +169,10 @@ namespace Amdocs.Ginger.Common
         static Stopwatch mLastStatusTime = new Stopwatch();
 
         public static void ToStatus(eStatusMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
-         {            
+        {
             StatusMsg messageToShow = null;
             string messageContent = string.Empty;
-            
+
             try
             {
                 // TODO: use TryGet
@@ -190,7 +188,7 @@ namespace Amdocs.Ginger.Common
                     foreach (object o in messageArgs)
                     {
                         mess += o.ToString() + " ";
-                    }                    
+                    }
                     ToUser(eUserMsgKey.StaticErrorMessage, "Cannot find Status message key: " + messageKey);
                     ToLog(eLogLevel.ERROR, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
@@ -210,7 +208,7 @@ namespace Amdocs.Ginger.Common
                 {
                     ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
                 }
-            
+
                 WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
                 mLastStatusTime.Start();
             }
@@ -227,9 +225,9 @@ namespace Amdocs.Ginger.Common
             if (bClosing)
             {
                 return;
-            }            
-        
-            if(mLastStatusTime.IsRunning)  
+            }
+
+            if (mLastStatusTime.IsRunning)
             {
                 bClosing = true;
                 // let the message show for at least one second
@@ -238,7 +236,7 @@ namespace Amdocs.Ginger.Common
                 timer.AutoReset = false; // Stops it from repeating
                 timer.Elapsed += new ElapsedEventHandler(HideMessage_Event);
                 timer.Start();
-            }          
+            }
 
         }
 
@@ -257,7 +255,7 @@ namespace Amdocs.Ginger.Common
         {
             try
             {
-                string msg = messageToConsole;                
+                string msg = messageToConsole;
                 if (exceptionToConsole != null)
                 {
                     string excFullInfo = "Error:" + exceptionToConsole.Message + Environment.NewLine;
@@ -272,60 +270,10 @@ namespace Amdocs.Ginger.Common
             {
                 ToLog(eLogLevel.ERROR, "Failed to report to Console", ex);
             }
-        }        
+        }
         #endregion ToConsole
 
 
-        
-        //static StringBuilder dt()
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss - "));
-        //    return sb;
-        //}
 
-
-        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //public static void ToTrace(string action, string info)
-        //{
-        //    StringBuilder sb = dt();
-        //    sb.Append(action);
-        //    sb.Append(info);
-        //    Trace.WriteLine(sb.ToString());
-        //}
-
-
-        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //public static Stopwatch ToTraceStart(string action, string info)
-        //{
-        //    Trace.WriteLine("{");
-        //    Trace.Indent();            
-        //    StringBuilder sb = dt();
-        //    sb.Append(action);
-        //    sb.Append(", ");
-        //    sb.Append(info);
-        //    sb.Append("*** START ***");
-        //    Trace.WriteLine(sb.ToString());         
-        //    Stopwatch st = new Stopwatch();
-        //    st.Start();
-        //    return st;
-        //}
-
-        ////???????????????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //public static void ToTraceEnd(string action, string info, Stopwatch st)
-        //{            
-        //    st.Stop();
-            
-        //    StringBuilder sb = dt();
-        //    sb.Append(action);
-        //    sb.Append(", ");
-        //    sb.Append(info);
-        //    sb.Append(", Elasped=");
-        //    sb.Append(st.ElapsedMilliseconds);
-        //    sb.Append(" *** END ***");
-        //    Trace.WriteLine(sb.ToString());                        
-        //    Trace.Unindent();
-        //    Trace.WriteLine("}");
-        //}
-    }    
+    }
 }

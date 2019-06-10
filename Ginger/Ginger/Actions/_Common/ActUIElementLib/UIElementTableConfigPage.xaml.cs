@@ -16,21 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
+using GingerCore.Helpers;
+using GingerCore.Platforms.PlatformsInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Helpers;
-using GingerCore;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCore.Drivers.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -53,7 +54,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ActEditPage
         }
 
-        List<GingerCore.General.ComboItem> operationTypeList;        
+        List<ComboItem> operationTypeList;        
 
         public UIElementTableConfigPage(ActUIElement Act, PlatformInfoBase Platform)
         {
@@ -161,9 +162,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                 ActUIElement.eElementAction selectedSubElementAction;
 
-                if (Enum.TryParse(((GingerCore.General.ComboItem)SubElementActionComboBox.ComboBox.SelectedItem).Value.ToString(), out selectedSubElementAction))
+                if (Enum.TryParse(((ComboItem)SubElementActionComboBox.ComboBox.SelectedItem).Value.ToString(), out selectedSubElementAction))
                 {
-                    operationTypeList = mPlatform.GetTableControlActions(selectedSubElementAction).Select(x => new GingerCore.General.ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
+                    operationTypeList = mPlatform.GetTableControlActions(selectedSubElementAction).Select(x => new ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
                     ControlActionComboBox.UpdateComboItems(operationTypeList);
 
                     if (selectedSubElementAction == ActUIElement.eElementAction.TableCellAction)
@@ -221,7 +222,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SubElementTypeComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.SubElementType),
                 mPlatform.GetSubElementType(mAct.ElementType).ToList(), isVENeeded: false);
 
-                operationTypeList = new List<GingerCore.General.ComboItem>();
+                operationTypeList = new List<ComboItem>();
                 ActUIElement.eSubElementType elementType;
                 if (Enum.TryParse(mAct.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementType), out elementType))
                 {
@@ -235,12 +236,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                 if (Enum.TryParse(mAct.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementAction), out selectedSubElementAction))
                 {
-                    operationTypeList = mPlatform.GetTableControlActions(selectedSubElementAction).Select(x => new GingerCore.General.ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
+                    operationTypeList = mPlatform.GetTableControlActions(selectedSubElementAction).Select(x => new ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
                 }
             }
             else
             {
-                operationTypeList = mPlatform.GetTableControlActions(mAct.ElementAction).Select(x => new GingerCore.General.ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
+                operationTypeList = mPlatform.GetTableControlActions(mAct.ElementAction).Select(x => new ComboItem() { Value = x.ToString(), text = x.ToString() }).ToList();
             }
             ControlActionComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ControlAction), operationTypeList, isVENeeded: true, UCselectionChange: ControlActionComboBox_SelectionChanged, context: Context.GetAsContext(mAct.Context));
 
@@ -331,7 +332,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 for (int i = 0; i < mColNames.Count; i++)
                 {
                     ActTableElement.eRunColSelectorValue WhereColumnTitleSelectedValue;
-                    Enum.TryParse(((GingerCore.General.ComboEnumItem)WhereColumn.ComboBox.SelectedItem).Value.ToString(), out WhereColumnTitleSelectedValue);
+                    Enum.TryParse(((ComboEnumItem)WhereColumn.ComboBox.SelectedItem).Value.ToString(), out WhereColumnTitleSelectedValue);
 
                     if (WhereColumnTitleSelectedValue == ActTableElement.eRunColSelectorValue.ColTitle)
                         WhereColumnTitle.ComboBox.Items.Add(mColNames[i].ToString());
@@ -357,7 +358,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 for (int i = 0; i < mColNames.Count; i++)
                 {
                     ActTableElement.eRunColSelectorValue colSelectorSelectedValue;
-                    Enum.TryParse(((GingerCore.General.ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString(), out colSelectorSelectedValue);
+                    Enum.TryParse(((ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString(), out colSelectorSelectedValue);
 
                     if (colSelectorSelectedValue == ActTableElement.eRunColSelectorValue.ColTitle)
                         cmbColumnValue.ComboBox.Items.Add(mColNames[i].ToString());
@@ -452,7 +453,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
@@ -537,7 +538,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (cmbColSelectorValue.ComboBox.SelectedIndex != -1)
 
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ((GingerCore.General.ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString());
+                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ((ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString());
 
             string description = "";
             string rowVal = "";
