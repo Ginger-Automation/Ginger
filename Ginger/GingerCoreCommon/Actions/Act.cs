@@ -176,7 +176,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public eLocateBy ControlAction
+        public eLocateBy LocateBy
         {
             get
             {

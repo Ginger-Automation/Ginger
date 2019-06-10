@@ -1543,16 +1543,16 @@ namespace Ginger.Run
 
             act.ValueExpression = VE;
 
+
+
+            ProcessInputValueForDriver(act);
             // TODO: remove when we no longer use LocateValue in Action
             if (!string.IsNullOrEmpty(act.LocateValue))
             {
-                
+
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
-
-            ProcessInputValueForDriver(act);
-
             ProcessReturnValueForDriver(act);
                                     
             
