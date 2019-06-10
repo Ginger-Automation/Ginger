@@ -517,50 +517,94 @@ namespace GingerCore.Actions.Common
         }
 
         eElementType mElementType;
-        [IsSerializedForLocalRepository]
+       
         public eElementType ElementType
         {
-            get { return mElementType; }
+            get { return GetOrCreateInputParam<eElementType>(Fields.ElementType); }
             set
             {
-                if (mElementType != value)
-                {
-                    mElementType = value;
-                    OnPropertyChanged(nameof(ActUIElement.ElementType));
-                }
+                GetOrCreateInputParam(Fields.ElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.ElementType));
+
             }
         }
 
-        eElementAction mElementAction;
-        [IsSerializedForLocalRepository]
+
+
         public eElementAction ElementAction
         {
-            get { return mElementAction; }
+            get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction); }
             set
             {
-                if (mElementAction != value)
-                {
-                    mElementAction = value;
-                    OnPropertyChanged(nameof(ActUIElement.ElementAction));
-                }
+                GetOrCreateInputParam(Fields.ElementAction).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.ElementAction));
+
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public eLocateBy ElementLocateBy { get; set; }
+ 
+        public eLocateBy ElementLocateBy
+        {
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy); }
+            set
+            {
+                GetOrCreateInputParam(Fields.ElementLocateBy).Value = value.ToString();
 
-        [IsSerializedForLocalRepository]
-        public eLocateBy TargetLocateBy { get; set; }
+                OnPropertyChanged(nameof(ActUIElement.ElementLocateBy));
 
-        [IsSerializedForLocalRepository]
-        public eElementType TargetElementType { get; set; }
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eElementType HandleElementType { get; set; }
+     
+        public eLocateBy TargetLocateBy
+        {
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy); }
+            set
+            {
+                GetOrCreateInputParam(Fields.TargetLocateBy).Value = value.ToString();
 
-        [IsSerializedForLocalRepository]
-        public eElementAction HandleActionType { get; set; }
+                OnPropertyChanged(nameof(ActUIElement.TargetLocateBy));
 
+            }
+        }
+
+        public eElementType TargetElementType
+        {
+            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.TargetElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.TargetElementType));
+
+            }
+        }
+      
+        public eElementType HandleElementType
+        {
+            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.HandleElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.HandleElementType));
+
+            }
+        }
+  
+        public eElementAction HandleActionType
+        {
+            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.HandleActionType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.HandleActionType));
+
+            }
+        }
         #region TableElementConfigs
         public enum eTableElementRunColSelectorValue
         {
