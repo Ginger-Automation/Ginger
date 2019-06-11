@@ -34,6 +34,7 @@ namespace Ginger.Activities
         private string fileType;
         eBrowserType mBrowserType;
         public enum eBrowserType { File, Folder }
+        private Environment.SpecialFolder rootFolder;
         Context mContext;
         
         public UCValueExpression()
@@ -61,7 +62,7 @@ namespace Ginger.Activities
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
         }
 
-        public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
+        public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", Environment.SpecialFolder rootFolder = Environment.SpecialFolder.MyComputer, RoutedEventHandler extraBrowserSelectionHandler = null)
         {
             this.obj = obj;
             this.AttrName = AttrName;
@@ -74,7 +75,7 @@ namespace Ginger.Activities
                 LastCol.Width = new GridLength(55);
                 BrowseButton.Visibility = Visibility.Visible;
                 this.fileType = fileType;
-
+                this.rootFolder = rootFolder;
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
 
                 if (extraBrowserSelectionHandler != null)
@@ -114,7 +115,7 @@ namespace Ginger.Activities
                 case eBrowserType.Folder:
                     var dlgf = new System.Windows.Forms.FolderBrowserDialog();
                     dlgf.Description = "Select folder";
-                    dlgf.RootFolder = Environment.SpecialFolder.MyComputer;
+                    dlgf.RootFolder = rootFolder;
                     dlgf.ShowNewFolderButton = true;
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)

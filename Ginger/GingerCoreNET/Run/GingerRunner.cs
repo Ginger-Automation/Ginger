@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
@@ -40,7 +39,6 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -1512,13 +1510,15 @@ namespace Ginger.Run
                 if (typeof(ActPlugIn).IsAssignableFrom(action.GetType()))
                 {
                     ActExecutorType = eActionExecutorType.RunOnPlugIn;
-                    
-                    
                 }
                 else if (typeof(ActWithoutDriver).IsAssignableFrom(action.GetType()))
+                {
                     ActExecutorType = eActionExecutorType.RunWithoutDriver;
+                }
                 else
+                {
                     ActExecutorType = eActionExecutorType.RunOnDriver;
+                }
             }
 
             
@@ -1796,13 +1796,8 @@ namespace Ginger.Run
 
                                         // NewPayLoad ActionPayload = PluginAction.GetActionPayload();
 
-
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                                        
-
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
-                                        
-
+                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
+                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
                                     }
 
                                 }
@@ -1837,8 +1832,6 @@ namespace Ginger.Run
                                 errorMessage += ex.Message;
                                 act.Error = errorMessage;
                             }
-
-                            
 
 
                             break;                        

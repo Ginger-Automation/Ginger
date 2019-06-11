@@ -125,8 +125,8 @@ namespace GingerCore
             PerfectoMobileIOS,
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
-            [Description("Android ADB")]
-            AndroidADB,
+            //[Description("Android ADB")]
+            //AndroidADB,
 
             //MF
             [Description("MainFrame 3270")]
@@ -252,7 +252,7 @@ namespace GingerCore
 
                 if (AgentType == eAgentType.Service)
                 {
-                    if (mGingerNodeInfo != null)
+                    if (gingerNodeInfo != null)
                     {
                         return eStatus.Running;
                     }
@@ -344,47 +344,70 @@ namespace GingerCore
         }
 
 
-        System.Diagnostics.Process mProcess;
 
+
+
+        System.Diagnostics.Process mProcess;
+        Mutex mutex = new Mutex();
         // TODO: move to ExecuteOnPlugin
         public void StartPluginService()
         {
-            /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MyDriver
-            // Find the first service which match
-            mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId select x).FirstOrDefault();  // Keep First!!!
-
-            // Service not found start new one
-            // Add plugin config start if not exist and more depeneds on the config 
-            if (mGingerNodeInfo == null)
+            try
             {
-                // Dup with GR consolidate with timeout
-                mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);
-            }
+                // Enable to start one plugin each time so will let the plugin reserve and avoid race cond
+                mutex.WaitOne();
+                
+                gingerNodeInfo = FindFreeNode(ServiceId);                
 
-            Stopwatch st = Stopwatch.StartNew();
-            while (mGingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
+                // Service not found start new one
+                // Add plugin config start if not exist and more depeneds on the config 
+                if (gingerNodeInfo == null)
+                {
+                    // Dup with GR consolidate with timeout
+                    mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);
+                }
+
+                Stopwatch st = Stopwatch.StartNew();
+                while (gingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
+                {
+                    gingerNodeInfo = FindFreeNode(ServiceId);
+                    if (gingerNodeInfo != null) break;
+                    Thread.Sleep(100);
+                }
+
+                if (gingerNodeInfo == null)
+                {
+                    throw new Exception("Plugin not started " + PluginId);
+                }
+
+
+                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
+                // TODO: add by which agent to GNI
+
+                // Keep GNP on agent
+                GingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);
+ 
+ //TODO: Ginger Grid  CHeck if required                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                GingerNodeProxy.StartDriver(DriverConfiguration);
+            }
+            catch(Exception ex)
             {
-
-                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-                mGingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId select x).FirstOrDefault();  // Keep First!!!
-                if (mGingerNodeInfo != null) break;
-                Thread.Sleep(100);
+                throw ex;
             }
-
-            if (mGingerNodeInfo == null)
+            finally
             {
-                throw new Exception("Plugin not started " + PluginId);
+                mutex.ReleaseMutex();
             }
+            
+        }
 
+        private GingerNodeInfo FindFreeNode(string serviceId)
+        {
+            // TODO: add more filters from agent config like OS, machine id ,plugin version and more
 
-            mGingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-            // TODO: add by which agent to GNI
-
-            // Keep GNP on agent
-            GingerNodeProxy = new GingerNodeProxy(mGingerNodeInfo);
-            GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-            GingerNodeProxy.StartDriver();
+            // Find the first free service which match and Ready (not reserved)
+            gingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId && x.Status == GingerNodeInfo.eStatus.Ready select x).FirstOrDefault();  // Keep First!!!
+            return gingerNodeInfo;
         }
 
         public void driverMessageEventHandler(object sender, DriverMessageEventArgs e)
@@ -510,7 +533,7 @@ namespace GingerCore
 
             foreach (var config in PSI.Configs)
             {
-                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() != 0)
+                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -587,7 +610,7 @@ namespace GingerCore
         public GingerNodeProxy GingerNodeProxy { get; set; }
 
         // We keep the GingerNodeInfo for Plugin driver
-        private GingerNodeInfo mGingerNodeInfo;
+        private GingerNodeInfo gingerNodeInfo;
 
         public void RunAction(Act act)
         {          
@@ -623,12 +646,16 @@ namespace GingerCore
             {
                 if (AgentType == eAgentType.Service)
                 {
-                    if (mGingerNodeInfo != null)
+                    if (gingerNodeInfo != null)
                     {
                         // this is plugin driver
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                         GingerNodeProxy.CloseDriver();
+
+                        gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                      
+                   
                         if (mProcess != null)
                         {
                             // mProcess.Kill();
@@ -636,7 +663,7 @@ namespace GingerCore
                             //GingerCore.General.DoEvents();
                             mProcess.CloseMainWindow();
                         }
-                        mGingerNodeInfo = null;
+                        gingerNodeInfo = null;
                         // GNP.Shutdown();
                         return;
                     }
@@ -784,8 +811,8 @@ namespace GingerCore
                     return ePlatformType.Java;
                 case eDriverType.MainFrame3270:
                     return ePlatformType.MainFrame;
-                case eDriverType.AndroidADB:
-                    return ePlatformType.AndroidDevice;               
+                //case eDriverType.AndroidADB:
+                //    return ePlatformType.AndroidDevice;               
                 default:
                     return ePlatformType.NA;
             }                
@@ -849,10 +876,10 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.WebServices);
             }
 
-            else if (platformType == ePlatformType.AndroidDevice.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.AndroidADB);
-            }
+            //else if (platformType == ePlatformType.AndroidDevice.ToString())
+            //{
+            //    driverTypes.Add(Agent.eDriverType.AndroidADB);
+            //}
             else if (platformType == ePlatformType.ASCF.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.ASCF);

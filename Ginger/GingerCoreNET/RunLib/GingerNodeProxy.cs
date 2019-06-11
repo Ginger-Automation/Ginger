@@ -17,8 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.Drivers;
+using GingerCore;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace GingerCoreNET.RunLib
@@ -28,6 +31,8 @@ namespace GingerCoreNET.RunLib
         public GingerGrid GingerGrid { get; set; }
 
         GingerNodeInfo mGingerNodeInfo;
+        
+        bool mRecordingSocketTraffic = false;
 
         private bool mIsConnected = false;
         // This is the socket connected or not - doesn't mean if the driver is started or closed
@@ -44,7 +49,12 @@ namespace GingerCoreNET.RunLib
             mGingerNodeInfo = GNI;
         }
 
-        // C#
+        public void StartRecordingSocketTraffic()
+        {
+            mRecordingSocketTraffic = true;
+            Monitor.ShowMonitor(this);
+        }
+
 
         public string Description
         {
@@ -62,10 +72,11 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        
+        public IGingerNodeMonitor Monitor { get; set; }
 
         public void Reserve()
         {
+            /// !!!! FIXME for remoe grid
             //// if GingerGrid is local - we can do direct communication
             //if (GingerGrid != null)
             //{
@@ -82,24 +93,64 @@ namespace GingerCoreNET.RunLib
         public NewPayLoad RunAction(NewPayLoad newPayLoad)
         {
             NewPayLoad RC = SendRequestPayLoad(newPayLoad);
-            return RC;           
+            return RC;
         }
 
-        private NewPayLoad SendRequestPayLoad(NewPayLoad payload)
+        public NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
-            
-            // if local grid use
-            return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
-            // else use remote grid
-            
+            if (!mRecordingSocketTraffic)
+            {
+                return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+            }
+            else
+            {
+                GingerSocketLog gingerSocketLog = new GingerSocketLog();
+                gingerSocketLog.SetPayLoad(payload);
+                gingerSocketLog.LogType = "Send";
+                Monitor.Add(gingerSocketLog);
+
+                Stopwatch st = Stopwatch.StartNew();
+
+                // if local grid use !!!!!!!!!!!!!!
+                NewPayLoad responsePayload = GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+                // else use remote grid
+
+                st.Stop();
+
+                GingerSocketLog rc = new GingerSocketLog();
+                rc.SetPayLoad(responsePayload);
+                rc.LogType = "Recv";
+                rc.Elapsed = st.ElapsedMilliseconds;
+                Monitor.Add(rc);
+
+                return responsePayload;
+            }
+
         }
 
-        public void StartDriver()
+        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
         {
             //TODO: get return code - based on it set status if running OK
             NewPayLoad PL = new NewPayLoad("StartDriver");
+            List<NewPayLoad> DriverConfigs = new List<NewPayLoad>();
+
+            if (driverConfiguration != null)
+            {
+                foreach (DriverConfigParam DC in driverConfiguration)
+                {
+                    NewPayLoad FieldPL = new NewPayLoad("Config", DC.Parameter, DC.Value == null ? " " : DC.Value);
+
+                    DriverConfigs.Add(FieldPL);
+                }
+            }
+            PL.AddListPayLoad(DriverConfigs);
             PL.ClosePackage();
-            SendRequestPayLoad(PL);
+            NewPayLoad plss = SendRequestPayLoad(PL);
+
+            if (plss.IsErrorPayLoad())
+            {
+                throw new KeyNotFoundException();
+            }
         }
 
         public void CloseDriver()
@@ -107,7 +158,7 @@ namespace GingerCoreNET.RunLib
             NewPayLoad PL = new NewPayLoad("CloseDriver");
             PL.ClosePackage();
             NewPayLoad RC = SendRequestPayLoad(PL);
-        }
+                }
 
         public void Shutdown()
         {
@@ -145,6 +196,6 @@ namespace GingerCoreNET.RunLib
             SendRequestPayLoad(PL);
         }
 
-        
+
     }
 }

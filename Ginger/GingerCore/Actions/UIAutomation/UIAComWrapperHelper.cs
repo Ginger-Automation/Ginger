@@ -2322,9 +2322,10 @@ namespace GingerCore.Drivers
                     if (AE != null)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "In Accept Dialog:");
-                        UIAElementInfo EI = new UIAElementInfo();
-
-                        EI.ElementObject = AE;
+                        UIAElementInfo EI = new UIAElementInfo
+                        {
+                            ElementObject = AE
+                        };
                         List<ElementInfo> lstElem = GetElementChildren(EI);
                         foreach (ElementInfo elemInfo in lstElem)
                         {
@@ -3369,11 +3370,40 @@ namespace GingerCore.Drivers
                                                           SelectionItemPattern.Pattern) as SelectionItemPattern;
                 sPat.Select();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::");
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::" + ex.Message);
                 throw new Exception("Element doesn't support ValuePattern.Pattern, make sure locator is finding the correct element");
             }
+        }
+
+        /// <summary>
+        /// This method is used to expand the combobox
+        /// </summary>
+        /// <param name="element"></param>
+        public override bool ExpandComboboxByUIA(object element)
+        {
+            bool isExpanded = false;
+            try
+            {
+                AutomationElement autoElement = (AutomationElement)element;
+                ExpandCollapsePattern exPat = autoElement.GetCurrentPattern(ExpandCollapsePattern.Pattern)
+                                                                              as ExpandCollapsePattern;
+
+                if (exPat == null)
+                {
+                    throw new ApplicationException("Unable to expand the combobox");
+                }
+
+                exPat.Expand();
+                isExpanded = true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box Exception vp is null::" + ex.Message);
+                throw new Exception("Element doesn't support Expand method, make sure locator is finding the correct element");
+            }
+            return isExpanded;
         }
 
         private bool ComparePBActualExpected(string actual,string exp)
@@ -4730,9 +4760,11 @@ namespace GingerCore.Drivers
         
         public override string GetElementAbsoluteXPath(object obj)
         {
-            UIAElementInfo EI = new UIAElementInfo(); //Create small simple EI
-            EI.ElementObject = obj;
-            EI.WindowExplorer = WindowExplorer;
+            UIAElementInfo EI = new UIAElementInfo
+            {
+                ElementObject = obj,
+                WindowExplorer = WindowExplorer
+            }; //Create small simple EI
             string XPath = mXPathHelper.GetElementXpathAbsulote(EI);
             return XPath;
 

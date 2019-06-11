@@ -381,10 +381,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             HandelElementSelectionChange();
         }
 
-        bool disabeledElementMsgShown;
+        // bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description))
+            if ((string)e.Column.Header == "Name" || (string)e.Column.Header == nameof(ElementInfo.Description))
             {
                 return;
             }

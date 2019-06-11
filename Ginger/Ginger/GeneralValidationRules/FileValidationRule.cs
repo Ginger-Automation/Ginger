@@ -29,11 +29,7 @@ namespace Ginger.GeneralValidationRules
     public class FileValidationRule : ValidationRule
     {
         string fileExtension = "";  //default File Extension
-        public FileValidationRule()
-        {
-            
-        }
-
+     
         public FileValidationRule(string fileExt)
         {
             fileExtension = fileExt;

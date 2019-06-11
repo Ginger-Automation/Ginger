@@ -17,12 +17,16 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
@@ -54,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID)
+        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID, ObservableList<DriverConfigParam> DriverConfiguration = null)
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
@@ -122,8 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid
 
             Console.WriteLine("Checking for DoStartSession..");
 
@@ -131,7 +134,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             if (DoStartSession)
             {
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-                GNP.StartDriver();
+                GNP.StartDriver(DriverConfiguration);
                 dic.Add(key, gingerNodeInfo);
             }
 
@@ -177,7 +180,8 @@ namespace Amdocs.Ginger.CoreNET.Run
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {
             // Get the action payload
-            NewPayLoad p = actPlugin.GetActionPayload();
+            // NewPayLoad p = actPlugin.GetActionPayload();
+            NewPayLoad p = GeneratePlatformActionPayload(actPlugin, agent);
 
             // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
@@ -187,37 +191,53 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
 
+
         // Use for Actions which run without agent and are of the generic type ActPlugin - 
         internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
-            // first verify we have service ready or start service
-            Stopwatch st = Stopwatch.StartNew();
-            
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
-
-            NewPayLoad p = CreateActionPayload(actPlugin);
-            NewPayLoad RC = GNP.RunAction(p);
-
-            // release the node as soon as the result came in
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
-            if (!IsSessionService)
+            try
             {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                // first verify we have service ready or start service
+
+                Stopwatch st = Stopwatch.StartNew();
+                GingerNodeProxy gingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);  // FIXME for remote grid
+
+                //!!!!!!!!!!!!! TODO: check if null set err
+
+                NewPayLoad p = CreateActionPayload(actPlugin);
+                NewPayLoad RC = gingerNodeProxy.RunAction(p);
+
+                // release the node as soon as the result came in
+                bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
+                if (!IsSessionService)
+                {
+                    // standalone plugin action release the node
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                }
+                ParseActionResult(RC, actPlugin);
+
+                gingerNodeInfo.IncreaseActionCount();
+
+                st.Stop();
+                long millis = st.ElapsedMilliseconds;
+                actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                string errorMessage = "";
+                if (gingerNodeInfo == null)
+                {
+                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)actPlugin).PluginId + ", Service " + ((ActPlugIn)actPlugin).ServiceId + Environment.NewLine;
+                }
+                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                errorMessage += ex.Message;
+                actPlugin.Error = errorMessage;
             }
 
-            ParseActionResult(RC, actPlugin);
-            
-
-            gingerNodeInfo.IncreaseActionCount();
-
-            st.Stop();
-            long millis = st.ElapsedMilliseconds;
-            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
-        private static void ParseActionResult(NewPayLoad RC, Act actPlugin)
+        public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
@@ -267,7 +287,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
         // Move code to the ActPlugIn and make it impl IACtPlug...
-        private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
+        public static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
@@ -337,26 +357,12 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-
-
-        internal static void RunServiceAction(NewPayLoad ActionPayload, string PluginId, string ServiceID)
-        {
-            GingerNodeInfo GNI = GetGingerNodeInfo(PluginId, ServiceID);
-
-
-
-        }
-
         public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
-
         {
-
-
             NewPayLoad PL = new NewPayLoad("ScreenshotAction");
-       
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
 
-           NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
+            NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
             PLParams.Add(AIVPL);
             PL.AddListPayLoad(PLParams);
             // Get the action payload
@@ -384,7 +390,163 @@ namespace Amdocs.Ginger.CoreNET.Run
                 string Err = RC.GetValueString();
                 act.Error += Err;
             }
-     
+
+        }
+
+
+        static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
+        {
+
+            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
+            PL.AddValue(ACT.GetName());
+            if (ACT is Act actPlugin)
+            {
+                List<NewPayLoad> PLParams = new List<NewPayLoad>();
+
+                if (ACT is ActUIElement ActUi)
+                {
+                    if (ActUi.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
+                    {
+                        NewPayLoad PomPayload = GetPOMPayload(ref ActUi, agent.ProjEnvironment, agent.BusinessFlow);
+                        PLParams.Add(PomPayload);
+                    }
+                }
+
+                string acttype = actPlugin.GetType().FullName + "+Fields";
+
+               
+                foreach (FieldInfo FI in Type.GetType(acttype).GetFields())
+                {
+                    string Name = FI.Name;
+                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
+
+                    if (string.IsNullOrEmpty(Value))
+                    {
+                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
+
+                        if (Output != null)
+                        {
+                            Value = Output.ToString();
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(Value))
+                    {
+                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
+                        PLParams.Add(FieldPL);
+                    }
+                }
+
+                foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
+                {
+                    string Name = FI.Name;
+                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
+
+                    if (string.IsNullOrEmpty(Value))
+                    {
+                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
+
+                        if (Output != null)
+                        {
+                            Value = Output.ToString();
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(Value))
+                    {
+                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
+                        PLParams.Add(FieldPL);
+                    }
+                }
+
+
+                foreach (ActInputValue AIV in actPlugin.InputValues)
+                {
+                    if (!string.IsNullOrEmpty(AIV.ValueForDriver))
+                    {
+                        NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
+                        PLParams.Add(AIVPL);
+                    }
+                }
+
+
+
+
+                PL.AddListPayLoad(PLParams);
+            }
+            PL.ClosePackage();
+
+            return PL;
+        }
+
+        private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
+        {
+            NewPayLoad PL = new NewPayLoad("POMPayload");
+           
+
+            string[] pOMandElementGUIDs = actUi.ElementLocateValue.ToString().Split('_');
+            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            if (currentPOM == null)
+            {
+                actUi.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                return null;
+            }
+
+            {
+                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+
+                PL.AddValue(selectedPOMElement.ElementTypeEnum.ToString());
+                if (selectedPOMElement == null)
+                {
+                    actUi.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                    return null;
+                }
+                else
+                {
+                    List<NewPayLoad> switchframpayload = new List<NewPayLoad>();
+
+                    if (selectedPOMElement.Path != null)
+                    {
+                        string[] spliter = new string[] { "," };
+                        string[] iframesPathes = selectedPOMElement.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string iframePath in iframesPathes)
+                        {
+                            NewPayLoad FieldPL = new NewPayLoad("Frame-Xpath", iframePath);
+                            switchframpayload.Add(FieldPL);
+
+                        }
+                    }
+                    PL.AddListPayLoad(switchframpayload);
+
+
+                    //adding all locators from POM
+                    List<NewPayLoad> LocatorsPayload = new List<NewPayLoad>();
+                    foreach (ElementLocator locator in selectedPOMElement.Locators.Where(x => x.Active == true).ToList())
+                    {
+                        NewPayLoad LocatorPayload;
+                        string locateValue;
+                        if (locator.IsAutoLearned)
+                        {
+
+                            locateValue = locator.LocateValue;
+                        }
+                        else
+                        {
+                            ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+                            GingerCore.ValueExpression VE = new GingerCore.ValueExpression(projEnvironment, businessFlow);
+                            locateValue =  VE.Calculate(evaluatedLocator.LocateValue);
+                  
+                        }
+                        LocatorPayload = new NewPayLoad("Locator", locator.LocateBy.ToString(), locateValue);
+                        LocatorsPayload.Add(LocatorPayload);
+                    }
+                    PL.AddListPayLoad(LocatorsPayload);
+                }
+                PL.ClosePackage();
+                return PL;
+            }
         }
     }
 }

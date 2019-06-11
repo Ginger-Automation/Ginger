@@ -22,13 +22,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Plugin.Core;
-using Newtonsoft.Json;
-using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Plugin.Core.PlugInsLib;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.Attributes;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -233,6 +233,7 @@ namespace Amdocs.Ginger.Repository
                                  continue;                                
                             }
                             
+
                             PluginServiceActionInfo action = new PluginServiceActionInfo();
 
                             if (gingerActionAttr != null)
@@ -288,11 +289,29 @@ namespace Amdocs.Ginger.Repository
 
                             foreach (ParameterInfo PI in MI.GetParameters())
                             {
-                                if (PI.ParameterType.Name != nameof(IGingerAction))
+                                if (PI.ParameterType.Name == nameof(IGingerAction))
                                 {
-                                    action.InputValues.Add(new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType });
+                                    continue;
                                 }
+
+                                ActionInputValueInfo actionInputValueInfo = new ActionInputValueInfo() { Param = PI.Name, ParamType = PI.ParameterType };
+                                actionInputValueInfo.ParamAttrs = new List<Attribute>();
+                                action.InputValues.Add(actionInputValueInfo);
+
+                                // Add Ginger param properties
+                                
+                                Attribute[] attrs = Attribute.GetCustomAttributes(PI, typeof(Attribute), false);
+
+                                
+                                // var v = PI.CustomAttributes; - not good
+                                foreach (Attribute attribute in attrs)
+                                {
+                                    actionInputValueInfo.ParamAttrs.Add(attribute);
+                                }
+
                             }
+                            
+
                             pluginServiceInfo.Actions.Add(action);
                         }
 
@@ -309,37 +328,37 @@ namespace Amdocs.Ginger.Repository
                             }
                         }
 
-
-                        MemberInfo[] members = type.GetMembers();
-                        GingerServiceConfigurationAttribute token = null;
-
+                        MemberInfo[] members = type.GetMembers();  
+                        
                         foreach (MemberInfo mi in members)
                         {
-                            if( Attribute.GetCustomAttribute(mi, typeof(GingerServiceConfigurationAttribute), false) is GingerServiceConfigurationAttribute mconfig)
+                            if( Attribute.GetCustomAttribute(mi, typeof(ServiceConfigurationAttribute), false) is ServiceConfigurationAttribute mconfig)
                             {
                                 PluginServiceConfigInfo Config =new  PluginServiceConfigInfo();
                                 Config.Name = mconfig.Name;
                                 Config.Description = mconfig.Description;
-                                Config.Type = mconfig.Type.Name;
-                                Config.DefaultValue = mconfig.DefaultValue?.ToString();
-                               
-                                if (mconfig.OptionalValues!=null)
+                                Config.Type = mconfig.GetType().Name;
+                                // Config.DefaultValue = mconfig.DefaultValue?.ToString();
+
+                                if (Attribute.GetCustomAttribute(mi, typeof(ValidValueAttribute), false) is ValidValueAttribute validValues)
                                 {
-                                    foreach (var val in mconfig.OptionalValues)
-                                    {
-                                        Config.OptionalValues.Add(val.ToString());
-                                    }
+                                    
+                                        foreach (var val in validValues.ValidValue)
+                                        {
+                                            Config.OptionalValues.Add(val.ToString());
+                                        }
 
                                 }
+                                if (Attribute.GetCustomAttribute(mi, typeof(DefaultAttribute), false) is DefaultAttribute DefaultValue)
+                                {
+
+                                    Config.DefaultValue = DefaultValue == null ? string.Empty : DefaultValue.ToString();
+                                }
+                              
                                 pluginServiceInfo.Configs.Add(Config);
-                            }
-
-                          
+                            }                          
                         }
-
-
                         mServices.Add(pluginServiceInfo);
-
                     }                    
                 }
             }            
@@ -397,7 +416,8 @@ namespace Amdocs.Ginger.Repository
                 string fileName = PluginPackageServicesInfoFileName();
                 if (!File.Exists(fileName))
                 {
-                    throw new Exception("PluginPackage Services info file not found: " + fileName);
+                    // Auto create if not exist                
+                    CreateServicesInfo();
                 }
                 string txt = File.ReadAllText(fileName);
                 mServices = JsonConvert.DeserializeObject<ObservableList<PluginServiceInfo>>(txt);                            

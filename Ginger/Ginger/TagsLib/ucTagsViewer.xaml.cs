@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.TagsLib;
@@ -24,9 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -46,14 +45,14 @@ namespace Ginger
         RepositoryItemTag mFullListEditTag = null;
         bool mAddTags = true;
 
-        
+
         public enum eItemTagsType
         {
             Guid,
             RepositoryItemKey
         }
 
-        public event EventHandler TagsStackPanlChanged;      
+        public event EventHandler TagsStackPanlChanged;
 
         public ucTagsViewer()
         {
@@ -62,15 +61,15 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if ( WorkSpace.Instance.Solution == null)
+            if (WorkSpace.Instance.Solution == null)
                 return;
 
             if (fullTagsList == null)
             {
                 mUseSolutionTags = true;
-                mFullTagsList =  WorkSpace.Instance.Solution.Tags;
+                mFullTagsList = WorkSpace.Instance.Solution.Tags;
 
-                if(mAddTags == true)
+                if (mAddTags == true)
                 {
                     mFullListEditTag = new RepositoryItemTag() { Name = "Add/Edit Solution Tags..." };
                 }
@@ -87,7 +86,7 @@ namespace Ginger
             else
                 mItemTagsKey.CollectionChanged += MItemTags_CollectionChanged;
 
-           
+
             SetComboTagsSource();
             if (mAddTags == false)
             {
@@ -110,7 +109,7 @@ namespace Ginger
         public void Init(ObservableList<RepositoryItemKey> itemTags, ObservableList<RepositoryItemTag> fullTagsList = null)
         {
             mItemTagsType = eItemTagsType.RepositoryItemKey;
-            
+
             //mItemTags = new ObservableList<object>(itemTags.Cast<object>());
             mItemTagsKey = itemTags;
 
@@ -229,18 +228,18 @@ namespace Ginger
             if (mItemTagsType == eItemTagsType.Guid)
                 mItemTagsGUID.Remove(((RepositoryItemTag)((Button)sender).Tag).Guid);
             else
-                mItemTagsKey.Remove(mItemTagsKey.Where(x=>x.Guid == ((RepositoryItemTag)((Button)sender).Tag).Guid).FirstOrDefault());
+                mItemTagsKey.Remove(mItemTagsKey.Where(x => x.Guid == ((RepositoryItemTag)((Button)sender).Tag).Guid).FirstOrDefault());
         }
 
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             if (TagsComboBox.SelectedItem != null)
             {
-                if (mFullListEditTag!=null && ((RepositoryItemTag)TagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
+                if (mFullListEditTag != null && ((RepositoryItemTag)TagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
                 {
                     //open edit solution page
                     TagsPage page = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
-                    
+
                     page.ShowAsWindow();
                 }
                 else
@@ -261,30 +260,36 @@ namespace Ginger
             TagsComboBox.IsDropDownOpen = true;
         }
 
-       // Add tags to stackpanal
+        // Add tags to stackpanal
         private void AddSelectedTag()
         {
             RepositoryItemTag itag;
             itag = (RepositoryItemTag)TagsComboBox.SelectedItem;
-            if (itag != null )
+            if (itag != null)
             {
                 if (mItemTagsType == eItemTagsType.Guid)
                     mItemTagsGUID.Add(itag.Guid);
                 else
-                    mItemTagsKey.Add(itag.Key);                
+                    mItemTagsKey.Add(itag.Key);
             }
         }
 
         private void TagsComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            if(mUseSolutionTags)
-                mFullTagsList =  WorkSpace.Instance.Solution.Tags;
+            if (mUseSolutionTags)
+            {
+                mFullTagsList = WorkSpace.Instance.Solution.Tags;
+            }
 
             RefreshComboSelectionTagsList();
             if (ComboTagsList.Count == 0)
+            {
                 TagsComboBox.MaxDropDownHeight = 20;
+            }
             else
+            {
                 TagsComboBox.MaxDropDownHeight = 200;
+            }
             TagsComboBox.ItemsSource = ComboTagsList;
         }
 
@@ -293,13 +298,19 @@ namespace Ginger
             //remove from combobox all Items that are already saved on item else load all Soultion Tags.
             if (GetItemTagsCount() != 0)
             {
-                if(mItemTagsType == eItemTagsType.Guid)
+                if (mItemTagsType == eItemTagsType.Guid)
+                {
                     ComboTagsList = mFullTagsList.Where(y => !mItemTagsGUID.Any(x => y.Guid == (Guid)x)).ToList();
+                }
                 else
+                {
                     ComboTagsList = mFullTagsList.Where(y => !mItemTagsKey.Any(x => y.Guid == ((RepositoryItemKey)x).Guid)).ToList();
-            }   
-            else            
+                }
+            }
+            else
+            {
                 ComboTagsList = mFullTagsList.Where(y => mFullTagsList.Contains(y)).ToList();
+            }
 
             //add dummy edit tag
             if (mFullListEditTag != null)

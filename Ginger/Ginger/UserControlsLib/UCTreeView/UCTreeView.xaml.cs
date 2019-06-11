@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.Repository;
-using GingerWPF.DragDropLib;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -693,7 +692,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     currentItem = o.GetType();
 
-                    if (currentItem == searchItem)
+                    if (currentItem.GetType() == searchItem)
                     {
                         return TVI;
                     }

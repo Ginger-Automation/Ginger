@@ -94,7 +94,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         /// Create Payload from Bytes
-        /// IgnoreExtraSpace - the buffer size might ve bigger then the length defined but there will be End of Packet -255 char at the length postiion - so valid with extra unused space, need to save copy bytes for resize in socket
+        /// IgnoreExtraSpace - the buffer size might be bigger than the length defined but there will be End of Packet -255 char at the length postiion - so valid with extra unused space, need to save copy bytes for resize in socket
         public NewPayLoad(byte[] bytes, bool IgnoreExtraSpace = false)
         {
             //TODO: check if we need to do memcopy, to dup and not use the original, since we do not change packets it should be OK.

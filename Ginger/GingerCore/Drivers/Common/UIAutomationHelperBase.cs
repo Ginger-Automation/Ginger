@@ -63,6 +63,7 @@ namespace GingerCore.Drivers.Common
         public abstract Boolean IsWindowExist(Act act);
         public abstract Boolean CloseWindow(Act act);
         public abstract Boolean SetWindowVisualState(ActWindow act);
+        public abstract bool ExpandComboboxByUIA(object element);
 
         public abstract string SetElementVisualState(object AE,string state);
 
