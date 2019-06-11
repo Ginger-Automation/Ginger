@@ -33,11 +33,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         public bool IsRecording = false;
         IWindowExplorer mWindowExplorerDriver;
-        private Activity mActParentActivity = null;
         ePlatformType mActivityPlatform;
         Context mContext;
         RecordingManager mRecordingMngr;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
+        Agent mAgent;
 
         /// <summary>
         /// Constructor
@@ -47,6 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
             mContext = context;
+            mAgent = null;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethods();
         }
@@ -74,6 +75,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
                                      where x.AppName == targetApp
                                      select x.Platform).FirstOrDefault();
+
+            mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            if (mAgent != null)
+            {
+                mAgent.PropertyChanged -= Agent_PropertyChanged;
+                mAgent.PropertyChanged += Agent_PropertyChanged;
+            }
+
             SetControlsVisibility();
             SetRecordingButtonText();
             SetMultiplePropertiesGridView();            
@@ -92,14 +101,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
                 xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged; 
-            }
-
-            Agent agent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-            if (agent != null)
-            {
-                agent.PropertyChanged -= Agent_PropertyChanged;
-                agent.PropertyChanged += Agent_PropertyChanged; 
-            }
+            }            
         }
 
         /// <summary>
@@ -111,19 +113,32 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if(e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
             {
+                ePlatformType platform = ePlatformType.NA;
                 if (e.PropertyName == nameof(BusinessFlow))
                 {
                     mContext = (Context)sender;
                     xWinGridUC.mContext = mContext;
+                    mApplicationPOMSelectionPage = null;                    
                 }
+                else if (e.PropertyName == nameof(Activity) && ((Context)sender).BusinessFlow.CurrentActivity != null)
+                {
+                    platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                where x.AppName == ((Context)sender).BusinessFlow.CurrentActivity.TargetApplication
+                                select x.Platform).FirstOrDefault();
 
-                InitMethods();
-                if (IsRecording)
+                    if (mActivityPlatform != platform)
+                    {
+                        mApplicationPOMSelectionPage = null;
+                    }        
+                }
+                if (IsRecording && (e.PropertyName == nameof(BusinessFlow) 
+                                    || (e.PropertyName == nameof(Activity)
+                                        && mActivityPlatform != platform)))
                 {
                     IsRecording = !IsRecording;
                     StopRecording();
                 }
-                SetRecordingButtonText();
+                InitMethods();
             }
         }
 
@@ -139,13 +154,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
         
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationPOMsTreeItem appModelFolder;
-
-            RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
-            appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
+        {            
             if (mApplicationPOMSelectionPage == null)
             {
+                ApplicationPOMsTreeItem appModelFolder;
+                RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
                 mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
                                                                                         SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone; 
@@ -165,11 +179,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xAgentNotSupportRecording.Visibility = Visibility.Collapsed;
             xPOMPanel.Visibility = Visibility.Hidden;
 
-            if (PlatformInfoBase.IsPlatformSupportRecording(mActivityPlatform))
-            {                
-                if (PlatformInfoBase.IsPlatformSupportPOM(mActivityPlatform))
+            if (mAgent != null && mAgent.Driver != null && mAgent.Driver is IRecord)
+            {
+                if (PlatformInfoBase.GetPlatformImpl(mActivityPlatform) != null && PlatformInfoBase.GetPlatformImpl(mActivityPlatform).IsPlatformSupportPOM())
                 {
-                    gridPOMListItems.Visibility = Visibility.Visible;
+                    if (((bool)xIntegratePOM.IsChecked))
+                    {
+                        gridPOMListItems.Visibility = Visibility.Visible; 
+                    }
                     xIntegratePOM.Visibility = Visibility.Visible;
                     xPOMPanel.Visibility = Visibility.Visible;
                 }
@@ -181,7 +198,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xWinGridUC.IsEnabled = true;
                     if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
                     {
-                        xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                        xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
                     }
                 }
 

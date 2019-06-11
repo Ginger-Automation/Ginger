@@ -84,7 +84,6 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 BusinessFlow = bFlow;
-                PlatformDriver.CurrentBusinessFlow = bFlow;
                 Context = context;
                 PlatformDriver.RecordingEvent -= PlatformDriver_RecordingEvent;
                 PlatformDriver.RecordingEvent += PlatformDriver_RecordingEvent;

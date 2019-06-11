@@ -164,25 +164,18 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
-            try
+            this.Dispatcher.Invoke(() =>
             {
-                this.Dispatcher.Invoke(() =>
-                    {
-                        //different kind of changes that may have occurred in collection
-                        if (e.Action == NotifyCollectionChangedAction.Add ||
-                            e.Action == NotifyCollectionChangedAction.Replace ||
-                            e.Action == NotifyCollectionChangedAction.Remove ||
-                            e.Action == NotifyCollectionChangedAction.Move)
-                        {
-                            OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
-                        }
-                        UpdateTitleListCount();
-                    });
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Collection Changed Method", ex);
-            }
+                //different kind of changes that may have occurred in collection
+                if (e.Action == NotifyCollectionChangedAction.Add ||
+                    e.Action == NotifyCollectionChangedAction.Replace ||
+                    e.Action == NotifyCollectionChangedAction.Remove ||
+                    e.Action == NotifyCollectionChangedAction.Move)
+                {
+                    OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
+                }
+                UpdateTitleListCount();
+            });
         }
 
         private void UpdateTitleListCount()

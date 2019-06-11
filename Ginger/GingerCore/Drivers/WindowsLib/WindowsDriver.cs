@@ -34,7 +34,7 @@ using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
+    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver
     {
         int mActionTimeout = 10;
 
@@ -941,29 +941,6 @@ namespace GingerCore.Drivers.WindowsLib
         bool IWindowExplorer.IsElementObjectValid(object obj)
         {
             return mUIAutomationHelper.IsWindowValid(obj);
-        }
-
-        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-        object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
-        {
-            get
-            {
-                return BusinessFlow;
-            }
-            set
-            {
-                BusinessFlow = (BusinessFlow)value;
-            }
-        }
-
-        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
-        {
-            mUIAutomationHelper.StartRecording();
-        }
-
-        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
-        {
-
         }
 
         public override void StartRecording()

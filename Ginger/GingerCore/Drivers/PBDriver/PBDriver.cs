@@ -35,7 +35,7 @@ using System.Threading;
 namespace GingerCore.Drivers.PBDriver
 {
     //This class is for Power Builder UIAutomation
-    public class PBDriver : UIAutomationDriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
+    public class PBDriver : UIAutomationDriverBase, IWindowExplorer
     {
         Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
 
@@ -1065,39 +1065,17 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.IsWindowValid(obj);
         }
 
-        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-        object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
-        {
-            get
-            {
-                return BusinessFlow;
-            }
-            set
-            {
-                BusinessFlow = (BusinessFlow)value;
-            }
-        }
-
+        
         public override void StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
-
-        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
-        {
-            mUIAutomationHelper.StartRecording();
-        }
-
+        
         public override void StopRecording()
         {
             
         }
-
-        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
-        {
-
-        }
-
+        
         void IWindowExplorer.UnHighLightElements()
         {
             throw new NotImplementedException();

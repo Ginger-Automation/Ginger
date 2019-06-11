@@ -17,21 +17,6 @@ namespace GingerCoreNET
     public class AgentHelper
     {
         /// <summary>
-        /// This methods sets the default target applciation to acitvity
-        /// </summary>
-        /// <param name="activity"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        private static Activity SetDefaultTargetApplication(Activity activity, Context context)
-        {
-            if(activity != null)
-            {
-                activity.TargetApplication = ((ApplicationAgent)context.Runner.ApplicationAgents[0]).AppName;
-            }
-            return activity;
-        }
-
-        /// <summary>
         /// This method is used to get the app agent
         /// </summary>
         /// <param name="activity"></param>
@@ -43,29 +28,11 @@ namespace GingerCoreNET
             ApplicationAgent appAgent = null;
             if (context != null && context.BusinessFlow.CurrentActivity != null)
             {
-                if (string.IsNullOrEmpty(activity.TargetApplication))
-                {
-                    if (context.BusinessFlow.TargetApplications.Count() == 1)
-                    {
-                        activity = SetDefaultTargetApplication(activity, context); 
-                    }
-                }
                 appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();
                 if (appAgent == null)
                 {
                     context.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
                     context.Runner.UpdateApplicationAgents();
-                }
-                else
-                {
-                    ObservableList<DataSourceBase> dSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                    if (appAgent != null)
-                    {
-                        if (appAgent.Agent.Driver == null)
-                        {
-                            appAgent.Agent.DSList = dSList;
-                        }
-                    }
                 }
             }
             return appAgent;

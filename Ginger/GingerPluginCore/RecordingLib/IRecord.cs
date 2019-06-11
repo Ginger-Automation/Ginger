@@ -24,7 +24,6 @@ namespace Amdocs.Ginger.Plugin.Core
     [GingerInterface("IRecord", "Record user actions")]
     public interface IRecord
     {
-        object CurrentBusinessFlow { get; set; }
         event RecordingEventHandler RecordingEvent;
         
         void StartRecording(bool learnAdditionalChanges);

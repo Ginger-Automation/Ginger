@@ -25,7 +25,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class MainAddActionsNavigationPage : Page
     {
         Context mContext;
-        IWindowExplorer mWindowExplorerDriver;
         RecordNavPage mRecordPage = null;
         SharedRepositoryNavPage mSharedRepositoryNavPage = null;
         POMNavPage mPOMNavPage = null;
@@ -40,6 +39,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             context.PropertyChanged += Context_PropertyChanged;
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
+
+            ePlatformType ePlatformType = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                           where x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication
+                                           select x.Platform).FirstOrDefault();
+
+            if (PlatformInfoBase.GetPlatformImpl(ePlatformType) != null && PlatformInfoBase.GetPlatformImpl(ePlatformType).IsPlatformSupportPOM())
+            {
+                xRecordItemBtn.IsEnabled = true;
+            }
+            else
+            {
+                xRecordItemBtn.IsEnabled = false;
+            }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -63,7 +75,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                  where x.AppName == targetApp
                                  select x.Platform).FirstOrDefault();
 
-                if (PlatformInfoBase.IsPlatformSupportRecording(ePlatformType))
+                if (PlatformInfoBase.GetPlatformImpl(ePlatformType) != null && PlatformInfoBase.GetPlatformImpl(ePlatformType).IsPlatformSupportPOM())
                 {
                     xRecordItemBtn.IsEnabled = true;
                 }
@@ -135,7 +147,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
         {
-            if (mLiveSpyNavPage == null)
+            if (mWindowsExplorerNavPage == null)
             {
                 mWindowsExplorerNavPage = new WindowsExplorerNavPage(mContext);
             }

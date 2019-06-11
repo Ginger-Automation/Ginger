@@ -5402,19 +5402,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
             }
         }
-
-        object IRecord.CurrentBusinessFlow
-        {
-            get
-            {
-                return BusinessFlow;
-            }
-            set
-            {
-                BusinessFlow = (BusinessFlow)value;
-            }
-        }
-
+        
         public event RecordingEventHandler RecordingEvent;
         private string CurrentPageURL = string.Empty;
 
