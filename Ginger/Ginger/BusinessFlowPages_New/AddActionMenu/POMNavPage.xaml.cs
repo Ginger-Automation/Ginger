@@ -1,10 +1,18 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Help;
 using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -31,6 +39,45 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         public PomElementsPage mappedUIElementsPage;
         ApplicationPOMModel mPOM;
+        Context mContext;
+
+        private Agent mAgent;
+        IWindowExplorer mWinExplorer
+        {
+            get
+            {
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {
+                    return mAgent.Driver as IWindowExplorer;
+                }
+                else
+                {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
+                    return null;
+                }
+            }
+        }
+        internal void SetAgent(Agent agent)
+        {
+            mAgent = agent;
+        }
+        ElementInfo mSelectedElement
+        {
+            get
+            {
+                if (xMainElementsGrid.Grid.SelectedItem != null)
+                {
+                    return (ElementInfo)xMainElementsGrid.Grid.SelectedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         public POMNavPage()
         {
             InitializeComponent();
@@ -41,28 +88,48 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             get { return xTreeView; }
         }
 
-        public POMNavPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
+        public POMNavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
         {
             InitializeComponent();
+
+            mContext = context;
 
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-
+            mContext.BusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
+
             r.IsExpanded = true;
 
             itemTypeRootNode.SetTools(xTreeView);
             xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
 
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
-
             SetElementsGridView();
+
             //if (treeItemDoubleClickHandler != null)
             //{
             //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             //}
+        }
+
+        private void CurrentActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+        }
+
+        private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(xMainElementsGrid.toolbar.Visibility == Visibility.Visible)
+                xMainElementsGrid.toolbar.Visibility = Visibility.Hidden;
+            else
+                xMainElementsGrid.toolbar.Visibility = Visibility.Visible;
+            //throw new NotImplementedException();
         }
 
         //public POMNavPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addItemHandler = null, EventHandler itemDoubleClickHandler = null)
@@ -97,7 +164,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             TreeViewItem TVI = (TreeViewItem)sender;
             object tvItem = TVI.Tag;
             ITreeViewItem mPOMObj = tvItem as ITreeViewItem;
-            SolutionWindows.TreeViewItems.ApplicationModelsTreeItems.ApplicationPOMTreeItem treeItem = tvItem as SolutionWindows.TreeViewItems.ApplicationModelsTreeItems.ApplicationPOMTreeItem;
+
             ApplicationPOMModel mPOM = mPOMObj.NodeObject() as ApplicationPOMModel;
             if (tvItem is ITreeViewItem)
             {
@@ -142,10 +209,126 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             List<GingerCore.GeneralLib.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
             xMainElementsGrid.SetAllColumnsDefaultView(view);
             xMainElementsGrid.InitViewItems();
             xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
+
+            xMainElementsGrid.AddToolbarTool(eImageType.GoBack, "Add to Actions", new RoutedEventHandler(AddFromPOMNavPage));
+            xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+        }
+
+        private void AddFromPOMNavPage(object sender, RoutedEventArgs e)
+        {
+            if (xMainElementsGrid.Grid.SelectedItems != null && xMainElementsGrid.Grid.SelectedItems.Count > 0)
+            {
+                foreach (ElementInfo elemInfo in xMainElementsGrid.Grid.SelectedItems)
+                {
+                    Act instance = GenerateRelatedAction(elemInfo);
+                    if(instance != null)
+                    {
+                        instance.Active = true;
+
+                    }
+                    mContext.BusinessFlow.AddAct(instance, true);
+                }
+
+                int selectedActIndex = -1;
+                ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
+                if (actsList.CurrentItem != null)
+                {
+                    selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
+                }
+                if (selectedActIndex >= 0)
+                {
+                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
+
+                }
+            }
+            else
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+        }
+
+        private static Act GenerateRelatedAction(ElementInfo elementInfo)
+        {
+            Act instance;
+            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
+            ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
+            {
+                Description = "UIElement Action : " + elementInfo.ItemName,
+                Operation = ActUIElement.eElementAction.NotExist.ToString(),
+                LocateBy = eLocateBy.POMElement,
+                LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
+                ElementValue = "",
+                AddPOMToAction = true,
+                POMGuid = elementInfo.ParentGuid.ToString(),
+                ElementGuid = elementInfo.Guid.ToString(),
+                LearnedElementInfo = elementInfo,
+            };
+
+            switch (elementInfo.ElementTypeEnum)
+            {
+                case eElementType.Button:
+                case eElementType.CheckBox:
+                case eElementType.RadioButton:
+                case eElementType.HyperLink:
+                case eElementType.Span:
+                case eElementType.Div:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.Click.ToString();
+                    break;
+
+                case eElementType.TextBox:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.SetText.ToString();
+                    break;
+
+                default:
+                    actionConfigurations.Operation = ActUIElement.eElementAction.NotExist.ToString();
+                    break;
+            }
+
+            instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
+            return instance;
+        }
+
+        private void HighlightElementClicked(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateDriverAvalability())
+            {
+                return;
+            }
+
+            if (mSelectedElement != null)
+            {
+                mWinExplorer.HighLightElement(mSelectedElement, true);
+            }
+        }
+        private bool ValidateDriverAvalability()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
+                return false;
+            }
+
+            if (IsDriverBusy())
+            {
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
+                return false;
+            }
+
+            return true;
+        }
+        private bool IsDriverBusy()
+        {
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

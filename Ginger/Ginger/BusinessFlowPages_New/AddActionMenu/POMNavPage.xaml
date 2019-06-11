@@ -6,16 +6,25 @@
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="600"
       Title="POMNavAction">
 
-    <Grid>
+    <Grid Name="PageGrid">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xPOMItems" Height="300*"/>
             <RowDefinition />
             <RowDefinition x:Name="xPOMDetails" Height="*"/>
         </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <DataTemplate x:Key="xHighlightButtonTemplate">
+                <Button x:Name="HighlightButton" Click="HighlightElementClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Pointer" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+        </Grid.Resources>
 
         <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Background="White" Foreground="White" Grid.Row="0">
         </UCTreeView:TreeView1>

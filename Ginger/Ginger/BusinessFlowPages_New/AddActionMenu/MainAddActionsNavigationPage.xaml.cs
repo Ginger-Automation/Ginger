@@ -51,7 +51,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
-            LoadActionFrame(new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM), "Page Objects Model", eImageType.ApplicationPOMModel);
+            LoadActionFrame(new POMNavPage(mContext, "Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM), "Page Objects Model", eImageType.ApplicationPOMModel);
         }
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
