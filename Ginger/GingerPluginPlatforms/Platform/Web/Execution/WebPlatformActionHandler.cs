@@ -14,95 +14,101 @@ namespace Ginger.Plugin.Platform.Web.Execution
     {
         public NewPayLoad HandleRunAction(IPlatformService service, NewPayLoad ActionPayload)
         {
-            string actionType = ActionPayload.GetValueString();
-
-            // TODO: split to class and functions, or we use smart reflection to redirect the action
-            Dictionary<string, string> InputParams = new Dictionary<string, string>();
-            List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
-
-            NewPayLoad PomPayload=null;
-            int i = 0;
-            if(FieldsandParams[0].Name== "POMPayload")
+            try
             {
-                i = 1;
-                PomPayload = FieldsandParams[0];
-            }
+                string actionType = ActionPayload.GetValueString();
 
-            for (; i < FieldsandParams.Count-1; i++)
-            {
-                NewPayLoad Np =FieldsandParams[i];
-                string Name = Np.GetValueString();
+                // TODO: split to class and functions, or we use smart reflection to redirect the action
+                Dictionary<string, string> InputParams = new Dictionary<string, string>();
+                List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
 
-                string Value = Np.GetValueString();
-                if (!InputParams.ContainsKey(Name))
+                NewPayLoad PomPayload = null;
+                int i = 0;
+                if (FieldsandParams[0].Name == "POMPayload")
                 {
-                    InputParams.Add(Name, Value);
+                    i = 1;
+                    PomPayload = FieldsandParams[0];
                 }
-            }
-            //foreach (NewPayLoad Np in FieldsandParams)
-            //{
-            //    string Name = Np.GetValueString();
 
-            //    string Value = Np.GetValueString();
-            //    if (!InputParams.ContainsKey(Name))
-            //    {
-            //        InputParams.Add(Name, Value);
-            //    }
-            //}
-            IWebPlatform PlatformService = null;
-            if (service is IWebPlatform Mservice)
-            {
-                PlatformService = Mservice;
-            }
-
-
-            if (actionType == "BrowserAction")
-            {
-
-
-
-                BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
-
-                
-                Handler.ExecuteAction();
-
-
-                NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo,Handler.Error, Handler.AOVs);
-                return PLRC;
-            }
-
-            if (actionType == "UIElementAction")
-            {
-                try
+                for (; i < FieldsandParams.Count; i++)
                 {
-                  
+                    NewPayLoad Np = FieldsandParams[i];
+                    string Name = Np.GetValueString();
+
+                    string Value = Np.GetValueString();
+                    if (!InputParams.ContainsKey(Name))
+                    {
+                        InputParams.Add(Name, Value);
+                    }
+                }
+                //foreach (NewPayLoad Np in FieldsandParams)
+                //{
+                //    string Name = Np.GetValueString();
+
+                //    string Value = Np.GetValueString();
+                //    if (!InputParams.ContainsKey(Name))
+                //    {
+                //        InputParams.Add(Name, Value);
+                //    }
+                //}
+                IWebPlatform PlatformService = null;
+                if (service is IWebPlatform Mservice)
+                {
+                    PlatformService = Mservice;
+                }
 
 
-                 
-                    UIELementActionHandler Handler = new UIELementActionHandler(PlatformService,InputParams);
+                if (actionType == "BrowserAction")
+                {
 
-                    Handler.PrepareforExecution(PomPayload);
+
+
+                    BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
+
 
                     Handler.ExecuteAction();
 
+
                     NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
                     return PLRC;
-     
                 }
-                catch (Exception ex)
-                {
-                    NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
-                    return newPayLoad;
-                }
-            }
 
-            
+                if (actionType == "UIElementAction")
+                {
+                    try
+                    {
+
+
+
+
+                        UIELementActionHandler Handler = new UIELementActionHandler(PlatformService, InputParams);
+
+                        Handler.PrepareforExecution(PomPayload);
+
+                        Handler.ExecuteAction();
+
+                        NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
+                        return PLRC;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
+                        return newPayLoad;
+                    }
+                }
+
+        
 
             NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + actionType);
             return err;
 
+            }
+            catch(Exception ex)
+            {
+                return NewPayLoad.Error(ex.Message + System.Environment.NewLine +ex.StackTrace);
+            }
 
-            
         }
 
      

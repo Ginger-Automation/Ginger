@@ -7,5 +7,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
 {
     public interface IRadioButton:IGingerWebElement,IClick
     {
+
+        string GetValue();
     }
 }

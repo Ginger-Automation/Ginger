@@ -14,5 +14,7 @@ namespace Ginger.Plugin.Platform.Web.Actions
         void Select(string Value);
         void SelectByIndex(int index);
         void SelectByText(string Text);
+
+        string GetSelectedValue();
     }
 }

@@ -1,12 +1,10 @@
 ﻿using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Ginger.Plugin.Platform.Web.Actions;
 using Ginger.Plugin.Platform.Web.Elements;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -15,100 +13,40 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         public enum eElementAction
         {
-            #region Generic Action Types
-
-            Unknown,
-
-            Hover,
-
-            Visible,
-
-            Click,
-            JavaScriptClick,
-            GetCustomAttribute,//keeping for backward support
-            ClickAndValidate,
-            AsyncClick,
-            // not here at all ?
-            WinClick,
-
-            MouseClick,
-
-            ClickXY,
-
-            SetText,
-
-            GetText,
-
-            SetValue,
-
             GetValue,
-
-            GetXY,
-
-            GetSize,
-
-            OpenDropDown,
-
-            SelectandValidate,
-            CloseDropDown,
-            GetAllValues,
-            GetAttrValue,
-            SetFocus,
-            IsEnabled,
-            Toggle,
-            Select,
-            IsVisible,
-            IsMandatory,
-            Exist,
-            NotExist,
-            Enabled,
-            GetName,
-            GetDialogText,
-            AcceptDialog,
-            DismissDialog,
-            SetDate,
-            ScrollUp,
-            ScrollDown,
-            ScrollLeft,
-            ScrollRight,
-            SelectByIndex,
-            GetValueByIndex,
-            GetItemCount,
-            SendKeys,
-            DragDrop,
-            IsExist,
-            GetContexts,
-            SetContext,
-            MouseRightClick,
-            GetFont,
-            GetWidth,
-            GetHeight,
-            GetStyle,
-            MultiClicks,
-            MultiSetValue,
-            GetWindowTitle,
-            IsDisabled,
-            Switch,
-            SendKeysXY,
-            #endregion Generic Action Types
-
-            #region TextBox Action Types
-            ClearValue,
+            Click,
+            SetValue,
             GetTextLength,
-            #endregion TextBox Action Types
-
-
-            #region ComboBox related Types
-            SetSelectedValueByIndex,
-            SelectByText,
-            GetValidValues,
-            GetSelectedValue,
+            SendKeys,
+            SetText,
+            GetFont,
+            ClearValue,
             IsValuePopulated,
-            #endregion Usable Action Types
-
-            Submit,
-            RunJavaScript,
+            GetValidValues,
+            Select,
+            SelectByIndex,
+            SelectByText,
+            GetText,
             DrawObject,
+            Submit,
+            JavaScriptClick,
+            MouseClick,
+            ClickAndValidate,
+            DragDrop,
+            GetAttrValue,
+            GetHeight,
+            GetItemCount,
+            GetSize,
+            GetStyle,
+            GetWidth,
+            Hover,
+            IsEnabled,
+            IsVisible,
+            MouseRightClick,
+            RunJavaScript,
+            SetFocus,
+            ScrollToElement,
+            GetSelectedValue
         }
 
         #region PomProperties
@@ -128,14 +66,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
         eElementAction ElementAction;
         eElementType ElementType;
         #endregion
-  
+
 
         string Value;
         readonly IWebPlatform PlatformService;
         Dictionary<string, string> InputParams;
-       internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
+        internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
 
-        public string ExecutionInfo { get ; set; }
+        public string ExecutionInfo { get; set; }
         public string Error { get; set; }
 
         public UIELementActionHandler(IWebPlatform mplatformService, Dictionary<string, string> mInputParams)
@@ -144,7 +82,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             InputParams = mInputParams;
 
-        
+
         }
 
         private void PreparePOMforExecution(NewPayLoad pomPayload)
@@ -152,7 +90,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             if (pomPayload != null)
             {
                 IsPOM = true;
-        
+
                 mElementType = pomPayload.GetValueString();
                 //handleAutoShiftFrame 
 
@@ -186,7 +124,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
             }
 
-            ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
+
+            _ = Enum.TryParse<eElementType>(mElementType, out ElementType);
 
             string mElementAction;
             InputParams.TryGetValue("ElementAction", out mElementAction);
@@ -197,10 +136,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             InputParams.TryGetValue("Value", out Value);
 
-         
+
 
         }
-        
+
 
 
 
@@ -211,12 +150,12 @@ namespace Ginger.Plugin.Platform.Web.Execution
             try
             {
                 string Locatevalue = InputParams["ElementLocateValue"];
-               
+
                 IGingerWebElement Element = null;
 
                 LocateByValue = Locatevalue;
 
-                if(IsPOM)
+                if (IsPOM)
                 {
                     Element = LocateElementByPom(ref ElementType);
                 }
@@ -290,15 +229,15 @@ namespace Ginger.Plugin.Platform.Web.Execution
         private IGingerWebElement LocateElementByPom(ref eElementType elementType)
         {
             IGingerWebElement pomelement = null;
-            if(PlatformService.AutomaticallyShiftIframe)
+            if (PlatformService.AutomaticallyShiftIframe)
             {
                 AutomaticSwitchFrame();
             }
 
-            foreach (KeyValuePair<string,string>locator in Locators)
+            foreach (KeyValuePair<string, string> locator in Locators)
             {
                 pomelement = LocateElement(ref elementType, locator.Key, locator.Value);
-                if(pomelement!=null)
+                if (pomelement != null)
                 {
                     break;
                 }
@@ -314,98 +253,98 @@ namespace Ginger.Plugin.Platform.Web.Execution
             throw new NotImplementedException();
         }
 
-        private IGingerWebElement LocateElement(ref eElementType ElementType,string ElementLocateBy,string LocateByValue)
+        private IGingerWebElement LocateElement(ref eElementType ElementType, string ElementLocateBy, string LocateByValue)
         {
-            IGingerWebElement Element=null;
-            
-                switch (ElementLocateBy)
-                {
-                    case "ByID":
+            IGingerWebElement Element = null;
 
-                        Element = PlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
-                        break;
-                    case "ByCSSSelector":
-                    case "ByCSS":
+            switch (ElementLocateBy)
+            {
+                case "ByID":
 
-                        Element = PlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
+                    Element = PlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
+                    break;
+                case "ByCSSSelector":
+                case "ByCSS":
 
-                        break;
-                    case "ByLinkText":
-                        Element = PlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
+                    Element = PlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
 
-                        break;
+                    break;
+                case "ByLinkText":
+                    Element = PlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
+
+                    break;
 
                 case "ByName":
                     Element = PlatformService.LocateWebElement.LocateElementByName(ElementType, LocateByValue);
 
                     break;
                 case "ByRelXPath":
-                    case "ByXPath":
-                        Element = PlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
+                case "ByXPath":
+                    Element = PlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
 
-                        break;
+                    break;
 
 
 
-                }
-                if (Element!=null &&(ElementType == eElementType.WebElement || ElementType == eElementType.Unknown))
+            }
+            if (Element != null && (ElementType == eElementType.WebElement || ElementType == eElementType.Unknown))
+            {
+                if (Element is IButton)
                 {
-                    if (Element is IButton)
-                    {
-                        ElementType = eElementType.Button;
-                    }
-                    else if (Element is ICanvas)
-                    {
-                        ElementType = eElementType.Canvas;
-                    }
-                    else if (Element is ICheckBox)
-                    {
-                        ElementType = eElementType.CheckBox;
-                    }
-                    else if (Element is IComboBox)
-                    {
-                        ElementType = eElementType.ComboBox;
-                    }
-                    else if (Element is IDiv)
-                    {
-                        ElementType = eElementType.Div;
-                    }
-                    else if (Element is IHyperLink)
-                    {
-                        ElementType = eElementType.HyperLink;
-                    }
-                    else if (Element is IImage)
-                    {
-                        ElementType = eElementType.Image;
-                    }
-                    else if (Element is ILabel)
-                    {
-                        ElementType = eElementType.Label;
-                    }
-                    else if (Element is IWebList)
-                    {
-                        ElementType = eElementType.List;
-                    }
-                    else if (Element is IRadioButton)
-                    {
-                        ElementType = eElementType.RadioButton;
-                    }
-                    else if (Element is ISpan)
-                    {
-                        ElementType = eElementType.Span;
-                    }
-                    else if (Element is ITable)
-                    {
-                        ElementType = eElementType.Table;
-                    }
-                    else if (Element is ITextBox)
-                    {
-                        ElementType = eElementType.TextBox;
-                    }
-
-
+                    ElementType = eElementType.Button;
                 }
-       
+                else if (Element is ICanvas)
+                {
+                    ElementType = eElementType.Canvas;
+                }
+                else if (Element is ICheckBox)
+                {
+                    ElementType = eElementType.CheckBox;
+                }
+                else if (Element is IComboBox)
+                {
+                    ElementType = eElementType.ComboBox;
+                }
+                else if (Element is IDiv)
+                {
+                    ElementType = eElementType.Div;
+                }
+                else if (Element is IHyperLink)
+                {
+                    ElementType = eElementType.HyperLink;
+                }
+                else if (Element is IImage)
+                {
+                    ElementType = eElementType.Image;
+                }
+                else if (Element is ILabel)
+                {
+                    ElementType = eElementType.Label;
+                }
+                else if (Element is IWebList)
+                {
+                    ElementType = eElementType.List;
+                }
+                else if (Element is IRadioButton)
+                {
+                    ElementType = eElementType.RadioButton;
+                }
+                else if (Element is ISpan)
+                {
+                    ElementType = eElementType.Span;
+                }
+                else if (Element is ITable)
+                {
+                    ElementType = eElementType.Table;
+                }
+                else if (Element is ITextBox)
+                {
+                    ElementType = eElementType.TextBox;
+                }
+
+
+            }
+
 
             return Element;
         }
@@ -416,9 +355,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
             {
                 if (element is IClick ClickElement)
                 {
-                    ClickActions(ClickElement,ElementAction);
+                    ClickActions(ClickElement, ElementAction);
                 }
-                else {
+                else
+                {
 
                     switch (mElementAction)
                     {
@@ -428,7 +368,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                             AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Hyperlink.GetValue() });
 
                             break;
-                       
+
 
 
 
@@ -441,7 +381,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         {
             string ValidationElementLocateBy = InputParams["ValidationElementLocateBy"];
             string ValidationElementLocatorValue = InputParams["ValidationElementLocatorValue"];
- 
+
             string mValidationElement = InputParams["ValidationElement"];
             eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
             IGingerWebElement ValidationElement = LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue);
@@ -489,7 +429,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                 case eElementAction.GetTextLength:
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetTextLength() });
-                    
+
                     break;
                 case eElementAction.SendKeys:
 
@@ -517,27 +457,59 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         }
 
-            private void SpanActions(IGingerWebElement element)
+        private void SpanActions(IGingerWebElement element)
         {
-            throw new NotImplementedException();
+            if (element is ISpan SpanElement)
+            {
+                switch (ElementAction)
+                {
+                    case eElementAction.SetValue:
+
+                        SpanElement.SetValue(Value);
+                        break;
+                    case eElementAction.GetValue:
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = SpanElement.GetValue() });
+
+                        break;
+                    default:
+                        Error = String.Format("Action {0} not found", ElementAction.ToString());
+                        break;
+                }
+            }
         }
 
         private void RadioButtonActions(IGingerWebElement element)
         {
-
-            if (element is IClick ClickElement)
-            {
-                ClickActions(ClickElement, ElementAction);
-            }
-
-            else if (element is IGetValue GetElementValue)
+            switch (ElementAction)
             {
 
+                case eElementAction.Click:
+                case eElementAction.JavaScriptClick:
+                case eElementAction.MouseClick:
+                case eElementAction.MouseRightClick:
+
+                    ClickActions(element as IClick, ElementAction);
+                    break;
+
+                case eElementAction.GetValue:
+
+                    if (element is IRadioButton GetElementValue)
+                    {
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = GetElementValue.GetValue() });
+
+                    }
+
+                    break;
+                default:
+
+                    Error = "Not Supported Action";
+                    break;
             }
-            else
-            {
-                Error = "Not Supported Action";
-            }
+
+
+        
+
+   
 
         }
 
@@ -586,15 +558,15 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 {
 
                     case eElementAction.GetFont:
-                       
 
-                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetFont()    });
+
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetFont() });
 
                         break;
                     case eElementAction.GetText:
 
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetText() });
-                
+
                         break;
 
                     case eElementAction.GetValue:
@@ -634,6 +606,9 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Element.IsValuePopulated() });
                         break;
+                    case eElementAction.GetSelectedValue:
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Element.GetSelectedValue() });
+                        break;
 
                     case eElementAction.Select:
                         Element.Select(ValueToSelect);
@@ -645,7 +620,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eElementAction.SetValue:
                         Element.SelectByText(Value);
 
-                        
+
                         break;
 
                 }
@@ -678,7 +653,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         {
             if (element is ICanvas E)
             {
-              
+
                 switch (ElementAction)
                 {
                     case eElementAction.DrawObject:
@@ -689,7 +664,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 }
 
 
-                
+
             }
         }
 
@@ -700,7 +675,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 string ValueToSelect;
                 InputParams.TryGetValue("ValueToSelect", out ValueToSelect);
 
-                if (ElementAction.ToString().ToUpper().Contains("CLICK" ) && element is IClick ClickElement)
+                if (ElementAction.ToString().ToUpper().Contains("CLICK") && element is IClick ClickElement)
                 {
                     ClickActions(ClickElement, ElementAction);
                 }
@@ -753,8 +728,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     if ("IsVisible".Equals(ValidationType))
                     {
-                     
-                        if(ValidationElement.IsVisible())
+
+                        if (ValidationElement.IsVisible())
                         {
                             ExecutionInfo = "Validation element is Visible";
                         }
@@ -795,7 +770,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         private bool PerformCommonActions(IGingerWebElement Element)
         {
             bool performed = true;
-            
+
             switch (ElementAction)
             {
                 case eElementAction.DragDrop:
@@ -816,17 +791,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     break;
 
                 case eElementAction.GetItemCount:
-         
-                    throw new  NotImplementedException("Get Item count is not implementd");
-             
+
+                    throw new NotImplementedException("Get Item count is not implementd");
+
                 case eElementAction.GetSize:
-                   Size s= Element.GetSize();
-                    AOVs.Add(new NodeActionOutputValue() { Param = "Height", Value = s.Height});
+                    Size s = Element.GetSize();
+                    AOVs.Add(new NodeActionOutputValue() { Param = "Height", Value = s.Height });
                     AOVs.Add(new NodeActionOutputValue() { Param = "Width", Value = s.Width });
 
                     break;
                 case eElementAction.GetStyle:
-              
+
                     AOVs.Add(new NodeActionOutputValue() { Param = "Style", Value = Element.GetStyle() });
                     break;
                 case eElementAction.GetWidth:
@@ -851,6 +826,9 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     break;
                 case eElementAction.SetFocus:
                     Element.SetFocus();
+                    break;
+                case eElementAction.ScrollToElement:
+                    Element.ScrollToElement();
                     break;
 
                 default:

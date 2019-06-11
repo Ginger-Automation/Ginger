@@ -160,14 +160,21 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         string ElementLocateBy;
                         string Locatevalue;
                         string mElementType;
+                                           InputParams.TryGetValue("LocateValue", out Locatevalue);
                         InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
-                        InputParams.TryGetValue("Locatevalue", out Locatevalue);
-                        InputParams.TryGetValue("ElementType", out mElementType);
-                        if(string.IsNullOrEmpty(Locatevalue))
+                        if(string.IsNullOrEmpty(ElementLocateBy))
+                        {
+                            InputParams.TryGetValue("LocateBy", out ElementLocateBy);
+                        }
+     
+                        if (string.IsNullOrEmpty(Locatevalue))
                         {
                             InputParams.TryGetValue("Value", out Locatevalue);
                         }
-                        eElementType  ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
+                        InputParams.TryGetValue("ElementType", out mElementType);
+              
+                        eElementType ElementType = eElementType.WebElement;
+                            _=Enum.TryParse<eElementType>( mElementType,out ElementType);
                         IGingerWebElement   Element = LocateElement(ElementType, ElementLocateBy, Locatevalue);
                         BrowserService.SwitchToFrame(Element);
                         break;
