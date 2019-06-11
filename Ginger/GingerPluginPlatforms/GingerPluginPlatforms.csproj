@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="HelpProj.shfbproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ginger.Plugin.Core" Version="3.3.3" />
   </ItemGroup>
 

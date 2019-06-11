@@ -96,7 +96,9 @@ namespace Ginger.Plugin.Platform.Web
         /// Closes Current Tab.
         /// </summary>
         void CloseCurrentTab();
-
-
+        /// <summary>
+        /// Deletes AllCookies .
+        /// </summary>
+        void DeleteAllCookies();
     }
 }

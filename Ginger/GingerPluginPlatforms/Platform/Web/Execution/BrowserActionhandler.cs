@@ -136,7 +136,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         BrowserService.NavigateBack();
                         break;
                     case eControlAction.DismissMessageBox:
-                        BrowserService.DismissMessageBox();
+                        BrowserService.DismissAlert();
                         break;
                     case eControlAction.DeleteAllCookies:
                         BrowserService.DeleteAllCookies();
@@ -144,7 +144,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     case eControlAction.AcceptMessageBox:
 
-                        BrowserService.AcceptMessageBox();
+                        BrowserService.AcceptAlert();
                         break;
                     case eControlAction.GetWindowTitle:
 
@@ -156,7 +156,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         break;
                     case eControlAction.SetAlertBoxText:
 
-                        BrowserService.SetAlertBoxText(Value);
+                        BrowserService.SendAlertText(Value);
                         break;
                     case eControlAction.SwitchFrame:
                         string ElementLocateBy;

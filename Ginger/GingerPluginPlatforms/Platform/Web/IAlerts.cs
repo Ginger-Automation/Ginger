@@ -22,7 +22,7 @@ namespace Ginger.Plugin.Platform.Web
         /// Get Text from An ALert.
         /// </summary>
         /// <returns></returns>
-        string GetALertText();
+        string GetAlertText();
         /// <summary>
         /// Set Text in Alert .
         /// </summary>
