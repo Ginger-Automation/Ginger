@@ -159,6 +159,7 @@ namespace Ginger.Run
             {
                 mCurrentBusinessFlow = value;
                 mContext.BusinessFlow = mCurrentBusinessFlow;
+                mContext.Runner = this;
             }
         }        
         public bool AgentsRunning = false;

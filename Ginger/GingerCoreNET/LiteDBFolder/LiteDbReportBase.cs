@@ -81,6 +81,20 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             return eRunStatus.Pending.ToString();
         }
+
+        public void RemoveObjFromLiteDB(Object o)
+        {
+            if(o is Amdocs.Ginger.Repository.RepositoryItemBase && (o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId != null)
+            {
+                LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                if (o.GetType().FullName.Contains("Actions"))
+                {
+                    var actionData = liteDbManager.GetActionsLiteData();
+                    actionData.Delete((o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId);
+                }
+            }
+            return;
+        }
     }
     public class LiteDbRunSet : LiteDbReportBase
     {
@@ -157,12 +171,79 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             StartTimeStamp = bfReport.StartTimeStamp;
             EndTimeStamp = bfReport.EndTimeStamp;
             Elapsed = bfReport.Elapsed;
-            this.RunStatus = bfReport.RunStatus;
+            this.RunStatus = CalculateBusinessFlowFinalStatus(bfReport);
             VariablesBeforeExec = bfReport.VariablesBeforeExec;
             VariablesAfterExec = bfReport.VariablesAfterExec;
             SolutionVariablesBeforeExec = bfReport.SolutionVariablesBeforeExec;
             SolutionVariablesAfterExec = bfReport.SolutionVariablesAfterExec;
             BFFlowControlDT = bfReport.BFFlowControls;
+        }
+        public String CalculateBusinessFlowFinalStatus(BusinessFlowReport BF, bool considrePendingAsSkipped = false)
+        {
+            // A flow is blocked if some activity failed and all the activities after it failed
+            // A Flow is failed if one or more activities failed
+            // A flow is skipped if all acticities are marked skipped
+
+            // Add Blocked
+            bool Failed = false;
+            bool Blocked = false;
+            bool Stopped = false;
+
+            // All activities skipped
+            if (BF.Activities.Count == 0 ||
+                BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.RunStatus == eRunStatus.Skipped.ToString()).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(ActivityReport)).ToList().Count)
+            {
+                return BF.RunStatus = eRunStatus.Skipped.ToString();
+
+            }
+
+            if (considrePendingAsSkipped &&
+                BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == eRunStatus.Pending.ToString()).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(ActivityReport)).ToList().Count)
+            {
+                return BF.RunStatus = eRunStatus.Skipped.ToString();
+            }
+
+
+            // Assume pass unless error
+            eRunStatus newStatus = eRunStatus.Passed;
+
+            foreach (ActivityReport a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler)))
+            {
+                if (a.RunStatus == eRunStatus.Stopped.ToString())
+                {
+                    Stopped = true;
+                    break;
+                }
+                else if (a.RunStatus == eRunStatus.Failed.ToString())
+                {
+                    Failed = true;
+
+                }
+                else if (a.RunStatus == eRunStatus.Blocked.ToString())
+                {
+                    Blocked = true;
+                }
+            }
+
+            if (Stopped)
+            {
+                newStatus = eRunStatus.Stopped;
+            }
+            else if (Failed)
+            {
+                newStatus = eRunStatus.Failed;
+            }
+            else if (Blocked)
+            {
+                newStatus = eRunStatus.Blocked;
+            }
+            else
+            {
+                newStatus = eRunStatus.Passed;
+            }
+
+            BF.RunStatus = newStatus.ToString();
+            return BF.RunStatus;
         }
     }
 
@@ -211,11 +292,54 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             StartTimeStamp = activityReport.StartTimeStamp;
             EndTimeStamp = activityReport.EndTimeStamp;
             Elapsed = activityReport.Elapsed;
-            RunStatus = activityReport.RunStatus;
+            RunStatus = CalculateActivityFinalStatus(activityReport);
             VariablesAfterExec = activityReport.VariablesAfterExec;
             //VariablesBeforeExec = activityReport.VariablesBeforeExec;
         }
+
+        private string SetStatusReportObj(List<ActionReport> actionsColl)
+        {
+            if (actionsColl.Any(rp => rp.Status.Equals(eRunStatus.Failed.ToString())))
+            {
+                return eRunStatus.Failed.ToString();
+            }
+            if (actionsColl.Any(rp => rp.Status.Equals(eRunStatus.Blocked.ToString())))
+            {
+                return eRunStatus.Blocked.ToString();
+            }
+            if (actionsColl.Any(rp => rp.Status.Equals(eRunStatus.Stopped.ToString())))
+            {
+                return eRunStatus.Stopped.ToString();
+            }
+            if (actionsColl.Count(rp => rp.Status.Equals(eRunStatus.Passed.ToString()) || rp.Status.Equals(eRunStatus.Skipped.ToString())) == actionsColl.Count())
+            {
+                return eRunStatus.Passed.ToString();
+            }
+            return eRunStatus.Pending.ToString();
+        }
+        public string CalculateActivityFinalStatus(ActivityReport ar)
+        {
+            ar.RunStatus = eRunStatus.Skipped.ToString();
+
+            //if there is one fail then Activity status is fail
+            if (ar.Actions.Where(x => x.Status == eRunStatus.Stopped.ToString()).FirstOrDefault() != null)   
+                ar.RunStatus = eRunStatus.Stopped.ToString();
+            else if (ar.Actions.Where(x => x.Status == eRunStatus.Failed.ToString()).FirstOrDefault() != null)
+                ar.RunStatus = eRunStatus.Failed.ToString();
+            else if (ar.Actions.Count > 0 && ar.Actions.Where(x => x.Status == eRunStatus.Blocked.ToString()).ToList().Count == ar.Actions.Count)
+                ar.RunStatus = eRunStatus.Blocked.ToString();
+            else
+            {
+                // If we have at least 1 pass then it passed, otherwise will remain Skipped
+                if (ar.Actions.Where(x => x.Status == eRunStatus.Passed.ToString()).FirstOrDefault() != null)
+                {
+                    ar.RunStatus = eRunStatus.Passed.ToString();
+                }
+            }
+            return ar.RunStatus;
+        }
     }
+    
     public class LiteDbAction : LiteDbReportBase
     {
         public string ActionType { get; set; }

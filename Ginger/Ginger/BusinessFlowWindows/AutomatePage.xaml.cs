@@ -172,6 +172,7 @@ namespace Ginger
                         isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                         return;
                     }
+                    DeleteRunSetBFRefData();
                 }
             }
         }
@@ -991,6 +992,13 @@ namespace Ginger
         {
             if (mBusinessFlow != businessFlowToLoad)
             {
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    DeleteRunSetBFRefData();
+                    ClearAutomatedId(businessFlowToLoad);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                    
+                }
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
@@ -1016,12 +1024,24 @@ namespace Ginger
 
                     UpdateRunnerAgentsUsedBusinessFlow();
                 }
-                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                {
-                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
-                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
-                }
             }
+        }
+
+        private void ClearAutomatedId(BusinessFlow businessFlowToLoad)
+        {
+            foreach (var activity in businessFlowToLoad.Activities)
+            {
+                foreach (var action in activity.Acts)
+                {
+                    (action as Act).LiteDbId = null;
+                }
+                activity.LiteDbId = null;
+            }
+            foreach (var ag in businessFlowToLoad.ActivitiesGroups)
+            {
+                ag.LiteDbId = null;
+            }
+            businessFlowToLoad.LiteDbId = null;
         }
 
         public void UpdateRunnerAgentsUsedBusinessFlow()
