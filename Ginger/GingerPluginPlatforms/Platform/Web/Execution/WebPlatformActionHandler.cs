@@ -10,8 +10,19 @@ using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
+    /// <summary>
+    /// Default Implementation of IPlatformActionHandler for WebPlatform. A Plugin Implementing IwebPlatform can use this.
+    /// </summary>
     public class WebPlatformActionHandler : IPlatformActionHandler
     {
+        /// <summary>
+        /// It Takes an instance of IWebPlatform(ehich extends IPlatformService ) and Action payload and call the required functions for execution.
+        /// Supported actions are Browser Action and Ui Element action with Page object Model Support
+        /// 
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="ActionPayload"></param>
+        /// <returns></returns>
         public NewPayLoad HandleRunAction(IPlatformService service, NewPayLoad ActionPayload)
         {
             try

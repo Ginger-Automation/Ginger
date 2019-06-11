@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Execution
-{
+{/// <summary>
+/// Handles the Browser Action
+/// </summary>
     class BrowserActionhandler:IActionHandler
     {
         public enum eControlAction

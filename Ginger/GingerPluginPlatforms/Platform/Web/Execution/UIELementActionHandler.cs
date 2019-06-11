@@ -8,11 +8,17 @@ using System.Drawing;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
+    /// <summary>
+    /// Class having logic for converting the payloads and calling relevent functions from different element Interfaces to execute actions
+    /// </summary>
     public class UIELementActionHandler : IActionHandler
     {
-
-        public enum eElementAction
+        /// <summary>
+        /// Enum Having all the possible Element Action
+        /// </summary>
+        private enum eElementAction
         {
+         
             GetValue,
             Click,
             SetValue,
@@ -72,10 +78,19 @@ namespace Ginger.Plugin.Platform.Web.Execution
         readonly IWebPlatform PlatformService;
         Dictionary<string, string> InputParams;
         internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
-
+        /// <summary>
+        /// Execution details are stored in this.
+        /// </summary>
         public string ExecutionInfo { get; set; }
+        /// <summary>
+        /// If an error happens during execution you should store in this proeprty and it will be 
+        /// </summary>
         public string Error { get; set; }
-
+        /// <summary>
+        /// Instantiate the UIElementAction Handler with wervice implementing IWebplatform and Dictionary of InputParams
+        /// </summary>
+        /// <param name="mplatformService"></param>
+        /// <param name="mInputParams"></param>
         public UIELementActionHandler(IWebPlatform mplatformService, Dictionary<string, string> mInputParams)
         {
             PlatformService = mplatformService;

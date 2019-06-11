@@ -5,9 +5,15 @@ using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
-    public interface IRadioButton:IGingerWebElement,IClick
+    /// <summary>
+    /// Exposes Funationality for Radio Button.
+    /// </summary>
+    public interface IRadioButton : IGingerWebElement, IClick
     {
-
+        /// <summary>
+        /// Get The current value of Raid Button.
+        /// </summary>
+        /// <returns></returns>
         string GetValue();
     }
 }
