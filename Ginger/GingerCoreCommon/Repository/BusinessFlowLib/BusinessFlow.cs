@@ -757,7 +757,7 @@ namespace GingerCore
 
         public void AttachActivitiesGroupsAndActivities()
         {
-            //Free Activities which attached to not exist groups
+            //Free Activities which attached to missing group
             foreach (Activity activity in this.Activities)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
@@ -766,12 +766,46 @@ namespace GingerCore
                     if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == activity.ActivityName && actidnt.ActivityGuid == activity.Guid).FirstOrDefault()) == null)
                     {
                         activity.ActivitiesGroupID = string.Empty;
-                        //act.ActivitiesGroupColor = string.Empty;
                     }
                 }
             }
 
-            //Attach Activities 
+            //Attach mapped activities to groups nad clear missing Activities
+            foreach (ActivitiesGroup group in this.ActivitiesGroups)
+            {
+                for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
+                {
+                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
+                    Activity activ = this.Activities.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    if (activ == null)
+                    {
+                        activ = this.Activities.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    }
+                    if (activ == null)
+                    {
+                        activ = this.Activities.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    }
+                    if (activ != null)
+                    {
+                        //actIdentifis.IdentifiedActivity = (Activity)activ;
+                        activ.ActivitiesGroupID = group.Name;
+                        indx++;
+                    }
+                    else
+                    {
+                        group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
+                    }
+                }
+
+                //re-add the activities in correct order
+                group.ActivitiesIdentifiers.Clear();
+                foreach(Activity activity in Activities.Where(x=>x.ActivitiesGroupID == group.Name).ToList())
+                {
+                    group.AddActivityToGroup(activity);
+                }
+            }
+
+            //Attach free Activities + make sure Activities groups having valid order
             foreach (Activity activity in this.Activities)
             {
                 if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
@@ -780,7 +814,7 @@ namespace GingerCore
                     //attach to Activity Group
                     if (Activities.IndexOf(activity) == 0)
                     {
-                        ActivitiesGroup group = AddActivitiesGroup(null, 0);                        
+                        ActivitiesGroup group = AddActivitiesGroup(null, 0);
                         group.AddActivityToGroup(activity);
                     }
                     else
@@ -825,41 +859,26 @@ namespace GingerCore
                             }
                         }
                     }
-
                 }
             }
 
-
-            foreach (ActivitiesGroup group in this.ActivitiesGroups)
+            //Make sure groups order is according to flow
+            Dictionary<ActivitiesGroup, int> groupsOrderDic = new Dictionary<ActivitiesGroup, int>();
+            int index = 0;
+            foreach(Activity activity in Activities)
             {
-                //if (string.IsNullOrEmpty(group.GroupColor))
-                //{
-                //    SetUniqueGroupColor(group);//added in order to add colors to old activities groups
-                //}
-
-                for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
+                ActivitiesGroup group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                if (!groupsOrderDic.ContainsKey(group))
                 {
-                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = this.Activities.Where(act => act.ActivityName == actIdentifis.ActivityName && act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
-                    if (activ == null)
-                    {
-                        activ = this.Activities.Where(act => act.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
-                    }
-                    if (activ == null)
-                    {
-                        activ = this.Activities.Where(act => act.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
-                    }
-                    if (activ != null)
-                    {
-                        actIdentifis.IdentifiedActivity = (Activity)activ;
-                        activ.ActivitiesGroupID = group.Name;
-                        //activ.ActivitiesGroupColor = group.GroupColor;
-                        indx++;
-                    }
-                    else
-                    {
-                        group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
-                    }
+                    groupsOrderDic.Add(group, index);
+                    index++;
+                }
+            }
+            foreach(ActivitiesGroup group in groupsOrderDic.Keys)
+            {
+                if (ActivitiesGroups.IndexOf(group) != groupsOrderDic[group])
+                {
+                    ActivitiesGroups.Move(ActivitiesGroups.IndexOf(group), groupsOrderDic[group]);
                 }
             }
         }

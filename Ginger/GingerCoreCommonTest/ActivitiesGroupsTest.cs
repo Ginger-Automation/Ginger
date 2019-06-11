@@ -121,7 +121,7 @@ namespace GingerCoreCommonTest
             Assert.IsTrue(activity5.ActivitiesGroupID == group1.Name + "_2", "Validate Activity was re-grouped to new added group");
         }
 
-        [Ignore]
+
         [TestMethod]
         public void GroupsOrderTest()
         {
@@ -158,6 +158,44 @@ namespace GingerCoreCommonTest
             Assert.IsTrue(busFlow.ActivitiesGroups[0] == group1, "Validate first group is group 1 same as in Activities flow");
             Assert.IsTrue(busFlow.ActivitiesGroups[1] == group2, "Validate first group is group 2 same as in Activities flow");
             Assert.IsTrue(busFlow.ActivitiesGroups[2] == group3, "Validate first group is group 3 same as in Activities flow");
+        }
+
+        [TestMethod]
+        public void GroupsActivitiesOrderTest()
+        {
+            //Arrange
+            BusinessFlow busFlow = new BusinessFlow();
+            Activity activity1 = new Activity() { ActivityName = "Activity1" };
+            busFlow.AddActivity(activity1);
+            Activity activity2 = new Activity() { ActivityName = "Activity2" };
+            busFlow.AddActivity(activity2);
+            Activity activity3 = new Activity() { ActivityName = "Activity3" };
+            busFlow.AddActivity(activity3);
+            Activity activity4 = new Activity() { ActivityName = "Activity4" };
+            busFlow.AddActivity(activity4);
+            Activity activity5 = new Activity() { ActivityName = "Activity5" };
+            busFlow.AddActivity(activity5);
+
+            ActivitiesGroup group1 = new ActivitiesGroup() { Name = "Group1" };
+            busFlow.AddActivitiesGroup(group1);
+            ActivitiesGroup group2 = new ActivitiesGroup() { Name = "Group2" };
+            busFlow.AddActivitiesGroup(group2);
+
+            group1.AddActivityToGroup(activity3);
+            group1.AddActivityToGroup(activity2);
+            group1.AddActivityToGroup(activity1);
+            group2.AddActivityToGroup(activity4);
+            group2.AddActivityToGroup(activity5);
+
+            //Act
+            busFlow.AttachActivitiesGroupsAndActivities();
+
+            //Assert
+            Assert.IsTrue(group1.ActivitiesIdentifiers[0].IdentifiedActivity == activity1, "Validate group 1 Activity 1 order is same as in Activities flow");
+            Assert.IsTrue(group1.ActivitiesIdentifiers[1].IdentifiedActivity == activity2, "Validate group 1 Activity 2 order is same as in Activities flow");
+            Assert.IsTrue(group1.ActivitiesIdentifiers[2].IdentifiedActivity == activity3, "Validate group 1 Activity 3 order is same as in Activities flow");
+            Assert.IsTrue(group2.ActivitiesIdentifiers[0].IdentifiedActivity == activity4, "Validate group 2 Activity 4 order is same as in Activities flow");
+            Assert.IsTrue(group2.ActivitiesIdentifiers[1].IdentifiedActivity == activity5, "Validate group 2 Activity 5 order is same as in Activities flow");
         }
     }
 }
