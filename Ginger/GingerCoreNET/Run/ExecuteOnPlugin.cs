@@ -184,6 +184,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             NewPayLoad p = GeneratePlatformActionPayload(actPlugin, agent);
 
             // Send the payload to the service
+
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
 
             // Pasrse the result
@@ -412,53 +413,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     }
                 }
 
-                string acttype = actPlugin.GetType().FullName + "+Fields";
-
-               
-                foreach (FieldInfo FI in Type.GetType(acttype).GetFields())
-                {
-                    string Name = FI.Name;
-                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-                    if (string.IsNullOrEmpty(Value))
-                    {
-                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-                        if (Output != null)
-                        {
-                            Value = Output.ToString();
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(Value))
-                    {
-                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                        PLParams.Add(FieldPL);
-                    }
-                }
-
-                foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
-                {
-                    string Name = FI.Name;
-                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-                    if (string.IsNullOrEmpty(Value))
-                    {
-                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-                        if (Output != null)
-                        {
-                            Value = Output.ToString();
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(Value))
-                    {
-                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                        PLParams.Add(FieldPL);
-                    }
-                }
-
+           
 
                 foreach (ActInputValue AIV in actPlugin.InputValues)
                 {

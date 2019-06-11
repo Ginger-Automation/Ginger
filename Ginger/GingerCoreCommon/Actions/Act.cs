@@ -200,7 +200,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                GetOrCreateInputParam(Fields.LocateValue).Value = value.ToString();
+                GetOrCreateInputParam(Fields.LocateValue).Value = value;
                 OnPropertyChanged(Fields.LocateValue);
                 OnPropertyChanged(Fields.Details);
             }
@@ -298,8 +298,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
+       [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> InputValues { get; set; } =new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
@@ -664,8 +664,8 @@ namespace GingerCore.Actions
             ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
 
             TEnum result;
-            _ = Enum.TryParse<TEnum>(AIV.Value, out result);
-
+       _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+         
             return result;
 
         }

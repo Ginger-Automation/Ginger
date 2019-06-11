@@ -914,21 +914,51 @@ namespace Amdocs.Ginger.Repository
                     }
                     else
                     {
-                        //TODO: handle other types of list, meanwhile Assume observable list
-                        IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
-                        //assign it to the relevant obj
+                        try
+                        {
 
-                        if (mi.MemberType == MemberTypes.Property)
-                        {
-                            ((PropertyInfo)mi).SetValue(obj, lst);                            
+                            object result = null;
+                            if (mi.MemberType == MemberTypes.Property)
+                            {
+                                result=((PropertyInfo)mi).GetValue(obj);
+                            }
+
+                            else
+                            {
+                                result = ((FieldInfo)mi).GetValue(obj);
+                            }
+                            IObservableList lst = null;
+                            if (result == null)
+                            {
+                                lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
+                            }
+                            else
+                            {
+                                lst = (IObservableList)result;
+                            }
+
+
+                            //TODO: handle other types of list, meanwhile Assume observable list
+
+                            //assign it to the relevant obj
+
+                            if (mi.MemberType == MemberTypes.Property)
+                            {
+                                ((PropertyInfo)mi).SetValue(obj, lst);
+                            }
+
+                            else
+                            {
+                                ((FieldInfo)mi).SetValue(obj, lst);
+                            }
+
+                            // Read the list from the xml
+                            xmlReadListOfObjects(obj, xdr, lst);
                         }
-                        else
+                        catch(Exception e)
                         {
-                            ((FieldInfo)mi).SetValue(obj, lst);                            
+
                         }
-                        
-                        // Read the list from the xml
-                        xmlReadListOfObjects(obj, xdr, lst);
                     }
                 }
             }

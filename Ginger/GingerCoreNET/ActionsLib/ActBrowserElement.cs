@@ -183,7 +183,8 @@ namespace GingerCore.Actions
             }
             set
             {
-                GetOrCreateInputParam(Fields.ControlAction).Value = value.ToString();
+                 AddOrUpdateInputParamValue(Fields.ControlAction, value.ToString());
+     
                 OnPropertyChanged(nameof(ControlAction));
             }
         }
