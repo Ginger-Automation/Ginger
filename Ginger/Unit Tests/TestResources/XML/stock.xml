@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.cdyne.com/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:GetQuickQuote>
+         <!--Optional:-->
+         <ws:StockSymbol>?</ws:StockSymbol>
+         <!--Optional:-->
+         <ws:LicenseKey>?</ws:LicenseKey>
+      </ws:GetQuickQuote>
+   </soapenv:Body>
+</soapenv:Envelope>
