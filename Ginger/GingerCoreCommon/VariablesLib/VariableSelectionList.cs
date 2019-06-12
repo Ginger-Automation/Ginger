@@ -48,8 +48,23 @@ namespace GingerCore.Variables
 
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
-
+        [IsSerializedForLocalRepository]
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
+
+        private string mValue;
+
+        public override string Value
+        {
+            get
+            {
+                return mValue;
+            }
+            set
+            {
+                mValue = value;
+                OnPropertyChanged("Value");
+            }
+        }
 
         public override string GetFormula()
         {
