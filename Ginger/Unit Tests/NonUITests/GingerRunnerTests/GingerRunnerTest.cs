@@ -32,6 +32,12 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger;
 using GingerTestHelper;
 using Amdocs.Ginger.Common.InterfacesLib;
+using System;
+using GingerWPF.WorkSpaceLib;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.Repository;
+using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
@@ -42,6 +48,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
+        static SolutionRepository SR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -73,6 +80,15 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+
+
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.RunningFromUnitTest = true;
+
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple"));
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
+            SR.Open(path);
         }
 
         [Ignore]
@@ -200,6 +216,53 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
 
             Assert.AreEqual(v1.Value, "123");  // <<< the importnat part as with this defect it turned to "1" - initial val
+        }
+
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestRunsetConfigBFVariables()
+        {
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF1 = bfList[0];
+
+            ObservableList<Activity> activityList = BF1.Activities;
+
+            Activity activity = activityList[0];
+
+            ActDummy act1 = new ActDummy() { Value = "", Active = true };
+            activity.Acts.Add(act1);
+
+            VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "aaa" };
+            BF1.AddVariable(v1);
+
+            BF1.Active = true;
+
+            mGR.BusinessFlows.Add(BF1);
+
+            BusinessFlow bfToAdd = (BusinessFlow)BF1.CreateCopy(false);
+            bfToAdd.ContainingFolder = BF1.ContainingFolder;
+            bfToAdd.Active = true;
+            bfToAdd.Reset();
+            bfToAdd.InstanceGuid = Guid.NewGuid();
+            mGR.BusinessFlows.Add(bfToAdd);
+
+            mGR.BusinessFlows[2].Variables[0].Value = "bbb";
+            mGR.BusinessFlows[2].Variables[0].DiffrentFromOrigin = true;
+
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            mGR.RunRunner();
+
+            //Assert
+            Assert.AreEqual(BF1.RunStatus, eRunStatus.Passed);
+            Assert.AreEqual(activity.Status, eRunStatus.Passed);
+
+            Assert.AreEqual(bfToAdd.RunStatus, eRunStatus.Passed);
+
+            Assert.AreEqual(v1.Value, "aaa");
+            Assert.AreEqual(mGR.BusinessFlows[2].Variables[0].Value, "bbb");
+
         }
 
     }
