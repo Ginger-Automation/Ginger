@@ -113,6 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportActivity(Activity activity,Context context, bool offlineMode = false, bool isConfEnable = false)
         {
             LiteDbActivity AR = new LiteDbActivity();
+            context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity,context, offlineMode));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             if(activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
@@ -159,13 +160,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
+        public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
-            BFR.SetReportData(GetBFReportData(businessFlow, environment));
-            if (businessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+            context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
+            BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
+            if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
-                BFR._id = businessFlow.LiteDbId;
+                BFR._id = context.BusinessFlow.LiteDbId;
                 var BFRToUpdate = liteDbManager.GetBfLiteData().IncludeAll().Find(x => x._id == BFR._id).ToList();
                 if (BFRToUpdate.Count > 0)
                 {
@@ -186,11 +188,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     // To check whether the execution is from Runset/Automate tab
                     if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
@@ -206,7 +208,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
-                    businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
@@ -216,7 +218,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             if (executedFrom == eExecutedFrom.Automation)
             {
-                businessFlow.LiteDbId = BFR._id;
+                context.BusinessFlow.LiteDbId = BFR._id;
             }
             return BFR;
         }
