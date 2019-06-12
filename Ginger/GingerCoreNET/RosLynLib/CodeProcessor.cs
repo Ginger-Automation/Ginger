@@ -119,10 +119,14 @@ namespace GingerCoreNET.RosLynLib
                     return Conditionparse;
                 }
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
-
+                Console.WriteLine("Error EvalCondition: " + condition + Ex.Message);
+                // !!!!!!!!!!!!! throw; check next stmt !!!
             }
+            //TODO: fix me !!!!!  bad double try to recover from exceptopn!? or we can use if else
+
+
             bool result = false;
             try
             {
@@ -173,7 +177,7 @@ namespace GingerCoreNET.RosLynLib
             ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
 
             //Globals to pass in vars
-            GingerConsoleScriptGlobals globals = new GingerConsoleScriptGlobals();
+            GingerScriptGlobals globals = new GingerScriptGlobals();
 
             scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
             if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))
@@ -181,8 +185,6 @@ namespace GingerCoreNET.RosLynLib
 
             Console.WriteLine("Executing script code complete");
             
-            //!!!
-            globals.WaitforallNodesShutDown();
 
             return null;
         }
@@ -241,5 +243,27 @@ namespace GingerCoreNET.RosLynLib
 
             return result;
         }
+
+        public static object ExecuteNew(string code)
+        {
+            Console.WriteLine("Executing script code: " + code);
+
+            // Add ref to DLLs needed
+            ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
+
+            //Globals to pass in vars
+            GingerScriptGlobals globals = new GingerScriptGlobals();
+
+            scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
+            if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))
+            {
+                return scriptState.ReturnValue;
+            }
+
+            Console.WriteLine("Executing script code complete");
+
+            return null;
+        }
+
     }
 }

@@ -13,36 +13,79 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and 
 limitations under the License. 
 */
+"use strict";
 
-function createEvent(typeOfEvent) {
-    var event = document.createEvent("CustomEvent");
-    event.initCustomEvent(typeOfEvent, true, true, null);
-    event.dataTransfer = {
-        data: {},
-        setData: function (key, value) {
-            this.data[key] = value;
+var args = arguments;
+var source = args[0],
+    target = args[1],
+    offsetX = args[2] || 0,
+    offsetY = args[3] || 0;
+var sourceDoc = source.ownerDocument,
+    docView = sourceDoc.defaultView,
+    sourceBox = source.getBoundingClientRect(),
+    targetBox = target ? target.getBoundingClientRect() : sourceBox,
+    x1 = sourceBox.left + (sourceBox.width >> 1),
+    y1 = sourceBox.top + (sourceBox.height >> 1),
+    x2 = targetBox.left + (targetBox.width >> 1) + offsetX,
+    y2 = targetBox.top + (targetBox.height >> 1) + offsetY,
+    data = Object.create(Object.prototype, {
+        _items: {
+            value: {}
         },
-        getData: function (key) {
-            return this.data[key];
+        effectAllowed: {
+            value: "all",
+            writable: !0
+        },
+        dropEffect: {
+            value: "move",
+            writable: !0
+        },
+        files: {
+            get: function get() {
+                return this._items.Files;
+            }
+        },
+        types: {
+            get: function get() {
+                return Object.keys(this._items);
+            }
+        },
+        setData: {
+            value: function value(e, t) {
+                this._items[e] = t;
+            }
+        },
+        getData: {
+            value: function value(e) {
+                return this._items[e];
+            }
+        },
+        clearData: {
+            value: function value(e) {
+                delete this._items[e];
+            }
+        },
+        setDragImage: {
+            value: function value(e) { }
         }
-    };
-    return event;
+    });
+
+function emit(element, type, delay, callback) {
+    var event = sourceDoc.createEvent("DragEvent");
+    event.initMouseEvent(type, !0, !0, docView, 0, 0, 0, x1, y1, !1, !1, !1, !1, 0, null), Object.defineProperty(event, "dataTransfer", {
+        get: function get() {
+            return data;
+        }
+    }), element.dispatchEvent(event), docView.setTimeout(callback, delay);
 }
-function dispatchEvent(element, event, transferData) {
-    if (transferData !== undefined) {
-        event.dataTransfer = transferData;
-    }
-    if (element.dispatchEvent) {
-        element.dispatchEvent(event);
-    } else if (element.fireEvent) {
-        element.fireEvent("on" + event.type, event);
-    }
-}
-function simulateHTML5DragAndDrop(element, target) {
-    var dragStartEvent = createEvent('dragstart');
-    dispatchEvent(element, dragStartEvent);
-    var dropEvent = createEvent('drop');
-    dispatchEvent(target, dropEvent, dragStartEvent.dataTransfer);
-    var dragEndEvent = createEvent('dragend');
-    dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
-}
+
+targetBox = target.getBoundingClientRect(), emit(source, "dragstart", 101, function () {
+    var i = target.getBoundingClientRect();
+    x1 = i.left + x2 - targetBox.left, y1 = i.top + y2 - targetBox.top, emit(target, "dragenter", 1, function () {
+        emit(target, "dragover", 101, function () {
+            target = sourceDoc.elementFromPoint(x1, y1), emit(target, "drop", 1, function () {
+                emit(source, "dragend", 1, callback);
+            });
+        });
+    });
+});

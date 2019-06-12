@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_DarkBlue" Color="#152B37" />
     <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="LightGray" />
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#EDEFF5" />
+    <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="DarkGray" />
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="White" />
 
     <!--Selection Colors-->
@@ -110,7 +111,7 @@
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{DynamicResource @DarkBlue}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
     </Style>
 
     <Style TargetType="TextBlock"  x:Key="$DetailsTextBlockStyle" >
@@ -968,7 +969,7 @@
                     <ControlTemplate.Resources>
                         <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
                     </ControlTemplate.Resources>
-                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $SelectionColor_Pink}">
+                    <Border Name="Border" BorderThickness="0 0 1 0" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}">
                         <ContentPresenter x:Name="ContentSite"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
@@ -1743,6 +1744,8 @@
     <ImageSource x:Key="@Wheel_50x50">pack://application:,,,/Ginger;component/Images/@Wheel_50x50.png</ImageSource>
     <ImageSource x:Key="@Wheel2_50x50">pack://application:,,,/Ginger;component/Images/@Wheel2_50x50.png</ImageSource>
 
+    <ImageSource x:Key="@AddFile_16x16.png">pack://application:,,,/Ginger;component/Images/@AddFile_16x16.png</ImageSource>
+    
     <ImageSource x:Key="@AddFolder_64x64.png">pack://application:,,,/Ginger;component/Images/@AddFolder_64x64.png</ImageSource>
     <ImageSource x:Key="@AddFolder_16x16.png">pack://application:,,,/Ginger;component/Images/@AddFolder_16x16.png</ImageSource>
     <ImageSource x:Key="@AddFolder_24x24.png">pack://application:,,,/Ginger;component/Images/@AddFolder_24x24.png</ImageSource>

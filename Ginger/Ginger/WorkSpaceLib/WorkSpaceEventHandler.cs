@@ -18,17 +18,19 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
-using GingerWPF.ApplicationPlatformsLib;
-using System.Diagnostics;
-using System.IO;
+using Ginger.SolutionGeneral;
+using Ginger.SolutionWindows;
+using Ginger.SourceControl;
+using GingerCore.SourceControl;
+using GingerCoreNET.SourceControl;
+using System.Collections.Generic;
 
 namespace GingerWPF.WorkSpaceLib
 {
-    public class WorkSpaceEventHandler : IWorkSpaceEventHandler
-    {
-        public MainWindow GingerMainWindow;
+    // Ginger.exe Workspace Event Handler
 
+    public class WorkSpaceEventHandler : IWorkSpaceEventHandler
+    {        
         public void AddApplication()
         {
         }
@@ -37,26 +39,64 @@ namespace GingerWPF.WorkSpaceLib
         {
         }
 
-        public void OpenContainingFolder(string folderPath)
-        {
-            string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
-            if (string.IsNullOrEmpty(FullPath))
-                return;
-
-            if (!Directory.Exists(FullPath))
+        public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
+        {           
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
+            if (type == SourceControlBase.eSourceControlType.GIT)
             {
-                Directory.CreateDirectory(FullPath);
+                solution.SourceControl = new GITSourceControl();
             }
-            Process.Start(FullPath);
+            else if (type == SourceControlBase.eSourceControlType.SVN)
+            {
+                solution.SourceControl = new SVNSourceControl();
+            }
         }
 
         public void ShowBusinessFlows()
         {
+            throw new System.NotImplementedException();
         }
 
-        //public void SolutionChanged(Solution solution)
-        //{          
+        //public void OpenContainingFolder(string folderPath)
+        //{
+        //    string FullPath = WorkSpace.Instance.SolutionRepository.GetFolderFullPath(folderPath);
+        //    if (string.IsNullOrEmpty(FullPath))
+        //        return;
+
+        //    if (!Directory.Exists(FullPath))
+        //    {
+        //        Directory.CreateDirectory(FullPath);
+        //    }
+        //    Process.Start(FullPath);
         //}
+
+
+
+        public void ShowDebugConsole(bool visible = true)
+        {
+            // TODO: decide if we want both or one and done !!!!!!!!!!!!
+
+
+            // Ginger WPF window with buttons like clear and we can customize
+            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
+            debugConsole.ShowAsWindow();
+
+            // windows black console window
+            App.ShowConsoleWindow();
+        }
+
+
+        public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
+        {
+            UpgradePage gingerUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeGinger, solutionFolder, string.Empty, higherVersionFiles);
+            gingerUpgradePage.ShowAsWindow();
+        }
+
+        public void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list)
+        {
+            UpgradePage solutionUpgradePage = new UpgradePage(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, list);
+            solutionUpgradePage.ShowAsWindow();
+        }
 
         public void SolutionClosed()
         {

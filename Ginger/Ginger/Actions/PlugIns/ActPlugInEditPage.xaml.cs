@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore.Actions.PlugIns;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,14 +58,15 @@ namespace Ginger.Actions.PlugIns
 
             foreach (ActInputValue param in mAct.InputValues)
             {
+                ActionInputValueInfo actionInputValueInfo = (from x in actionInputsDetails where x.Param == param.Param select x).SingleOrDefault();
                 // update the type based on the info json of the plugin
-                param.ParamType = (from x in actionInputsDetails where x.Param == param.Param select x.ParamType).SingleOrDefault();
+                param.ParamType = actionInputValueInfo.ParamType;
                 
                 // Add ActionInputValueUserControl for the param value to edit
-                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param);
+                ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param, actionInputValueInfo.ParamAttrs);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
                 actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
-                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);
+                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);               
             }
         }
 

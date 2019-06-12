@@ -17,38 +17,15 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Plugin.Core.ActionsLib;
+
 namespace Amdocs.Ginger.Plugin.Core
 {
 
-    public enum eElementType
-    {
-        TextBox,
-        ComboBox,
-        Button
-        //TDDO: add all the rest
-        // do not put grid
-    }
-
-    public enum eLocateBy
-    {
-        Id,
-        Name,
-        XPath,
-        Text
-        //TDDO: add all the rest
-    }
-
-    public enum eElementAction
-    {
-        Click,
-        SetValue,
-        GetValue
-        //TDDO: add all the rest
-    }
 
     [GingerInterface("IUIElementAction", "UI Element Action")]
-    public interface IUIElementAction 
+    public interface IUIElementAction
     {
-        void UIElementAction(GingerAction gingerAction, eElementType elementType, eLocateBy locateBy, string locateValue, eElementAction elementAction, string value = null);
+         void PerformUIElementAction(GingerAction GA, ActUIElementInfo act);
     }
 }

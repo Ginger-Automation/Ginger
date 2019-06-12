@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -60,6 +61,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LiteDB;
+using Amdocs.Ginger.CoreNET.Logger;
 
 namespace Ginger
 {
@@ -97,8 +100,9 @@ namespace Ginger
         GridLength mlastActivitiyActionsRowHeight = new GridLength(300, GridUnitType.Star);
         readonly GridLength mMinRowsExpanderSize = new GridLength(35);
         readonly GridLength mMinColsExpanderSize = new GridLength(35);
+        ObjectId runnerLiteDbId;
+        ObjectId runSetLiteDbId;
 
-        
 
         public AutomatePage(BusinessFlow businessFlow)
         {
@@ -109,6 +113,7 @@ namespace Ginger
 
             SetAutomateRunner();
             UpdateAutomateRunner();
+            SetRunSetDBLite(businessFlow);
             LoadBusinessFlowToAutomate(businessFlow);           
 
             //UI Updates
@@ -148,6 +153,53 @@ namespace Ginger
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find {0} to load into Automate page.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
                 return;
             }
+        }
+
+        private void SetRunSetDBLite(BusinessFlow businessFlowToLoad)
+        {
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
+                if (ExecutionLoggerManager.RunSetReport == null)
+                {
+                    ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                    ExecutionLoggerManager.RunSetReport.SetDataForAutomateTab();
+                    if (!isAutoRunSetExists)
+                    {
+                        mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
+                        mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner);
+                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                        isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void DeleteRunSetBFRefData()
+        {
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            var result = dbManager.GetRunSetLiteData();
+            List<LiteDbRunSet> filterData = null;
+            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
+            LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+            dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+        }
+
+        private bool AutoRunSetDocumentExistsInLiteDB()
+        {
+            bool isExist = false;
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            var result = dbManager.GetRunSetLiteData();
+            List<LiteDbRunSet> filterData = null;
+            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
+            isExist = (filterData == null) ? false : filterData.Count > 0;
+            if(isExist)
+            {
+                runSetLiteDbId = filterData[0]._id;
+                runnerLiteDbId = filterData[0].RunnersColl[0]._id ;
+            }
+            return isExist;
         }
 
         public void GoToBusFlowsListHandler()
@@ -238,7 +290,7 @@ namespace Ginger
             CurrentBusFrame.Content = mCurrentBusPage;
             CurrentBusExpander.IsExpanded = false;
 
-            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
+            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext,General.RepositoryItemPageViewMode.Automation);
             mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             BFVariablesFrame.Content = mVariablesPage;
             mActivitiesGroupsPage = new ActivitiesGroupsPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
@@ -249,7 +301,7 @@ namespace Ginger
             mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesFrame.Content = mActivitiesPage;
 
-            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, General.RepositoryItemPageViewMode.Automation);
+            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, mContext, General.RepositoryItemPageViewMode.Automation);
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
@@ -498,7 +550,7 @@ namespace Ginger
         private void SetAutomateRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
             // Add Listener so we can do GiveUserFeedback            
             AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
@@ -515,8 +567,8 @@ namespace Ginger
             mRunner.SolutionAgents = new ObservableList<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            mRunner.ExecutionLogger.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
         }
 
         private void DoCleanUp()
@@ -964,6 +1016,11 @@ namespace Ginger
 
                     UpdateRunnerAgentsUsedBusinessFlow();
                 }
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                }
             }
         }
 
@@ -987,7 +1044,7 @@ namespace Ginger
                 mBusinessFlow.TargetApplications.CollectionChanged -= mBusinessFlowTargetApplications_CollectionChanged;
                 mBusinessFlow = null;
                 mRunner.BusinessFlows.Clear();
-            }            
+            }
         }
 
         private void mBusinessFlowTargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -1078,7 +1135,7 @@ namespace Ginger
             try
             {
                 AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
                 switch (resetFrom)
                 {
                     case Run.GingerRunner.eResetStatus.All:
@@ -1173,7 +1230,7 @@ namespace Ginger
 
                 SetAutomateTabRunnerForExecution();
 
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
                 
                 RunActivity();
                 AutoLogProxy.UserOperationEnd();
@@ -1209,6 +1266,11 @@ namespace Ginger
                 {
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                 }
+            }
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
             }
         }        
 
@@ -1275,6 +1337,13 @@ namespace Ginger
                 }
                 //execute
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
+                if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    //mRunner.ExecutionLoggerManager.RunSetStart("", WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize,DateTime.UtcNow, true);
+                    //mRunner.ExecutionLoggerManager.RunnerRunUpdate(runnerLiteDbId);
+
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                }
                 this.Dispatcher.Invoke(() =>
                 {
                     AutoLogProxy.UserOperationEnd();
@@ -1319,7 +1388,7 @@ namespace Ginger
             //execute preparations
             SetAutomateTabRunnerForExecution();
             mRunner.ResetRunnerExecutionDetails();
-            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
             
         }
 
@@ -1402,14 +1471,19 @@ namespace Ginger
                 mRunner.SetCurrentActivityAgent(); 
             }
 
-            mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
             if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
             {
                 ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
             }
-
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.ActivityEnd(0, mCurrentActivity);
+                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+            }
             AutoLogProxy.UserOperationEnd();
         }
 
@@ -1448,7 +1522,7 @@ namespace Ginger
                 EnableDisableAutomateTabGrids(false);
 
                 AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-                mRunner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
@@ -1523,7 +1597,12 @@ namespace Ginger
 
         private void GenerateLastExecutedItemReport()
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
@@ -1531,7 +1610,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
@@ -1552,10 +1631,23 @@ namespace Ginger
                 }
             }
         }
-
+        private void CreateLiteDBReport()
+        {
+            if (runSetLiteDbId != null)
+            {
+                var selectedGuid = runSetLiteDbId;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+            }
+        }
         private void btnOfflineExecutionHTMLReport_click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
@@ -1563,7 +1655,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = Ginger.Run.ExecutionLogger.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLogger.defaultAutomationTabOfflineLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
 
             if (Directory.Exists(exec_folder))
             {
@@ -1574,7 +1666,7 @@ namespace Ginger
                 Directory.CreateDirectory(exec_folder);
             }
             
-            if (((ExecutionLogger)mRunner.ExecutionLogger).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            if (((ExecutionLoggerManager)mRunner.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
             {
                 //create the HTML report
                 try

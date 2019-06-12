@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -32,6 +32,7 @@ namespace Amdocs.Ginger.CoreNET.Execution
             Wait,
             FailIgnored,
             Blocked,
-            Completed
+            Completed,
+            Automated
     }    
 }
