@@ -29,10 +29,8 @@
                                ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
 
         <Label x:Name="xStartAgentMessage"  Grid.Row="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
-
-        <Label x:Name="xAgentNotSupportRecording"  Grid.Row="3"  Content="Recording not supported with selected Agent" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
-        
-        <StackPanel x:Name="xPOMPanel" Grid.Row="4" Margin="10,5,0,0" HorizontalAlignment="Stretch">
+       
+        <StackPanel x:Name="xPOMPanel" Grid.Row="3" Margin="10,5,0,0" HorizontalAlignment="Stretch">
             <DockPanel x:Name="xPOMSelection" Margin="0,1,0,0" >
                 <CheckBox x:Name="xIntegratePOM" Style="{StaticResource @CheckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate recording with POM's</CheckBox>
             </DockPanel>      

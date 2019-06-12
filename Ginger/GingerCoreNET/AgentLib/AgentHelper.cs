@@ -1,16 +1,10 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCoreNET
 {
@@ -28,12 +22,7 @@ namespace GingerCoreNET
             ApplicationAgent appAgent = null;
             if (context != null && context.BusinessFlow.CurrentActivity != null)
             {
-                appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();
-                if (appAgent == null)
-                {
-                    context.Runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    context.Runner.UpdateApplicationAgents();
-                }
+                appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();                
             }
             return appAgent;
         }

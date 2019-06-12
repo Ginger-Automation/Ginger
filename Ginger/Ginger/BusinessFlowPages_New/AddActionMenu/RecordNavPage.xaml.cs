@@ -54,7 +54,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Agent.Status) && ((Agent)sender).Status == Agent.eStatus.Running)
+            if (e.PropertyName == nameof(Agent.Status))
             {
                 SetControlsVisibility();
             }
@@ -175,43 +175,44 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xIntegratePOM.Visibility = Visibility.Hidden;
             xWinGridUC.IsEnabled = false;
             xRecordingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Collapsed;
-            xAgentNotSupportRecording.Visibility = Visibility.Collapsed;
+            xStartAgentMessage.Visibility = Visibility.Visible;
             xPOMPanel.Visibility = Visibility.Hidden;
 
-            if (mAgent != null && mAgent.Driver != null && mAgent.Driver is IRecord)
+            if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
             {
                 if (PlatformInfoBase.GetPlatformImpl(mActivityPlatform) != null && PlatformInfoBase.GetPlatformImpl(mActivityPlatform).IsPlatformSupportPOM())
                 {
                     if (((bool)xIntegratePOM.IsChecked))
                     {
                         gridPOMListItems.Visibility = Visibility.Visible; 
-                    }
-                    xIntegratePOM.Visibility = Visibility.Visible;
+                    }                    
                     xPOMPanel.Visibility = Visibility.Visible;
                 }
 
                 bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if(isAgentRunning)
                 {
-                    xStartAgentMessage.Visibility = Visibility.Hidden;
+                    xStartAgentMessage.Visibility = Visibility.Collapsed;
                     xWinGridUC.IsEnabled = true;
                     if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
                     {
                         xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
                     }
                 }
+                else
+                {
+                    if(IsRecording)
+                    {
+                        StopRecording();
+                    }
+                }
 
                 if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
                     && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
                 {
+                    xIntegratePOM.Visibility = Visibility.Visible;
                     xRecordingButton.IsEnabled = true;
                 }
-            }
-            else
-            {
-                xStartAgentMessage.Visibility = Visibility.Hidden;
-                xAgentNotSupportRecording.Visibility = Visibility.Visible;
             }
         }
 

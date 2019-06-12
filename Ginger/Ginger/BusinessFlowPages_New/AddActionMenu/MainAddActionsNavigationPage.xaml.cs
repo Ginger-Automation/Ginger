@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Agents;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
@@ -39,12 +40,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             context.PropertyChanged += Context_PropertyChanged;
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
+            SetRecordButtonAccessebility();
+        }
 
-            ePlatformType ePlatformType = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                           where x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication
-                                           select x.Platform).FirstOrDefault();
-
-            if (PlatformInfoBase.GetPlatformImpl(ePlatformType) != null && PlatformInfoBase.GetPlatformImpl(ePlatformType).IsPlatformSupportPOM())
+        private void SetRecordButtonAccessebility()
+        {
+            Agent mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
             {
                 xRecordItemBtn.IsEnabled = true;
             }
@@ -58,27 +60,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
             {
-                xRecordItemBtn.IsEnabled = false;
-                ePlatformType ePlatformType = ePlatformType.NA;
-
-                string targetApp = string.Empty;
-                if (mContext.BusinessFlow.CurrentActivity == null || string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
-                {
-                    targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
-                }
-                else if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
-                {
-                    targetApp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
-                }
-
-                ePlatformType = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                 where x.AppName == targetApp
-                                 select x.Platform).FirstOrDefault();
-
-                if (PlatformInfoBase.GetPlatformImpl(ePlatformType) != null && PlatformInfoBase.GetPlatformImpl(ePlatformType).IsPlatformSupportPOM())
-                {
-                    xRecordItemBtn.IsEnabled = true;
-                }
+                SetRecordButtonAccessebility();
+                LoadActionFrame(null);
             }
         }
 

@@ -75,7 +75,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return null;
             }
         }
-                
+
         /// <summary>
         /// This method is used to check if the paltform supports POM
         /// </summary>
