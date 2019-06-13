@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
@@ -26,8 +27,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class SharedRepositoryNavPage : Page
     {
+        public ActivitiesGroupsRepositoryPage ActivitiesGroupsRepoPage;
+        public ActivitiesRepositoryPage ActivitiesRepoPage;
         public ActionsRepositoryPage ActionsRepoPage;
         public VariablesRepositoryPage VariablesRepoPage;
+
         BusinessFlow mBusinessFlow;
 
         Context mContext;
@@ -92,6 +96,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
 
             // We do load on demand
+            if (tabRepository.SelectedItem == tbActivitiesGroups)
+            {
+                if (((string)tbActivitiesGroups.Tag) != "Done")
+                {
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
+                    frmActivitiesGroups.Content = ActivitiesGroupsRepoPage;
+                    // Mark that this tab is loaded with info
+                    tbActivitiesGroups.Tag = "Done";
+                }
+            }
+
+            if (tabRepository.SelectedItem == tbiActivities)
+            {
+                if (((string)tbiActivities.Tag) != "Done")
+                {
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mBusinessFlow);
+                    frmActivities.Content = ActivitiesRepoPage;
+                    // Mark that this tab is loaded with info
+                    tbiActivities.Tag = "Done";
+                }
+            }
+
             if (tabRepository.SelectedItem == tbiActions)
             {
                 if (((string)tbiActions.Tag) != "Done")

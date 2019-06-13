@@ -33,6 +33,25 @@
                 </Style>
             </TabControl.Resources>
 
+            <TabItem x:Name="tbActivitiesGroups" Margin="0,0,0,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @Group_16x16.png }" Height="16" Width="16" />
+                        <TextBlock x:Name="xActivitiesGroupsTextBlock" Text="Activities Groups" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame x:Name="frmActivitiesGroups" Background="White"></Frame>
+            </TabItem>
+            <TabItem x:Name="tbiActivities" Margin="2,0,-6,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @Activities_16x16 }" Height="16" Width="16" />
+                        <TextBlock x:Name="xActivitiesTextBlock" Text="Activities" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame  x:Name="frmActivities" Background="White"></Frame>
+            </TabItem>
+
             <TabItem x:Name="tbiActions" Margin="8,0,-12,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
