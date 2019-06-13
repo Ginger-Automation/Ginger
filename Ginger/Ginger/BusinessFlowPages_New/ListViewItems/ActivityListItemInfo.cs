@@ -3,11 +3,11 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
-using System;
+using GingerCore.Activities;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowPages.ListViewItems
 {
@@ -118,20 +118,27 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return operationsList;
         }
 
-        //private void EditHandler(object sender, RoutedEventArgs e)
-        //{
-        //    SetItem(sender);
-        //    mAction.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-        //    mAction.Context = mContext;
-        //    ActionEditPage actedit = new ActionEditPage(mAction, General.RepositoryItemPageViewMode.Automation);//TODO: check if need diifrent mode
-        //    //actedit.ap = this;
-        //    actedit.ShowAsWindow();
-        //}
+        public List<ListItemGroupOperation> GetGroupOperationsList()
+        {
+            List<ListItemGroupOperation> groupOperationsList = new List<ListItemGroupOperation>();
 
-        //private void ActiveHandler(object sender, RoutedEventArgs e)
-        //{
-        //    SetItem(sender);
-        //    mAction.Active = !mAction.Active;
-        //}
+            ListItemGroupOperation rename = new ListItemGroupOperation();
+            rename.Header = "Rename";
+            rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+            rename.ToolTip = "Rename Group";
+            rename.OperationHandler = RenameGroupHandler;
+            groupOperationsList.Add(rename);
+
+            return groupOperationsList;
+        }
+
+
+        private void RenameGroupHandler(object sender, RoutedEventArgs e)
+        {            
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+
+
+
+        }
     }
 }

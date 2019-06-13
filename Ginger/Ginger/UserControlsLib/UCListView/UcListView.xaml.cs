@@ -61,6 +61,8 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        IListViewItemInfo mListItemInfo = null;
+
         public UcListView()
         {
             InitializeComponent();
@@ -90,10 +92,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;                        
+                        mObjList.PropertyChanged -= ObjListPropertyChanged;
                     }
 
-                    mObjList = value;                    
+                    mObjList = value;
                     //mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
                     //if (mCollectionView != null)
@@ -117,7 +119,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
-                        {                            
+                        {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
@@ -403,8 +405,9 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public void SetDefaultListDataTemplate(object listItemInfo)
+        public void SetDefaultListDataTemplate(IListViewItemInfo listItemInfo)
         {
+            mListItemInfo = listItemInfo;
             DataTemplate dataTemp = new DataTemplate();
             FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
             listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
@@ -500,24 +503,80 @@ namespace Ginger.UserControlsLib.UCListView
         {
 
         }
+
+        string mGroupByProperty = string.Empty;
+        public void AddGrouping(string groupByProperty)
+        {
+            mGroupByProperty = groupByProperty;
+            DoGrouping();
+            //List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
+            //if (groupOperations == null || groupOperations.Count == 0)
+            //{
+
+            //}
+        }
+
+        public void UpdateGrouping()
+        {
+            DoGrouping();
+        }
+
+        private void DoGrouping()
+        {
+            CollectionView groupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription(mGroupByProperty);
+            groupView.GroupDescriptions.Clear();
+            groupView.GroupDescriptions.Add(groupDescription);
+        }
+
+        private void SetGroupOperations(Menu menu)
+        {
+            List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
+            if (groupOperations != null && groupOperations.Count > 0)
+            {
+                foreach (ListItemGroupOperation operation in groupOperations)
+                {
+                    MenuItem menuitem = new MenuItem();
+                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
+                    ImageMakerControl iconImage = new ImageMakerControl();
+                    iconImage.ImageType = operation.ImageType;
+                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
+                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    menuitem.Icon = iconImage;
+                    menuitem.Header = operation.Header;
+                    menuitem.ToolTip = operation.ToolTip;
+                    menuitem.Click += operation.OperationHandler;
+
+                    menuitem.Tag = menu.Tag;
+
+                    menu.Items.Add(menuitem);
+                }
+            }
+
+        }
+
+        private void XGroupOperationsMenu_Loaded(object sender, RoutedEventArgs e)
+        {
+            //SetGroupOperations((Menu)sender);
+        }
     }
 
     public class UcListViewEventArgs
-    {
-        public enum eEventType
         {
-            ExpandAllItems,
-            CollapseAllItems,
-            UpdateIndex,
-        }
+            public enum eEventType
+            {
+                ExpandAllItems,
+                CollapseAllItems,
+                UpdateIndex,
+            }
 
-        public eEventType EventType;
-        public Object EventObject;
+            public eEventType EventType;
+            public Object EventObject;
 
-        public UcListViewEventArgs(eEventType eventType, object eventObject = null)
-        {
-            this.EventType = eventType;
-            this.EventObject = eventObject;
-        }
-    }
+            public UcListViewEventArgs(eEventType eventType, object eventObject = null)
+            {
+                this.EventType = eventType;
+                this.EventObject = eventObject;
+            }
+        }    
 }

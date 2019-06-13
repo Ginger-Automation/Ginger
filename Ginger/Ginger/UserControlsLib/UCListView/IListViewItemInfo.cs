@@ -29,5 +29,7 @@ namespace Ginger.UserControlsLib.UCListView
         List<ListItemNotification> GetNotificationsList(object item);
 
         List<ListItemOperation> GetOperationsList(object item);
+
+        List<ListItemGroupOperation> GetGroupOperationsList();
     }
 }

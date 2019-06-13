@@ -33,7 +33,7 @@ namespace Ginger.BusinessFlowPages
             SetListView();
         }
 
-        CollectionView groupView;
+        
         private void SetListView()
         {
             //List Title
@@ -60,14 +60,14 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
 
             //List Grouping
-            DoActivitiesGrouping();
+            xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
         }
 
         private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
         {
             ActivitiesGroupsManagerPage activitiesGroupsManagerPage = new ActivitiesGroupsManagerPage(mBusinessFlow);
             activitiesGroupsManagerPage.ShowAsWindow();
-            DoActivitiesGrouping();
+            xActivitiesListView.UpdateGrouping();
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
@@ -77,7 +77,7 @@ namespace Ginger.BusinessFlowPages
             if (mBusinessFlow != null)
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-                DoActivitiesGrouping();
+                xActivitiesListView.UpdateGrouping();
             }
             else
             {
@@ -85,12 +85,6 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void DoActivitiesGrouping()
-        {
-            groupView = (CollectionView)CollectionViewSource.GetDefaultView(xActivitiesListView.List.ItemsSource);
-            PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(Activity.ActivitiesGroupID));
-            groupView.GroupDescriptions.Clear();
-            groupView.GroupDescriptions.Add(groupDescription);
-        }
+
     }
 }

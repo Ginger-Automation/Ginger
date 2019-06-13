@@ -719,6 +719,7 @@
       <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemGroupOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemUniqueIdentifier.cs" />
