@@ -821,7 +821,11 @@ namespace GingerCoreNET.DataSource
 
                 DataTable changed = dataTable.GetChanges();
                 DataTable dtChange = dataTable;
-
+                //if datatable is empty
+                if (dtChange.Rows.Count==0 && changed==null)
+                {
+                    return;
+                }
                 table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
                 if (!(dtChange == null))
@@ -1171,7 +1175,7 @@ namespace GingerCoreNET.DataSource
                         doc[List[i]] = "";
                     }
                 table.Insert(doc);
-                ColumnList=GetColumnList(TName);
+                
             }
         }
     }
