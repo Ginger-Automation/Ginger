@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Ginger.Logger
+namespace Amdocs.Ginger.CoreNET.Logger
 {
     public class WebReportFilter
     {
@@ -15,12 +13,11 @@ namespace Ginger.Logger
 
     public enum ReportLevelType
     {
-        RunSet=1,
-        Runner=2,
-        BusinessFlow=3,
-        ActivityGroup=4,
-        Activity=5,
-        Action=6
+        RunSet = 1,
+        Runner = 2,
+        BusinessFlow = 3,
+        ActivityGroup = 4,
+        Activity = 5,
+        Action = 6
     }
-
 }

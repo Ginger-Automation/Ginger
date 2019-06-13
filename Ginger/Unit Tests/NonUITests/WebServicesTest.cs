@@ -20,10 +20,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.REST;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -68,7 +70,7 @@ namespace UnitTests.NonUITests
             mDriver = new WebServicesDriver(mBF);
             mDriver.SaveRequestXML = true;
             mDriver.SavedXMLDirectoryPath = "~\\Documents";
-
+            mDriver.SecurityType = @"None";
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             wsAgent.Driver = mDriver;
@@ -83,14 +85,19 @@ namespace UnitTests.NonUITests
 
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);         
-
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.SolutionRepository = Amdocs.Ginger.CoreNET.Repository.GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
             
+        }
+        [TestCleanup]
+        public void TestMethodCleanUP()
+        {
+            mBF.Activities.ClearAll();
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -437,5 +444,118 @@ namespace UnitTests.NonUITests
 
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void LegacyWebServiceToNewWebApiSoap_Converter_Test()
+        {
+            Activity oldActivity = new Activity();
+            oldActivity.Active = true;
+            oldActivity.ActivityName = "Legacy Web Service activity";
+            oldActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(oldActivity);
+
+            ActWebService actLegacyWebService = new ActWebService();
+
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"http://ws.cdyne.com/GetQuickQuote");
+
+            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML\stock.xml");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
+            
+            actLegacyWebService.FileName = "Web Service Action";
+            actLegacyWebService.FilePath = "Web Service Action";
+            actLegacyWebService.Active = true;
+            actLegacyWebService.AddNewReturnParams = true;
+           
+            mBF.Activities[0].Acts.Add(actLegacyWebService);
+            mDriver.StartDriver();
+            mGR.RunRunner();
+
+            Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
+            Assert.AreEqual(0,Convert.ToInt32(actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"GetQuickQuoteResult").Actual));
+
+            //Convert the legacy action
+            Activity newActivity = new Activity() { Active = true };
+            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
+            newActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(newActivity);
+
+            Act newAction = ((IObsoleteAction)actLegacyWebService).GetNewAction();
+            newAction.AddNewReturnParams = true;
+            newAction.Active = true;
+            newAction.ItemName = "Converted webapisoap action";
+            newActivity.Acts.Add((ActWebAPISoap)newAction);
+            mBF.Activities[1].Acts.Add(newAction);
+
+            //Assert converted action
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
+
+            //Run newAction
+            mGR.RunRunner();
+            
+            //assert newaction
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void LegacyRestActionToNewWebApiRest_Converter_Test()
+        {
+            Activity oldActivity = new Activity();
+            oldActivity.Active = true;
+            oldActivity.ActivityName = "Legacy Rest Service activity";
+            oldActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(oldActivity);
+
+            ActREST actLegacyRestService = new ActREST();
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.RequestType, ActREST.eRequestType.GET.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.ReqHttpVersion, ActREST.eHttpVersion.HTTPV10.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.ContentType, ActREST.eContentType.JSon.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.CookieMode, ActREST.eCookieMode.None.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.SecurityType, ActREST.eSercurityType.None.ToString());
+            actLegacyRestService.AddOrUpdateInputParamValue(ActREST.Fields.EndPointURL, @"https://jsonplaceholder.typicode.com/posts/1");
+
+            actLegacyRestService.FileName = "Web Rest Action";
+            actLegacyRestService.FilePath = "Web Rest Action";
+            actLegacyRestService.Active = true;
+            actLegacyRestService.AddNewReturnParams = true;
+
+            mBF.Activities[0].Acts.Add(actLegacyRestService);
+            mDriver.StartDriver();
+            mGR.RunRunner();
+
+            //Assert old action
+            Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
+            var expected = actLegacyRestService.ReturnValues.FirstOrDefault(x =>x.Actual == "OK");
+            Assert.AreNotEqual(null, expected);
+
+            //Convert the legacy action
+            Activity newActivity = new Activity() { Active = true };
+            newActivity.ActivityName = "New - " + oldActivity.ActivityName;
+            newActivity.CurrentAgent = wsAgent;
+            mBF.Activities.Add(newActivity);
+
+            Act newAction = ((IObsoleteAction)actLegacyRestService).GetNewAction();
+            newAction.AddNewReturnParams = true;
+            newAction.Active = true;
+            newAction.ItemName = "Converted webapiRest action";
+            newActivity.Acts.Add((ActWebAPIRest)newAction);
+            mBF.Activities[1].Acts.Add(newAction);
+
+            //Assert converted action
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            var expected1 = newAction.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(null, expected1);
+
+            //Run newAction
+            mGR.RunRunner();
+
+            //assert newaction
+            Assert.AreNotEqual(0, newAction.ReturnValues.Count);
+            var expected2 = newAction.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
+            Assert.AreNotEqual(null, expected2);
+        }
     }
 }

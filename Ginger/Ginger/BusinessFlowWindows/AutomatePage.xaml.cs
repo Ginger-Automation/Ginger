@@ -62,7 +62,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LiteDB;
-using Ginger.Logger;
+using Amdocs.Ginger.CoreNET.Logger;
 
 namespace Ginger
 {
