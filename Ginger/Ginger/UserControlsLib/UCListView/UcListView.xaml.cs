@@ -170,9 +170,9 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 //different kind of changes that may have occurred in collection
                 if (e.Action == NotifyCollectionChangedAction.Add ||
-                e.Action == NotifyCollectionChangedAction.Replace ||
-                e.Action == NotifyCollectionChangedAction.Remove ||
-                e.Action == NotifyCollectionChangedAction.Move)
+                    e.Action == NotifyCollectionChangedAction.Replace ||
+                    e.Action == NotifyCollectionChangedAction.Remove ||
+                    e.Action == NotifyCollectionChangedAction.Move)
                 {
                     OnUcListViewEvent(UcListViewEventArgs.eEventType.UpdateIndex);
                 }
@@ -413,7 +413,10 @@ namespace Ginger.UserControlsLib.UCListView
             listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
             listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
             dataTemp.VisualTree = listItemFac;
-            xListView.ItemTemplate = dataTemp;
+            this.Dispatcher.Invoke(() =>
+            {
+                xListView.ItemTemplate = dataTemp;
+            });
         }
 
         public void AddListOperations(List<ListItemOperation> operations)

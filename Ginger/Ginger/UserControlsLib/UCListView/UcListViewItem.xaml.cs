@@ -169,31 +169,37 @@ namespace Ginger.UserControlsLib.UCListView
             ItemIconField = ItemInfo.GetItemIconField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
             ItemActiveField = ItemInfo.GetItemActiveField();
-            SetItemUniqueIdentifier();
-            SetItemNotifications();
-            SetItemOperations();
+            this.Dispatcher.Invoke(() =>
+            {
+                SetItemUniqueIdentifier();
+                SetItemNotifications();
+                SetItemOperations();
 
-            SetItemBindings();
+                SetItemBindings();
+            });
         }
 
         private void SetItemUniqueIdentifier()
         {
-            ListItemUniqueIdentifier identifier = ItemInfo.GetItemUniqueIdentifier(Item);
-            if (identifier != null)
+            this.Dispatcher.Invoke(() =>
             {
-                if (!String.IsNullOrEmpty(identifier.Color))
+                ListItemUniqueIdentifier identifier = ItemInfo.GetItemUniqueIdentifier(Item);
+                if (identifier != null)
                 {
-                    BrushConverter conv = new BrushConverter();
-                    xIdentifierBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
+                    if (!String.IsNullOrEmpty(identifier.Color))
+                    {
+                        BrushConverter conv = new BrushConverter();
+                        xIdentifierBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
+                    }
+                    xIdentifierBorder.ToolTip = identifier.Tooltip;
                 }
-                xIdentifierBorder.ToolTip = identifier.Tooltip;
-            }
-            else
-            {
-                xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
-                xIdentifierBorder.ToolTip = string.Empty;
-                xIdentifierBorder.Visibility = Visibility.Collapsed;
-            }
+                else
+                {
+                    xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
+                    xIdentifierBorder.ToolTip = string.Empty;
+                    xIdentifierBorder.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void SetItemNotifications()

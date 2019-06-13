@@ -1461,7 +1461,7 @@ namespace GingerCore.Drivers.Appium
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-
+        
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
             Dispatcher.Invoke(() =>

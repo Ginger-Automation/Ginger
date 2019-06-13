@@ -9,7 +9,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
     {
         private bool LearnAdditionalDetails { get; set; }
         public event RecordingEventHandler RecordingEvent;
-
+        
         public Timer mGetRecordingTimer;
         int i = 0;
 

@@ -90,7 +90,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableSelectionList.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.MinusSquare, eImageType, "Image Type");
         }
 
     }

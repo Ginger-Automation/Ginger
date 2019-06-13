@@ -240,7 +240,7 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-
+        
         public override void StartDriver()
         {
             if (StartBMP)
@@ -5340,20 +5340,24 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
-
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-
+                                    
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
                                     }
+                                    else
+                                    {
+                                        eInfo = GetElementInfoFromActionConfiguration(configArgs);
+                                        configArgs.LearnedElementInfo = eInfo;
+                                    }
                                 }
-                                if (RecordingEvent != null)
+                                if (learnAdditionalChanges && RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
                                     RecordingEventArgs args = new RecordingEventArgs();
@@ -5363,17 +5367,16 @@ namespace GingerCore.Drivers
                                 }
                                 else
                                 {
+                                    string url = Driver.Url;
+                                    string title = Driver.Title;
+                                    if (CurrentPageURL != url)
+                                    {
+                                        CurrentPageURL = url;
+                                        AddBrowserAction(title, url);
+                                    }
+
                                     //Temp existing implementation
-                                    ActUIElement actUI = new ActUIElement();
-                                    actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
-                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
-                                    actUI.ElementLocateValue = configArgs.LocateValue;
-                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
-                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
-                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
-                                    else
-                                        continue;
-                                    actUI.Value = configArgs.ElementValue;
+                                    ActUIElement actUI = GetActUIElementAction(configArgs);
                                     this.BusinessFlow.AddAct(actUI);
                                     if (mActionRecorded != null)
                                     {
@@ -5395,8 +5398,57 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// This method will create the element info object
+        /// </summary>
+        /// <param name="configArgs"></param>
+        /// <returns></returns>
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration configArgs)
+        {
+            ElementInfo eInfo = new ElementInfo();
+            try
+            {
+                if (Enum.IsDefined(typeof(eElementType), Convert.ToString(configArgs.Type)))
+                {
+                    eInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(configArgs.Type));
+                }
+                eInfo.ElementName = configArgs.Description;
+                eInfo.Locators.Add(new ElementLocator()
+                {
+                    ItemName = Convert.ToString(configArgs.LocateBy),
+                    LocateValue = configArgs.LocateValue
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
+            }
+            return eInfo;
+        }
+
+        /// <summary>
+        /// This method is used to get the ActUIElement action
+        /// </summary>
+        /// <param name="configArgs"></param>
+        /// <returns></returns>
+        private ActUIElement GetActUIElementAction(ElementActionCongifuration configArgs)
+        {
+            ActUIElement actUI = new ActUIElement();
+            actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
+            actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
+            actUI.ElementLocateValue = configArgs.LocateValue;
+            actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+            if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
+                actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
+            else
+            {
+                actUI = null;
+            }
+            actUI.Value = configArgs.ElementValue;
+            return actUI;
+        }
+        
         public event RecordingEventHandler RecordingEvent;
-        private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
         protected void OnRecordingEvent(RecordingEventArgs e)
@@ -5413,7 +5465,7 @@ namespace GingerCore.Drivers
                 {
                     string url = Driver.Url;
                     string title = Driver.Title;
-                    if (!lstURL.Contains(url) && CurrentPageURL != url)
+                    if (CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
                         PageChangedEventArgs pageArgs = new PageChangedEventArgs()
@@ -5424,8 +5476,8 @@ namespace GingerCore.Drivers
                         };
 
                         RecordingEventArgs args = new RecordingEventArgs();
-                        args.EventType = eRecordingEvent.ElementRecorded;
-                        args.EventArgs = args;
+                        args.EventType = eRecordingEvent.PageChanged;
+                        args.EventArgs = pageArgs;
                         OnRecordingEvent(args);
                     }
 
@@ -5453,6 +5505,25 @@ namespace GingerCore.Drivers
             }
 
             return eInfo;
+        }
+
+        private void AddBrowserAction(string pageTitle, string pageURL)
+        {
+            try
+            {
+                ActBrowserElement browseAction = new ActBrowserElement()
+                {
+                    Description = "Go to Url - " + pageTitle,
+                    ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                    LocateBy = eLocateBy.NA,
+                    Value = pageURL
+                };
+                this.BusinessFlow.AddAct(browseAction);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding browser action", ex);
+            }
         }
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)

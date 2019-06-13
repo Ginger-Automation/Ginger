@@ -64,8 +64,9 @@ namespace GingerWPF.BusinessFlowsLib
         VariabelsListViewPage mBfVariabelsPage;
         BusinessFlowConfigurationsPage mBfConfigurationsPage;
         ActivityPage mActivityPage;
+        MainAddActionsNavigationPage mMainNavigationPage;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(250);
+        GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
         public NewAutomatePage(BusinessFlow businessFlow)
         {
@@ -145,7 +146,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
                 xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
                 xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
-                xAddActionSectionSpliter.IsEnabled = true;
+                xAddActionSectionSpliter.IsEnabled = true;                
             }
             else
             {
@@ -246,7 +247,11 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();
-                    xAddActionMenuFrame.Content = new MainAddActionsNavigationPage(mContext);
+                    if (mMainNavigationPage == null)
+                    {
+                        mMainNavigationPage = new MainAddActionsNavigationPage(mContext); 
+                    }
+                    xAddActionMenuFrame.Content = mMainNavigationPage;
                 }
             }
         }
@@ -254,6 +259,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
+            mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
         }

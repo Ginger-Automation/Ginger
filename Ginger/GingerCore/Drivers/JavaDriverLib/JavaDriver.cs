@@ -2403,7 +2403,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-
+        
         public override void StartRecording()
         {
             DoRecordings();
