@@ -63,11 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void InitMethods()
         {
             string targetApp = string.Empty;
-            if (mContext.BusinessFlow.CurrentActivity == null || string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
-            {
-                targetApp = ((ApplicationAgent)mContext.Runner.ApplicationAgents[0]).AppName;
-            }
-            else if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+            if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
             {
                 targetApp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
             }
@@ -118,6 +114,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     mContext = (Context)sender;
                     xWinGridUC.mContext = mContext;
+                    xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();
                     mApplicationPOMSelectionPage = null;                    
                 }
                 else if (e.PropertyName == nameof(Activity) && ((Context)sender).BusinessFlow.CurrentActivity != null)
@@ -142,7 +139,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        public void SetMultiplePropertiesGridView()
+        private void SetMultiplePropertiesGridView()
         {
             gridPOMListItems.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -151,6 +148,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             gridPOMListItems.btnAdd.Click += BtnAdd_Click;
             gridPOMListItems.SetAllColumnsDefaultView(view);
             gridPOMListItems.InitViewItems();
+            PomModels = new ObservableList<POMBindingObjectHelper>();
+            gridPOMListItems.DataSourceList = PomModels;
         }
         
         private void BtnAdd_Click(object sender, RoutedEventArgs e)

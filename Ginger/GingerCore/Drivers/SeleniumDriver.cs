@@ -5340,27 +5340,24 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
-                                bool addedAction = false;
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-
+                                    
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
                                     }
                                     else
                                     {
-                                        //if the element info object is not found then adding action by existing method not supporting POM
-                                        ActUIElement actUI = GetActUIElementAction(configArgs);
-                                        this.BusinessFlow.AddAct(actUI);
-                                        addedAction = true;
+                                        eInfo = GetElementInfoFromActionConfiguration(configArgs);
+                                        configArgs.LearnedElementInfo = eInfo;
                                     }
                                 }
-                                if (learnAdditionalChanges && RecordingEvent != null && !addedAction)
+                                if (learnAdditionalChanges && RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
                                     RecordingEventArgs args = new RecordingEventArgs();
@@ -5399,6 +5396,34 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
             }
+        }
+
+        /// <summary>
+        /// This method will create the element info object
+        /// </summary>
+        /// <param name="configArgs"></param>
+        /// <returns></returns>
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration configArgs)
+        {
+            ElementInfo eInfo = new ElementInfo();
+            try
+            {
+                if (Enum.IsDefined(typeof(eElementType), Convert.ToString(configArgs.Type)))
+                {
+                    eInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(configArgs.Type));
+                }
+                eInfo.ElementName = configArgs.Description;
+                eInfo.Locators.Add(new ElementLocator()
+                {
+                    ItemName = Convert.ToString(configArgs.LocateBy),
+                    LocateValue = configArgs.LocateValue
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
+            }
+            return eInfo;
         }
 
         /// <summary>
