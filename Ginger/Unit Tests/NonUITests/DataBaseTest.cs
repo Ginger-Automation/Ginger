@@ -329,6 +329,7 @@ namespace UnitTests.NonUITests
         [Timeout(60000)]
         public void RenameDBName()
         {
+            //Arrange
             ProjEnvironment projEnvironment = new ProjEnvironment();
             projEnvironment.Name = "MongoDbApp";
 
@@ -351,15 +352,13 @@ namespace UnitTests.NonUITests
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
-
+            
+            //Act            
             db.NameBeforeEdit = actDB.DBName;
             db.Name = "MongoDBNew";
-
-            bool changedwasDone = false;
-            Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name, ref changedwasDone);
-
-
-            Assert.AreEqual(changedwasDone, true);
+            Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
+            
+            //Assert
             Assert.AreEqual(actDB.DBName, db.Name, "Names");
 
         }

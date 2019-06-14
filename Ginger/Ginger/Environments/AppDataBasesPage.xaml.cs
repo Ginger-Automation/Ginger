@@ -62,8 +62,8 @@ namespace Ginger.Environments
         {
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                Database selectedDBName = (Database)grdAppDbs.CurrentItem;
-                selectedDBName.NameBeforeEdit = selectedDBName.Name;
+                Database selectedDB = (Database)grdAppDbs.CurrentItem;
+                selectedDB.NameBeforeEdit = selectedDB.Name;
             }
         }
 
@@ -89,10 +89,10 @@ namespace Ginger.Environments
 
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                Database selectedDBName = (Database)grdAppDbs.CurrentItem;
-                if (selectedDBName.Name != selectedDBName.NameBeforeEdit)
+                Database selectedDB = (Database)grdAppDbs.CurrentItem;
+                if (selectedDB.Name != selectedDB.NameBeforeEdit)
                 {
-                    UpdateDatabaseNameChange(selectedDBName);
+                    UpdateDatabaseNameChange(selectedDB);
                 }
             }
         }
@@ -104,24 +104,32 @@ namespace Ginger.Environments
                 return;
             }
 
-            Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
-
-            ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            foreach (BusinessFlow bfl in allBF)
+            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, db.Name, "Database");
+            try
             {
-                foreach (Activity activity in bfl.Activities)
+                ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                foreach (BusinessFlow businessFlow in allBF)
                 {
-                    List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
-                    foreach (Act action in dbActs)
+                    foreach (Activity activity in businessFlow.Activities)
                     {
-                        bool changedwasDone = false;
-                        Database.UpdateDatabaseNameChangeInItem(action, db.NameBeforeEdit, db.Name, ref changedwasDone); 
+                        List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
+                        foreach (ActDBValidation action in dbActs)
+                        {
+                            Database.UpdateDatabaseNameChangeInItem(action, db.NameBeforeEdit, db.Name);
+                        }
                     }
                 }
-            }
 
-            db.NameBeforeEdit = db.Name;
-            Reporter.HideStatusMessage();
+                db.NameBeforeEdit = db.Name;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while renaming DBName", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
         #region Events

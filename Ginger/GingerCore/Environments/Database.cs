@@ -34,6 +34,8 @@ using MySql.Data.MySqlClient;
 using Amdocs.Ginger.Common.InterfacesLib;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using GingerCore.Actions;
+
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase, IDatabase
@@ -105,9 +107,11 @@ namespace GingerCore.Environments
                 OnPropertyChanged(Fields.KeepConnectionOpen);
             }
         }
-       
+
+
+        private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
+        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(Fields.Name); } }
 
         [IsSerializedForLocalRepository]
         public string Description { get; set; }
@@ -115,7 +119,7 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public eDBTypes DBType { get { return mDBType; }
             set {
-                mDBType = value;
+                //mDBType = value;
                 OnPropertyChanged(Fields.Type);
                 if (DBType==eDBTypes.Cassandra)
                 {
@@ -222,72 +226,11 @@ namespace GingerCore.Environments
 
         public string NameBeforeEdit;
 
-        public static void UpdateDatabaseNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
+        public static void UpdateDatabaseNameChangeInItem(ActDBValidation act, string prevDBName, string newDBName)
         {
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
-            foreach (MemberInfo mi in properties)
+            if (act.DBName == prevDBName)
             {
-                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
-                {
-                    continue;
-                }
-
-                //Get the attr value
-                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                dynamic value = null;
-                try
-                {
-                    if (mi.MemberType == MemberTypes.Property)
-                    {
-                        if (PI.CanWrite)
-                        {
-                            value = PI.GetValue(item);
-                        }
-                    }
-                    else if (mi.MemberType == MemberTypes.Field)
-                    {
-                        value = item.GetType().GetField(mi.Name).GetValue(item);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateDatabseNameChangeInItem", ex);
-                }
-
-                if (value is IObservableList)
-                {
-                    List<dynamic> list = new List<dynamic>();
-                    foreach (object o in value)
-                    {
-                        UpdateDatabaseNameChangeInItem(o, prevVarName, newVarName, ref namechange);
-                    }
-                }
-                else
-                {
-                    if (value != null)
-                    {
-                        try
-                        {
-                            if (PI.CanWrite)
-                            {
-                                string stringValue = value.ToString();
-                                if (PI.Name == "DBName")
-                                {
-                                    var db = (Actions.ActDBValidation)item;
-                                    if (db.DBName == prevVarName)
-                                    {
-                                        PI.SetValue(item, newVarName);
-                                        namechange = true;
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateDatabseNameChangeInItem", ex);
-                        }
-                    }
-                }
+                act.DBName = newDBName;
             }
         }
 
