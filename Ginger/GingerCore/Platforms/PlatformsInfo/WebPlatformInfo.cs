@@ -88,7 +88,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.DismissMessageBox);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
-
+            browserActElementList.Add(ActBrowserElement.eControlAction.BrowserLog);
             return browserActElementList;
         }
 
