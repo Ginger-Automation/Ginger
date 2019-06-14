@@ -189,6 +189,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(sender);
             mAction.Active = !mAction.Active;
         }
+
+        public List<ListItemGroupOperation> GetGroupOperationsList()
+        {
+            return null;
+        }
     }
 
 

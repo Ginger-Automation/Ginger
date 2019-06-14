@@ -6,31 +6,37 @@
       xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
+      xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
-      Title="RecordNavAction">
+      Title="RecordNavAction" >
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300*"/>
+            <ColumnDefinition Width="400*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>        
+        
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Margin="0, 5, 0, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="False" />
+        <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Play" 
+                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="10" 
+                               ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
 
-        <Button x:Name="RecordingButton" Click="RecordingButton_Click"  IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Row="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Ellipse Name="startRecord" Height="25" Width="25" Fill="Red" Grid.Column="0" Margin="0,10" VerticalAlignment="Center" Visibility="Visible"/>
-                <Rectangle Name="stopRecord" Height="25" Width="25" Fill="Red" Grid.Column="0" Margin="0,10" VerticalAlignment="Center" Visibility="Collapsed" />
-                <Label Name="lblRecording" Grid.Column="1" Content="Start Recording" FontSize="15" FontWeight="Bold" Foreground="White" />
-            </Grid>
-        </Button>
+        <Label x:Name="xStartAgentMessage"  Grid.Row="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+       
+        <StackPanel x:Name="xPOMPanel" Grid.Row="3" Margin="10,5,0,0" HorizontalAlignment="Stretch">
+            <DockPanel x:Name="xPOMSelection" Margin="0,1,0,0" >
+                <CheckBox x:Name="xIntegratePOM" Style="{StaticResource @CheckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate recording with POM's</CheckBox>
+            </DockPanel>      
+            <Ginger:ucGrid x:Name="gridPOMListItems" Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
+                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+            
+        </StackPanel>
     </Grid>
 </Page>

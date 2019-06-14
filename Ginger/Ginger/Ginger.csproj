@@ -619,6 +619,7 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\POMBindingObjectHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
@@ -678,8 +679,6 @@
     <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
     <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
-    <Compile Include="Logger\WebReportGenerator.cs" />
-    <Compile Include="Logger\WebReportFilter.cs" />
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
@@ -724,6 +723,7 @@
       <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemGroupOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemUniqueIdentifier.cs" />

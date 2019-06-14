@@ -234,7 +234,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             return elementAction;
         }
-        
+
+        /// <summary>
+        /// This method is used to check if the paltform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsPlatformSupportPOM()
+        {
+            return true;
+        }
+
         public List<ElementTypeData> GetPlatformElementTypesData()
         {
             if (mPlatformElementTypeOperations == null)

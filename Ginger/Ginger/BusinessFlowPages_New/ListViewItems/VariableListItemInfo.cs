@@ -114,6 +114,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return operationsList;
         }
 
+        public List<ListItemGroupOperation> GetGroupOperationsList()
+        {
+            return null;
+        }
+
         //private void EditHandler(object sender, RoutedEventArgs e)
         //{
         //    SetItem(sender);

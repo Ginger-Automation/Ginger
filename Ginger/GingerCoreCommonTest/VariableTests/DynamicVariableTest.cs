@@ -91,7 +91,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableDynamic.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Random, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.CSS3Text, eImageType, "Image Type");
         }
 
         [Ignore]

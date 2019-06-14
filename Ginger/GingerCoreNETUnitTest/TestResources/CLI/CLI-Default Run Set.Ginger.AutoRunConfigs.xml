@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DynamicGingerExecution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SolutionDetails>
+    <Path>SOLUTION_PATH</Path>
+  </SolutionDetails>
+  <ShowAutoRunWindow>false</ShowAutoRunWindow>
+  <AddRunsets>
+    <AddRunset Name="Dynamic_Default Run Set">
+      <Environment>Default</Environment>
+      <RunAnalyzer>true</RunAnalyzer>
+      <RunInParallel>true</RunInParallel>
+      <AddRunners>
+        <AddRunner Name="Runner 1">
+          <SetAgents>
+            <SetAgent ApplicationName="app1" AgentName="app1 - Agent 1" />
+          </SetAgents>
+          <AddBusinessFlows>
+            <AddBusinessFlow Name="Flow 1" />
+          </AddBusinessFlows>
+        </AddRunner>
+      </AddRunners>
+      <AddRunsetOperations />
+    </AddRunset>
+  </AddRunsets>
+</DynamicGingerExecution>
