@@ -4,6 +4,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
+using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +30,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if ((sender as Frame).Content == null)
             {
+
                 (sender as Frame).Visibility = Visibility.Collapsed;
                 xNavigationBarPnl.Visibility = Visibility.Collapsed;
                 xAddActionsOptionsPnl.Visibility = Visibility.Visible;
@@ -38,13 +40,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 (sender as Frame).Visibility = Visibility.Visible;
                 xNavigationBarPnl.Visibility = Visibility.Visible;
                 xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
-                //navBarTitle.Content = (navPnlActionFrame.Content as Page).Title;
+                xApplicationModelsPnl.Visibility = Visibility.Collapsed;
             }
         }
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            //LoadActionFrame(new RepositoryPage(mContext.BusinessFlow));
             LoadActionFrame(new SharedRepositoryNavPage(mContext), "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }
 
@@ -77,14 +78,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
+            if(xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
+            {
+                xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+                xApplicationModelsPnl.Visibility = Visibility.Visible;
+            }
+            else if(xSelectedItemFrame.Content is null)
+            {
+                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+            }
+
             LoadActionFrame(null);
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
-        {            
+        {
             xSelectedItemFrame.Content = navigationPage;
 
-            if (navigationPage != null)
+            if (navigationPage != null || xApplicationModelsPnl.Visibility == Visibility.Visible)
             {
                 xSelectedItemTitlePnl.Visibility = Visibility.Visible;
                 xSelectedItemTitleImage.ImageType = titleImage;
@@ -94,6 +106,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void XAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+            LoadActionFrame(new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument));
+        }
+
+        private void XApplicationModelsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xApplicationModelsPnl.Visibility = Visibility.Visible;
+            xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+
+            LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
         }
     }
 }
