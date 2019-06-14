@@ -251,14 +251,16 @@ namespace GingerCore.Environments
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateDatabseNameChangeInItem", ex);
                 }
 
                 if (value is IObservableList)
                 {
                     List<dynamic> list = new List<dynamic>();
                     foreach (object o in value)
+                    {
                         UpdateDatabaseNameChangeInItem(o, prevVarName, newVarName, ref namechange);
+                    }
                 }
                 else
                 {
@@ -280,7 +282,10 @@ namespace GingerCore.Environments
                                 }
                             }
                         }
-                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateDatabseNameChangeInItem", ex);
+                        }
                     }
                 }
             }

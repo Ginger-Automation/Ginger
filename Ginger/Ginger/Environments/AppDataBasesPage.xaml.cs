@@ -91,13 +91,18 @@ namespace Ginger.Environments
             {
                 Database selectedDBName = (Database)grdAppDbs.CurrentItem;
                 if (selectedDBName.Name != selectedDBName.NameBeforeEdit)
+                {
                     UpdateDatabaseNameChange(selectedDBName);
+                }
             }
         }
 
         public void UpdateDatabaseNameChange(Database db)
         {
-            if (db == null) return;
+            if (db == null)
+            {
+                return;
+            }
 
             Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
 
