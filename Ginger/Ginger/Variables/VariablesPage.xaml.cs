@@ -443,6 +443,8 @@ namespace Ginger.Variables
         {
             if (variable == null) return;
 
+            Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
+
             switch (mVariablesLevel)
             {
                 case eVariablesLevel.Solution:
@@ -482,6 +484,7 @@ namespace Ginger.Variables
             }
 
             variable.NameBeforeEdit = variable.Name;
+            Reporter.HideStatusMessage();
         }
     }
 }

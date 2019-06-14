@@ -220,6 +220,71 @@ namespace GingerCore.Environments
             }
         }
 
+        public string NameBeforeEdit;
+
+        public static void UpdateDatabaseNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
+        {
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
+
+                //Get the attr value
+                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                dynamic value = null;
+                try
+                {
+                    if (mi.MemberType == MemberTypes.Property)
+                    {
+                        if (PI.CanWrite)
+                        {
+                            value = PI.GetValue(item);
+                        }
+                    }
+                    else if (mi.MemberType == MemberTypes.Field)
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
+                }
+
+                if (value is IObservableList)
+                {
+                    List<dynamic> list = new List<dynamic>();
+                    foreach (object o in value)
+                        UpdateDatabaseNameChangeInItem(o, prevVarName, newVarName, ref namechange);
+                }
+                else
+                {
+                    if (value != null)
+                    {
+                        try
+                        {
+                            if (PI.CanWrite)
+                            {
+                                string stringValue = value.ToString();
+                                if (PI.Name == "DBName")
+                                {
+                                    var db = (Actions.ActDBValidation)item;
+                                    if (db.DBName == prevVarName)
+                                    {
+                                        PI.SetValue(item, newVarName);
+                                        namechange = true;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                    }
+                }
+            }
+        }
 
         public string GetConnectionString()
         {

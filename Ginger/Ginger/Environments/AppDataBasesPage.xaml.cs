@@ -27,6 +27,9 @@ using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.Actions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.Environments
 {
@@ -51,6 +54,16 @@ namespace Ginger.Environments
             if (grdAppDbs.grdMain != null)
             {
                 grdAppDbs.grdMain.CellEditEnding += grdMain_CellEditEnding;
+                grdAppDbs.grdMain.PreparingCellForEdit += grdMain_PreparingCellForEdit;
+            }
+        }
+
+        private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if (e.Column.Header.ToString() == nameof(Database.Name))
+            {
+                Database selectedDBName = (Database)grdAppDbs.CurrentItem;
+                selectedDBName.NameBeforeEdit = selectedDBName.Name;
             }
         }
 
@@ -73,6 +86,37 @@ namespace Ginger.Environments
                     }                   
                 }
             }
+
+            if (e.Column.Header.ToString() == nameof(Database.Name))
+            {
+                Database selectedDBName = (Database)grdAppDbs.CurrentItem;
+                if (selectedDBName.Name != selectedDBName.NameBeforeEdit)
+                    UpdateDatabaseNameChange(selectedDBName);
+            }
+        }
+
+        public void UpdateDatabaseNameChange(Database db)
+        {
+            if (db == null) return;
+
+            Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
+
+            ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            foreach (BusinessFlow bfl in allBF)
+            {
+                foreach (Activity activity in bfl.Activities)
+                {
+                    List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
+                    foreach (Act action in dbActs)
+                    {
+                        bool changedwasDone = false;
+                        Database.UpdateDatabaseNameChangeInItem(action, db.NameBeforeEdit, db.Name, ref changedwasDone); 
+                    }
+                }
+            }
+
+            db.NameBeforeEdit = db.Name;
+            Reporter.HideStatusMessage();
         }
 
         #region Events
