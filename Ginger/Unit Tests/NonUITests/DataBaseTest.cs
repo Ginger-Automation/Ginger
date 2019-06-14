@@ -360,9 +360,7 @@ namespace UnitTests.NonUITests
 
 
             Assert.AreEqual(changedwasDone, true);
-            Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
             Assert.AreEqual(actDB.DBName, db.Name, "Names");
-
 
         }
     }
