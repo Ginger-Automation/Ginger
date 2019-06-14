@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCore;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -131,7 +132,7 @@ namespace GingerCoreNET.RunLib
         public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
         {
             //TODO: get return code - based on it set status if running OK
-            NewPayLoad PL = new NewPayLoad("StartDriver");
+            NewPayLoad PL = new NewPayLoad("StartDriver");    //!!!! Rename to StartService + use const
             List<NewPayLoad> DriverConfigs = new List<NewPayLoad>();
 
             if (driverConfiguration != null)
@@ -149,13 +150,13 @@ namespace GingerCoreNET.RunLib
 
             if (plss.IsErrorPayLoad())
             {
-                throw new KeyNotFoundException();
+                throw new Exception("Error in GingerNodeProxy.StartDriver - " + plss.GetValueString());
             }
         }
 
         public void CloseDriver()
         {
-            NewPayLoad PL = new NewPayLoad("CloseDriver");
+            NewPayLoad PL = new NewPayLoad("CloseDriver");  //!!!! Rename to StopService + use const
             PL.ClosePackage();
             NewPayLoad RC = SendRequestPayLoad(PL);
                 }

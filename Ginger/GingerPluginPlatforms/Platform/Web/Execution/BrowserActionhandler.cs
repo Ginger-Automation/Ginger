@@ -78,10 +78,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
             PlatformService = mPlatformService;
             InputParams = minputParams;
             BrowserService = PlatformService.BrowserActions;
-            InputParams.TryGetValue("Value", out Value);
+            InputParams.TryGetValue("Value", out Value);  // Need to be ValueForDriver !!!
             ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"]);
-
-
         }
 
 
@@ -108,7 +106,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         }
      
                         BrowserService.Navigate(Value, GotoURLType);
-
+                        ExecutionInfo += "Navigated to: " + Value;
 
                         break;
 

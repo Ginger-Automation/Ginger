@@ -58,15 +58,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             if (actionType == "BrowserAction")
             {
-
-
-
                 BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
-
-                
                 Handler.ExecuteAction();
-
-
                 NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo,Handler.Error, Handler.AOVs);
                 return PLRC;
             }
@@ -74,17 +67,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
             if (actionType == "UIElementAction")
             {
                 try
-                {
-                  
-
-
-                 
+                {                  
                     UIELementActionHandler Handler = new UIELementActionHandler(PlatformService,InputParams);
-
                     Handler.PrepareforExecution(PomPayload);
-
                     Handler.ExecuteAction();
-
                     NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
                     return PLRC;
      
@@ -96,12 +82,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 }
             }
 
-            
-
             NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + actionType);
             return err;
-
-
             
         }
 
@@ -109,8 +91,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         private NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> outputValues)
         {
-            return GingerNode.CreateActionResult(exInfo, error, outputValues);
-            
+            return GingerNode.CreateActionResult(exInfo, error, outputValues);            
         }
 
     }
