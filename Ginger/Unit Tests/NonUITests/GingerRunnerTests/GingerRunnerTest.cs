@@ -223,6 +223,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [Timeout(60000)]
         public void TestRunsetConfigBFVariables()
         {
+            //Arrange
             ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
@@ -240,6 +241,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             mGR.BusinessFlows.Add(BF1);
 
+            //Adding Same Business Flow Again to GingerRunner
             BusinessFlow bfToAdd = (BusinessFlow)BF1.CreateCopy(false);
             bfToAdd.ContainingFolder = BF1.ContainingFolder;
             bfToAdd.Active = true;
@@ -247,10 +249,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             bfToAdd.InstanceGuid = Guid.NewGuid();
             mGR.BusinessFlows.Add(bfToAdd);
 
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            //Act
+            //Changing initial value of 2nd BF from BusinessFlow Config 
             mGR.BusinessFlows[2].Variables[0].Value = "bbb";
             mGR.BusinessFlows[2].Variables[0].DiffrentFromOrigin = true;
-
-            WorkSpace.Instance.SolutionRepository = SR;
 
             mGR.RunRunner();
 
@@ -260,7 +264,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Assert.AreEqual(bfToAdd.RunStatus, eRunStatus.Passed);
 
-            Assert.AreEqual(v1.Value, "aaa");
+            Assert.AreEqual(mGR.BusinessFlows[1].Variables[0].Value, "aaa");
             Assert.AreEqual(mGR.BusinessFlows[2].Variables[0].Value, "bbb");
 
         }
