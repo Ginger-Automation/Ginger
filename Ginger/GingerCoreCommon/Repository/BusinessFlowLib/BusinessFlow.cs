@@ -35,7 +35,7 @@ using GingerCoreNET.GeneralLib;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
-    {        
+    {
 
         public BusinessFlow()
         {
@@ -87,7 +87,7 @@ namespace GingerCore
             Gherkin     // From Gherking Feature file
         }
 
-        public  static partial class Fields
+        public static partial class Fields
         {
             public static string Active = "Active";
             public static string Mandatory = "Mandatory";
@@ -152,7 +152,7 @@ namespace GingerCore
             }
             set
             {
-              if (mRunDescription != value)
+                if (mRunDescription != value)
                 {
                     mRunDescription = value;
                     OnPropertyChanged(Fields.RunDescription);
@@ -160,7 +160,7 @@ namespace GingerCore
             }
         }
 
-        double? mElapsed; 
+        double? mElapsed;
         [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
@@ -294,12 +294,12 @@ namespace GingerCore
             {
                 mActivities = value;
             }
-        }        
+        }
 
         [IsSerializedForLocalRepository]
         public new string ExternalID { get; set; } // will use it for QC ID or other external ID
         [IsSerializedForLocalRepository]
-        public string AlmData{ get; set; } 
+        public string AlmData { get; set; }
         //[IsSerializedForLocalRepository]
         //TODO: remove and make it only platform, otherwise is save also the agent details and make isDirsty too sensitive
 
@@ -307,7 +307,7 @@ namespace GingerCore
         // public ObservableList<Platform> Platforms;
 
         [IsSerializedForLocalRepository]
-        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();       
+        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();
 
         private Activity mCurrentActivity { get; set; }
 
@@ -642,7 +642,7 @@ namespace GingerCore
         public ActivitiesGroup AddActivitiesGroup(ActivitiesGroup activitiesGroup = null, int index = -1)
         {
             if (activitiesGroup == null)
-            {                
+            {
                 activitiesGroup = new ActivitiesGroup();
                 activitiesGroup.Name = "Group";
             }
@@ -694,7 +694,7 @@ namespace GingerCore
         //            rndColorIndx = rnd.Next(0, listOfColors.Count);
         //        }
         //        triedColorIndx.Add(rndColorIndx);
-                
+
         //        if (this.ActivitiesGroups.Where(ag => ag.GroupColor == listOfColors[rndColorIndx].ToString()).FirstOrDefault() == null || triedColorIndx.Count >= listOfColors.Count)
         //        {
         //            activitiesGroup.GroupColor = listOfColors[rndColorIndx].ToString();
@@ -703,7 +703,7 @@ namespace GingerCore
         //    }
         //}
 
-        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup,ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
+        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
         {
             string missingActivities = string.Empty;
 
@@ -728,10 +728,10 @@ namespace GingerCore
                         {
                             SetActivityTargetApplication(actInstance);
                         }
-                                             
+
                         this.AddActivity(actInstance);
                         actIdent.IdentifiedActivity = actInstance;
-                        
+
                     }
                     else
                     {
@@ -799,7 +799,7 @@ namespace GingerCore
 
                 //re-add the activities in correct order
                 group.ActivitiesIdentifiers.Clear();
-                foreach(Activity activity in Activities.Where(x=>x.ActivitiesGroupID == group.Name).ToList())
+                foreach (Activity activity in Activities.Where(x => x.ActivitiesGroupID == group.Name).ToList())
                 {
                     group.AddActivityToGroup(activity);
                 }
@@ -865,7 +865,7 @@ namespace GingerCore
             //Make sure groups order is according to flow
             Dictionary<ActivitiesGroup, int> groupsOrderDic = new Dictionary<ActivitiesGroup, int>();
             int index = 0;
-            foreach(Activity activity in Activities)
+            foreach (Activity activity in Activities)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                 if (!groupsOrderDic.ContainsKey(group))
@@ -874,7 +874,7 @@ namespace GingerCore
                     index++;
                 }
             }
-            foreach(ActivitiesGroup group in groupsOrderDic.Keys)
+            foreach (ActivitiesGroup group in groupsOrderDic.Keys)
             {
                 if (ActivitiesGroups.IndexOf(group) != groupsOrderDic[group])
                 {
@@ -1001,7 +1001,7 @@ namespace GingerCore
             CleanDynamicAddedItems();
         }
 
-        public  void InvokPropertyChanngedForAllFields()
+        public void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);
@@ -1307,7 +1307,7 @@ namespace GingerCore
             {
                 return nameof(this.Name);
             }
-        }       
+        }
         public void OffilinePropertiesPrep(string logFolderPath)
         {
             ExecutionLogFolder = logFolderPath;
@@ -1362,7 +1362,7 @@ namespace GingerCore
         {
             //delete group
             ActivitiesGroups.Remove(groupToDelete);
-            
+
             if (groupToDelete.ActivitiesIdentifiers.Count > 0)
             {
                 //delete group activities 
@@ -1371,7 +1371,74 @@ namespace GingerCore
                     Activities.Remove(activityIdent.IdentifiedActivity);
                 }
             }
-        }        
+        }
+
+        public Tuple<ActivitiesGroup, ActivityIdentifiers> GetActivityGroupAndIdentifier(Activity activity)
+        {
+            ActivitiesGroup group = null; ;
+            ActivityIdentifiers activityIdent = null;
+            group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+            if (group != null)
+            {
+                activityIdent = group.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
+            }
+            return Tuple.Create(group, activityIdent);
+        }
+
+        public void DeleteActivity(Activity activityToDelete)
+        {
+            //remove from group
+            Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToDelete);
+            if (group.Item1 != null && group.Item2 != null)
+            {
+                group.Item1.ActivitiesIdentifiers.Remove(group.Item2);
+            }
+
+            //remove from list of Activites
+            Activities.Remove(activityToDelete);
+        }
+
+        public void MoveActivityUp(Activity activityToMove)
+        {
+            int index = Activities.IndexOf(activityToMove);
+            if (index > 0 && Activities[index - 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            {
+                //move Activity
+                Activities.Move(index, index - 1);
+
+                //update move in group
+                Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
+                if (group.Item1 != null && group.Item2 != null)
+                {
+                    int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
+                    if (idntIndex > 0)
+                    {
+                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex - 1);
+                    }
+                }
+            }
+        }
+
+        public void MoveActivityDown(Activity activityToMove)
+        {
+            int index = Activities.IndexOf(activityToMove);
+            if (index < (Activities.Count-1) && Activities[index + 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            {
+                //move Activity
+                Activities.Move(index, index + 1);
+
+                //update move in group
+                Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
+                if (group.Item1 != null && group.Item2 != null)
+                {
+                    int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
+                    if (idntIndex < (group.Item1.ActivitiesIdentifiers.Count - 1))
+                    {
+                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + 1);
+                    }
+                }
+            }
+        }
 
     }
 }

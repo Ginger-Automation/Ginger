@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowPages.ListViewItems
 {
@@ -109,6 +110,25 @@ namespace Ginger.BusinessFlowPages.ListViewItems
         {
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+
+            ListItemNotification varsDepInd = new ListItemNotification();
+            varsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+            varsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables)) ;
+            varsDepInd.ImageSize = 14;
+            varsDepInd.BindingObject = mActivity;
+            varsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
+            varsDepInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(varsDepInd);
+
+            ListItemNotification sharedRepoInd = new ListItemNotification();
+            sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+            sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+            sharedRepoInd.ImageForeground = Brushes.Orange;
+            sharedRepoInd.BindingObject = mActivity;
+            sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
+            sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(sharedRepoInd);
+
             return notificationsList;
         }
 
@@ -117,22 +137,33 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            //ListItemOperation edit = new ListItemOperation();
-            //edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            //edit.ToolTip = "Edit Action";
-            //edit.OperationHandler = EditHandler;
-            //operationsList.Add(edit);
+            ListItemOperation delete = new ListItemOperation();
+            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            delete.ToolTip = "Delete";
+            delete.OperationHandler = DeleteHandler;
+            operationsList.Add(delete);
 
+            ListItemOperation moveUp = new ListItemOperation();
+            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
+            moveUp.ToolTip = "Move Up";
+            moveUp.OperationHandler = MoveUpHandler;
+            operationsList.Add(moveUp);
 
-            //ListItemOperation active = new ListItemOperation();
-            //active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            //active.ImageBindingObject = mAction;
-            //active.ImageBindingFieldName = nameof(Act.Active);
-            //active.ImageBindingConverter = new ActiveImageTypeConverter();
-            //active.ToolTip = "Activate/Un-Activate Action";
-            ////active.ImageSize = 15;
-            //active.OperationHandler = ActiveHandler;
-            //operationsList.Add(active);
+            ListItemOperation moveDown = new ListItemOperation();
+            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
+            moveDown.ToolTip = "Move Down";
+            moveDown.OperationHandler = MoveDownHandler;
+            operationsList.Add(moveDown);
+
+            ListItemOperation mandatory = new ListItemOperation();
+            mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            mandatory.ImageBindingObject = mActivity;
+            mandatory.ImageBindingFieldName = nameof(Activity.Mandatory);
+            mandatory.ImageBindingConverter = new ActiveImageTypeConverter();
+            mandatory.ToolTip = "Mandatory";
+            //active.ImageSize = 15;
+            mandatory.OperationHandler = MandatoryHandler;
+            operationsList.Add(mandatory);
 
             return operationsList;
         }
@@ -184,6 +215,30 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             groupOperationsList.Add(export);
 
             return groupOperationsList;
+        }
+
+        private void MandatoryHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mActivity.Mandatory = !mActivity.Mandatory;
+        }
+
+        private void DeleteHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mContext.BusinessFlow.DeleteActivity(mActivity);
+        }
+
+        private void MoveUpHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mContext.BusinessFlow.MoveActivityUp(mActivity);
+        }
+
+        private void MoveDownHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mContext.BusinessFlow.MoveActivityDown(mActivity);
         }
 
 
