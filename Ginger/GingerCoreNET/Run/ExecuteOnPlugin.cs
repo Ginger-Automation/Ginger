@@ -396,7 +396,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
         {
-
+            // TODO: Improve to send only needed params !!! too slow!!!
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue(ACT.GetName());
             if (ACT is Act actPlugin)
@@ -414,7 +414,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
                 string acttype = actPlugin.GetType().FullName + "+Fields";
 
-               
+
                 foreach (FieldInfo FI in Type.GetType(acttype).GetFields())
                 {
                     string Name = FI.Name;
