@@ -118,6 +118,7 @@ namespace Ginger.UserControlsLib.UCListView
         public string ItemGroupField { get; set; }
         public string ItemTagsField { get; set; }
         public string ItemIconField { get; set; }
+        public string ItemIconTooltipField { get; set; }
         public string ItemExecutionStatusField { get; set; }
         public string ItemActiveField { get; set; }
 
@@ -167,6 +168,7 @@ namespace Ginger.UserControlsLib.UCListView
             ItemGroupField = ItemInfo.GetItemGroupField();
             ItemTagsField = ItemInfo.GetItemTagsField();
             ItemIconField = ItemInfo.GetItemIconField();
+            ItemIconTooltipField = ItemInfo.GetItemIconTooltipField();
             ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
             ItemActiveField = ItemInfo.GetItemActiveField();
             this.Dispatcher.Invoke(() =>
@@ -304,6 +306,10 @@ namespace Ginger.UserControlsLib.UCListView
             if (!string.IsNullOrEmpty(ItemIconField))
             {
                 BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode:BindingMode.OneWay);
+            }
+            if (!string.IsNullOrEmpty(ItemIconTooltipField))
+            {
+                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, ItemIconTooltipField, BindingMode: BindingMode.OneWay);
             }
 
             if (!string.IsNullOrEmpty(ItemActiveField))

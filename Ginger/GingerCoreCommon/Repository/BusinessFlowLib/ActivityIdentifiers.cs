@@ -98,10 +98,10 @@ namespace GingerCore.Activities
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Activity.Fields.ActivityName
-                    || e.PropertyName == Activity.Fields.Description
-                        || e.PropertyName == Activity.Fields.ExternalID
-                            || e.PropertyName == Activity.Fields.AutomationStatus)
+            if (e.PropertyName == nameof(Activity.ActivityName)
+                    || e.PropertyName == nameof(Activity.Description)
+                        || e.PropertyName == nameof(Activity.ExternalID)
+                            || e.PropertyName == nameof(Activity.AutomationStatus))
             {
                 RefreshActivityIdentifiers();
             }

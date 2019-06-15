@@ -69,7 +69,7 @@ namespace Ginger.Variables
             {
                 mDepededItemType = eDependedItemsType.Actions;
                 chkBoxEnableDisableDepControl.Content = "Enable Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies Control";
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, Activity.Fields.EnableActionsVariablesDependenciesControl);                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, nameof(Activity.EnableActionsVariablesDependenciesControl));                
                 infoImage.ToolTip = "In case the Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies control is enabled then a specific Action will be executed in run time only if it was mapped (checked) to a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value which was selected in run time." + System.Environment.NewLine +
                                   "The mapping is been done between the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions and " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type Selection List.";
             }

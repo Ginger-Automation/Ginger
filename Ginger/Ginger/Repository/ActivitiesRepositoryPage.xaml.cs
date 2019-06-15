@@ -97,8 +97,8 @@ namespace Ginger.Repository
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            viewCols.Add(new GridColView() { Field = Activity.Fields.ActivityName, Header="Name", WidthWeight = 50, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = Activity.Fields.Description, WidthWeight = 35, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(Activity.ActivityName), Header="Name", WidthWeight = 50, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(Activity.Description), WidthWeight = 35, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });
             xActivitiesRepositoryGrid.SetAllColumnsDefaultView(view);           
             xActivitiesRepositoryGrid.InitViewItems();

@@ -167,7 +167,7 @@ namespace Ginger.BusinessFlowFolder
         }
         private void mBusinessFlowActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Activity.Fields.AutomationStatus)
+            if (e.PropertyName == nameof(Activity.AutomationStatus))
             {
                 mBusinessFlow.OnPropertyChanged(BusinessFlow.Fields.AutomationPrecentage);
                 Activity changedActivity= (Activity)sender;

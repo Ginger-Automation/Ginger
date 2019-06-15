@@ -40,7 +40,9 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            xActivitiesListView.SetDefaultListDataTemplate(new ActivityListItemInfo(mContext));
+            ActivityListItemInfo activityListItemInfo = new ActivityListItemInfo(mContext);
+            activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
+            xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
             //List tools bar
             xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;
@@ -59,6 +61,16 @@ namespace Ginger.BusinessFlowPages
 
             //List Grouping
             xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+        }
+
+        private void ActivityListItemInfo_ActivityListItemEvent(ActivityListItemEventArgs EventArgs)
+        {
+            switch (EventArgs.EventType)
+            {
+                case ActivityListItemEventArgs.eEventType.UpdateGrouping:
+                    xActivitiesListView.UpdateGrouping();
+                    break;
+            }
         }
 
         private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
@@ -82,7 +94,5 @@ namespace Ginger.BusinessFlowPages
                 xActivitiesListView.DataSourceList = null;
             }
         }
-
-
     }
 }

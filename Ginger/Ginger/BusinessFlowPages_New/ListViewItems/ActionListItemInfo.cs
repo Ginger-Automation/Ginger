@@ -87,6 +87,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(Act.Image);
         }
 
+        public string GetItemIconTooltipField()
+        {
+            return nameof(Act.ActionType);
+        }
+
         public List<ListItemNotification> GetNotificationsList(object item)
         {
             SetItem(item);

@@ -74,37 +74,37 @@ namespace Ginger.BusinessFlowWindows
                 mActivity.SaveBackup();
             editMode = mode;
 
-            RunDescritpion.Init(mContext, activity, Activity.Fields.RunDescription);
+            RunDescritpion.Init(mContext, activity, nameof(Activity.RunDescription));
             
             mActivityParentBusinessFlow = activityParentBusinessFlow;            
 
             List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
             AutomationStatusCombo.ItemsSource = automationStatusList;
-            RunOptionCombo.BindControl(activity, Activity.Fields.ActionRunOption);            
+            RunOptionCombo.BindControl(activity, nameof(Activity.ActionRunOption));            
             HandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
 
             GingerCore.General.FillComboFromEnumObj(cmbErrorHandlerMapping, mActivity.ErrorHandlerMappingType);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, Activity.Fields.ActivityName);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityDescription, TextBox.TextProperty, mActivity, Activity.Fields.Description);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtExpected, TextBox.TextProperty, mActivity, Activity.Fields.Expected);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtScreen, TextBox.TextProperty, mActivity, Activity.Fields.Screen);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroup, TextBox.TextProperty, mActivity, Activity.Fields.ActivitiesGroupID);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutomationStatusCombo, ComboBox.TextProperty, mActivity, Activity.Fields.AutomationStatus);            
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, Activity.Fields.Mandatory);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityName, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtActivityDescription, TextBox.TextProperty, mActivity, nameof(Activity.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtExpected, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtScreen, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroup, TextBox.TextProperty, mActivity, nameof(Activity.ActivitiesGroupID));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutomationStatusCombo, ComboBox.TextProperty, mActivity, nameof(Activity.AutomationStatus));            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
 
             if (activity.GetType() == typeof(ErrorHandler))
             {
                 HandlerTypeStack.Visibility = Visibility.Visible;
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HandlerTypeCombo, ComboBox.TextProperty, mActivity, ErrorHandler.Fields.HandlerType);                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(HandlerTypeCombo, ComboBox.TextProperty, mActivity, nameof(ErrorHandler.HandlerType));                
             }
             else
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbErrorHandlerMapping, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.ErrorHandlerMappingType);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbErrorHandlerMapping, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.ErrorHandlerMappingType));
                 HandlerMappingStack.Visibility = Visibility.Visible;
                 Row1.Height = new GridLength(Row1.Height.Value - 38);
             }
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, Activity.Fields.TargetApplication);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
 
             FillTargetAppsComboBox();
 

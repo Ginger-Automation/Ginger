@@ -94,7 +94,7 @@ namespace Ginger.BusinessFlowFolder
         {
             Style st = grdActivities.grdMain.RowHeaderStyle;
             DataTrigger DT = new DataTrigger();
-            PropertyPath PT = new PropertyPath(Activity.Fields.IsNotGherkinOptimizedActivity);
+            PropertyPath PT = new PropertyPath(nameof(Activity.IsNotGherkinOptimizedActivity));
             DT.Binding = new Binding() { Path = PT };
             DT.Value = false;
             DT.Setters.Add(new Setter(DataGridRow.BackgroundProperty, Brushes.Orange));
@@ -102,7 +102,7 @@ namespace Ginger.BusinessFlowFolder
 
             Style st2 = grdActivities.grdMain.RowHeaderStyle;
             DataTrigger DT2 = new DataTrigger();
-            PropertyPath PT2 = new PropertyPath(Activity.Fields.AGSelected);
+            PropertyPath PT2 = new PropertyPath(nameof(Activity.AGSelected));
             DT2.Binding = new Binding() { Path = PT2 };
             DT2.Value = true;
             DT2.Setters.Add(new Setter(DataGridRow.BackgroundProperty, Brushes.LightBlue));
@@ -208,32 +208,32 @@ namespace Ginger.BusinessFlowFolder
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldActive"] });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Mandatory, Header="Mand.", WidthWeight =3.0, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldName"] });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Description, WidthWeight = 10 });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.TargetApplication, WidthWeight = 7.5, Header = "T. Application" });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivitiesGroupID, Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 7.5, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.VariablesNames, Header = GingerDicser.GetTermResValue(eTermResKey.Variables), WidthWeight = 7.5, BindingMode = BindingMode.OneWay });           
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Active), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldActive"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Mandatory), Header="Mand.", WidthWeight =3.0, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.mainGrdActivities.Resources["FieldName"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Description), WidthWeight = 10 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.TargetApplication), WidthWeight = 7.5, Header = "T. Application" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivitiesGroupID), Header = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 7.5, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.VariablesNames), Header = GingerDicser.GetTermResValue(eTermResKey.Variables), WidthWeight = 7.5, BindingMode = BindingMode.OneWay });           
             List<string> automationStatusList = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.AutomationStatus, WidthWeight = 6, Header="Auto. Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = automationStatusList });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.AutomationStatus), WidthWeight = 6, Header="Auto. Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = automationStatusList });
             List<ComboEnumItem> runOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(eActionRunOption));
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActionRunOption, WidthWeight = 10, Header = "Actions Run Option", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runOptionList });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Status, WidthWeight = 6, Header="Run Status", BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActivityStatusConverter(), TextBlock.ForegroundProperty)) });                       
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ElapsedSecs, WidthWeight = 6, Header="Elapsed", BindingMode = BindingMode.OneWay, HorizontalAlignment = System.Windows.HorizontalAlignment.Right });                        
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActionRunOption), WidthWeight = 10, Header = "Actions Run Option", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runOptionList });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Status), WidthWeight = 6, Header="Run Status", BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActivityStatusConverter(), TextBlock.ForegroundProperty)) });                       
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ElapsedSecs), WidthWeight = 6, Header="Elapsed", BindingMode = BindingMode.OneWay, HorizontalAlignment = System.Windows.HorizontalAlignment.Right });                        
             grdActivities.SetAllColumnsDefaultView(defView);
 
             //# Custom Views
             GridViewDef desView = new GridViewDef(eAutomatePageViewStyles.Design.ToString());
             desView.GridColsView = new ObservableList<GridColView>();
-            desView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Status, Visible = false });
-            desView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ElapsedSecs, Visible = false });            
+            desView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Status), Visible = false });
+            desView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ElapsedSecs), Visible = false });            
             grdActivities.AddCustomView(desView);
 
             GridViewDef execView = new GridViewDef(eAutomatePageViewStyles.Execution.ToString());
             execView.GridColsView = new ObservableList<GridColView>();
-            execView.GridColsView.Add(new GridColView() { Field = Activity.Fields.VariablesNames, Visible = false });           
-            execView.GridColsView.Add(new GridColView() { Field = Activity.Fields.AutomationStatus, Visible = false });
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Activity.VariablesNames), Visible = false });           
+            execView.GridColsView.Add(new GridColView() { Field = nameof(Activity.AutomationStatus), Visible = false });
             grdActivities.AddCustomView(execView);
             
             grdActivities.InitViewItems();

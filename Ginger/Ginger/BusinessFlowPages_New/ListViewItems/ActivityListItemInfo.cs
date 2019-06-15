@@ -6,6 +6,7 @@ using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -17,6 +18,17 @@ namespace Ginger.BusinessFlowPages.ListViewItems
     {
         Activity mActivity;
         Context mContext;
+
+        public delegate void ActivityListItemEventHandler(ActivityListItemEventArgs EventArgs);
+        public event ActivityListItemEventHandler ActivityListItemEvent;
+        private void OnActivityListItemEvent(ActivityListItemEventArgs.eEventType eventType, Object eventObject = null)
+        {
+            ActivityListItemEventHandler handler = ActivityListItemEvent;
+            if (handler != null)
+            {
+                handler(new ActivityListItemEventArgs(eventType, eventObject));
+            }
+        }
 
         public ActivityListItemInfo(Context context)
         {
@@ -88,6 +100,11 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(RepositoryItemBase.ItemImageType);
         }
 
+        public string GetItemIconTooltipField()
+        {
+            return nameof(Activity.ActivityType);
+        }
+
         public List<ListItemNotification> GetNotificationsList(object item)
         {
             SetItem(item);
@@ -125,42 +142,42 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             List<ListItemGroupOperation> groupOperationsList = new List<ListItemGroupOperation>();
 
             ListItemGroupOperation rename = new ListItemGroupOperation();
-            rename.Header = "Rename";
+            rename.Header = "Rename Group";
             rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             rename.ToolTip = "Rename group";
             rename.OperationHandler = RenameGroupHandler;
             groupOperationsList.Add(rename);
 
             ListItemGroupOperation moveUp = new ListItemGroupOperation();
-            moveUp.Header = "Move Up";
+            moveUp.Header = "Move Group Up";
             moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
             moveUp.ToolTip = "Move all group up";
             moveUp.OperationHandler = MoveGroupUpHandler;
             groupOperationsList.Add(moveUp);
 
             ListItemGroupOperation moveDown = new ListItemGroupOperation();
-            moveDown.Header = "Move Down";
+            moveDown.Header = "Move Group Down";
             moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
             moveDown.ToolTip = "Move all group down";
             moveDown.OperationHandler = MoveGroupDownHandler;
             groupOperationsList.Add(moveDown);
 
             ListItemGroupOperation delete = new ListItemGroupOperation();
-            delete.Header = "Delete";
+            delete.Header = "Delete Group";
             delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
             delete.ToolTip = "Delete all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
             delete.OperationHandler = DeleteGroupHandler;
             groupOperationsList.Add(delete);
 
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
-            addToSR.Header = "Add to Shared Repository";
+            addToSR.Header = "Add Group to Shared Repository";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.ToolTip = "Add group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to Shared Repository";
             addToSR.OperationHandler = AddGroupToSRHandler;
             groupOperationsList.Add(addToSR);
 
             ListItemGroupOperation export = new ListItemGroupOperation();
-            export.Header = "Export";
+            export.Header = "Export Group";
             export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
             export.OperationHandler = ExportGroupHandler;
@@ -182,6 +199,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
                     if (mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == newName.Trim()).FirstOrDefault() == null)
                     {
                         activitiesGroup.ChangeName(newName);
+                        OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
                     }
                     else
                     {
@@ -195,12 +213,14 @@ namespace Ginger.BusinessFlowPages.ListViewItems
         {
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
             mContext.BusinessFlow.MoveActivitiesGroupUp(activitiesGroup);
+            OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private void MoveGroupDownHandler(object sender, RoutedEventArgs e)
         {
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
             mContext.BusinessFlow.MoveActivitiesGroupDown(activitiesGroup);
+            OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private void DeleteGroupHandler(object sender, RoutedEventArgs e)
@@ -226,6 +246,23 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             ObservableList<ActivitiesGroup> list = new ObservableList<ActivitiesGroup>();
             list.Add(activitiesGroup);
             ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mContext.BusinessFlow, list);
+        }
+    }
+
+    public class ActivityListItemEventArgs
+    {
+        public enum eEventType
+        {
+            UpdateGrouping,
+        }
+
+        public eEventType EventType;
+        public Object EventObject;
+
+        public ActivityListItemEventArgs(eEventType eventType, object eventObject = null)
+        {
+            this.EventType = eventType;
+            this.EventObject = eventObject;
         }
     }
 }

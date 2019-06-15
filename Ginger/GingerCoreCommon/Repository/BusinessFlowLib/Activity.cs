@@ -69,42 +69,6 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class Activity : RepositoryItemBase
     {
-    
-
-    
-        
-        public  static class Fields
-        {            
-            public static string ActivityName = "ActivityName";
-            public static string Description = "Description";
-            public static string RunDescription = "RunDescription";
-            public static string Screen = "Screen";
-            //public static string Params = "Params";
-            public static string Active = "Active";
-            public static string Mandatory = "Mandatory";
-            public static string PercentAutomated = "PercentAutomated";
-            //public static string Automated = "Automated";
-            public static string Elapsed = "Elapsed";
-            public static string ElapsedSecs = "ElapsedSecs";
-            public static string Status = "Status"; //TODO: change to 'RunStatus'
-            public static string ActionRunOption = "ActionRunOption";
-            public static string Acts = "Acts";
-            public static string Expected = "Expected";
-            public static string AutomationStatus = "AutomationStatus";
-            public static string Variables = "Variables";
-            public static string VariablesNames = "VariablesNames";
-            public static string EnableActionsVariablesDependenciesControl = "EnableActionsVariablesDependenciesControl";
-            public static string TargetApplication = "TargetApplication";
-            public static string ExternalID = "ExternalID";
-            public static string ActivitiesGroupID = "ActivitiesGroupID";
-            public static string Linked = "Linked";
-            public static string IsNotGherkinOptimizedActivity = "IsNotGherkinOptimizedActivity";
-            public static string AGSelected = "AGSelected";
-            public static string SelectedForConversion = "SelectedForConversion";
-            public static string MappedErrorHandlers = "MappedErrorHandlers";
-            public static string ErrorHandlerMappingType = "ErrorHandlerMappingType";
-        }
-
         bool mSelectedForConversion;
         public bool SelectedForConversion
         {
@@ -114,7 +78,7 @@ namespace GingerCore
                 if (mSelectedForConversion != value)
                 {
                     mSelectedForConversion = value;
-                    OnPropertyChanged(Fields.SelectedForConversion);
+                    OnPropertyChanged(nameof(SelectedForConversion));
                 }
             }
         }
@@ -134,7 +98,7 @@ namespace GingerCore
                 if (mErrorHandlerMappingType != value)
                 {
                     mErrorHandlerMappingType = value;
-                    OnPropertyChanged(Fields.ErrorHandlerMappingType);
+                    OnPropertyChanged(nameof(ErrorHandlerMappingType));
                 }
             }
         }
@@ -143,7 +107,7 @@ namespace GingerCore
         public bool IsNotGherkinOptimizedActivity { get { return ActivitiesGroupID != "Optimized Activities" && ActivitiesGroupID != "Optimized Activities - Not in Use"; } }
 
         private bool mAGSelected;
-        public bool AGSelected { get { return mAGSelected; } set { if (mAGSelected != value) { mAGSelected = value; OnPropertyChanged(Fields.AGSelected); } } }
+        public bool AGSelected { get { return mAGSelected; } set { if (mAGSelected != value) { mAGSelected = value; OnPropertyChanged(nameof(AGSelected)); } } }
 
         public List<string> VariablesBeforeExec { get; set; }
         
@@ -161,7 +125,7 @@ namespace GingerCore
 
         private bool mActive;
         [IsSerializedForLocalRepository]
-        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
+        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]
@@ -173,7 +137,7 @@ namespace GingerCore
                 if (mActivityName != value)
                 {
                     mActivityName = value;
-                    OnPropertyChanged(Fields.ActivityName);
+                    OnPropertyChanged(nameof(ActivityName));
                 }
             }
         }        
@@ -187,7 +151,7 @@ namespace GingerCore
                 if (mMandatory != value)
                 {
                     mMandatory = value;
-                    OnPropertyChanged(Fields.Mandatory);
+                    OnPropertyChanged(nameof(Mandatory));
                 }
             }
         }
@@ -202,7 +166,7 @@ namespace GingerCore
                 if (mDescription != value)
                 {
                     mDescription = value;
-                    OnPropertyChanged(Fields.Description);
+                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
@@ -217,7 +181,7 @@ namespace GingerCore
                 if (mRunDescription != value)
                 {
                     mRunDescription = value;
-                    OnPropertyChanged(Fields.RunDescription);
+                    OnPropertyChanged(nameof(RunDescription));
                 }
             }
         }
@@ -232,7 +196,7 @@ namespace GingerCore
                 if (mExpected != value)
                 {
                     mExpected = value;
-                    OnPropertyChanged(Fields.Expected);
+                    OnPropertyChanged(nameof(Expected));
                 }
             }
         }
@@ -284,7 +248,7 @@ namespace GingerCore
                 }
                 value = percent.ToString("P").Split('.')[0] + "%";
                 //RaisePropertyChanged("PercentAutomated");
-                OnPropertyChanged(Fields.PercentAutomated);
+                OnPropertyChanged(nameof(PercentAutomated));
             }
         }
         
@@ -301,7 +265,7 @@ namespace GingerCore
                 if (mAutomationStatus != value)
                 {
                     mAutomationStatus = value;
-                    OnPropertyChanged(Fields.AutomationStatus);
+                    OnPropertyChanged(nameof(AutomationStatus));
                 }
             }
         }
@@ -316,7 +280,7 @@ namespace GingerCore
                 if (mActionRunOption != value)
                 {
                     mActionRunOption = value;
-                    OnPropertyChanged(Fields.ActionRunOption);
+                    OnPropertyChanged(nameof(ActionRunOption));
                 }
             }
         }
@@ -327,7 +291,7 @@ namespace GingerCore
         /// </summary>
         //[IsSerializedForLocalRepository]    
         //TODO: check if status is different
-        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
+        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
         //TODO: add change history log in class and save it
         
 
@@ -344,7 +308,7 @@ namespace GingerCore
                 if (mActivitiesGroupID != value)
                 {
                     mActivitiesGroupID = value;
-                    OnPropertyChanged(Fields.ActivitiesGroupID);
+                    OnPropertyChanged(nameof(ActivitiesGroupID));
                 }
             } 
         }
@@ -370,7 +334,7 @@ namespace GingerCore
                 if (mTargetApplication != value)
                 {
                     mTargetApplication = value;
-                    OnPropertyChanged(Fields.TargetApplication);
+                    OnPropertyChanged(nameof(TargetApplication));
                 }
             }
         }
@@ -415,7 +379,7 @@ namespace GingerCore
                 return (varsNames.TrimEnd(new char[] {',', ' '}));                
             }
         }
-        public void RefreshVariablesNames() { OnPropertyChanged(Fields.VariablesNames); }
+        public void RefreshVariablesNames() { OnPropertyChanged(nameof(VariablesNames)); }
 
         public VariableBase GetVariable(string name)
         {
@@ -464,8 +428,8 @@ namespace GingerCore
             set
             {
                 mElapsed = value;
-                OnPropertyChanged(Fields.Elapsed);
-                OnPropertyChanged(Fields.ElapsedSecs);
+                OnPropertyChanged(nameof(Elapsed));
+                OnPropertyChanged(nameof(ElapsedSecs));
             }
         }
 
@@ -494,7 +458,7 @@ namespace GingerCore
                 if (mScreen != value)
                 {
                     mScreen = value;
-                    OnPropertyChanged(Fields.Screen);
+                    OnPropertyChanged(nameof(Screen));
                 }
             }
         }
@@ -580,12 +544,6 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
-        }
-
-        public  void InvokPropertyChanngedForAllFields()
-        {
-            foreach (var field in typeof(Fields).GetFields())
-                OnPropertyChanged(field.Name);
         }
 
         public void Reset()
@@ -894,6 +852,14 @@ namespace GingerCore
             ExecutionLogActionCounter = 0;
             ExecutionLogFolder = executionLogFolder + @"\" + executionLogActivityCounter + " " + activityName;
             VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+        }
+
+        public virtual string ActivityType
+        {
+            get
+            {
+                return "List of Actions";
+            }
         }
     }
 }
