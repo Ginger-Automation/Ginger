@@ -1315,5 +1315,63 @@ namespace GingerCore
             SolutionVariablesBeforeExec = GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             ExecutionLogActivityCounter = 1;
         }
+
+        public void MoveActivitiesGroupUp(ActivitiesGroup groupToMove)
+        {
+            if (groupToMove != null && ActivitiesGroups.IndexOf(groupToMove) > 0)
+            {
+                int groupIndex = ActivitiesGroups.IndexOf(groupToMove);
+                ActivitiesGroup groupAbove = ActivitiesGroups[groupIndex - 1];
+
+                //move group up
+                ActivitiesGroups.Move(groupIndex, groupIndex - 1);
+
+                if (groupToMove.ActivitiesIdentifiers.Count > 0)
+                {
+                    //move group activities up
+                    foreach (ActivityIdentifiers activityIdent in groupToMove.ActivitiesIdentifiers)
+                    {
+                        Activities.Move(Activities.IndexOf(activityIdent.IdentifiedActivity), Activities.IndexOf(activityIdent.IdentifiedActivity) - groupAbove.ActivitiesIdentifiers.Count);
+                    }
+                }
+            }
+        }
+
+        public void MoveActivitiesGroupDown(ActivitiesGroup groupToMove)
+        {
+            if (groupToMove != null && ActivitiesGroups.IndexOf(groupToMove) < (ActivitiesGroups.Count - 1))
+            {
+                int groupIndex = ActivitiesGroups.IndexOf(groupToMove);
+                ActivitiesGroup groupBlow = ActivitiesGroups[groupIndex + 1];
+
+                //move group down
+                ActivitiesGroups.Move(groupIndex, groupIndex + 1);
+
+                if (groupToMove.ActivitiesIdentifiers.Count > 0)
+                {
+                    //move group activities down by shifting below group up
+                    foreach (ActivityIdentifiers activityIdent in groupBlow.ActivitiesIdentifiers)
+                    {
+                        Activities.Move(Activities.IndexOf(activityIdent.IdentifiedActivity), Activities.IndexOf(activityIdent.IdentifiedActivity) - groupToMove.ActivitiesIdentifiers.Count);
+                    }
+                }
+            }
+        }
+
+        public void DeleteActivitiesGroup(ActivitiesGroup groupToDelete)
+        {
+            //delete group
+            ActivitiesGroups.Remove(groupToDelete);
+            
+            if (groupToDelete.ActivitiesIdentifiers.Count > 0)
+            {
+                //delete group activities 
+                foreach (ActivityIdentifiers activityIdent in groupToDelete.ActivitiesIdentifiers)
+                {
+                    Activities.Remove(activityIdent.IdentifiedActivity);
+                }
+            }
+        }        
+
     }
 }

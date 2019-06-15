@@ -32,7 +32,6 @@ namespace Ginger.BusinessFlowPages
 
             SetListView();
         }
-
         
         private void SetListView()
         {
@@ -42,7 +41,6 @@ namespace Ginger.BusinessFlowPages
 
             //List Items
             xActivitiesListView.SetDefaultListDataTemplate(new ActivityListItemInfo(mContext));
-
 
             //List tools bar
             xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;

@@ -40,9 +40,6 @@ namespace GingerCore.Activities
             Activities
         }
 
-
-    
-
         private executionLoggerStatus _executionLoggerStatus = executionLoggerStatus.NotStartedYet;
 
         public executionLoggerStatus ExecutionLoggerStatus
@@ -51,19 +48,6 @@ namespace GingerCore.Activities
             set { _executionLoggerStatus = value; }
         }
 
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string ActivitiesIdentifiers = "ActivitiesIdentifiers";
-            public static string Elapsed = "ElapsedSecs";
-            public static string AutomationPrecentage = "AutomationPrecentage";
-            public static string RefreshfromALMOption = "RefreshfromALMOption";
-            public static string RunStatus = "RunStatus";
-            public static string TestSuiteTitle = "TestSuiteTitle";
-            public static string TestSuiteId = "TestSuiteId";
-        }
-        
         public ActivitiesGroup()
         {
         }
@@ -83,7 +67,7 @@ namespace GingerCore.Activities
                         if (aIdent.IdentifiedActivity != null)
                             aIdent.IdentifiedActivity.ActivitiesGroupID = mName;
 
-                    OnPropertyChanged(Fields.Name);
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -98,7 +82,7 @@ namespace GingerCore.Activities
                 if (mDescription != value)
                 {
                     mDescription = value;
-                    OnPropertyChanged(Fields.Description);
+                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
@@ -242,7 +226,6 @@ namespace GingerCore.Activities
                         ((BusinessFlow)hostItem).SetUniqueActivitiesGroupName(newInstance);
                         ((BusinessFlow)hostItem).ActivitiesGroups.Insert(originalIndex, newInstance);
                         ((BusinessFlow)hostItem).AttachActivitiesGroupsAndActivities();
-                        //((BusinessFlow)hostItem).UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
                     }
                     break;
                 case eItemParts.Activities:
@@ -296,7 +279,7 @@ namespace GingerCore.Activities
                 if (mElapsed != value)
                 {
                     mElapsed = value;
-                    OnPropertyChanged(Fields.Elapsed);
+                    OnPropertyChanged(nameof(Elapsed));
                 }
             }
         }
@@ -348,7 +331,7 @@ namespace GingerCore.Activities
                 if (mRunStatus != value)
                 {
                     mRunStatus = value;
-                    OnPropertyChanged(Fields.RunStatus);
+                    OnPropertyChanged(nameof(RunStatus));
                 }
             }
         }
@@ -388,5 +371,14 @@ namespace GingerCore.Activities
         //        }
         //    }
         //}
+
+        public void ChangeName(string newName)
+        {
+            Name = newName;
+            foreach(ActivityIdentifiers activityIdent in ActivitiesIdentifiers)
+            {
+                activityIdent.IdentifiedActivity.ActivitiesGroupID = newName;
+            }
+        }
     }
 }

@@ -552,7 +552,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     menuitem.Tag = menu.Tag;
 
-                    menu.Items.Add(menuitem);
+                    ((MenuItem)menu.Items[0]).Items.Add(menuitem);
                 }
             }
 
@@ -560,7 +560,10 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XGroupOperationsMenu_Loaded(object sender, RoutedEventArgs e)
         {
-            //SetGroupOperations((Menu)sender);
+            if (((MenuItem)((Menu)sender).Items[0]).Items.Count == 0)
+            {
+                SetGroupOperations((Menu)sender);
+            }
         }
     }
 

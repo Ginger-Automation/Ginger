@@ -182,11 +182,11 @@ namespace Ginger.Activities
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Name), Header = "Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Description), Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
-                defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.TestSuiteTitle, Header = "Test Suite Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.AutomationPrecentage, Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.TestSuiteTitle), Header = "Test Suite Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.AutomationPrecentage), Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdActivitiesGroups.SetAllColumnsDefaultView(defView);
             grdActivitiesGroups.InitViewItems();
 
@@ -215,11 +215,11 @@ namespace Ginger.Activities
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header = "Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Name), Header = "Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Description), Header = "Description", WidthWeight = 40 });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
-                defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.TestSuiteTitle, Header = "RQM Test Suite", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.AutomationPrecentage, Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.TestSuiteTitle), Header = "RQM Test Suite", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.AutomationPrecentage), Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
 
             grdActivitiesGroups.updateAndSelectCustomView(defView);
             grdActivitiesGroups.InitViewItems();

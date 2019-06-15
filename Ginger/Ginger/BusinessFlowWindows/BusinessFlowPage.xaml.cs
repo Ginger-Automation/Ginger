@@ -176,7 +176,7 @@ namespace Ginger.BusinessFlowFolder
                     foreach(ActivitiesGroup actGroup in mBusinessFlow.ActivitiesGroups)
                         if (actGroup.Name == changedActivity.ActivitiesGroupID)
                         {
-                            actGroup.OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+                            actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
                             break;
                         }                    
                 }

@@ -1,9 +1,11 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.ALM;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -125,20 +127,105 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             ListItemGroupOperation rename = new ListItemGroupOperation();
             rename.Header = "Rename";
             rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            rename.ToolTip = "Rename Group";
+            rename.ToolTip = "Rename group";
             rename.OperationHandler = RenameGroupHandler;
             groupOperationsList.Add(rename);
+
+            ListItemGroupOperation moveUp = new ListItemGroupOperation();
+            moveUp.Header = "Move Up";
+            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
+            moveUp.ToolTip = "Move all group up";
+            moveUp.OperationHandler = MoveGroupUpHandler;
+            groupOperationsList.Add(moveUp);
+
+            ListItemGroupOperation moveDown = new ListItemGroupOperation();
+            moveDown.Header = "Move Down";
+            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
+            moveDown.ToolTip = "Move all group down";
+            moveDown.OperationHandler = MoveGroupDownHandler;
+            groupOperationsList.Add(moveDown);
+
+            ListItemGroupOperation delete = new ListItemGroupOperation();
+            delete.Header = "Delete";
+            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            delete.ToolTip = "Delete all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            delete.OperationHandler = DeleteGroupHandler;
+            groupOperationsList.Add(delete);
+
+            ListItemGroupOperation addToSR = new ListItemGroupOperation();
+            addToSR.Header = "Add to Shared Repository";
+            addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+            addToSR.ToolTip = "Add group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to Shared Repository";
+            addToSR.OperationHandler = AddGroupToSRHandler;
+            groupOperationsList.Add(addToSR);
+
+            ListItemGroupOperation export = new ListItemGroupOperation();
+            export.Header = "Export";
+            export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+            export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
+            export.OperationHandler = ExportGroupHandler;
+            groupOperationsList.Add(export);
 
             return groupOperationsList;
         }
 
 
         private void RenameGroupHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
 
+            string newName = activitiesGroup.Name;
+            if (InputBoxWindow.GetInputWithValidation("Rename Group", "New Group Name:", ref newName))
+            {
+                if (!string.IsNullOrEmpty(newName))
+                {
+                    if (mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == newName.Trim()).FirstOrDefault() == null)
+                    {
+                        activitiesGroup.ChangeName(newName);
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Group with same name already exist, please set unique name.");
+                    }
+                }
+            }
+        }
 
+        private void MoveGroupUpHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            mContext.BusinessFlow.MoveActivitiesGroupUp(activitiesGroup);
+        }
 
+        private void MoveGroupDownHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            mContext.BusinessFlow.MoveActivitiesGroupDown(activitiesGroup);
+        }
+
+        private void DeleteGroupHandler(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup) == eUserMsgSelection.Yes)
+            {
+                ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+                mContext.BusinessFlow.DeleteActivitiesGroup(activitiesGroup);
+            }
+        }
+
+        private void AddGroupToSRHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            list.Add(activitiesGroup);
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+        }
+
+        private void ExportGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ObservableList<ActivitiesGroup> list = new ObservableList<ActivitiesGroup>();
+            list.Add(activitiesGroup);
+            ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mContext.BusinessFlow, list);
         }
     }
 }
