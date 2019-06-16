@@ -333,6 +333,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         
         private void Duplicate(object sender, RoutedEventArgs e)
         {
+            //TODO: Need to move code from if else to the respective classes.
             if (DSDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);

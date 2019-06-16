@@ -488,6 +488,7 @@ namespace GingerCore.DataSource
                 DataRow row = (((DataRowView)o).Row);
                 DataRow dr = mDSTableDetails.DataTable.NewRow();
                 foreach (string sColName in mColumnNames)
+                {
                     if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                     {
                         dr[sColName] = row[sColName];
@@ -496,6 +497,7 @@ namespace GingerCore.DataSource
                     {
                         dr[sColName] = System.DBNull.Value;
                     }
+                }
                 mDSTableDetails.DataTable.Rows.Add(dr);
             }
         }
@@ -541,6 +543,16 @@ namespace GingerCore.DataSource
             {
                 ((DataRowView)o).Delete();
             }
+        }
+
+        public override string AddColumnName(string colName)
+        {
+            return string.Format("[{0}] Text,", colName);
+        }
+
+        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
+        {
+            return "INSERT INTO " + Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
         }
     }
 }

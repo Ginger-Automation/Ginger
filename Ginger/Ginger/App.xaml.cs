@@ -108,9 +108,6 @@ namespace Ginger
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
 
-
-            //AddClass(list, typeof(GingerCoreNET.DataSource.GingerLiteDB));
-            //AddClass(list, typeof(ActDSTableElement));
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));

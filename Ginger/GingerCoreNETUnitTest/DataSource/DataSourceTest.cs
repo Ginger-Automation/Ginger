@@ -103,12 +103,10 @@ namespace UnitTests.NonUITests
 
             //Act
             liteDB.RenameTable("MyCustomizedDataTable", NewName);
-
-            //Assert
             Assert.AreEqual(liteDB.IsTableExist(NewName), true);
-
             liteDB.RenameTable(NewName, "MyCustomizedDataTable");
 
+            //Assert
             Assert.AreEqual(liteDB.IsTableExist("MyCustomizedDataTable"), true);
         }
 
@@ -122,14 +120,14 @@ namespace UnitTests.NonUITests
             object res = liteDB.GetResult(Query);
 
             //Assert
-            Assert.AreEqual(res.ToString(), "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]");
+            Assert.AreEqual("System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]" , res.ToString());
 
         }
 
         [TestMethod]
         public void SaveTable()
         {
-            // Assert
+            // Arrange
             ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
             DataSourceTable dataSource = null;
             List<string> mColumnNames = null;
@@ -150,13 +148,13 @@ namespace UnitTests.NonUITests
             var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
 
             //Assert
-            Assert.AreEqual(a, "1");
+            Assert.AreEqual( "1" , a, "RowCount");
         }
 
         [TestMethod]
         public void GetTable()
         {
-            // Assert
+            // Arrange
             string TableName = "MyCustomizedDataTable";
 
             // Act
@@ -170,7 +168,7 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void AddRow()
         {
-            // Assert
+            // Arrange
             ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
             DataSourceTable dataSource = null;
             List<string> mColumnNames = null;
@@ -191,7 +189,7 @@ namespace UnitTests.NonUITests
             var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
 
             //Assert
-            Assert.AreEqual(a, "1");
+            Assert.AreEqual( "1", a, "RowCount");
         }
 
         [TestMethod]
@@ -213,7 +211,7 @@ namespace UnitTests.NonUITests
             ActReturnValue value = actDSTable.GetReturnValue(actDSTable.LocateColTitle);
 
             //Assert
-            Assert.AreEqual(value.Actual, "1");
+            Assert.AreEqual( "1", value.Actual);
         }
 
         [TestMethod]
@@ -236,7 +234,7 @@ namespace UnitTests.NonUITests
             ActReturnValue value = actDSTable.GetReturnValue(actDSTable.LocateColTitle);
 
             //Assert
-            Assert.AreEqual(value.Actual, "1");
+            Assert.AreEqual("1", value.Actual);
         }
 
         [TestMethod]
@@ -258,7 +256,7 @@ namespace UnitTests.NonUITests
             ActReturnValue value = actDSTable.GetReturnValue("GINGER_ID");
 
             //Assert
-            Assert.AreEqual(value.Actual, "1");
+            Assert.AreEqual("1", value.Actual);
         }
 
         [TestMethod]
@@ -291,7 +289,7 @@ namespace UnitTests.NonUITests
             DataTable res = liteDB.GetQueryOutput(Query);
 
             //Assert
-            Assert.AreEqual(res.Rows.Count, 1);
+            Assert.AreEqual( 1, res.Rows.Count);
         }
 
 

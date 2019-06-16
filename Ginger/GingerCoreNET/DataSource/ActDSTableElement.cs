@@ -63,10 +63,6 @@ namespace GingerCore.Actions
                 return "Data Source Manipulation";
             }
         }
-
-        // TODO: Need Fix it
-        //public override System.Drawing.Image Image { get { return Resources.Act; } }
-
         public override void Execute()
         {
             DataSourceBase DataSource = null;
@@ -104,7 +100,6 @@ namespace GingerCore.Actions
                     case eControlAction.GetValue:
                         ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                         VE.Value = ValueExp;
-                        // VE.ReplaceDataSource(ValueExp);
                         AddOrUpdateReturnParamActual("Output", VE.ValueCalculated);
                         break;
                     case eControlAction.SetValue:
@@ -114,7 +109,6 @@ namespace GingerCore.Actions
                         ValueExpression VEUpdate = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, true, SVE.ValueCalculated);
                         VEUpdate.Value = ValueExp;
                         outVal = VEUpdate.ValueCalculated;
-                        //VEUpdate.ReplaceDataSource(ValueExp);
                         break;
                     case eControlAction.MarkAsDone:
                         ValueExpression VEMAD = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
@@ -125,7 +119,6 @@ namespace GingerCore.Actions
                     case eControlAction.AvailableRowCount:
                         ValueExpression VERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                         VERC.Value = ValueExp;
-                        // VE.ReplaceDataSource(ValueExp);
                         AddOrUpdateReturnParamActual("Output", VERC.ValueCalculated);
                         break;
                     case eControlAction.ExportToExcel:
@@ -133,8 +126,7 @@ namespace GingerCore.Actions
                         EVE.Value = this.Value;
 
                         ValueExpression ETERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, false, EVE.ValueCalculated);
-                        ETERC.Value = ValueExp;
-                        // VE.ReplaceDataSource(ValueExp);                    
+                        ETERC.Value = ValueExp;                    
                         if (ETERC.ValueCalculated == "The Export Excel can be *.xlsx only")
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -165,46 +157,45 @@ namespace GingerCore.Actions
         }
         public new static partial class Fields
         {
-            public static string DSName = "DSName";
-            public static string DSTableName = "DSTableName";
+            public static readonly string DSName = "DSName";
+            public static readonly string DSTableName = "DSTableName";
 
             
-            public static string ControlAction = "ControlAction";
-            public static string Identifier = "Identifier";
+            public static readonly string ControlAction = "ControlAction";
+            public static readonly string Identifier = "Identifier";
 
-            public static string KeyName = "KeyName";
+            public static readonly string KeyName = "KeyName";
 
-            public static string Customized = "Customized";
-            public static string ByQuery = "ByQuery";
+            public static readonly string Customized = "Customized";
+            public static readonly string ByQuery = "ByQuery";
 
-            public static string QueryValue = "QueryValue";
-            public static string ColSelectorValue = "ColSelectorValue";
-            public static string WhereOperator = "WhereOperator";
-            //public static string WhereColumnVal = "WhereColumnVal";
-            public static string WhereProperty = "WhereProperty";
+            public static readonly string QueryValue = "QueryValue";
+            public static readonly string ColSelectorValue = "ColSelectorValue";
+            public static readonly string WhereOperator = "WhereOperator";
+            
+            public static readonly string WhereProperty = "WhereProperty";
 
-            public static string LocateColTitle = "LocateColTitle";
-            public static string LocateRowType = "LocateRowType";
-            public static string LocateRowValue = "LocateRowValue";
+            public static readonly string LocateColTitle = "LocateColTitle";
+            public static readonly string LocateRowType = "LocateRowType";
+            public static readonly string LocateRowValue = "LocateRowValue";
 
-            public static string ByRowNum = "ByRowNum";
-            public static string ByNextAvailable = "ByNextAvailable";            
-            public static string ByWhere = "ByWhere";
+            public static readonly string ByRowNum = "ByRowNum";
+            public static readonly string ByNextAvailable = "ByNextAvailable";            
+            public static readonly string ByWhere = "ByWhere";
 
-            public static string WhereColSelector = "WhereColSelector";
-            public static string WhereColumnTitle = "WhereColumnTitle";
-            public static string WhereColumnValue = "WhereColumnValue";
+            public static readonly string WhereColSelector = "WhereColSelector";
+            public static readonly string WhereColumnTitle = "WhereColumnTitle";
+            public static readonly string WhereColumnValue = "WhereColumnValue";
             
 
-            public static string ValueExp = "ValueExpression";
+            public static readonly string ValueExp = "ValueExpression";
 
-            public static string WhereConditions = "WhereConditions";
+            public static readonly string WhereConditions = "WhereConditions";
 
-            public static string ExcelPath = "ExcelPath";
-            public static string ExcelSheetName = "ExcelSheetName";
+            public static readonly string ExcelPath = "ExcelPath";
+            public static readonly string ExcelSheetName = "ExcelSheetName";
 
-            //public static string InputValue = "InputValue";
-            //public static string LocateY = "LocateColTitle";
+            
         }
 
         [IsSerializedForLocalRepository]
@@ -287,10 +278,10 @@ namespace GingerCore.Actions
         }
 
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string QueryValue { get; set; }
 
-        //public string InputValue { get; set; }
+        
         [IsSerializedForLocalRepository]
         public string ColSelectorValue { get; set; }
 
@@ -311,11 +302,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eRunColOperator WhereOperator { get; set; }
-                
-        //[IsSerializedForLocalRepository]
-        //public eRunActionOn RunActionOn { get; set; }
-        
-
+           
         [IsSerializedForLocalRepository]
         public bool ByRowNum { get; set; }
 
@@ -329,15 +316,15 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public bool IsKeyValueTable { get; set; }
         public bool MarkUpdate { get; set; }
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eRunColSelectorValue WhereColSelector { get; set; }
 
         [IsSerializedForLocalRepository]
         public bool BySelectedCell { get; set; }
 
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string WhereColumnTitle { get; set; }
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string WhereColumnValue { get; set; }       
        
         [IsSerializedForLocalRepository]

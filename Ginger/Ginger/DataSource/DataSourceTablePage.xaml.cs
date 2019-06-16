@@ -44,8 +44,8 @@ namespace Ginger.DataSource
         Setter SetterError = new Setter(Border.BorderBrushProperty, Brushes.Red);
         Setter SetterBorderBold = new Setter(Border.BorderThicknessProperty, new Thickness(2, 2, 2, 2));
         Setter SetterBorder = new Setter(Border.BorderThicknessProperty, new Thickness(1, 1, 1, 1));
-        int i = 1;
-        int count = 1;
+        int i = 0;
+        
         public DataSourceTablePage(DataSourceTable dsTableDetails)
         {
             InitializeComponent();
@@ -223,8 +223,9 @@ namespace Ginger.DataSource
                 {
                     try
                     {
+                        i++;
                         sCol.DisplayIndex = i;
-                        i ++;
+                        
                     }
                     catch(Exception ex)
                     {

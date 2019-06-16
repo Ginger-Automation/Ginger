@@ -283,7 +283,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NonUITests\AutoPilot\APILearningTests.cs" />
-    <Compile Include="NonUITests\DataSourceTest.cs" />
     <Compile Include="NonUITests\ExpectedWithActual.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />

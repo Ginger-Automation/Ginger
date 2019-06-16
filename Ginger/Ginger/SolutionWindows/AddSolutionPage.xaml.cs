@@ -192,7 +192,7 @@ namespace Ginger.SolutionWindows
             RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder.AddRepositoryItem(a);
 
-           
+            // TODO: Try not to use resources, we can put the file in folder and copy
             // adding LiteDB while adding solution
             byte[] litedbobj = Properties.Resources.LiteDB;
 

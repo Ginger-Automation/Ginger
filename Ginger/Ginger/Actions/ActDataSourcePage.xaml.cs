@@ -1188,7 +1188,7 @@ namespace Ginger.Actions
                                     }
                                     else
                                     {
-                                        TBH.AddBoldText(" GINGER_USED =\"False\" limit 1");
+                                        TBH.AddBoldText(" GINGER_USED =\"False\"");
                                     }
                                 }
                                 else if (RowNum.IsChecked == true)

@@ -194,7 +194,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
-                //DSTableDetails.DataTable.RejectChanges();  // Commenting this out as it was breaking the logic if the changes hasnt been commited.
                 if (mDataSourceTablePage != null)
                 {
                     mDataSourceTablePage.RefreshGrid();
