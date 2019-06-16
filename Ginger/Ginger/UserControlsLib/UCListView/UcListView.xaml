@@ -21,29 +21,14 @@
                 <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
 
-            <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
-                <StackPanel x:Name="xListCommonOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
-                    <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="xDeleteAllBtn_Click"/>
-                    <StackPanel x:Name="xMoveBtns" Orientation="Horizontal">
-                        <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="xMoveUpBtn_Click" />
-                        <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="xMoveDownBtn_Click" />
-                    </StackPanel>
-                </StackPanel>
+            <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 0 0">
+                <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
 
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
                     <MenuItem>
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Icon>
-                        <!--<MenuItem x:Name="xDuplicateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xDuplicateBusinessflow_Click">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Duplicate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Duplicate [BusinessFlow]"/>
-                                </MenuItem.Header>
-                            </MenuItem>-->
                     </MenuItem>
                 </Menu>
             </DockPanel>

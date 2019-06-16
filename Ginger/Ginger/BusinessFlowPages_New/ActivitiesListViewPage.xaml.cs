@@ -1,6 +1,8 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.Activities;
-using Ginger.BusinessFlowPages.ListViewItems;
+using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using System.Collections.Generic;
@@ -31,6 +33,7 @@ namespace Ginger.BusinessFlowPages
             mContext = context;
 
             SetListView();
+            SetSharedRepositoryMark();
         }
         
         private void SetListView()
@@ -40,21 +43,9 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            ActivityListItemInfo activityListItemInfo = new ActivityListItemInfo(mContext);
+            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext);
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
-
-            //List tools bar
-            xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;
-
-            List<ListItemOperation> operationsListToAdd = new List<ListItemOperation>();
-            ListItemOperation groupsManager = new ListItemOperation();
-            groupsManager.ImageType = Amdocs.Ginger.Common.Enums.eImageType.ActivitiesGroup;
-            groupsManager.ImageSize = 17;
-            groupsManager.ToolTip = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, prefixString: "Open", suffixString: "Manager");
-            groupsManager.OperationHandler = OpenGroupsManagerHandler;
-            operationsListToAdd.Add(groupsManager);
-            xActivitiesListView.AddListOperations(operationsListToAdd);
 
             //List Data
             xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
@@ -88,11 +79,18 @@ namespace Ginger.BusinessFlowPages
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
                 xActivitiesListView.UpdateGrouping();
+                SetSharedRepositoryMark();
             }
             else
             {
                 xActivitiesListView.DataSourceList = null;
             }
+        }
+
+        private void SetSharedRepositoryMark()
+        {
+            ObservableList<Activity> srActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)srActivities);
         }
     }
 }

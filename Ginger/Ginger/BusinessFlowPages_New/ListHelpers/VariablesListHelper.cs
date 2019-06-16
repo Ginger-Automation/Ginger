@@ -5,9 +5,9 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 
-namespace Ginger.BusinessFlowPages.ListViewItems
+namespace Ginger.BusinessFlowPages.ListHelpers
 {
-    public class VariableListItemInfo : IListViewItemInfo
+    public class VariablesListHelper : IListViewHelper
     {
         VariableBase mVariable;
         Context mContext;
@@ -23,7 +23,7 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             }
         }
 
-        public VariableListItemInfo(Context context)
+        public VariablesListHelper(Context context)
         {
             mContext = context;
         }
@@ -87,14 +87,47 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return nameof(VariableBase.VariableType);
         }
 
-        public List<ListItemNotification> GetNotificationsList(object item)
+        public List<ListItemOperation> GetListOperations()
+        {
+            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+
+            //ListItemOperation addNew = new ListItemOperation();
+            //addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            //addNew.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            //addNew.OperationHandler = AddNewHandler;
+            //operationsList.Add(addNew);
+
+            //ListItemOperation deleteAll = new ListItemOperation();
+            //deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            //deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            //deleteAll.OperationHandler = DeleteAllHandler;
+            //operationsList.Add(deleteAll);
+
+            return operationsList;
+        }
+
+        public List<ListItemOperation> GetListExtraOperations()
+        {
+            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            //ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
+            //activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
+            //activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            //activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            //activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
+            //extraOperationsList.Add(activeUnactiveAllActivities);
+
+            return extraOperationsList;
+        }
+
+        public List<ListItemNotification> GetItemNotificationsList(object item)
         {
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
             return notificationsList;
         }
 
-        public List<ListItemOperation> GetOperationsList(object item)
+        public List<ListItemOperation> GetItemOperationsList(object item)
         {
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
@@ -119,7 +152,30 @@ namespace Ginger.BusinessFlowPages.ListViewItems
             return operationsList;
         }
 
-        public List<ListItemGroupOperation> GetGroupOperationsList()
+        public List<ListItemOperation> GetItemExtraOperationsList(object item)
+        {
+            SetItem(item);
+            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            //ListItemOperation mandatory = new ListItemOperation();
+            //mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            //mandatory.ImageBindingObject = mActivity;
+            //mandatory.ImageBindingFieldName = nameof(Activity.Mandatory);
+            //mandatory.ImageBindingConverter = new ActiveImageTypeConverter();
+            //mandatory.ToolTip = "Mandatory";
+            ////active.ImageSize = 15;
+            //mandatory.OperationHandler = MandatoryHandler;
+            //extraOperationsList.Add(mandatory);
+
+            return extraOperationsList;
+        }
+
+        public List<ListItemOperation> GetItemExecutionOperationsList(object item)
+        {
+            return null;
+        }
+
+        public List<ListItemGroupOperation> GetItemGroupOperationsList()
         {
             return null;
         }

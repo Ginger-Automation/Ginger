@@ -630,13 +630,13 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivitiesGroupListItemInfo.cs" />
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivityListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListViewItems\VariableListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
     </Compile>
@@ -719,7 +719,7 @@
     <Compile Include="UserControlsLib\UcItemExecutionStatus.xaml.cs">
       <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
+    <Compile Include="UserControlsLib\UCListView\IListViewHelper.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemGroupOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />

@@ -470,7 +470,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xLocatorsGrid.InitViewItems();
 
             xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
 

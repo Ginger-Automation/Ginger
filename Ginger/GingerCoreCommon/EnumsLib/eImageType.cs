@@ -106,7 +106,8 @@ namespace Amdocs.Ginger.Common.Enums
         AddCircle,//needed?
         Stop,
         Close,
-        Play,
+        Run,
+        RunSingle,
         Continue,
         Save,
         Open,
@@ -119,8 +120,8 @@ namespace Amdocs.Ginger.Common.Enums
         Analyze,
         Delete,
         DeleteSingle,
-        StopCircleOutline,// needed?
-        PlayCircleOutline,// needed?
+        StopAll,// needed?
+        RunAll,// needed?
         Config,
         Edit,
         Reply,
@@ -246,6 +247,7 @@ namespace Amdocs.Ginger.Common.Enums
         CSS3Text,
         Languages,
         MinusSquare,
+        Mandatory,
         #endregion
 
         #region Source control Images     

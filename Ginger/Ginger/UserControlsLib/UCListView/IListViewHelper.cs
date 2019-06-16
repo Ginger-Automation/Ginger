@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.UserControlsLib.UCListView
 {
-    public interface IListViewItemInfo 
+    public interface IListViewHelper
     {
         void SetItem(object item);
 
@@ -26,12 +26,20 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemActiveField();
 
+        List<ListItemOperation> GetListOperations();
+
+        List<ListItemOperation> GetListExtraOperations();
+
+        List<ListItemGroupOperation> GetItemGroupOperationsList();
+
         ListItemUniqueIdentifier GetItemUniqueIdentifier(object item);
 
-        List<ListItemNotification> GetNotificationsList(object item);
+        List<ListItemNotification> GetItemNotificationsList(object item);
 
-        List<ListItemOperation> GetOperationsList(object item);
+        List<ListItemOperation> GetItemOperationsList(object item);
 
-        List<ListItemGroupOperation> GetGroupOperationsList();
+        List<ListItemOperation> GetItemExtraOperationsList(object item);
+
+        List<ListItemOperation> GetItemExecutionOperationsList(object item);        
     }
 }

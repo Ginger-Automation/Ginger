@@ -7,6 +7,7 @@ namespace Ginger.UserControlsLib.UCListView
 {
     public class ListItemOperation
     {
+        public string Header;
         public eImageType ImageType;
         public SolidColorBrush ImageForeground;
         public double ImageSize = 16;

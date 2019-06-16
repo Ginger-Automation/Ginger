@@ -365,9 +365,20 @@ namespace GingerCore
             return false;
         }
 
-
+        bool mEnableActionsVariablesDependenciesControl;
         [IsSerializedForLocalRepository]
-        public bool EnableActionsVariablesDependenciesControl { get; set; }
+        public bool EnableActionsVariablesDependenciesControl
+        {
+            get
+            {
+                return mEnableActionsVariablesDependenciesControl;
+            }
+            set
+            {
+                mEnableActionsVariablesDependenciesControl = value;
+                OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+            }
+        }
 
         public string VariablesNames
         {

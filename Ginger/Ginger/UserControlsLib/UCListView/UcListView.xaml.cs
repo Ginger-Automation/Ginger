@@ -61,7 +61,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        IListViewItemInfo mListItemInfo = null;
+        IListViewHelper mListViewHelper = null;
 
         public UcListView()
         {
@@ -240,18 +240,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public Visibility AddBtnVisiblity
-        {
-            get
-            {
-                return xAddBtn.Visibility;
-            }
-            set
-            {
-                xAddBtn.Visibility = value;
-            }
-        }
-
+       
         public Visibility ListTitleVisibility
         {
             get
@@ -263,31 +252,6 @@ namespace Ginger.UserControlsLib.UCListView
                 xListTitlePnl.Visibility = value;
             }
         }
-
-        public Visibility DeleteAllBtnVisiblity
-        {
-            get
-            {
-                return xDeleteAllBtn.Visibility;
-            }
-            set
-            {
-                xDeleteAllBtn.Visibility = value;
-            }
-        }
-
-        public Visibility MoveBtnsVisiblity
-        {
-            get
-            {
-                return xMoveBtns.Visibility;
-            }
-            set
-            {
-                xMoveBtns.Visibility = value;
-            }
-        }
-
         public string Title
         {
             get
@@ -319,48 +283,40 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public RoutedEventHandler AddItemHandler
-        {
-            set
-            {
-                xAddBtn.Click += value;
-            }
-        }
+        //private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (mObjList.Count == 0)
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.NoItemToDelete);
+        //        return;
+        //    }
 
-        private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (mObjList.Count == 0)
-            {
-                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
-                return;
-            }
+        //    if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+        //    {
+        //        mObjList.SaveUndoData();
+        //        mObjList.ClearAll();
+        //    }
+        //}
 
-            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-            {
-                mObjList.SaveUndoData();
-                mObjList.ClearAll();
-            }
-        }
+        //private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    int currentIndx = CurrentItemIndex;
+        //    if (currentIndx >= 1)
+        //    {
+        //        mObjList.Move(currentIndx, currentIndx - 1);
+        //        ScrollToViewCurrentItem();
+        //    }
+        //}
 
-        private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
-        {
-            int currentIndx = CurrentItemIndex;
-            if (currentIndx >= 1)
-            {
-                mObjList.Move(currentIndx, currentIndx - 1);
-                ScrollToViewCurrentItem();
-            }
-        }
-
-        private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
-        {
-            int currentIndx = CurrentItemIndex;
-            if (currentIndx >= 0)
-            {
-                mObjList.Move(currentIndx, currentIndx + 1);
-                ScrollToViewCurrentItem();
-            }
-        }
+        //private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    int currentIndx = CurrentItemIndex;
+        //    if (currentIndx >= 0)
+        //    {
+        //        mObjList.Move(currentIndx, currentIndx + 1);
+        //        ScrollToViewCurrentItem();
+        //    }
+        //}
 
         public void ScrollToViewCurrentItem()
         {
@@ -405,33 +361,39 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public void SetDefaultListDataTemplate(IListViewItemInfo listItemInfo)
+        public void SetDefaultListDataTemplate(IListViewHelper listViewHelper)
         {
-            mListItemInfo = listItemInfo;
-            DataTemplate dataTemp = new DataTemplate();
-            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
-            dataTemp.VisualTree = listItemFac;
+            mListViewHelper = listViewHelper;
             this.Dispatcher.Invoke(() =>
             {
+                DataTemplate dataTemp = new DataTemplate();
+                FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+                listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+                listItemFac.SetValue(UcListViewItem.ListHelperProperty, listViewHelper);
+                dataTemp.VisualTree = listItemFac;
                 xListView.ItemTemplate = dataTemp;
+
+                SetListOperations();
+                SetListExtraOperations();
             });
         }
 
-        public void AddListOperations(List<ListItemOperation> operations)
+        public void SetListOperations()
         {
-            if (operations != null && operations.Count > 0)
+            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
+            if (listOperations != null && listOperations.Count > 0)
             {
-                foreach (ListItemOperation operation in operations)
+                xListOperationsPnl.Visibility = Visibility.Visible;
+
+                foreach (ListItemOperation operation in listOperations)
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    operationBtn.ButtonImageHeight = 18;
-                    operationBtn.ButtonImageWidth = 18;
+                    operationBtn.Margin = new Thickness(0, 0, 2, 0);
+                    operationBtn.ButtonImageHeight = 16;
+                    operationBtn.ButtonImageWidth = 16;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
 
                     if (operation.ImageForeground == null)
@@ -458,8 +420,64 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.Click += operation.OperationHandler;
                     operationBtn.Tag = xListView.ItemsSource;
 
-                    xListCommonOperationsPnl.Children.Add(operationBtn);
+                    xListOperationsPnl.Children.Add(operationBtn);
                 }
+            }
+            else
+            {
+                xListOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void SetListExtraOperations()
+        {
+            List<ListItemOperation> extraOperations = mListViewHelper.GetListExtraOperations();
+            if (extraOperations != null && extraOperations.Count > 0)
+            {
+                xListExtraOperationsMenu.Visibility = Visibility.Visible;
+                foreach (ListItemOperation operation in extraOperations)
+                {
+                    MenuItem menuitem = new MenuItem();
+                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
+                    ImageMakerControl iconImage = new ImageMakerControl();
+                    iconImage.ImageType = operation.ImageType;
+                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
+                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    menuitem.Icon = iconImage;
+                    menuitem.Header = operation.Header;
+                    menuitem.ToolTip = operation.ToolTip;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        iconImage.ImageForeground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    menuitem.Click += operation.OperationHandler;
+
+                    menuitem.Tag = xListView.ItemsSource;
+
+                    ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                }
+            }
+            else
+            {
+                xListExtraOperationsMenu.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -476,11 +494,11 @@ namespace Ginger.UserControlsLib.UCListView
         void IDragDrop.Drop(DragInfo Info)
         {
             // first check if we did drag and drop in the same grid then it is a move - reorder
-            if (Info.DragSource == this)
-            {
-                if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
-                return;
-            }
+            //if (Info.DragSource == this)
+            //{
+            //    if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+            //    return;
+            //}
 
             // OK this is a dropped from external
             EventHandler handler = ItemDropped;
@@ -534,7 +552,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetGroupOperations(Menu menu)
         {
-            List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
+            List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
             if (groupOperations != null && groupOperations.Count > 0)
             {
                 foreach (ListItemGroupOperation operation in groupOperations)

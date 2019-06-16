@@ -70,7 +70,7 @@ namespace Amdocs.Ginger.Common
         AgentNotFound, MissingNewAgentDetails, MissingNewTableDetails, InvalidTableDetails, MissingNewColumn, ChangingAgentDriverAlert, MissingNewDSDetails, DuplicateDSDetails, GingerKeyNameError, GingerKeyNameDuplicate,
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
-        SureWantToDeleteAll, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
+        SureWantToDeleteAll, SureWantToDelete, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
         ErrorReadingRepositoryItem,
         EnvNotFound, SelectItemToAdd, CannotAddGinger,
         ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
@@ -438,10 +438,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UnknownParamInCommandLine, new UserMsg(eUserMsgType.ERROR, "Unknown Parameter", "Parameter not recognized {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion CommandLineParams Messages
 
-            #region Tree / Grid
+            #region Tree / Grid / List
             Reporter.UserMsgsPool.Add(eUserMsgKey.ConfirmToAddTreeItem, new UserMsg(eUserMsgType.QUESTION, "Add New Item to Tree", "Are you Sure you want to add new item to tree?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddTreeItem, new UserMsg(eUserMsgType.ERROR, "Add Tree Item", "Failed to add the tree item '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteAll, new UserMsg(eUserMsgType.QUESTION, "Delete All", "Are you sure you want to delete all?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete", "Are you sure you want to delete '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete All", "Didn't found item to delete", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SelectItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete", "Please select items to delete", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SelectItemToAdd, new UserMsg(eUserMsgType.WARN, "Add New Item", "Please select an Activity on which you want to add a new Action", eUserMsgOption.OK, eUserMsgSelection.None));

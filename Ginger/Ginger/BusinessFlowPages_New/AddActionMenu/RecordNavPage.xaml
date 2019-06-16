@@ -24,7 +24,7 @@
         
         <userControl:UCWindowsGrid x:Name="xWinGridUC" Margin="0, 5, 0, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
 
-        <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Play" 
+        <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Run" 
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="10" 
                                ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
 

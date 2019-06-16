@@ -286,7 +286,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xRecordingButton.ButtonText = "Start Recording";
                 xRecordingButton.ToolTip = "Start Recording";
-                xRecordingButton.ButtonImageType = eImageType.Play;
+                xRecordingButton.ButtonImageType = eImageType.Run;
             }
             xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");            
         }

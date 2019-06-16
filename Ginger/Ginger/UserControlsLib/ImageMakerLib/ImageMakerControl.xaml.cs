@@ -325,17 +325,21 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Reply:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Reply);
                     break;
+
+                case eImageType.Run:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
+                    break;
+                case eImageType.RunSingle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircleOutline);
+                    break;
+                case eImageType.RunAll:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
+                    break;
                 case eImageType.Stop:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Stop);
                     break;
-                case eImageType.Play:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
-                    break;
-                case eImageType.StopCircleOutline:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.StopCircleOutline);
-                    break;
-                case eImageType.PlayCircleOutline:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircleOutline);
+                case eImageType.StopAll:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.StopCircle);
                     break;
                 case eImageType.Close:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Close);
@@ -770,8 +774,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.MinusSquare:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.MinusSquare);
                     break;
-
-                    #endregion
+                case eImageType.Mandatory:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle);
+                    break;
+                #endregion
 
                 #region ElementType Images
                 case eImageType.Button:
