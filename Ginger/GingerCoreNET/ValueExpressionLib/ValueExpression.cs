@@ -328,6 +328,11 @@ namespace GingerCore
 
             string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
 
+            if (DSList == null)
+            {
+                DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            }
+
             foreach (DataSourceBase ds in DSList)
                 if (ds.Name == DSName)
                     DataSource = ds;
