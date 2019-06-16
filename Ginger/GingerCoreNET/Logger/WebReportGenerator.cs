@@ -12,7 +12,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 {
     public class WebReportGenerator
     {
-        private string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+        private string browserPath = "chrome.exe";
         public WebReportGenerator()
         {
 
@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             bool response = false;
             try
             {
-                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
                 if (!Directory.Exists(clientAppFolderPath))
                     return false;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     pageDataSb.Append(openObject.Guid);
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\"";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.js"), json);
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets","Execution_Data","executiondata.js"), json);
                 System.Diagnostics.Process.Start(@browserPath, taskCommand);
                 response = true;
             }

@@ -864,7 +864,7 @@ namespace Ginger
         {
             if (xLogOptionsMenuItem.Tag == null)
             {
-                xLogOptionsMenuItem.Tag = true;//expanded
+                xLogOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
@@ -924,7 +924,7 @@ namespace Ginger
         {
             if (xSupportOptionsMenuItem.Tag == null)
             {
-                xSupportOptionsMenuItem.Tag = true;//expanded
+                xSupportOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
@@ -962,7 +962,7 @@ namespace Ginger
         {
             if (xContactOptionsMenuItem.Tag == null)
             {
-                xContactOptionsMenuItem.Tag = true;//expanded
+                xContactOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
