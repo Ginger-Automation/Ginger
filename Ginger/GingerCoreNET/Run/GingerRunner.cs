@@ -759,7 +759,7 @@ namespace Ginger.Run
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
-            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowInstanceGuid == CurrentBusinessFlow?.InstanceGuid select x).FirstOrDefault();
 
             if (businessFlowRun == null)
             {
