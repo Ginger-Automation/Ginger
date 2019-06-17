@@ -117,6 +117,8 @@ namespace GingerCore
         bool bUpdate;
         string updateValue;
         bool bDone;
+        string DSName;
+
 
         public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
@@ -153,6 +155,7 @@ namespace GingerCore
             this.bUpdate = bUpdate;
             this.updateValue = UpdateValue;
             this.bDone = bDone;
+            
         }
 
         /// <summary>
@@ -166,9 +169,15 @@ namespace GingerCore
             this.ObjAttr = attr;
         }
 
+        [IsSerializedForLocalRepository]
+        public GingerCore.Actions.ActDSTableElement actDSTableElement { get; set; }
+
         //In case we need to pass VE to another control like grid -> edit then we fill this 2 values
         public Object Obj { get; set; }
         public string ObjAttr { get; set; }
+
+        
+        
 
         private void Calculate()
         {
@@ -320,7 +329,9 @@ namespace GingerCore
             string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
 
             if (DSList == null)
+            {
                 DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            }
 
             foreach (DataSourceBase ds in DSList)
                 if (ds.Name == DSName)
@@ -333,6 +344,16 @@ namespace GingerCore
                 return;
             }
 
+            string Query = "";
+            string updateQuery = "";
+            List<string> mColList = null;
+            string rowNum = "0";
+            string DSTable = "";
+            string sAct = "";
+            string IRow = "";
+            string ExcelPath = "";
+            string ExcelSheet = "";
+
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 //if (DataSource.FileFullPath.StartsWith("~"))
@@ -342,284 +363,373 @@ namespace GingerCore
                 //}
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 DataSource.Init(DataSource.FileFullPath);
-            }
-
-            string Query = "";
-            string updateQuery = "";
-            List<string> mColList = null;
-            string rowNum = "0";
-            string DSTable = "";
-            string sAct = "";
-            string IRow = "";
-            string ExcelPath = "";
-            string ExcelSheet = "";            
-            try
-            {
-                DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
-                mColList = DataSource.DSC.GetColumnList(DSTable);
-                p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-
-                if (p.IndexOf("ACT=") != -1)
+                try
                 {
-                    sAct = p.Substring(p.IndexOf("ACT=") + 4, p.IndexOf(" ") - 4);
-
-                    if (sAct == "DA") // Delete All Rows
-                    {
-                        updateQuery = "Delete From " + DSTable;
-                        p = "";
-                    }
-                    else if (sAct == "YA") // Mark All Used
-                    {
-                        updateQuery = "Update " + DSTable + " SET GINGER_USED='True'";
-                        p = "";
-                    }
-                    else if (sAct == "NA") // Mark All UnUsed
-                    {
-                        updateQuery = "Update " + DSTable + " SET GINGER_USED='False'";
-                        p = "";
-                    }
-                    else if (sAct == "RC") // Get Row Count
-                    {
-                        Query = "Select COUNT(*) FROM " + DSTable;
-                        p = "";
-                    }
-                    else if (sAct == "ARC") // Get Available Row Count
-                    {
-                        Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
-                        p = "";
-                    }
-                    else if (sAct == "ETE") // Get Row Count
-                    {
-                        Query = "";
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    }
-                    else
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                }
-                if (p.IndexOf("EP=") != -1)
-                {
-                    ExcelPath = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ") - 3);
+                    DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
+                    mColList = DataSource.DSC.GetColumnList(DSTable);
                     p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    ExcelSheet = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
-                }
-                else if (p.IndexOf("KEY=") != -1)
-                {
-                    string KeyName = p.Substring(p.IndexOf("KEY=") + 4, p.IndexOf("}") - 4);
-                    if (sAct == "DR")
-                        updateQuery = "DELETE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
-                    else
+
+                    if (p.IndexOf("ACT=") != -1)
                     {
-                        if (bUpdate == true)
+                        sAct = p.Substring(p.IndexOf("ACT=") + 4, p.IndexOf(" ") - 4);
+
+                        if (sAct == "DA") // Delete All Rows
                         {
-                            DataTable dtTemp = DataSource.DSC.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
-                            if (dtTemp.Rows[0].ItemArray[0].ToString() != "0")
-                                updateQuery = "UPDATE " + DSTable + " SET GINGER_KEY_VALUE = '" + updateValue.Replace("'", "''") + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                            updateQuery = "Delete From " + DSTable;
+                            p = "";
+                        }
+                        else if (sAct == "YA") // Mark All Used
+                        {
+                            updateQuery = "Update " + DSTable + " SET GINGER_USED='True'";
+                            p = "";
+                        }
+                        else if (sAct == "NA") // Mark All UnUsed
+                        {
+                            updateQuery = "Update " + DSTable + " SET GINGER_USED='False'";
+                            p = "";
+                        }
+                        else if (sAct == "RC") // Get Row Count
+                        {
+                            Query = "Select COUNT(*) FROM " + DSTable;
+                            p = "";
+
+                        }
+                        else if (sAct == "ARC") // Get Available Row Count
+                        {
+                            Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
+                            p = "";
+                        }
+                        else if (sAct == "ETE") // Get Row Count
+                        {
+                            Query = "";
+                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        }
+                        else
+                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    }
+                    if (p.IndexOf("EP=") != -1)
+                    {
+                        ExcelPath = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ") - 3);
+                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        ExcelSheet = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
+                    }
+                    else if (p.IndexOf("KEY=") != -1)
+                    {
+                        string KeyName = p.Substring(p.IndexOf("KEY=") + 4, p.IndexOf("}") - 4);
+                        if (sAct == "DR")
+                            updateQuery = "DELETE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                        else
+                        {
+                            if (bUpdate == true)
+                            {
+                                DataTable dtTemp = DataSource.DSC.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
+                                if (dtTemp.Rows[0].ItemArray[0].ToString() != "0")
+                                    updateQuery = "UPDATE " + DSTable + " SET GINGER_KEY_VALUE = '" + updateValue.Replace("'", "''") + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                                else
+                                    updateQuery = "INSERT INTO " + DSTable + "(GINGER_KEY_NAME,GINGER_KEY_VALUE,GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME) VALUES ('" + KeyName + "','" + updateValue.Replace("'", "''") + "','" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "')";
+                            }
                             else
-                                updateQuery = "INSERT INTO " + DSTable + "(GINGER_KEY_NAME,GINGER_KEY_VALUE,GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME) VALUES ('" + KeyName + "','" + updateValue.Replace("'", "''") + "','" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "')";
+                                Query = "Select GINGER_KEY_VALUE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                        }
+                    }
+                    else if (p != "" && (sAct == "MASD" || sAct == "DR" || sAct == ""))
+                    {
+                        bMarkAsDone = p.Substring(p.IndexOf("MASD=") + 5, p.IndexOf(" ") - 5);
+                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        if (p.IndexOf("MR=") == 0)
+                        {
+                            bMultiRow = p.Substring(p.IndexOf("MR=") + 3, p.IndexOf(" ") - 3);
+                            p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        }
+                        string DSIden = p.Substring(p.IndexOf("IDEN=") + 5, p.IndexOf(" ") - 5);
+                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        if (DSIden == "Query")
+                        {
+                            Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);
+                            if (Query.ToUpper().IndexOf("SELECT *") == -1)
+                            {
+                                Query = Regex.Replace(Query, " FROM ", ",[GINGER_ID] FROM ", RegexOptions.IgnoreCase);
+                            }
                         }
                         else
-                            Query = "Select GINGER_KEY_VALUE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                        {
+                            Query = "Select ";
+                            iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
+                            iColVal = "[" + iColVal + "]";
+                            p = p.Substring(p.TrimStart().IndexOf("IROW="));
+                            Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
+
+                            if (p.IndexOf(" ") > 0)
+                                IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
+                            else
+                                IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf("}") - 5);
+                            if (IRow == "NxtAvail")
+                            {
+                                Query = Query + " Where GINGER_USED <> 'True' or GINGER_USED is null";
+                            }
+                            else if (IRow == "RowNum")
+                            {
+                                p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
+                                rowNum = p.Substring(p.IndexOf("ROWNUM=") + 7, p.IndexOf("}") - 7);
+                            }
+                            else if (IRow == "Where")
+                            {
+                                if (p.TrimStart().IndexOf("COND=") != -1)
+                                {
+                                    p = p.Substring(p.TrimStart().IndexOf("COND="));
+                                    string Cond = p.Substring(p.IndexOf("COND=") + 5, p.IndexOf("}") - 5);
+                                    Query = Query + " Where " + Cond;
+                                }
+                                else if (p.TrimStart().IndexOf("WCOLVAL=") != -1 && p.TrimStart().IndexOf("WOPR=") != -1)
+                                {
+                                    p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
+                                    string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
+                                    wColVal = "[" + wColVal + "]";
+                                    Query = Query + " Where ";
+                                    p = p.Substring(p.TrimStart().IndexOf("WOPR="));
+                                    string wOpr = "";
+                                    string wRowVal = "";
+                                    if (p.IndexOf("WROWVAL=") == -1)
+                                        wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("}") - 5);
+                                    else
+                                        wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
+                                    if (wOpr != "Is Null" && wOpr != "Is Null")
+                                    {
+                                        p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
+                                        wRowVal = p.Substring(p.IndexOf("WROWVAL=") + 8, p.IndexOf("}") - 8);
+                                    }
+                                    if (wOpr == "Equals")
+                                    {
+                                        if (wColVal == "[GINGER_ID]")
+                                        {
+                                            Query = Query + wColVal + " = " + wRowVal + "";
+                                        }
+                                        else
+                                        {
+                                            Query = Query + wColVal + " = '" + wRowVal + "'";
+                                        }
+                                    }
+                                    else if (wOpr == "NotEquals")
+                                    {
+                                        if (wColVal == "[GINGER_ID]")
+                                        {
+                                            Query = Query + wColVal + " <> " + wRowVal + "";
+                                        }
+                                        else
+                                        {
+                                            Query = Query + wColVal + " <> '" + wRowVal + "'";
+                                        }
+                                    }
+                                    else if (wOpr == "Contains")
+                                        Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
+                                    else if (wOpr == "Not Contains")
+                                        Query = Query + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
+                                    else if (wOpr == "Starts With")
+                                        Query = Query + wColVal + " LIKE '" + wRowVal + "%'";
+                                    else if (wOpr == "Not Starts With")
+                                        Query = Query + wColVal + " NOT LIKE '" + wRowVal + "%'";
+                                    else if (wOpr == "Ends With")
+                                        Query = Query + wColVal + " LIKE '%" + wRowVal + "'";
+                                    else if (wOpr == "Not Ends With")
+                                        Query = Query + wColVal + " NOT LIKE '%" + wRowVal + "'";
+                                    else if (wOpr == "Is Null")
+                                        Query = Query + wColVal + " IS NULL";
+                                    else if (wOpr == "Is Not Null")
+                                        Query = Query + wColVal + " IS NOT NULL";
+                                }
+                                else
+                                    return;
+                            }
+                        }
                     }
                 }
-                else if (p != "" && (sAct == "MASD" || sAct == "DR" || sAct == ""))
+                catch (Exception e)
                 {
-                    bMarkAsDone = p.Substring(p.IndexOf("MASD=") + 5, p.IndexOf(" ") - 5);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    if(p.IndexOf("MR=") == 0)
+                    mValueCalculated = pOrg;
+                    Console.WriteLine(e.StackTrace);
+                }
+                if (Query != "")
+                {
+                    DataTable dt = DataSource.DSC.GetQueryOutput(Query);
+                    if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
                     {
-                        bMultiRow = p.Substring(p.IndexOf("MR=") + 3, p.IndexOf(" ") - 3);
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        DataSource.DSC.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
+                        dt = DataSource.DSC.GetQueryOutput(Query);
                     }
-                    string DSIden = p.Substring(p.IndexOf("IDEN=") + 5, p.IndexOf(" ") - 5);
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
-                    if (DSIden == "Query")
+                    if (dt.Rows.Count == 0)
                     {
-                        Query = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - 7);                        
-                        if (Query.ToUpper().IndexOf("SELECT *") == -1)
+                        mValueCalculated = "No Row found with " + Query;
+                        return;
+                    }
+                    if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
+                        if (rowNum.All(char.IsDigit))
                         {
-                            Query = Regex.Replace(Query, " FROM ", ",[GINGER_ID] FROM ", RegexOptions.IgnoreCase);
+                            mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
                         }
+                        else
+                            mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
+
+                    string GingerIds = "";
+                    if (dt.Columns.Contains("GINGER_ID"))
+                    {
+                        if (bMultiRow == "Y")
+                        {
+                            foreach (DataRow row in dt.Rows)
+                                GingerIds += row["GINGER_ID"].ToString() + ",";
+                            GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
+                        }
+                        else
+                            GingerIds = dt.Rows[Convert.ToInt32(rowNum)]["GINGER_ID"].ToString();
+                    }
+                    if (bUpdate == true)
+                    {
+                        if (updateQuery == "")
+                        {
+                            if (iColVal == "")
+                                iColVal = dt.Columns[0].ColumnName;
+                            if (updateValue == null)
+                            {
+                                updateValue = string.Empty;
+                            }
+                            updateQuery = "UPDATE " + DSTable + " SET ";
+                            foreach (DataColumn sCol in dt.Columns)
+                            {
+                                if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
+                                    updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
+                            }
+                            updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
+                            if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
+                                updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
+                            if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                                updateQuery = updateQuery + ",GINGER_LAST_UPDATE_DATETIME = '" + DateTime.Now.ToString() + "' ";
+
+                            updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
+                        }
+                        DataSource.DSC.RunQuery(updateQuery);
+                    }
+                    if (bMarkAsDone == "Y" && bDone == true)
+                    {
+                        DataSource.DSC.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
+                    }
+                    else if (sAct == "DR" && bDone == true)
+                        DataSource.DSC.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
+                }
+                else if (updateQuery != "" && bDone == true)
+                {
+                    DataSource.DSC.RunQuery(updateQuery);
+                    mValueCalculated = "";
+                }
+                else if (sAct == "ETE" && bDone == true)
+                {
+                    if (ExcelSheet == "")
+                        ExcelSheet = DSTable;
+                    if (ExcelPath.ToLower().EndsWith(".xlsx"))
+                    {
+                        DataSource.DSC.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
+                        mValueCalculated = "";
                     }
                     else
-                    {
-                        Query = "Select ";
-                        iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
-                        iColVal = "[" + iColVal + "]";                        
-                        p = p.Substring(p.TrimStart().IndexOf("IROW="));
-                        Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
+                        mValueCalculated = "The Export Excel can be *.xlsx only";
+                }
+            }
+            else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
+            {
+                try
+                {
+                    //DataBase connection 
+                    GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
+                    liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                    liteDB.Init(liteDB.FileFullPath);
+                    liteDB.DSC = liteDB;
 
-                        if (p.IndexOf(" ") > 0)
-                            IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
-                        else
-                            IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf("}") - 5);
+                    // Getting all values to execute query
+                    int rowNumber = 0;
+                    bool Markasdone = false;
+
+                    string litedbquery = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - (p.IndexOf("QUERY=") + 7));
+
+                    // Query is with Customized option
+                    if (p.Contains("ICOLVAL="))
+                    {
+                        string[] tokens = p.Split(new[] { "ICOLVAL=" }, StringSplitOptions.None);
+                        char[] splitchar = { ' ' };
+                        string[] Name = tokens[1].Split(splitchar);
+
+                        string[] markasdone = tokens[0].Split(new[] { "MASD=" }, StringSplitOptions.None)[1].Split(splitchar);
+
+                        string[] tableName = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
+
+                        iColVal = Name[0];
+
+                        string[] irow = Name[1].Split(new[] { "IROW=" }, StringSplitOptions.None);
+                        IRow = irow[1];
+
                         if (IRow == "NxtAvail")
                         {
-                            Query = Query + " Where GINGER_USED <> 'True' or GINGER_USED is null";
+                            rowNumber = 0;
                         }
                         else if (IRow == "RowNum")
                         {
-                            p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
-                            rowNum = p.Substring(p.IndexOf("ROWNUM=") + 7, p.IndexOf("}") - 7);
+                            string[] rownum = Name[2].Split(new[] { "ROWNUM=" }, StringSplitOptions.None)[1].Split(splitchar);
+                            rowNumber = Int32.Parse(rownum[0]);
                         }
-                        else if (IRow == "Where")
+                        if (markasdone[0] == "Y")
                         {
-                            if (p.TrimStart().IndexOf("COND=") != -1)
+                            Markasdone = true;
+                        }
+                        // Get Value query
+                        if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
+                        {
+                            mValueCalculated = liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]);
+                        }
+
+                        // Set value Query
+                        else if (litedbquery.Contains(".update") && this.updateValue != null)
+                        {
+                            if (litedbquery.Contains("where"))
                             {
-                                p = p.Substring(p.TrimStart().IndexOf("COND="));
-                                string Cond = p.Substring(p.IndexOf("COND=") + 5, p.IndexOf("}") - 5);
-                                Query = Query + " Where " + Cond;
-                            }
-                            else if (p.TrimStart().IndexOf("WCOLVAL=") != -1 && p.TrimStart().IndexOf("WOPR=") != -1)
-                            {
-                                p = p.Substring(p.TrimStart().IndexOf("WCOLVAL="));
-                                string wColVal = p.Substring(p.IndexOf("WCOLVAL=") + 8, p.IndexOf("WOPR=") - 9);
-                                wColVal = "[" + wColVal + "]";
-                                Query = Query + " Where ";
-                                p = p.Substring(p.TrimStart().IndexOf("WOPR="));
-                                string wOpr = "";
-                                string wRowVal = "";
-                                if (p.IndexOf("WROWVAL=") == -1)
-                                    wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("}") - 5);
-                                else
-                                    wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
-                                if (wOpr != "Is Null" && wOpr != "Is Null")
-                                {
-                                    p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
-                                    wRowVal = p.Substring(p.IndexOf("WROWVAL=") + 8, p.IndexOf("}") - 8);
-                                }
-                                if (wOpr == "Equals")
-                                {
-                                    if (wColVal == "[GINGER_ID]")
-                                    { 
-                                        Query = Query + wColVal + " = " + wRowVal + "";
-                                    }
-                                    else
-                                    { 
-                                        Query = Query + wColVal + " = '" + wRowVal + "'";
-                                    }
-                                }
-                                else if (wOpr == "NotEquals")
-                                {
-                                    if (wColVal == "[GINGER_ID]")
-                                    { 
-                                        Query = Query + wColVal + " <> " + wRowVal + "";
-                                    }
-                                    else
-                                    { 
-                                        Query = Query + wColVal + " <> '" + wRowVal + "'";
-                                    }
-                                }
-                                else if (wOpr == "Contains")
-                                    Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
-                                else if (wOpr == "Not Contains")
-                                    Query = Query + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
-                                else if (wOpr == "Starts With")
-                                    Query = Query + wColVal + " LIKE '" + wRowVal + "%'";
-                                else if (wOpr == "Not Starts With")
-                                    Query = Query + wColVal + " NOT LIKE '" + wRowVal + "%'";
-                                else if (wOpr == "Ends With")
-                                    Query = Query + wColVal + " LIKE '%" + wRowVal + "'";
-                                else if (wOpr == "Not Ends With")
-                                    Query = Query + wColVal + " NOT LIKE '%" + wRowVal + "'";
-                                else if (wOpr == "Is Null")
-                                    Query = Query + wColVal + " IS NULL";
-                                else if (wOpr == "Is Not Null")
-                                    Query = Query + wColVal + " IS NOT NULL";
+                                string[] querysplit = litedbquery.Split(new[] { "where" }, StringSplitOptions.None);
+                                char[] split = { ' ' };
+                                string[] Token = querysplit[0].Split(new[] { "=" }, StringSplitOptions.None);
+
+                                litedbquery = Token[0] + "=\"" + updateValue + "\" where " + querysplit[1];
                             }
                             else
-                                return;
+                            {
+                                litedbquery = litedbquery.Replace("\"\"", "\"" + updateValue + "\"");
+                            }
+                            bool nextavail = false;
+                            if (IRow == "NxtAvail")
+                            {
+                                nextavail = true;
+                            }
+                            liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
                         }
-                    }
-                }
-            }
-            catch (Exception e) {
-                mValueCalculated = pOrg;
-                Console.WriteLine(e.StackTrace);
-            }
-            if (Query != "")
-            {
-                DataTable dt = DataSource.DSC.GetQueryOutput(Query);
-                if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
-                {
-                    DataSource.DSC.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
-                    dt = DataSource.DSC.GetQueryOutput(Query);
-                }
-                if (dt.Rows.Count == 0)
-                {
-                    mValueCalculated = "No Row found with " + Query;
-                    return;
-                }
-                if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
-                    if (rowNum.All(char.IsDigit))
-                        mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
-                    else
-                        mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
-
-                string GingerIds = "";
-                if(dt.Columns.Contains("GINGER_ID"))
-                {
-                    if (bMultiRow == "Y")
-                    {
-                        foreach (DataRow row in dt.Rows)
-                            GingerIds += row["GINGER_ID"].ToString() + ",";
-                        GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
                     }
                     else
-                        GingerIds = dt.Rows[Convert.ToInt32(rowNum)]["GINGER_ID"].ToString();
-                }
-                if (bUpdate == true)
-                {
-                    if (updateQuery == "")
                     {
-                        if (iColVal == "")
-                            iColVal = dt.Columns[0].ColumnName;
-                        if (updateValue == null)
-                        {
-                            updateValue = string.Empty;
-                        }
-                        updateQuery = "UPDATE " + DSTable + " SET ";
-                        foreach (DataColumn sCol in dt.Columns)
-                        {
-                            if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
-                                updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
-                        }
-                        updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
-                        if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
-                            updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
-                        if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
-                            updateQuery = updateQuery + ",GINGER_LAST_UPDATE_DATETIME = '" + DateTime.Now.ToString() + "' ";
+                        string[] tokens = p.Split(new[] { "MASD=" }, StringSplitOptions.None);
+                        char[] splitchar = { ' ' };
+                        string[] Token = tokens[1].Split(splitchar);
 
-                        updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
+                        string[] col = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
+                        if (Token[0] == "Y")
+                        {
+                            Markasdone = true;
+                        }
+                        mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
                     }
-                    DataSource.DSC.RunQuery(updateQuery);
                 }
-                if (bMarkAsDone == "Y" && bDone == true)
+                catch (Exception e)
                 {
-                    DataSource.DSC.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
+                    mValueCalculated = pOrg;
+                    Console.WriteLine(e.StackTrace);
                 }
-                else if (sAct == "DR" && bDone == true)
-                    DataSource.DSC.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
-            }
-            else if (updateQuery != "" && bDone == true)
-            {
-                DataSource.DSC.RunQuery(updateQuery);
-                mValueCalculated = "";
-            }
-            else if (sAct == "ETE" && bDone == true)
-            {
-                if (ExcelSheet == "")
-                    ExcelSheet = DSTable;
-                if (ExcelPath.ToLower().EndsWith(".xlsx"))
-                {
-                    DataSource.DSC.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
-                    mValueCalculated = "";
-                }
-                else
-                    mValueCalculated = "The Export Excel can be *.xlsx only";
             }
             DataSource.Close();
         }
 
+        
 
         private void CalculateFunctions()
         {      

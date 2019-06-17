@@ -169,18 +169,19 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
+                if (ex.Message.Contains("Oracle.ManagedDataAccess.dll is missing"))
                 {
                     if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
-                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
+                        System.Threading.Thread.Sleep(2000);
+                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html"); 
                         
                     }
                     return;
                 }
-
-                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+                
+               Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
         }
         #endregion Events

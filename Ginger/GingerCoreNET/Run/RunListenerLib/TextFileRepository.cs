@@ -134,9 +134,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
+        public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
-            BusinessFlowReport BFR = GetBFReportData(businessFlow, environment);
+            BusinessFlowReport BFR = GetBFReportData(context.BusinessFlow, context.Environment);
             if (isConfEnable)
             {
                 if (offlineMode)
@@ -144,20 +144,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     // To check whether the execution is from Runset/Automate tab
                     if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
-                    SaveObjToReporsitory(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
+                    SaveObjToReporsitory(BFR, context.BusinessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
 
                 }
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToReporsitory(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
-                    businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+                    SaveObjToReporsitory(BFR, ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
+                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
