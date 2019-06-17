@@ -6,9 +6,13 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -18,6 +22,14 @@ namespace Ginger.UserControlsLib.UCListView
     public partial class UcListView : UserControl, IDragDrop
     {
         IObservableList mObjList;
+
+        public event EventHandler SearchStarted;
+        public event EventHandler SearchCancelled;
+        public event EventHandler SearchCompleted;
+        private Task mSearchTask = null;
+        private CancellationTokenSource mCancellationTokenSource = null;
+        private string mSearchString;
+
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
@@ -391,7 +403,7 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(0, 0, 2, 0);
+                    operationBtn.Margin = new Thickness(-2, 0, -2, 0);
                     operationBtn.ButtonImageHeight = 16;
                     operationBtn.ButtonImageWidth = 16;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
@@ -583,6 +595,155 @@ namespace Ginger.UserControlsLib.UCListView
                 SetGroupOperations((Menu)sender);
             }
         }
+
+        private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(xSearchTextBox.Text))
+            {
+                return;
+            }
+            // this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
+            {
+                string txt = xSearchTextBox.Text;
+                await Task.Delay(1000);
+                return txt != xSearchTextBox.Text;
+            }
+            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+
+            mSearchString = xSearchTextBox.Text;
+            await SearchAsync();
+        }
+
+        private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
+            xSearchTextBox.Text = "";
+            mSearchString = null;
+
+            if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
+            {
+                await CancelSearchAsync();
+            }
+            //else
+            //{
+            //    //if search is already complete and user trying to clear text we collapse the unselected nodes
+            //    List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+            //    if (xTreeViewTree.LastSelectedTVI != null)
+            //    {
+            //        pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);
+            //    }
+            //    UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
+            //}
+        }
+
+        public void SearchList(string txt)
+        {
+            xSearchTextBox.Text = txt;
+        }
+
+        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
+            {
+                await SearchAsync();
+            }
+        }
+
+        private async Task SearchAsync()
+        {
+
+            if (string.IsNullOrEmpty(mSearchString))
+            {
+                return;
+            }
+
+            if (mSearchTask?.IsCanceled == false && mSearchTask?.IsCompleted == false)
+            {
+                //Cancel if previous search is running 
+                await CancelSearchAsync();
+            }
+
+            xSearchBtn.Visibility = Visibility.Collapsed;
+            xSearchClearBtn.Visibility = Visibility.Visible;
+            mCancellationTokenSource = new CancellationTokenSource();
+            mSearchTask = new Task(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        mCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                        if (SearchStarted == null)
+                        {
+                            //If event is not hooked we say searching status on main window
+                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
+                        }
+                        else
+                        {
+                            //If event is hookded then no point in showing status on main window. 
+                            //child window need to handle it in the window. E.g. Windows Explorer
+                            SearchStarted.Invoke(xListView, new EventArgs());
+                        }
+                        Mouse.OverrideCursor = Cursors.Wait;
+                        //xListView.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token); //To implement
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
+                    }
+                    finally
+                    {
+
+                        if (SearchStarted == null)
+                        {
+                            Reporter.HideStatusMessage();
+                        }
+                        else
+                        {
+                            SearchCompleted.Invoke(xListView, new EventArgs());
+                        }
+
+                        Mouse.OverrideCursor = null;
+                        mCancellationTokenSource.Dispose();
+                    }
+                });
+            }, mCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+
+            mSearchTask.Start();
+
+        }
+
+        public async Task CancelSearchAsync()
+        {
+
+            mCancellationTokenSource?.Cancel();
+            Stopwatch st = new Stopwatch();
+            st.Start();
+            while (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false && mSearchTask.IsFaulted == false)
+            {
+                await Task.Delay(1000);
+                if (st.ElapsedMilliseconds > 5000)
+                {
+                    break;
+                }
+            }
+
+            mCancellationTokenSource?.Dispose();
+            mSearchTask = null;
+            if (SearchCancelled == null)
+            {
+                SearchCancelled.Invoke(xListView, new EventArgs());
+            }
+            else
+            {
+                Reporter.HideStatusMessage();
+            }
+            Mouse.OverrideCursor = null;
+        }
+
     }
 
     public class UcListViewEventArgs
