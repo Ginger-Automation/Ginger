@@ -17,7 +17,7 @@ namespace GingerCoreNET
         /// <param name="runner"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
+        public static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
         {
             ApplicationAgent appAgent = null;
             if (context != null && context.BusinessFlow.CurrentActivity != null)
