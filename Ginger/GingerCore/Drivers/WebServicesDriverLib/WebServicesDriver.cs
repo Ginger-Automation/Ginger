@@ -319,12 +319,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             ApplicationAPIModel AAMBDuplicate = SetAPIModelData(AAMB, actWebAPIModel);
 
-            //Initilizing Act Properties
+            //Initializing Act Properties
             actWebAPIBase.AddNewReturnParams = actWebAPIModel.AddNewReturnParams;
             actWebAPIBase.SolutionFolder = actWebAPIModel.SolutionFolder;
             actWebAPIBase.SupportSimulation = actWebAPIModel.SupportSimulation;
             actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
-
             actWebAPIBase.Description = actWebAPIModel.Description;
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
@@ -339,7 +338,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, AAMBDuplicate.URLPass);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, AAMBDuplicate.DoNotFailActionOnBadRespose.ToString());
             actWebAPIBase.HttpHeaders = ConvertAPIModelKeyValueToActInputValues(AAMBDuplicate.HttpHeaders, actWebAPIModel);
-
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, AAMBDuplicate.RequestBodyType.ToString());
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, AAMBDuplicate.RequestBody);
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, AAMBDuplicate.CertificateType.ToString());
@@ -442,7 +440,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             SoapUIUtils soapUIUtils = new SoapUIUtils(act, SoapUIDirectoryPath, SoapUIExecutionOutputsDirectoryPath, SoapUISettingFile, SoapUISettingFilePassword, SoapUIProjectPassword, RunSoapUIProcessAsAdmin, SoapUIProcessRedirectStandardError, SoapUIProcessRedirectStandardOutput, SoapUIProcessUseShellExecute, SoapUIProcessWindowStyle, SoapUIProcessCreateNoWindow);
             string command = string.Empty;
 
-            //return the command string and checking if it been populated succesfully
+            //return the command string and checking if it been populated successfully
             if (soapUIUtils.Command(ref command))
                 //checking if the process got started successfully
                 if (soapUIUtils.StartProcess(command))

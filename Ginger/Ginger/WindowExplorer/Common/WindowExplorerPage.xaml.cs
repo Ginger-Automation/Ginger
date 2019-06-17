@@ -56,6 +56,9 @@ using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core;
+using GingerCore.Actions.Common;
 
 namespace Ginger.WindowExplorer
 {
@@ -752,21 +755,21 @@ namespace Ginger.WindowExplorer
                     // AWTI.UIAElementInfo = AEI;
                     InitTree(AWTI);
                     break;
-                case AppWindow.eWindowType.AndroidDevice:
-                    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
+                //case AppWindow.eWindowType.AndroidDevice:
+                //    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
 
-                    AndroidElementInfo AWI = new AndroidElementInfo();
-                    AWI.WindowExplorer = mWindowExplorerDriver;
-                    AWI.XPath = "/";
-                    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
-                    XmlDocument pageSourceXml2 = new XmlDocument();
-                    pageSourceXml2.LoadXml(pageSourceString2);
-                    AWI.XmlDoc = pageSourceXml2;
-                    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
+                //    AndroidElementInfo AWI = new AndroidElementInfo();
+                //    AWI.WindowExplorer = mWindowExplorerDriver;
+                //    AWI.XPath = "/";
+                //    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
+                //    XmlDocument pageSourceXml2 = new XmlDocument();
+                //    pageSourceXml2.LoadXml(pageSourceString2);
+                //    AWI.XmlDoc = pageSourceXml2;
+                //    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
 
-                    ADTI.AndroidElementInfo = AWI;
-                    InitTree(ADTI);
-                    break;
+                //    ADTI.AndroidElementInfo = AWI;
+                //    InitTree(ADTI);
+                //    break;
                 case AppWindow.eWindowType.Mainframe:
                     MainframeTreeItemBase MFTI = new MainframeTreeItemBase ();
                     MFTI.Name = AW.Title;
@@ -811,19 +814,24 @@ namespace Ginger.WindowExplorer
         {
             UpdateWindowsList();
         }
-        
+
         private void StartRecording()
         {
             SetPageFunctionalityEnableDisable(false,false,false,false,false,false,false,false,false,false,false);
+
             mWindowExplorerDriver.SwitchWindow(((AppWindow)WindowsComboBox.SelectedValue).Title);
+
             ((DriverBase)mWindowExplorerDriver).StartRecording();
+
             SetPageFunctionalityEnableDisable(true, false, false, false, false, false, false, false, false, false, false);
         }
         
         private void StopRecording()
         {
             SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
+
             ((DriverBase)mWindowExplorerDriver).StopRecording();
+
             SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
         }
         

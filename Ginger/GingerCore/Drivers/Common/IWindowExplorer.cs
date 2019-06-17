@@ -41,7 +41,7 @@ namespace GingerCore.Drivers
         ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
 
         // Get the data of the element
-        // For Combo box: will return all valid values - options avaialble - List<ComboBoxElementItem>
+        // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
         // For Table: will return list of rows data: List<TableElementItem>        
         object GetElementData(ElementInfo ElementInfo, ActUIElement.eLocateBy elementLocateBy, string elementLocateValue);
         

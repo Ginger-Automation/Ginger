@@ -111,6 +111,16 @@ namespace Ginger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] LiteDB {
+            get {
+                object obj = ResourceManager.GetObject("LiteDB", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap ScreenShot1 {

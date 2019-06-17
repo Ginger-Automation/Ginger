@@ -168,7 +168,7 @@ namespace Ginger.WindowExplorer
 
             Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
             SetActionDetails(act);
-
+            act.Context = mContext;
             mContext.BusinessFlow.AddAct(act, true);
            
             ActionEditPage AEP = new ActionEditPage(act);
@@ -228,7 +228,7 @@ namespace Ginger.WindowExplorer
             ApplicationAgent ag =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
-                mContext.Runner.ExecutionLogger.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+                mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
                ((Agent) ag.Agent).RunAction(act);
             }
             

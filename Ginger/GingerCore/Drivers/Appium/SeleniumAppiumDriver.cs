@@ -42,7 +42,7 @@ namespace GingerCore.Drivers.Appium
 {
 
 
-    public class SeleniumAppiumDriver : DriverBase, IWindowExplorer
+    public class SeleniumAppiumDriver : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {
         public override bool IsSTAThread()
         {
@@ -113,6 +113,7 @@ namespace GingerCore.Drivers.Appium
         [UserConfiguredDefault("Phone")] 
         [UserConfiguredDescription("The device type, set it to 'Phone' or 'Tablet'")]
         public String DeviceType { get; set; }
+
 
         [UserConfigured]
         [UserConfiguredDescription("The absolute local path or remote http URL to an .ipa (iOS) or .apk (Android) file, or a .zip containing one of these. Appium will attempt to install this app on the appropriate device first")]
@@ -225,7 +226,9 @@ namespace GingerCore.Drivers.Appium
                 //Setting capabilities
                 DriverOptions driverOptions = this.GetCapabilities();
 
-                foreach(DriverConfigParam UserCapability in AdvanceDriverConfigurations)
+                driverOptions.AddAdditionalCapability("newCommandTimeout", INIT_TIMEOUT_SEC.TotalSeconds);
+
+                foreach (DriverConfigParam UserCapability in AdvanceDriverConfigurations)
                 {
                  
                     driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
@@ -346,7 +349,7 @@ namespace GingerCore.Drivers.Appium
                     try {
                         File.Delete(currFileName);
                     }catch(Exception e) {
-                        //Could't delete log file
+                        //Couldn't delete log file
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                     }
                 }
@@ -729,7 +732,7 @@ namespace GingerCore.Drivers.Appium
                                     {
                                         //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
                                         ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
-                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 charachter
+                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
                                         ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
                                     }
                                 }
@@ -1230,7 +1233,7 @@ namespace GingerCore.Drivers.Appium
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1239,7 +1242,7 @@ namespace GingerCore.Drivers.Appium
             pageSourceXml.LoadXml(pageSourceString);
 
 
-            //Get all elements but onlyy clickable elements= user can interact with them
+            //Get all elements but only clickable elements= user can interact with them
             XmlNodeList nodes = pageSourceXml.SelectNodes("//*");  
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -1384,7 +1387,7 @@ namespace GingerCore.Drivers.Appium
             //Only by Resource ID
             string resid = GetAttrValue(AEI.XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
-            if (residXpath != AEI.XPath) // We show by res id when it is differnet then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            if (residXpath != AEI.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
             {
             list.Add(new ElementLocator()
             {
@@ -1422,7 +1425,7 @@ namespace GingerCore.Drivers.Appium
         }
 
         // Get the data of the element
-        // For Combo box: will return all valid values - options avaialble - List<ComboBoxElementItem>
+        // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
         // For Table: will return list of rows data: List<TableElementItem>        
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
@@ -1455,6 +1458,24 @@ namespace GingerCore.Drivers.Appium
         bool IWindowExplorer.AddSwitchWindowAction(string Title)
         {
             return false;
+        }
+
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StartRecording();
+            });
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DriverWindow.StopRecording();
+            });
         }
 
         public override void StartRecording()

@@ -26,13 +26,13 @@ namespace Ginger.GingerGridLib
     /// </summary>
     public partial class GingerGridNodePage : Page
     {
-        GingerNodeProxy mGingerNodeAgent;
+        GingerNodeProxy mGingerNodeProxy;
 
-        public GingerGridNodePage(GingerNodeProxy GingerNodeAgent)
+        public GingerGridNodePage(GingerNodeProxy gingerNodeProxy)
         {
             InitializeComponent();
-            mGingerNodeAgent = GingerNodeAgent;
-            GingerNodeNameLabel.Content = GingerNodeAgent.Description;
+            mGingerNodeProxy = gingerNodeProxy;
+            GingerNodeNameLabel.Content = gingerNodeProxy.Description;
         }
 
         private void StartLiveView()
@@ -46,11 +46,11 @@ namespace Ginger.GingerGridLib
 
         private void StartDriverButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (!mGingerNodeAgent.IsConnected)
+            if (!mGingerNodeProxy.IsConnected)
             {
-                mGingerNodeAgent.Reserve();
+                mGingerNodeProxy.Reserve();
             }
-            mGingerNodeAgent.StartDriver();
+           
         }
     }
 }

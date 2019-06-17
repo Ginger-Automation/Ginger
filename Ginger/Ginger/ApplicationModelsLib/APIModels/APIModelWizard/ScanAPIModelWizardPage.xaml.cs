@@ -230,7 +230,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the WSDL");
+                Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the WSDL " + ex.Message);
                 parseSuccess = false;
             }
 

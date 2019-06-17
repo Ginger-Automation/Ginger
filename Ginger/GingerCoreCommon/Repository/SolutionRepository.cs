@@ -162,13 +162,15 @@ namespace Amdocs.Ginger.Repository
             repositoryItem.FilePath = filePath;
             repositoryItem.RefreshSourceControlStatus();
             RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
                 repositoryItem.SetDirtyStatusToNoChange();
+            repositoryItem.CreateBackup();
         }      
 
         public void Close()
         {
-            StopAllRepositoryFolderWatchers(SolutionRootFolders);
+            StopAllRepositoryFolderWatchers();
 
             mRepositorySerializer = null;
             mSolutionFolderPath = null;
@@ -176,9 +178,9 @@ namespace Amdocs.Ginger.Repository
             mSolutionRepositoryItemInfoDictionary = null;
         }
 
-        private void StopAllRepositoryFolderWatchers(List<RepositoryFolderBase> folders)
+        public void StopAllRepositoryFolderWatchers()
         {
-            foreach (RepositoryFolderBase RF in folders)
+            foreach (RepositoryFolderBase RF in SolutionRootFolders)
             {
                 RF.StopFileWatcherRecursive();
             }
@@ -202,7 +204,12 @@ namespace Amdocs.Ginger.Repository
         public RepositoryItemBase GetRepositoryItemByPath(string filePath)
         {
             RepositoryItemBase repoItem = null;
-            ObservableList<RepositoryItemBase> repoItemList = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath)).GetFolderRepositoryItems();
+            ObservableList<RepositoryItemBase> repoItemList = new ObservableList<RepositoryItemBase>();
+            RepositoryFolderBase repositoryFolderBase = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath));
+            if(repositoryFolderBase != null)
+            {
+                repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
+            }             
             repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
             return repoItem;
         }
@@ -239,28 +246,13 @@ namespace Amdocs.Ginger.Repository
         /// Refresh source control status of all parent folders
         /// </summary>
         /// <param name="folderPath"></param>
-        public void RefreshParentFoldersSoucerControlStatus(string folderPath, bool pullParentFolder = false)
+        public void RefreshParentFoldersSoucerControlStatus(string folderPath)
         {
-            if (pullParentFolder)
-            {
-                FileAttributes attr;
-                attr = File.GetAttributes(folderPath);
-
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    folderPath = Directory.GetParent(folderPath).FullName;
-                }
-                else
-                {
-                    folderPath = Path.GetDirectoryName(folderPath);
-                }
-            }
-
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
-                repoFolder.RefreshFolderSourceControlStatus();
-                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath).FullName);
+                repoFolder.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath)?.FullName);
             }
         }
 
@@ -670,7 +662,11 @@ namespace Amdocs.Ginger.Repository
 
 
 
-
+        /// <summary>
+        /// Create new solution folders 
+        /// path must be to empty folder
+        /// </summary>
+        /// <param name="path"></param>
         public void CreateRepository(string path)
         {
             if (System.IO.Directory.Exists(path))

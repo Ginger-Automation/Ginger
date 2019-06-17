@@ -80,7 +80,7 @@ namespace Ginger.Environments
         {
             try
             {
-                Database db = (Database)grdAppDbs.grdMain.CurrentItem;
+                Database db = (Database)grdAppDbs.grdMain.SelectedItem;
                 if (db == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
@@ -112,18 +112,19 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
+                if (ex.Message.Contains("Oracle.ManagedDataAccess.dll is missing"))
                 {
                     if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
-                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
+                        System.Threading.Thread.Sleep(2000);
+                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html"); 
                         
                     }
                     return;
                 }
-
-                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+                
+               Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
         }
         #endregion Events
@@ -155,13 +156,11 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.Pass,Header="User Password", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE3", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["PswdValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.ConnectionString, WidthWeight = 20, Header = "Connection String (Optional)" });
-            view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open" , StyleType= GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight=10 });
-
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }
-
         private void AddNewDB(object sender, RoutedEventArgs e)
         {
             Database db = new Database();

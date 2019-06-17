@@ -28,7 +28,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
     /// </summary>
     public partial class AddNewEnvIntroPage : Page, IWizardPage
     {
-        AddEnvironmentWizard mWizard;
+        // AddEnvironmentWizard mWizard;
         public AddNewEnvIntroPage()
         {
             InitializeComponent();

@@ -18,10 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.CommandProcessorLib;
-// using GingerCoreNET.CommandProcessorLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +46,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             // TODO: Console.SetOut
             Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.0.0.2");
+            Console.WriteLine("Ginger Console v3.0.0.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -136,9 +135,11 @@ namespace Amdocs.Ginger.GingerConsole
         }
 
         private static void ProcessArgs(string[] args)
-        {            
-            CommandProcessor CP = new CommandProcessor();
-            CP.RunCommand(args[0]);
+        {                       
+            InitWorkSpace();                              
+            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), null);
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(args);
         }
 
         private static Module A_ModuleResolve1(object sender, ResolveEventArgs e)

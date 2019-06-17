@@ -57,7 +57,7 @@ namespace Ginger.UserControls
 
         // Cell ValuesList can be list of the following types which are handled in UCGrid
         // can be simple List<string>
-        // or List<GingerCore.General.ComboEnumItem>
+        // or List<ComboEnumItem>
         public IEnumerable CellValuesList { get; set; }
         public BindingMode? BindingMode { get; set; }
 

@@ -18,9 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.DataSource;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -29,6 +29,8 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 
 
 namespace Amdocs.Ginger.Common
@@ -409,14 +411,12 @@ namespace Amdocs.Ginger.Common
         }
 
         public void AddToFirstIndex(T obj)
-        {
+        {            
+            // TODO: why not to use Insert ?
             Add(obj);
             Move(Count - 1, 0);
         }
 
-        public static implicit operator ObservableList<T>(ObservableList<DataSourceBase> v)
-        {
-            throw new NotImplementedException();
-        }
+        
     } 
 }

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using System;
@@ -29,21 +28,18 @@ namespace Amdocs.Ginger.GingerConsole
 {
     public class PluginMenu
     {
-        MenuItem LoadPluginMenuItem;
+        // MenuItem LoadPluginMenuItem;
         MenuItem CreatePluginServicesinfojsonMenuItem;
         MenuItem CreatePluginPackageMenuItem;
-        MenuItem StartServiceMenuItem;
+        // MenuItem StartServiceMenuItem;
         // static GingerConsoleScriptGlobals g = new GingerConsoleScriptGlobals();
         public MenuItem GetMenu()
-        {
-            LoadPluginMenuItem = new MenuItem(ConsoleKey.D1, "Load Plugin", () => LoadPlugin(), true);
-            StartServiceMenuItem = new MenuItem(ConsoleKey.D2, "Start Service", () => StartService(), true);
+        {            
+            // StartServiceMenuItem = new MenuItem(ConsoleKey.D2, "Start Service", () => StartService(), true);
             //StartServiceMenuItem = new MenuItem(ConsoleKey.D3, "Load Plugin and run Action", () => LoadPluginAndRunAction(), true);
             CreatePluginServicesinfojsonMenuItem = new MenuItem(ConsoleKey.D4, "Create Plugin Services info json", () => CreatePluginServicesinfojson(), true);
             CreatePluginPackageMenuItem = new MenuItem(ConsoleKey.D5, "Create Plugin Package", () => CreatePluginPackage(), true);
-            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");
-            GingerGridMenu.SubItems.Add(LoadPluginMenuItem);
-            GingerGridMenu.SubItems.Add(StartServiceMenuItem);
+            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");           
             GingerGridMenu.SubItems.Add(CreatePluginServicesinfojsonMenuItem);
             GingerGridMenu.SubItems.Add(CreatePluginPackageMenuItem);
             return GingerGridMenu;
@@ -101,46 +97,21 @@ namespace Amdocs.Ginger.GingerConsole
 
         private void CreatePluginServicesinfojson()
         {
-            Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
-            string folder = Console.ReadLine();
-            if (System.IO.Directory.Exists(folder))
-            {
-                PluginPackage p = new PluginPackage(folder);
-                p.CreateServicesInfo();
-            }
-            else
-            {
-                Console.WriteLine("folder not found");
-            }
-        }
-
-        private void LoadPluginAndRunAction()
-        {
-            //PluginPackage p = new PluginPackage();
-            //Console.WriteLine("Plugin Package folder?");
-            //string s = Console.ReadLine();
-            //p.Folder = s;
-            //p.ScanPackage();
-            //ObservableList<StandAloneAction> list = p.GetStandAloneActions();
-            //int i = 0;
-            //foreach (StandAloneAction a in list)
+            Console.WriteLine("!!! Obsolete !!! - Plugin Package Services json is automatically created - no need to generate");
+            //Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
+            //string folder = Console.ReadLine();
+            //if (System.IO.Directory.Exists(folder))
             //{
-            //    Console.WriteLine(i + ": " + a.ID);
-            //    i++;
+            //    PluginPackage p = new PluginPackage(folder);
+            //    p.CreateServicesInfo();
             //}
-            //string actnum = Console.ReadLine();
-            //ActionHandler AH =  p.GetStandAloneActionHandler(list[int.Parse(actnum)].ID);
-            
-            // FIXME need lazy load of params
-            //foreach(ActionParam v in AH.GingerAction.InputParams.Values)
-            //{                
-            //    Console.WriteLine(v.Name + "?");
-            //    string val = Console.ReadLine();
-            //    v.Value = val;
+            //else
+            //{
+            //    Console.WriteLine("folder not found");
             //}
-
-            //ActionRunner.RunAction(AH.Instance, AH.GingerAction, AH);
         }
+
+       
 
         private void StartService()
         {
@@ -167,17 +138,6 @@ namespace Amdocs.Ginger.GingerConsole
 
         PluginPackage p;
 
-        private void LoadPlugin()
-        {
-            Console.WriteLine("Plugin Package folder?");
-            string folder = Console.ReadLine();
-            p = new PluginPackage(folder);
-            
-
-            // TODO: list services
-
-            
-            
-        }
+       
     }
 }

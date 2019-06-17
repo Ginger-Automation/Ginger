@@ -163,7 +163,7 @@ namespace Ginger.Run
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
-                    this.Context.Activity = ac;
+                    this.Context.BusinessFlow = (BusinessFlow)ItemObject; 
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
@@ -186,6 +186,7 @@ namespace Ginger.Run
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
                     RunnerItemPage ri = new RunnerItemPage(act);
+                    this.Context.Activity = (Activity)ItemObject;
                     ri.Context = this.Context;
                     act.Context = this.Context;
                     ri.xItemSeparator.Visibility = Visibility.Collapsed;
@@ -233,6 +234,12 @@ namespace Ginger.Run
                 {
                     pageGrid.IsEnabled = false;
                 }
+            }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xRunnerItemButtons.Visibility = Visibility.Collapsed;
+                xRunnerItemMenu.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -329,13 +336,13 @@ namespace Ginger.Run
             if (isExpand)
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(30);
-                xRunnerItemButtons.Visibility = Visibility.Visible;
+               // xRunnerItemButtons.Visibility = Visibility.Visible;
                 xDetailView.ButtonImageType = eImageType.Collapse;
             }
             else
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(0);
-                xRunnerItemButtons.Visibility = Visibility.Collapsed;
+               // xRunnerItemButtons.Visibility = Visibility.Collapsed;
                 xDetailView.ButtonImageType = eImageType.Expand;
             }
         }

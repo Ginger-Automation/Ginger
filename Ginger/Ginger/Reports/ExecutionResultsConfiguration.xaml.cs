@@ -34,21 +34,21 @@ namespace Ginger.Reports
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
+        bool isControlsSet = false;
+        //private static ExecutionResultsConfiguration mInstance;
+        
+        //public static ExecutionResultsConfiguration Instance
+        //{
+        //    get
+        //    {
+        //        if (mInstance == null)
+        //            mInstance = new ExecutionResultsConfiguration();
 
-        private static ExecutionResultsConfiguration mInstance;
+        //        return mInstance;
+        //    }
+        //}
 
-        public static ExecutionResultsConfiguration Instance
-        {
-            get
-            {
-                if (mInstance == null)
-                    mInstance = new ExecutionResultsConfiguration();
-
-                return mInstance;
-            }
-        }
-
-        private ExecutionResultsConfiguration()
+        public  ExecutionResultsConfiguration()
         {
             InitializeComponent();
             Init();
@@ -56,33 +56,35 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             SetControls();
+            isControlsSet = true;
         }
 
         private void SetControls()
         {
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 ExecutionResultFolderPnl.IsEnabled = true;
-            }
-            else
-            {
-                ExecutionResultFolderPnl.IsEnabled = false;
-            }
-
-            if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
                 executionResultOnRadioBtnsPnl.IsChecked = true;
                 executionResultOffRadioBtnsPnl.IsChecked = false;
             }
             else
             {
+                ExecutionResultFolderPnl.IsEnabled = false;
                 executionResultOnRadioBtnsPnl.IsChecked = false;
                 executionResultOffRadioBtnsPnl.IsChecked = true;
             }
-
+            if(_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                textFileRadioBtnsPnl.IsChecked = true;
+            }
+            else
+            {
+                liteDbRadioBtnsPnl.IsChecked = true;
+            }
             FolderTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder == null ? string.Empty : _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder;
             SizeTextBox.Text = _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize.ToString();
         }
@@ -159,10 +161,36 @@ namespace Ginger.Reports
              WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
 
             // validate the paths of inserted folders
-            Ginger.Run.ExecutionLogger.GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
-            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationHTMLReportsFolder);
+            //GetLoggerDirectory( WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().ExecutionLoggerConfigurationExecResultsFolder);
+            Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder);
 
             //App.AutomateTabGingerRunner.ExecutionLogger.Configuration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        }
+        private void TextFileRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                ExecutionResultFolderPnl.IsEnabled = true;
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+                if (isControlsSet)
+                {
+                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
+                }
+            }
+        }
+        private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                ExecutionResultFolderPnl.IsEnabled = true;
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+                if (isControlsSet)
+                {
+                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
+                }
+            }
         }
     }
 }

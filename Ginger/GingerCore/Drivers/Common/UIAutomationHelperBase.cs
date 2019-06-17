@@ -63,6 +63,7 @@ namespace GingerCore.Drivers.Common
         public abstract Boolean IsWindowExist(Act act);
         public abstract Boolean CloseWindow(Act act);
         public abstract Boolean SetWindowVisualState(ActWindow act);
+        public abstract bool ExpandComboboxByUIA(object element);
 
         public abstract string SetElementVisualState(object AE,string state);
 
@@ -279,13 +280,13 @@ namespace GingerCore.Drivers.Common
         {
             if (IsWindowValid(GetCurrentWindow()))
             {
-                //TODO: FIXME there is still glitch in refresh when highlighing form system menu
+                //TODO: FIXME there is still glitch in refresh when highlighting form system menu
                 UIAElementInfo WEI = (UIAElementInfo)ei;
                 //First remove the last highlight if exist
                 if (LastHighLightHWND != 0)
                 {
                     // Remove the highlighter by asking the window to repaint
-                    // Better repain the whole window, caused some glitched when trying to repaint just the control window
+                    // Better repaint the whole window, caused some glitched when trying to repaint just the control window
                     HandlePaintWindow(GetCurrentWindow());
                     RedrawWindow((IntPtr)LastHighLightHWND, IntPtr.Zero, IntPtr.Zero, 0x0400/*RDW_FRAME*/ | 0x0100/*RDW_UPDATENOW*/ | 0x0001/*RDW_INVALIDATE*/);
                 }

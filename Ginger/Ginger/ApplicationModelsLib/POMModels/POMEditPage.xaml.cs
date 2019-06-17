@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
         
-        ScreenShotViewPage pd;
+        // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
@@ -273,7 +273,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AgentStartedHandler()
         {
-            GoToPageURL();
+            if (string.IsNullOrEmpty(mPOM.PageURL) == false && mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
+            {
+                GoToPageURL();
+            }
         }
 
         private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
