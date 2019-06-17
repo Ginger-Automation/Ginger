@@ -681,7 +681,6 @@ namespace Ginger
             foreach (DataRowView row in dtView) rowslist.Add(row);
             mObjList = rowslist;
             mObjList.PropertyChanged += ObjListPropertyChanged;
-            
             grdMain.ItemsSource = dtView; 
         }
         #endregion #####Grid Handlers

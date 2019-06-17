@@ -467,7 +467,7 @@ namespace Amdocs.Ginger.Common.UIElement
             NA,
             [EnumValueDescription("")]
             Unknown,
-            [EnumValueDescription("Page Objects Model Element")]
+            [EnumValueDescription("An Page Objects Model Element")]
             POMElement,
             [EnumValueDescription("By ID")]
             ByID,

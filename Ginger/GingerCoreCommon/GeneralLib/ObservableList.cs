@@ -16,6 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.DataSource;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
