@@ -635,6 +635,13 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
+      <DependentUpon>AddActivityConfigsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml.cs">
+      <DependentUpon>AddActivityDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityWizard.cs" />
     <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListHelper.cs" />
@@ -3064,6 +3071,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

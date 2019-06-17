@@ -8,6 +8,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -293,6 +294,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemGroupOperation> groupOperationsList = new List<ListItemGroupOperation>();
 
+            ListItemGroupOperation addNewActivity = new ListItemGroupOperation();
+            addNewActivity.Header = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            addNewActivity.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addNewActivity.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            addNewActivity.OperationHandler = AddNewActivityToGroupHandler;
+            groupOperationsList.Add(addNewActivity);
+
             ListItemGroupOperation rename = new ListItemGroupOperation();
             rename.Header = "Rename Group";
             rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
@@ -340,7 +348,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddNewHandler(object sender, RoutedEventArgs e)
         {
-            
+            WizardWindow.ShowWizard(new AddActivityWizard(mContext));
         }
 
         private void DeleteAllHandler(object sender, RoutedEventArgs e)
@@ -459,6 +467,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             mContext.BusinessFlow.MoveActivityDown(mActivity);
         }
 
+        private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+
+            WizardWindow.ShowWizard(new AddActivityWizard(mContext, activitiesGroup));
+        }
 
         private void RenameGroupHandler(object sender, RoutedEventArgs e)
         {

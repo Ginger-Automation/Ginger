@@ -539,50 +539,54 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity a)
+        public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null)
         {
-            if (a == null)
+            if (activity == null)
                 return;
 
-            int selectedActivityIndex = 0;
+            int insertIndex = 0;
 
-            if (CurrentActivity != null)
+            if (activitiesGroup != null)
             {
-                String activityGroupName = CurrentActivity.ActivitiesGroupID;
-                if (!string.IsNullOrEmpty(activityGroupName))
+                if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
                 {
-                    ActivitiesGroup activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == activityGroupName).FirstOrDefault();
-                    selectedActivityIndex = Activities.IndexOf(CurrentActivity);
-                    while (!string.IsNullOrEmpty(Activities[selectedActivityIndex].ActivitiesGroupID) && Activities[selectedActivityIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
+                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity);
+                }
+                activitiesGroup.AddActivityToGroup(activity);                
+            }
+            else if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+            {
+                activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                insertIndex = Activities.IndexOf(CurrentActivity);
+                while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
+                {
+                    insertIndex++;
+                    if (insertIndex >= Activities.Count)
                     {
-                        selectedActivityIndex++;
-                        if (selectedActivityIndex >= Activities.Count)
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
             }
             else
             {
-                CurrentActivity = a;
+                CurrentActivity = activity;
             }
 
-            if (selectedActivityIndex > 0)
+            if (insertIndex > 0)
             {
-                Activities.Insert(selectedActivityIndex, a);
+                Activities.Insert(insertIndex, activity);
             }
-            else if (selectedActivityIndex == 0)
+            else if (insertIndex == 0)
             {
-                selectedActivityIndex = Activities.IndexOf(CurrentActivity) + 1;
-                Activities.Insert(selectedActivityIndex, a);
-
+                insertIndex = Activities.IndexOf(CurrentActivity) + 1;
+                Activities.Insert(insertIndex, activity);
             }
             else
             {
-                Activities.Add(a);
+                Activities.Add(activity);
             }
-            CurrentActivity = a;
+
+            CurrentActivity = activity;
         }
 
         public void InsertActivity(Activity a, int index = -1)
