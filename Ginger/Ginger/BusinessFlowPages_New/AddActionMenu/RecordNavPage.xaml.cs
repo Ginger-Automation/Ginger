@@ -38,6 +38,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         RecordingManager mRecordingMngr;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         Agent mAgent;
+        ApplicationAgent mAppAgent;
 
         /// <summary>
         /// Constructor
@@ -51,15 +52,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             context.PropertyChanged += Context_PropertyChanged;
             InitMethods();
         }
-
-        private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Agent.Status))
-            {
-                SetControlsVisibility();
-            }
-        }
-
+              
         private void InitMethods()
         {
             string targetApp = string.Empty;
@@ -72,11 +65,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                      where x.AppName == targetApp
                                      select x.Platform).FirstOrDefault();
 
-            mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-            if (mAgent != null)
+            if (mContext.Activity != null)
             {
-                mAgent.PropertyChanged -= Agent_PropertyChanged;
-                mAgent.PropertyChanged += Agent_PropertyChanged;
+                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mContext.Activity.PropertyChanged += Activity_PropertyChanged; 
+            }
+
+            mAppAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            if (mAppAgent != null)
+            {
+                mAppAgent.PropertyChanged -= MAppAgent_PropertyChanged;
+                mAppAgent.PropertyChanged += MAppAgent_PropertyChanged;
+                mAgent = mAppAgent.Agent;
+                if (mAgent != null)
+                {
+                    mAgent.PropertyChanged -= Agent_PropertyChanged;
+                    mAgent.PropertyChanged += Agent_PropertyChanged;
+                }
             }
 
             SetControlsVisibility();
@@ -88,7 +93,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xWinGridUC.mContext = mContext; 
             }
 
-            if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
+            if (xWinGridUC.mWindowExplorerDriver == null || (mWindowExplorerDriver != null && xWinGridUC.mWindowExplorerDriver != mWindowExplorerDriver))
             {
                 xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
             }
@@ -98,6 +103,30 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
                 xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged; 
             }            
+        }
+
+        private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Agent.Status))
+            {
+                InitMethods();
+            }
+        }
+
+        private void MAppAgent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(Agent))
+            {
+                InitMethods();
+            }
+        }
+
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TargetApplication))
+            {
+                InitMethods();
+            }
         }
 
         /// <summary>
@@ -286,7 +315,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xRecordingButton.ButtonText = "Start Recording";
                 xRecordingButton.ToolTip = "Start Recording";
-                xRecordingButton.ButtonImageType = eImageType.Play;
+                xRecordingButton.ButtonImageType = eImageType.Run;
             }
             xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");            
         }

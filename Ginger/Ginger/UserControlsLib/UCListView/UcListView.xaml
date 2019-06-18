@@ -8,50 +8,70 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition x:Name="xListTitleRow" Height="40" />
             <RowDefinition x:Name="xListControlsRow" Height="40" />
             <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
         
         <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click" />
-            
+
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
                 <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
                 <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
+        </DockPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*" MinWidth="100"/>
+                <ColumnDefinition Width="100*" MinWidth="100"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                    <!--<ColumnDefinition Width="40" />-->
+                    <ColumnDefinition Width="100*" />
+                </Grid.ColumnDefinitions>
 
-            <DockPanel x:Name="xAllListOperationsBarPnl" HorizontalAlignment="Right" Margin="10 0 10 0">
-                <StackPanel x:Name="xListCommonOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <usercontrols:ucButton x:Name="xAddBtn" ToolTip="Add" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" />
-                    <usercontrols:ucButton x:Name="xDeleteAllBtn" ToolTip="Delete All" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Delete" Click="xDeleteAllBtn_Click"/>
-                    <StackPanel x:Name="xMoveBtns" Orientation="Horizontal">
-                        <usercontrols:ucButton x:Name="xMoveUpBtn" ToolTip="Move Up" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveUp" Click="xMoveUpBtn_Click" />
-                        <usercontrols:ucButton x:Name="xMoveDownBtn" ToolTip="Move Down" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="MoveDown"  Click="xMoveDownBtn_Click" />
-                    </StackPanel>
-                </StackPanel>
-
+                <!--<Button x:Name="xGroupBtn" Grid.Column="0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Click="xGroupBtn_Click" Margin="5,0,5,0" BorderBrush="Transparent" Background="Transparent" >
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <usercontrols:ImageMakerControl ImageType="ListGroup" Width="16" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+                            <Path x:Name="sortBtnArrow" Margin="4" VerticalAlignment="Center" Width="5" Fill="#FF527DB5" Stretch="Uniform" HorizontalAlignment="Right" Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "/>
+                        </StackPanel>
+                    </Button.Content>
+                    <Button.ContextMenu>
+                        <ContextMenu >
+                            <MenuItem Header="Group By Tag"/>
+                            <MenuItem Header="Group By Target Application"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>-->
+                <!-- Search Text Box -->
+                <!-- overlay with hint text & Clear button-->
+                <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
+                <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            </Grid>
+            
+            <DockPanel x:Name="xAllListOperationsBarPnl" Grid.Column="1" HorizontalAlignment="Right" Margin="10 0 0 0">
+                <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
                     <MenuItem>
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Icon>
-                        <!--<MenuItem x:Name="xDuplicateBusinessflow" Style="{StaticResource $MenuItemStyle}" Click="xDuplicateBusinessflow_Click">
-                                <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="Duplicate" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Duplicate [BusinessFlow]"/>
-                                </MenuItem.Header>
-                            </MenuItem>-->
                     </MenuItem>
                 </Menu>
             </DockPanel>
-        </DockPanel>
-        
+            
+        </Grid>
+       
+
         <!--<usercontrols:ImageMakerControl x:Name="xLoadingListImage" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />-->
 
-        <ListView x:Name="xListView" Grid.Row="1" 
+        <ListView x:Name="xListView" Grid.Row="2" 
                   Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  
                   VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
                   SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
@@ -83,11 +103,7 @@
                                                             <Label Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="-9,0,0,0">)</Label>
                                                         </StackPanel>
                                                     </DockPanel>
-                                                    <!--<StackPanel  >
-                                                        <usercontrols:ucButton DockPanel.Dock="Right" Tag="{Binding Name}" ToolTip="Delete Group" ButtonType="CircleImageButton" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  ButtonImageType="Delete" Click="XDeleteGroupBtn_Click" HorizontalAlignment="Right" />
-                                                        <usercontrols:ucButton DockPanel.Dock="Right" Tag="{Binding Name}" ToolTip="Add Activity" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="12" ButtonImageHeight="12"  ButtonImageType="Add"  HorizontalAlignment="Right" />
-                                                    </StackPanel>-->
-                                                    <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" >
+                                                    <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" >
                                                         <MenuItem>
                                                             <MenuItem.Icon>
                                                                 <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>

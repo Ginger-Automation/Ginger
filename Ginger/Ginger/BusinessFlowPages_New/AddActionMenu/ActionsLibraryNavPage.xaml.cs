@@ -23,7 +23,7 @@ using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
-using Ginger.BusinessFlowPages.ListViewItems;
+using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -225,9 +225,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //dataTemp.VisualTree = listItemFac;
             //xActionsListView.List.ItemTemplate = dataTemp;
 
-            xActionsListView.SetDefaultListDataTemplate(new ActionListItemInfo(mContext));
-
-            xActionsListView.AddBtnVisiblity = Visibility.Collapsed;
+            xActionsListView.SetDefaultListDataTemplate(new ActionsListHelper(mContext));
 
             xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
             //xActionsListView.List.ItemsSource = mActivity.Acts;

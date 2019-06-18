@@ -197,5 +197,98 @@ namespace GingerCoreCommonTest
             Assert.IsTrue(group2.ActivitiesIdentifiers[0].IdentifiedActivity == activity4, "Validate group 2 Activity 4 order is same as in Activities flow");
             Assert.IsTrue(group2.ActivitiesIdentifiers[1].IdentifiedActivity == activity5, "Validate group 2 Activity 5 order is same as in Activities flow");
         }
+
+        [TestMethod]
+        public void MoveActivitiesGroupUpTest()
+        {
+            //Arrange
+            BusinessFlow busFlow = new BusinessFlow();
+            Activity activity1 = new Activity() { ActivityName = "Activity1" };
+            busFlow.AddActivity(activity1);
+            Activity activity2 = new Activity() { ActivityName = "Activity2" };
+            busFlow.AddActivity(activity2);
+            Activity activity3 = new Activity() { ActivityName = "Activity3" };
+            busFlow.AddActivity(activity3);
+            Activity activity4 = new Activity() { ActivityName = "Activity4" };
+            busFlow.AddActivity(activity4);
+            Activity activity5 = new Activity() { ActivityName = "Activity5" };
+            busFlow.AddActivity(activity5);
+            Activity activity6 = new Activity() { ActivityName = "Activity6" };
+            busFlow.AddActivity(activity6);
+            Activity activity7 = new Activity() { ActivityName = "Activity7" };
+            busFlow.AddActivity(activity7);
+
+            ActivitiesGroup group1 = new ActivitiesGroup() { Name = "Group1" };
+            busFlow.AddActivitiesGroup(group1);
+            ActivitiesGroup group2 = new ActivitiesGroup() { Name = "Group2" };
+            busFlow.AddActivitiesGroup(group2);
+            ActivitiesGroup group3 = new ActivitiesGroup() { Name = "Group3" };
+            busFlow.AddActivitiesGroup(group3);
+
+            group1.AddActivityToGroup(activity1);
+            group1.AddActivityToGroup(activity2);
+            group2.AddActivityToGroup(activity3);
+            group2.AddActivityToGroup(activity4);
+            group2.AddActivityToGroup(activity5);
+            group3.AddActivityToGroup(activity6);
+            group3.AddActivityToGroup(activity7);
+
+            //Act
+            busFlow.MoveActivitiesGroupUp(group3);
+
+            //Assert
+            Assert.IsTrue(busFlow.ActivitiesGroups[1] == group3, "Validate group 3 moved to place 2");
+            Assert.IsTrue(busFlow.ActivitiesGroups[2] == group2, "Validate group 2 moved to place 3");
+            Assert.IsTrue(busFlow.Activities[2] == activity6, "Validate group 3 Activities moved up");
+            Assert.IsTrue(busFlow.Activities[3] == activity7, "Validate group 3 Activities moved up");
+            Assert.IsTrue(busFlow.Activities[4] == activity3, "Validate group 2 Activities moved down");
+            Assert.IsTrue(busFlow.Activities[5] == activity4, "Validate group 2 Activities moved down");
+            Assert.IsTrue(busFlow.Activities[6] == activity5, "Validate group 2 Activities moved down");
+        }
+
+        [TestMethod]
+        public void MoveActivitiesGroupDownTest()
+        {
+            //Arrange
+            BusinessFlow busFlow = new BusinessFlow();
+            Activity activity1 = new Activity() { ActivityName = "Activity1" };
+            busFlow.AddActivity(activity1);
+            Activity activity2 = new Activity() { ActivityName = "Activity2" };
+            busFlow.AddActivity(activity2);
+            Activity activity3 = new Activity() { ActivityName = "Activity3" };
+            busFlow.AddActivity(activity3);
+            Activity activity4 = new Activity() { ActivityName = "Activity4" };
+            busFlow.AddActivity(activity4);
+            Activity activity5 = new Activity() { ActivityName = "Activity5" };
+            busFlow.AddActivity(activity5);
+            Activity activity6 = new Activity() { ActivityName = "Activity6" };
+            busFlow.AddActivity(activity6);
+
+            ActivitiesGroup group1 = new ActivitiesGroup() { Name = "Group1" };
+            busFlow.AddActivitiesGroup(group1);
+            ActivitiesGroup group2 = new ActivitiesGroup() { Name = "Group2" };
+            busFlow.AddActivitiesGroup(group2);
+            ActivitiesGroup group3 = new ActivitiesGroup() { Name = "Group3" };
+            busFlow.AddActivitiesGroup(group3);
+
+            group1.AddActivityToGroup(activity1);
+            group1.AddActivityToGroup(activity2);
+            group2.AddActivityToGroup(activity3);
+            group2.AddActivityToGroup(activity4);
+            group2.AddActivityToGroup(activity5);
+            group3.AddActivityToGroup(activity6);
+
+            //Act
+            busFlow.MoveActivitiesGroupDown(group1);
+
+            //Assert
+            Assert.IsTrue(busFlow.ActivitiesGroups[0] == group2, "Validate group 2 moved to place 1");
+            Assert.IsTrue(busFlow.ActivitiesGroups[1] == group1, "Validate group 1 moved to place 2");
+            Assert.IsTrue(busFlow.Activities[0] == activity3, "Validate group 2 Activities moved up");
+            Assert.IsTrue(busFlow.Activities[1] == activity4, "Validate group 2 Activities moved up");
+            Assert.IsTrue(busFlow.Activities[2] == activity5, "Validate group 2 Activities moved up");
+            Assert.IsTrue(busFlow.Activities[3] == activity1, "Validate group 1 Activities moved down");
+            Assert.IsTrue(busFlow.Activities[4] == activity2, "Validate group 1 Activities moved down");
+        }
     }
 }

@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.Repository;
 using Ginger.ApiModelsFolder;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
@@ -29,13 +32,12 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -49,7 +51,7 @@ namespace GingerWPF.BusinessFlowsLib
         Activity mActivity;
         Context mContext;
 
-        ActionListItemInfo mActionListItemInfo;
+        ActionsListHelper mActionsListHelper;
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
 
@@ -66,6 +68,7 @@ namespace GingerWPF.BusinessFlowsLib
             mContext = context;
 
             SetListView();
+            SetSharedRepositoryMark();
             ShowHideEditPage(null);
         }
 
@@ -91,11 +94,9 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.Title = "Actions";
             mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionListItemInfo = new ActionListItemInfo(mContext);
-            mActionListItemInfo.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
-            mActionsListView.SetDefaultListDataTemplate(mActionListItemInfo);
-
-            mActionsListView.AddBtnVisiblity = Visibility.Collapsed;
+            mActionsListHelper = new ActionsListHelper(mContext);
+            mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
+            mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
             mActionsListView.DataSourceList = mActivity.Acts;
 
@@ -132,6 +133,7 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mActivity != null)
                 {
                     mActionsListView.DataSourceList = mActivity.Acts;
+                    SetSharedRepositoryMark();
                 }
                 else
                 {
@@ -268,6 +270,12 @@ namespace GingerWPF.BusinessFlowsLib
         private void xGoToActionsList_Click(object sender, RoutedEventArgs e)
         {
             ShowHideEditPage(null);
+        }
+
+        private void SetSharedRepositoryMark()
+        {
+            ObservableList<Act> sharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mActivity.Acts, (IEnumerable<object>)sharedActions);
         }
     }
 }

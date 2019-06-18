@@ -113,6 +113,9 @@
     <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\FlaUI.Core.dll</HintPath>
@@ -229,7 +232,7 @@
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -243,6 +246,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Console, Version=4.0.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Console.4.3.1\lib\net46\System.Console.dll</HintPath>
       <Private>True</Private>
@@ -323,6 +327,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -607,6 +612,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
+      <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
@@ -633,13 +641,20 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActionListItemInfo.cs" />
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivitiesGroupListItemInfo.cs" />
-    <Compile Include="BusinessFlowPages_New\ListViewItems\ActivityListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
+      <DependentUpon>AddActivityConfigsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml.cs">
+      <DependentUpon>AddActivityDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityWizard.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListViewItems\VariableListItemInfo.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListHelper.cs" />
     <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
     </Compile>
@@ -722,7 +737,7 @@
     <Compile Include="UserControlsLib\UcItemExecutionStatus.xaml.cs">
       <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\UCListView\IListViewItemInfo.cs" />
+    <Compile Include="UserControlsLib\UCListView\IListViewHelper.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemGroupOperation.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
     <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
@@ -2234,6 +2249,7 @@
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
+    <EmbeddedResource Include="Resources\LiteDB.db" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -3028,6 +3044,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3065,6 +3085,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

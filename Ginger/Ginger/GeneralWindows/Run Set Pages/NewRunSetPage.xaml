@@ -110,7 +110,7 @@
                                        ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" 
                                        Click="xResetRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Play"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                            <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Rest &amp; Run All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
@@ -190,7 +190,7 @@
                                 <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
                                 <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel">
                                     <DockPanel x:Name="xMiniRunnerExecutionPanel">
-                                        <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Play" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+                                        <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                     </DockPanel>

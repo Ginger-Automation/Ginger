@@ -36,7 +36,7 @@
                         <Label Style="{StaticResource $LabelStyle}" Content="Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         <Label x:Name="xAgentTypelbl" Style="{StaticResource $LabelStyle}"  HorizontalAlignment="Left"  Margin="10,0,0,0" VerticalAlignment="Center" FontWeight="Bold"/>
                     </StackPanel>
-                    <usercontrols:ucButton x:Name="xTestBtn" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Agent" ButtonImageType="Play" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ToolTip="Test will start the Agent, run test Action and will close it"/>
+                    <usercontrols:ucButton x:Name="xTestBtn" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" ButtonType="RoundTextAndImageButton" ButtonText="Test Agent" ButtonImageType="Run" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xTestBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ToolTip="Test will start the Agent, run test Action and will close it"/>
                 </DockPanel>
 
                 <StackPanel x:Name="xDriverConfigPnl" Margin="0,10,0,0">

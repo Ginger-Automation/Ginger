@@ -54,7 +54,7 @@ namespace Ginger.VisualAutomate
             }
 
             ActivitiesComboBox.ItemsSource = mBusinessFlow.Activities;
-            ActivitiesComboBox.DisplayMemberPath = Activity.Fields.ActivityName;
+            ActivitiesComboBox.DisplayMemberPath = nameof(Activity.ActivityName);
 
             CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
 

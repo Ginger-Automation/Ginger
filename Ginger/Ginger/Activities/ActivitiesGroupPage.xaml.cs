@@ -60,9 +60,9 @@ namespace Ginger.Activities
             mActivitiesGroup.SaveBackup();
             mBusinessFlow = parentBusinessFlow;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Description);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.AutomationPrecentage, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.AutomationPrecentage), BindingMode.OneWay);
 
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
@@ -129,7 +129,7 @@ namespace Ginger.Activities
         private void RefreshGroupedActivities()
         {
             AttachActivitiesGroupAndRepositoryActivities();
-            mActivitiesGroup.OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+            mActivitiesGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
         }
 
         private void RefreshGroupedActivities(object sender, RoutedEventArgs e)

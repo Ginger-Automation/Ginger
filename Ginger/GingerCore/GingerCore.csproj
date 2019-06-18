@@ -645,8 +645,6 @@
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
-    <Compile Include="DataSource\ActDSTableElement.cs" />
-    <Compile Include="DataSource\ActDSConditon.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">

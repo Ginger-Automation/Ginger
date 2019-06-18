@@ -373,7 +373,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    xRunRunsetBtn.ButtonImageType = eImageType.Play;
+                    xRunRunsetBtn.ButtonImageType = eImageType.Run;
                     xRunRunsetBtn.IsEnabled = true;
                     xContinueRunsetBtn.IsEnabled = true;
                     xResetRunsetBtn.IsEnabled = true;

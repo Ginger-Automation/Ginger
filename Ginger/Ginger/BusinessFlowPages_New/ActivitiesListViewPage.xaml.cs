@@ -1,6 +1,8 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.Activities;
-using Ginger.BusinessFlowPages.ListViewItems;
+using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using System.Collections.Generic;
@@ -31,8 +33,8 @@ namespace Ginger.BusinessFlowPages
             mContext = context;
 
             SetListView();
+            SetSharedRepositoryMark();
         }
-
         
         private void SetListView()
         {
@@ -41,26 +43,25 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            xActivitiesListView.SetDefaultListDataTemplate(new ActivityListItemInfo(mContext));
-
-
-            //List tools bar
-            xActivitiesListView.AddBtnVisiblity = Visibility.Collapsed;
-
-            List<ListItemOperation> operationsListToAdd = new List<ListItemOperation>();
-            ListItemOperation groupsManager = new ListItemOperation();
-            groupsManager.ImageType = Amdocs.Ginger.Common.Enums.eImageType.ActivitiesGroup;
-            groupsManager.ImageSize = 17;
-            groupsManager.ToolTip = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, prefixString: "Open", suffixString: "Manager");
-            groupsManager.OperationHandler = OpenGroupsManagerHandler;
-            operationsListToAdd.Add(groupsManager);
-            xActivitiesListView.AddListOperations(operationsListToAdd);
+            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext);
+            activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
+            xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
             //List Data
             xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
 
             //List Grouping
             xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+        }
+
+        private void ActivityListItemInfo_ActivityListItemEvent(ActivityListItemEventArgs EventArgs)
+        {
+            switch (EventArgs.EventType)
+            {
+                case ActivityListItemEventArgs.eEventType.UpdateGrouping:
+                    xActivitiesListView.UpdateGrouping();
+                    break;
+            }
         }
 
         private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
@@ -78,6 +79,7 @@ namespace Ginger.BusinessFlowPages
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
                 xActivitiesListView.UpdateGrouping();
+                SetSharedRepositoryMark();
             }
             else
             {
@@ -85,6 +87,10 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-
+        private void SetSharedRepositoryMark()
+        {
+            ObservableList<Activity> srActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.Activities, (IEnumerable<object>)srActivities);
+        }
     }
 }

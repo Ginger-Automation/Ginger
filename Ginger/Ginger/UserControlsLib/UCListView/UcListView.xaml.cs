@@ -6,9 +6,13 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -18,6 +22,14 @@ namespace Ginger.UserControlsLib.UCListView
     public partial class UcListView : UserControl, IDragDrop
     {
         IObservableList mObjList;
+
+        public event EventHandler SearchStarted;
+        public event EventHandler SearchCancelled;
+        public event EventHandler SearchCompleted;
+        private Task mSearchTask = null;
+        private CancellationTokenSource mCancellationTokenSource = null;
+        private string mSearchString;
+
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
@@ -61,7 +73,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        IListViewItemInfo mListItemInfo = null;
+        IListViewHelper mListViewHelper = null;
 
         public UcListView()
         {
@@ -240,18 +252,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public Visibility AddBtnVisiblity
-        {
-            get
-            {
-                return xAddBtn.Visibility;
-            }
-            set
-            {
-                xAddBtn.Visibility = value;
-            }
-        }
-
+       
         public Visibility ListTitleVisibility
         {
             get
@@ -263,31 +264,6 @@ namespace Ginger.UserControlsLib.UCListView
                 xListTitlePnl.Visibility = value;
             }
         }
-
-        public Visibility DeleteAllBtnVisiblity
-        {
-            get
-            {
-                return xDeleteAllBtn.Visibility;
-            }
-            set
-            {
-                xDeleteAllBtn.Visibility = value;
-            }
-        }
-
-        public Visibility MoveBtnsVisiblity
-        {
-            get
-            {
-                return xMoveBtns.Visibility;
-            }
-            set
-            {
-                xMoveBtns.Visibility = value;
-            }
-        }
-
         public string Title
         {
             get
@@ -319,48 +295,40 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public RoutedEventHandler AddItemHandler
-        {
-            set
-            {
-                xAddBtn.Click += value;
-            }
-        }
+        //private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (mObjList.Count == 0)
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.NoItemToDelete);
+        //        return;
+        //    }
 
-        private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (mObjList.Count == 0)
-            {
-                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
-                return;
-            }
+        //    if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+        //    {
+        //        mObjList.SaveUndoData();
+        //        mObjList.ClearAll();
+        //    }
+        //}
 
-            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-            {
-                mObjList.SaveUndoData();
-                mObjList.ClearAll();
-            }
-        }
+        //private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    int currentIndx = CurrentItemIndex;
+        //    if (currentIndx >= 1)
+        //    {
+        //        mObjList.Move(currentIndx, currentIndx - 1);
+        //        ScrollToViewCurrentItem();
+        //    }
+        //}
 
-        private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
-        {
-            int currentIndx = CurrentItemIndex;
-            if (currentIndx >= 1)
-            {
-                mObjList.Move(currentIndx, currentIndx - 1);
-                ScrollToViewCurrentItem();
-            }
-        }
-
-        private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
-        {
-            int currentIndx = CurrentItemIndex;
-            if (currentIndx >= 0)
-            {
-                mObjList.Move(currentIndx, currentIndx + 1);
-                ScrollToViewCurrentItem();
-            }
-        }
+        //private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    int currentIndx = CurrentItemIndex;
+        //    if (currentIndx >= 0)
+        //    {
+        //        mObjList.Move(currentIndx, currentIndx + 1);
+        //        ScrollToViewCurrentItem();
+        //    }
+        //}
 
         public void ScrollToViewCurrentItem()
         {
@@ -405,33 +373,39 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public void SetDefaultListDataTemplate(IListViewItemInfo listItemInfo)
+        public void SetDefaultListDataTemplate(IListViewHelper listViewHelper)
         {
-            mListItemInfo = listItemInfo;
-            DataTemplate dataTemp = new DataTemplate();
-            FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            listItemFac.SetValue(UcListViewItem.ItemInfoProperty, listItemInfo);
-            dataTemp.VisualTree = listItemFac;
+            mListViewHelper = listViewHelper;
             this.Dispatcher.Invoke(() =>
             {
+                DataTemplate dataTemp = new DataTemplate();
+                FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
+                listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
+                listItemFac.SetValue(UcListViewItem.ListHelperProperty, listViewHelper);
+                dataTemp.VisualTree = listItemFac;
                 xListView.ItemTemplate = dataTemp;
+
+                SetListOperations();
+                SetListExtraOperations();
             });
         }
 
-        public void AddListOperations(List<ListItemOperation> operations)
+        public void SetListOperations()
         {
-            if (operations != null && operations.Count > 0)
+            List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
+            if (listOperations != null && listOperations.Count > 0)
             {
-                foreach (ListItemOperation operation in operations)
+                xListOperationsPnl.Visibility = Visibility.Visible;
+
+                foreach (ListItemOperation operation in listOperations)
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    operationBtn.ButtonImageHeight = 18;
-                    operationBtn.ButtonImageWidth = 18;
+                    operationBtn.Margin = new Thickness(-2, 0, -2, 0);
+                    operationBtn.ButtonImageHeight = 16;
+                    operationBtn.ButtonImageWidth = 16;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
 
                     if (operation.ImageForeground == null)
@@ -458,8 +432,64 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.Click += operation.OperationHandler;
                     operationBtn.Tag = xListView.ItemsSource;
 
-                    xListCommonOperationsPnl.Children.Add(operationBtn);
+                    xListOperationsPnl.Children.Add(operationBtn);
                 }
+            }
+            else
+            {
+                xListOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void SetListExtraOperations()
+        {
+            List<ListItemOperation> extraOperations = mListViewHelper.GetListExtraOperations();
+            if (extraOperations != null && extraOperations.Count > 0)
+            {
+                xListExtraOperationsMenu.Visibility = Visibility.Visible;
+                foreach (ListItemOperation operation in extraOperations)
+                {
+                    MenuItem menuitem = new MenuItem();
+                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
+                    ImageMakerControl iconImage = new ImageMakerControl();
+                    iconImage.ImageType = operation.ImageType;
+                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
+                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    menuitem.Icon = iconImage;
+                    menuitem.Header = operation.Header;
+                    menuitem.ToolTip = operation.ToolTip;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        iconImage.ImageForeground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    menuitem.Click += operation.OperationHandler;
+
+                    menuitem.Tag = xListView.ItemsSource;
+
+                    ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                }
+            }
+            else
+            {
+                xListExtraOperationsMenu.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -476,11 +506,11 @@ namespace Ginger.UserControlsLib.UCListView
         void IDragDrop.Drop(DragInfo Info)
         {
             // first check if we did drag and drop in the same grid then it is a move - reorder
-            if (Info.DragSource == this)
-            {
-                if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
-                return;
-            }
+            //if (Info.DragSource == this)
+            //{
+            //    if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+            //    return;
+            //}
 
             // OK this is a dropped from external
             EventHandler handler = ItemDropped;
@@ -534,7 +564,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetGroupOperations(Menu menu)
         {
-            List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
+            List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
             if (groupOperations != null && groupOperations.Count > 0)
             {
                 foreach (ListItemGroupOperation operation in groupOperations)
@@ -552,7 +582,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     menuitem.Tag = menu.Tag;
 
-                    menu.Items.Add(menuitem);
+                    ((MenuItem)menu.Items[0]).Items.Add(menuitem);
                 }
             }
 
@@ -560,8 +590,160 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XGroupOperationsMenu_Loaded(object sender, RoutedEventArgs e)
         {
-            //SetGroupOperations((Menu)sender);
+            if (((MenuItem)((Menu)sender).Items[0]).Items.Count == 0)
+            {
+                SetGroupOperations((Menu)sender);
+            }
         }
+
+        private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(xSearchTextBox.Text))
+            {
+                return;
+            }
+            // this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
+            {
+                string txt = xSearchTextBox.Text;
+                await Task.Delay(1000);
+                return txt != xSearchTextBox.Text;
+            }
+            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+
+            mSearchString = xSearchTextBox.Text;
+            await SearchAsync();
+        }
+
+        private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xSearchClearBtn.Visibility = Visibility.Collapsed;
+            xSearchBtn.Visibility = Visibility.Visible;
+            xSearchTextBox.Text = "";
+            mSearchString = null;
+
+            if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
+            {
+                await CancelSearchAsync();
+            }
+            //else
+            //{
+            //    //if search is already complete and user trying to clear text we collapse the unselected nodes
+            //    List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+            //    if (xTreeViewTree.LastSelectedTVI != null)
+            //    {
+            //        pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);
+            //    }
+            //    UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
+            //}
+        }
+
+        public void SearchList(string txt)
+        {
+            xSearchTextBox.Text = txt;
+        }
+
+        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
+            {
+                await SearchAsync();
+            }
+        }
+
+        private async Task SearchAsync()
+        {
+
+            if (string.IsNullOrEmpty(mSearchString))
+            {
+                return;
+            }
+
+            if (mSearchTask?.IsCanceled == false && mSearchTask?.IsCompleted == false)
+            {
+                //Cancel if previous search is running 
+                await CancelSearchAsync();
+            }
+
+            xSearchBtn.Visibility = Visibility.Collapsed;
+            xSearchClearBtn.Visibility = Visibility.Visible;
+            mCancellationTokenSource = new CancellationTokenSource();
+            mSearchTask = new Task(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        mCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                        if (SearchStarted == null)
+                        {
+                            //If event is not hooked we say searching status on main window
+                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
+                        }
+                        else
+                        {
+                            //If event is hookded then no point in showing status on main window. 
+                            //child window need to handle it in the window. E.g. Windows Explorer
+                            SearchStarted.Invoke(xListView, new EventArgs());
+                        }
+                        Mouse.OverrideCursor = Cursors.Wait;
+                        //xListView.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token); //To implement
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
+                    }
+                    finally
+                    {
+
+                        if (SearchStarted == null)
+                        {
+                            Reporter.HideStatusMessage();
+                        }
+                        else
+                        {
+                            SearchCompleted.Invoke(xListView, new EventArgs());
+                        }
+
+                        Mouse.OverrideCursor = null;
+                        mCancellationTokenSource.Dispose();
+                    }
+                });
+            }, mCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+
+            mSearchTask.Start();
+
+        }
+
+        public async Task CancelSearchAsync()
+        {
+
+            mCancellationTokenSource?.Cancel();
+            Stopwatch st = new Stopwatch();
+            st.Start();
+            while (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false && mSearchTask.IsFaulted == false)
+            {
+                await Task.Delay(1000);
+                if (st.ElapsedMilliseconds > 5000)
+                {
+                    break;
+                }
+            }
+
+            mCancellationTokenSource?.Dispose();
+            mSearchTask = null;
+            if (SearchCancelled == null)
+            {
+                SearchCancelled.Invoke(xListView, new EventArgs());
+            }
+            else
+            {
+                Reporter.HideStatusMessage();
+            }
+            Mouse.OverrideCursor = null;
+        }
+
     }
 
     public class UcListViewEventArgs

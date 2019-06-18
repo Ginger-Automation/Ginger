@@ -53,9 +53,9 @@ namespace Ginger.Activities
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
 
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, Header = "Name", WidthWeight = 30, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.Description, Header = "Description", WidthWeight = 32.5, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.AutomationStatus, Header = "Auto. Status", WidthWeight = 32.5, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), Header = "Name", WidthWeight = 30, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.Description), Header = "Description", WidthWeight = 32.5, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.AutomationStatus), Header = "Auto. Status", WidthWeight = 32.5, ReadOnly = true });
             grdActivities.SetAllColumnsDefaultView(defView);
             grdActivities.InitViewItems();
         }

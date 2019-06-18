@@ -44,6 +44,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         ActionsListViewPage mActionsPage;
         VariabelsListViewPage mVariabelsPage;
+        ActivityConfigurationsPage mConfigurationsPage;
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
         public ActivityPage(Activity activity, Context context, Ginger.General.RepositoryItemPageViewMode pageMode)
@@ -60,10 +61,6 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControlsContent()
         {
-            xAutomationStatusCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
-            xHandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
-            xRunOptionCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eActionRunOption));
-
             mActionsPage = new ActionsListViewPage(mActivity, mContext);
             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActionsTabFrame.Content = mActionsPage;
@@ -71,6 +68,9 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage = new VariabelsListViewPage(mActivity, mContext);
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
+
+            mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext);
+            xConfigurationsFrame.Content = mConfigurationsPage;
         }
 
         public void UpdateActivity(Activity activity)
@@ -92,16 +92,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
             BindingOperations.ClearBinding(xNameTextBlock, TextBlock.TextProperty);
-            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.TextProperty);
-            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xTargetApplicationComboBox, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.TextProperty);
-            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.TextProperty);
-            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);            
+                  
         }
 
         private void BindControls()
@@ -122,41 +113,7 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage.UpdateParent(mActivity);
 
             //Configurations Tab Bindings
-            xRunDescritpion.Init(mContext, mActivity, nameof(Activity.RunDescription));                        
-            BindingHandler.ObjFieldBinding(xRunOptionCombo, ComboBox.TextProperty, mActivity, nameof(Activity.ActionRunOption));
-            GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
-            xTagsViewer.Init(mActivity.Tags);
-            BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
-            BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
-            BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
-            BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));           
-            BindingHandler.ObjFieldBinding(xAutomationStatusCombo, ComboBox.TextProperty, mActivity, nameof(Activity.AutomationStatus));
-            BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
-            if (mContext != null && mContext.BusinessFlow != null)
-            {
-                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;                               
-            }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
-            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
-            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
-            BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-          
-            if (mActivity.GetType() == typeof(ErrorHandler))
-            {
-                xHandlerTypeStack.Visibility = Visibility.Visible;
-                xHandlerMappingStack.Visibility = Visibility.Collapsed;                
-                BindingHandler.ObjFieldBinding(xHandlerTypeCombo, ComboBox.TextProperty, mActivity, nameof(ErrorHandler.HandlerType));
-            }
-            else
-            {
-                BindingHandler.ObjFieldBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.ErrorHandlerMappingType));
-                xHandlerMappingStack.Visibility = Visibility.Visible;                
-                xHandlerTypeStack.Visibility = Visibility.Collapsed;
-            }
-
+            mConfigurationsPage.UpdateActivity(mActivity);
         }
 
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -214,25 +171,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void xContinueRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
 
-        }
-
-        private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xErrorHandlerMappingCmb.SelectedValue != null && xErrorHandlerMappingCmb.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
-            {
-                xSpecificErrorHandlerBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xSpecificErrorHandlerBtn.Visibility = Visibility.Collapsed;
-            }
-
-        }
-
-        private void xSpecificErrorHandlerBtn_Click(object sender, RoutedEventArgs e)
-        {            
-            ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mContext.BusinessFlow);
-            errorHandlerMappingPage.ShowAsWindow();            
         }
 
         private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

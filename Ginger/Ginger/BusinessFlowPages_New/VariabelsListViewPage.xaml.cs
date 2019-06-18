@@ -1,7 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages.ListViewItems;
+using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -23,7 +23,7 @@ namespace Ginger.BusinessFlowPages
         RepositoryItemBase mVariabelsParent;
         Context mContext;
 
-        VariableListItemInfo mVariabelListItemInfo;
+        VariablesListHelper mVariabelListItemInfo;
         UcListView mVariabelsListView;
         VariableEditPage mVariabelEditPage;
         VariableBase mVarBeenEdit;
@@ -100,7 +100,7 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
             mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListItemInfo = new VariableListItemInfo(mContext);
+            mVariabelListItemInfo = new VariablesListHelper(mContext);
             mVariabelListItemInfo.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
             mVariabelsListView.SetDefaultListDataTemplate(mVariabelListItemInfo);
 

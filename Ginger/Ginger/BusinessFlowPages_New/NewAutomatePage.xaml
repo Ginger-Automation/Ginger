@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="58"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
         
@@ -80,7 +80,7 @@
 
                 <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal">
                     <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Rest &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Play"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Rest &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                     <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Run" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                     <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Run" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                 </StackPanel>

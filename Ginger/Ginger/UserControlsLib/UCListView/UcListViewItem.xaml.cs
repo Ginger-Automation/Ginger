@@ -87,17 +87,16 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public static readonly DependencyProperty ItemInfoProperty = DependencyProperty.Register(nameof(ItemInfo), typeof(IListViewItemInfo), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnItemInfoPropertyChanged)));
-        public IListViewItemInfo ItemInfo
+        public static readonly DependencyProperty ListHelperProperty = DependencyProperty.Register(nameof(ListHelper), typeof(IListViewHelper), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnItemInfoPropertyChanged)));
+        public IListViewHelper ListHelper
         {
             get
             {
-                return (IListViewItemInfo)GetValue(ItemInfoProperty);
+                return (IListViewHelper)GetValue(ListHelperProperty);
             }
             set
             {
-                SetValue(ItemInfoProperty, value);
-                //ItemInfo.SetItem(Item);
+                SetValue(ListHelperProperty, value);
                 ConfigItem();
             }
         }
@@ -106,7 +105,7 @@ namespace Ginger.UserControlsLib.UCListView
             var c = d as UcListViewItem;
             if (c != null && e.NewValue != null)
             {
-                c.ItemInfo = ((IListViewItemInfo)e.NewValue);
+                c.ListHelper = ((IListViewHelper)e.NewValue);
             }
         }
 
@@ -118,6 +117,7 @@ namespace Ginger.UserControlsLib.UCListView
         public string ItemGroupField { get; set; }
         public string ItemTagsField { get; set; }
         public string ItemIconField { get; set; }
+        public string ItemIconTooltipField { get; set; }
         public string ItemExecutionStatusField { get; set; }
         public string ItemActiveField { get; set; }
 
@@ -162,19 +162,21 @@ namespace Ginger.UserControlsLib.UCListView
         //    ItemExecutionStatusField = itemExecutionStatusField;
         public void ConfigItem()
         {
-            ItemNameField = ItemInfo.GetItemNameField();
-            ItemDescriptionField = ItemInfo.GetItemDescriptionField();
-            ItemGroupField = ItemInfo.GetItemGroupField();
-            ItemTagsField = ItemInfo.GetItemTagsField();
-            ItemIconField = ItemInfo.GetItemIconField();
-            ItemExecutionStatusField = ItemInfo.GetItemExecutionStatusField();
-            ItemActiveField = ItemInfo.GetItemActiveField();
+            ItemNameField = ListHelper.GetItemNameField();
+            ItemDescriptionField = ListHelper.GetItemDescriptionField();
+            ItemGroupField = ListHelper.GetItemGroupField();
+            ItemTagsField = ListHelper.GetItemTagsField();
+            ItemIconField = ListHelper.GetItemIconField();
+            ItemIconTooltipField = ListHelper.GetItemIconTooltipField();
+            ItemExecutionStatusField = ListHelper.GetItemExecutionStatusField();
+            ItemActiveField = ListHelper.GetItemActiveField();
             this.Dispatcher.Invoke(() =>
             {
                 SetItemUniqueIdentifier();
                 SetItemNotifications();
                 SetItemOperations();
-
+                SetItemExtraOperations();
+                SetItemExecutionOperations();
                 SetItemBindings();
             });
         }
@@ -183,7 +185,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                ListItemUniqueIdentifier identifier = ItemInfo.GetItemUniqueIdentifier(Item);
+                ListItemUniqueIdentifier identifier = ListHelper.GetItemUniqueIdentifier(Item);
                 if (identifier != null)
                 {
                     if (!String.IsNullOrEmpty(identifier.Color))
@@ -204,7 +206,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetItemNotifications()
         {
-            List<ListItemNotification> notifications = ItemInfo.GetNotificationsList(Item);
+            List<ListItemNotification> notifications = ListHelper.GetItemNotificationsList(Item);
             if (notifications != null)
             {
                 foreach (ListItemNotification notification in notifications)
@@ -236,14 +238,14 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     xItemNotificationsPnl.Children.Add(itemInd);
-                    xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 5);
+                    xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 10);
                 }
             }
         }
 
         private void SetItemOperations()
         {
-            List<ListItemOperation> operations = ItemInfo.GetOperationsList(Item);
+            List<ListItemOperation> operations = ListHelper.GetItemOperationsList(Item);
             if (operations != null && operations.Count > 0)
             {
                 xItemOperationsPnl.Visibility = Visibility.Visible;
@@ -291,6 +293,111 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        private void SetItemExtraOperations()
+        {
+            List<ListItemOperation> extraOperations = ListHelper.GetItemExtraOperationsList(Item);
+            if (extraOperations != null && extraOperations.Count > 0)
+            {
+                xItemExtraOperationsMenu.Visibility = Visibility.Visible;
+                foreach (ListItemOperation operation in extraOperations)
+                {
+                    MenuItem menuitem = new MenuItem();
+                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
+                    ImageMakerControl iconImage = new ImageMakerControl();
+                    iconImage.ImageType = operation.ImageType;
+                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
+                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                    menuitem.Icon = iconImage;
+                    menuitem.Header = operation.Header;
+                    menuitem.ToolTip = operation.ToolTip;
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        iconImage.ImageForeground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    menuitem.Click += operation.OperationHandler;
+
+                    menuitem.Tag = Item;
+
+                    ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                }
+            }
+            else
+            {
+                xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void SetItemExecutionOperations()
+        {
+            List<ListItemOperation> executionOperations = ListHelper.GetItemExecutionOperationsList(Item);
+            if (executionOperations != null && executionOperations.Count > 0)
+            {
+                xOperationsSplitter.Visibility = Visibility.Visible;
+                xItemExecutionOperationsPnl.Visibility = Visibility.Visible;
+                foreach (ListItemOperation operation in executionOperations)
+                {
+                    ucButton operationBtn = new ucButton();                   
+                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                    operationBtn.ButtonImageType = operation.ImageType;
+                    operationBtn.ToolTip = operation.ToolTip;
+                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                    operationBtn.ButtonImageHeight = 15;
+                    operationBtn.ButtonImageWidth = 15;
+                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+                    operationBtn.ButtonStyle = (Style)FindResource("$ImageButtonStyle_Execution");
+
+                    if (operation.ImageForeground == null)
+                    {
+                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                    }
+                    else
+                    {
+                        operationBtn.ButtonImageForground = operation.ImageForeground;
+                    }
+
+                    if (operation.ImageBindingObject != null)
+                    {
+                        if (operation.ImageBindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                        }
+                    }
+
+                    operationBtn.Click += operation.OperationHandler;
+                    operationBtn.Tag = Item;
+
+                    xItemExecutionOperationsPnl.Children.Add(operationBtn);
+                }
+            }
+            else
+            {
+                xOperationsSplitter.Visibility = Visibility.Collapsed;
+                xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void SetItemBindings()
         {
             if (Item is RepositoryItemBase)
@@ -304,6 +411,10 @@ namespace Ginger.UserControlsLib.UCListView
             if (!string.IsNullOrEmpty(ItemIconField))
             {
                 BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode:BindingMode.OneWay);
+            }
+            if (!string.IsNullOrEmpty(ItemIconTooltipField))
+            {
+                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, ItemIconTooltipField, BindingMode: BindingMode.OneWay);
             }
 
             if (!string.IsNullOrEmpty(ItemActiveField))
@@ -366,11 +477,6 @@ namespace Ginger.UserControlsLib.UCListView
             xExtraDetailsRow.Height = new GridLength(0);
             xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
             xExpandCollapseBtn.ToolTip = "Expand";
-        }
-
-        private void xRunnerItemContinue_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void UcListViewItem_Loaded(object sender, RoutedEventArgs e)
