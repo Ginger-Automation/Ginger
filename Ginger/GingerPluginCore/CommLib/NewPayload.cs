@@ -462,7 +462,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         // 11 add Struct        
-        public void AddValue<T>(T @struct) where T : struct
+        public void AddValue<T>(T structValue) where T : struct
         {
             // Since we use unmanaged, memory, pointers etc adding try/catch
 
@@ -474,7 +474,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 var size = Marshal.SizeOf(typeof(T));             
                 var bytes = new byte[size];
                 ptr = Marshal.AllocHGlobal(size);
-                Marshal.StructureToPtr(@struct, ptr, true);
+                Marshal.StructureToPtr(structValue, ptr, true);
                 Marshal.Copy(ptr, bytes, 0, size);                
                 CheckBuffer(1 + 4 + bytes.Length);  // type + len
                 WriteValueType(Struct);
@@ -819,12 +819,12 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     case 10: // bool true                        
                         s += "bool=true " + Environment.NewLine;
                         break;
-                    case 11: // Struct
-                        // TODO: Create display for struct!?
-                        int len = ReadInt();
-                        mBufferIndex += len; // skip the bytes
-                        s += "struct=true " + Environment.NewLine;
-                        break;
+                    //case 11: // Struct // FIXME !!!
+                    //    // TODO: Create display for struct!?
+                    //    int len = ReadInt();
+                    //    mBufferIndex += len; // skip the bytes
+                    //    s += "struct=true " + Environment.NewLine;
+                    //    break;
                     default:
                         mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
