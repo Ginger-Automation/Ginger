@@ -49,7 +49,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class ActionsLibraryNavPage : Page
     {
-        GenericWindow _pageGenericWin = null;
+        //GenericWindow pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
         Context mContext;
@@ -59,16 +59,43 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
-            SetActionsGridsView();
-            LoadGridData();
-            LoadPluginsActions();
 
+            mContext.PropertyChanged += MContext_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+
+            SetActionsGridsView();
+
+            FillActionsList();
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
 
 
+        }
+
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(mContext.Activity.TargetApplication))
+            {
+                FillActionsList();
+            }
+        }
+
+        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity))
+            {
+                FillActionsList();
+            }
+        }
+
+        private void FillActionsList()
+        {
+            LoadGridData();
+            LoadPluginsActions();
         }
 
         private void LoadPluginsActions()
@@ -169,6 +196,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 if (a.IsSelectableAction == false)
                     continue;
+
+                if (mContext.BusinessFlow.CurrentActivity == null)
+                    mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
 
                 TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)

@@ -39,8 +39,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
 
-            mContext.PropertyChanged -= MContext_PropertyChanged;
             mContext.PropertyChanged += MContext_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
 
             xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;

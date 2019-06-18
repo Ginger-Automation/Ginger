@@ -45,6 +45,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
             SetRecordButtonAccessebility();
+            xApplicationModelsPnl.Visibility = Visibility.Collapsed;
         }
 
         private void SetRecordButtonAccessebility()
@@ -65,7 +66,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
             {
                 SetRecordButtonAccessebility();
-                LoadActionFrame(null);
+                //LoadActionFrame(null);
             }
         }
 

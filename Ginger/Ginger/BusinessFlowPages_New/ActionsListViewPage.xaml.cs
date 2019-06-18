@@ -26,7 +26,6 @@ using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.ApiModelsFolder;
-using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -149,7 +148,8 @@ namespace GingerWPF.BusinessFlowsLib
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
                     || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
-                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
+                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
+                            || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
                 // OK to drop                         
                 DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
@@ -174,7 +174,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 else if (droppedItem is ApplicationPOMModel)
                 {
-                    ApplicationPOMModel currentPOM = ((DragInfo)sender).Data as ApplicationPOMModel;
+                    ApplicationPOMModel currentPOM = droppedItem as ApplicationPOMModel;
                     foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
                     {
                         HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
@@ -187,21 +187,24 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     instance = null;
                 }
-                else if (droppedItem is ApplicationAPIModel)
+                else if (droppedItem is ApplicationAPIModel || droppedItem is RepositoryFolder<ApplicationAPIModel>)
                 {
-                    ApplicationAPIModel currentAPIModel = ((DragInfo)sender).Data as ApplicationAPIModel;
+                    ObservableList<ApplicationAPIModel> apiModelsList = new ObservableList<ApplicationAPIModel>();
+                    if (droppedItem is RepositoryFolder<ApplicationAPIModel>)
+                    {
+                        apiModelsList = (droppedItem as RepositoryFolder<ApplicationAPIModel>).GetFolderItems();
+                    }
+                    else
+                    {
+                        apiModelsList.Add(droppedItem as ApplicationAPIModel);
+                    }
+
                     AddApiModelActionWizardPage APIModelWizPage = new AddApiModelActionWizardPage(mContext);
-                    APIModelWizPage.AAMList.Add(currentAPIModel);
+                    APIModelWizPage.AAMList = apiModelsList;
                     APIModelWizPage.Pages.RemoveAt(0);
                     WizardWindow wizWindow = new WizardWindow(APIModelWizPage);
-                    //APIModelWizPage.Pages.Insert(0, new WizardPage());
                     APIModelWizPage.GetCurrentPage().Page.WizardEvent(new WizardEventArgs(APIModelWizPage, EventType.Active));
                     wizWindow.Show();
-
-                    //APIModelParamsWizardPage
-                    //APIModelWizPage.AAMList.Add(currentAPIModel);
-                    //APIModelWizPage.Next();
-                    //instance = new GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel();
                 }
 
                 if (instance != null)
