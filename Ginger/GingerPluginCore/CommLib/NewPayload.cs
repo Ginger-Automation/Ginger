@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
@@ -74,6 +75,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // bool is special case we save one byte as the type include the value
         const byte BoolFalse = 9;    // bool = false
         const byte BoolTrue = 10;    // bool = true
+        const byte Struct = 11;    // bool = true
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
@@ -459,6 +461,70 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }            
         }
 
+        // 11 add Struct        
+        public void AddValue<T>(T @struct) where T : struct
+        {
+            // Since we use unmanaged, memory, pointers etc adding try/catch
+
+            IntPtr ptr = IntPtr.Zero;            
+            try
+            {                
+                //TODO: Copy direct to buffer !!!!
+
+                var size = Marshal.SizeOf(typeof(T));             
+                var bytes = new byte[size];
+                ptr = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(@struct, ptr, true);
+                Marshal.Copy(ptr, bytes, 0, size);                
+                CheckBuffer(1 + 4 + bytes.Length);  // type + len
+                WriteValueType(Struct);
+                WriteInt(bytes.Length);
+                WriteBytes(bytes);
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                if (ptr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+        }
+
+        
+        public T GetValue<T>() where T : struct
+        {
+            byte b = ReadValueType();
+
+            if (b == Struct)
+            {                
+                int size = Marshal.SizeOf(typeof(T));
+                IntPtr ptr = Marshal.AllocHGlobal(size);
+
+                int len = ReadInt();
+
+                //TODO: add check if size != len
+
+                Byte[] array = new byte[len];
+                Buffer.BlockCopy(mBuffer, mBufferIndex, array, 0, len);
+                mBufferIndex += len;
+
+                Marshal.Copy(array, 0, ptr, size);
+                var s = (T)Marshal.PtrToStructure(ptr, typeof(T));
+                Marshal.FreeHGlobal(ptr);
+                return s;
+
+            }
+            else
+            {
+                throw new InvalidOperationException("List String Parsing Error/wrong value type");
+            }
+
+            
+        }
 
 
         public void AddValueByObjectType(object obj)
@@ -645,7 +711,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // Use to write screen shot or any binary data
         private void WriteBytes(byte[] Bytes)
         {
-            CheckBuffer(Bytes.Length + 4);
+            CheckBuffer(Bytes.Length + 4);   // why + 4 if not used !!!???
 
             Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);            
             mBufferIndex += Bytes.Length;
@@ -753,7 +819,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     case 10: // bool true                        
                         s += "bool=true " + Environment.NewLine;
                         break;
+                    case 11: // Struct
+                        // TODO: Create display for struct!?
+                        int len = ReadInt();
+                        mBufferIndex += len; // skip the bytes
+                        s += "struct=true " + Environment.NewLine;
+                        break;
                     default:
+                        mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
                 }
 
@@ -840,6 +913,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 {
                     AddValue((bool)item);
                 }
+
+                // Add struct !!!!!!!!
 
 
                 //TODO: add all types...
