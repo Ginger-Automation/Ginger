@@ -95,7 +95,7 @@ namespace Ginger.Run
             get { return mConfiguration; }
             set
             {
-                if (value != null && Configuration.SelectedDataRepositoryMethod != ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (value != null)
                 {
                     mConfiguration = value;
                     mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = executionLoggerHelper.GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
@@ -317,7 +317,7 @@ namespace Ginger.Run
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             //BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
-            Object BFR = mExecutionLogger.SetReportBusinessFlow(businessFlow, mContext.Environment, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
+            Object BFR = mExecutionLogger.SetReportBusinessFlow(mContext, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
