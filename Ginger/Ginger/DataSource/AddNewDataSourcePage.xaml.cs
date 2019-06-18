@@ -28,6 +28,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using GingerCoreNET.DataSource;
 
 namespace Ginger.DataSource
 {
@@ -53,9 +54,9 @@ namespace Ginger.DataSource
             mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
             mDSDetails.Name = "GingerDataSource";
 
-            FilePathTextBox.IsEnabled = false;
-            FileBrowseButton.IsEnabled = false;
-            DSTypeComboBox.IsEnabled = false;
+            FilePathTextBox.IsEnabled = true;
+            FileBrowseButton.IsEnabled = true;
+            DSTypeComboBox.IsEnabled = true;
 
             GingerCore.General.FillComboFromEnumType(DSTypeComboBox, typeof(DataSourceBase.eDSType));
             DSTypeComboBox.SelectionChanged += DSTypeComboBox_SelectionChanged;
@@ -71,6 +72,18 @@ namespace Ginger.DataSource
                 mDSDetails = new AccessDataSource();
             if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString())
                 mFileType = "mdb";
+            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString() && mDSDetails.GetType() != typeof(GingerLiteDB))
+            {
+                mDSDetails = new GingerLiteDB();
+                mDSDetails.DSType = DataSourceBase.eDSType.LiteDataBase;
+            }
+            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString())
+            {
+                mFileType = "db";
+                mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\LiteDB.db";
+                FilePathTextBox.Text = mDSDetails.FilePath;
+            }
+
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -79,6 +92,7 @@ namespace Ginger.DataSource
             if (FilePathTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "File Path"); return; }
             else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
 
+            mDSDetails.FilePath = FilePathTextBox.Text;
             mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.Instance.Solution.Folder);
 
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
@@ -97,11 +111,22 @@ namespace Ginger.DataSource
             
             if (File.Exists(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder)) == false)
             {
-                byte[] obj = Properties.Resources.GingerDataSource;
-                System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~",  WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                fs.Write(obj, 0, obj.Count());
-                fs.Close();
-                fs.Dispose();
+                if (mDSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+                {
+                    byte[] obj = Properties.Resources.GingerDataSource;
+                    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    fs.Write(obj, 0, obj.Count());
+                    fs.Close();
+                    fs.Dispose();
+                }
+                else if (mDSDetails.DSType == DataSourceBase.eDSType.LiteDataBase)
+                {
+                    byte[] obj = Properties.Resources.LiteDB;
+                    System.IO.FileStream fs = new System.IO.FileStream(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                    fs.Write(obj, 0, obj.Count());
+                    fs.Close();
+                    fs.Dispose();
+                }
             }
 
             mTargetFolder.AddRepositoryItem(mDSDetails);
@@ -191,13 +216,15 @@ namespace Ginger.DataSource
         {
             if(Default.IsChecked == false)
             {
+                FilePathTextBox.Clear();
                 string FilePath = FilePathTextBox.Text;
                 if(FilePath == "" || FilePath.StartsWith(@"~DataSources\") || FilePath.StartsWith(@"~\DataSources\"))
                 {
                     if (DSName.Text != "")
                     {
                         string FileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(DSName.Text);
-                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + FileName + ".mdb";
+                        FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\" + FileName + mDSDetails.GetExtension();
+                        mDSDetails.Name = DSName.Text;
                     }
                     else
                         FilePathTextBox.Text = "";                        

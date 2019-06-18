@@ -157,6 +157,7 @@ namespace Ginger.Run
             {
                 mCurrentBusinessFlow = value;
                 mContext.BusinessFlow = mCurrentBusinessFlow;
+                mContext.Runner = this;
             }
         }        
         public bool AgentsRunning = false;
@@ -758,7 +759,7 @@ namespace Ginger.Run
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
-            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
+            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowInstanceGuid == CurrentBusinessFlow?.InstanceGuid select x).FirstOrDefault();
 
             if (businessFlowRun == null)
             {
@@ -1314,7 +1315,8 @@ namespace Ginger.Run
                                     }
 
                                 }
-                                sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
+                                sQuery = DataSource.DSC.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
+                                //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
                             }
                             DataSource.DSC.RunQuery(sQuery);
                         }
@@ -2030,6 +2032,7 @@ namespace Ginger.Run
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
                 {
+                    
                     ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
                     VE.Calculate(item.StoreToValue);
                 }
