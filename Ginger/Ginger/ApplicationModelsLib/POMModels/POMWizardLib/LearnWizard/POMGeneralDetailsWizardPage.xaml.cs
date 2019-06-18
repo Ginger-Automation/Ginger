@@ -61,7 +61,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xDescriptionTextBox.BindControl(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.Description));
                     xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
 
-                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow));
+                    mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
                     xFrameBusinessFlowControl.Content = mBusinessFlowControl;
                     SetDefaultPage();
                     break;
@@ -132,13 +132,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
                 xURLTextBox.Visibility = Visibility.Visible;
-                xFrameBusinessFlowControl.Visibility = Visibility.Hidden; 
+                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed; 
             }
             else
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.BusinessFlow;
                 xFrameBusinessFlowControl.Visibility = Visibility.Visible;
-                xURLTextBox.Visibility = Visibility.Hidden;
+                xURLTextBox.Visibility = Visibility.Collapsed;
             }
         }
     }

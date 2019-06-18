@@ -870,5 +870,11 @@ namespace GingerCore
                 return nameof(this.ActivityName);
             }
         }
+        public void OfflinePropertiesPrep(string executionLogFolder, int executionLogActivityCounter, string activityName)
+        {
+            ExecutionLogActionCounter = 0;
+            ExecutionLogFolder = executionLogFolder + @"\" + executionLogActivityCounter + " " + activityName;
+            VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+        }
     }
 }

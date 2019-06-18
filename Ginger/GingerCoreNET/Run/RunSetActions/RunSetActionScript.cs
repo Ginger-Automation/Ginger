@@ -54,7 +54,7 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
-                RepositoryItemHelper.RepositoryItemFactory.ExecuteActScriptAction(SolutionFolder, FileName);
+                RepositoryItemHelper.RepositoryItemFactory.ExecuteActScriptAction(ScriptFileName, SolutionFolder);
             }
             catch(Exception ex)
             {
@@ -90,7 +90,7 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-        public override string Type { get { return "Execute Script"; } }
+        public override string Type { get { return "Run Script"; } }
         
     }
 }

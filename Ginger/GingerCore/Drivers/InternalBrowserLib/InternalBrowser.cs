@@ -31,7 +31,7 @@ using System.Xml;
 
 namespace GingerCore.Drivers.InternalBrowserLib
 {
-    public class InternalBrowser : DriverBase, IWindowExplorer
+    public class InternalBrowser : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {        
         private InternalBrowserWindow mFrmBrowser;
         private WebBrowser mBrowserControl;
@@ -433,7 +433,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             ABPT.AddOrUpdateReturnParamActual("connectStart", ((ulong)PerfObj.connectStart).ToString());
             ABPT.AddOrUpdateReturnParamActual("connectEnd", ((ulong)PerfObj.connectEnd).ToString());
 
-            //TODO: giving err check/fix, meanhwile empty val
+            //TODO: giving err check/fix, meanwhile empty val
             // ABPT.AddOrUpdateReturnParam("secureConnectionStart", ((ulong)PerfObj.secureConnectionStart).ToString());
             ABPT.AddOrUpdateReturnParamActual("secureConnectionStart", "");
 
@@ -1217,7 +1217,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             //TODO: impl
             return null;
@@ -1241,7 +1241,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            //TODO: keep old elemnent border and restore it
+            //TODO: keep old element border and restore it
             //string scriptRemoveBorder = "arguments[0].style.border='0px'";
             //if (mCurrentHighlightedElement != null)
             //{
@@ -1302,10 +1302,27 @@ namespace GingerCore.Drivers.InternalBrowserLib
             aw.Title = "Current Window";
             return aw;
         }
-        
+
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+
+        }
+
         public override void StartRecording()
         {
 
+        }
+
+        public override void StopRecording()
+        {
+            
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)

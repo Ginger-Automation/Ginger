@@ -237,6 +237,8 @@ namespace GingerCore.Drivers.Common
         {
             if (!retryForCOMExceptionDoneFlag && mUIAutomationHelper.GetCurrentWindow() != null && mUIAutomationHelper.CurrentWindowRootElement != null && mUIAutomationHelper.CurrentWindowRootElement.ElementName != null)
             {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
                 retryForCOMExceptionDoneFlag = true;
                 mUIAutomationHelper.SwitchToWindow(mUIAutomationHelper.CurrentWindowRootElement.ElementName);
                 Reporter.ToLog(eLogLevel.DEBUG, "Retrying the action" + act.GetType() + " Description is" + act.Description);

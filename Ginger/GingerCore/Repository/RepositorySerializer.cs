@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.Actions;
@@ -27,7 +28,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -58,8 +58,8 @@ namespace GingerCore.Repository
 
     public class RepositorySerializer : IRepositorySerializer
     {
-        static string mGingerVersion;
-        static long mGingerVersionAsLong = 0;        
+        // static string mGingerVersion;
+        // static long mGingerVersionAsLong = 0;        
 
         public void SaveToFile(RepositoryItemBase ri, string FileName)
         {
@@ -79,7 +79,7 @@ namespace GingerCore.Repository
                         xml.WriteStartDocument();
 
                         xml.WriteWhitespace("\n");
-                        xml.WriteComment("Ginger Repository Item created with version: " + GetCurrentGingerVersion());
+                        xml.WriteComment("Ginger Repository Item created with version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
                         xml.WriteWhitespace("\n");
 
                         xmlwriteObject(xml, ri);
@@ -94,28 +94,7 @@ namespace GingerCore.Repository
                 return string.Empty;
         }
 
-        public static string GetCurrentGingerVersion()
-        {
-            if (string.IsNullOrEmpty(mGingerVersion))
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                mGingerVersion = fvi.FileVersion;
-            }
-            return mGingerVersion;
-        }
-
-        public static long GetCurrentGingerVersionAsLong()
-        {
-            if (mGingerVersionAsLong == 0)
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                mGingerVersionAsLong = fvi.FileMajorPart * 1000000 + fvi.FileMinorPart * 10000 + fvi.FileBuildPart * 100 + fvi.FilePrivatePart;
-
-            }
-            return mGingerVersionAsLong;
-        }
+       
 
         //TODO: later on get back this function it is more organize, but causing saving problems  -to be fixed later
         private void xmlwriteObject(XmlTextWriter xml, RepositoryItemBase ri)
@@ -140,7 +119,7 @@ namespace GingerCore.Repository
 
                 //Get tha attr value
                 v = ri.GetType().GetProperty(mi.Name).GetValue(ri);
-                // Enum might be unknow = not set - so no need to write to xml, like null for object                        
+                // Enum might be unknown = not set - so no need to write to xml, like null for object                        
                 if (ri.GetType().GetProperty(mi.Name).PropertyType.IsEnum)
                 {
                     string vs = v.ToString();
@@ -421,7 +400,7 @@ namespace GingerCore.Repository
         private static bool IsObseravbleListLazyLoad(string name)
         {
             // Here we decide which Observable List we cache as string until user really ask for the data
-            // for now we cache only activities which is the major issue for performance when laoding solution            
+            // for now we cache only activities which is the major issue for performance when loading solution            
             return false;
         }
 
@@ -516,7 +495,7 @@ namespace GingerCore.Repository
                     {
                         FieldInfo FI = (FieldInfo)mi;                         
                         // We check if it is list by arg count - List<string> will have string etc...
-                        // another option is check the nake to start with List, Observ...
+                        // another option is check the nake to start with List, Observe...
                         //or find a better way
                         // meanwhile it is working
                         if (FI.FieldType.GenericTypeArguments.Count() > 0)
@@ -541,7 +520,7 @@ namespace GingerCore.Repository
                         PropertyInfo PI = (PropertyInfo)mi;
                         // obj.GetType().GetField(attrName);
                         // We check if it is list by arg count - List<string> will have string etc...
-                        // another option is check the nake to start with List, Observ...
+                        // another option is check the nake to start with List, Observe...
                         //or find a better way
                         // meanwhile it is working
                         if (PI.PropertyType.GenericTypeArguments.Count() > 0)
@@ -602,7 +581,7 @@ namespace GingerCore.Repository
                         }
                         else
                         {
-                            //TODO: handle other types of list, meanwhile Assume observb list
+                            //TODO: handle other types of list, meanwhile Assume observable list
                             IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
                             //assign it to the relevant obj
                             fi.SetValue(obj, lst);
@@ -628,7 +607,7 @@ namespace GingerCore.Repository
                         }
                         else
                         {
-                            //TODO: handle other types of list, meanwhile Assume observb list
+                            //TODO: handle other types of list, meanwhile Assume observable list
                             IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
                             //assign it to the relevant obj
                             pi.SetValue(obj, lst);
@@ -839,7 +818,7 @@ namespace GingerCore.Repository
                         break;
 
                     default:
-                        throw new Exception("Serializer - Err set value, Unknow type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
+                        throw new Exception("Serializer - Err set value, Unknown type - " + propertyInfo.PropertyType.ToString() + " Value: " + sValue);
 
                 }
 
@@ -887,7 +866,7 @@ namespace GingerCore.Repository
                 Match match = regex.Match(BuildInfo);
                 if (match.Success)
                 {
-                    //avoiding Beta + Alpha numbers because for now it is not supposed to be writen to XML's, only oficial release numbers
+                    //avoiding Beta + Alpha numbers because for now it is not supposed to be written to XML's, only official release numbers
                     int counter = 0;
                     string ver = string.Empty;
                     for (int indx = 0; indx < match.Value.Length; indx++)
@@ -899,7 +878,7 @@ namespace GingerCore.Repository
                         else
                             ver += match.Value[indx];
                     }
-                    return ver;//something wronge
+                    return ver;//something wrong
                 }
                 else
                 {

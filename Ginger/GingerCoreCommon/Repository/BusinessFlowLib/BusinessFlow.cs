@@ -406,7 +406,7 @@ namespace GingerCore
                     varsList.Add(var);
             return varsList;
         }
-        public ObservableList<VariableBase> GetAllVariables(Activity CurrentActivity)
+        public ObservableList<VariableBase> GetAllVariables(Activity activity)
         {
             ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
             if (SolutionVariables != null)
@@ -414,8 +414,8 @@ namespace GingerCore
                     varsList.Add(var);
             foreach (VariableBase var in Variables)
                 varsList.Add(var);
-            if (CurrentActivity != null)
-                foreach (VariableBase var in CurrentActivity.Variables)
+            if (activity != null)
+                foreach (VariableBase var in activity.Variables)
                     varsList.Add(var);
             return varsList;
         }
@@ -1171,5 +1171,12 @@ namespace GingerCore
                 return nameof(this.Name);
             }
         }       
+        public void OffilinePropertiesPrep(string logFolderPath)
+        {
+            ExecutionLogFolder = logFolderPath;
+            VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            SolutionVariablesBeforeExec = GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            ExecutionLogActivityCounter = 1;
+        }
     }
 }

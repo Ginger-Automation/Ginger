@@ -52,6 +52,7 @@ namespace Amdocs.Ginger.Repository
         private string mExternalID;
         [IsSerializedForLocalRepository]
         public string ExternalID { get { return mExternalID; } set { if (mExternalID != value) { mExternalID = value; OnPropertyChanged(nameof(ExternalID)); } } }
+        public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
 
@@ -174,7 +175,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         // Deep backup keep obj ref and all prop, restore to real original situation
-        private void CreateBackup(bool isLocalBackup = false)
+        public void CreateBackup(bool isLocalBackup = false)
         {
             if (!isLocalBackup)
             {
@@ -525,7 +526,7 @@ namespace Amdocs.Ginger.Repository
             {
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
-                GingerVersion = GingerVersion.GetCurrentVersion(),
+                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
                 Version= 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
@@ -537,7 +538,7 @@ namespace Amdocs.Ginger.Repository
         public void UpdateHeader()
         {
             RepositoryItemHeader.Version++;
-            RepositoryItemHeader.GingerVersion = GingerVersion.GetCurrentVersion();
+            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion;
             RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
@@ -655,7 +656,7 @@ namespace Amdocs.Ginger.Repository
 
         public virtual string RelativeFilePath { get; set; }
 
-        internal void UpdateBeforeSave()
+        public virtual void UpdateBeforeSave()
         {            
             this.ClearBackup();
         }
@@ -856,7 +857,24 @@ namespace Amdocs.Ginger.Repository
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
             DirtyStatus = eDirtyStatus.Modified;
-            // RaiseDirtyChangedEvent();
+
+            // if item added set tracking too
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (object obj in e.NewItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                        repositoryItemBase.StartDirtyTracking();
+                        repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                    }
+                    else
+                    {
+                        // not RI no tracking...
+                    }
+                }
+            }
         }
 
         List<string> DirtyTrackingFields;

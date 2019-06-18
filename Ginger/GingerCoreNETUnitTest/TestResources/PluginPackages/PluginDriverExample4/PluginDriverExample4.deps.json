@@ -1,0 +1,75 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.1",
+    "signature": "13256dd670e1229d42cfe615a4556863f0a21787"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.1": {
+      "PluginDriverExample4/1.0.0": {
+        "dependencies": {
+          "Ginger.Plugin.Core": "3.3.2"
+        },
+        "runtime": {
+          "PluginDriverExample4.dll": {}
+        }
+      },
+      "Ginger.Plugin.Core/3.3.2": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1",
+          "System.Reflection.DispatchProxy": "4.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/GingerPluginCore.dll": {
+            "assemblyVersion": "3.3.2.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/12.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.22727"
+          }
+        }
+      },
+      "System.Reflection.DispatchProxy/4.5.1": {
+        "runtime": {
+          "lib/netcoreapp2.0/System.Reflection.DispatchProxy.dll": {
+            "assemblyVersion": "4.0.4.0",
+            "fileVersion": "4.6.26606.5"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PluginDriverExample4/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Ginger.Plugin.Core/3.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gmdtU1RARrlUXhb4lKXFMEf9HeAhDq7pc8wuVgSLQt/JriwrUylbgb/tjyhPi4DUuvtjYlpc+4uiHIr1zwukRg==",
+      "path": "ginger.plugin.core/3.3.2",
+      "hashPath": "ginger.plugin.core.3.3.2.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pBR3wCgYWZGiaZDYP+HHYnalVnPJlpP1q55qvVb+adrDHmFMDc1NAKio61xTwftK3Pw5h7TZJPJEEVMd6ty8rg==",
+      "path": "newtonsoft.json/12.0.1",
+      "hashPath": "newtonsoft.json.12.0.1.nupkg.sha512"
+    },
+    "System.Reflection.DispatchProxy/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FsYDYPmR2coa1BCo9mquY5A1hy5RSQq7ZJH3qaMoy3lCTUMZvB4lEFqX1i4XQINVjda4e7p2PN1DHk8AV3wfXw==",
+      "path": "system.reflection.dispatchproxy/4.5.1",
+      "hashPath": "system.reflection.dispatchproxy.4.5.1.nupkg.sha512"
+    }
+  }
+}

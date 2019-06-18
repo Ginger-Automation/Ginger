@@ -28,6 +28,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using System;
 
 namespace Ginger.DataSource
 {
@@ -43,7 +44,8 @@ namespace Ginger.DataSource
         Setter SetterError = new Setter(Border.BorderBrushProperty, Brushes.Red);
         Setter SetterBorderBold = new Setter(Border.BorderThicknessProperty, new Thickness(2, 2, 2, 2));
         Setter SetterBorder = new Setter(Border.BorderThicknessProperty, new Thickness(1, 1, 1, 1));
-       
+        int i = 0;
+        
         public DataSourceTablePage(DataSourceTable dsTableDetails)
         {
             InitializeComponent();
@@ -70,6 +72,7 @@ namespace Ginger.DataSource
                 grdTableData.AddToolbarTool("@Undo_16x16.png", "Undo Local Changes", new RoutedEventHandler(UndoTableChanges));
                 grdTableData.AddToolbarTool("@Copy_16x16.png", "Duplicate Row", new RoutedEventHandler(DuplicateRow));
                 grdTableData.AddToolbarTool("@Trash_16x16.png", "Delete All Rows", new RoutedEventHandler(DeleteAll));
+
 
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
                 {
@@ -171,6 +174,7 @@ namespace Ginger.DataSource
             grdTableData.Title = "'" + mDSTableDetails.Name + "' Table Data";
             grdTableData.ShowViewCombo = Visibility.Collapsed;
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            
             int iColIndex = mColumnNames.Count - 1;
             
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -217,25 +221,44 @@ namespace Ginger.DataSource
                 }
                 if (sCol.Header.ToString() == "GINGER__USED")
                 {
-                    sCol.DisplayIndex = 1;                   
+                    try
+                    {
+                        i++;
+                        sCol.DisplayIndex = i;
+                        
+                    }
+                    catch(Exception ex)
+                    {
+                        i = 0;
+                        sCol.DisplayIndex = i++;
+                    }
                 }
                 if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
-                {                    
-                    sCol.DisplayIndex = iColIndex;
-                    iColIndex--;
+                {
+                    if (!(sCol.DisplayIndex == -1)&& sCol.DisplayIndex== null)
+                    {
+                        sCol.DisplayIndex = iColIndex;
+                        iColIndex--;
+                    }
+                    else
+                    {
+                        sCol.DisplayIndex = iColIndex;
+                        iColIndex--;
+                    }
                 }                    
             }          
         }
 
         private void SetGridData()
         {
-            mDSTableDetails.DataTable = mDSTableDetails.DSC.GetQueryOutput("Select * from " + mDSTableDetails.Name);
-            
-            grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
-            {
-                Source = mDSTableDetails.DataTable
-            });
-            grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable,false);           
+                mDSTableDetails.DataTable = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name);
+
+                grdTableData.Grid.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
+                {
+                    Source = mDSTableDetails.DataTable
+                });
+                grdTableData.UseGridWithDataTableAsSource(mDSTableDetails.DataTable, false);
+           
         }
         public void RefreshGrid()
         {
@@ -244,20 +267,14 @@ namespace Ginger.DataSource
         }
         private void MarkUnMarkAllUsed(bool usedStatus)
         {
-            foreach (object oRow in grdTableData.Grid.SelectedItems)
+            foreach (object oRow in grdTableData.Grid.Items)
                 ((DataRowView)oRow).Row["GINGER_USED"] = usedStatus;                          
         }
 
         private void AddRow(object sender, RoutedEventArgs e)
         {
-            DataRow dr = mDSTableDetails.DataTable.NewRow();
-            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
-            foreach (string sColName in mColumnNames)
-                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                    dr[sColName] = "";
-                else if (sColName == "GINGER_ID")
-                    dr[sColName] = System.DBNull.Value;                        
-            mDSTableDetails.DataTable.Rows.Add(dr);             
+            mDSTableDetails.DSC.AddRow(mColumnNames, mDSTableDetails);
+                        
         }
 
         private void DeleteRow(object sender, RoutedEventArgs e)
@@ -284,10 +301,8 @@ namespace Ginger.DataSource
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
-                foreach (object o in AllItemsList)
-                {
-                    ((DataRowView)o).Delete();
-                }
+                mDSTableDetails.DSC.DeleteAll(AllItemsList, mDSTableDetails.Name);
+                RefreshGrid();
             }            
         }
         private void DuplicateRow(object sender, RoutedEventArgs e)
@@ -298,18 +313,8 @@ namespace Ginger.DataSource
                 return;
             }
             List<object> SelectedItemsList = grdTableData.Grid.SelectedItems.Cast<object>().ToList();
-            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
-            foreach (object o in SelectedItemsList)
-            {
-                DataRow row = (((DataRowView)o).Row);
-                DataRow dr = mDSTableDetails.DataTable.NewRow();
-                foreach (string sColName in mColumnNames)
-                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
-                        dr[sColName] = row[sColName];                    
-                    else
-                        dr[sColName] = System.DBNull.Value;
-                mDSTableDetails.DataTable.Rows.Add(dr);              
-            }                 
+            mDSTableDetails.DSC.DuplicateRow(mColumnNames, SelectedItemsList, mDSTableDetails);
+                             
         }
         
         private void AddColumn(object sender, RoutedEventArgs e)

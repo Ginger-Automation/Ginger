@@ -19,6 +19,7 @@
         <StackPanel>
             <CheckBox x:Name="ShowDebugConsoleCheckBox" Margin="5">Show Debug console</CheckBox>
             <CheckBox x:Name="ShowTimingsCheckBox" Margin="5">Show Timings</CheckBox>
+            <CheckBox x:Name="ShowSocketMonitorCheckBox" Margin="5">Show socket Monitor</CheckBox>
             <Label FontSize="14" FontWeight="Bold" HorizontalAlignment="Left" Margin="10">Available Beta Features</Label>
         </StackPanel>
 

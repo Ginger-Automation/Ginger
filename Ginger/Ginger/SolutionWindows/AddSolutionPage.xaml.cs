@@ -101,8 +101,8 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.SolutionAlreadyExist);
                     return;
                 }
-                
-                App.SetSolution(mSolution.Folder);
+
+                WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
@@ -110,7 +110,7 @@ namespace Ginger.SolutionWindows
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
                 AutomatePage.CreateDefaultEnvironment();
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(App.GetNewBusinessFlow("Flow 1", true));
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user
                 Mouse.OverrideCursor = null;
@@ -191,6 +191,28 @@ namespace Ginger.SolutionWindows
             a.DSType = DataSourceBase.eDSType.MSAccess;
             RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder.AddRepositoryItem(a);
+
+            // TODO: Try not to use resources, we can put the file in folder and copy
+            // adding LiteDB while adding solution
+            byte[] litedbobj = Properties.Resources.LiteDB;
+
+            if (!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\LiteDB.db")))
+            {
+                Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
+                System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\LiteDB.db"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                fs.Write(litedbobj, 0, litedbobj.Count());
+                fs.Close();
+                fs.Dispose();
+            }
+
+            DataSourceBase lite = new GingerCoreNET.DataSource.GingerLiteDB();
+            lite.Name = "LiteDB";
+            lite.FilePath = @"~\DataSources\LiteDB.db";
+            lite.DSType = DataSourceBase.eDSType.LiteDataBase;
+
+            RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+            dsTargetFolder.AddRepositoryItem(lite);
+            
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

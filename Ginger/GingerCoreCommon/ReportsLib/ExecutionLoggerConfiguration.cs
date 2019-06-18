@@ -25,6 +25,12 @@ namespace Ginger.Reports
 {
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
+        public static partial class Fields
+        {
+            public static string Parameter = "Parameter";
+            public static string Value = "Value";
+            public static string Description = "Description";
+        }
         public enum AutomationTabContext
         {
             None,
@@ -34,7 +40,11 @@ namespace Ginger.Reports
             ContinueRun,
             Reset
         }
-
+        public enum DataRepositoryMethod
+        {
+            TextFile,
+            LiteDB
+        }
 
         // Why we serialzie!!?
 
@@ -65,7 +75,20 @@ namespace Ginger.Reports
         public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 
         private string _ExecutionLoggerConfigurationSetName = string.Empty;
-
+        private DataRepositoryMethod mDataRepositoryMethod;
+        [IsSerializedForLocalRepository]
+        public DataRepositoryMethod SelectedDataRepositoryMethod
+        {
+            get { return mDataRepositoryMethod; }
+            set
+            {
+                if (mDataRepositoryMethod != value)
+                {
+                    mDataRepositoryMethod = value;
+                    OnPropertyChanged(nameof(mDataRepositoryMethod));
+                }
+            }
+        }
         public override string ItemName
         {
             get

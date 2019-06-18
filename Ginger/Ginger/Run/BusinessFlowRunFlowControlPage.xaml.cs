@@ -17,14 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.FlowControlLib;
-using Ginger.Actions.UserControls;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Run
 {
@@ -35,7 +36,7 @@ namespace Ginger.Run
     {
         GingerRunner mBfParentRunner = null;
         BusinessFlow mActParentBusinessFlow = null;
-        private static readonly List<GingerCore.General.ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.BusinessFlowFlowControls);
+        private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.BusinessFlowFlowControls);
 
         public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow)
         {

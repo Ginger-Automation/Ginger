@@ -86,8 +86,17 @@ namespace GingerCore.Actions
                 Error = GingerDicser.GetTermResValue(eTermResKey.Variable) + " was not found.";
                 return;
             }
-
-            string calculatedValue = ValueExpression.Calculate(this.Value);
+            string calculatedValue = string.Empty;
+            if (ValueExpression!=null)
+            {
+                ValueExpression.DecryptFlag = false;
+                 calculatedValue = ValueExpression.Calculate(this.Value);
+            }
+            else
+            {
+                calculatedValue = this.Value;
+            }
+            
             if (SetVariableValueOption == VariableBase.eSetValueOptions.SetValue)
             {                
                 if (Var.GetType() == typeof(VariableString))

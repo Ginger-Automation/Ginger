@@ -44,7 +44,7 @@ namespace Ginger.BusinessFlowFolder
     public partial class BusinessFlowPage : Page
     {
         BusinessFlow mBusinessFlow;
-        RepositoryPage mReposiotryPage;
+        // RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
         ActivitiesPage mActivitiesPage;
@@ -66,7 +66,8 @@ namespace Ginger.BusinessFlowFolder
             mContext = new Context() { BusinessFlow = BizFlow, Activity= BizFlow.CurrentActivity };
             RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
             mEditMode = editMode;
-            LoadBizFlowData();
+            LoadBizFlowData();            
+
             mBusinessFlow.PropertyChanged += BusinessFlow_PropertyChanged;
      
             if (mBusinessFlow.TargetApplications == null)
@@ -96,7 +97,7 @@ namespace Ginger.BusinessFlowFolder
                 BfActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
                 if (mBusinessFlow.ActivitiesGroups.Count == 0) ActivitiesGroupsExpander.IsExpanded = false;
 
-                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mEditMode);
+                mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext, mEditMode);
                 mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
                 BfVariablesFrame.Content = mVariablesPage;
                 if (mBusinessFlow.Variables.Count == 0) VariablesExpander.IsExpanded = false;

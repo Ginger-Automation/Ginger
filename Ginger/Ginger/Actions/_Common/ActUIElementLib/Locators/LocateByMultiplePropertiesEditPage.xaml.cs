@@ -17,11 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Windows.Controls;
 using Ginger.UserControls;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -54,7 +55,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             view.GridColsView.Add(new GridColView() { Field = "Property", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstLocateBy });
 
-            List<GingerCore.General.ComboEnumItem> lstOps = GingerCore.General.GetEnumValuesForCombo(typeof(UIElementPropertyValueLocator.eLocatorOpertor));
+            List<ComboEnumItem> lstOps = GingerCore.General.GetEnumValuesForCombo(typeof(UIElementPropertyValueLocator.eLocatorOpertor));
             view.GridColsView.Add(new GridColView() { Field = "Operator", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = lstOps });
 
 

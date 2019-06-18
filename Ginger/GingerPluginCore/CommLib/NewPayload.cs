@@ -94,7 +94,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         /// Create Payload from Bytes
-        /// IgnoreExtraSpace - the buffer size might ve bigger then the length defined but there will be End of Packet -255 char at the length postiion - so valid with extra unused space, need to save copy bytes for resize in socket
+        /// IgnoreExtraSpace - the buffer size might be bigger than the length defined but there will be End of Packet -255 char at the length postiion - so valid with extra unused space, need to save copy bytes for resize in socket
         public NewPayLoad(byte[] bytes, bool IgnoreExtraSpace = false)
         {
             //TODO: check if we need to do memcopy, to dup and not use the original, since we do not change packets it should be OK.
@@ -110,7 +110,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 byte b = bytes[len +3];
                 if (b != LastByteMarker)
                 {
-                    throw new Exception("PayLoad Integrity Error - last byte != 255");
+                    throw new InvalidOperationException("PayLoad Integrity Error - last byte != 255");
                 }
             }
             else
@@ -119,7 +119,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 byte b = bytes[bytes.Length - 1];
                 if (b != LastByteMarker)
                 {
-                    throw new Exception("PayLoad Integrity Error - last byte != 255");
+                    throw new InvalidOperationException("PayLoad Integrity Error - last byte != 255");
                 }
             }
         }
@@ -476,7 +476,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     AddValue((bool)obj);
                     break;
                 default:
-                    throw new Exception("Unhandled param type - " + pType);
+                    throw new InvalidOperationException("Unhandled param type - " + pType);
                     // TODO: handle other types
             }
         }
@@ -505,7 +505,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     return true;
                 //TODO: add other types
                 default:
-                    throw new Exception("unhandled return type - " + bType);
+                    throw new InvalidOperationException("unhandled return type - " + bType);
             }
         }
 
@@ -540,7 +540,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         }
                         break;
                     default:
-                        throw new Exception("Parsing Error/Wrong Value Type b =" + byteValue + ". Name of the Payload is " + Name + " & Buffer Index is " + mBufferIndex);
+                        throw new InvalidOperationException("Parsing Error/Wrong Value Type b =" + byteValue + ". Name of the Payload is " + Name + " & Buffer Index is " + mBufferIndex);
                 }           
             return result;
         }
@@ -556,7 +556,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("String Parsing Error/wrong value type b=" + b + " Name of the payload is" + Name + " Buffer Index is: " + mBufferIndex);
+                throw new InvalidOperationException("String Parsing Error/wrong value type b=" + b + " Name of the payload is" + Name + " Buffer Index is: " + mBufferIndex);
             }
         }
 
@@ -571,7 +571,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("Int Parsing Error/wrong value type");
+                throw new InvalidOperationException("Int Parsing Error/wrong value type");
             }
         }
 
@@ -586,7 +586,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("Enum Parsing Error/wrong value type");
+                throw new InvalidOperationException("Enum Parsing Error/wrong value type");
             }
         }
 
@@ -602,7 +602,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("String UTF16 Parsing Error/wrong value type");
+                throw new InvalidOperationException("String UTF16 Parsing Error/wrong value type");
             }
         }
 
@@ -624,7 +624,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("List String Parsing Error/wrong value type");
+                throw new InvalidOperationException("List String Parsing Error/wrong value type");
             }
         }
 
@@ -639,7 +639,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             {
                 return false;
             }
-            throw new Exception("bool Parsing Error/wrong value type (not 9 or 10)");
+            throw new InvalidOperationException("bool Parsing Error/wrong value type (not 9 or 10)");
         }
 
         // Use to write screen shot or any binary data
@@ -668,7 +668,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("List PayLoad Parsing Error/wrong value type");
+                throw new InvalidOperationException("List PayLoad Parsing Error/wrong value type");
             }
         }
 
@@ -754,7 +754,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         s += "bool=true " + Environment.NewLine;
                         break;
                     default:
-                        throw new Exception("Payload.ToString() Error - Unknown ValueType: " + ValueType);
+                        throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
                 }
 
                 ValueType = mBuffer[mBufferIndex];
@@ -845,7 +845,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 //TODO: add all types...
                 else
                 {
-                    throw new Exception("Unhandled PayLoad item type: " + item.GetType().Name + "  - " + item.ToString());
+                    throw new InvalidOperationException("Unhandled PayLoad item type: " + item.GetType().Name + "  - " + item.ToString());
                 }
             }
             ClosePackage();
@@ -864,7 +864,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("Guid Parsing Error/wrong value type");
+                throw new InvalidOperationException("Guid Parsing Error/wrong value type");
             }
         }
 
@@ -881,7 +881,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("Byte[] Parsing Error/wrong value type");
+                throw new InvalidOperationException("Byte[] Parsing Error/wrong value type");
             }
         }
 

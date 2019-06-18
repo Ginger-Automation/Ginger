@@ -17,10 +17,11 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Text;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
-    public class NewGingerSocketLog
+    public class GingerSocketLog
     {
         public DateTime TimeStamp {get; set;}
         public string LogType {get; set;}
@@ -30,7 +31,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public long Elapsed { get; set; }
         public NewPayLoad PayLoad { get; set; }
 
-        public NewGingerSocketLog()
+        public GingerSocketLog()
         {
             TimeStamp = DateTime.Now;
         }
@@ -41,6 +42,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             Info = pl.ToString();
             Len = pl.PackageLen();
             PayLoad = pl;
+        }
+
+        public string ascii { get {
+                byte[] bytes = PayLoad.GetPackage();
+                string asciiString = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                return asciiString;
+            }
         }
     }
 }

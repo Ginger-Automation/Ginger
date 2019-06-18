@@ -16,17 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.FlowControlLib;
-using Ginger.Run;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.UserControls
 {
@@ -133,7 +134,7 @@ namespace Ginger.Actions.UserControls
         private void ActionValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // We keep the GUID of the action or activity
-            GingerCore.General.ComboEnumItem CEI = (GingerCore.General.ComboEnumItem)ActionValueComboBox.SelectedItem;
+            ComboEnumItem CEI = (ComboEnumItem)ActionValueComboBox.SelectedItem;
             if (CEI != null)
             {
                 FC.Value = CEI.Value.ToString();
@@ -163,7 +164,7 @@ namespace Ginger.Actions.UserControls
                                 if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run && mActParentBusinessFlow == bf)//TODO: do better condition 
                                     continue;
                                 
-                                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                                ComboEnumItem CEI = new ComboEnumItem();
                                 CEI.Value = bf.InstanceGuid + FC.GUID_NAME_SEPERATOR + bf.Name;//adding also name as second option search to be used when pulling the activity from Shared Repository
                                 CEI.text = bf.Name;
                                 ActionValueComboBox.Items.Add(CEI);
@@ -215,7 +216,7 @@ namespace Ginger.Actions.UserControls
                                         continue;
                                     }
 
-                                    GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                                    ComboEnumItem CEI = new ComboEnumItem();
                                     CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.Description;//adding also name as second option search to be used when pulling the actions from Shared Repository
                                     CEI.text = a.Description;
                                     ActionValueComboBox.Items.Add(CEI);
@@ -253,7 +254,7 @@ namespace Ginger.Actions.UserControls
                                     continue;
                                 }
 
-                                GingerCore.General.ComboEnumItem CEI = new GingerCore.General.ComboEnumItem();
+                                ComboEnumItem CEI = new ComboEnumItem();
                                 CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName;//adding also name as second option search to be used when pulling the activity from Shared Repository
                                 CEI.text = a.ActivityName;
                                 ActionValueComboBox.Items.Add(CEI);

@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -105,7 +106,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 return;
             }
-            eLocateBy SelectedLocType = (eLocateBy)((GingerCore.General.ComboEnumItem)ElementLocateByComboBox.SelectedItem).Value;
+            eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)ElementLocateByComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
             LocateValueEditFrame.Content = p;
             UpdateActionInfo(mAction.ElementAction);
@@ -299,7 +300,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Width = 600,
                         Margin = new Thickness(10, 0, 0, 0)
                     };
-                    comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true);
+                    comboBox.Init(mAction.GetOrCreateInputParam(element.BindedString), isVENeeded: true,context:Context.GetAsContext(mAction.Context));
                     ((Ginger.UserControlsLib.UCComboBox)comboBox).ComboBox.ItemsSource = element.PossibleValues;
                     if (mAction.ElementLocateBy == eLocateBy.POMElement)
                     {

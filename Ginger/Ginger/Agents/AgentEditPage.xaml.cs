@@ -71,8 +71,15 @@ namespace Ginger.Agents
                     xPluginIdComboBox.DisplayMemberPath = nameof(PluginPackage.PluginId);
                     xPluginIdComboBox.BindControl(mAgent, nameof(Agent.PluginId));
                 }
-                         
-                xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));                
+                if (mAgent.AgentType == eAgentType.Driver)
+                {
+                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
+                }
+                else
+                {
+                   // xAgentConfigFrame.SetContent(new NewAgentDriverConfigPage(mAgent));
+                   xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
+                }
             }
         }
 

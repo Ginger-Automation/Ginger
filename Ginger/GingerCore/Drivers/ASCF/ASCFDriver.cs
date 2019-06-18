@@ -37,7 +37,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Drivers.ASCF
 {
     // 10 Aug 2014 - This class is for ASCF connector actions
-    public class ASCFDriver : DriverBase, IWindowExplorer
+    public class ASCFDriver : DriverBase, IWindowExplorer, Amdocs.Ginger.Plugin.Core.IRecord
     {
         // remove do events !!!
         [UserConfigured]
@@ -1053,6 +1053,20 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
+        public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
+        {
+            StartRecord();
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        {
+            GetRecording();
+            Send("StopRecording", NA, NA, NA, NA, false);
+            //TODO: check RC            
+        }
+
         public override void StartRecording()
         {
  	        StartRecord();
@@ -1400,7 +1414,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool learnFullElementInfoDetails = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
