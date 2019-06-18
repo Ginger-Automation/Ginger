@@ -74,7 +74,7 @@ namespace Ginger.ApiModelsFolder
         {
             foreach (ApplicationAPIModel aamb in AAMList)
             {
-                if (aamb.TargetApplicationKey == null || Convert.ToString(aamb.TargetApplicationKey) != mContext.Activity.TargetApplication)
+                if (aamb.TargetApplicationKey == null || Convert.ToString(aamb.TargetApplicationKey.ItemName) != mContext.Activity.TargetApplication)
                     continue;
 
                 ActWebAPIModel aNew = new ActWebAPIModel();
