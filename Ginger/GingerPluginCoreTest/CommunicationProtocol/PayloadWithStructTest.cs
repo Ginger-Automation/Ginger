@@ -1,14 +1,16 @@
 ﻿using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace GingerPluginCoreTest.CommunicationProtocol
 {
     [TestClass]
     [Level1]
-    class PayloadWithStructTest
+    public class PayloadWithStructTest
     {
         
         [TestInitialize]
@@ -35,14 +37,16 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             public int age;
         }
 
+        [Ignore]
         [TestMethod]
         public void StructTestSpeed()
         {
             // for per checks of using struct and no struct
             for (int i = 0; i < 500000; i++)
             {
-                StructTest();
+                // StructTest();
                 // NoStructTest();
+                ListsStructTestJSON();
             }
         }
 
@@ -131,6 +135,39 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             Assert.AreEqual(p1.num2, p2.num2);
             Assert.AreEqual(p1.num3, p2.num3);
 
+        }
+
+
+        struct complexStructwithStrings
+        {            
+            public string a;         
+            public List<string> strings;            
+            public string b;
+        }
+
+        [TestMethod]
+        public void ListsStructTestJSON()
+        {
+            //Arrange            
+            complexStructwithStrings s1 = new complexStructwithStrings() { a = "aaa", strings = new List<string>() { "aaa", "bbb", "ccc" }, b = "ggg" };
+
+            // Act
+            NewPayLoad pl = new NewPayLoad("ll");
+            pl.AddJSONValue(s1);
+            pl.ClosePackage();
+
+            byte[] b = pl.GetPackage();
+            NewPayLoad pl2 = new NewPayLoad(b);
+
+            complexStructwithStrings s2 = pl2.GetJSONValue<complexStructwithStrings>();
+
+            //Assert
+            Assert.AreEqual(s1.a, s2.a);
+            Assert.AreEqual(s2.strings.Count, s2.strings.Count);
+            Assert.AreEqual(s2.strings[0], s2.strings[0]);
+            Assert.AreEqual(s2.strings[1], s2.strings[1]);
+            Assert.AreEqual(s2.strings[2], s2.strings[2]);
+            Assert.AreEqual(s1.b, s2.b);
         }
 
 

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // bool is special case we save one byte as the type include the value
         const byte BoolFalse = 9;    // bool = false
         const byte BoolTrue = 10;    // bool = true
-        const byte Struct = 11;    // bool = true
+        const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
+        const byte JSONStruct = 12;    // Struct for fixed struct with simple propers like int, float not for dynamic values
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
@@ -481,9 +483,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 WriteInt(bytes.Length);
                 WriteBytes(bytes);
             }
-            catch
+            catch(Exception ex)
             {
-
+                Console.WriteLine("Error in Payload AddValue for struct: " + ex.Message);
+                throw ex;
             }
             finally
             {
@@ -513,17 +516,40 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 mBufferIndex += len;
 
                 Marshal.Copy(array, 0, ptr, size);
-                var s = (T)Marshal.PtrToStructure(ptr, typeof(T));
+                var structValue = (T)Marshal.PtrToStructure(ptr, typeof(T));
                 Marshal.FreeHGlobal(ptr);
-                return s;
+                return structValue;
 
             }
             else
             {
-                throw new InvalidOperationException("List String Parsing Error/wrong value type");
+                throw new InvalidOperationException("Struct Parsing Error/wrong value type");
             }
+        }
 
-            
+
+        // 12 JSONStruct
+        public void AddJSONValue<T>(T structValue) where T : struct
+        {
+            var json = JsonConvert.SerializeObject(structValue);            
+            WriteValueType(JSONStruct);
+            WriteString(json);            
+        }
+
+        public T GetJSONValue<T>() where T : struct
+        {
+            byte b = ReadValueType();
+
+            if (b == JSONStruct)
+            {
+                string json = ReadString();
+                T structValue = JsonConvert.DeserializeObject<T>(json);
+                return structValue;
+            }
+            else
+            {
+                throw new InvalidOperationException("JSONStruct Parsing Error/wrong value type");
+            }
         }
 
 
