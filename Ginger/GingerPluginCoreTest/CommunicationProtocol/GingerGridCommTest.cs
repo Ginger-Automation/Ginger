@@ -28,7 +28,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            int port = 15555;// !!!!!!!! TODO: get free port
+            int port = SocketHelper.GetOpenPort();
 
             // gingerGrid = WorkSpace.Instance.LocalGingerGrid; // new GingerGrid(port); 
             gingerGrid = new GingerGrid(port); 
