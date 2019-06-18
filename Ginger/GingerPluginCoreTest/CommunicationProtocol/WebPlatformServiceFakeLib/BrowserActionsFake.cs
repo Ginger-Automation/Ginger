@@ -12,7 +12,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 
         public void AcceptMessageBox()
         {
-            // dummy change 4
+            // dummy change 5
             throw new NotImplementedException();
         }
 
