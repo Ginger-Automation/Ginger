@@ -40,6 +40,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public PomElementsPage mappedUIElementsPage;
         ApplicationPOMModel mPOM;
         Context mContext;
+        ITreeViewItem mItemTypeRootNode;
 
         private Agent mAgent;
         IWindowExplorer mWinExplorer
@@ -93,12 +94,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
 
             mContext = context;
-
+            mItemTypeRootNode = itemTypeRootNode;
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-            mContext.BusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
+
+            mContext.PropertyChanged -= MContext_PropertyChanged;
+            mContext.PropertyChanged += MContext_PropertyChanged;
+
             xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
@@ -117,18 +121,47 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //}
         }
 
-        private void CurrentActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+            if (e.PropertyName == nameof(mContext.BusinessFlow))
+            {
+                UpdatePOMTree();
+            }
+
+            if (e.PropertyName == nameof(mContext.Activity))
+            {
+                UpdatePOMTree();
+            }
+        }
+
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Activity.TargetApplication))
+            {
+                UpdatePOMTree();
+            }
+        }
+
+        private void UpdatePOMTree()
         {
             xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+        }
+
+        private void CurrentActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(mContext.BusinessFlow.CurrentActivity.TargetApplication))
+            {
+                xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+                xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            }
         }
 
         private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(xMainElementsGrid.toolbar.Visibility == Visibility.Visible)
-                xMainElementsGrid.toolbar.Visibility = Visibility.Hidden;
-            else
-                xMainElementsGrid.toolbar.Visibility = Visibility.Visible;
             //throw new NotImplementedException();
         }
 
@@ -216,7 +249,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
 
             xMainElementsGrid.AddToolbarTool(eImageType.GoBack, "Add to Actions", new RoutedEventHandler(AddFromPOMNavPage));
-            xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
         }
 
         private void AddFromPOMNavPage(object sender, RoutedEventArgs e)

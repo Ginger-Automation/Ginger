@@ -13,6 +13,7 @@ using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using System;
 using System.Linq;
 using System.Windows;
@@ -32,6 +33,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ActionsLibraryNavPage mActionsLibraryNavPage = null;
         LiveSpyNavPage mLiveSpyNavPage = null;
         WindowsExplorerNavPage mWindowsExplorerNavPage = null;
+        APINavPage mAPINavPage = null;
+        private bool applicationModelView;
+        private Agent mAgent = null;
 
         public MainAddActionsNavigationPage(Context context)
         {
@@ -45,7 +49,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetRecordButtonAccessebility()
         {
-            Agent mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
             if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
             {
                 xRecordItemBtn.IsEnabled = true;
@@ -69,10 +73,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if ((sender as Frame).Content == null)
             {
-
-                (sender as Frame).Visibility = Visibility.Collapsed;
-                xNavigationBarPnl.Visibility = Visibility.Collapsed;
-                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                if(applicationModelView)
+                {
+                    (sender as Frame).Visibility = Visibility.Collapsed;
+                    xNavigationBarPnl.Visibility = Visibility.Visible;
+                    xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+                    xApplicationModelsPnl.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    (sender as Frame).Visibility = Visibility.Collapsed;
+                    xNavigationBarPnl.Visibility = Visibility.Collapsed;
+                    xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                    xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
@@ -97,7 +111,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             if(mPOMNavPage == null)
             {
-                mPOMNavPage = new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+                mPOMNavPage = new POMNavPage(mContext,"Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+                mPOMNavPage.SetAgent(mAgent);
             }
             LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
@@ -139,28 +154,41 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             LoadActionFrame(mWindowsExplorerNavPage, "Windows Explorer", eImageType.Search);
         }
 
+        private void XAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(mAPINavPage == null)
+            {
+                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+                mAPINavPage = new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
+            }
+            LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
+        }
+
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
             if(xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
             {
-                xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
-                xApplicationModelsPnl.Visibility = Visibility.Visible;
+                applicationModelView = true;
+                LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
             }
             else if(xSelectedItemFrame.Content is null)
             {
+                applicationModelView = false;
+                xNavigationBarPnl.Visibility = Visibility.Collapsed;
                 xAddActionsOptionsPnl.Visibility = Visibility.Visible;
                 xApplicationModelsPnl.Visibility = Visibility.Collapsed;
             }
-
-            LoadActionFrame(null);
+            else
+                LoadActionFrame(null);
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
         {
             xSelectedItemFrame.Content = navigationPage;
 
-            if (navigationPage != null || xApplicationModelsPnl.Visibility == Visibility.Visible)
+            if (navigationPage != null || titleImage is eImageType.ApplicationModel)
             {
+                xNavigationBarPnl.Visibility = Visibility.Visible;
                 xSelectedItemTitlePnl.Visibility = Visibility.Visible;
                 xSelectedItemTitleImage.ImageType = titleImage;
                 xSelectedItemTitleText.Content = titleText;
@@ -171,16 +199,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void XAPIBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-            LoadActionFrame(new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument));
-        }
-
         private void XApplicationModelsBtn_Click(object sender, RoutedEventArgs e)
         {
             xApplicationModelsPnl.Visibility = Visibility.Visible;
             xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+            applicationModelView = true;
 
             LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
         }

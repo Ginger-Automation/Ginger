@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using Ginger.Help;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -25,19 +26,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class APINavPage : Page
     {
         Context mContext;
+        ITreeViewItem mItemTypeRootNode;
 
         public APINavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
         {
             InitializeComponent();
 
             mContext = context;
-
+            mItemTypeRootNode = itemTypeRootNode;
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-            mContext.BusinessFlow.CurrentActivity.PropertyChanged += CurrentActivity_PropertyChanged;
-            //xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+
+            mContext.PropertyChanged -= MContext_PropertyChanged;
+            mContext.PropertyChanged += MContext_PropertyChanged;
+
+            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
 
@@ -53,6 +58,31 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //{
             //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             //}
+        }
+
+        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity))
+            {
+                UpdateAPITree();
+            }
+        }
+
+        private void UpdateAPITree()
+        {
+            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+        }
+
+        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(mContext.Activity.TargetApplication))
+            {
+                UpdateAPITree();
+            }
         }
 
         private void CurrentActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.ApiModelsFolder;
 using Ginger.BusinessFlowPages.ListViewItems;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -32,7 +33,9 @@ using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -143,7 +146,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
-                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo)))
+                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
+                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
                 // OK to drop                         
                 DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
@@ -180,6 +184,22 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                     }
                     instance = null;
+                }
+                else if (droppedItem is ApplicationAPIModel)
+                {
+                    ApplicationAPIModel currentAPIModel = ((DragInfo)sender).Data as ApplicationAPIModel;
+                    AddApiModelActionWizardPage APIModelWizPage = new AddApiModelActionWizardPage(mContext);
+                    APIModelWizPage.AAMList.Add(currentAPIModel);
+                    APIModelWizPage.Pages.RemoveAt(0);
+                    WizardWindow wizWindow = new WizardWindow(APIModelWizPage);
+                    //APIModelWizPage.Pages.Insert(0, new WizardPage());
+                    APIModelWizPage.GetCurrentPage().Page.WizardEvent(new WizardEventArgs(APIModelWizPage, EventType.Active));
+                    wizWindow.Show();
+
+                    //APIModelParamsWizardPage
+                    //APIModelWizPage.AAMList.Add(currentAPIModel);
+                    //APIModelWizPage.Next();
+                    //instance = new GingerCore.Actions.WebServices.WebAPI.ActWebAPIModel();
                 }
 
                 if (instance != null)
