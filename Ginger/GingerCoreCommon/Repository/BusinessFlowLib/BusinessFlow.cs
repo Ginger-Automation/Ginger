@@ -550,7 +550,11 @@ namespace GingerCore
             {
                 if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
                 {
-                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity);
+                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                }
+                else
+                {
+                    insertIndex = Activities.Count;//last
                 }
                 activitiesGroup.AddActivityToGroup(activity);                
             }
