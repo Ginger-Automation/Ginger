@@ -593,7 +593,7 @@ namespace UnitTests.NonUITests
             
             //check original list ref obj
            Assert.AreEqual(BF.Activities, OriginalActivitiesObj, "BF.Activities REF");
-           Assert.AreEqual(BF.Activities[0].Description, "desc1", "BF.Activities[0].Description");
+           Assert.AreEqual(BF.Activities[0].Description, "desc5", "BF.Activities[0].Description");
            Assert.AreEqual(BF.Activities[5].ActivityName, "a6", "BF.Activities[5].ActivityName");
 
             // Check original action ref is back                
