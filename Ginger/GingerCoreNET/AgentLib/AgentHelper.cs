@@ -20,7 +20,7 @@ namespace GingerCoreNET
         public static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
         {
             ApplicationAgent appAgent = null;
-            if (context != null && context.BusinessFlow.CurrentActivity != null)
+            if (context != null && activity != null)
             {
                 appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();                
             }

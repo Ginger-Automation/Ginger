@@ -180,6 +180,11 @@ namespace GingerWPF.BusinessFlowsLib
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
+
+                mRunner.BusinessFlows.Add(mBusinessFlow);
+                mRunner.CurrentBusinessFlow = mBusinessFlow;
+                UpdateApplicationsAgentsMapping();
+
                 mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {
@@ -239,11 +244,8 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     SetActivityEditPage();
 
-                    mRunner.BusinessFlows.Add(mBusinessFlow);
-                    mRunner.CurrentBusinessFlow = mBusinessFlow;
 
                     SetBusinessFlowTargetAppIfNeeded();
-                    UpdateApplicationsAgentsMapping();
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();

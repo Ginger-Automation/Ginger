@@ -61,7 +61,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
             {
                 SetRecordButtonAccessebility();
-                LoadActionFrame(null);
+                if (e.PropertyName == nameof(BusinessFlow))
+                {
+                    LoadActionFrame(null); 
+                }
             }
         }
 
