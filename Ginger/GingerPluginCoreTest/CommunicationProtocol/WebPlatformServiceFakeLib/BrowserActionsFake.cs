@@ -12,7 +12,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 
         public void AcceptMessageBox()
         {
-            // dummy change 10 check AppVeyor VS 2019
+            // dummy change 11 check AppVeyor VS 2019
             throw new NotImplementedException();
         }
 
