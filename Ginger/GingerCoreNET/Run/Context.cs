@@ -149,19 +149,19 @@ namespace Amdocs.Ginger.Common
             }
         }
 
-        private ePlatformType mActivityPlatform;
-        public ePlatformType ActivityPlatform
+        private ePlatformType mPlatform;
+        public ePlatformType Platform
         {
             get
             {
-                return mActivityPlatform;
+                return mPlatform;
             }
             set
             {
-                if (mActivityPlatform != value)
+                if (mPlatform != value)
                 {
-                    mActivityPlatform = value;
-                    OnPropertyChanged(nameof(ActivityPlatform));
+                    mPlatform = value;
+                    OnPropertyChanged(nameof(Platform));
                 }
             }
         }

@@ -95,7 +95,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                      e.PropertyName == nameof(Context.AgentStatus) || 
                      e.PropertyName == nameof(Context.Agent) || 
                      e.PropertyName == nameof(Context.Target) || 
-                     e.PropertyName == nameof(Context.ActivityPlatform))
+                     e.PropertyName == nameof(Context.Platform))
             {
                 InitMethods();
             }
@@ -141,7 +141,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
-                if (PlatformInfoBase.GetPlatformImpl(mContext.ActivityPlatform) != null && PlatformInfoBase.GetPlatformImpl(mContext.ActivityPlatform).IsPlatformSupportPOM())
+                if (PlatformInfoBase.GetPlatformImpl(mContext.Platform) != null && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
                 {
                     if (((bool)xIntegratePOM.IsChecked))
                     {
@@ -202,7 +202,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void StartRecording()
         {
             IRecord record = (IRecord)mWindowExplorerDriver;            
-            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.ActivityPlatform);
+            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
 
             List<ApplicationPOMModel> applicationPOMs = null;
             if (Convert.ToBoolean(xIntegratePOM.IsChecked))

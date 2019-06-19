@@ -173,7 +173,7 @@ namespace GingerWPF.BusinessFlowsLib
                 if (tBase != null)
                 {
                     mContext.Target = tBase;
-                    mContext.ActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
                                                  where x.AppName == targetApp
                                                  select x.Platform).FirstOrDefault();
                 }
