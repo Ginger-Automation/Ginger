@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,8 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-            OpenSolution(@"C:\Ginger\test");
+            string jsonfilepath = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
+            OpenSolution(@jsonfilepath);
             WorkSpace.Instance.Solution = (Solution)(ISolution)sr.RepositorySerializer.DeserializeFromFile(Path.Combine(sr.SolutionFolder, "Ginger.Solution.xml"));
         }
     

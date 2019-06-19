@@ -278,6 +278,9 @@
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\ReportWebApp\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\Variables\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
