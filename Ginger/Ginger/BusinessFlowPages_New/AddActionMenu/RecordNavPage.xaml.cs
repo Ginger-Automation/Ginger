@@ -79,14 +79,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e != null && e.PropertyName == nameof(BusinessFlow))
+            if(e != null && e.PropertyName == nameof(Context.BusinessFlow))
             {
-                if (e.PropertyName == nameof(BusinessFlow))
-                {
-                    mContext = (Context)sender;
-                    xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();
-                    mApplicationPOMSelectionPage = null;                    
-                }
+                mContext = (Context)sender;
+                xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();
+                mApplicationPOMSelectionPage = null;
                 if (IsRecording)
                 {
                     IsRecording = !IsRecording;
@@ -94,7 +91,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
                 InitMethods();
             }
-            else if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.TargetApplication))
+            else if (e.PropertyName == nameof(Context.Activity) || 
+                     e.PropertyName == nameof(Context.AgentStatus) || 
+                     e.PropertyName == nameof(Context.Agent) || 
+                     e.PropertyName == nameof(Context.Target) || 
+                     e.PropertyName == nameof(Context.ActivityPlatform))
             {
                 InitMethods();
             }
@@ -157,13 +158,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
                     {
                         xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
-                    }
-                }
-                else
-                {
-                    if(IsRecording)
-                    {
-                        StopRecording();
                     }
                 }
 
