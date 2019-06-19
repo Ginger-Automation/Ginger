@@ -23,12 +23,12 @@ namespace Amdocs.Ginger.CoreNET.Logger
             this.browserPath = browserNewPath;
         }
 
-        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null)
+        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldOpenBrowser = true)
         {
             bool response = false;
             try
             {
-                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
+                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
                 if (!Directory.Exists(clientAppFolderPath))
                     return false;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 LiteDbRunSet lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
-                response = RunClientApp(json, clientAppFolderPath, openObject);
+                response = RunClientApp(json, clientAppFolderPath, openObject, shouldOpenBrowser);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
-        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject)
+        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldOpenBrowser = true)
         {
             bool response = false;
 
@@ -73,8 +73,9 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     pageDataSb.Append(openObject.Guid);
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\"";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets","Execution_Data","executiondata.js"), json);
-                System.Diagnostics.Process.Start(@browserPath, taskCommand);
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
+                if (shouldOpenBrowser)
+                    System.Diagnostics.Process.Start(@browserPath, taskCommand);
                 response = true;
             }
             catch (Exception ec)

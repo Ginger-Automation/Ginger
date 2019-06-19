@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             // a selected browser from unix can be run ,with his path
             string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
             WebReportGenerator webReporterRunner = new WebReportGenerator(browserPath);
-            Assert.IsTrue(webReporterRunner.RunNewHtmlReport());
+            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(null,null,false));
         }
 
         private void OpenSolution(string sFolder)
