@@ -33,12 +33,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         public bool IsRecording = false;
         IWindowExplorer mWindowExplorerDriver;
-        ePlatformType mActivityPlatform;
         Context mContext;
         RecordingManager mRecordingMngr;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
-        Agent mAgent;
-        ApplicationAgent mAppAgent;
 
         /// <summary>
         /// Constructor
@@ -48,42 +45,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
             mContext = context;
-            mAgent = null;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethods();
         }
               
         private void InitMethods()
         {
-            string targetApp = string.Empty;
-            if (mContext.BusinessFlow.CurrentActivity != null && !string.IsNullOrEmpty(mContext.BusinessFlow.CurrentActivity.TargetApplication))
-            {
-                targetApp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
-            }
-
-            mActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                     where x.AppName == targetApp
-                                     select x.Platform).FirstOrDefault();
-
-            if (mContext.Activity != null)
-            {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-                mContext.Activity.PropertyChanged += Activity_PropertyChanged; 
-            }
-
-            mAppAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-            if (mAppAgent != null)
-            {
-                mAppAgent.PropertyChanged -= MAppAgent_PropertyChanged;
-                mAppAgent.PropertyChanged += MAppAgent_PropertyChanged;
-                mAgent = mAppAgent.Agent;
-                if (mAgent != null)
-                {
-                    mAgent.PropertyChanged -= Agent_PropertyChanged;
-                    mAgent.PropertyChanged += Agent_PropertyChanged;
-                }
-            }
-
             SetControlsVisibility();
             SetRecordingButtonText();
             SetMultiplePropertiesGridView();            
@@ -104,31 +71,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged; 
             }            
         }
-
-        private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Agent.Status))
-            {
-                InitMethods();
-            }
-        }
-
-        private void MAppAgent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if(e.PropertyName == nameof(Agent))
-            {
-                InitMethods();
-            }
-        }
-
-        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(TargetApplication))
-            {
-                InitMethods();
-            }
-        }
-
+        
         /// <summary>
         /// Context Property changed event
         /// </summary>
@@ -136,34 +79,24 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
+            if(e != null && e.PropertyName == nameof(Context.BusinessFlow))
             {
-                ePlatformType platform = ePlatformType.NA;
-                if (e.PropertyName == nameof(BusinessFlow))
-                {
-                    mContext = (Context)sender;
-                    xWinGridUC.mContext = mContext;
-                    xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();
-                    mApplicationPOMSelectionPage = null;                    
-                }
-                else if (e.PropertyName == nameof(Activity) && ((Context)sender).BusinessFlow.CurrentActivity != null)
-                {
-                    platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                where x.AppName == ((Context)sender).BusinessFlow.CurrentActivity.TargetApplication
-                                select x.Platform).FirstOrDefault();
-
-                    if (mActivityPlatform != platform)
-                    {
-                        mApplicationPOMSelectionPage = null;
-                    }        
-                }
-                if (IsRecording && (e.PropertyName == nameof(BusinessFlow) 
-                                    || (e.PropertyName == nameof(Activity)
-                                        && mActivityPlatform != platform)))
+                mContext = (Context)sender;
+                xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();
+                mApplicationPOMSelectionPage = null;
+                if (IsRecording)
                 {
                     IsRecording = !IsRecording;
                     StopRecording();
                 }
+                InitMethods();
+            }
+            else if (e.PropertyName == nameof(Context.Activity) || 
+                     e.PropertyName == nameof(Context.AgentStatus) || 
+                     e.PropertyName == nameof(Context.Agent) || 
+                     e.PropertyName == nameof(Context.Target) || 
+                     e.PropertyName == nameof(Context.Platform))
+            {
                 InitMethods();
             }
         }
@@ -206,9 +139,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xStartAgentMessage.Visibility = Visibility.Visible;
             xPOMPanel.Visibility = Visibility.Hidden;
 
-            if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
+            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
-                if (PlatformInfoBase.GetPlatformImpl(mActivityPlatform) != null && PlatformInfoBase.GetPlatformImpl(mActivityPlatform).IsPlatformSupportPOM())
+                if (PlatformInfoBase.GetPlatformImpl(mContext.Platform) != null && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
                 {
                     if (((bool)xIntegratePOM.IsChecked))
                     {
@@ -225,13 +158,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
                     {
                         xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
-                    }
-                }
-                else
-                {
-                    if(IsRecording)
-                    {
-                        StopRecording();
                     }
                 }
 
@@ -276,7 +202,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void StartRecording()
         {
             IRecord record = (IRecord)mWindowExplorerDriver;            
-            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mActivityPlatform);
+            IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
 
             List<ApplicationPOMModel> applicationPOMs = null;
             if (Convert.ToBoolean(xIntegratePOM.IsChecked))

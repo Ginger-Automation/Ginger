@@ -37,6 +37,7 @@ using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
+using GingerCoreNET;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -91,7 +92,103 @@ namespace GingerWPF.BusinessFlowsLib
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
             BindEnvsCombo();
+            UpdateContext();
         }
+
+        private void UpdateContext()
+        {
+            if(mContext != null)
+            {
+                if (mContext.BusinessFlow.CurrentActivity != null)
+                {
+                    mContext.BusinessFlow.CurrentActivity.PropertyChanged -= Activity_PropertyChanged;
+                    mContext.BusinessFlow.CurrentActivity.PropertyChanged += Activity_PropertyChanged; 
+                }
+
+                if (mContext.Agent == null)
+                {
+                    SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+                }
+            }
+        }
+
+        /// <summary>
+        /// This event is used to handle the Activity's TargetApplciation changed functionality
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Activity_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Activity.TargetApplication))
+            {
+                SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            }
+        }
+
+        /// <summary>
+        /// This event is used to handle the ApplicationAgents Agent changed functionality
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AppAgent_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Agent))
+            {
+                SetContextAgent(((ApplicationAgent)sender).Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);                
+            }
+        }
+
+        /// <summary>
+        /// This event is used to handle the Agent's Status changed functionality
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Agent_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Agent.Status))
+            {
+                mContext.AgentStatus = Convert.ToString(((Agent)sender).Status);
+            }
+        }
+        
+        /// <summary>
+        /// This method will set the Agent for current activity in Context
+        /// </summary>
+        private void SetContextAgent(Agent agent, Activity activity, GingerRunner runner, Context context)
+        {
+            ApplicationAgent appAgent = AgentHelper.GetAppAgent(activity, runner, context);
+            if (appAgent != null)
+            {
+                if (agent != null && mContext.Agent != agent)
+                {
+                    mContext.Agent = agent;
+                }
+                else if (mContext.Agent != appAgent.Agent)
+                {
+                    mContext.Agent = appAgent.Agent;
+                }
+
+                string targetApp = Convert.ToString(activity.TargetApplication);
+                TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == targetApp select x).FirstOrDefault();
+                if (tBase != null)
+                {
+                    mContext.Target = tBase;
+                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                                 where x.AppName == targetApp
+                                                 select x.Platform).FirstOrDefault();
+                }
+                               
+                if (mContext.Agent != null)
+                {
+                    mContext.Agent.PropertyChanged -= Agent_PropertyChanged;
+                    mContext.Agent.PropertyChanged += Agent_PropertyChanged;
+                }
+
+                appAgent.PropertyChanged -= AppAgent_PropertyChanged;
+                appAgent.PropertyChanged += AppAgent_PropertyChanged;
+            }
+        }
+
 
         //private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         //{
@@ -180,6 +277,11 @@ namespace GingerWPF.BusinessFlowsLib
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
+
+                mRunner.BusinessFlows.Add(mBusinessFlow);
+                mRunner.CurrentBusinessFlow = mBusinessFlow;
+                UpdateApplicationsAgentsMapping();
+
                 mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {
@@ -239,11 +341,8 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     SetActivityEditPage();
 
-                    mRunner.BusinessFlows.Add(mBusinessFlow);
-                    mRunner.CurrentBusinessFlow = mBusinessFlow;
 
                     SetBusinessFlowTargetAppIfNeeded();
-                    UpdateApplicationsAgentsMapping();
                     mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
 
                     UpdateRunnerAgentsUsedBusinessFlow();

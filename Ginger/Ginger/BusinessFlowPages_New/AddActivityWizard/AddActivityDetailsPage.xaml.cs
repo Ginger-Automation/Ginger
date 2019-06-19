@@ -86,15 +86,18 @@ namespace Ginger.BusinessFlowPages
         {
             if (mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Count > 0)
             {
-                return mWizard.ParentActivitiesGroup.ActivitiesIdentifiers[0].IdentifiedActivity.TargetApplication;
-            }
-            else
-            {
-                if (mWizard.Context.BusinessFlow.TargetApplications.Count > 0)
+                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
+                if (activityIdnt != null)
                 {
-                    return mWizard.Context.BusinessFlow.TargetApplications[0].Name;
+                    return activityIdnt.IdentifiedActivity.TargetApplication;
                 }
             }
+
+            if (mWizard.Context.BusinessFlow.TargetApplications.Count > 0)
+            {
+                return mWizard.Context.BusinessFlow.TargetApplications[0].Name;
+            }
+
             return string.Empty;
         }
     }
