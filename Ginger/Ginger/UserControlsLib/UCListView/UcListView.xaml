@@ -4,12 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             xmlns:Ginger="clr-namespace:Ginger"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xListTitleRow" Height="40" />
-            <RowDefinition x:Name="xListControlsRow" Height="40" />
+            <RowDefinition x:Name="xListSearchRow" Height="30" />
+            <RowDefinition x:Name="xListFilterRow" Height="30" />
             <RowDefinition Height="300*" />
         </Grid.RowDefinitions>
         
@@ -21,41 +23,8 @@
                 <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
                 <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
-        </DockPanel>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100*" MinWidth="100"/>
-                <ColumnDefinition Width="100*" MinWidth="100"/>
-            </Grid.ColumnDefinitions>
-            
-            <Grid Grid.Row="1" >
-                <Grid.ColumnDefinitions>
-                    <!--<ColumnDefinition Width="40" />-->
-                    <ColumnDefinition Width="100*" />
-                </Grid.ColumnDefinitions>
 
-                <!--<Button x:Name="xGroupBtn" Grid.Column="0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Click="xGroupBtn_Click" Margin="5,0,5,0" BorderBrush="Transparent" Background="Transparent" >
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <usercontrols:ImageMakerControl ImageType="ListGroup" Width="16" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
-                            <Path x:Name="sortBtnArrow" Margin="4" VerticalAlignment="Center" Width="5" Fill="#FF527DB5" Stretch="Uniform" HorizontalAlignment="Right" Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "/>
-                        </StackPanel>
-                    </Button.Content>
-                    <Button.ContextMenu>
-                        <ContextMenu >
-                            <MenuItem Header="Group By Tag"/>
-                            <MenuItem Header="Group By Target Application"/>
-                        </ContextMenu>
-                    </Button.ContextMenu>
-                </Button>-->
-                <!-- Search Text Box -->
-                <!-- overlay with hint text & Clear button-->
-                <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
-                <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-                <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-            </Grid>
-            
-            <DockPanel x:Name="xAllListOperationsBarPnl" Grid.Column="1" HorizontalAlignment="Right" Margin="10 0 0 0">
+            <DockPanel x:Name="xAllListOperationsBarPnl"  HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="10 0 0 0">
                 <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent">
                     <MenuItem>
@@ -65,13 +34,19 @@
                     </MenuItem>
                 </Menu>
             </DockPanel>
-            
+        </DockPanel>
+
+        <Grid Grid.Row="1" >
+            <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
+            <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
         </Grid>
-       
+        
+        <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
 
-        <!--<usercontrols:ImageMakerControl x:Name="xLoadingListImage" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />-->
-
-        <ListView x:Name="xListView" Grid.Row="2" 
+        <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
+        
+        <ListView x:Name="xListView" Grid.Row="3" 
                   Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  
                   VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
                   SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >

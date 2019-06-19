@@ -554,12 +554,12 @@ namespace Ginger
         }
         public bool EnableTagsPanel
         {
-            get { return TagsViewer.TagsStackPanl.IsEnabled; }
-            set { TagsViewer.TagsStackPanl.IsEnabled = value;
+            get { return TagsViewer.xTagsStackPanl.IsEnabled; }
+            set { TagsViewer.xTagsStackPanl.IsEnabled = value;
                 if(value == true)
-                    TagsViewer.AddTagBtn1.Visibility = Visibility.Visible;
+                    TagsViewer.xAddTagBtn.Visibility = Visibility.Visible;
                 else
-                    TagsViewer.AddTagBtn1.Visibility = Visibility.Collapsed;
+                    TagsViewer.xAddTagBtn.Visibility = Visibility.Collapsed;
             }
         }
 

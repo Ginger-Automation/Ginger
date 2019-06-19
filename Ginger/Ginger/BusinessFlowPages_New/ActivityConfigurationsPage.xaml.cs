@@ -25,10 +25,6 @@ namespace Ginger.BusinessFlowPages
             mActivity = activity;
             mContext = context;
 
-            xAutomationStatusCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eActivityAutomationStatus));
-            xHandlerTypeCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eHandlerType));
-            xRunOptionCombo.ItemsSource = GingerCore.General.GetEnumValues(typeof(eActionRunOption));
-
             BindControls();
         }
 
@@ -47,15 +43,15 @@ namespace Ginger.BusinessFlowPages
 
         private void RemoveBindings()
         {
-            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.SelectedValueProperty);
             BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
             BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
             BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
             BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
             BindingOperations.ClearBinding(xTargetApplicationComboBox, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
             BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.TextProperty);
+            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
             BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);
         }
 
@@ -63,14 +59,14 @@ namespace Ginger.BusinessFlowPages
         {
             //Configurations Tab Bindings
             xRunDescritpion.Init(mContext, mActivity, nameof(Activity.RunDescription));
-            BindingHandler.ObjFieldBinding(xRunOptionCombo, ComboBox.TextProperty, mActivity, nameof(Activity.ActionRunOption));
+            xRunOptionCombo.BindControl(mActivity, nameof(Activity.ActionRunOption));
             GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
             xTagsViewer.Init(mActivity.Tags);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
             BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
             BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
-            BindingHandler.ObjFieldBinding(xAutomationStatusCombo, ComboBox.TextProperty, mActivity, nameof(Activity.AutomationStatus));
+            xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             if (mContext != null && mContext.BusinessFlow != null)
             {
@@ -88,7 +84,7 @@ namespace Ginger.BusinessFlowPages
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;
-                BindingHandler.ObjFieldBinding(xHandlerTypeCombo, ComboBox.TextProperty, mActivity, nameof(ErrorHandler.HandlerType));
+                xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
             }
             else
             {

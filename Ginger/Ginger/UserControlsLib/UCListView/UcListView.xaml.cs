@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.UCListView
         private Task mSearchTask = null;
         private CancellationTokenSource mCancellationTokenSource = null;
         private string mSearchString;
-
+        public ObservableList<Guid> Tags = null;
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
@@ -82,6 +82,23 @@ namespace Ginger.UserControlsLib.UCListView
             //Hook Drag Drop handler
             mIsDragDropCompatible = true;
             DragDrop2.HookEventHandlers(this);
+
+            if (Tags == null)
+            {
+                Tags = new ObservableList<Guid>();
+            }
+
+            xTagsFilter.Init(Tags);
+            xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+        }
+
+        private void TagsFilter_TagsStackPanlChanged(object sender, EventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                //CollectFilterData(); //TO implement
+                //mCollectionView.Refresh();
+            });
         }
 
         public ListView List
