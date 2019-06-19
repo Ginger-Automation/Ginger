@@ -207,7 +207,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             xApplicationModelsPnl.Visibility = Visibility.Visible;
             xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
-            applicationModelView = true;
 
             LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
         }

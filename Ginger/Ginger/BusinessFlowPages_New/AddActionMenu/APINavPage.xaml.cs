@@ -72,6 +72,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdateAPITree()
         {
+            if (mContext.BusinessFlow.CurrentActivity == null)
+                mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
+
             xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);

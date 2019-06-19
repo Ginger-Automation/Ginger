@@ -125,12 +125,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
             mContext.Activity.PropertyChanged += Activity_PropertyChanged;
-            if (e.PropertyName == nameof(mContext.BusinessFlow))
-            {
-                UpdatePOMTree();
-            }
-
-            if (e.PropertyName == nameof(mContext.Activity))
+            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity))
             {
                 UpdatePOMTree();
             }
@@ -146,6 +141,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdatePOMTree()
         {
+            if (mContext.BusinessFlow.CurrentActivity == null)
+                mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
+
             xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
