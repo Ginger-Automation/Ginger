@@ -256,8 +256,9 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
                     operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    operationBtn.ButtonImageHeight = 16;
-                    operationBtn.ButtonImageWidth = 18;
+                    //operationBtn.ButtonFontImageSize = 14;
+                    //operationBtn.ButtonImageHeight = 16;
+                    //operationBtn.ButtonImageWidth = 18;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
 
                     if (operation.ImageForeground == null)

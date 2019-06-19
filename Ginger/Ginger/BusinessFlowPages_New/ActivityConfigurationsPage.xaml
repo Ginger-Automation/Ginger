@@ -23,10 +23,10 @@
             <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
             
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Screen/Component:</Label>
-            <TextBox x:Name="xScreenTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+            <TextBox x:Name="xScreenTxt" DockPanel.Dock="Top" Height="25" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
             
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Expected:</Label>
-            <TextBox x:Name="xExpectedTxt"  DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+            <TextBox x:Name="xExpectedTxt"  DockPanel.Dock="Top" Height="25" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
 
             <CheckBox x:Name="xMandatoryActivityCB" DockPanel.Dock="Top" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Activity"/>
 
