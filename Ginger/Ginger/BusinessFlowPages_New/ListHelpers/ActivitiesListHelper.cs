@@ -123,18 +123,19 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addNew.OperationHandler = AddNewHandler;
             operationsList.Add(addNew);
 
-            ListItemOperation deleteAll = new ListItemOperation();
-            deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            deleteAll.OperationHandler = DeleteAllHandler;
-            operationsList.Add(deleteAll);
-
             return operationsList;
         }
 
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            ListItemOperation deleteAll = new ListItemOperation();
+            deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            deleteAll.Header = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            deleteAll.OperationHandler = DeleteAllHandler;
+            extraOperationsList.Add(deleteAll);
 
             ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
             activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
@@ -349,6 +350,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void AddNewHandler(object sender, RoutedEventArgs e)
         {
             WizardWindow.ShowWizard(new AddActivityWizard(mContext));
+            //OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private void DeleteAllHandler(object sender, RoutedEventArgs e)

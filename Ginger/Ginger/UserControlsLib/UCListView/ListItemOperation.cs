@@ -10,7 +10,7 @@ namespace Ginger.UserControlsLib.UCListView
         public string Header;
         public eImageType ImageType;
         public SolidColorBrush ImageForeground;
-        public double ImageSize = 16;
+        public double ImageSize = 14;
         public object ImageBindingObject;
         public string ImageBindingFieldName;
         public IValueConverter ImageBindingConverter;

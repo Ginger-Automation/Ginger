@@ -550,20 +550,27 @@ namespace GingerCore
             {
                 if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
                 {
-                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity);
+                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                }
+                else
+                {
+                    insertIndex = Activities.Count;//last
                 }
                 activitiesGroup.AddActivityToGroup(activity);                
             }
-            else if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+            else if (CurrentActivity != null)                 
             {
-                activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
-                insertIndex = Activities.IndexOf(CurrentActivity);
-                while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
+                if (string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
                 {
-                    insertIndex++;
-                    if (insertIndex >= Activities.Count)
+                    activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                    insertIndex = Activities.IndexOf(CurrentActivity);
+                    while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
                     {
-                        break;
+                        insertIndex++;
+                        if (insertIndex >= Activities.Count)
+                        {
+                            break;
+                        }
                     }
                 }
             }

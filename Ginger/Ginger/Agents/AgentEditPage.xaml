@@ -26,7 +26,7 @@
                 <StackPanel>
                     <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
                     <TextBox x:Name="xDescriptionTextBox" Text="" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
-                    <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,5,0,0" HorizontalAlignment="Left" />
+                    <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,0,0,0" HorizontalAlignment="Left" />
                 </StackPanel>
             </StackPanel>
 

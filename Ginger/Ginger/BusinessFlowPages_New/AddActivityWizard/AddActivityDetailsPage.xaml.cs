@@ -49,14 +49,14 @@ namespace Ginger.BusinessFlowPages
             {
                 if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler))
                 {
-                    mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), Active = true };
+                    mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication=SetTargetApp(), Active = true };
                 }                
             }
             else if (xErrorHandlerType.IsChecked == true)
             {
                 if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) == false)
                 {
-                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler" };
+                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler" , TargetApplication = SetTargetApp()};
                 }
             }
         }
@@ -72,6 +72,7 @@ namespace Ginger.BusinessFlowPages
                     {
                         ActivitiesGroup activitiesGroup = new ActivitiesGroup() { Name = groupName.Trim() };
                         mWizard.Context.BusinessFlow.AddActivitiesGroup(activitiesGroup);
+                        xGroupComboBox.SelectedItem = activitiesGroup;
                     }
                     else
                     {
@@ -79,6 +80,25 @@ namespace Ginger.BusinessFlowPages
                     }
                 }
             }
+        }
+
+        private string SetTargetApp()
+        {
+            if (mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Count > 0)
+            {
+                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
+                if (activityIdnt != null)
+                {
+                    return activityIdnt.IdentifiedActivity.TargetApplication;
+                }
+            }
+
+            if (mWizard.Context.BusinessFlow.TargetApplications.Count > 0)
+            {
+                return mWizard.Context.BusinessFlow.TargetApplications[0].Name;
+            }
+
+            return string.Empty;
         }
     }
 }

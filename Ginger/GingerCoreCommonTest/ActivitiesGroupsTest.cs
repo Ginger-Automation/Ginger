@@ -290,5 +290,78 @@ namespace GingerCoreCommonTest
             Assert.IsTrue(busFlow.Activities[3] == activity1, "Validate group 1 Activities moved down");
             Assert.IsTrue(busFlow.Activities[4] == activity2, "Validate group 1 Activities moved down");
         }
+
+        [TestMethod]
+        public void AddActivityWithNewGroupTest()
+        {
+            //Arrange
+            BusinessFlow busFlow = new BusinessFlow();
+
+            ActivitiesGroup group1 = new ActivitiesGroup() { Name = "Group1" };
+            busFlow.AddActivitiesGroup(group1);
+            ActivitiesGroup group2 = new ActivitiesGroup() { Name = "Group2" };
+            busFlow.AddActivitiesGroup(group2);
+
+            Activity activity1 = new Activity() { ActivityName = "Activity1" };           
+            Activity activity2 = new Activity() { ActivityName = "Activity2" };           
+            Activity activity3 = new Activity() { ActivityName = "Activity3" };            
+            Activity activity4 = new Activity() { ActivityName = "Activity4" };          
+            Activity activity5 = new Activity() { ActivityName = "Activity5" };                      
+
+            busFlow.AddActivity(activity1, group1);
+            busFlow.AddActivity(activity2, group1);
+            busFlow.AddActivity(activity3, group1);
+
+            busFlow.AddActivity(activity4, group2);
+            busFlow.AddActivity(activity5, group2);
+
+            //Act
+            busFlow.AttachActivitiesGroupsAndActivities();
+            ActivitiesGroup group3 = new ActivitiesGroup() { Name = "Group3" };
+            busFlow.AddActivitiesGroup(group3);
+            Activity activity6 = new Activity() { ActivityName = "Activity6" };
+            busFlow.AddActivity(activity6, group3);
+
+            //Assert
+            Assert.IsTrue(busFlow.Activities[5] == activity6, "Validate new Activity added in last");
+            Assert.IsTrue(busFlow.ActivitiesGroups[2] == group3, "Validate new group was added to BF");
+            Assert.IsTrue(activity6.ActivitiesGroupID == group3.Name, "Validate new Activity is mapped to new group");           
+            Assert.IsTrue(group3.ActivitiesIdentifiers[0].IdentifiedActivity == activity6, "Validate new Activity is mapped to new group");
+        }
+
+        [TestMethod]
+        public void AddActivityToExistingGroupTest()
+        {
+            //Arrange
+            BusinessFlow busFlow = new BusinessFlow();
+
+            ActivitiesGroup group1 = new ActivitiesGroup() { Name = "Group1" };
+            busFlow.AddActivitiesGroup(group1);
+            ActivitiesGroup group2 = new ActivitiesGroup() { Name = "Group2" };
+            busFlow.AddActivitiesGroup(group2);
+
+            Activity activity1 = new Activity() { ActivityName = "Activity1" };
+            Activity activity2 = new Activity() { ActivityName = "Activity2" };
+            Activity activity3 = new Activity() { ActivityName = "Activity3" };
+            Activity activity4 = new Activity() { ActivityName = "Activity4" };
+            Activity activity5 = new Activity() { ActivityName = "Activity5" };
+
+            busFlow.AddActivity(activity1, group1);
+            busFlow.AddActivity(activity2, group1);
+            busFlow.AddActivity(activity3, group1);
+
+            busFlow.AddActivity(activity4, group2);
+            busFlow.AddActivity(activity5, group2);
+
+            //Act
+            busFlow.AttachActivitiesGroupsAndActivities();
+            Activity activity6 = new Activity() { ActivityName = "Activity6" };
+            busFlow.AddActivity(activity6, group1);
+
+            //Assert
+            Assert.IsTrue(busFlow.Activities[3] == activity6, "Validate new Activity added in last of existing group Activities");            
+            Assert.IsTrue(activity6.ActivitiesGroupID == group1.Name, "Validate new Activity is mapped to existing group");
+            Assert.IsTrue(group1.ActivitiesIdentifiers[group1.ActivitiesIdentifiers.Count -1].IdentifiedActivity == activity6, "Validate new Activity is mapped to existing group");
+        }
     }
 }
