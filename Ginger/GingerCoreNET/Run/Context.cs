@@ -16,14 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCore.Platforms;
+using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common
 {
@@ -43,7 +46,7 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-
+        
         private ProjEnvironment mEnvironment;
         public ProjEnvironment Environment
         {
@@ -94,7 +97,7 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-
+        
         private TargetBase mTarget;
         public TargetBase Target
         {
@@ -111,7 +114,58 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
+                
+        private Agent mAgent;
+        public Agent Agent
+        {
+            get
+            {
+                return mAgent;
+            }
+            set
+            {
+                if (mAgent != value)
+                {
+                    mAgent = value;
+                    OnPropertyChanged(nameof(Agent));
+                }
+            }
+        }
 
+        private string mAgentStatus;
+        public string AgentStatus
+        {
+            get
+            {
+                return mAgentStatus;
+            }
+            set
+            {
+                if (mAgentStatus != value)
+                {
+                    mAgentStatus = value;
+                    OnPropertyChanged(nameof(AgentStatus));
+                }
+            }
+        }
+
+        private ePlatformType mPlatform;
+        public ePlatformType Platform
+        {
+            get
+            {
+                return mPlatform;
+            }
+            set
+            {
+                if (mPlatform != value)
+                {
+                    mPlatform = value;
+                    OnPropertyChanged(nameof(Platform));
+                }
+            }
+        }
+               
         public static Context GetAsContext(object contextObj)
         {
             if (contextObj != null && contextObj is Context)
