@@ -358,8 +358,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
-            mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
-            // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+            mContext.Activity = mBusinessFlow.CurrentActivity;            
             SetActivityEditPage();
         }
 
@@ -426,7 +425,14 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mBusinessFlow != null && mBusinessFlow.CurrentActivity != null)
             {
-                mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                if (mActivityPage == null)
+                {
+                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                }
+                else
+                {
+                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                }
             }
             else
             {

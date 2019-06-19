@@ -358,7 +358,21 @@ namespace GingerCore.Actions
         // Stop on this act if in debug mode
         // No need to serialize
         private bool mBreakPoint;
-        public bool BreakPoint { get { return mBreakPoint; } set { if (mBreakPoint != value) { mBreakPoint = value; OnPropertyChanged(Fields.BreakPoint); } } }
+        public bool BreakPoint
+        {
+            get
+            {
+                return mBreakPoint;
+            }
+            set
+            {
+                if(mBreakPoint != value)
+                {
+                    mBreakPoint = value;
+                    OnPropertyChanged(Fields.BreakPoint);
+                }
+            }
+        }
 
         //TODO: need to remove from here and use only ActUIElement         
         public string LocateValueCalculated { get; set; }

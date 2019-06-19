@@ -4,6 +4,7 @@ using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
 using Ginger.UserControlsLib.UCListView;
+using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -144,6 +145,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
             extraOperationsList.Add(activeUnactiveAllActivities);
 
+            ListItemOperation activitiesVarsDep = new ListItemOperation();
+            activitiesVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+            activitiesVarsDep.Header = string.Format("{0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            activitiesVarsDep.ToolTip = string.Format("Set {0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            activitiesVarsDep.OperationHandler = ActivitiesVarsHandler;
+            extraOperationsList.Add(activitiesVarsDep);
+
             return extraOperationsList;
         }
 
@@ -238,28 +246,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             reset.Header = "Reset";
             reset.ToolTip = "Reset execution details";
             reset.OperationHandler = ResetHandler;
-            extraOperationsList.Add(reset);
-
-            ListItemOperation actionVarsDep = new ListItemOperation();
-            actionVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionVarsDep.Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.OperationHandler = ActionsVarsHandler;
-            extraOperationsList.Add(actionVarsDep);
-
-            ListItemOperation activeUnactiveAllActions = new ListItemOperation();
-            activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActions.Header = "Activate/Un-Activate all Actions";
-            activeUnactiveAllActions.ToolTip = "Activate/Un-Activate all Actions";
-            activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
-            extraOperationsList.Add(activeUnactiveAllActions);
-
-            ListItemOperation takeUntakeSS = new ListItemOperation();
-            takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-            takeUntakeSS.Header = "Take/Un-Take Screen Shots";
-            takeUntakeSS.ToolTip = "Set Take/Un-Take Screen Shots to all Actions";
-            takeUntakeSS.OperationHandler = TakeUntakeSSHandler;
-            extraOperationsList.Add(takeUntakeSS);            
+            extraOperationsList.Add(reset);           
 
             ListItemOperation addToSR = new ListItemOperation();
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
@@ -284,7 +271,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             ListItemOperation continueRun = new ListItemOperation();
             continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
-            continueRun.ToolTip = "Continue Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            continueRun.ToolTip = "Continue Run from " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             continueRun.OperationHandler = ContinueRunHandler;
             executionOperationsList.Add(continueRun);
 
@@ -402,12 +389,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             mActivity.Reset();
         }
-
-        private void ActionsVarsHandler(object sender, RoutedEventArgs e)
+        private void ActivitiesVarsHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            Ginger.Variables.VariablesDependenciesPage actionsDepPage = new Ginger.Variables.VariablesDependenciesPage(mActivity);
-            actionsDepPage.ShowAsWindow();
+            VariablesDependenciesPage activitiesVarsDepPage = new VariablesDependenciesPage(mContext.BusinessFlow);
+            activitiesVarsDepPage.ShowAsWindow();
         }
 
         private void ActiveUnactiveAllActivitiesHandler(object sender, RoutedEventArgs e)
@@ -420,33 +406,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     a.Active = activeValue;
                 }
             }
-        }
-
-        private void ActiveUnactiveAllActionsHandler(object sender, RoutedEventArgs e)
-        {
-            SetItem(sender);
-            if (mActivity.Acts.Count > 0)
-            {
-                bool activeValue = !mActivity.Acts[0].Active;
-                foreach (Act a in mActivity.Acts)
-                {
-                    a.Active = activeValue;
-                }
-            }
-        }
-
-        private void TakeUntakeSSHandler(object sender, RoutedEventArgs e)
-        {
-            SetItem(sender);
-            if (mActivity.Acts.Count > 0)
-            {
-                bool takeValue = !((Act)mActivity.Acts[0]).TakeScreenShot;//decide if to take or not
-                foreach (Act a in mActivity.Acts)
-                {
-                    a.TakeScreenShot = takeValue;
-                }
-            }
-        }
+        }      
 
         private void DeleteHandler(object sender, RoutedEventArgs e)
         {

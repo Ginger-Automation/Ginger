@@ -19,13 +19,16 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Activities;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowWindows;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerCore.Platforms;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -101,6 +104,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mActivity, nameof(Activity.ActivityName));
             mActivity.PropertyChanged += mActivity_PropertyChanged;
             UpdateDescription();
+            xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
 
             //Actions Tab Bindings            
             mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
@@ -160,17 +164,22 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xUploadToShareRepoMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            list.Add(mActivity);
+            (new Ginger.Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
         }
 
         private void xRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-
+            mContext.BusinessFlow.CurrentActivity = mActivity;
+            mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null);
         }
 
         private void xContinueRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-
+            mContext.BusinessFlow.CurrentActivity = mActivity;
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, null);
         }
 
         private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -196,6 +205,16 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xActionsTabHeaderText.Text = string.Format("Actions ({0})", mActivity.Acts.Count);
             });
+        }
+
+        private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
+        }
+
+        private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mActivity.Reset();
         }
     }
 }

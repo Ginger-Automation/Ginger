@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
             BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
             BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xTargetApplicationComboBox, CheckBox.IsCheckedProperty);
+            BindingOperations.ClearBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty);
             BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
             BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
             BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
