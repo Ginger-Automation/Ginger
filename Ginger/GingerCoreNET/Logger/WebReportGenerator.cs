@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             this.browserPath = browserNewPath;
         }
 
-        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null)
+        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool displayReport = false)
         {
             bool response = false;
             try
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 LiteDbRunSet lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
-                response = RunClientApp(json, clientAppFolderPath, openObject);
+                response = RunClientApp(json, clientAppFolderPath, openObject, !displayReport);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
-        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject)
+        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool displayReport)
         {
             bool response = false;
 
@@ -74,7 +74,11 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\"";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets","Execution_Data","executiondata.js"), json);
-                System.Diagnostics.Process.Start(@browserPath, taskCommand);
+                if (displayReport)
+                {
+                    System.Diagnostics.Process.Start(@browserPath, taskCommand);
+                    System.Diagnostics.Process.Start(clientAppFolderPath);
+                }
                 response = true;
             }
             catch (Exception ec)
@@ -83,8 +87,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             return response;
         }
-
-        private void DeleteFoldersData(string clientAppFolderPath)
+        
+        public void DeleteFoldersData(string clientAppFolderPath)
         {
             DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
             foreach (FileInfo fi in dir.GetFiles())
