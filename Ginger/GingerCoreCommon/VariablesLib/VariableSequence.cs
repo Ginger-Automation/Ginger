@@ -82,7 +82,10 @@ namespace GingerCore.Variables
         }
     
         public override eImageType Image { get { return eImageType.SequentialExecution; } }
-        public override string VariableType() { return "Sequence"; }
+        public override string VariableType
+        {
+            get { return "Sequence"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()

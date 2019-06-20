@@ -69,7 +69,10 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Label; } }
-        public override string VariableType() { return "String"; }
+        public override string VariableType
+        {
+            get { return "String"; }
+        }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {

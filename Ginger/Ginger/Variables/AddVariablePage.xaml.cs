@@ -41,6 +41,8 @@ namespace Ginger.Variables
 
         Context mContext = new Context();
 
+        public bool ShowEditPage = true;
+
         public AddVariablePage(eVariablesLevel variablesLevel, object variablesParentObj,Context context)
         {
             InitializeComponent();
@@ -122,28 +124,31 @@ namespace Ginger.Variables
                 return;
             }
 
-            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
-            if (mVariablesLevel == eVariablesLevel.Solution)
+            if (ShowEditPage)
             {
-                editMode = VariableEditPage.eEditMode.Global;
-            }
-            VariableEditPage varEditPage = new VariableEditPage(newVar, mContext, false, editMode);
-            _pageGenericWin.Close();
-            varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
-          
+                VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
+                if (mVariablesLevel == eVariablesLevel.Solution)
+                {
+                    editMode = VariableEditPage.eEditMode.Global;
+                }
+                VariableEditPage varEditPage = new VariableEditPage(newVar, mContext, false, editMode);
+                _pageGenericWin.Close();
+                varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
-            //make sure name is unique
-            switch (mVariablesLevel)
-            {
-                case eVariablesLevel.Solution:
-                    ((Solution)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
-                case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
-                case eVariablesLevel.Activity:
-                    ((Activity)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
+
+                //make sure name is unique
+                switch (mVariablesLevel)
+                {
+                    case eVariablesLevel.Solution:
+                        ((Solution)mVariablesParentObj).SetUniqueVariableName(newVar);
+                        break;
+                    case eVariablesLevel.BusinessFlow:
+                        ((BusinessFlow)mVariablesParentObj).SetUniqueVariableName(newVar);
+                        break;
+                    case eVariablesLevel.Activity:
+                        ((Activity)mVariablesParentObj).SetUniqueVariableName(newVar);
+                        break;
+                }
             }
         }
 

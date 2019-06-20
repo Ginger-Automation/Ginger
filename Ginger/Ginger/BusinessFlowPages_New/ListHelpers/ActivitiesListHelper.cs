@@ -6,7 +6,6 @@ using Ginger.BusinessFlowWindows;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
@@ -66,7 +65,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Activity.Description);
         }
 
-        public string GetItemGroupField()
+        public string GetItemNameExtentionField()
         {
             return nameof(Activity.ActivitiesGroupID);
         }

@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -46,6 +48,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 mAction = (Act)(((ucButton)item).Tag);
             }
+            else if (item is MenuItem)
+            {
+                mAction = (Act)(((MenuItem)item).Tag);
+            }
         }
 
         public string GetItemNameField()
@@ -53,7 +59,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.Description);
         }
 
-        public string GetItemGroupField()
+        public string GetItemNameExtentionField()
         {
             return null;
         }
@@ -266,6 +272,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             reset.OperationHandler = ResetHandler;
             extraOperationsList.Add(reset);
 
+            ListItemOperation addToSR = new ListItemOperation();
+            addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+            addToSR.Header = "Add to Shared Repository";
+            addToSR.ToolTip = "Add to Shared Repository";
+            addToSR.OperationHandler = AddToSRHandler;
+            extraOperationsList.Add(addToSR);
+
             return extraOperationsList;
         }
 
@@ -403,6 +416,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, null);
+        }
+
+        private void AddToSRHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            list.Add(mAction);
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
         }
 
     }

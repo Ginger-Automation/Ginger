@@ -224,6 +224,7 @@ namespace Amdocs.Ginger.Common.Enums
         Ping,
         Database,
         Output,
+        Input,
         CodeFile,
         Rows,
         Column,

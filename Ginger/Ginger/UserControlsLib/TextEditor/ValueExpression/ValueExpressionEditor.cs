@@ -145,7 +145,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         private TextCompletionData GETVariableTCD(VariableBase v)
         {
             TextCompletionData TCD = new TextCompletionData("{Var Name=" + v.Name + "}");
-            TCD.Description = "Variable " + v.Name + " " + v.VariableType();
+            TCD.Description = "Variable " + v.Name + " " + v.VariableType;
 
 
             //TODO: replace with General.GetImage("@Variable_32x32.png")

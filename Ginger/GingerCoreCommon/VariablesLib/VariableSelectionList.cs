@@ -35,7 +35,10 @@ namespace GingerCore.Variables
 
         public override eImageType Image { get { return eImageType.MinusSquare; } }
 
-        public override string VariableType() { return "Selection List"; }
+        public override string VariableType
+        {
+            get { return "Selection List"; }
+        }
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues

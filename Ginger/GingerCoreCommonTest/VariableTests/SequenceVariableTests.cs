@@ -61,7 +61,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSequence variableSequence = new VariableSequence();
 
             //Act
-            string varType = variableSequence.VariableType();
+            string varType = variableSequence.VariableType;
 
             //Assert            
             Assert.AreEqual("Sequence", varType, "Sequence Variable Type");
