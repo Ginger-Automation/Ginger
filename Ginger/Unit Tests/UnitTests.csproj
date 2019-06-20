@@ -288,6 +288,7 @@
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />
     <Compile Include="NonUITests\OutputSimulation.cs" />
     <Compile Include="NonUITests\RepositoryTest.cs" />
+    <Compile Include="NonUITests\ScriptActionTest.cs" />
     <Compile Include="NonUITests\Script\VBSDateTimeTests.cs" />
     <Compile Include="NonUITests\Script\VBSNumericTests.cs" />
     <Compile Include="NonUITests\Script\VBSStringTests.cs" />
@@ -446,6 +447,9 @@
     <None Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TestResources\Script\SampleScript.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
