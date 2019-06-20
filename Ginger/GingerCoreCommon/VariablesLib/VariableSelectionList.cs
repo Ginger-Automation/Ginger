@@ -97,8 +97,19 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
+            // As the initial value is not configured for VariableSelectionList
             if (OptionalValuesList.Count > 0)
-                Value = OptionalValuesList[0].Value;
+            {
+                if (SelectedValue != null)
+                {
+                    Value = SelectedValue;
+                }
+                else
+                {
+                    Value = OptionalValuesList[0].Value;
+                }
+            }
+                
         }
 
         public override void GenerateAutoValue()

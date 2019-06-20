@@ -37,10 +37,6 @@ namespace GingerCore.Variables
 
     public abstract class VariableBase : RepositoryItemBase
     {
-        public VariableBase()
-        {
-            ResetValue();
-        }
         public enum eSetValueOptions
         {
             [EnumValueDescription("Set Value")]
