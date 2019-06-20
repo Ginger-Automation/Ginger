@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -49,7 +49,7 @@ namespace GingerCore.DataSource
 
         [IsSerializedForLocalRepository]
         public eDSTableType DSTableType { get; set; }
-        
+
         public DataSourceBase DSC { get; set; }
 
         DataTable mDataTable;
