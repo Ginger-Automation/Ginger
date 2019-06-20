@@ -464,6 +464,15 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         // 11 add Struct        
+        /// <summary>
+        /// Add value to payload of type struct as byte array
+        /// Use it for fixed array struct which contains values with fixed length like: int, float 
+        /// Do not use for struct which contain pointers - like string
+        /// Very efficient on CPU/Memeory as it copy the data from memeory to the buffer
+        /// Might not be supported cross platforms as it access memory directly
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="structValue"></param>
         public void AddValue<T>(T structValue) where T : struct
         {
             // Since we use unmanaged, memory, pointers etc adding try/catch
@@ -529,6 +538,16 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
 
         // 12 JSONStruct
+        /// <summary>
+        /// Add Value of struct to payload
+        /// will convert the stuct to json and add it like string
+        /// struct can include any item which is convertible using json including annotations
+        /// use it for complex objects data with list, string which are more dynamic and doesn't have fixed length
+        /// Keep in mind it will convert any type to string represenataiton and then back on the other side
+        /// Supported cross platfomrs based on the json converter used
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="structValue"></param>
         public void AddJSONValue<T>(T structValue) where T : struct
         {
             var json = JsonConvert.SerializeObject(structValue);            
@@ -851,6 +870,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     //    mBufferIndex += len; // skip the bytes
                     //    s += "struct=true " + Environment.NewLine;
                     //    break;
+                    case 12: // JSONStruct                         
+                        string json = ReadString();                        
+                        s += "jsonstruct= " + json + Environment.NewLine;
+                        break;
                     default:
                         mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
