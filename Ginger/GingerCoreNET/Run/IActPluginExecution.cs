@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         NewPayLoad GetActionPayload();
 
-        NewPayLoad GetActionPayload2();
+        // NewPayLoad GetActionPayload2();
 
         string GetName();
     }
