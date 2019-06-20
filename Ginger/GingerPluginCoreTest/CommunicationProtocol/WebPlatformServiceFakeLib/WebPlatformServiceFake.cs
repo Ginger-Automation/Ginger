@@ -16,7 +16,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 
         public IBrowserActions BrowserActions { get; set; } = new BrowserActionsFake();
 
-        public ILocateWebElement LocateWebElement => throw new NotImplementedException();
+        public ILocateWebElement LocateWebElement { get; set; } = new LocateWebElementFake();
 
         public IAlerts Alerts => throw new NotImplementedException();
 

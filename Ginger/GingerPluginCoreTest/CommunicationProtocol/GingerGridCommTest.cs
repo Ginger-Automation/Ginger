@@ -1,8 +1,10 @@
 ﻿using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Run;
 using Ginger.Plugin.Platform.Web;
+using Ginger.Plugin.Platform.Web.Elements;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib;
@@ -63,12 +65,36 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             // gingerGrid.shutdown...
 
-
-
         }
 
         [TestMethod]
-        public void GotoURL2()
+        public void SpeedTest()
+        {
+            for (int i = 0; i < 1000;i++)
+            {
+                // GotoURLGrid();
+                GotoURLDirect();
+            }
+        }
+
+        [TestMethod]
+        public void GotoURLDirect()
+        {
+            // Arrange
+            string url = "http://www.google.com";
+
+            // Act
+            webPlatform.BrowserActions.Navigate(url, "???");
+            string browserurl = webPlatform.BrowserActions.GetCurrentUrl();
+
+            //Assert
+            Assert.AreEqual(url, browserurl, "URL of naviagte equel browser url");
+
+        }
+
+
+        [TestMethod]
+        public void GotoURLGrid()
         {
             //Arrange
             string url = "aaa";
@@ -89,19 +115,46 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         }
 
 
+        
+
+
         [TestMethod]
-        public void GotoURL()
+        public void ClickButtonDirect()
         {
             // Arrange
-            string url = "http://www.google.com";
+
 
             // Act
-            webPlatform.BrowserActions.Navigate(url, "???");
-            string browserurl = webPlatform.BrowserActions.GetCurrentUrl();
+            IButton elem = (IButton)webPlatform.LocateWebElement.LocateElementByID(Ginger.Plugin.Platform.Web.Elements.eElementType.Button, "button1");
+            elem.Click();
+            
 
             //Assert
-            Assert.AreEqual(url, browserurl, "URL of naviagte equel browser url");
+            // Assert.AreEqual(url, browserurl, "URL of naviagte equel browser url");
 
         }
+
+        [TestMethod]
+        public void ClickButtonGrid()
+        {
+            //Arrange
+
+            ActUIElement actUIElement = new ActUIElement();
+            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
+            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actUIElement.ElementLocateValue = "button1";
+            actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+
+            //Act            
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+
+            //Assert            
+            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
+
+            //FIXME !!!
+            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.ExInfo), "Naviagted to: " + url, "ExInfo");
+        }
+
+
     }
 }

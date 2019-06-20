@@ -17,24 +17,23 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCore.Helpers;
-using System;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.ComponentModel;
-using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
+using GingerCore.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 
 namespace GingerCore.Actions.Common
 {
-    public class ActUIElement : Act,IActPluginExecution
+    public class ActUIElement : Act, IActPluginExecution
     {
         // --------------------------------------------------------------------------------------------
         // TODO: remove after we take LocateBy, LocateValue from Act.cs
@@ -654,7 +653,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("4. Very Long - more than 30 seconds (test for idle every 5 seconds , max 5 minutes wait)")]
             VeryLong,
         }
-        
+
         public string ElementLocateValue
         {
             get
@@ -896,6 +895,9 @@ namespace GingerCore.Actions.Common
                 return d;
             }
         }
+
+        
+
         public NewPayLoad GetActionPayload()
         {
             // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
@@ -952,6 +954,8 @@ namespace GingerCore.Actions.Common
             return "UIElementAction";
         }
 
+        
+
         public string ElementLocateValueForDriver
         {
             get
@@ -972,6 +976,32 @@ namespace GingerCore.Actions.Common
             {
                 return this.GetInputParamCalculatedValue(Fields.TargetLocateValue);
             }
+        }
+
+
+        public struct SimpleAction
+        {            
+            public List<string> Locators;
+            public string action;
+        }
+        
+
+        public NewPayLoad GetActionPayload2()
+        {
+            if (ElementType == eElementType.Button)
+            {
+                
+                SimpleAction buttonAction = new SimpleAction();
+                buttonAction.action = ElementAction.ToString();
+                // buttonAction.Locators = ...
+            }
+
+            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
+            PL.AddValue("UIElementAction");
+
+            return PL;
+
+            // else send full action data!?
         }
     }
 }
