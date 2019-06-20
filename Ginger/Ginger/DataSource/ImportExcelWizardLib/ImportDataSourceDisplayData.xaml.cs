@@ -71,7 +71,27 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     DisplayData();
                     break;                
                 case EventType.LeavingForNextPage:
-                    ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
+                    if (xSelectRowTextBox.Text != null && !(string.IsNullOrWhiteSpace(xSelectRowTextBox.Text)))
+                    {
+                        impParams.ExcelWhereCondition = Convert.ToString(xSelectRowTextBox.Text);
+                        DataTable dt = impParams.GetExceSheetlData(true);
+                        if (dt != null)
+                        {
+                            xExcelDataGrid.ItemsSource = dt.AsDataView();
+                            xExcelDataGridDockPanel.Visibility = Visibility.Visible;
+                        }
+                        DataSet TableWithWhereCondition = new DataSet();
+                        dt.TableName = SheetName;
+                        TableWithWhereCondition.Tables.Add(dt);
+                        ExcelImportData = TableWithWhereCondition;
+                        ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
+                    }
+                    else
+                    {
+                        ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
+                    }
+                    
+
                     break;
                 default:
                     break;
@@ -220,6 +240,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 {
                     xExcelDataGrid.ItemsSource = dt.AsDataView();
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
+                    
                 }
 
                 mWizardEventArgs.Wizard.ProcessEnded();
