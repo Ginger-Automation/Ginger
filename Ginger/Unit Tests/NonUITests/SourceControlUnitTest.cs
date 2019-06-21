@@ -138,16 +138,19 @@ namespace UnitTests.NonUITests
             TestConnection(SourceControlURL, SourceControlUser, SourceControlPass, SourceControlType);
             GetProject(SourceControlURL, SourceControlUser, SourceControlPass, SourceControlType);
             string workingDirectory = Path.Combine(SolutionFolder, SourceControlType);
-
-            File.WriteAllText(workingDirectory + "/Dummy.txt", File.ReadAllText(Path.Combine(workingDirectory, "Dummy.txt")).Replace("123", "1234"));
+            SourceControl.SolutionFolder = workingDirectory;
+            File.WriteAllText(Path.Combine(workingDirectory, "Dummy.txt"), File.ReadAllText(Path.Combine(workingDirectory, "Dummy.txt")).Replace("123", "1234"));
             string error = string.Empty;
             bool checkin = false;
+            List<string> pathsToCommit = new List<string>();
+            pathsToCommit.Add(Path.Combine(workingDirectory, "Dummy.txt"));
+            List<string> conflictsPaths = new List<string>();
 
             //Act
-            checkin = SourceControl.CommitChanges("aaa", ref error);
+            checkin = SourceControl.CommitChanges(pathsToCommit, "aaa", ref error, ref conflictsPaths, false);
 
             //Assert
-            Assert.AreEqual(checkin, false);
+            Assert.AreEqual(checkin, true);
         }
 
 
