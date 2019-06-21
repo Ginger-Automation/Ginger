@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Repository
             public static string Param = "Param";
             public static string Value = "Value";
             public static string ValueForDriver = "ValueForDriver";
-            public static string StoreToVariable = "StoreToVariable";
+            //public static string StoreToVariable = "StoreToVariable";
             public static string StoreToDataSource = "StoreToDataSource";
         }
 
@@ -151,8 +151,8 @@ namespace Amdocs.Ginger.Repository
         //TODO: fix me soemthing wrong here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! - not needed - commented out - delete me later
         // when delete - reading exisitng flow will not load the Value!!!!!!!!!!!!!!!! be careful
         //private string mStoreToVariable;
-        [IsSerializedForLocalRepository]
-        public virtual string StoreToVariable { get { return mValue; } set { mValue = value; OnPropertyChanged(Fields.ValueForDriver); } }
+        //[IsSerializedForLocalRepository]
+        //public virtual string StoreToVariable { get { return mValue; } set { mValue = value; OnPropertyChanged(Fields.ValueForDriver); } }
 
         public override string ItemName
         {
