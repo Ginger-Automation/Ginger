@@ -3611,6 +3611,13 @@ namespace GingerCore.Drivers
                         winAPI.SendClickOnXYPoint(element, x1, y1);
                     }
                     break;
+                case "treeview":
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
+                    if (((ScrollPattern)vp).Current.VerticalScrollPercent < 100)
+                    {
+                        ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent + 3);
+                    }
+                    break;
                 default:
                     Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
@@ -3651,6 +3658,13 @@ namespace GingerCore.Drivers
                         y1 = Convert.ToInt32(element.Current.BoundingRectangle.TopRight.Y + 5);
 
                         winAPI.SendClickOnXYPoint(element, x1, y1);
+                    }
+                    break;
+                case "treeview":
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
+                    if (((ScrollPattern)vp).Current.VerticalScrollPercent > 1)
+                    {
+                        ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent - 3);
                     }
                     break;
                 default:
