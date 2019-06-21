@@ -273,10 +273,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             {
                 mSeleniumDriver.ActBrowserElementHandler((ActBrowserElement)act);
                 return;
-            } 
-            if(ActType == typeof(ActScreenShot))
-            {
-                TakeScreenShot();
             }
 
         }
@@ -475,16 +471,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", PressKey.ToString());
             mDriver.ExecuteScript("mobile:presskey", params1);
-        }
-
-        private void TakeScreenShot()
-        {
-            string command = "mobile:screen:image";
-            Dictionary<string, object> Parms = new Dictionary<string, object>();
-            Parms.Add("handsetId", Perfecto_Device_ID);
-            Parms.Add("key", "PRIVATE:Facebook\\SC_" + DateTime.Now.ToString().Replace(" ", "_").Replace("/", "_").Replace(":","_") + ".png");
-            Parms.Add("format", "png");
-            mDriver.ExecuteScript(command, Parms);
         }
 
         //Back Click Action

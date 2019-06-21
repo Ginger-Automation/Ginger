@@ -63,7 +63,10 @@ namespace Ginger.ApiModelsFolder
             // xApiModelsGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteApiButtonClicked));
 
             this.Visibility = Visibility.Hidden;
-            OpenAPITreeSelection();
+
+            if(mAddApiModelActionWizardPage.AAMList.Count == 0)
+                OpenAPITreeSelection();
+
             this.Visibility = Visibility.Visible;
         }
 

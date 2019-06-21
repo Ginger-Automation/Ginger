@@ -35,10 +35,23 @@ namespace Ginger.ApiModelsFolder
 
         ObservableList<IAct> mActions;
 
+        public AddApiModelActionWizardPage(Context context, ObservableList<ApplicationAPIModel> APIModelsList = null)
+        {
+            mContext = context;
+            mActions = mContext.BusinessFlow.CurrentActivity.Acts;
+
+            if (APIModelsList != null)
+                mAAMList = APIModelsList;
+
+            AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage(context));
+            AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
+        }
+
         public AddApiModelActionWizardPage(Context context)
         {
             mContext = context;
             mActions = mContext.BusinessFlow.CurrentActivity.Acts;
+
             AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage(context));
             AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
         }

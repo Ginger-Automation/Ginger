@@ -61,7 +61,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
             mContext.PropertyChanged += MContext_PropertyChanged;
-            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
 
             SetActionsGridsView();
 
@@ -70,23 +69,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
-
-
-        }
-
-        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(mContext.Activity.TargetApplication))
-            {
-                FillActionsList();
-            }
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
-            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity))
+            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
                 FillActionsList();
             }

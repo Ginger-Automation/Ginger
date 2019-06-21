@@ -61,10 +61,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
         }
-        internal void SetAgent(Agent agent)
-        {
-            mAgent = agent;
-        }
+
         ElementInfo mSelectedElement
         {
             get
@@ -123,19 +120,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
-            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity))
+            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
                 UpdatePOMTree();
             }
-        }
-
-        private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Activity.TargetApplication))
+            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
             {
-                UpdatePOMTree();
+                mAgent = mContext.Agent;
             }
         }
 
@@ -280,14 +271,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
-        private static Act GenerateRelatedAction(ElementInfo elementInfo)
+        private Act GenerateRelatedAction(ElementInfo elementInfo)
         {
             Act instance;
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
+            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);              // PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
             {
-                Description = "UIElement Action : " + elementInfo.ItemName,
-                Operation = ActUIElement.eElementAction.NotExist.ToString(),
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
                 ElementValue = "",
@@ -296,26 +285,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 ElementGuid = elementInfo.Guid.ToString(),
                 LearnedElementInfo = elementInfo,
             };
-
-            switch (elementInfo.ElementTypeEnum)
-            {
-                case eElementType.Button:
-                case eElementType.CheckBox:
-                case eElementType.RadioButton:
-                case eElementType.HyperLink:
-                case eElementType.Span:
-                case eElementType.Div:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.Click.ToString();
-                    break;
-
-                case eElementType.TextBox:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.SetText.ToString();
-                    break;
-
-                default:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.NotExist.ToString();
-                    break;
-            }
 
             instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
             return instance;

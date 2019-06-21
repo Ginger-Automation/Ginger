@@ -17,7 +17,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <TabControl x:Name="tabRepository" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" SelectionChanged="TabControl_SelectionChanged" >
+        <TabControl x:Name="xTabRepository" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" SelectionChanged="TabControl_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -33,42 +33,42 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem x:Name="tbActivitiesGroups" Margin="0,0,0,0">
+            <TabItem x:Name="xTabActivitiesGroups" Margin="0,0,0,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Group_16x16.png }" Height="16" Width="16" />
                         <TextBlock x:Name="xActivitiesGroupsTextBlock" Text="Activities Groups" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="frmActivitiesGroups" Background="White"></Frame>
+                <Frame x:Name="xFrameActivitiesGroups" Background="White"></Frame>
             </TabItem>
-            <TabItem x:Name="tbiActivities" Margin="2,0,-6,0">
+            <TabItem x:Name="xTabActivities" Margin="2,0,-6,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Activities_16x16 }" Height="16" Width="16" />
                         <TextBlock x:Name="xActivitiesTextBlock" Text="Activities" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame  x:Name="frmActivities" Background="White"></Frame>
+                <Frame  x:Name="xFrameActivities" Background="White"></Frame>
             </TabItem>
 
-            <TabItem x:Name="tbiActions" Margin="8,0,-12,0">
+            <TabItem x:Name="xTabActions" Margin="8,0,-12,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Action_32x32 }" Height="16" Width="16" />
                         <TextBlock Text="Actions" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame  x:Name="frmActions" Background="White"></Frame>
+                <Frame  x:Name="xFrameActions" Background="White"></Frame>
             </TabItem>
-            <TabItem x:Name="tbiVariables" Margin="14,0,-18,0">
+            <TabItem x:Name="xTabVariables" Margin="14,0,-18,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Variable_16x16 }" Height="16" Width="16" />
                         <TextBlock x:Name="xVariablesTextBlock" Text="Variables" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame  x:Name="frmVariables" Background="White"></Frame>
+                <Frame  x:Name="xFrameVariables" Background="White"></Frame>
             </TabItem>
         </TabControl>
     </Grid>

@@ -35,7 +35,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         WindowsExplorerNavPage mWindowsExplorerNavPage = null;
         APINavPage mAPINavPage = null;
         private bool applicationModelView;
-        private Agent mAgent = null;
 
         public MainAddActionsNavigationPage(Context context)
         {
@@ -50,20 +49,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetRecordButtonAccessebility()
         {
-            mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-            if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
+            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
-                xRecordItemBtn.IsEnabled = true;
+                xRecordItemBtn.Visibility = Visibility.Visible;
             }
             else
             {
-                xRecordItemBtn.IsEnabled = false;
+                xRecordItemBtn.Visibility = Visibility.Collapsed;
             }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
+            if (e != null && e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Agent))
             {
                 SetRecordButtonAccessebility();
                 if (e.PropertyName == nameof(BusinessFlow))
@@ -116,7 +114,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if(mPOMNavPage == null)
             {
                 mPOMNavPage = new POMNavPage(mContext,"Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
-                mPOMNavPage.SetAgent(mAgent);
             }
             LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
