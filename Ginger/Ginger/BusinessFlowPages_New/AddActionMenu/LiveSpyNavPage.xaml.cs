@@ -12,23 +12,29 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
 using Ginger.Drivers.PowerBuilder;
+using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.Appium;
 using Ginger.WindowExplorer.HTMLCommon;
 using Ginger.WindowExplorer.Java;
 using Ginger.WindowExplorer.Windows;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -39,21 +45,78 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class LiveSpyNavPage : Page
     {
         bool isSpying = false;
-        //private IWindowExplorer mWindowExplorerDriver;
         Context mContext;
         System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
         ElementInfo mSpyElement;
         ITreeViewItem mCurrentControlTreeViewItem;
         Page mControlFrameContentPage = null;
         bool mFirstElementSelectionDone = false;
-        private Act mAction;
+        private Act mAction;        
+        IWindowExplorer mWindowExplorerDriver;
 
         public LiveSpyNavPage(Context context)
         {
             InitializeComponent();
             mContext = context;
             xWinGridUC.mContext = mContext;
+            context.PropertyChanged += Context_PropertyChanged;
+            InitMethod();
+            InitControlPropertiesGridView();
         }
+        
+        /// <summary>
+        /// This method is used to set controls to initialise or set to default
+        /// </summary>
+        private void InitMethod()
+        {
+            xWinGridUC.IsEnabled = false;
+            xSpyingButton.IsEnabled = false;
+            if (mContext.Agent != null)
+            {
+                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                if (isAgentRunning)
+                {
+                    xWinGridUC.IsEnabled = true;
+                    xSpyingButton.IsEnabled = true;
+                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                    xWinGridUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+                    if (xWinGridUC.WindowsComboBox != null)
+                    {
+                        xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
+                        xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Context Property changed event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e != null && e.PropertyName == nameof(Context.BusinessFlow))
+            {
+                mContext = (Context)sender;
+                xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();                
+                InitMethod();
+            }
+            else if (e.PropertyName == nameof(Context.Activity) ||
+                     e.PropertyName == nameof(Context.AgentStatus) ||
+                     e.PropertyName == nameof(Context.Agent) ||
+                     e.PropertyName == nameof(Context.Target) ||
+                     e.PropertyName == nameof(Context.Platform))
+            {
+                InitMethod();
+            }
+        }
+
+        private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            xWinGridUC.IsEnabled = true;
+        }
+
         private void SpyingButton_Click(object sender, RoutedEventArgs e)
         {
             isSpying = !isSpying;
@@ -91,12 +154,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xSpyingButton.ToolTip = "Stop Spying";
                 xSpyingButton.Background = Brushes.White;
-                lblRecording.Foreground = Brushes.DeepSkyBlue;
-                lblRecording.Content = "Stop Spying";
                 xSpyingButton.BorderThickness = new Thickness(2);
                 xSpyingButton.BorderBrush = Brushes.DeepSkyBlue;
                 StatusTextBlock.Text = "Spying...";
-                //                xSpyingButton.Background = Brushes.White;
             }
             else
             {
@@ -104,8 +164,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
                 xSpyingButton.Background = Brushes.DeepSkyBlue;
-                lblRecording.Foreground = Brushes.White;
-                lblRecording.Content = "Start Spying";
             }
         }
 
@@ -138,6 +196,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     GingerCore.General.DoEvents();
                 }
             }
+        }
+
+        private void InitControlPropertiesGridView()
+        {
+            // Grid View
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 8, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 20, ReadOnly = true });
+
+            ControlPropertiesGrid.SetAllColumnsDefaultView(view);
+            ControlPropertiesGrid.InitViewItems();
         }
 
         private void ShowCurrentControlInfo()

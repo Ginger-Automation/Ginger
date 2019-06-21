@@ -20,26 +20,19 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="165" />
+                <ColumnDefinition Width="400" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="xSpyingButton" Click="SpyingButton_Click" IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10,10,0,0" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Column="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <usercontrols:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Spy" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
-                    <Label Name="lblRecording" Grid.Column="1" Content="Start Spying" FontSize="15" FontWeight="Bold" Foreground="White" />
-                </Grid>
-            </Button>
-
+            <ToggleButton x:Name="xSpyingButton" HorizontalAlignment="Left" Click="SpyingButton_Click" ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" 
+                          Width="36" Height="36" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Margin="5,0,0,0">
+                <Image Source="{StaticResource @Spy_24x24}"/>
+            </ToggleButton>
+            
             <TextBlock Name="StatusTextBlock" Grid.Column="1" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center" Width="Auto" Foreground="Red" />
         </Grid>
         <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,1,0,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
+        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,5,0,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
             <Expander.Header>
                 <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
             </Expander.Header>
