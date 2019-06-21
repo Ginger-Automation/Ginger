@@ -670,21 +670,11 @@ namespace Ginger.Actions
 
             mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
 
-            /// If there is flow control in the action and current action is changed ActionEditPage will change according to the current action
-            ///
-            this.Dispatcher.Invoke(() =>
+            Act tempAct = (Act)mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+            if (mAction != tempAct)
             {
-                Act tempAct = (Act)mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-                if (tempAct != null)
-                {
-                    if (mAction != tempAct)//no need if action is not changed
-                    {
-                        ActionEditPage actEdit = new ActionEditPage(tempAct);
-                        actEdit.ShowAsWindow();
-                        _pageGenericWin.Close();
-                    }
-                }
-            });
+                mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem = mAction;
+            }
         }
 
         private void StopRunBtn_Click(object sender, RoutedEventArgs e)
