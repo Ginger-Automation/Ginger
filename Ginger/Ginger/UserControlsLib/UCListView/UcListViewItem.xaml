@@ -75,7 +75,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*" MinWidth="100"/>
                 <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
-                <ColumnDefinition Width="25"/>
+                <ColumnDefinition x:Name="xItemStatusClm"  Width="25"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" Text="Title">
                 <TextBlock.Style>

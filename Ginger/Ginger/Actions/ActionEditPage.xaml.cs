@@ -494,11 +494,11 @@ namespace Ginger.Actions
             List<String> varsCollc;
             if (mActParentBusinessFlow != null)
             {
-                varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+                varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
             }
             else
             {
-                varsCollc = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType() == "String").Select(a => a.Name).ToList();
+                varsCollc = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
                 if (mActParentActivity != null)
                 {
                     foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)

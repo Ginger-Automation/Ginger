@@ -114,7 +114,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public string ItemNameField { get; set; }
         public string ItemDescriptionField { get; set; }
-        public string ItemGroupField { get; set; }
+        public string ItemNameExtentionField { get; set; }
         public string ItemTagsField { get; set; }
         public string ItemIconField { get; set; }
         public string ItemIconTooltipField { get; set; }
@@ -164,7 +164,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             ItemNameField = ListHelper.GetItemNameField();
             ItemDescriptionField = ListHelper.GetItemDescriptionField();
-            ItemGroupField = ListHelper.GetItemGroupField();
+            ItemNameExtentionField = ListHelper.GetItemNameExtentionField();
             ItemTagsField = ListHelper.GetItemTagsField();
             ItemIconField = ListHelper.GetItemIconField();
             ItemIconTooltipField = ListHelper.GetItemIconTooltipField();
@@ -194,6 +194,7 @@ namespace Ginger.UserControlsLib.UCListView
                         xIdentifierBorder.Background = conv.ConvertFromString(identifier.Color) as SolidColorBrush;
                     }
                     xIdentifierBorder.ToolTip = identifier.Tooltip;
+                    xIdentifierBorder.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -256,9 +257,6 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
                     operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    //operationBtn.ButtonFontImageSize = 14;
-                    //operationBtn.ButtonImageHeight = 16;
-                    //operationBtn.ButtonImageWidth = 18;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
 
                     if (operation.ImageForeground == null)
@@ -403,6 +401,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             if (Item is RepositoryItemBase)
             {
+                ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
                 ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
             }
             SetItemFullName();
@@ -432,16 +431,18 @@ namespace Ginger.UserControlsLib.UCListView
             if (string.IsNullOrEmpty(ItemExecutionStatusField))
             {
                 xItemStatusImage.Visibility = Visibility.Collapsed;
+                xItemStatusClm.Width = new GridLength(0);
             }
             else
             {
                 BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, ItemExecutionStatusField);
+                xItemStatusClm.Width = new GridLength(25);
             }
         }
 
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == ItemNameField || e.PropertyName == ItemGroupField)
+            if (e.PropertyName == ItemNameField || e.PropertyName == ItemNameExtentionField)
             {
                 SetItemFullName();
             }
@@ -449,7 +450,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemDescription();
             }
-            SetItemUniqueIdentifier();
+            SetItemUniqueIdentifier();            
         }
 
         private void xExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -532,20 +533,20 @@ namespace Ginger.UserControlsLib.UCListView
                         fullname += name;
                     }
                 }
-                //if (!string.IsNullOrEmpty(ItemGroupField))
-                //{
-                //    Object group = Item.GetType().GetProperty(ItemGroupField).GetValue(Item);
-                //    if (group != null)
-                //    {
-                //        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
-                //        {
-                //            FontSize = 10,
-                //            Text = string.Format("[{0}]", group.ToString())
-                //    });
+                if (!string.IsNullOrEmpty(ItemNameExtentionField))
+                {
+                    Object group = Item.GetType().GetProperty(ItemNameExtentionField).GetValue(Item);
+                    if (group != null)
+                    {
+                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                        {
+                            FontSize = 10,
+                            Text = string.Format("[{0}]", group.ToString())
+                        });
 
-                //        fullname += string.Format("[{0}]", group.ToString());
-                //    }
-                //}
+                        fullname += string.Format("[{0}]", group.ToString());
+                    }
+                }
 
                 xItemNameTxtBlock.ToolTip = fullname;
             }

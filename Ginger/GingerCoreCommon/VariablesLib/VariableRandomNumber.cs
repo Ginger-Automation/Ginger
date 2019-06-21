@@ -101,7 +101,10 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Random; } }
-        public override string VariableType() { return "RandomNumber"; }
+        public override string VariableType
+        {
+            get { return "RandomNumber"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()

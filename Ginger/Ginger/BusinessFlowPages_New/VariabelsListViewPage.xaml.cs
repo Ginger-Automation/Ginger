@@ -21,9 +21,10 @@ namespace Ginger.BusinessFlowPages
     public partial class VariabelsListViewPage : Page
     {
         RepositoryItemBase mVariabelsParent;
+        eVariablesLevel mVariablesLevel;
         Context mContext;
 
-        VariablesListHelper mVariabelListItemInfo;
+        VariablesListHelper mVariabelListHelper;
         UcListView mVariabelsListView;
         VariableEditPage mVariabelEditPage;
         VariableBase mVarBeenEdit;
@@ -38,6 +39,7 @@ namespace Ginger.BusinessFlowPages
             InitializeComponent();
 
             mVariabelsParent = variabelsParent;
+            mVariablesLevel = GetVariablesLevel();
             mContext = context;
 
             SetListView();
@@ -61,6 +63,26 @@ namespace Ginger.BusinessFlowPages
             else
             {
                 return null; 
+            }
+        }
+
+        private eVariablesLevel GetVariablesLevel()
+        {
+            if (mVariabelsParent is Solution)
+            {
+                return eVariablesLevel.Solution;
+            }
+            else if (mVariabelsParent is BusinessFlow)
+            {
+                return eVariablesLevel.BusinessFlow;
+            }
+            else if (mVariabelsParent is Activity)
+            {
+                return eVariablesLevel.Activity;
+            }
+            else
+            {
+                return eVariablesLevel.Activity; 
             }
         }
 
@@ -100,9 +122,9 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
             mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListItemInfo = new VariablesListHelper(mContext);
-            mVariabelListItemInfo.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
-            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListItemInfo);
+            mVariabelListHelper = new VariablesListHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext);
+            mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
+            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
             mVariabelsListView.DataSourceList = GetVariablesList();
 
@@ -135,12 +157,18 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsParent != parent)
             {
                 mVariabelsParent = parent;
+                mVariablesLevel = GetVariablesLevel();
                 if (mVariabelsParent != null)
                 {
+                    mVariabelListHelper.VariablesParent = mVariabelsParent;
+                    mVariabelListHelper.VariablesLevel = mVariablesLevel;
+                    mVariabelListHelper.Variables = GetVariablesList();
                     mVariabelsListView.DataSourceList = GetVariablesList();
                 }
                 else
                 {
+                    mVariabelListHelper.VariablesParent = null;
+                    mVariabelListHelper.Variables = null;
                     mVariabelsListView.DataSourceList = null;
                 }
                 ShowHideEditPage(null);
@@ -177,7 +205,9 @@ namespace Ginger.BusinessFlowPages
         private void xGoToList_Click(object sender, RoutedEventArgs e)
         {
             if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
+            {
                 UpdateVariableNameChange(mVarBeenEdit);
+            }
 
             ShowHideEditPage(null);
         }

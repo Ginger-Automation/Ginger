@@ -33,14 +33,14 @@ namespace GingerCore.Variables
 
         private string mValueExpression;
         [IsSerializedForLocalRepository]
-        public string ValueExpression 
+        public string ValueExpression
         {
-            set { mValueExpression = value; OnPropertyChanged("Formula"); } 
-            get { return mValueExpression; } 
+            set { mValueExpression = value; OnPropertyChanged("Formula"); }
+            get { return mValueExpression; }
         }
 
         public VariableDynamic()
-        {            
+        {
         }
 
         public override string VariableUIType
@@ -73,7 +73,7 @@ namespace GingerCore.Variables
                 OnPropertyChanged("Value");
             }
         }
-      
+
         public override void ResetValue()
         {
             Value = GenerateVEValue();
@@ -91,7 +91,7 @@ namespace GingerCore.Variables
                 if (mProjEnvironment == null && mBusinessFlow == null)
                 {
                     return "Value will be calculated during execution.";
-                }   
+                }
 
                 IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;
@@ -110,7 +110,7 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.CSS3Text; } }
-        public override string VariableType() { return "Dynamic"; }
+        public override string VariableType { get { return "Dynamic"; } }
 
         public override bool SupportSetValue { get { return true; } }
 

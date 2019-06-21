@@ -428,7 +428,14 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mBusinessFlow != null && mBusinessFlow.CurrentActivity != null)
             {
-                mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                if (mActivityPage == null)
+                {
+                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                }
+                else
+                {
+                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                }
             }
             else
             {
