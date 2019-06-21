@@ -138,7 +138,7 @@ namespace GingerCoreCommonTest.VariablesTest
             //Arrange
             Activity a1 = new Activity() { ActivityName = "a1" };
             ActDummy act1 = new ActDummy();
-            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToVariable = "v1" };
+            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToValue = "v1" };
             act1.ReturnValues.Add(actReturnValue);
             a1.Acts.Add(act1);
 
@@ -158,7 +158,7 @@ namespace GingerCoreCommonTest.VariablesTest
             //Arrange
             Activity a1 = new Activity() { ActivityName = "a1" };
             ActDummy act1 = new ActDummy();            
-            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToVariable = "v1" };
+            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToValue = "v1" };
             act1.ReturnValues.Add(actReturnValue);
             FlowControl flowControl = new FlowControl() { Condition = "{Var Name=v1}=123" };
             act1.FlowControls.Add(flowControl);
@@ -180,7 +180,7 @@ namespace GingerCoreCommonTest.VariablesTest
             Activity a1 = new Activity() { ActivityName = "a1" };
             ActDummy act1 = new ActDummy();
 
-            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToVariable = "v1" };
+            ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToValue = "v1" };
             act1.ReturnValues.Add(actReturnValue);
             FlowControl flowControl = new FlowControl() { Condition = "{Var Name=v2}=123" };
             act1.FlowControls.Add(flowControl);
