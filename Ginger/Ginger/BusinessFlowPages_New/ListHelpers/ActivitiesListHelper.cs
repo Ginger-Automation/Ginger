@@ -254,11 +254,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(mandatory);
 
                 ListItemOperation reset = new ListItemOperation();
+                reset.Group = "Reset Operations";
+                reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-                reset.Header = "Reset";
-                reset.ToolTip = "Reset execution details";
+                reset.Header = string.Format("Reset {0} execution details", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                reset.ToolTip = string.Format("Reset {0} execution details", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 reset.OperationHandler = ResetHandler;
                 extraOperationsList.Add(reset);
+
+                ListItemOperation resetRest = new ListItemOperation();
+                resetRest.Group = "Reset Operations";
+                resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                resetRest.Header = string.Format("Reset execution details from this {0}", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                resetRest.ToolTip = string.Format("Reset execution details from this {0}", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                resetRest.OperationHandler = ResetResetHandler;
+                extraOperationsList.Add(resetRest);
             }
 
             ListItemOperation addToSR = new ListItemOperation();
@@ -408,6 +418,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             mActivity.Reset();
         }
+
+        private void ResetResetHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);            
+            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx <= mContext.BusinessFlow.Activities.Count;indx++)
+            {
+                mContext.BusinessFlow.Activities[indx].Reset();
+            }
+        }
+
         private void ActivitiesVarsHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);

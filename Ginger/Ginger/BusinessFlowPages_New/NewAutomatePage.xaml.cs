@@ -19,9 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Run;
+using Amdocs.Ginger.UserControls;
 using Ginger;
+using Ginger.Actions.ActionConversion;
 using Ginger.Agents;
+using Ginger.ALM;
+using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
@@ -38,23 +43,27 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
-using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
+using GingerWPF.WizardLib;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace GingerWPF.BusinessFlowsLib
 {
     /// <summary>
     /// Interaction logic for BusinessFlowPage.xaml
     /// </summary>
-    public partial class NewAutomatePage : Page
+    public partial class NewAutomatePage : Page, INotifyPropertyChanged
     {
         GingerRunner mRunner;
         BusinessFlow mBusinessFlow = null;        
@@ -68,6 +77,54 @@ namespace GingerWPF.BusinessFlowsLib
         MainAddActionsNavigationPage mMainNavigationPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(350);
+
+        ObjectId runnerLiteDbId;
+        ObjectId runSetLiteDbId;
+
+        private bool mAutoRunAnalyzer = true;
+        public bool AutoRunAnalyzer
+        {
+            get
+            {
+                return mAutoRunAnalyzer;
+            }
+            set
+            {
+                if (mAutoRunAnalyzer != value)
+                {
+                    mAutoRunAnalyzer = value;
+                    OnPropertyChanged(nameof(AutoRunAnalyzer));
+                }
+            }
+        }
+
+        private bool mAutoGenerateReport = false;
+        public bool AutoGenerateReport
+        {
+            get
+            {
+                return mAutoGenerateReport;
+            }
+            set
+            {
+                if (mAutoGenerateReport != value)
+                {
+                    mAutoGenerateReport = value;
+                    OnPropertyChanged(nameof(GenerateReport));
+                }
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
 
         public NewAutomatePage(BusinessFlow businessFlow)
         {
@@ -89,6 +146,9 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Configurations");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
+
+            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ContentProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ContentProperty, this, nameof(GenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
             BindEnvsCombo();
@@ -819,9 +879,11 @@ namespace GingerWPF.BusinessFlowsLib
             mfindAndReplacePageAutomate.ShowAsWindow();
         }
 
-        private void xGenerateReportBtn_Click(object sender, RoutedEventArgs e)
+        private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            AnalyzerPage AP = new AnalyzerPage();
+            AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+            AP.ShowAsWindow();
         }
 
         private void xAutomationRunnerConfigBtn_Click(object sender, RoutedEventArgs e)
@@ -831,22 +893,18 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xResetFlowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+            mBusinessFlow.Reset();
         }
 
-        private void xRunFlowBtn_Click(object sender, RoutedEventArgs e)
+        private async void xRunFlowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            await RunAutomateTabFlow();
         }
 
         private void xStopRunBtn_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
-        {
-
+            StopAutomateRun();
         }
 
         private void xBusinessFlowItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -867,6 +925,241 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xItemsTabs.SelectedItem = xBfActiVitiesTab;
             }
+        }
+
+        private void xActionsConvertionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);
+        }
+
+        private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (mBusinessFlow != null && mBusinessFlow.ActivitiesGroups != null && mBusinessFlow.ActivitiesGroups.Count > 0)
+            {
+                ALMIntegration.Instance.RefreshAllGroupsFromALM(mBusinessFlow);
+            }
+        }
+
+        private void xExportToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow))
+            {
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                    Reporter.HideStatusMessage();
+                }
+            }
+        }
+
+        private void xExportResultsToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            bfs.Add(mBusinessFlow);
+            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+            ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+        }
+
+        private async Task RunAutomateTabFlow()
+        {
+            if (AutoRunAnalyzer)
+            {
+                //Run Analyzer check if not including any High or Critical issues before execution
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                try
+                {
+                    AnalyzerPage analyzerPage = new AnalyzerPage();
+                    analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+                    await analyzerPage.AnalyzeWithoutUI();
+                    Reporter.HideStatusMessage();
+                    if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                        analyzerPage.ShowAsWindow();
+                        return;
+                    }
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                }
+            }
+            try
+            {
+                //execute preparations
+                SetAutomateTabRunnerForExecution();
+                mRunner.ResetRunnerExecutionDetails();
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+
+                //execute
+                await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                }
+                this.Dispatcher.Invoke(() =>
+                {                    
+                    if (AutoGenerateReport)
+                    {
+                        GenerateReport();
+                    }
+                    //else
+                    //{
+                    //    ShowExecutionSummaryPage();
+                    //}
+                });
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                //enable grids
+                //EnableDisableAutomateTabGrids(true);
+                mRunner.ResetFailedToStartFlagForAgents();
+            }
+        }
+
+        public void SetAutomateTabRunnerForExecution()
+        {
+            mRunner.ProjEnvironment = mEnvironment;
+            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            mRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
+            mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
+        }
+
+        private void xReportMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateReport();
+        }
+
+        private void GenerateReport()
+        {
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
+                return;
+            }
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //create the execution logger files            
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
+
+            if (Directory.Exists(exec_folder))
+            {
+                GingerCore.General.ClearDirectoryContent(exec_folder);
+            }
+            else
+            {
+                Directory.CreateDirectory(exec_folder);
+            }
+
+            if (((ExecutionLoggerManager)mRunner.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            {
+                //create the HTML report
+                try
+                {
+                    string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+                    if (reportsResultFolder == string.Empty)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                        return;
+                    }
+                    else
+                    {
+                        foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
+                        {
+                            string fileName = Path.GetFileName(txt_file);
+                            if (fileName.Contains(".html"))
+                            {
+                                System.Diagnostics.Process.Start(reportsResultFolder);
+                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+            }
+        }
+
+        private void CreateLiteDBReport()
+        {
+            if (runSetLiteDbId != null)
+            {
+                var selectedGuid = runSetLiteDbId;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+            }
+        }
+
+        private void xSummaryPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
+            w.ShowAsWindow();
+        }
+
+        private void xAutoAnalyzeConfigMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AutoRunAnalyzer = !AutoRunAnalyzer;
+        }
+
+        private void xAutoReportConfigMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AutoGenerateReport = !AutoGenerateReport;
+        }
+
+        private async void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                //EnableDisableAutomateTabGrids(true);
+            }
+        }
+    }
+
+    public class ActiveImageTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((bool)value == false)
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.InActive;
+            }
+            else
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.Active;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

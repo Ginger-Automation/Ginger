@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Linq;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -343,7 +344,40 @@ namespace Ginger.UserControlsLib.UCListView
 
                         menuitem.Tag = Item;
 
-                        ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                        if (string.IsNullOrEmpty(operation.Group))
+                        {
+                            ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                        }
+                        else
+                        {
+                            //need to add to Group
+                            bool addedToGroup = false;
+                            foreach(MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
+                            {
+                                if (item.Header.ToString() == operation.Group)
+                                {
+                                    //adding to existing group
+                                    item.Items.Add(menuitem);
+                                    addedToGroup = true;
+                                    break;
+                                }
+                            }
+                            if(!addedToGroup)
+                            {
+                                //creating the group and adding
+                                MenuItem groupMenuitem = new MenuItem();
+                                groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                                ImageMakerControl groupIconImage = new ImageMakerControl();
+                                groupIconImage.ImageType = operation.GroupImageType;
+                                groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                                groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                                groupMenuitem.Icon = groupIconImage;
+                                groupMenuitem.Header = operation.Group;
+                                groupMenuitem.ToolTip = operation.Group;
+                                ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(groupMenuitem);
+                                groupMenuitem.Items.Add(menuitem);
+                            }
+                        }
                     }
                 }
                 else

@@ -279,11 +279,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(breakPoint);
 
                 ListItemOperation reset = new ListItemOperation();
+                reset.Group = "Reset Operations";
+                reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-                reset.Header = "Reset";
-                reset.ToolTip = "Reset execution details";
+                reset.Header = "Reset Action execution details";
+                reset.ToolTip = "Reset Action execution details";
                 reset.OperationHandler = ResetHandler;
                 extraOperationsList.Add(reset);
+
+                ListItemOperation resetRest = new ListItemOperation();
+                resetRest.Group = "Reset Operations";
+                resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                resetRest.Header = "Reset execution details from this Action";
+                resetRest.ToolTip = "Reset execution details from this Action";
+                reset.OperationHandler = ResetResetHandler;
+                extraOperationsList.Add(resetRest);
             }
 
             ListItemOperation addToSR = new ListItemOperation();
@@ -421,6 +431,25 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             mAction.Reset();
+        }
+
+        private void ResetResetHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+
+            //reset current Activity
+            mContext.Activity.Elapsed = null;
+            mContext.Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+            for (int indx = mContext.Activity.Acts.IndexOf(mAction); indx <= mContext.Activity.Acts.Count; indx++)
+            {
+                ((Act)mContext.Activity.Acts[indx]).Reset();
+            }
+
+            //reset next Activities
+            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mContext.Activity) + 1; indx <= mContext.BusinessFlow.Activities.Count; indx++)
+            {
+                mContext.BusinessFlow.Activities[indx].Reset();
+            }
         }
 
         private void RunHandler(object sender, RoutedEventArgs e)
