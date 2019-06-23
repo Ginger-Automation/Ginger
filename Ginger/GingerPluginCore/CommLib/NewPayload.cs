@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace GingerCoreNET.Drivers.CommunicationProtocol
@@ -74,6 +76,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // bool is special case we save one byte as the type include the value
         const byte BoolFalse = 9;    // bool = false
         const byte BoolTrue = 10;    // bool = true
+        const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
+        const byte JSONStruct = 12;    // Struct for fixed struct with simple propers like int, float not for dynamic values
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
@@ -459,6 +463,113 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }            
         }
 
+        // 11 add Struct        
+        /// <summary>
+        /// Add value to payload of type struct as byte array
+        /// Use it for fixed array struct which contains values with fixed length like: int, float 
+        /// Do not use for struct which contain pointers - like string
+        /// Very efficient on CPU/Memeory as it copy the data from memeory to the buffer
+        /// Might not be supported cross platforms as it access memory directly
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="structValue"></param>
+        public void AddValue<T>(T structValue) where T : struct
+        {
+            // Since we use unmanaged, memory, pointers etc adding try/catch
+
+            IntPtr ptr = IntPtr.Zero;            
+            try
+            {                
+                //TODO: Copy direct to buffer !!!!
+
+                var size = Marshal.SizeOf(typeof(T));             
+                var bytes = new byte[size];
+                ptr = Marshal.AllocHGlobal(size);
+                Marshal.StructureToPtr(structValue, ptr, true);
+                Marshal.Copy(ptr, bytes, 0, size);                
+                CheckBuffer(1 + 4 + bytes.Length);  // type + len
+                WriteValueType(Struct);
+                WriteInt(bytes.Length);
+                WriteBytes(bytes);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error in Payload AddValue for struct: " + ex.Message);
+                throw ex;
+            }
+            finally
+            {
+                if (ptr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
+            }
+        }
+
+        
+        public T GetValue<T>() where T : struct
+        {
+            byte b = ReadValueType();
+
+            if (b == Struct)
+            {                
+                int size = Marshal.SizeOf(typeof(T));
+                IntPtr ptr = Marshal.AllocHGlobal(size);
+
+                int len = ReadInt();
+
+                //TODO: add check if size != len
+
+                Byte[] array = new byte[len];
+                Buffer.BlockCopy(mBuffer, mBufferIndex, array, 0, len);
+                mBufferIndex += len;
+
+                Marshal.Copy(array, 0, ptr, size);
+                var structValue = (T)Marshal.PtrToStructure(ptr, typeof(T));
+                Marshal.FreeHGlobal(ptr);
+                return structValue;
+
+            }
+            else
+            {
+                throw new InvalidOperationException("Struct Parsing Error/wrong value type");
+            }
+        }
+
+
+        // 12 JSONStruct
+        /// <summary>
+        /// Add Value of struct to payload
+        /// will convert the stuct to json and add it like string
+        /// struct can include any item which is convertible using json including annotations
+        /// use it for complex objects data with list, string which are more dynamic and doesn't have fixed length
+        /// Keep in mind it will convert any type to string represenataiton and then back on the other side
+        /// Supported cross platfomrs based on the json converter used
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="structValue"></param>
+        public void AddJSONValue<T>(T structValue) where T : struct
+        {
+            var json = JsonConvert.SerializeObject(structValue);            
+            WriteValueType(JSONStruct);
+            WriteString(json);            
+        }
+
+        public T GetJSONValue<T>() where T : struct
+        {
+            byte b = ReadValueType();
+
+            if (b == JSONStruct)
+            {
+                string json = ReadString();
+                T structValue = JsonConvert.DeserializeObject<T>(json);
+                return structValue;
+            }
+            else
+            {
+                throw new InvalidOperationException("JSONStruct Parsing Error/wrong value type");
+            }
+        }
 
 
         public void AddValueByObjectType(object obj)
@@ -645,7 +756,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // Use to write screen shot or any binary data
         private void WriteBytes(byte[] Bytes)
         {
-            CheckBuffer(Bytes.Length + 4);
+            CheckBuffer(Bytes.Length + 4);   // why + 4 if not used !!!???
 
             Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);            
             mBufferIndex += Bytes.Length;
@@ -753,7 +864,18 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     case 10: // bool true                        
                         s += "bool=true " + Environment.NewLine;
                         break;
+                    //case 11: // Struct // FIXME !!!
+                    //    // TODO: Create display for struct!?
+                    //    int len = ReadInt();
+                    //    mBufferIndex += len; // skip the bytes
+                    //    s += "struct=true " + Environment.NewLine;
+                    //    break;
+                    case 12: // JSONStruct                         
+                        string json = ReadString();                        
+                        s += "jsonstruct= " + json + Environment.NewLine;
+                        break;
                     default:
+                        mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
                 }
 
@@ -840,6 +962,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 {
                     AddValue((bool)item);
                 }
+
+                // Add struct !!!!!!!!
 
 
                 //TODO: add all types...
