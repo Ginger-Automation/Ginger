@@ -21,6 +21,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     {
         Act mAction;
         Context mContext;
+        General.eRIPageViewMode mPageViewMode;
 
         public delegate void ActionListItemEventHandler(ActionListItemEventArgs EventArgs);
         public event ActionListItemEventHandler ActionListItemEvent;
@@ -33,9 +34,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public ActionsListHelper(Context context)
+        public ActionsListHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
+            mPageViewMode = pageViewMode;
         }
 
         public void SetItem(object item)
@@ -61,7 +63,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameExtentionField()
         {
-            return null;
+            return nameof(Act.ElapsedSecs);
         }
 
         public string GetItemTagsField()
@@ -111,11 +113,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            ListItemOperation deleteAll = new ListItemOperation();
-            deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteAll.ToolTip = "Delete All Actions";
-            deleteAll.OperationHandler = DeleteAllHandler;
-            operationsList.Add(deleteAll);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation deleteAll = new ListItemOperation();
+                deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                deleteAll.ToolTip = "Delete All Actions";
+                deleteAll.OperationHandler = DeleteAllHandler;
+                operationsList.Add(deleteAll);
+            }
 
             return operationsList;
         }
@@ -124,26 +129,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation actionVarsDep = new ListItemOperation();
-            actionVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionVarsDep.Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
-            actionVarsDep.OperationHandler = ActionsVarsHandler;
-            extraOperationsList.Add(actionVarsDep);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation actionVarsDep = new ListItemOperation();
+                actionVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                actionVarsDep.Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
+                actionVarsDep.ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
+                actionVarsDep.OperationHandler = ActionsVarsHandler;
+                extraOperationsList.Add(actionVarsDep);
 
-            ListItemOperation activeUnactiveAllActions = new ListItemOperation();
-            activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActions.Header = "Activate/Un-Activate all Actions";
-            activeUnactiveAllActions.ToolTip = "Activate/Un-Activate all Actions";
-            activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
-            extraOperationsList.Add(activeUnactiveAllActions);
+                ListItemOperation activeUnactiveAllActions = new ListItemOperation();
+                activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
+                activeUnactiveAllActions.Header = "Activate/Un-Activate all Actions";
+                activeUnactiveAllActions.ToolTip = "Activate/Un-Activate all Actions";
+                activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
+                extraOperationsList.Add(activeUnactiveAllActions);
 
-            ListItemOperation takeUntakeSS = new ListItemOperation();
-            takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-            takeUntakeSS.Header = "Take/Un-Take Screen Shots";
-            takeUntakeSS.ToolTip = "Set Take/Un-Take Screen Shots to all Actions";
-            takeUntakeSS.OperationHandler = TakeUntakeSSHandler;
-            extraOperationsList.Add(takeUntakeSS);
+                ListItemOperation takeUntakeSS = new ListItemOperation();
+                takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
+                takeUntakeSS.Header = "Take/Un-Take Screen Shots";
+                takeUntakeSS.ToolTip = "Set Take/Un-Take Screen Shots to all Actions";
+                takeUntakeSS.OperationHandler = TakeUntakeSSHandler;
+                extraOperationsList.Add(takeUntakeSS);
+            }
 
             return extraOperationsList;
         }
@@ -214,38 +222,41 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            ListItemOperation edit = new ListItemOperation();
-            edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            edit.ToolTip = "Edit Action";
-            edit.OperationHandler = EditHandler;
-            operationsList.Add(edit);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation edit = new ListItemOperation();
+                edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+                edit.ToolTip = "Edit Action";
+                edit.OperationHandler = EditHandler;
+                operationsList.Add(edit);
 
-            ListItemOperation moveUp = new ListItemOperation();
-            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
-            moveUp.ToolTip = "Move Up";
-            moveUp.OperationHandler = MoveUpHandler;
-            operationsList.Add(moveUp);
+                ListItemOperation moveUp = new ListItemOperation();
+                moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
+                moveUp.ToolTip = "Move Up";
+                moveUp.OperationHandler = MoveUpHandler;
+                operationsList.Add(moveUp);
 
-            ListItemOperation moveDown = new ListItemOperation();
-            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
-            moveDown.ToolTip = "Move Down";
-            moveDown.OperationHandler = MoveDownHandler;
-            operationsList.Add(moveDown);
+                ListItemOperation moveDown = new ListItemOperation();
+                moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
+                moveDown.ToolTip = "Move Down";
+                moveDown.OperationHandler = MoveDownHandler;
+                operationsList.Add(moveDown);
 
-            ListItemOperation delete = new ListItemOperation();
-            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            delete.ToolTip = "Delete";
-            delete.OperationHandler = DeleteHandler;
-            operationsList.Add(delete);
+                ListItemOperation delete = new ListItemOperation();
+                delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                delete.ToolTip = "Delete";
+                delete.OperationHandler = DeleteHandler;
+                operationsList.Add(delete);
 
-            ListItemOperation active = new ListItemOperation();
-            active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            active.ImageBindingObject = mAction;
-            active.ImageBindingFieldName = nameof(Act.Active);
-            active.ImageBindingConverter = new ActiveImageTypeConverter();
-            active.ToolTip = "Active";
-            active.OperationHandler = ActiveHandler;
-            operationsList.Add(active);
+                ListItemOperation active = new ListItemOperation();
+                active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+                active.ImageBindingObject = mAction;
+                active.ImageBindingFieldName = nameof(Act.Active);
+                active.ImageBindingConverter = new ActiveImageTypeConverter();
+                active.ToolTip = "Active";
+                active.OperationHandler = ActiveHandler;
+                operationsList.Add(active);
+            }
 
             return operationsList;
         }
@@ -255,22 +266,25 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation breakPoint = new ListItemOperation();
-            breakPoint.Header = "Break Point";
-            breakPoint.ToolTip = "Stop execution on that Action";
-            breakPoint.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            breakPoint.ImageBindingObject = mAction;
-            breakPoint.ImageBindingFieldName = nameof(Act.BreakPoint);
-            breakPoint.ImageBindingConverter = new ActiveImageTypeConverter();
-            breakPoint.OperationHandler = BreakPointHandler;
-            extraOperationsList.Add(breakPoint);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation breakPoint = new ListItemOperation();
+                breakPoint.Header = "Break Point";
+                breakPoint.ToolTip = "Stop execution on that Action";
+                breakPoint.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+                breakPoint.ImageBindingObject = mAction;
+                breakPoint.ImageBindingFieldName = nameof(Act.BreakPoint);
+                breakPoint.ImageBindingConverter = new ActiveImageTypeConverter();
+                breakPoint.OperationHandler = BreakPointHandler;
+                extraOperationsList.Add(breakPoint);
 
-            ListItemOperation reset = new ListItemOperation();
-            reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            reset.Header = "Reset";
-            reset.ToolTip = "Reset execution details";
-            reset.OperationHandler = ResetHandler;
-            extraOperationsList.Add(reset);
+                ListItemOperation reset = new ListItemOperation();
+                reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                reset.Header = "Reset";
+                reset.ToolTip = "Reset execution details";
+                reset.OperationHandler = ResetHandler;
+                extraOperationsList.Add(reset);
+            }
 
             ListItemOperation addToSR = new ListItemOperation();
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
@@ -287,17 +301,20 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation run = new ListItemOperation();
-            run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            run.ToolTip = "Run Action";
-            run.OperationHandler = RunHandler;
-            executionOperationsList.Add(run);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation run = new ListItemOperation();
+                run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
+                run.ToolTip = "Run Action";
+                run.OperationHandler = RunHandler;
+                executionOperationsList.Add(run);
 
-            ListItemOperation continueRun = new ListItemOperation();
-            continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
-            continueRun.ToolTip = "Continue Run from Action";
-            continueRun.OperationHandler = ContinueRunHandler;
-            executionOperationsList.Add(continueRun);
+                ListItemOperation continueRun = new ListItemOperation();
+                continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
+                continueRun.ToolTip = "Continue Run from Action";
+                continueRun.OperationHandler = ContinueRunHandler;
+                executionOperationsList.Add(continueRun);
+            }
 
             return executionOperationsList;
         }

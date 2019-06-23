@@ -7,6 +7,7 @@ using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
@@ -23,6 +24,7 @@ namespace Ginger.BusinessFlowPages
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;
         Context mContext;
+        General.eRIPageViewMode mPageViewMode;
 
         VariablesListHelper mVariabelListHelper;
         UcListView mVariabelsListView;
@@ -34,13 +36,14 @@ namespace Ginger.BusinessFlowPages
             get { return mVariabelsListView; }
         }
 
-        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context)
+        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mVariabelsParent = variabelsParent;
             mVariablesLevel = GetVariablesLevel();
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             SetListView();
             ShowHideEditPage(null);
@@ -92,6 +95,8 @@ namespace Ginger.BusinessFlowPages
             {
                 xBackToListPnl.Visibility = Visibility.Visible;
                 mVarBeenEdit = variabelToEdit;
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, mVarBeenEdit, nameof(VariableBase.Name));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
                 mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
                 if (mVariabelsParent is Solution)
                 {
@@ -122,7 +127,7 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
             mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListHelper = new VariablesListHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext);
+            mVariabelListHelper = new VariablesListHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
             mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
             mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 

@@ -779,6 +779,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Mandatory:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle);
                     break;
+                case eImageType.ALM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
+                    break;
+                case eImageType.CSV:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
+                    break;
                 #endregion
 
                 #region ElementType Images

@@ -249,6 +249,8 @@ namespace Amdocs.Ginger.Common.Enums
         Languages,
         MinusSquare,
         Mandatory,
+        ALM,
+        CSV,
         #endregion
 
         #region Source control Images     

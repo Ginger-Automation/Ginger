@@ -43,20 +43,20 @@ namespace GingerWPF.BusinessFlowsLib
     {
         Activity mActivity;
         Context mContext;
-        Ginger.General.RepositoryItemPageViewMode mPageMode;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
         ActionsListViewPage mActionsPage;
         VariabelsListViewPage mVariabelsPage;
         ActivityConfigurationsPage mConfigurationsPage;
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity activity, Context context, Ginger.General.RepositoryItemPageViewMode pageMode)
+        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mActivity = activity;
             mContext = context;
-            mPageMode = pageMode;
+            mPageViewMode = pageViewMode;
 
             SetUIControlsContent();
             BindControls();
@@ -64,11 +64,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControlsContent()
         {
-            mActionsPage = new ActionsListViewPage(mActivity, mContext);
+            mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActionsTabFrame.Content = mActionsPage;
 
-            mVariabelsPage = new VariabelsListViewPage(mActivity, mContext);
+            mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
 

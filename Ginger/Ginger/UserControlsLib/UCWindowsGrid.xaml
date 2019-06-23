@@ -20,7 +20,7 @@
         
         <userControls:ucButton Grid.Column="2" x:Name="xRefreshWindowsButton" ButtonType="RoundTextAndImageButton" ButtonText="Refresh" ButtonImageType="Refresh"  
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="15" ButtonImageWidth="15" 
-                               ButtonImageHeight="15" Click="RefreshWindowsButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                               ButtonImageHeight="15" Click="RefreshWindowsButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
         
         <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" ToolTip="Add Switch Window Action to Business Flow" 
                 Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">

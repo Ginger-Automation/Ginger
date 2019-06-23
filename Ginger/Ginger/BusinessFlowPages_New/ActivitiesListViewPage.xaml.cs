@@ -19,18 +19,20 @@ namespace Ginger.BusinessFlowPages
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
         public UcListView ListView
         {
             get { return xActivitiesListView; }
         }
 
-        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context)
+        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             SetListView();
             SetSharedRepositoryMark();
@@ -43,7 +45,7 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext);
+            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext, mPageViewMode);
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 

@@ -5,24 +5,17 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.Agents;
 using Ginger.BusinessFlowPages_New;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -243,7 +236,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xRecordingButton.ToolTip = "Start Recording";
                 xRecordingButton.ButtonImageType = eImageType.Run;
             }
-            xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");            
+            xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle");            
         }
 
         ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();

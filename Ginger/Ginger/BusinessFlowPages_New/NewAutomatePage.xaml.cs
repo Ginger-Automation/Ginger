@@ -294,7 +294,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.AttachActivitiesGroupsAndActivities();
                     if (mBfActivitiesPage == null)
                     {
-                        mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+                        mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         //mBfActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         mBfActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mBfActivitiesPage;
@@ -309,7 +309,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                     if (mBfVariabelsPage == null)
                     {
-                        mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
+                        mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         //mBfVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xBfVariablesTabFrame.Content = mBfVariabelsPage;
                     }
@@ -427,7 +427,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mActivityPage == null)
                 {
-                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.eRIPageViewMode.Automation);
                 }
                 else
                 {
