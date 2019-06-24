@@ -1233,8 +1233,14 @@ namespace Ginger.Run
                     {
                         iPathCount++;
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
-                    }
 
+                        // if in output values there is only 1 record with Path = null
+                        if (mOutRVs.Count == 0 && act.ReturnValues != null)
+                        {
+                            mOutRVs = act.ReturnValues.ToList();
+                        }
+                    }
+                    
                     while(mOutRVs.Count >0)
                     {
                         string sColList = "";
