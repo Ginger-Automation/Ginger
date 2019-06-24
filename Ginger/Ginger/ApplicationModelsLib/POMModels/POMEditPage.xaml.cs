@@ -49,7 +49,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ScreenShotViewPage mScreenShotViewPage;
         GenericWindow mWin;
         public bool IsPageSaved = false;
-        public RepositoryItemPageViewMode mEditMode { get; set; }
+        public eRIPageViewMode mEditMode { get; set; }
         private Agent mAgent;
         public Agent Agent
         {
@@ -92,7 +92,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
-        public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
+        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode = eRIPageViewMode.View)
         {
             InitializeComponent();
             mPOM = POM;

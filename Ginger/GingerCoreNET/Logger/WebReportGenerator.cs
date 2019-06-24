@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             this.browserPath = browserNewPath;
         }
 
-        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool displayReport = false)
+        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
             bool response = false;
             try
@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 LiteDbRunSet lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
-                response = RunClientApp(json, clientAppFolderPath, openObject, !displayReport);
+                response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
-        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool displayReport)
+        private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldDisplayReport)
         {
             bool response = false;
 
@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\"";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets","Execution_Data","executiondata.js"), json);
-                if (displayReport)
+                if (shouldDisplayReport)
                 {
                     System.Diagnostics.Process.Start(@browserPath, taskCommand);
                     System.Diagnostics.Process.Start(clientAppFolderPath);

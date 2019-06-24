@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Linq;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -207,237 +208,285 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetItemNotifications()
         {
-            List<ListItemNotification> notifications = ListHelper.GetItemNotificationsList(Item);
-            if (notifications != null)
+            this.Dispatcher.Invoke(() =>
             {
-                foreach (ListItemNotification notification in notifications)
+                List<ListItemNotification> notifications = ListHelper.GetItemNotificationsList(Item);
+                if (notifications != null)
                 {
-                    ImageMakerControl itemInd = new ImageMakerControl();
-                    itemInd.ImageType = notification.ImageType;
-                    itemInd.ToolTip = notification.ToolTip;
-                    itemInd.Margin = new Thickness(3, 0, 3, 0);
-                    itemInd.Height = 16;
-                    itemInd.Width = 16;
-                    itemInd.SetAsFontImageWithSize = notification.ImageSize;
+                    foreach (ListItemNotification notification in notifications)
+                    {
+                        ImageMakerControl itemInd = new ImageMakerControl();
+                        itemInd.ImageType = notification.ImageType;
+                        itemInd.ToolTip = notification.ToolTip;
+                        itemInd.Margin = new Thickness(3, 0, 3, 0);
+                        itemInd.Height = 16;
+                        itemInd.Width = 16;
+                        itemInd.SetAsFontImageWithSize = notification.ImageSize;
 
-                    if (notification.ImageForeground == null)
-                    {
-                        itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
-                    }
-                    else
-                    {
-                        itemInd.ImageForeground = notification.ImageForeground;
-                    }
+                        if (notification.ImageForeground == null)
+                        {
+                            itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
+                        }
+                        else
+                        {
+                            itemInd.ImageForeground = notification.ImageForeground;
+                        }
 
-                    if (notification.BindingConverter == null)
-                    {
-                        BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
-                    }
-                    else
-                    {
-                        BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
-                    }
+                        if (notification.BindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                        }
 
-                    xItemNotificationsPnl.Children.Add(itemInd);
-                    xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 10);
+                        xItemNotificationsPnl.Children.Add(itemInd);
+                        xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 10);
+                    }
                 }
-            }
+            });
         }
 
         private void SetItemOperations()
         {
-            List<ListItemOperation> operations = ListHelper.GetItemOperationsList(Item);
-            if (operations != null && operations.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                xItemOperationsPnl.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in operations)
+                List<ListItemOperation> operations = ListHelper.GetItemOperationsList(Item);
+                if (operations != null && operations.Count > 0)
                 {
-                    ucButton operationBtn = new ucButton();
-                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
-                    operationBtn.ButtonImageType = operation.ImageType;
-                    operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    operationBtn.ButtonFontImageSize = operation.ImageSize;
+                    xItemOperationsPnl.Visibility = Visibility.Visible;
+                    foreach (ListItemOperation operation in operations)
+                    {
+                        ucButton operationBtn = new ucButton();
+                        operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                        operationBtn.ButtonImageType = operation.ImageType;
+                        operationBtn.ToolTip = operation.ToolTip;
+                        operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                        operationBtn.ButtonFontImageSize = operation.ImageSize;
 
-                    if (operation.ImageForeground == null)
-                    {
-                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
-                    }
-                    else
-                    {
-                        operationBtn.ButtonImageForground = operation.ImageForeground;
-                    }
-
-                    if (operation.ImageBindingObject != null)
-                    {
-                        if (operation.ImageBindingConverter == null)
+                        if (operation.ImageForeground == null)
                         {
-                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
                         }
                         else
                         {
-                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            operationBtn.ButtonImageForground = operation.ImageForeground;
                         }
+
+                        if (operation.ImageBindingObject != null)
+                        {
+                            if (operation.ImageBindingConverter == null)
+                            {
+                                BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            }
+                            else
+                            {
+                                BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            }
+                        }
+
+                        operationBtn.Click += operation.OperationHandler;
+                        operationBtn.Tag = Item;
+
+                        xItemOperationsPnl.Children.Add(operationBtn);
                     }
-
-                    operationBtn.Click += operation.OperationHandler;
-                    operationBtn.Tag = Item;
-
-                    xItemOperationsPnl.Children.Add(operationBtn);
                 }
-            }
-            else
-            {
-                xItemOperationsPnl.Visibility = Visibility.Collapsed;
-            }
+                else
+                {
+                    xItemOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void SetItemExtraOperations()
         {
-            List<ListItemOperation> extraOperations = ListHelper.GetItemExtraOperationsList(Item);
-            if (extraOperations != null && extraOperations.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                xItemExtraOperationsMenu.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in extraOperations)
+                List<ListItemOperation> extraOperations = ListHelper.GetItemExtraOperationsList(Item);
+                if (extraOperations != null && extraOperations.Count > 0)
                 {
-                    MenuItem menuitem = new MenuItem();
-                    menuitem.Style = (Style)FindResource("$MenuItemStyle");
-                    ImageMakerControl iconImage = new ImageMakerControl();
-                    iconImage.ImageType = operation.ImageType;
-                    iconImage.SetAsFontImageWithSize = operation.ImageSize;
-                    iconImage.HorizontalAlignment = HorizontalAlignment.Left;
-                    menuitem.Icon = iconImage;
-                    menuitem.Header = operation.Header;
-                    menuitem.ToolTip = operation.ToolTip;
+                    xItemExtraOperationsMenu.Visibility = Visibility.Visible;
+                    foreach (ListItemOperation operation in extraOperations)
+                    {
+                        MenuItem menuitem = new MenuItem();
+                        menuitem.Style = (Style)FindResource("$MenuItemStyle");
+                        ImageMakerControl iconImage = new ImageMakerControl();
+                        iconImage.ImageType = operation.ImageType;
+                        iconImage.SetAsFontImageWithSize = operation.ImageSize;
+                        iconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                        menuitem.Icon = iconImage;
+                        menuitem.Header = operation.Header;
+                        menuitem.ToolTip = operation.ToolTip;
 
-                    if (operation.ImageForeground == null)
-                    {
-                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
-                    }
-                    else
-                    {
-                        iconImage.ImageForeground = operation.ImageForeground;
-                    }
-
-                    if (operation.ImageBindingObject != null)
-                    {
-                        if (operation.ImageBindingConverter == null)
+                        if (operation.ImageForeground == null)
                         {
-                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
                         }
                         else
                         {
-                            BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            iconImage.ImageForeground = operation.ImageForeground;
+                        }
+
+                        if (operation.ImageBindingObject != null)
+                        {
+                            if (operation.ImageBindingConverter == null)
+                            {
+                                BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            }
+                            else
+                            {
+                                BindingHandler.ObjFieldBinding(iconImage, ImageMaker.ContentProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            }
+                        }
+
+                        menuitem.Click += operation.OperationHandler;
+
+                        menuitem.Tag = Item;
+
+                        if (string.IsNullOrEmpty(operation.Group))
+                        {
+                            ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                        }
+                        else
+                        {
+                            //need to add to Group
+                            bool addedToGroup = false;
+                            foreach(MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
+                            {
+                                if (item.Header.ToString() == operation.Group)
+                                {
+                                    //adding to existing group
+                                    item.Items.Add(menuitem);
+                                    addedToGroup = true;
+                                    break;
+                                }
+                            }
+                            if(!addedToGroup)
+                            {
+                                //creating the group and adding
+                                MenuItem groupMenuitem = new MenuItem();
+                                groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                                ImageMakerControl groupIconImage = new ImageMakerControl();
+                                groupIconImage.ImageType = operation.GroupImageType;
+                                groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                                groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                                groupMenuitem.Icon = groupIconImage;
+                                groupMenuitem.Header = operation.Group;
+                                groupMenuitem.ToolTip = operation.Group;
+                                ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(groupMenuitem);
+                                groupMenuitem.Items.Add(menuitem);
+                            }
                         }
                     }
-
-                    menuitem.Click += operation.OperationHandler;
-
-                    menuitem.Tag = Item;
-
-                    ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Add(menuitem);
                 }
-            }
-            else
-            {
-                xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
-            }
+                else
+                {
+                    xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void SetItemExecutionOperations()
         {
-            List<ListItemOperation> executionOperations = ListHelper.GetItemExecutionOperationsList(Item);
-            if (executionOperations != null && executionOperations.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                xOperationsSplitter.Visibility = Visibility.Visible;
-                xItemExecutionOperationsPnl.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in executionOperations)
+                List<ListItemOperation> executionOperations = ListHelper.GetItemExecutionOperationsList(Item);
+                if (executionOperations != null && executionOperations.Count > 0)
                 {
-                    ucButton operationBtn = new ucButton();                   
-                    operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
-                    operationBtn.ButtonImageType = operation.ImageType;
-                    operationBtn.ToolTip = operation.ToolTip;
-                    operationBtn.Margin = new Thickness(-5, 0, -5, 0);
-                    operationBtn.ButtonImageHeight = 15;
-                    operationBtn.ButtonImageWidth = 15;
-                    operationBtn.ButtonFontImageSize = operation.ImageSize;
-                    operationBtn.ButtonStyle = (Style)FindResource("$ImageButtonStyle_Execution");
+                    xOperationsSplitter.Visibility = Visibility.Visible;
+                    xItemExecutionOperationsPnl.Visibility = Visibility.Visible;
+                    foreach (ListItemOperation operation in executionOperations)
+                    {
+                        ucButton operationBtn = new ucButton();
+                        operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
+                        operationBtn.ButtonImageType = operation.ImageType;
+                        operationBtn.ToolTip = operation.ToolTip;
+                        operationBtn.Margin = new Thickness(-5, 0, -5, 0);
+                        operationBtn.ButtonImageHeight = 15;
+                        operationBtn.ButtonImageWidth = 15;
+                        operationBtn.ButtonFontImageSize = operation.ImageSize;
+                        operationBtn.ButtonStyle = (Style)FindResource("$ImageButtonStyle_Execution");
 
-                    if (operation.ImageForeground == null)
-                    {
-                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
-                    }
-                    else
-                    {
-                        operationBtn.ButtonImageForground = operation.ImageForeground;
-                    }
-
-                    if (operation.ImageBindingObject != null)
-                    {
-                        if (operation.ImageBindingConverter == null)
+                        if (operation.ImageForeground == null)
                         {
-                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
                         }
                         else
                         {
-                            BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            operationBtn.ButtonImageForground = operation.ImageForeground;
                         }
+
+                        if (operation.ImageBindingObject != null)
+                        {
+                            if (operation.ImageBindingConverter == null)
+                            {
+                                BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, BindingMode.OneWay);
+                            }
+                            else
+                            {
+                                BindingHandler.ObjFieldBinding(operationBtn, ucButton.ButtonImageTypeProperty, operation.ImageBindingObject, operation.ImageBindingFieldName, bindingConvertor: operation.ImageBindingConverter, BindingMode.OneWay);
+                            }
+                        }
+
+                        operationBtn.Click += operation.OperationHandler;
+                        operationBtn.Tag = Item;
+
+                        xItemExecutionOperationsPnl.Children.Add(operationBtn);
                     }
-
-                    operationBtn.Click += operation.OperationHandler;
-                    operationBtn.Tag = Item;
-
-                    xItemExecutionOperationsPnl.Children.Add(operationBtn);
                 }
-            }
-            else
-            {
-                xOperationsSplitter.Visibility = Visibility.Collapsed;
-                xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
-            }
+                else
+                {
+                    xOperationsSplitter.Visibility = Visibility.Collapsed;
+                    xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void SetItemBindings()
         {
-            if (Item is RepositoryItemBase)
+            this.Dispatcher.Invoke(() =>
             {
-                ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-                ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
-            }
-            SetItemFullName();
+                if (Item is RepositoryItemBase)
+                {
+                    ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+                    ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+                }
+                SetItemFullName();
 
-            SetItemDescription();
+                SetItemDescription();
 
-            if (!string.IsNullOrEmpty(ItemIconField))
-            {
-                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode:BindingMode.OneWay);
-            }
-            if (!string.IsNullOrEmpty(ItemIconTooltipField))
-            {
-                BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, ItemIconTooltipField, BindingMode: BindingMode.OneWay);
-            }
+                if (!string.IsNullOrEmpty(ItemIconField))
+                {
+                    BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode: BindingMode.OneWay);
+                }
+                if (!string.IsNullOrEmpty(ItemIconTooltipField))
+                {
+                    BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, ItemIconTooltipField, BindingMode: BindingMode.OneWay);
+                }
 
-            if (!string.IsNullOrEmpty(ItemActiveField))
-            {
-                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
-                b.Source = Item;
-                b.Path = new PropertyPath(ItemActiveField);
-                b.Mode = BindingMode.OneWay;
-                b.Converter = new ActiveBackgroundColorConverter();
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
-            }
+                if (!string.IsNullOrEmpty(ItemActiveField))
+                {
+                    System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                    b.Source = Item;
+                    b.Path = new PropertyPath(ItemActiveField);
+                    b.Mode = BindingMode.OneWay;
+                    b.Converter = new ActiveBackgroundColorConverter();
+                    b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                    xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
+                }
 
-            if (string.IsNullOrEmpty(ItemExecutionStatusField))
-            {
-                xItemStatusImage.Visibility = Visibility.Collapsed;
-                xItemStatusClm.Width = new GridLength(0);
-            }
-            else
-            {
-                BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, ItemExecutionStatusField);
-                xItemStatusClm.Width = new GridLength(25);
-            }
+                if (string.IsNullOrEmpty(ItemExecutionStatusField))
+                {
+                    xItemStatusImage.Visibility = Visibility.Collapsed;
+                    xItemStatusClm.Width = new GridLength(0);
+                }
+                else
+                {
+                    BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, ItemExecutionStatusField);
+                    xItemStatusClm.Width = new GridLength(25);
+                }
+            });
         }
 
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -469,34 +518,43 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ExpandItem()
         {
-            xExtraDetailsRow.Height = new GridLength(25);
-            xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
-            xExpandCollapseBtn.ToolTip = "Collapse";
+            this.Dispatcher.Invoke(() =>
+            {
+                xExtraDetailsRow.Height = new GridLength(25);
+                xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
+                xExpandCollapseBtn.ToolTip = "Collapse";
+            });
         }
 
         public void CollapseItem()
         {
-            xExtraDetailsRow.Height = new GridLength(0);
-            xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
-            xExpandCollapseBtn.ToolTip = "Expand";
+            this.Dispatcher.Invoke(() =>
+            {
+                xExtraDetailsRow.Height = new GridLength(0);
+                xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Expand;
+                xExpandCollapseBtn.ToolTip = "Expand";
+            });
         }
 
         private void UcListViewItem_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ParentList == null)
+            this.Dispatcher.Invoke(() =>
             {
-                var parent = GingerCore.General.TryFindParent<UcListView>(this);
-                if (parent != null)
+                if (ParentList == null)
                 {
-                    ParentList = (UcListView)parent;
-                    ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-                    ParentList.UcListViewEvent += ParentList_UcListViewEvent;
-                    ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-                    ParentList.List.SelectionChanged += ParentList_SelectionChanged;
+                    var parent = GingerCore.General.TryFindParent<UcListView>(this);
+                    if (parent != null)
+                    {
+                        ParentList = (UcListView)parent;
+                        ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
+                        ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+                        ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
+                        ParentList.List.SelectionChanged += ParentList_SelectionChanged;
+                    }
+                    OnPropertyChanged(nameof(IsSelected));
                 }
-                OnPropertyChanged(nameof(IsSelected));
-            }
-            SetItemIndex();
+                SetItemIndex();
+            });
         }
 
         private void ParentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -506,85 +564,99 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetItemIndex()
         {
-            if (ParentList != null)
+            this.Dispatcher.Invoke(() =>
             {
-                //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
-                xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
-            }
+                if (ParentList != null)
+                {
+                    //xItemIndexTxt.Text = (ParentList.List.ItemContainerGenerator.IndexFromContainer(this) + 1).ToString();
+                    xItemIndexTxt.Text = (ParentList.List.Items.IndexOf(Item) + 1).ToString();
+                }
+            });
         }
 
         private void SetItemFullName()
         {
-            try
+            this.Dispatcher.Invoke(() =>
             {
-                xItemNameTxtBlock.Text = string.Empty;
-                string fullname = string.Empty;
-                if (!string.IsNullOrEmpty(ItemNameField))
+                try
                 {
-                    Object name = Item.GetType().GetProperty(ItemNameField).GetValue(Item);
-                    if (name != null)
-                    {                        
-                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
-                        {
-                            FontSize = 15,
-                            Text = name.ToString() + " "
-                        });
-
-                        fullname += name;
-                    }
-                }
-                if (!string.IsNullOrEmpty(ItemNameExtentionField))
-                {
-                    Object group = Item.GetType().GetProperty(ItemNameExtentionField).GetValue(Item);
-                    if (group != null)
+                    xItemNameTxtBlock.Text = string.Empty;
+                    string fullname = string.Empty;
+                    if (!string.IsNullOrEmpty(ItemNameField))
                     {
-                        xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                        Object name = Item.GetType().GetProperty(ItemNameField).GetValue(Item);
+                        if (name != null)
                         {
-                            FontSize = 10,
-                            Text = string.Format("[{0}]", group.ToString())
-                        });
+                            xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                            {
+                                FontSize = 15,
+                                Text = name.ToString() + " "
+                            });
 
-                        fullname += string.Format("[{0}]", group.ToString());
+                            fullname += name;
+                        }
                     }
-                }
+                    if (!string.IsNullOrEmpty(ItemNameExtentionField))
+                    {
+                        Object group = Item.GetType().GetProperty(ItemNameExtentionField).GetValue(Item);
+                        if (group != null)
+                        {
+                            xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                            {
+                                FontSize = 12,
+                                Text = string.Format("[{0}]", group.ToString())
+                            });
 
-                xItemNameTxtBlock.ToolTip = fullname;
-            }
-            catch (Exception ex)
-            {
-                xItemDescriptionTxtBlock.Text = "Failed to set Name!;";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Name", ex);
-            }
+                            fullname += string.Format("[{0}]", group.ToString());
+                        }
+                    }
+
+                    xItemNameTxtBlock.ToolTip = fullname;
+                }
+                catch (Exception ex)
+                {
+                    xItemDescriptionTxtBlock.Text = "Failed to set Name!;";
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Name", ex);
+                }
+            });
         }
 
         private void SetItemDescription()
         {
-            try
+            this.Dispatcher.Invoke(() =>
             {
-                string fullDesc = string.Empty;
-                if (!string.IsNullOrEmpty(ItemDescriptionField))
+                try
                 {
-                    Object desc = Item.GetType().GetProperty(ItemDescriptionField).GetValue(Item);
-                    if (desc != null)
+                    string fullDesc = string.Empty;
+                    if (!string.IsNullOrEmpty(ItemDescriptionField))
                     {
-                        fullDesc += desc.ToString() + " ";
+                        Object desc = Item.GetType().GetProperty(ItemDescriptionField).GetValue(Item);
+                        if (desc != null)
+                        {
+                            fullDesc += desc.ToString() + " ";
+                        }
                     }
-                }
 
-                if (!string.IsNullOrEmpty(ItemTagsField))
+                    if (!string.IsNullOrEmpty(ItemTagsField))
+                    {
+                        Object tags = Item.GetType().GetField(ItemTagsField).GetValue(Item);
+                        fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";
+                    }
+
+                    xItemDescriptionTxtBlock.Text = fullDesc;
+                    xItemDescriptionTxtBlock.ToolTip = fullDesc;
+                }
+                catch (Exception ex)
                 {
-                    Object tags = Item.GetType().GetField(ItemTagsField).GetValue(Item);
-                    fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";                    
+                    xItemDescriptionTxtBlock.Text = "Failed to set description!;";
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Description", ex);
                 }
+            });
+        }
 
-                xItemDescriptionTxtBlock.Text = fullDesc;
-                xItemDescriptionTxtBlock.ToolTip = fullDesc;
-            }
-            catch(Exception ex)
-            {
-                xItemDescriptionTxtBlock.Text = "Failed to set description!;";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Description", ex);
-            }
+        private void XListItemGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ExpandItem();
         }
     }
 

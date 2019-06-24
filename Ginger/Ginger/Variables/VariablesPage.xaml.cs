@@ -48,7 +48,7 @@ namespace Ginger.Variables
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
        
-        readonly General.RepositoryItemPageViewMode mEditMode;
+        readonly General.eRIPageViewMode mEditMode;
         Context mContext = new Context();
 
         public eVariablesLevel VariablesLevel
@@ -62,7 +62,7 @@ namespace Ginger.Variables
         /// </summary>
         /// <param name="variablesLevel">Type of Variables parent object</param>
         /// <param name="variablesParentObj">Actual Variables parent object, if not provided then the Current Business Flow / Activity will be used</param>       
-        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, Context context, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, Context context, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation)
         {
             InitializeComponent();
 
@@ -73,7 +73,7 @@ namespace Ginger.Variables
             SetVariablesParentObj(variablesParentObj);                      
             SetVariablesGridView();            
 
-            if (mEditMode == General.RepositoryItemPageViewMode.View)
+            if (mEditMode == General.eRIPageViewMode.View)
             {
                 grdVariables.ShowToolsBar = Visibility.Collapsed;
                 grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
@@ -181,7 +181,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.BusinessFlow:
-                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
+                        if (mEditMode != General.eRIPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((BusinessFlow)mVariablesParentObj).Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -190,7 +190,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.Activity:
-                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
+                        if (mEditMode != General.eRIPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((Activity)mVariablesParentObj).ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -413,7 +413,7 @@ namespace Ginger.Variables
 
         private void RefreshVariablesNames()
         {
-            if (mEditMode != General.RepositoryItemPageViewMode.Automation
+            if (mEditMode != General.eRIPageViewMode.Automation
                 && mVariablesLevel == eVariablesLevel.Activity && mVariablesParentObj != null)
             {
                 ((Activity)mVariablesParentObj).RefreshVariablesNames();

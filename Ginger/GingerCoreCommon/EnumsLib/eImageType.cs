@@ -127,6 +127,7 @@ namespace Amdocs.Ginger.Common.Enums
         Reply,
         ShareSquareOutline,
         Reorder,
+        Convert,
         Retweet,
         Automate,
         Minimize,
@@ -168,7 +169,7 @@ namespace Amdocs.Ginger.Common.Enums
         EditWindow,
         UserDefined,
         Spy,
-
+        Undo,
         #endregion
 
         #region Items Images
@@ -240,6 +241,7 @@ namespace Amdocs.Ginger.Common.Enums
         ChartLine,
         Suitcase,
         Paragraph,
+        Graph,
         BullsEye,
         WindowsIcon,
         SoapUI,
@@ -249,6 +251,8 @@ namespace Amdocs.Ginger.Common.Enums
         Languages,
         MinusSquare,
         Mandatory,
+        ALM,
+        CSV,
         #endregion
 
         #region Source control Images     

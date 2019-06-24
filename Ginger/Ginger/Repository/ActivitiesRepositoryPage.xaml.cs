@@ -142,7 +142,7 @@ namespace Ginger.Repository
             if (xActivitiesRepositoryGrid.CurrentItem != null)
             {
                 Activity a = (Activity)xActivitiesRepositoryGrid.CurrentItem;
-                BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(a, General.RepositoryItemPageViewMode.SharedReposiotry);
+                BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(a, General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else

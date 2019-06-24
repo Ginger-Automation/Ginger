@@ -13,7 +13,7 @@
         <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="xListItemGrid" Background="White">
+    <Grid x:Name="xListItemGrid" Background="White" MouseLeftButtonDown="XListItemGrid_MouseLeftButtonDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition x:Name="xExtraDetailsRow" Height="25"/>
@@ -126,23 +126,6 @@
 
                 <StackPanel x:Name="xItemOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right"/>
             </DockPanel>
-
-            <!--<usercontrols:ucButton x:Name="xViewItemBtn" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"   VerticalAlignment="Bottom"  Visibility="Collapsed"/>-->
-            <!--<usercontrols:ucButton x:Name="xconfig" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xconfig_Click"  VerticalAlignment="Bottom" Visibility="Collapsed"   >
-                <usercontrols:ucButton.ToolTip>
-                    <GingerCore:ucTextDicResource Text="Configure [BusinessFlow]"/>
-                </usercontrols:ucButton.ToolTip>
-            </usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xremoveBusinessflow" DockPanel.Dock="Right"  ButtonType="ImageButton" SetBorder="True" ButtonFontImageSize="12" ButtonImageWidth="20" ButtonImageHeight="20" Click="xremoveBusinessflow_Click" ButtonImageType="DeleteSingle" Visibility="Collapsed">
-                <usercontrols:ucButton.ToolTip>
-                    <GingerCore:ucTextDicResource Text="Remove [BusinessFlow]"/>
-                </usercontrols:ucButton.ToolTip>
-            </usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xBusinessflowActive" DockPanel.Dock="Right" ButtonFontImageSize="20" ButtonImageWidth="30" ButtonImageHeight="20" ButtonType="ImageButton" ButtonImageType="Active"   Click="xBusinessflowActive_Click" VerticalAlignment="Bottom" Visibility="Collapsed">
-                <usercontrols:ucButton.ToolTip>
-                    <GingerCore:ucTextDicResource Text="Active / Inactive [BusinessFlow]"/>
-                </usercontrols:ucButton.ToolTip>
-            </usercontrols:ucButton>-->
         </Grid>
     </Grid>
 </UserControl>

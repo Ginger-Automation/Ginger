@@ -40,17 +40,17 @@
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Icon>
-                        <!--<MenuItem x:Name="xResetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetMenuItem_Click">
+                        <MenuItem x:Name="xResetRestMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetRestMenuItem_Click">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="14" />
+                                <usercontrols:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
                             </MenuItem.Icon>
                             <MenuItem.Header>
-                                <GingerCore:ucTextDicResource Text="Reset [Activity]"/>
+                                <GingerCore:ucTextDicResource Text="Reset execution details from this [Activity]"/>
                             </MenuItem.Header>
-                        </MenuItem>-->
+                        </MenuItem>
                         <MenuItem x:Name="xUploadToShareRepoMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xUploadToShareRepoMenuItem_Click">
                             <MenuItem.Icon>
-                                <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="14" />
+                                <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" />
                             </MenuItem.Icon>
                             <MenuItem.Header>
                                 <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" />

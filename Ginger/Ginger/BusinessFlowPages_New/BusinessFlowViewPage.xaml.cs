@@ -16,12 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Ginger;
+using Ginger.ALM;
+using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
+using Ginger.Functionalities;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -39,13 +43,13 @@ namespace GingerWPF.BusinessFlowsLib
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
-        Ginger.General.RepositoryItemPageViewMode mPageMode;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
         ActivitiesListViewPage mActivitiesPage;
         VariabelsListViewPage mVariabelsPage;
         BusinessFlowConfigurationsPage mConfigurationsPage;
 
-        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.RepositoryItemPageViewMode pageMode)
+        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
@@ -56,7 +60,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext = new Context();
             }
             mContext.BusinessFlow = mBusinessFlow;
-            mPageMode = pageMode;
+            mPageViewMode = pageViewMode;
 
             SetUIControlsContent();
             BindControls();
@@ -64,11 +68,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControlsContent()
         {
-            mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+            mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
             mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActivitiesTabFrame.Content = mActivitiesPage;
 
-            mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
+            mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
 
@@ -183,6 +187,34 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAutomate_Click(object sender, RoutedEventArgs e)
         {
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
+        }
+
+        //FindAndReplacePage mfindAndReplacePageAutomate = null;
+        //private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (mfindAndReplacePageAutomate == null)
+        //    {
+        //        mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage, mBusinessFlow);
+        //    }
+        //    mfindAndReplacePageAutomate.ShowAsWindow();
+        //}
+
+        private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AnalyzerPage AP = new AnalyzerPage();
+            AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+            AP.ShowAsWindow();
+        }
+
+        private void xExportToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+        }
+
+        private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Ginger.Export.GingerToCSV.BrowseForFilename();
+            Ginger.Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
         }
     }
 }

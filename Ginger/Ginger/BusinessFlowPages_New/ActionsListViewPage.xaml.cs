@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
@@ -50,6 +51,7 @@ namespace GingerWPF.BusinessFlowsLib
     {
         Activity mActivity;
         Context mContext;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
         ActionsListHelper mActionsListHelper;
         UcListView mActionsListView;
@@ -60,12 +62,13 @@ namespace GingerWPF.BusinessFlowsLib
             get { return mActionsListView; }
         }
 
-        public ActionsListViewPage(Activity Activity, Context context)
+        public ActionsListViewPage(Activity Activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mActivity = Activity;
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             SetListView();
             SetSharedRepositoryMark();
@@ -77,7 +80,9 @@ namespace GingerWPF.BusinessFlowsLib
             if (actionToEdit != null)
             {
                 xBackToListPnl.Visibility = Visibility.Visible;
-                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.RepositoryItemPageViewMode.Automation);//need to pass Context?
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, actionToEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, actionToEdit, nameof(Act.Description));
+                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.eRIPageViewMode.Automation);//need to pass Context?
                 xMainFrame.Content = mActionEditPage;
             }
             else
@@ -94,7 +99,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.Title = "Actions";
             mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListHelper(mContext);
+            mActionsListHelper = new ActionsListHelper(mContext, mPageViewMode);
             mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
             mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 

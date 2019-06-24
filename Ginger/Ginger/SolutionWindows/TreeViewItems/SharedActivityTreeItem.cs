@@ -73,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivityEditPage == null)
             {
-                mActivityEditPage = new ActivityEditPage(mActivity, General.RepositoryItemPageViewMode.SharedReposiotry);
+                mActivityEditPage = new ActivityEditPage(mActivity, General.eRIPageViewMode.SharedReposiotry);
             }
             return mActivityEditPage;
         }

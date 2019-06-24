@@ -83,14 +83,14 @@ namespace Ginger.Actions
 
         Context mContext;
 
-        public General.RepositoryItemPageViewMode EditMode { get; set; }
+        public General.eRIPageViewMode EditMode { get; set; }
 
-        public ActionEditPage(Act act, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
+        public ActionEditPage(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
         {
             InitializeComponent();
 
             mAction = act;
-            if (editMode != General.RepositoryItemPageViewMode.View)
+            if (editMode != General.eRIPageViewMode.View)
             {
                 mAction.SaveBackup();
             }
@@ -219,7 +219,7 @@ namespace Ginger.Actions
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
-            if (EditMode == General.RepositoryItemPageViewMode.Automation)
+            if (EditMode == General.eRIPageViewMode.Automation)
             {
                 SharedRepoInstanceUC.Init(mAction, null);
             }
@@ -229,7 +229,7 @@ namespace Ginger.Actions
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
 
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
             }
@@ -273,9 +273,9 @@ namespace Ginger.Actions
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
             ActionFlowControlPage AFCP;
-            if(EditMode == General.RepositoryItemPageViewMode.View)
+            if(EditMode == General.eRIPageViewMode.View)
             {
-                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.View);
+                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.View);
             }
             else
             {
@@ -809,7 +809,7 @@ namespace Ginger.Actions
             saveBtn.Content = "Save";
             switch (EditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:                   
+                case General.eRIPageViewMode.Automation:                   
                     winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
 
@@ -840,27 +840,27 @@ namespace Ginger.Actions
                     break;
 
 
-                case General.RepositoryItemPageViewMode.SharedReposiotry:
+                case General.eRIPageViewMode.SharedReposiotry:
                     title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";                   
                     saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
                     winButtons.Add(saveBtn);                    
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.Child:
+                case General.eRIPageViewMode.Child:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
                     winButtons.Add(okBtn);
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.ChildWithSave:
+                case General.eRIPageViewMode.ChildWithSave:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
                     saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.View:
+                case General.eRIPageViewMode.View:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
                     winButtons.Add(okBtn);
                     closeHandler = new RoutedEventHandler(okBtn_Click);

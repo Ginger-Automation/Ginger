@@ -371,6 +371,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Reset:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.RotateLeft);
                     break;
+                case eImageType.Undo:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Undo);
+                    break;
                 case eImageType.Delete:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
                     break;
@@ -400,6 +403,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Automate:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    break;
+                case eImageType.Convert:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
                 case eImageType.ParallelExecution:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
@@ -753,6 +759,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Paragraph);
                     break;
 
+                case eImageType.Graph:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LineChart);
+                    break;
+
                 case eImageType.BullsEye:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Bullseye);
                     break;
@@ -778,6 +788,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Mandatory:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle);
+                    break;
+                case eImageType.ALM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
+                    break;
+                case eImageType.CSV:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
                     break;
                 #endregion
 

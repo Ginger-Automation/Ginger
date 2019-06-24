@@ -37,42 +37,49 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetStatus()
         {
+            Brush statusBrush = null;
+            eImageType statusImage;
+
             switch (Status)
             {
                 case eRunStatus.Passed:
-                    xPolygon.Fill = FindResource("$PassedStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Passed;
+                    statusBrush = FindResource("$PassedStatusColor") as Brush;
+                    statusImage = eImageType.Passed;
                     break;
                 case eRunStatus.Failed:
-                    xPolygon.Fill = FindResource("$FailedStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Failed;
+                    statusBrush = FindResource("$FailedStatusColor") as Brush;
+                    statusImage = eImageType.Failed;
                     break;
                 case eRunStatus.Pending:
-                    xPolygon.Fill = FindResource("$PendingStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Pending;
+                    statusBrush = FindResource("$PendingStatusColor") as Brush;
+                    statusImage = eImageType.Pending;
                     break;
                 case eRunStatus.Running:
-                    xPolygon.Fill = FindResource("$RunningStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Running;
+                    statusBrush = FindResource("$RunningStatusColor") as Brush;
+                    statusImage = eImageType.Running;
                     break;
                 case eRunStatus.Stopped:
-                    xPolygon.Fill = FindResource("$StoppedStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Stop;
+                    statusBrush = FindResource("$StoppedStatusColor") as Brush;
+                    statusImage = eImageType.Stop;
                     break;
                 case eRunStatus.Blocked:
-                    xPolygon.Fill = FindResource("$BlockedStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Blocked;
+                    statusBrush = FindResource("$BlockedStatusColor") as Brush;
+                    statusImage = eImageType.Blocked;
                     break;
                 case eRunStatus.Skipped:
-                    xPolygon.Fill = FindResource("$SkippedStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Skipped;
+                    statusBrush = FindResource("$SkippedStatusColor") as Brush;
+                    statusImage = eImageType.Skipped;
                     break;
                 default:
-                    xPolygon.Fill = FindResource("$PendingStatusColor") as Brush;
-                    xStatusIcon.ImageType = eImageType.Pending;
+                    statusBrush = FindResource("$PendingStatusColor") as Brush;
+                    statusImage = eImageType.Pending;
                     break;
             }
 
+            xPolygon.Fill = statusBrush;
+            xPolygon.Stroke = statusBrush;
+
+            xStatusIcon.ImageType = statusImage;
             xStatusIcon.ImageForeground = Brushes.White;
         }
     }

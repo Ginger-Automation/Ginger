@@ -49,9 +49,9 @@ namespace Ginger.BusinessFlowWindows
         private BusinessFlow mActivityParentBusinessFlow = null;
         Context mContext;
 
-        public General.RepositoryItemPageViewMode editMode { get; set; }
+        public General.eRIPageViewMode editMode { get; set; }
 
-        public ActivityEditPage(Activity activity, General.RepositoryItemPageViewMode mode = General.RepositoryItemPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null, Context context=null)
+        public ActivityEditPage(Activity activity, General.eRIPageViewMode mode = General.eRIPageViewMode.Automation, BusinessFlow activityParentBusinessFlow = null, Context context=null)
         {
             InitializeComponent();
 
@@ -70,7 +70,7 @@ namespace Ginger.BusinessFlowWindows
                 mContext.Activity = mActivity;
             }
 
-            if (editMode != General.RepositoryItemPageViewMode.View)
+            if (editMode != General.eRIPageViewMode.View)
                 mActivity.SaveBackup();
             editMode = mode;
 
@@ -112,16 +112,16 @@ namespace Ginger.BusinessFlowWindows
 
             VariablesPage varbsPage;
             ActionsPage actionsPage;
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
-                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext, General.RepositoryItemPageViewMode.View);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.View, mContext);
+                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext, General.eRIPageViewMode.View);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.eRIPageViewMode.View, mContext);
                 SetViewMode();
             }
             else
             {
-                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext,General.RepositoryItemPageViewMode.Child);
-                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.RepositoryItemPageViewMode.Child, mContext);
+                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext,General.eRIPageViewMode.Child);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.eRIPageViewMode.Child, mContext);
             }
 
             varbsPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
@@ -132,7 +132,7 @@ namespace Ginger.BusinessFlowWindows
             VariablesFrame.Content = varbsPage;
             ActionsFrame.Content = actionsPage;
 
-            if (editMode == General.RepositoryItemPageViewMode.Automation)
+            if (editMode == General.eRIPageViewMode.Automation)
                 SharedRepoInstanceUC.Init(mActivity, mActivityParentBusinessFlow);
             else
             {
@@ -177,26 +177,26 @@ namespace Ginger.BusinessFlowWindows
             saveBtn.Content = "Save";
             switch (editMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:                    
+                case General.eRIPageViewMode.Automation:                    
                     winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.SharedReposiotry:
+                case General.eRIPageViewMode.SharedReposiotry:
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity);                    
                     saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.ChildWithSave:
+                case General.eRIPageViewMode.ChildWithSave:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     saveBtn.Click += new RoutedEventHandler(ParentItemSaveButton_Click);
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
 
-                case General.RepositoryItemPageViewMode.View:
+                case General.eRIPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     winButtons.Add(okBtn);
                     closeHandler = new RoutedEventHandler(okBtn_Click);
@@ -256,7 +256,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void CheckIfUserWantToSave()
         {
-            if (editMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            if (editMode == General.eRIPageViewMode.SharedReposiotry)
             {
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {

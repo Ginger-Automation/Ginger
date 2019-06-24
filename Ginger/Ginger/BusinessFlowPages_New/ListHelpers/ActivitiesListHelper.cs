@@ -22,6 +22,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     {
         Activity mActivity;
         Context mContext;
+        General.eRIPageViewMode mPageViewMode;
 
         public delegate void ActivityListItemEventHandler(ActivityListItemEventArgs EventArgs);
         public event ActivityListItemEventHandler ActivityListItemEvent;
@@ -34,9 +35,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public ActivitiesListHelper(Context context)
+        public ActivitiesListHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
+            mPageViewMode = pageViewMode;
         }
 
         public void SetItem(object item)
@@ -67,7 +69,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameExtentionField()
         {
-            return nameof(Activity.ActivitiesGroupID);
+            return null;//nameof(Activity.ActivitiesGroupID);
         }
 
         public string GetItemTagsField()
@@ -117,11 +119,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            ListItemOperation addNew = new ListItemOperation();
-            addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-            addNew.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            addNew.OperationHandler = AddNewHandler;
-            operationsList.Add(addNew);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation addNew = new ListItemOperation();
+                addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+                addNew.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                addNew.OperationHandler = AddNewHandler;
+                operationsList.Add(addNew);
+            }
 
             return operationsList;
         }
@@ -130,26 +135,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation deleteAll = new ListItemOperation();
-            deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteAll.Header = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            deleteAll.OperationHandler = DeleteAllHandler;
-            extraOperationsList.Add(deleteAll);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation deleteAll = new ListItemOperation();
+                deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                deleteAll.Header = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                deleteAll.OperationHandler = DeleteAllHandler;
+                extraOperationsList.Add(deleteAll);
 
-            ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
-            activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
-            extraOperationsList.Add(activeUnactiveAllActivities);
+                ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
+                activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
+                activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
+                extraOperationsList.Add(activeUnactiveAllActivities);
 
-            ListItemOperation activitiesVarsDep = new ListItemOperation();
-            activitiesVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDep.Header = string.Format("{0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            activitiesVarsDep.ToolTip = string.Format("Set {0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            activitiesVarsDep.OperationHandler = ActivitiesVarsHandler;
-            extraOperationsList.Add(activitiesVarsDep);
+                ListItemOperation activitiesVarsDep = new ListItemOperation();
+                activitiesVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                activitiesVarsDep.Header = string.Format("{0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                activitiesVarsDep.ToolTip = string.Format("Set {0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                activitiesVarsDep.OperationHandler = ActivitiesVarsHandler;
+                extraOperationsList.Add(activitiesVarsDep);
+            }
 
             return extraOperationsList;
         }
@@ -194,33 +202,36 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            ListItemOperation moveUp = new ListItemOperation();
-            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
-            moveUp.ToolTip = "Move Up";
-            moveUp.OperationHandler = MoveUpHandler;
-            operationsList.Add(moveUp);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation moveUp = new ListItemOperation();
+                moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
+                moveUp.ToolTip = "Move Up";
+                moveUp.OperationHandler = MoveUpHandler;
+                operationsList.Add(moveUp);
 
-            ListItemOperation moveDown = new ListItemOperation();
-            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
-            moveDown.ToolTip = "Move Down";
-            moveDown.OperationHandler = MoveDownHandler;
-            operationsList.Add(moveDown);
+                ListItemOperation moveDown = new ListItemOperation();
+                moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
+                moveDown.ToolTip = "Move Down";
+                moveDown.OperationHandler = MoveDownHandler;
+                operationsList.Add(moveDown);
 
-            ListItemOperation delete = new ListItemOperation();
-            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            delete.ToolTip = "Delete";
-            delete.OperationHandler = DeleteHandler;
-            operationsList.Add(delete);
+                ListItemOperation delete = new ListItemOperation();
+                delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                delete.ToolTip = "Delete";
+                delete.OperationHandler = DeleteHandler;
+                operationsList.Add(delete);
 
-            ListItemOperation active = new ListItemOperation();
-            active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            active.ImageBindingObject = mActivity;
-            active.ImageBindingFieldName = nameof(Activity.Active);
-            active.ImageBindingConverter = new ActiveImageTypeConverter();
-            active.ToolTip = "Active";
-            //active.ImageSize = 15;
-            active.OperationHandler = ActiveHandler;
-            operationsList.Add(active);
+                ListItemOperation active = new ListItemOperation();
+                active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+                active.ImageBindingObject = mActivity;
+                active.ImageBindingFieldName = nameof(Activity.Active);
+                active.ImageBindingConverter = new ActiveImageTypeConverter();
+                active.ToolTip = "Active";
+                //active.ImageSize = 15;
+                active.OperationHandler = ActiveHandler;
+                operationsList.Add(active);
+            }
 
             return operationsList;
         }
@@ -230,22 +241,35 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation mandatory = new ListItemOperation();
-            mandatory.Header = "Mandatory";
-            mandatory.ToolTip = string.Format("If {0} fails so stop execution", GingerDicser.GetTermResValue(eTermResKey.Activity));
-            mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            mandatory.ImageBindingObject = mActivity;
-            mandatory.ImageBindingFieldName = nameof(Activity.Mandatory);
-            mandatory.ImageBindingConverter = new ActiveImageTypeConverter();
-            mandatory.OperationHandler = MandatoryHandler;
-            extraOperationsList.Add(mandatory);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation mandatory = new ListItemOperation();
+                mandatory.Header = "Mandatory";
+                mandatory.ToolTip = string.Format("If {0} fails so stop execution", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+                mandatory.ImageBindingObject = mActivity;
+                mandatory.ImageBindingFieldName = nameof(Activity.Mandatory);
+                mandatory.ImageBindingConverter = new ActiveImageTypeConverter();
+                mandatory.OperationHandler = MandatoryHandler;
+                extraOperationsList.Add(mandatory);
 
-            ListItemOperation reset = new ListItemOperation();
-            reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            reset.Header = "Reset";
-            reset.ToolTip = "Reset execution details";
-            reset.OperationHandler = ResetHandler;
-            extraOperationsList.Add(reset);           
+                ListItemOperation reset = new ListItemOperation();
+                reset.Group = "Reset Operations";
+                reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                reset.Header = string.Format("Reset {0} execution details", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                reset.ToolTip = string.Format("Reset {0} execution details", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                reset.OperationHandler = ResetHandler;
+                extraOperationsList.Add(reset);
+
+                ListItemOperation resetRest = new ListItemOperation();
+                resetRest.Group = "Reset Operations";
+                resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                resetRest.Header = string.Format("Reset execution details from this {0}", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                resetRest.ToolTip = string.Format("Reset execution details from this {0}", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                resetRest.OperationHandler = ResetResetHandler;
+                extraOperationsList.Add(resetRest);
+            }
 
             ListItemOperation addToSR = new ListItemOperation();
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
@@ -262,17 +286,20 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation run = new ListItemOperation();
-            run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            run.OperationHandler = RunHandler;
-            executionOperationsList.Add(run);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation run = new ListItemOperation();
+                run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
+                run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                run.OperationHandler = RunHandler;
+                executionOperationsList.Add(run);
 
-            ListItemOperation continueRun = new ListItemOperation();
-            continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
-            continueRun.ToolTip = "Continue Run from " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            continueRun.OperationHandler = ContinueRunHandler;
-            executionOperationsList.Add(continueRun);
+                ListItemOperation continueRun = new ListItemOperation();
+                continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
+                continueRun.ToolTip = "Continue Run from " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                continueRun.OperationHandler = ContinueRunHandler;
+                executionOperationsList.Add(continueRun);
+            }
 
             return executionOperationsList;
         }
@@ -281,40 +308,43 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemGroupOperation> groupOperationsList = new List<ListItemGroupOperation>();
 
-            ListItemGroupOperation addNewActivity = new ListItemGroupOperation();
-            addNewActivity.Header = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            addNewActivity.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-            addNewActivity.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            addNewActivity.OperationHandler = AddNewActivityToGroupHandler;
-            groupOperationsList.Add(addNewActivity);
+            if (mPageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemGroupOperation addNewActivity = new ListItemGroupOperation();
+                addNewActivity.Header = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                addNewActivity.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+                addNewActivity.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                addNewActivity.OperationHandler = AddNewActivityToGroupHandler;
+                groupOperationsList.Add(addNewActivity);
 
-            ListItemGroupOperation rename = new ListItemGroupOperation();
-            rename.Header = "Rename Group";
-            rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            rename.ToolTip = "Rename group";
-            rename.OperationHandler = RenameGroupHandler;
-            groupOperationsList.Add(rename);
+                ListItemGroupOperation rename = new ListItemGroupOperation();
+                rename.Header = "Rename Group";
+                rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+                rename.ToolTip = "Rename group";
+                rename.OperationHandler = RenameGroupHandler;
+                groupOperationsList.Add(rename);
 
-            ListItemGroupOperation moveUp = new ListItemGroupOperation();
-            moveUp.Header = "Move Group Up";
-            moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
-            moveUp.ToolTip = "Move all group up";
-            moveUp.OperationHandler = MoveGroupUpHandler;
-            groupOperationsList.Add(moveUp);
+                ListItemGroupOperation moveUp = new ListItemGroupOperation();
+                moveUp.Header = "Move Group Up";
+                moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
+                moveUp.ToolTip = "Move all group up";
+                moveUp.OperationHandler = MoveGroupUpHandler;
+                groupOperationsList.Add(moveUp);
 
-            ListItemGroupOperation moveDown = new ListItemGroupOperation();
-            moveDown.Header = "Move Group Down";
-            moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
-            moveDown.ToolTip = "Move all group down";
-            moveDown.OperationHandler = MoveGroupDownHandler;
-            groupOperationsList.Add(moveDown);
+                ListItemGroupOperation moveDown = new ListItemGroupOperation();
+                moveDown.Header = "Move Group Down";
+                moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
+                moveDown.ToolTip = "Move all group down";
+                moveDown.OperationHandler = MoveGroupDownHandler;
+                groupOperationsList.Add(moveDown);
 
-            ListItemGroupOperation delete = new ListItemGroupOperation();
-            delete.Header = "Delete Group";
-            delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            delete.ToolTip = "Delete all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            delete.OperationHandler = DeleteGroupHandler;
-            groupOperationsList.Add(delete);
+                ListItemGroupOperation delete = new ListItemGroupOperation();
+                delete.Header = "Delete Group";
+                delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                delete.ToolTip = "Delete all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                delete.OperationHandler = DeleteGroupHandler;
+                groupOperationsList.Add(delete);
+            }
 
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
             addToSR.Header = "Add Group to Shared Repository";
@@ -388,6 +418,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             mActivity.Reset();
         }
+
+        private void ResetResetHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);            
+            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx <= mContext.BusinessFlow.Activities.Count;indx++)
+            {
+                mContext.BusinessFlow.Activities[indx].Reset();
+            }
+        }
+
         private void ActivitiesVarsHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);

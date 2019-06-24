@@ -43,7 +43,7 @@ namespace Ginger.Activities
     {
         BusinessFlow mBusinessFlow;
         Context mContext = new Context();
-        public ActivitiesGroupsPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
+        public ActivitiesGroupsPage(BusinessFlow businessFlow, General.eRIPageViewMode editMode = General.eRIPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
 
@@ -57,7 +57,7 @@ namespace Ginger.Activities
             SetActivitiesGroupsGridView();
             RefreshActivitiesGroupsGrid();
 
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 grdActivitiesGroups.ShowToolsBar = Visibility.Collapsed;
                 grdActivitiesGroups.ToolsTray.Visibility = Visibility.Collapsed;

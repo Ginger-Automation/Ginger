@@ -114,11 +114,11 @@ namespace Ginger
         {
             //TODO find a way to make in generic
             if (mLinkedRepoItem is Activity)
-                (new BusinessFlowWindows.ActivityEditPage((Activity)mLinkedRepoItem, General.RepositoryItemPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
+                (new BusinessFlowWindows.ActivityEditPage((Activity)mLinkedRepoItem, General.eRIPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is VariableBase)
                 (new VariableEditPage((VariableBase)mLinkedRepoItem, null, false, VariableEditPage.eEditMode.SharedRepository)).ShowAsWindow(eWindowShowStyle.Dialog, startupLocationWithOffset: true);
             else if (mLinkedRepoItem is Act)
-                (new ActionEditPage((Act)mLinkedRepoItem, General.RepositoryItemPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity())).ShowAsWindow(startupLocationWithOffset: true);
+                (new ActionEditPage((Act)mLinkedRepoItem, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity())).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is GingerCore.Activities.ActivitiesGroup)
                 (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, null, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
         }
