@@ -1205,6 +1205,28 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type ListBox}" x:Key="$ListBoxTransparntSelectedItem">
+        <Style.Resources>
+            <!-- Background of selected item when focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                         Color="Transparent"/>
+            <!-- Background of selected item when not focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" 
+                         Color="Transparent" />
+        </Style.Resources>
+    </Style>
+
+    <Style TargetType="{x:Type ListView}" x:Key="$ListViewTransparntSelectedItem">
+        <Style.Resources>
+            <!-- Background of selected item when focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                         Color="Transparent"/>
+            <!-- Background of selected item when not focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" 
+                         Color="Transparent" />
+        </Style.Resources>
+    </Style>
+
     <Style TargetType="Button" x:Key="$WindowButtonStyle">
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}" />
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_DarkBlue}" />

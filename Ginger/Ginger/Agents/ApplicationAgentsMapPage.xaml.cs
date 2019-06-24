@@ -16,24 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using Ginger.Run;
 using Ginger.WindowExplorer;
 using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
-using GingerCore.Drivers.ASCF;
-using GingerCore.Drivers.WebServicesDriverLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
-using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.Drivers.WebServicesDriverLib;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.Agents
 {
@@ -72,7 +74,7 @@ namespace Ginger.Agents
                 }
             }
 
-            AppAgentsListBox.ItemsSource = ApplicationAgents;
+            xAppAgentsListBox.ItemsSource = ApplicationAgents;
         }
 
         private void StartAgentButton_Click(object sender, RoutedEventArgs e)
@@ -167,7 +169,7 @@ namespace Ginger.Agents
 
         private void AppAgentsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ApplicationAgent AG = (ApplicationAgent)AppAgentsListBox.SelectedItem;
+            ApplicationAgent AG = (ApplicationAgent)xAppAgentsListBox.SelectedItem;
             if (AG == null) return;
             ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
             w.ShowAsWindow();
@@ -177,6 +179,68 @@ namespace Ginger.Agents
         {
             ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
             ((Agent)AG.Agent).Driver.cancelAgentLoading = true;
+        }
+
+        private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
+            Agent agent = ((Agent)AG.Agent);
+            if (agent.Status != Agent.eStatus.Running)
+            {
+                //start Agent
+                Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                ((Agent)AG.Agent).StartDriver();
+                Reporter.HideStatusMessage();
+            }
+            else
+            {
+                //close Agent
+                agent.Close();
+            }
+        }
+    }
+
+    public class AgentForgroundTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+            {
+                return Brushes.DodgerBlue;
+            }
+            else
+            {
+                return Brushes.Red;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentStatusImageTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null && (Agent.eStatus)value == Agent.eStatus.Running)
+            {
+                return eImageType.Active;
+            }
+            else
+            {
+                return eImageType.InActive;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
