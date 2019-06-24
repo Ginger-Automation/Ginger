@@ -102,8 +102,7 @@ namespace GingerCore.SourceControl
                     }
                     catch { }
 
-                    conflictsPaths = GetConflictsPaths();
-                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "The files are not connected to source control");
+                    conflictsPaths = GetConflictsPaths();                    
                     result = false;
                 }
             }
