@@ -117,14 +117,15 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             try
             {
                 StringBuilder colList = new StringBuilder();
-                colList.Append("[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text,");
+                colList.Append(mDSDetails.DSC.AddNewCustomizedTableQuery()+",");
                 foreach (DataColumn col in dt.Columns)
                 {
                     if(col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                     {
                         continue;
                     }
-                    colList.Append(string.Format("[{0}] Text,", col.ColumnName));
+                    colList.Append(mDSDetails.DSC.AddColumnName(col.ColumnName));
+                    
                 }
                 cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
             }
