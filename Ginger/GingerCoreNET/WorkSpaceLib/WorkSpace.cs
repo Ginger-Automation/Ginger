@@ -175,8 +175,8 @@ namespace amdocs.ginger.GingerCoreNET
         {
             try
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports\\Ginger-Web-Client");
-                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports\\Ginger-Web-Client");
+                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
+                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
@@ -203,7 +203,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        private void CopyFolderRec(string sourceFolder, string destinationFolder, bool copySubDirs)
+        public void CopyFolderRec(string sourceFolder, string destinationFolder, bool copySubDirs)
         {
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceFolder);
