@@ -64,6 +64,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControlsContent()
         {
+            xRunBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.Activity, "Run");
+
             mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActionsTabFrame.Content = mActionsPage;

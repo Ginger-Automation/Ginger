@@ -167,14 +167,23 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-            ListItemNotification varsDepInd = new ListItemNotification();
-            varsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            varsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables)) ;
-            varsDepInd.ImageSize = 14;
-            varsDepInd.BindingObject = mActivity;
-            varsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
-            varsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(varsDepInd);
+            ListItemNotification activitiesVarsDepInd = new ListItemNotification();
+            activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            activitiesVarsDepInd.ImageSize = 14;
+            activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
+            activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
+            activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(activitiesVarsDepInd);
+
+            ListItemNotification actionsVarsDepInd = new ListItemNotification();
+            actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables)) ;
+            actionsVarsDepInd.ImageSize = 14;
+            actionsVarsDepInd.BindingObject = mActivity;
+            actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
+            actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(actionsVarsDepInd);
 
             ListItemNotification mandatoryInd = new ListItemNotification();
             mandatoryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Mandatory;
@@ -288,6 +297,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
+                ListItemOperation runAction = new ListItemOperation();
+                runAction.ImageType = Amdocs.Ginger.Common.Enums.eImageType.RunSingle;
+                runAction.ToolTip = "Run Current Action";
+                runAction.OperationHandler = RunActionHandler;
+                executionOperationsList.Add(runAction);
+
                 ListItemOperation run = new ListItemOperation();
                 run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
                 run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -376,6 +391,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 mContext.BusinessFlow.Activities.Clear();
                 mContext.BusinessFlow.ActivitiesGroups.Clear();
             }
+        }
+
+        private void RunActionHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mContext.BusinessFlow.CurrentActivity = mActivity;
+            mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
         }
 
         private void RunHandler(object sender, RoutedEventArgs e)

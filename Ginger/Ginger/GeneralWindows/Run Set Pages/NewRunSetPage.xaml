@@ -77,26 +77,26 @@
                                     </MenuItem.Header>
                                     <MenuItem x:Name="xAnalyzerMenuItem" Style="{StaticResource $MenuItemStyle}" Click="analyzerRunset_Click">
                                         <MenuItem.Icon>
-                                           <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="22"/>
+                                           <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18"/>
                                         </MenuItem.Icon>
                                         <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="15"/>
+                                            <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="12"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                     <MenuItem x:Name="xExportToAlmBtnMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmBtn_Click">
                                         <MenuItem.Icon>
-                                            <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="22"/>
+                                            <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18"/>
                                         </MenuItem.Icon>
                                         <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Export Execution Result to ALM" FontSize="15"/>
+                                            <GingerCore:ucTextDicResource Text="Export Execution Result to ALM" FontSize="12"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                     <MenuItem x:Name="xReloadRunsetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRunSetReload_Click">
                                         <MenuItem.Icon>
-                                            <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="22"/>
+                                            <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18"/>
                                         </MenuItem.Icon>
                                         <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="15"/>
+                                            <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="12"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                 </MenuItem>
@@ -164,7 +164,7 @@
 
                         <DockPanel x:Name="xRunnersControlPnl" Grid.Row="0" Background="{StaticResource $BackgroundColor_LightGray}" >
                             <usercontrols:ucButton x:Name="xRunnerDetailViewBtn" Margin="40 0 0 0" ToolTip="Expand / Collapse All Runners" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="CollapseAll" Click="xRunnerDetailView_Click" Visibility="Visible" />
-                            <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>
+                            <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
                             <DockPanel x:Name="xRunnersCanvasControls" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">
                                 <usercontrols:ucButton x:Name="xRunnersActiveBtn" ToolTip="Active / Inactive All Runners" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xRunnersActive_Click" />
                                 <usercontrols:ucButton x:Name="xAddRunnerBtn" ToolTip="Add Runner" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="17" ButtonImageHeight="17" ButtonImageType="Add" Click="addRunner_Click"></usercontrols:ucButton>
@@ -177,7 +177,7 @@
                                 <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
                                 <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
                                 <usercontrols:ucButton x:Name="xExecutionModeBtn" ToolTip="Sequential Execution" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SequentialExecution" Click="executionMode_Click"></usercontrols:ucButton>
-                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>
+                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
                                 <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                             </DockPanel>
                         </DockPanel>
@@ -194,7 +194,7 @@
                                         <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                     </DockPanel>
-                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" Margin="10 0 10 0"/>
+                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
                                     <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $SelectionColor_LightBlue}" />
                                     <state:StatusItem x:Name="xStatus" Margin="0 2 2 0" HorizontalAlignment="Right" SetStatusIcon="True"></state:StatusItem>
                                 </DockPanel>

@@ -503,9 +503,20 @@ namespace GingerCore
         }
 
 
-
+        bool mEnableActivitiesVariablesDependenciesControl;
         [IsSerializedForLocalRepository]
-        public bool EnableActivitiesVariablesDependenciesControl { get; set; }
+        public bool EnableActivitiesVariablesDependenciesControl
+        {
+            get
+            {
+                return mEnableActivitiesVariablesDependenciesControl;
+            }
+            set
+            {
+                mEnableActivitiesVariablesDependenciesControl = value;
+                OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+            }
+        }
 
         /// <summary>
         /// Function will add the act to the current Activity
