@@ -70,33 +70,33 @@
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
 
-                            <Menu x:Name="xOtherOperationsMenu" Background="Transparent">
+                            <Menu x:Name="xOtherOperationsMenu" Background="Transparent" ToolTip="Extra Operations">
                                 <MenuItem Cursor="Hand">
                                     <MenuItem.Header>
                                         <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16" Width="16" Height="30" Margin="5,5,5,5"/>
                                     </MenuItem.Header>
                                     <MenuItem x:Name="xAnalyzerMenuItem" Style="{StaticResource $MenuItemStyle}" Click="analyzerRunset_Click">
+                                        <MenuItem.Icon>
+                                           <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="22"/>
+                                        </MenuItem.Icon>
                                         <MenuItem.Header>
-                                            <DockPanel>
-                                                <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                                <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="15" Margin="5 5 0 0"/>
-                                            </DockPanel>
+                                            <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="15"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                     <MenuItem x:Name="xExportToAlmBtnMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmBtn_Click">
+                                        <MenuItem.Icon>
+                                            <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="22"/>
+                                        </MenuItem.Icon>
                                         <MenuItem.Header>
-                                            <DockPanel>
-                                                <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                                <GingerCore:ucTextDicResource Text="Export Execution Result to ALM"  FontSize="15" Margin="5 5 0 0"/>
-                                            </DockPanel>
+                                            <GingerCore:ucTextDicResource Text="Export Execution Result to ALM" FontSize="15"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                     <MenuItem x:Name="xReloadRunsetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRunSetReload_Click">
-                                        <MenuItem.Header >
-                                            <DockPanel>
-                                                <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="22"  Width="20" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                                <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="15" Margin="5 5 0 0"/>
-                                            </DockPanel>
+                                        <MenuItem.Icon>
+                                            <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="22"/>
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="15"/>
                                         </MenuItem.Header>
                                     </MenuItem>
                                 </MenuItem>

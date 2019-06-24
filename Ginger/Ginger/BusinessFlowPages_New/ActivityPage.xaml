@@ -35,11 +35,11 @@
                         <GingerCore:ucTextDicResource Text="Reset [Activity]"/>
                     </usercontrols:ucButton.ToolTip>
                 </usercontrols:ucButton>
-                <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center">
+                <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
                     <MenuItem Cursor="Hand">
-                        <MenuItem.Icon>
+                        <MenuItem.Header>
                             <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                        </MenuItem.Icon>
+                        </MenuItem.Header>
                         <MenuItem x:Name="xResetRestMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetRestMenuItem_Click">
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
