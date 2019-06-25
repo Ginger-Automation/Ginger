@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
 using GingerCore.Actions;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -34,15 +35,18 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public string BrowserAction { get; set; }
         public string value { get; set; }
 
-        public NewPayLoad GetActionPayload()
-        {            
-            NewPayLoad payload = new NewPayLoad("RunPlatformAction");   
-            payload.AddValue("IWebPlatform"); // Interface    
-            payload.AddValue("BrowserActions"); // Field
-            payload.AddValue(BrowserAction); // Method
-            payload.AddValue(value);
-            payload.ClosePackage();
-            return payload;
+        public PlatformAction GetAsPlatformAction()
+        {
+            PlatformAction platformAction = new PlatformAction(platform: "Web", "browser");
+
+            return platformAction;
+            //NewPayLoad payload = new NewPayLoad("RunPlatformAction");   
+            //payload.AddValue("IWebPlatform"); // Interface    
+            //payload.AddValue("BrowserActions"); // Field
+            //payload.AddValue(BrowserAction); // Method
+            //payload.AddValue(value);
+            //payload.ClosePackage();
+            //return payload;
         }
 
         public string GetName()

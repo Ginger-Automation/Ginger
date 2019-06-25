@@ -70,10 +70,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         [TestMethod]
         public void SpeedTest()
         {
-            for (int i = 0; i < 1000;i++)
+            for (int i = 0; i < 10000;i++)
             {
+                ClickButtonGrid();
                 // GotoURLGrid();
-                GotoURLDirect();
+                // GotoURLDirect();
             }
         }
 
@@ -89,7 +90,6 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             //Assert
             Assert.AreEqual(url, browserurl, "URL of naviagte equel browser url");
-
         }
 
 

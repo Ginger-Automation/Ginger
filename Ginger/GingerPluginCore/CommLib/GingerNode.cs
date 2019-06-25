@@ -162,7 +162,7 @@ namespace GingerCoreNET.DriversLib
                     break;
                 case "RunPlatformAction":
                     gingerSocketInfo.Response = RunPlatformAction(pl);
-                    break;
+                    break;                
                 case "StartDriver":
                     gingerSocketInfo.Response = StartDriver(pl);
                     break;
@@ -192,7 +192,8 @@ namespace GingerCoreNET.DriversLib
             // GingerNode needs to remain generic so we have one entry point and delagate the work to the platform handler
             if (mService is IPlatformService platformService)
             {
-                NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService, payload);
+                PlatformActionData platformActionData = payload.GetJSONValue<PlatformActionData>();
+                NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService, platformActionData);
                 return newPayLoad;
             }
 
@@ -262,8 +263,6 @@ namespace GingerCoreNET.DriversLib
         static NewPayLoad BitmapToPayload(Bitmap bitmap)
         {
             MemoryStream ms = new MemoryStream();
-
-
             bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
             string Base64Image = Convert.ToBase64String(ms.GetBuffer());
             return new NewPayLoad("ScreenShot", Base64Image);

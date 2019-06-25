@@ -2,6 +2,7 @@
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -74,6 +75,34 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public string GetName()
         {
             return "UIElementAction";
+        }
+
+
+        public struct SimpleAction
+        {
+            public List<string> Locators;
+            public string action;
+        }
+
+        public NewPayLoad GetActionPayload2()
+        {
+            //Create data struct
+            SimpleAction simpleAction = new SimpleAction();
+            simpleAction.action = ElementAction.ToString();
+            // buttonAction.Locators = ...
+
+            //Create action Payload
+            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
+            PL.AddValue("UIElementActionFake");
+            PL.AddValue("SimpleAction");
+            PL.AddJSONValue<SimpleAction>(simpleAction);
+            PL.ClosePackage();
+            return PL;
+        }
+
+        PlatformAction IActPluginExecution.GetAsPlatformAction()
+        {
+            throw new NotImplementedException();
         }
     }
 }

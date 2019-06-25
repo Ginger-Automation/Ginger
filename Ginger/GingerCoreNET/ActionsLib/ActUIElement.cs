@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers.CommunicationProtocol;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -979,29 +980,34 @@ namespace GingerCore.Actions.Common
         }
 
 
-        public struct SimpleAction
-        {            
-            public List<string> Locators;
-            public string action;
+        public struct Locator
+        {
+            public string By;
+            public string Value;
         }
         
 
-        public NewPayLoad GetActionPayload2()
+        public PlatformAction GetAsPlatformAction()
         {
-            if (ElementType == eElementType.Button)
+            PlatformAction platformAction = new PlatformAction(platform: "Any", action: "UIElementAction");            
+            platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
+            platformAction.InputParams.Add("ElementType", ElementType.ToString());            
+
+            // Add elem type POM data etc.
+            List<Locator> locators = new List<Locator>();
+            locators.Add(new Locator() { By = "ID", Value = "aaa" });
+            
+            platformAction.InputParams.Add("Locators", locators);
+
+            if (!string.IsNullOrEmpty(Value))
             {
-                
-                SimpleAction buttonAction = new SimpleAction();
-                buttonAction.action = ElementAction.ToString();
-                // buttonAction.Locators = ...
+                platformAction.InputParams.Add(nameof(Value), Value);
             }
+            
+            //TODO: bsaed on elementtpye and action type add the extra fields
 
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue("UIElementAction");
 
-            return PL;
-
-            // else send full action data!?
+            return platformAction;
         }
     }
 }

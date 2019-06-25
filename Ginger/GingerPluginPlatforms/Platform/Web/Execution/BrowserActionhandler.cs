@@ -66,20 +66,29 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
         string Value;
-
-        private Dictionary<string, string> InputParams;
+        
         IBrowserActions BrowserService = null;
 
         public string ExecutionInfo { get; set; }
         public string Error { get ; set; }
         readonly IWebPlatform PlatformService;
-        public BrowserActionhandler(IWebPlatform mPlatformService, Dictionary<string, string> minputParams)
+
+        PlatformActionData mPlatformAction;
+
+        public BrowserActionhandler(IWebPlatform mPlatformService, PlatformActionData platformAction)
         {
             PlatformService = mPlatformService;
-            InputParams = minputParams;
+            mPlatformAction = platformAction;
+
+            // InputParams = minputParams;
             BrowserService = PlatformService.BrowserActions;
-            InputParams.TryGetValue("Value", out Value);  // Need to be ValueForDriver !!!
-            ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"]);
+            // InputParams.TryGetValue("Value", out Value);  // Need to be ValueForDriver !!!
+            ElementAction = eControlAction.GotoURL;  // !!!!!!!!!!!!!!!!!!!
+            string val = (string)platformAction.InputParams["URL"];
+
+            // ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"]);
+
+            // platformAction
         }
 
 
@@ -93,20 +102,26 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 {
 
                     case eControlAction.GotoURL:
-                        Console.WriteLine();
+                        // Console.WriteLine();
 
                         string GotoURLType;
 
-                        InputParams.TryGetValue("GotoURLType", out GotoURLType);
+                        // InputParams.TryGetValue("GotoURLType", out GotoURLType);
+                        //GotoURLType = (string)mPlatformAction.InputValues["URLType"];
 
-                        if (string.IsNullOrEmpty(GotoURLType))
-                        {
+                        
+
+                        //if (string.IsNullOrEmpty(GotoURLType))
+                        //{
                             GotoURLType = "Current";
 
-                        }
-     
-                        BrowserService.Navigate(Value, GotoURLType);
+                        //}
+
+                        string url = (string)mPlatformAction.InputParams["URL"];
+
+                        BrowserService.Navigate(url, GotoURLType);
                         ExecutionInfo += "Navigated to: " + Value;
+                        
 
                         break;
 
@@ -155,19 +170,19 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         BrowserService.SetAlertBoxText(Value);
                         break;
                     case eControlAction.SwitchFrame:
-                        string ElementLocateBy;
-                        string Locatevalue;
-                        string mElementType;
-                        InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
-                        InputParams.TryGetValue("Locatevalue", out Locatevalue);
-                        InputParams.TryGetValue("ElementType", out mElementType);
-                        if(string.IsNullOrEmpty(Locatevalue))
-                        {
-                            InputParams.TryGetValue("Value", out Locatevalue);
-                        }
-                        eElementType  ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
-                        IGingerWebElement   Element = LocateElement(ElementType, ElementLocateBy, Locatevalue);
-                        BrowserService.SwitchToFrame(Element);
+                        //string ElementLocateBy;
+                        //string Locatevalue;
+                        //string mElementType;
+                        //InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
+                        //InputParams.TryGetValue("Locatevalue", out Locatevalue);
+                        //InputParams.TryGetValue("ElementType", out mElementType);
+                        //if(string.IsNullOrEmpty(Locatevalue))
+                        //{
+                        //    InputParams.TryGetValue("Value", out Locatevalue);
+                        //}
+                        //eElementType  ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
+                        //IGingerWebElement   Element = LocateElement(ElementType, ElementLocateBy, Locatevalue);
+                        //BrowserService.SwitchToFrame(Element);
                         break;
                     case eControlAction.RunJavaScript:
 
