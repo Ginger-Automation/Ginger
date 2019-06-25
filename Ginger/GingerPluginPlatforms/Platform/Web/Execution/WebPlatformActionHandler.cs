@@ -77,8 +77,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
             {
                 BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, platformAction);
                 Handler.ExecuteAction();
-                NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
-                return PLRC;
+                NewPayLoad actionResultPayload = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.outputValues);
+                return actionResultPayload;
             }
 
             if (platformAction.ActionType == "UIElementAction")

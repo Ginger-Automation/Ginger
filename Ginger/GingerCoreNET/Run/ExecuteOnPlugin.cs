@@ -178,15 +178,12 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {
-            // Get the action payload
-            // NewPayLoad p = actPlugin.GetActionPayload();
+        {                        
             NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
 
             // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
-
-            // Pasrse the result
+            
             ParseActionResult(RC, (Act)actPlugin);
         }
 
@@ -398,6 +395,8 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             PlatformAction platformAction = ACT.GetAsPlatformAction();
 
+            // TODO: calculate VE ??!!            
+
             NewPayLoad payload = new NewPayLoad("RunPlatformAction");
             payload.AddJSONValue<PlatformAction>(platformAction);
             payload.ClosePackage();
@@ -405,90 +404,6 @@ namespace Amdocs.Ginger.CoreNET.Run
             // TODO: Process Valuefordriver!!!!
 
             return payload;
-
-           
-
-            //// TODO: Improve to send only needed params !!! too slow!!!
-            //NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            //PL.AddValue(ACT.GetName());
-            //if (ACT is Act actPlugin)
-            //{
-            //    List<NewPayLoad> PLParams = new List<NewPayLoad>();
-
-            //    if (ACT is ActUIElement ActUi)
-            //    {
-            //        if (ActUi.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
-            //        {
-            //            NewPayLoad PomPayload = GetPOMPayload(ref ActUi, agent.ProjEnvironment, agent.BusinessFlow);
-            //            PLParams.Add(PomPayload);
-            //        }
-            //    }
-
-            //    string acttype = actPlugin.GetType().FullName + "+Fields";
-
-
-            //    foreach (FieldInfo FI in Type.GetType(acttype).GetFields())
-            //    {
-            //        string Name = FI.Name;
-            //        string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-            //        if (string.IsNullOrEmpty(Value))
-            //        {
-            //            object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-            //            if (Output != null)
-            //            {
-            //                Value = Output.ToString();
-            //            }
-            //        }
-
-            //        if (!string.IsNullOrEmpty(Value))
-            //        {
-            //            NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-            //            PLParams.Add(FieldPL);
-            //        }
-            //    }
-
-            //    foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
-            //    {
-            //        string Name = FI.Name;
-            //        string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-            //        if (string.IsNullOrEmpty(Value))
-            //        {
-            //            object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-            //            if (Output != null)
-            //            {
-            //                Value = Output.ToString();
-            //            }
-            //        }
-
-            //        if (!string.IsNullOrEmpty(Value))
-            //        {
-            //            NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-            //            PLParams.Add(FieldPL);
-            //        }
-            //    }
-
-
-            //    foreach (ActInputValue AIV in actPlugin.InputValues)
-            //    {
-            //        if (!string.IsNullOrEmpty(AIV.ValueForDriver))
-            //        {
-            //            NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-            //            PLParams.Add(AIVPL);
-            //        }
-            //    }
-
-
-
-
-            //    PL.AddListPayLoad(PLParams);
-            //}
-            //PL.ClosePackage();
-
-            //return PL;
         }
 
         private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)

@@ -12,7 +12,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             InitializeBrowser,  // ??
             GetPageSource,
             GetPageURL,
-            SwitchFrame,  // all Swithc* below in one action with param
+            SwitchFrame,  // all Switch* below in one action with param + add switch to top frame
             SwitchToDefaultFrame,
             SwitchToParentFrame,
             Maximize,

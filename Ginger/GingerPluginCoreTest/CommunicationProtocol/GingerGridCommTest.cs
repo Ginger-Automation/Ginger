@@ -72,8 +72,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                ClickButtonGrid();
-                // GotoURLGrid();
+                 ClickButtonGrid();
+                 // GotoURLGrid();
                 // GotoURLDirect();
             }
         }
@@ -101,21 +101,40 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             ActBrowserElement actBrowserElement = new ActBrowserElement();
             actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
-            // actBrowserElement.Value = url;   // Incorrect !!! need to use ValueForDriver
-            actBrowserElement.ValueForDriver = url;
+            actBrowserElement.Value = url;               
+
+            //Act            
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
+
+            //Assert            
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
+            Assert.AreEqual("Navigated to: " + url, actBrowserElement.ExInfo, "ExInfo");            
+            Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
+        }
+
+        [Ignore] // Failing need GR + VE, Create test with GR
+        [TestMethod]
+        public void GotoURLGridWithValueExpression()
+        {
+            //Arrange
+            string VEURL = "{CS Exp=@\"badurl\".Replace(@\"bad\",@\"good\")}";
+            string CalculatedURL = "goodurl";
+
+            ActBrowserElement actBrowserElement = new ActBrowserElement();
+            actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowserElement.Value = VEURL;           
 
             //Act            
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
-
-            //FIXME !!!
-            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.ExInfo), "Naviagted to: " + url, "ExInfo");
+            Assert.AreEqual("Navigated to: " + CalculatedURL, actBrowserElement.ExInfo, "ExInfo");
+            Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
         }
 
 
-        
+
 
 
         [TestMethod]

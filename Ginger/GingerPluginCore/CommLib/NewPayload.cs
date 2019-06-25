@@ -557,6 +557,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public T GetJSONValue<T>() where T : struct
         {
+            // Add try/catch - can crash? add unit test to crash it fake/bad json
+
             byte b = ReadValueType();
 
             if (b == JSONStruct)

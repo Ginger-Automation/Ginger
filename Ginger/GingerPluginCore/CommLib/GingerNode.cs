@@ -193,6 +193,8 @@ namespace GingerCoreNET.DriversLib
             if (mService is IPlatformService platformService)
             {
                 PlatformActionData platformActionData = payload.GetJSONValue<PlatformActionData>();
+                // Verify platformActionData is valid !!!
+
                 NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService, platformActionData);
                 return newPayLoad;
             }
