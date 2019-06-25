@@ -336,7 +336,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
-            RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -345,7 +345,7 @@ namespace Ginger.Run
 
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
-            RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
         }
 
 
@@ -1874,66 +1874,48 @@ namespace Ginger.Run
             }
         }
 
-
+        
         private bool ExecuteActionWithTimeLimit(Act act, TimeSpan timeSpan, Action codeBlock)
         {
-            Stopwatch st = new Stopwatch();
-            int count = 0;
+            Stopwatch st = Stopwatch.StartNew();
             st.Start();
 
+            
             //TODO: Cancel the task after timeout
             try
-            {            
-                Task task = Task.Factory.StartNew(() => codeBlock());
-                // Adaptive sleep, first one second sleep 10ms, then 50ms, more than one sec do 1000ms
-                int Sleep = 10;
-                while (!task.IsCompleted)
+            {                
+                Task task = Task.Factory.StartNew(() => 
+                        {            
+                            codeBlock();                         
+                        }
+                    );
+
+                while (!task.IsCompleted && st.ElapsedMilliseconds < timeSpan.TotalMilliseconds && !mStopRun)
                 {
-                    if (st.ElapsedMilliseconds > 500)
-                    {
-                        Sleep = 100;
-                    }
-                    
-                    Thread.Sleep(Sleep);
-                    count += Sleep;
-
-                    if (count > 1000)
-                    {
-                        GiveUserFeedback();
-                        count = 0;
-                    }
-
-                    // give user feedback every 200ms
-                    if (count > 200)
-                    {
-                        act.Elapsed = st.ElapsedMilliseconds;
-                        GiveUserFeedback();
-                        count = 0;
-                    }
-
-                    if (st.Elapsed > timeSpan)
-                    {                          
-                        if (String.IsNullOrEmpty(act.Error))
-                            act.Error = "Time out !";                        
-                        break;
-                    }
-
-                    if (mStopRun)
-                    {
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                        act.ExInfo += "Stopped";
-                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action until timeout even after stopping it.
-                        SetDriverPreviousRunStoppedFlag(true);                   
-                        break;
-                    }
-                    else
-                    {
-                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        SetDriverPreviousRunStoppedFlag(false);
-                    }
+                    task.Wait(500);  // Give user feedback every 500ms
+                    act.Elapsed = st.ElapsedMilliseconds;
+                    GiveUserFeedback();
                 }
-                return true;
+                bool bCompleted = task.IsCompleted;
+
+                if (mStopRun)
+                {
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                    act.ExInfo += "Stopped";
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action until timeout even after stopping it.
+                    SetDriverPreviousRunStoppedFlag(true);                    
+                }
+                else
+                {
+                    if (!bCompleted)
+                    {
+                        act.Error += "Time out !";
+                    }
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    SetDriverPreviousRunStoppedFlag(false);
+                }                
+                return bCompleted;
             }
             catch (AggregateException ae)
             {
@@ -2617,7 +2599,7 @@ namespace Ginger.Run
         {
 
 
-            string ErrorInfo;
+            string ErrorInfo = null;
             if (ARC.Operator == eOperator.Legacy)
             {
                 CalculateARCStatusLegacy(ARC);
@@ -2655,7 +2637,10 @@ namespace Ginger.Run
                         break;
                     case eOperator.Equals:
                         status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + " Does not equals " + ARC.ExpectedCalculated;
+                        if (status != true)
+                        {
+                            ErrorInfo = ARC.Actual + " Does not equals " + ARC.ExpectedCalculated;
+                        }
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
@@ -3008,9 +2993,7 @@ namespace Ginger.Run
                             }
                             break;
                         }
-                        CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
-                        // This Sleep is needed!
-                        Thread.Sleep(1);
+                        CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;                        
                         if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                         {
                             activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
