@@ -192,7 +192,26 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-      
+        [TestMethod]
+        [Timeout(60000)]
+        public void EditNewAddedChildToList()
+        {
+            //Arrange
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
+            item.Name = "abc";
+            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
+            item.StartDirtyTracking();
+
+            //Act           
+            MyComplextRepositoryItemChild newChild = new MyComplextRepositoryItemChild() { Name = "Child 1" };
+            item.childs.Add(newChild); //here parent will be marked as dirty
+            item.SetDirtyStatusToNoChange(); //like been done on Save item to clear dirty
+            newChild.Name = "NewName"; //expecting parent to show as dirty again because one of it's childs modified
+
+            //Assert  
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changedt to modified since one child was added and then child was modified");
+        }
+
 
     }
 }
