@@ -1,7 +1,9 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Help;
+using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -27,28 +29,43 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
+        SingleItemTreeViewSelectionPage mAPIPage;
+        //public APINavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
+        //{
+        //    InitializeComponent();
 
-        public APINavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
+        //    mContext = context;
+        //    mItemTypeRootNode = itemTypeRootNode;
+        //    GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
+        //    xTreeView.TreeTitle = itemTypeName;
+        //    xTreeView.TreeIcon = itemTypeIcon;
+
+        //    mContext.PropertyChanged += MContext_PropertyChanged;
+
+        //    xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+        //    xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+        //    TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
+
+        //    r.IsExpanded = true;
+
+        //    itemTypeRootNode.SetTools(xTreeView);
+        //    xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
+        //}
+
+        public APINavPage(Context context)
         {
             InitializeComponent();
 
             mContext = context;
-            mItemTypeRootNode = itemTypeRootNode;
-            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+            mItemTypeRootNode = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+            mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
+                                        new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
+                                            UCTreeView.eFilteroperationType.Equals);
 
-            xTreeView.TreeTitle = itemTypeName;
-            xTreeView.TreeIcon = itemTypeIcon;
-
+            mContext.PropertyChanged -= MContext_PropertyChanged;
             mContext.PropertyChanged += MContext_PropertyChanged;
-
-            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
-
-            r.IsExpanded = true;
-
-            itemTypeRootNode.SetTools(xTreeView);
-            xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
+            xAPIFrame.Content = mAPIPage;
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -64,9 +81,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mContext.BusinessFlow.CurrentActivity == null)
                 mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
 
-            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+            mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
     }
 }

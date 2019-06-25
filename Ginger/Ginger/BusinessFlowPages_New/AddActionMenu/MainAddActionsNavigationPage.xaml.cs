@@ -110,10 +110,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             if(mPOMNavPage == null)
             {
-                mPOMNavPage = new POMNavPage(mContext,"Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+                mPOMNavPage = new POMNavPage(mContext);
             }
             LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
@@ -159,8 +158,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if(mAPINavPage == null)
             {
-                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-                mAPINavPage = new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
+                mAPINavPage = new APINavPage(mContext);
+                //AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+                //mAPINavPage = new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
             }
             LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
         }

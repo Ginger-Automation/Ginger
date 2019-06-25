@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -7,6 +8,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Help;
+using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
@@ -41,6 +43,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ApplicationPOMModel mPOM;
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
+        SingleItemTreeViewSelectionPage mPOMPage;
 
         private Agent mAgent;
         IWindowExplorer mWinExplorer
@@ -76,47 +79,55 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
         }
-        public POMNavPage()
-        {
-            InitializeComponent();
-        }
 
-        public TreeView1 TreeView
-        {
-            get { return xTreeView; }
-        }
-
-        public POMNavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
+        public POMNavPage(Context context)
         {
             InitializeComponent();
 
             mContext = context;
-            mItemTypeRootNode = itemTypeRootNode;
-            GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
-            xTreeView.TreeTitle = itemTypeName;
-            xTreeView.TreeIcon = itemTypeIcon;
+            mItemTypeRootNode = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
+            mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
+                                        new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
+                                            UCTreeView.eFilteroperationType.Equals);
 
-            mContext.PropertyChanged -= MContext_PropertyChanged;
             mContext.PropertyChanged += MContext_PropertyChanged;
-
-            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
-
-            r.IsExpanded = true;
-
-            itemTypeRootNode.SetTools(xTreeView);
-            xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
-
-            xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
+            mPOMPage.OnSelect += MainTreeView_ItemSelected;
             SetElementsGridView();
+            xPOMFrame.Content = mPOMPage;
+        }
+
+        //public POMNavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
+        //{
+        //    InitializeComponent();
+
+        //    mContext = context;
+        //    mItemTypeRootNode = itemTypeRootNode;
+        //    GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
+
+        //    xTreeView.TreeTitle = itemTypeName;
+        //    xTreeView.TreeIcon = itemTypeIcon;
+
+        //    mContext.PropertyChanged -= MContext_PropertyChanged;
+        //    mContext.PropertyChanged += MContext_PropertyChanged;
+
+        //    xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+        //    xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+        //    TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
+
+        //    r.IsExpanded = true;
+
+        //    itemTypeRootNode.SetTools(xTreeView);
+        //    xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
+
+        //    xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
+        //    SetElementsGridView();
 
             //if (treeItemDoubleClickHandler != null)
             //{
             //    xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             //}
-        }
+//        }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -135,18 +146,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mContext.BusinessFlow.CurrentActivity == null)
                 mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
 
-            xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-            xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
-        }
-
-        private void CurrentActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(mContext.BusinessFlow.CurrentActivity.TargetApplication))
-            {
-                xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-                xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            }
+            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
 
         private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -178,12 +180,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         //    //}
         //}
 
-        private void MainTreeView_ItemSelected(object sender, EventArgs e)
+        private void MainTreeView_ItemSelected(object sender, SelectionTreeEventArgs e)
         {
             GridLength POMDetailsRegionHeight = new GridLength(400, GridUnitType.Star);
             GridLength unloadedPOMDetailsHeight = new GridLength(0);
 
-            TreeViewItem TVI = (TreeViewItem)sender;
+            TreeViewItem TVI = (TreeViewItem)e.SelectedItems[0];
             object tvItem = TVI.Tag;
             ITreeViewItem mPOMObj = tvItem as ITreeViewItem;
 
