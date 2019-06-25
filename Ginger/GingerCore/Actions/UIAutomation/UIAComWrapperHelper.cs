@@ -3613,9 +3613,16 @@ namespace GingerCore.Drivers
                     break;
                 case "treeview":
                     element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
-                    if (((ScrollPattern)vp).Current.VerticalScrollPercent < 100)
+                    if (((ScrollPattern)vp).Current.VerticallyScrollable == true)
                     {
-                        ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent + 3);
+                        if (((ScrollPattern)vp).Current.VerticalScrollPercent < 100)
+                        {
+                            ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent + 3);
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Scrollable properly is not supported for " + controlType);
                     }
                     break;
                 default:
@@ -3662,9 +3669,16 @@ namespace GingerCore.Drivers
                     break;
                 case "treeview":
                     element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
-                    if (((ScrollPattern)vp).Current.VerticalScrollPercent > 1)
+                    if (((ScrollPattern)vp).Current.VerticallyScrollable == true)
                     {
-                        ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent - 3);
+                        if (((ScrollPattern)vp).Current.VerticalScrollPercent > 1)
+                        {
+                            ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent - 3);
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Scrollable properly is not supported for " + controlType);
                     }
                     break;
                 default:
