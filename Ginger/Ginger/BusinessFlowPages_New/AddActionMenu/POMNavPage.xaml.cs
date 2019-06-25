@@ -99,11 +99,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
             SetElementsGridView();
             xPOMFrame.Content = mPOMPage;
+            xPOMSplitter.Visibility = Visibility.Collapsed;
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
                 UpdatePOMTree();
             }
@@ -115,9 +116,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdatePOMTree()
         {
-            if (mContext.BusinessFlow.CurrentActivity == null)
-                mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
-
             mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
@@ -134,12 +132,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
                 xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                 xMainElementsGrid.Visibility = Visibility.Visible;
-                xPOMItems.Height = new GridLength(400);
+                xPOMSplitter.Visibility = Visibility.Visible;
             }
             else
             {
                 xMainElementsGrid.Visibility = Visibility.Collapsed;
-                xPOMItems.Height = new GridLength(400, GridUnitType.Star);
+                xPOMSplitter.Visibility = Visibility.Collapsed;
             }
         }
 

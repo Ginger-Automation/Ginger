@@ -342,7 +342,6 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {
                     mBusinessFlow.SaveBackup();

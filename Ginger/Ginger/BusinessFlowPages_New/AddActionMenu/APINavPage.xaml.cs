@@ -52,7 +52,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
                 UpdateAPITree();
             }
@@ -60,10 +60,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdateAPITree()
         {
-            if (mContext.BusinessFlow.CurrentActivity == null)
-                mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
-
-            mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) 
+                                                                + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
             mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
