@@ -17,24 +17,20 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.UserControls;
-using Ginger.Run;
-using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Ginger.Agents
@@ -46,11 +42,13 @@ namespace Ginger.Agents
     {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
         Context mContext;
+
         public ApplicationAgentsMapPage(Context context)
         {
             InitializeComponent();
             mContext = context;
-            mContext.Runner.PropertyChanged += MGR_PropertyChanged; 
+            mContext.Runner.PropertyChanged += MGR_PropertyChanged;
+            
             RefreshApplicationAgentsList();
         }
 
@@ -77,110 +75,6 @@ namespace Ginger.Agents
             xAppAgentsListBox.ItemsSource = ApplicationAgents;
         }
 
-        private void StartAgentButton_Click(object sender, RoutedEventArgs e)
-        {                                    
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            try
-            {
-                StartAppAgent(AG);
-
-                //If there is errorMessageFromDriver is populated then do not wait. 
-                if(((Agent)AG.Agent).Driver!=null && String.IsNullOrEmpty(((Agent)AG.Agent).Driver.ErrorMessageFromDriver))
-                    ((Agent)AG.Agent).WaitForAgentToBeReady();
-                Agent.eStatus Status = ((Agent)AG.Agent).Status;
-                if (Status!= Agent.eStatus.Running && Status!= Agent.eStatus.Starting)
-                {
-                    string errorMessage = ((Agent)AG.Agent).Driver.ErrorMessageFromDriver;
-                    if (String.IsNullOrEmpty(errorMessage))
-                        errorMessage = "Failed to Connect the agent";
-                    
-                    Reporter.ToStatus(eStatusMsgKey.StartAgentFailed,null, errorMessage);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, ex.Message);
-           }         
-        }
-
-        private void ConfigAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
-            w.ShowAsWindow();
-        }
-
-        private void CloseAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            ((Agent)AG.Agent).Close();
-        }
-
-        private void ExplorerAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            if (AG.Agent != null)
-            {
-                if (((Agent)AG.Agent).Status == Agent.eStatus.NotStarted)
-                    StartAppAgent(AG);
-                //TODO: Temporary to launch Web service window, till we merge web services to window explorer
-                if (((Agent)AG.Agent).Driver is WebServicesDriver)
-                {
-                    ((WebServicesDriver)((Agent)AG.Agent).Driver).LauncDriverWindow();
-                    return;
-                }
-
-                //if (((Agent)AG.Agent).Driver is IWindowExplorer)
-                //Once all the driver implementing IwindowExplorer are ready, simply checking is IWindowExplorer will server the purpose and flag IsWindowExplorerSupportReady can be removed
-                if (((Agent)AG.Agent).IsWindowExplorerSupportReady)
-                {
-                    WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
-                    WEP.ShowAsWindow();
-                }               
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.DriverNotSupportingWindowExplorer, ((Agent)AG.Agent).DriverType);
-                }
-            }
-        }
-
-        private void StartAppAgent(ApplicationAgent AG)
-        {
-            AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-            if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
-
-            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow; 
-            ((Agent)AG.Agent).SolutionFolder =  WorkSpace.Instance.Solution.Folder;
-            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            ((Agent)AG.Agent).StartDriver();               
-            //For ASCF, launch explorer automatically when launching Agent
-            if (((Agent)AG.Agent).IsShowWindowExplorerOnStart && ((Agent)AG.Agent).Status == Agent.eStatus.Running)
-            {
-                WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
-                WEP.ShowAsWindow();
-            }
-
-            Reporter.HideStatusMessage();
-            AutoLogProxy.UserOperationEnd();
-        }
-
-        private void AppAgentsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)xAppAgentsListBox.SelectedItem;
-            if (AG == null) return;
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
-            w.ShowAsWindow();
-        }
-
-        private void LoadingAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            ((Agent)AG.Agent).Driver.cancelAgentLoading = true;
-        }
-
         private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
@@ -202,6 +96,27 @@ namespace Ginger.Agents
                 agent.Close();
             }
         }
+
+        private void XAgentNameComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            ApplicationAgent applicationAgent = (ApplicationAgent)((ComboBox)sender).DataContext;
+            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
+
+            //remove already mapped agents
+            List<IAgent> alreadyMappedAgents = mContext.Runner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
+            foreach (IAgent mappedAgent in alreadyMappedAgents)
+            {
+                if (mappedAgent != applicationAgent.Agent)
+                {
+                    if (filteredOptionalAgents.Contains(mappedAgent))
+                    {
+                        filteredOptionalAgents.Remove(mappedAgent);
+                    }
+                }
+            }
+
+            ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
+        }
     }
 
     public class AgentForgroundTypeConverter : IValueConverter
@@ -210,11 +125,11 @@ namespace Ginger.Agents
         {
             if (value != null)
             {
-                return Brushes.DodgerBlue;
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#152B37"));//blue
             }
             else
             {
-                return Brushes.Red;
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
             }
         }
 
@@ -224,17 +139,63 @@ namespace Ginger.Agents
         }
     }
 
-    public class AgentStatusImageTypeConverter : IValueConverter
+    public class AgentStatusColorTypeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null && (Agent.eStatus)value == Agent.eStatus.Running)
+            switch((Agent.eStatus)value)
             {
-                return eImageType.Active;
+                case Agent.eStatus.Running:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
+
+                case Agent.eStatus.Starting:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//orange
+
+                default:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentVisibilityTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return Visibility.Collapsed;
             }
             else
             {
-                return eImageType.InActive;
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentStatusTooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((Agent.eStatus)value)
+            {
+                case Agent.eStatus.Running:
+                    return "Agent is Running, Click to Close it";
+
+                case Agent.eStatus.Starting:
+                    return "Agent is Starting...";
+
+                default:
+                    return "Agent is Not Running, Click to Start it";
             }
         }
 
