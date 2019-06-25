@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
@@ -165,6 +166,7 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
+            var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
             if (!System.IO.Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
             {
                 System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
@@ -179,9 +181,13 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                GingerRunner gr = new GingerRunner();
-                runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
-                AutoLogProxy.UserOperationStart("Offline Report");
+                if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    GingerRunner gr = new GingerRunner();
+                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
+                    AutoLogProxy.UserOperationStart("Offline Report");
+                }
+                
             }
 
             var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
@@ -201,26 +207,29 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
-                    if (selectedHTMLReportTemplateID > -1)
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                     {
-                        CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                        if (selectedHTMLReportTemplateID > -1)
+                        {
+                            CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                        }
+                        else
+                        {
+                            Errors = "Default Template is not available, add Report Template in Configuration.";
+                            Reporter.HideStatusMessage();
+                            Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                            return;
+                        }
                     }
                     else
                     {
-                        Errors = "Default Template is not available, add Report Template in Configuration.";
+                        Errors = "In order to get HTML report, please, perform executions before";
                         Reporter.HideStatusMessage();
                         Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                         return;
                     }
-                }
-                else
-                {
-                    Errors = "In order to get HTML report, please, perform executions before";
-                    Reporter.HideStatusMessage();
-                    Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
-                    return;
                 }
             }
 
@@ -263,22 +272,32 @@ namespace Ginger.Run.RunSetActions
                     if (r is EmailHtmlReportAttachment)
                     {
                         EmailHtmlReportAttachment rReport = ((EmailHtmlReportAttachment)r);
-                        HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                        mVE.Value = rReport.ExtraInformation;
-                        extraInformationCalculated = mVE.ValueCalculated;
-                        if (!string.IsNullOrEmpty(rReport.SelectedHTMLReportTemplateID.ToString()))
+                        if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
-                            if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
+                            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                            mVE.Value = rReport.ExtraInformation;
+                            extraInformationCalculated = mVE.ValueCalculated;
+                            if (!string.IsNullOrEmpty(rReport.SelectedHTMLReportTemplateID.ToString()))
                             {
-                                RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
+                                if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
+                                {
+                                    RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
+                                }
+                                else
+                                {
+                                    ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                                                                                                                                              false,
+                                                                                                                                              HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault());
+                                }
                             }
-                            else
-                            {
-                                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                                reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                                                                                                                          false,
-                                                                                                                                          HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault());
-                            }
+                        }
+                        else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                        {
+                            WebReportGenerator webReporterRunner = new WebReportGenerator();
+                            webReporterRunner.RunNewHtmlReport(null, null, false);
+                            reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
+                            emailReadyHtml = "a new Email report will soon be added.";
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
                         {
@@ -406,7 +425,7 @@ namespace Ginger.Run.RunSetActions
             currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
             if (currentTemplate == null && selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
             {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault(); 
+                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
