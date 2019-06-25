@@ -94,7 +94,7 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
             ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
 
-            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);            
             if (currentType == typeof(ActBrowserElement))
             {
                 switch (GenElementAction)
@@ -222,6 +222,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.SwitchToParentFrame:
                 case eGenElementAction.AcceptMessageBox:
                 case eGenElementAction.GetWindowTitle:
+                case eGenElementAction.StartBrowser:
                     currentType = typeof(ActBrowserElement);
                     break;
 
@@ -256,6 +257,8 @@ namespace GingerCore.Actions
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
                 case eGenElementAction.RunJavaScript:
+                case eGenElementAction.AsyncSelectFromDropDownByIndex:
+                case eGenElementAction.SetAttributeUsingJs:
                     currentType =  typeof(ActUIElement);
                     break;
 
