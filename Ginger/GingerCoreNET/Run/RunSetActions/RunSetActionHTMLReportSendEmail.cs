@@ -297,7 +297,7 @@ namespace Ginger.Run.RunSetActions
                             WebReportGenerator webReporterRunner = new WebReportGenerator();
                             webReporterRunner.RunNewHtmlReport(null, null, false);
                             reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
-                            emailReadyHtml = "a new Email report will soon be added.";
+                            emailReadyHtml = "Ginger automation execution report attached";
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
                         {
