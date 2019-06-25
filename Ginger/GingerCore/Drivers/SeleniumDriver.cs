@@ -5970,7 +5970,7 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.CloseAll:
                     Driver.Quit();
                     break;
-                case ActBrowserElement.eControlAction.BrowserLog:
+                case ActBrowserElement.eControlAction.GetBrowserLog:
 
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;

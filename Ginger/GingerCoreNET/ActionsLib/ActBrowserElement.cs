@@ -153,7 +153,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Close All")]
             CloseAll,
             [EnumValueDescription("Get Browser Logs")]
-            BrowserLog,
+            GetBrowserLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
