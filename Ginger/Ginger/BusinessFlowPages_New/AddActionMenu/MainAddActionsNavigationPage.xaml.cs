@@ -159,8 +159,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if(mAPINavPage == null)
             {
                 mAPINavPage = new APINavPage(mContext);
-                //AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-                //mAPINavPage = new APINavPage(mContext, "API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
             }
             LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
         }

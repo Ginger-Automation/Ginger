@@ -30,40 +30,22 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mAPIPage;
-        //public APINavPage(Context context, string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null)
-        //{
-        //    InitializeComponent();
-
-        //    mContext = context;
-        //    mItemTypeRootNode = itemTypeRootNode;
-        //    GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
-
-        //    xTreeView.TreeTitle = itemTypeName;
-        //    xTreeView.TreeIcon = itemTypeIcon;
-
-        //    mContext.PropertyChanged += MContext_PropertyChanged;
-
-        //    xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-        //    xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-        //    TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
-
-        //    r.IsExpanded = true;
-
-        //    itemTypeRootNode.SetTools(xTreeView);
-        //    xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
-        //}
 
         public APINavPage(Context context)
         {
             InitializeComponent();
 
             mContext = context;
-            mItemTypeRootNode = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+
+            AppApiModelsFolderTreeItem mAPIsRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+            mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
                                         new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
                                             UCTreeView.eFilteroperationType.Equals);
 
-            mContext.PropertyChanged -= MContext_PropertyChanged;
+            mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
+            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument);
+
             mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
         }
