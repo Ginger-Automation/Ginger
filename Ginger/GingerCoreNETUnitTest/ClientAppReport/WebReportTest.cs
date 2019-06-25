@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -23,10 +24,11 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-            OpenSolution(@"C:\Ginger\test");
+            string jsonfilepath = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
+            OpenSolution(@jsonfilepath);
             WorkSpace.Instance.Solution = (Solution)(ISolution)sr.RepositorySerializer.DeserializeFromFile(Path.Combine(sr.SolutionFolder, "Ginger.Solution.xml"));
         }
-    
+
         [TestMethod]
         [Timeout(60000)]
         public void TestNewWebReport()
@@ -36,7 +38,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             // a selected browser from unix can be run ,with his path
             string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
             WebReportGenerator webReporterRunner = new WebReportGenerator(browserPath);
-            Assert.IsTrue(webReporterRunner.RunNewHtmlReport());
+            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(null, null, false));
         }
 
         private void OpenSolution(string sFolder)

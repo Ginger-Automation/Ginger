@@ -221,6 +221,7 @@ namespace Ginger.Run
                     ((Activity)ItemObject).PropertyChanged += RunnerItem_ActivityPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    xRunnerItemMenu.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -229,6 +230,7 @@ namespace Ginger.Run
                     ((Act)ItemObject).PropertyChanged += RunnerItem_ActionPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this Action";
                     xViewRunnerItem.ToolTip = "View Action";
+                    xRunnerItemMenu.Visibility = Visibility.Collapsed;
                 }
                 if(ViewMode)
                 {
