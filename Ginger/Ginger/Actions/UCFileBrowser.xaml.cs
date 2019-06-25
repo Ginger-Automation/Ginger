@@ -51,7 +51,7 @@ namespace Ginger.Actions
             // If the VE is on stand alone form:
             MakePathsRelative = mMakePathsRelative;
             this.obj = AIV;
-            this.AttrName = ActInputValue.Fields.Value;
+            this.AttrName = nameof(ActInputValue.Value);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
         }
 

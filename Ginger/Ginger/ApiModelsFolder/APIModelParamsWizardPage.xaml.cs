@@ -188,7 +188,7 @@ namespace Ginger.ApiModelsFolder
         private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAddApiModelActionWizardPage.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mAddApiModelActionWizardPage.Context);
             VEEW.ShowAsWindow();
         }
         private void MapOutputToDataSource(object sender, RoutedEventArgs e)

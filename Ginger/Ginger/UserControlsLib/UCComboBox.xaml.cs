@@ -113,7 +113,7 @@ namespace Ginger.UserControlsLib
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
-            this.AttrName = ActInputValue.Fields.Value;
+            this.AttrName = nameof(ActInputValue.Value);
             mContext = context;
             if (optionalEnumType!=null)
             {
@@ -136,7 +136,7 @@ namespace Ginger.UserControlsLib
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
-            this.AttrName = ActInputValue.Fields.Value;
+            this.AttrName = nameof(ActInputValue.Value);
             mContext = context;
             FillComboBoxFromDynamicList(comboBoxEnumItemsList);
             BindVEAndSelectionChangedEvent(isVENeeded, UCselectionChange);

@@ -120,7 +120,7 @@ namespace Ginger.Actions
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
-            this.AttrName = ActInputValue.Fields.Value;
+            this.AttrName = nameof(ActInputValue.Value);
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 

@@ -41,9 +41,9 @@ namespace Ginger.Actions.WebServices
 
             mActREST = a;
             URLUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.EndPointURL);
-            URLDomainUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLDomain, ActInputValue.Fields.Value);
-            URLPasswordUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLPass, ActInputValue.Fields.Value);
-            URLUserUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLUser, ActInputValue.Fields.Value);
+            URLDomainUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLDomain, nameof(ActInputValue.Value));
+            URLPasswordUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLPass, nameof(ActInputValue.Value));
+            URLUserUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.URLUser, nameof(ActInputValue.Value));
             RequestBodyUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.RequestBody);
             RequestRespondXmlSaveTextBox.Init(Context.GetAsContext(mActREST.Context), mActREST.SaveRequestResponseFolderPath);
 
@@ -102,14 +102,14 @@ namespace Ginger.Actions.WebServices
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicElementsGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mActREST.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mActREST.Context));
             VEEW.ShowAsWindow();
         }
 
         private void HttpHeadersInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)HttpHeadersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage (AIV, ActInputValue.Fields.Value, Context.GetAsContext(mActREST.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage (AIV, nameof(ActInputValue.Value), Context.GetAsContext(mActREST.Context));
             VEEW.ShowAsWindow ();
         }
 
@@ -118,10 +118,10 @@ namespace Ginger.Actions.WebServices
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Locator", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Replace With", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Locator", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Replace With", WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             DynamicElementsGrid.SetAllColumnsDefaultView(view);
             DynamicElementsGrid.InitViewItems();
@@ -134,10 +134,10 @@ namespace Ginger.Actions.WebServices
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Header", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Value", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Header", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
             view.GridColsView.Add (new GridColView () { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             HttpHeadersGrid.SetAllColumnsDefaultView(view);
             HttpHeadersGrid.InitViewItems();

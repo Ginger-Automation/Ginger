@@ -210,7 +210,7 @@ namespace Ginger
 
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
         {
-            TextBox.BindControl(AIV, ActInputValue.Fields.Value);
+            TextBox.BindControl(AIV, nameof(ActInputValue.Value));
         }
 
 

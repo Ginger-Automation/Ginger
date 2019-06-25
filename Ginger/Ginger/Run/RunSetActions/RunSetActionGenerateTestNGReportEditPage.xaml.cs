@@ -70,8 +70,8 @@ namespace Ginger.Run.RunSetActions
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Parameter Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Parameter Value", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Parameter Value", WidthWeight = 40 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
 
             grdTestNGReportParameters.SetAllColumnsDefaultView(defView);
@@ -88,7 +88,7 @@ namespace Ginger.Run.RunSetActions
         private void ParamsGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)grdTestNGReportParameters.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), null);
             VEEW.ShowAsWindow();
         }
     }
