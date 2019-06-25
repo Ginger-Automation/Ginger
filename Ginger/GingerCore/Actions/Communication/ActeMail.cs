@@ -83,7 +83,9 @@ namespace GingerCore.Actions.Communication
             {                
                 return GetOrCreateInputParam(nameof(Host), "").Value;
             }
-            set { AddOrUpdateInputParamValue(nameof(Host), value); }
+            set { AddOrUpdateInputParamValue(nameof(Host), value);
+                OnPropertyChanged(nameof(Host));
+            }
         }
         
         public string Port
@@ -92,53 +94,69 @@ namespace GingerCore.Actions.Communication
             {               
                 return GetOrCreateInputParam(nameof(Port), "25").Value;
             }
-            set { AddOrUpdateInputParamValue(nameof(Port), value); }
+            set { AddOrUpdateInputParamValue(nameof(Port), value);
+                OnPropertyChanged(nameof(Port));
+            }
         }
         
         public string User
         {
             get { return GetInputParamValue(nameof(User)); }
-            set { AddOrUpdateInputParamValue(nameof(User), value); }
+            set { AddOrUpdateInputParamValue(nameof(User), value);
+                OnPropertyChanged(nameof(User));
+            }
         }
         
         public string Pass
         {
             get { return GetInputParamValue(nameof(Pass)); }
-            set { AddOrUpdateInputParamValue(nameof(Pass), value); }
+            set { AddOrUpdateInputParamValue(nameof(Pass), value);
+                OnPropertyChanged(nameof(Pass));
+            }
         }
         
         public string MailFrom
         {
             get { return GetInputParamValue(nameof(MailFrom)); }
-            set { AddOrUpdateInputParamValue(nameof(MailFrom), value); }
+            set { AddOrUpdateInputParamValue(nameof(MailFrom), value);
+                OnPropertyChanged(nameof(MailFrom));
+            }
         }
 
         
         public string Mailto
         {
             get { return GetInputParamValue(nameof(Mailto)); }
-            set { AddOrUpdateInputParamValue(nameof(Mailto), value); }
+            set { AddOrUpdateInputParamValue(nameof(Mailto), value);
+                OnPropertyChanged(nameof(Mailto));
+            }
         }
 
         
         public string Mailcc
         {
             get { return GetInputParamValue(nameof(Mailcc)); }
-            set { AddOrUpdateInputParamValue(nameof(Mailcc), value); }
+            set { AddOrUpdateInputParamValue(nameof(Mailcc), value);
+                OnPropertyChanged(nameof(Mailcc));
+            }
         }
 
         
         public string Subject
         {
             get { return GetInputParamValue(nameof(Subject)); }
-            set { AddOrUpdateInputParamValue(nameof(Subject), value); }
+            set { AddOrUpdateInputParamValue(nameof(Subject), value);
+                OnPropertyChanged(nameof(Subject));
+            }
         }
 
         
         public string Body
         {
             get { return GetInputParamValue(nameof(Body)); }
-            set { AddOrUpdateInputParamValue(nameof(Body), value); }
+            set { AddOrUpdateInputParamValue(nameof(Body), value);
+                OnPropertyChanged(nameof(Body));
+            }
         }
 
         
@@ -154,7 +172,9 @@ namespace GingerCore.Actions.Communication
         public string MailOption
         {
             get { return GetInputParamValue(nameof(MailOption)); }
-            set { AddOrUpdateInputParamValue(nameof(MailOption), value); }
+            set { AddOrUpdateInputParamValue(nameof(MailOption), value);
+                OnPropertyChanged(nameof(MailOption));
+            }
         }
 
         
