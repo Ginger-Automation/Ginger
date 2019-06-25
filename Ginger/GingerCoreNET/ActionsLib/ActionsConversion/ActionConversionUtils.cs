@@ -97,28 +97,38 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         foreach (Act act in currentActivity.Acts.ToList())
                         {
-                            if (act.Active && act is IObsoleteAction &&
-                                actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() && 
-                                                          a.Selected && 
-                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                            try
                             {
-                                // get the index of the action that is being converted 
-                                int selectedActIndex = currentActivity.Acts.IndexOf(act);
-
-                                // convert the old action
-                                Act newAct = ((IObsoleteAction)act).GetNewAction();
-                                if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                                if (act.Active && act is IObsoleteAction &&
+                                                        actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
+                                                                                  a.Selected &&
+                                                                                  a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                                 {
-                                    newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
-                                }
-                                currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+                                    // get the index of the action that is being converted 
+                                    int selectedActIndex = currentActivity.Acts.IndexOf(act);
 
-                                // set obsolete action in the activity as inactive
-                                act.Active = false;
-                                if (addNewActivity)
-                                {
-                                    currentActivity.Acts.Remove(act);
+                                    // convert the old action
+                                    Act newAct = ((IObsoleteAction)act).GetNewAction();
+                                    if (newAct != null)
+                                    {
+                                        if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                                        {
+                                            newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
+                                        }
+                                        currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+
+                                        // set obsolete action in the activity as inactive
+                                        act.Active = false;
+                                        if (addNewActivity)
+                                        {
+                                            currentActivity.Acts.Remove(act);
+                                        } 
+                                    }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
                             }
                         }
 
