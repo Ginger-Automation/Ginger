@@ -37,7 +37,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Web", "browser");
+            PlatformAction platformAction = new PlatformAction(platform: "Web", action: "browser");
 
             return platformAction;
             //NewPayLoad payload = new NewPayLoad("RunPlatformAction");   
