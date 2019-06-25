@@ -92,21 +92,24 @@ namespace UnitTests.NonUITests
         }
         private static void DeleteDirectory(string directory)
         {
-            foreach (string subdirectory in Directory.EnumerateDirectories(directory))
+            if (Directory.Exists(directory))
             {
-                DeleteDirectory(subdirectory);
-            }
-
-            foreach (string fileName in Directory.EnumerateFiles(directory))
-            {
-                var fileInfo = new FileInfo(fileName)
+                foreach (string subdirectory in Directory.EnumerateDirectories(directory))
                 {
-                    Attributes = FileAttributes.Normal
-                };
-                fileInfo.Delete();
-            }
+                    DeleteDirectory(subdirectory);
+                }
 
-            Directory.Delete(directory);
+                foreach (string fileName in Directory.EnumerateFiles(directory))
+                {
+                    var fileInfo = new FileInfo(fileName)
+                    {
+                        Attributes = FileAttributes.Normal
+                    };
+                    fileInfo.Delete();
+                }
+
+                Directory.Delete(directory);
+            }
         }
 
         [TestMethod]
