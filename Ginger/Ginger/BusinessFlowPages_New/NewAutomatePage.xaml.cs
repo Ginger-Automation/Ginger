@@ -150,7 +150,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
-            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
+            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
             BindEnvsCombo();
             UpdateContext();
         }
@@ -777,6 +777,24 @@ namespace GingerWPF.BusinessFlowsLib
                 CreateDefaultEnvironment();
                 xEnvironmentComboBox.SelectedItem = xEnvironmentComboBox.Items[0];
             }
+
+            SetRunnerSpecificEnv((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
+        }
+
+        private void SetRunnerSpecificEnv(ProjEnvironment env)
+        {
+            if (xEnvironmentComboBox.SelectedItem != null)
+            {
+                mRunner.UseSpecificEnvironment = true;
+                mRunner.ProjEnvironment = env;
+                mRunner.SpecificEnvironmentName = env.Name;
+            }
+            else
+            {
+                mRunner.UseSpecificEnvironment = false;
+                mRunner.ProjEnvironment = null;
+                mRunner.SpecificEnvironmentName = string.Empty;
+            }
         }
 
         public static void CreateDefaultEnvironment()
@@ -829,7 +847,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mEnvironment = env;
             mContext.Environment = mEnvironment;
-            mRunner.ProjEnvironment = mEnvironment;
+            SetRunnerSpecificEnv(mEnvironment);
             if (mEnvironment != null)
             {
                 WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
@@ -888,7 +906,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutomationRunnerConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            GingerRunnerConfigurationsPage runnerConfigurationsPage = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.AutomatePage, mContext);
+            runnerConfigurationsPage.ShowAsWindow();
         }
 
         private void xResetFlowBtn_Click(object sender, RoutedEventArgs e)

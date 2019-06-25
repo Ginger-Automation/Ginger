@@ -16,84 +16,57 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System;
+using Ginger.Agents;
+using GingerCore.Environments;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Platforms;
-using GingerCore.Environments;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.Run
 {
     public partial class GingerRunnerConfigurationsPage : Page
     {
-        public enum ePageContext { AutomateTab,RunTab}
-        ePageContext mPageContext;
-        GingerRunner mGingerRunner;
-
+        public enum ePageViewMode { AutomatePage,RunsetPage}
+        ePageViewMode mPageViewMode;
+        GingerRunner mRunner;
+        Context mContext;
         GenericWindow genWin = null;
 
-        public GingerRunnerConfigurationsPage(GingerRunner GR, ePageContext pageContext)
+        public GingerRunnerConfigurationsPage(GingerRunner runner, ePageViewMode pageViewMode, Context context)
         {
             InitializeComponent();
 
-            mGingerRunner = GR;
-            mPageContext = pageContext;
+            mRunner = runner;
+            mPageViewMode = pageViewMode;
+            mContext = context;
+           
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner, nameof(GingerRunner.Name));
 
-            SetGridView();
-            GR.UpdateApplicationAgents();
+            mRunner.UpdateApplicationAgents();
+            xAppAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
 
-            ObservableList<ApplicationAgent> ApplicationAgents = new ObservableList<ApplicationAgent>();
+            List<int> waitOptions = new List<int>() { 0, 1, 2, 3, 4, 5 };
+            xAutoWaitComboBox.ItemsSource = waitOptions;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoWaitComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.AutoWait));
 
-            foreach (ApplicationAgent Apag in GR.ApplicationAgents)
+            GingerCore.General.FillComboFromEnumObj(xRunOptionComboBox, mRunner.RunOption);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunOptionComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.RunOption));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSimulationMode, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.RunInSimulationMode));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseSpecificEnvChkbox, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.UseSpecificEnvironment));
+
+            xExecutionTags.Init(mRunner.FilterExecutionTags);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTagsChkbox, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.FilterExecutionByTags));
+           
+            if (mPageViewMode == ePageViewMode.AutomatePage)
             {
-                if (GR.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
-                {
-                    ApplicationAgents.Add(Apag);
-                }
+                xNamePnl.Visibility = Visibility.Collapsed;
+                xRunOptionPnl.Visibility = Visibility.Collapsed;
             }
-
-            grdApplicationsAgentsMapping.DataSourceList = ApplicationAgents;
-            grdApplicationsAgentsMapping.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditMapping));
-            grdApplicationsAgentsMapping.RowDoubleClick += grdApplicationsAgentsMapping_RowDoubleClick;
-
-            ExecutionTags.Init(mGingerRunner.FilterExecutionTags);
-            if (mPageContext == ePageContext.RunTab)
-            {
-                GingerCore.General.FillComboFromEnumObj(RunOptionComboBox, mGingerRunner.RunOption);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RunOptionComboBox, ComboBox.SelectedValueProperty, mGingerRunner, GingerRunner.Fields.RunOption);
-
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(GingerNameTextBox, TextBox.TextProperty, mGingerRunner, GingerRunner.Fields.Name);
-
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(useSpecificEnvChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.UseSpecificEnvironment);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExecutionTagsChkbox, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.FilterExecutionByTags);
-                //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(specificEnvComboBox, ComboBox.DisplayMemberPathProperty, mGingerRunner, GingerRunner.Fields.SpecificEnvironmentName);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mGingerRunner, GingerRunner.Fields.RunInSimulationMode);
-            }
-            else
-            {
-                GingerDetailsPanel.Visibility = System.Windows.Visibility.Collapsed;
-                this.Title = "Agents Configurations";
-            }
-        }
-
-        private void SetGridView()
-        {           
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = ApplicationAgent.Fields.AppName, Header = "Target Application Name", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = ApplicationAgent.Fields.AgentName, Header = "Agent Name", WidthWeight = 50, BindingMode = BindingMode.OneWay, ReadOnly = true });
-
-            grdApplicationsAgentsMapping.SetAllColumnsDefaultView(view);
-            grdApplicationsAgentsMapping.InitViewItems();
         }
 
         public void ShowAsWindow()
@@ -101,88 +74,64 @@ namespace Ginger.Run
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, Ginger.eWindowShowStyle.Dialog, this.Title, this);
         }
 
-        private void RunOptionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
-        private void EditMapping()
-        {
-            if (grdApplicationsAgentsMapping.CurrentItem != null)
-            {
-                ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mGingerRunner, (ApplicationAgent)grdApplicationsAgentsMapping.CurrentItem);
-                w.ShowAsWindow();
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
-            }
-        }
-
-        private void EditMapping(object sender, RoutedEventArgs e)
-        {
-            EditMapping();
-        }
-
-        private void grdApplicationsAgentsMapping_RowDoubleClick(object sender, EventArgs e)
-        {
-            EditMapping();
-        }
-
         private void useSpecificEnvChkbox_Checked(object sender, RoutedEventArgs e)
         {
-            if (useSpecificEnvChkbox.IsChecked == true)
+            if (xUseSpecificEnvChkbox.IsChecked == true)
             {
-                useSpecificEnvChkbox.Content = "Use Specific Environment:";
-                specificEnvSelectionPnl.Visibility = System.Windows.Visibility.Visible;
+                xUseSpecificEnvChkbox.Content = "Use Specific Environment:";
+                xSpecificEnvComboBox.Visibility = System.Windows.Visibility.Visible;
                 SetEnvironments();                
             }
             else
             {
-                useSpecificEnvChkbox.Content = "Use Specific Environment";
-                specificEnvSelectionPnl.Visibility = System.Windows.Visibility.Collapsed;
-                specificEnvComboBox.SelectedValue = null;
+                xUseSpecificEnvChkbox.Content = "Use Specific Environment";
+                xSpecificEnvComboBox.Visibility = System.Windows.Visibility.Collapsed;
+                xSpecificEnvComboBox.SelectedValue = null;
             }
         }
 
         private void SetEnvironments()
         {
-            specificEnvComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
-            specificEnvComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
-            specificEnvComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
+            xSpecificEnvComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            xSpecificEnvComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
+            xSpecificEnvComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
 
-            ProjEnvironment selectedEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mGingerRunner.SpecificEnvironmentName).FirstOrDefault();
+            ProjEnvironment selectedEnv = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mRunner.SpecificEnvironmentName).FirstOrDefault();
             if (selectedEnv != null)
             {
-                specificEnvComboBox.SelectedItem = selectedEnv;
+                xSpecificEnvComboBox.SelectedItem = selectedEnv;
+            }
+        }
+
+        private void SpecificEnvComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xSpecificEnvComboBox.SelectedItem != null)
+            {
+                mRunner.UseSpecificEnvironment = true;
+                mRunner.ProjEnvironment = (ProjEnvironment)xSpecificEnvComboBox.SelectedItem;
+                mRunner.SpecificEnvironmentName = ((ProjEnvironment)xSpecificEnvComboBox.SelectedItem).Name;
+            }
+            else
+            {
+                mRunner.UseSpecificEnvironment = false;
+                mRunner.ProjEnvironment = null;
+                mRunner.SpecificEnvironmentName = string.Empty;
             }
         }
 
         private void ExecutionTagsChkbox_Checked(object sender, RoutedEventArgs e)
         {
-            if (ExecutionTagsChkbox.IsChecked == true)
+            if (xExecutionTagsChkbox.IsChecked == true)
             {
-                ExecutionTags.Visibility = Visibility.Visible;
-            }
-            
+                xExecutionTagsChkbox.Content = "Filter Execution by Tags:";
+                xExecutionTags.Visibility = Visibility.Visible;
+            }            
         }
 
         private void ExecutionTagsChkbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            ExecutionTags.Visibility = Visibility.Collapsed;
-        }
-
-        private void SpecificEnvComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (specificEnvComboBox.SelectedItem != null)
-            {
-                mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnvComboBox.SelectedItem;
-                mGingerRunner.SpecificEnvironmentName = ((ProjEnvironment)specificEnvComboBox.SelectedItem).Name;
-            }
-            else
-            {
-                mGingerRunner.ProjEnvironment = null;
-                mGingerRunner.SpecificEnvironmentName = string.Empty;
-            }
+            xExecutionTagsChkbox.Content = "Filter Execution by Tags";
+            xExecutionTags.Visibility = Visibility.Collapsed;
         }
     }
 }

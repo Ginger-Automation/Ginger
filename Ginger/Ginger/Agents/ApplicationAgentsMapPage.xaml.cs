@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.UserControls;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
@@ -41,20 +42,23 @@ namespace Ginger.Agents
     public partial class ApplicationAgentsMapPage : Page
     {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
+        GingerRunner mRunner;
         Context mContext;
 
-        public ApplicationAgentsMapPage(Context context)
+
+        public ApplicationAgentsMapPage(GingerRunner runner, Context context)
         {
             InitializeComponent();
+            mRunner = runner;
             mContext = context;
-            mContext.Runner.PropertyChanged += MGR_PropertyChanged;
+            mRunner.PropertyChanged += MGR_PropertyChanged;
             
             RefreshApplicationAgentsList();
         }
 
         private void MGR_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mContext.Runner.ApplicationAgents))
+            if (e.PropertyName == nameof(mRunner.ApplicationAgents))
             {
                 RefreshApplicationAgentsList();
             }
@@ -64,9 +68,9 @@ namespace Ginger.Agents
         {
             ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-            foreach (ApplicationAgent Apag in mContext.Runner.ApplicationAgents)
+            foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
             {
-                if (mContext.Runner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
                 {
                     ApplicationAgents.Add(Apag);
                 }
@@ -103,7 +107,7 @@ namespace Ginger.Agents
             List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             //remove already mapped agents
-            List<IAgent> alreadyMappedAgents = mContext.Runner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
+            List<IAgent> alreadyMappedAgents = mRunner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
             foreach (IAgent mappedAgent in alreadyMappedAgents)
             {
                 if (mappedAgent != applicationAgent.Agent)

@@ -112,25 +112,13 @@ namespace Ginger.Run
             FromSpecificActivityOnwards,
         }
 
-        public  static class Fields
-        {
-            public static string RunOption = "RunOption";
-            public static string Name = "Name";
-            public static string Selected = "Selected";
-            public static string Status = "Status";
-            public static string CyclesToRun = "CyclesToRun";
-            public static string CurrentCycle = "CurrentCycle";
-            public static string UseSpecificEnvironment = "UseSpecificEnvironment";
-            public static string SpecificEnvironmentName = "SpecificEnvironmentName";
-            public static string FilterExecutionByTags = "FilterExecutionByTags";
-            public static string RunInSimulationMode = "RunInSimulationMode";
-        }
-
-
         List<RunListenerBase> mRunListeners = new List<RunListenerBase>();
         public List<RunListenerBase> RunListeners { get { return mRunListeners; } }
 
-        private int mSpeed = 0;
+
+        [IsSerializedForLocalRepository]
+        public int AutoWait { get; set; } = 0;
+
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
 
@@ -237,7 +225,7 @@ namespace Ginger.Run
             set
             {
                 mName = value;
-                OnPropertyChanged(Fields.Name);
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -252,7 +240,7 @@ namespace Ginger.Run
                 if (_Selected != value)
                 {
                     _Selected = value;
-                    OnPropertyChanged("Selected");
+                    OnPropertyChanged(nameof(Selected));
                 }
             }
         }
@@ -281,7 +269,7 @@ namespace Ginger.Run
                 if (mStatus != value)
                 {
                     mStatus = value;
-                    OnPropertyChanged(Fields.Status);
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -3027,10 +3015,10 @@ namespace Ginger.Run
                         }
                         GiveUserFeedback();
                         // If the user selected slower speed then do wait
-                        if (mSpeed > 0)
+                        if (AutoWait > 0)
                         {
                             // TODO: sleep 100 and do events
-                            Thread.Sleep(mSpeed * 1000);
+                            Thread.Sleep(AutoWait * 1000);
                         }
 
                         if (mStopRun || mStopBusinessFlow)
@@ -3823,11 +3811,6 @@ namespace Ginger.Run
                     act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                 }
             }
-        }
-
-        public void SetSpeed(int Speed)
-        {
-            mSpeed = Speed;
         }
 
         public void StopRun()

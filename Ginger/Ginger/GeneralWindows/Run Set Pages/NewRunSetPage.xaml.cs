@@ -966,7 +966,7 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.Runner, GingerRunnerConfigurationsPage.ePageContext.RunTab);
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.Runner, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
             rp.UpdateRunnerInfo();
         }

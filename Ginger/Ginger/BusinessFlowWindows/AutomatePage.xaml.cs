@@ -125,8 +125,8 @@ namespace Ginger
             btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
-            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mContext);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.RunInSimulationMode));
+            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
             SetExpanders();
             //Bind between Menu expanders and actual grid expanders
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
@@ -1799,7 +1799,7 @@ namespace Ginger
 
         private void CboSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mRunner.SetSpeed(int.Parse(cboSpeed.Text));
+            mRunner.AutoWait = int.Parse(cboSpeed.Text);
         }
     }
 }

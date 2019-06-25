@@ -714,7 +714,7 @@ namespace Ginger.Run
         }
         private void xConfigButton_Click(object sender, RoutedEventArgs e)
         {
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageContext.RunTab);
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
 
             UpdateRunnerInfo();
