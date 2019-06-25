@@ -369,7 +369,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Close);
                     break;
                 case eImageType.Reset:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.RotateLeft);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.RotateRight);
                     break;
                 case eImageType.Undo:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Undo);

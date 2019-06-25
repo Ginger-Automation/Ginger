@@ -110,7 +110,7 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mAutoGenerateReport != value)
                 {
                     mAutoGenerateReport = value;
-                    OnPropertyChanged(nameof(GenerateReport));
+                    OnPropertyChanged(nameof(AutoGenerateReport));
                 }
             }
         }
@@ -147,8 +147,8 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add("Configurations");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
-            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ContentProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ContentProperty, this, nameof(GenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
             BindEnvsCombo();

@@ -292,7 +292,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 resetRest.Header = "Reset execution details from this Action";
                 resetRest.ToolTip = "Reset execution details from this Action";
-                reset.OperationHandler = ResetResetHandler;
+                resetRest.OperationHandler = ResetResetHandler;
                 extraOperationsList.Add(resetRest);
             }
 

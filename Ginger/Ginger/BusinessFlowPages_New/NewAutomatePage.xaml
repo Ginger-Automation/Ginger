@@ -36,49 +36,66 @@
                         <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}">></Label>
                         <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
+                    <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
-                    <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
+                    <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Undo [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
                 </StackPanel>
 
-                <!--<GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>-->
+                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
+
+                <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
+                    <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                </StackPanel>
+
+                <!--<GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>-->
+
+                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                    <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label HorizontalAlignment="Center">Environment:</Label>
+                        <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>
+                    </StackPanel>
+                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" />
+                </StackPanel>
+
+                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xSearchBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
+                    <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"></GingerCore:ucTextDicResource>
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
-                    
-                    <UserControls:ucButton x:Name="xAnalyzeBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Report" Click="xAnalyzeBtn_Click" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow]- Detect Integrity Issues"></GingerCore:ucTextDicResource>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
 
-                    <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center">
+                    <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Header>
                             <MenuItem x:Name="xAnalyzeMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAnalyzeBtn_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow]- Detect Integrity Issues" />
+                                    <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] for Detecting Integrity Issues" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem x:Name="xAutoAnalyzeConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoAnalyzeConfigMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl x:Name="xAutoAnalyzeConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl x:Name="xAutoAnalyzeConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Auto Analyze [BusinessFlow] before Flow Execution" />
@@ -87,14 +104,17 @@
                         </MenuItem>
                     </Menu>
 
-                    <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center">
+                    <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                                <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Header>
                             <MenuItem x:Name="xSummaryPageMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xSummaryPageMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Graph" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl ImageType="Graph" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
@@ -102,7 +122,7 @@
                             </MenuItem>
                             <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Report" />
@@ -110,7 +130,7 @@
                             </MenuItem>
                             <MenuItem x:Name="xAutoReportConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoReportConfigMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
@@ -119,11 +139,11 @@
                         </MenuItem>
                     </Menu>
 
-                    <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center">
+                    <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
                         <MenuItem Cursor="Hand">
-                            <MenuItem.Icon>
+                            <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Icon>
+                            </MenuItem.Header>
                             <MenuItem x:Name="xActionsConvertionMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xActionsConvertionMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
@@ -134,7 +154,7 @@
                             </MenuItem>
                             <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="ALM Operations" />
@@ -167,28 +187,6 @@
                         </MenuItem>
                     </Menu>
                 </StackPanel>
-
-              
-
-                <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                </StackPanel>
-
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>
-
-                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Label HorizontalAlignment="Center">Environment:</Label>
-                        <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>
-                    </StackPanel>
-                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" />
-                </StackPanel>
-
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,7,5,7"/>
             </DockPanel>
         </ScrollViewer>
        
