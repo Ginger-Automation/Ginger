@@ -172,13 +172,18 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (elementInfo != null)
             {
                 ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+                if(actConfig != null)
+                {
+                    if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                        actConfig.Operation = SetElementOperation(elementInfo.ElementTypeEnum, actConfig);
+                }
                 if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
                 {
                     if (elementTypeOperations.ActionType == typeof(ActBrowserElement))
                     {
                         elementAction = new ActBrowserElement()
                         {
-                            Description = actConfig.Description,
+                            Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "Browser Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                             ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), actConfig.Operation),
                             LocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
                             Value = actConfig.ElementValue
@@ -188,7 +193,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     {
                         elementAction = new ActUIElement()
                         {
-                            Description = actConfig.Description,
+                            Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                             ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
                             ElementLocateValue = actConfig.LocateValue,
                             Value = actConfig.ElementValue
@@ -224,7 +229,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 elementAction = new ActUIElement()
                 {
-                    Description = actConfig.Description,
+                    Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                     ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
                     ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
                     ElementLocateValue = actConfig.LocateValue,
@@ -235,6 +240,32 @@ namespace GingerCore.Platforms.PlatformsInfo
             return elementAction;
         }
 
+        public string SetElementOperation(eElementType ElementTypeEnum, ElementActionCongifuration actConfig)
+        {
+            switch (ElementTypeEnum)
+            {
+                case eElementType.Button:
+                case eElementType.CheckBox:
+                case eElementType.RadioButton:
+                case eElementType.HyperLink:
+                case eElementType.Span:
+                case eElementType.Div:
+                    //actConfig.Operation = ActUIElement.eElementAction.Click.ToString();
+                    return ActUIElement.eElementAction.Click.ToString();
+
+                case eElementType.TextBox:
+                    //actConfig.Operation = ActUIElement.eElementAction.SetText.ToString();
+                    return ActUIElement.eElementAction.SetText.ToString();
+
+                case eElementType.Iframe:
+                    //actConfig.Operation = ActUIElement.eElementAction.SetText.ToString();
+                    return ActBrowserElement.eControlAction.SwitchFrame.ToString();
+
+                default:
+                    //actConfig.Operation = ActUIElement.eElementAction.NotExist.ToString();
+                    return ActUIElement.eElementAction.NotExist.ToString();
+            }
+        }
         /// <summary>
         /// This method is used to check if the paltform supports POM
         /// </summary>

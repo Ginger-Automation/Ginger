@@ -69,6 +69,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                 FillTargetAppsComboBox();
                 xTargetApplicationComboBox.Init(AddAPIModelWizard, nameof(AddAPIModelWizard.TargetApplicationKey));
+                xTargetApplicationComboBox.ComboBox.SelectedIndex = 0;
 
                 xTagsViewer.Init(AddAPIModelWizard.TagsKeys);
             }

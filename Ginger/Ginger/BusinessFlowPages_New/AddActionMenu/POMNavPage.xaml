@@ -6,21 +6,29 @@
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="600"
       Title="POMNavAction">
 
-    <Grid>
+    <Grid Name="PageGrid">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="xPOMItems" Height="300*"/>
+            <RowDefinition x:Name="xPOMItems" Height="*"/>
             <RowDefinition />
             <RowDefinition x:Name="xPOMDetails" Height="*"/>
         </Grid.RowDefinitions>
 
-        <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Background="White" Foreground="White" Grid.Row="0">
-        </UCTreeView:TreeView1>
+        <Grid.Resources>
+            <DataTemplate x:Key="xHighlightButtonTemplate">
+                <Button x:Name="HighlightButton" Click="HighlightElementClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Pointer" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+        </Grid.Resources>
 
-        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Black" IsEnabled="True" />
+        <Frame x:Name="xPOMFrame" NavigationUIVisibility="Hidden" VerticalAlignment="Top" />
+        
+        <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Black" IsEnabled="True" />
         <Ginger:ucGrid x:Name="xMainElementsGrid" Visibility="Collapsed" Grid.Row="2" Title="Mapped Elements" ShowTitle="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" Margin="0,5,0,0" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowSearch="Collapsed" />
 
     </Grid>
