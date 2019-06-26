@@ -3587,7 +3587,7 @@ namespace GingerCore.Drivers
                     + " is not enabled.\n\n");
             }
 
-            object vp;
+            object vp, scrollPattern;
 
             string _controlType = element.Current.LocalizedControlType;
 
@@ -3611,6 +3611,20 @@ namespace GingerCore.Drivers
                         winAPI.SendClickOnXYPoint(element, x1, y1);
                     }
                     break;
+                case "treeview":
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out scrollPattern);
+                    if (scrollPattern != null && ((ScrollPattern)scrollPattern).Current.VerticallyScrollable == true)
+                    {
+                        if (((ScrollPattern)scrollPattern).Current.VerticalScrollPercent < 100)
+                        {
+                            ((ScrollPattern)scrollPattern).SetScrollPercent(((ScrollPattern)scrollPattern).Current.HorizontalScrollPercent, ((ScrollPattern)scrollPattern).Current.VerticalScrollPercent + 3);
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Scrollable properly is not supported for " + controlType);
+                    }
+                    break;
                 default:
                     Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                     break;
@@ -3629,7 +3643,7 @@ namespace GingerCore.Drivers
                     + " is not enabled.\n\n");
             }
 
-            object vp;
+            object vp, scrollPattern;
 
             string _controlType = element.Current.LocalizedControlType;
 
@@ -3651,6 +3665,20 @@ namespace GingerCore.Drivers
                         y1 = Convert.ToInt32(element.Current.BoundingRectangle.TopRight.Y + 5);
 
                         winAPI.SendClickOnXYPoint(element, x1, y1);
+                    }
+                    break;
+                case "treeview":
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out scrollPattern);
+                    if (scrollPattern != null && ((ScrollPattern)scrollPattern).Current.VerticallyScrollable == true)
+                    {
+                        if (((ScrollPattern)scrollPattern).Current.VerticalScrollPercent > 1)
+                        {
+                            ((ScrollPattern)scrollPattern).SetScrollPercent(((ScrollPattern)scrollPattern).Current.HorizontalScrollPercent, ((ScrollPattern)scrollPattern).Current.VerticalScrollPercent - 3);
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Scrollable properly is not supported for " + controlType);
                     }
                     break;
                 default:
