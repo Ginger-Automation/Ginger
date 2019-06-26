@@ -72,8 +72,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                 ClickButtonGrid();
-                 // GotoURLGrid();
+                 //ClickButtonGrid();
+                  GotoURLGrid();
                 // GotoURLDirect();
             }
         }
@@ -109,7 +109,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
             Assert.AreEqual("Navigated to: " + url, actBrowserElement.ExInfo, "ExInfo");            
-            Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
+            Assert.AreEqual(1, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
         }
 
         [Ignore] // Failing need GR + VE, Create test with GR
