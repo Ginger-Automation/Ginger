@@ -241,7 +241,7 @@ namespace GingerCore.Actions
 
             int i = sRC.IndexOf(GingerRCStart);
             int i2 = -1;
-            if (i > 0)
+            if (i >= 0)
             {
                 i2 = sRC.IndexOf(GingerRCEnd, i);
                 if (i2 > 0)
@@ -250,7 +250,7 @@ namespace GingerCore.Actions
                 }
             }
 
-            if (i>0 && i2> 0)
+            if (i>=0 && i2> 0)
             {             
                     string[] RCValues = sRC.Split('\n');
                     foreach (string RCValue in RCValues)

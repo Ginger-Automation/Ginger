@@ -39,7 +39,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         internal void SetPayLoad(NewPayLoad pl)
         {            
             Name = pl.Name;
-            Info = pl.ToString();
+            Info = pl.BufferInfo;
             Len = pl.PackageLen();
             PayLoad = pl;
         }
