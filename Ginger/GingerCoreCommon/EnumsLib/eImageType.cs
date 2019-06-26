@@ -170,6 +170,7 @@ namespace Amdocs.Ginger.Common.Enums
         UserDefined,
         Spy,
         Undo,
+        Simulate,
         #endregion
 
         #region Items Images

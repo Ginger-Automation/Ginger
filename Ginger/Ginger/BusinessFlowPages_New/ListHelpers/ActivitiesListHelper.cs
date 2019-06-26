@@ -176,15 +176,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(activitiesVarsDepInd);
 
-            ListItemNotification actionsVarsDepInd = new ListItemNotification();
-            actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables)) ;
-            actionsVarsDepInd.ImageSize = 14;
-            actionsVarsDepInd.BindingObject = mActivity;
-            actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
-            actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(actionsVarsDepInd);
-
             ListItemNotification mandatoryInd = new ListItemNotification();
             mandatoryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Mandatory;
             mandatoryInd.ToolTip = string.Format("{0} is Mandatory", GingerDicser.GetTermResValue(eTermResKey.Activity));

@@ -28,9 +28,9 @@
 
             <CheckBox x:Name="xSimulationMode" DockPanel.Dock="Top" Margin="0,10,0,0" Content="Run in simulation mode" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" />
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,15,0,0">
                 <CheckBox x:Name="xUseSpecificEnvChkbox" Content="Use Specific Environment" Style="{StaticResource $CeckBoxStyle}" Margin="0,0,10,0" VerticalAlignment="Center" Checked="useSpecificEnvChkbox_Checked" Unchecked="useSpecificEnvChkbox_Checked"/>
-                <ComboBox x:Name="xSpecificEnvComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" Width="175"  DockPanel.Dock="Left" Margin="5,0,0,0" SelectionChanged="SpecificEnvComboBox_SelectionChanged" Visibility="Collapsed"/>
+                <ComboBox x:Name="xSpecificEnvComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" Width="175"  DockPanel.Dock="Left" Margin="5,0,0,0" Visibility="Collapsed"/>
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
@@ -38,9 +38,9 @@
                 <Ginger:ucTagsViewer x:Name="xExecutionTags" HorizontalContentAlignment="Left" Margin="20,0,0,0" Visibility="Collapsed"/>
             </StackPanel>
 
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label Content="Applications - Agents Mapping:" Style="{StaticResource $LabelStyle}" />
-                <Frame x:Name="xAppAgentsMappingFrame" DockPanel.Dock="Top" Margin="0,10,0,0" NavigationUIVisibility="Hidden"/>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Top" Margin="0,15,0,0">
+                <Label Content="Applications-Agents Mapping:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" />
+                <Frame x:Name="xAppAgentsMappingFrame" DockPanel.Dock="Top" Margin="-5,0,0,0" NavigationUIVisibility="Hidden"/>
             </StackPanel>
         </DockPanel>
     </ScrollViewer>

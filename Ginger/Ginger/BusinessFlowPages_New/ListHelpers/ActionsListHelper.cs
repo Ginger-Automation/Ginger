@@ -161,6 +161,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
+            ListItemNotification simulationInd = new ListItemNotification();
+            simulationInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate;
+            simulationInd.ToolTip = "Action support Simulation mode";
+            simulationInd.ImageSize = 14;
+            simulationInd.BindingObject = mAction;
+            simulationInd.BindingFieldName = nameof(Act.SupportSimulation);
+            simulationInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(simulationInd);
+
             ListItemNotification flowControlInd = new ListItemNotification();
             flowControlInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
             flowControlInd.ToolTip = "Action contains Flow Control conditions";
@@ -169,6 +178,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             flowControlInd.BindingFieldName = nameof(Act.FlowControlsInfo);
             flowControlInd.BindingConverter = new StringVisibilityConverter();
             notificationsList.Add(flowControlInd);
+
+            ListItemNotification actionsVarsDepInd = new ListItemNotification();
+            actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            actionsVarsDepInd.ImageSize = 14;
+            actionsVarsDepInd.BindingObject = mContext.Activity;
+            actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
+            actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(actionsVarsDepInd);
 
             ListItemNotification outputValuesInd = new ListItemNotification();
             outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;

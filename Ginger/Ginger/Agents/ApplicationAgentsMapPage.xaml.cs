@@ -45,12 +45,15 @@ namespace Ginger.Agents
         GingerRunner mRunner;
         Context mContext;
 
+        bool AllowAgentsManipulation;
 
-        public ApplicationAgentsMapPage(GingerRunner runner, Context context)
+        public ApplicationAgentsMapPage(GingerRunner runner, Context context, bool allowAgentsManipulation=true)
         {
             InitializeComponent();
             mRunner = runner;
             mContext = context;
+            AllowAgentsManipulation = allowAgentsManipulation;
+            xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.PropertyChanged += MGR_PropertyChanged;
             
             RefreshApplicationAgentsList();
@@ -81,23 +84,26 @@ namespace Ginger.Agents
 
         private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
-            Agent agent = ((Agent)AG.Agent);
-            if (agent.Status != Agent.eStatus.Running)
+            if (AllowAgentsManipulation)
             {
-                //start Agent
-                Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-                ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                ((Agent)AG.Agent).StartDriver();
-                Reporter.HideStatusMessage();
-            }
-            else
-            {
-                //close Agent
-                agent.Close();
+                ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
+                Agent agent = ((Agent)AG.Agent);
+                if (agent.Status != Agent.eStatus.Running)
+                {
+                    //start Agent
+                    Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                    ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                    ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                    ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                    ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                    ((Agent)AG.Agent).StartDriver();
+                    Reporter.HideStatusMessage();
+                }
+                else
+                {
+                    //close Agent
+                    agent.Close();
+                }
             }
         }
 

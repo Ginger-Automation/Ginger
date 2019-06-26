@@ -151,7 +151,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
-            BindEnvsCombo();
+            SetEnvsCombo();
             UpdateContext();
         }
 
@@ -320,6 +320,8 @@ namespace GingerWPF.BusinessFlowsLib
         private void InitAutomatePageRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.PropertyChanged += MRunner_PropertyChanged;
+
             mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
             // Add Listener so we can do GiveUserFeedback            
@@ -328,6 +330,17 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.RunListeners.Add(automatePageRunnerListener);
 
             mContext.Runner = mRunner;
+        }
+
+        private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
+            {
+                if (!string.IsNullOrEmpty(mRunner.SpecificEnvironmentName))
+                {
+                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mRunner.SpecificEnvironmentName).First());
+                }
+            }
         }
 
         private void LoadBusinessFlowToAutomate(BusinessFlow businessFlowToLoad)
@@ -736,87 +749,65 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void UpdateToNewSolution()
         {
-            //if (mReposiotryPage != null)
-            //{
-            //    mReposiotryPage.RefreshCurrentRepo();
-            //}
-
-            BindEnvsCombo();
+            SetEnvsCombo();
             UpdateAutomatePageRunner();
         }
 
-        private void BindEnvsCombo()
+        private void SetEnvsCombo()
         {
-            xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
+            xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
 
-            if (WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            {
+                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
+                xEnvironmentComboBox.SelectedIndex = 0;
+            }
+            else
             {
                 //select last used environment
-                if (xEnvironmentComboBox.Items != null && xEnvironmentComboBox.Items.Count > 0)
+                if (xEnvironmentComboBox.Items.Count > 1 && WorkSpace.Instance.UserProfile.RecentEnvironment != null && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
                 {
-                    if (xEnvironmentComboBox.Items.Count > 1 && WorkSpace.Instance.UserProfile.RecentEnvironment != null && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
+                    foreach (object env in xEnvironmentComboBox.Items)
                     {
-                        foreach (object env in xEnvironmentComboBox.Items)
+                        if (((ProjEnvironment)env).Guid == WorkSpace.Instance.UserProfile.RecentEnvironment)
                         {
-                            if (((ProjEnvironment)env).Guid == WorkSpace.Instance.UserProfile.RecentEnvironment)
-                            {
-                                xEnvironmentComboBox.SelectedIndex = xEnvironmentComboBox.Items.IndexOf(env);
-                                return;
-                            }
+                            xEnvironmentComboBox.SelectedIndex = xEnvironmentComboBox.Items.IndexOf(env);
+                            return;
                         }
                     }
-
-                    //default selection
-                    xEnvironmentComboBox.SelectedIndex = 0;
                 }
-            }
 
-            //move to top after bind
-            if (xEnvironmentComboBox.Items.Count == 0)
-            {
-                CreateDefaultEnvironment();
-                xEnvironmentComboBox.SelectedItem = xEnvironmentComboBox.Items[0];
-            }
-
-            SetRunnerSpecificEnv((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
+                //default selection
+                xEnvironmentComboBox.SelectedIndex = 0;
+            }            
         }
 
-        private void SetRunnerSpecificEnv(ProjEnvironment env)
+        private void xEnvironmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xEnvironmentComboBox.SelectedItem != null)
+            if (xEnvironmentComboBox != null)
+            {
+                UpdateUsedEnvironment((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
+            }
+        }
+
+        private void UpdateUsedEnvironment(ProjEnvironment env)
+        {
+            mEnvironment = env;
+            mContext.Environment = env;
+            if (env != null)
             {
                 mRunner.UseSpecificEnvironment = true;
                 mRunner.ProjEnvironment = env;
                 mRunner.SpecificEnvironmentName = env.Name;
+                WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
             }
             else
             {
                 mRunner.UseSpecificEnvironment = false;
                 mRunner.ProjEnvironment = null;
                 mRunner.SpecificEnvironmentName = string.Empty;
-            }
-        }
-
-        public static void CreateDefaultEnvironment()
-        {
-            ObservableList<ProjEnvironment> environments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
-            if (environments.Count == 0)
-            {
-                ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-
-                // Add all solution target app
-                foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
-                {
-                    EnvApplication EA = new EnvApplication();
-                    EA.Name = AP.AppName;
-                    EA.CoreProductName = AP.Core;
-                    EA.CoreVersion = AP.CoreVersion;
-                    EA.Active = true;
-                    newEnv.Applications.Add(EA);
-                }
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
             }
         }
 
@@ -831,29 +822,6 @@ namespace GingerWPF.BusinessFlowsLib
                 });
             });
 
-        }
-
-        private void xEnvironmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xEnvironmentComboBox != null && xEnvironmentComboBox.SelectedItem != null)
-            {
-                UpdateUsedEnvironment((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
-            }
-            else
-            {
-                UpdateUsedEnvironment(null);
-            }
-        }
-
-        private void UpdateUsedEnvironment(ProjEnvironment env)
-        {
-            mEnvironment = env;
-            mContext.Environment = mEnvironment;
-            SetRunnerSpecificEnv(mEnvironment);
-            if (mEnvironment != null)
-            {
-                WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
-            }
         }
 
         private void xGoToBFsTreeBtn_Click(object sender, RoutedEventArgs e)

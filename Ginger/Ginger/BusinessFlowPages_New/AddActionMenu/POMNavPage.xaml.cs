@@ -126,13 +126,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (e.SelectedItems != null && e.SelectedItems.Count == 1)
             {
                 mPOM = e.SelectedItems[0] as ApplicationPOMModel;
-                foreach (ElementInfo elem in mPOM.MappedUIElements)
+                if (mPOM != null)
                 {
-                    elem.ParentGuid = mPOM.Guid;
+                    foreach (ElementInfo elem in mPOM.MappedUIElements)
+                    {
+                        elem.ParentGuid = mPOM.Guid;
+                    }
+                    xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
+                    xMainElementsGrid.Visibility = Visibility.Visible;
+                    xPOMSplitter.Visibility = Visibility.Visible;
                 }
-                xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
-                xMainElementsGrid.Visibility = Visibility.Visible;
-                xPOMSplitter.Visibility = Visibility.Visible;
             }
             else
             {

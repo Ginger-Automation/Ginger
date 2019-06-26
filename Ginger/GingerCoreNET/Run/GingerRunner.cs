@@ -269,8 +269,20 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public bool UseSpecificEnvironment { get; set; }
 
+        string mSpecificEnvironmentName;
         [IsSerializedForLocalRepository]
-        public string SpecificEnvironmentName { get; set; }
+        public string SpecificEnvironmentName
+        {
+            get
+            {
+                return mSpecificEnvironmentName;
+            }
+            set
+            {
+                mSpecificEnvironmentName = value;
+                OnPropertyChanged(nameof(SpecificEnvironmentName));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool FilterExecutionByTags { get; set; }
@@ -297,6 +309,7 @@ namespace Ginger.Run
              
 
         private bool mRunInSimulationMode;
+        [IsSerializedForLocalRepository]
         public bool RunInSimulationMode
         {
             get

@@ -374,6 +374,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Undo:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Undo);
                     break;
+                case eImageType.Simulate:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Android);
+                    break;
                 case eImageType.Delete:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
                     break;

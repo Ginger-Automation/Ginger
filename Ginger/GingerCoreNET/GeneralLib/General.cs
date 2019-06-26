@@ -16,10 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using GingerCore;
 using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -112,10 +115,7 @@ namespace GingerCoreNET.GeneralLib
 
         
         #endregion ENUM
-
-
-        #region Binding
-        #endregion Binding
+        
         
         public static T ParseEnum<T>(string value)
         {
@@ -324,6 +324,25 @@ namespace GingerCoreNET.GeneralLib
                 }
             }
             return "";
+        }
+
+        public static ProjEnvironment CreateDefaultEnvironment()
+        {
+            ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
+
+            // Add all solution target app
+            foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
+            {
+                EnvApplication EA = new EnvApplication();
+                EA.Name = AP.AppName;
+                EA.CoreProductName = AP.Core;
+                EA.CoreVersion = AP.CoreVersion;
+                EA.Active = true;
+                newEnv.Applications.Add(EA);
+            }
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
+
+            return newEnv;
         }
     }
 }
