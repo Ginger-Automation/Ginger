@@ -173,6 +173,10 @@ namespace GingerCore.Drivers.Appium
             DriverWindow.AppiumDriver = this;
             DriverWindow.DesignWindowInitialLook();
             DriverWindow.Show();
+            for (int i = 0; i < 100; i++)
+            {
+                Thread.Sleep(100);
+            }
       
             ConnectedToDevice = ConnectToAppium();
             if (ConnectedToDevice)
@@ -606,6 +610,11 @@ namespace GingerCore.Drivers.Appium
 
                 switch (LocatorType)
                 {
+                    case eLocateBy.ByResourceID:
+                    {
+                        elem = Driver.FindElementById(act.LocateValue);
+                        break;
+                    }
                     //need to override regular selenium driver locator if needed, 
                     //if not then to run the regular selenium driver locator for it to avoid duplication                
 
@@ -725,7 +734,7 @@ namespace GingerCore.Drivers.Appium
                             {
                                 //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
                                 //Wasting time when not needed
-                                string elemntContent = e.GetAttribute("name");
+                                string elemntContent = e.Text; //.GetAttribute("name");
                                 if (string.IsNullOrEmpty(elemntContent) == false)
                                 {
                                     for (int indx = 1; indx <= elemntContent.Length; indx++)
@@ -741,7 +750,7 @@ namespace GingerCore.Drivers.Appium
                             switch (DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
                                     break;
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
                                     ((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
@@ -970,7 +979,9 @@ namespace GingerCore.Drivers.Appium
                             act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
                         }
                         break;
-
+                    case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
+                        Driver.LaunchApp();
+                        break;
                     default:
                         throw new Exception("Action unknown/Not Implemented in Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -1009,7 +1020,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                act.Error = "Screen shot Error: Action failed to be performed, Details: " + ex.Message;
             }
         }
 
