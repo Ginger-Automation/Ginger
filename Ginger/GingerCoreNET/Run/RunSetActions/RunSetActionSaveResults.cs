@@ -109,48 +109,48 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (SaveindividualBFReport)
                     {
-                        ObservableList<BusinessFlow> BFs = new ObservableList<BusinessFlow>();
+                        //ObservableList<BusinessFlow> BFs = new ObservableList<BusinessFlow>();
 
-                        foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
-                        {
-                            foreach (BusinessFlow bf in GR.BusinessFlows)
-                            {
-                                if (bf.Active == true)
-                                {
-                                    if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
-                                    {
-                                        // !!!!!!!!!!!!!!!!!!!
-                                        ReportInfo BFRI = new ReportInfo(mRI.Environment.ProjEnvironment, bf);
+                        //foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
+                        //{
+                        //    foreach (BusinessFlow bf in GR.BusinessFlows)
+                        //    {
+                        //        if (bf.Active == true)
+                        //        {
+                        //            if (bf.RunStatus.ToString() == nameof(eRunStatus.Passed) || bf.RunStatus.ToString() == nameof(eRunStatus.Failed) || bf.RunStatus.ToString() == nameof(eRunStatus.Stopped))
+                        //            {
+                        //                // !!!!!!!!!!!!!!!!!!!
+                        //                ReportInfo BFRI = new ReportInfo(mRI.Environment.ProjEnvironment, bf);
 
-                                        string TempRepFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateTemplate(TemplateName, BFRI);
-                                        String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
+                        //                string TempRepFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateTemplate(TemplateName, BFRI);
+                        //                String RepFileName = DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + GR.Name + "_" + bf.Name + "_" + WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name;
 
-                                        while (RepFileName.Length > 250)
-                                        {
-                                            RepFileName = RepFileName.Substring(0, 250);
-                                        }
+                        //                while (RepFileName.Length > 250)
+                        //                {
+                        //                    RepFileName = RepFileName.Substring(0, 250);
+                        //                }
 
-                                        RepFileName = RepFileName + ".pdf";
+                        //                RepFileName = RepFileName + ".pdf";
 
-                                        if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
-                                        {
-                                            System.IO.File.Copy(TempRepFileName, SaveResultsInSolutionFolderName + "\\" + RepFileName);
-                                        }
+                        //                if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
+                        //                {
+                        //                    System.IO.File.Copy(TempRepFileName, SaveResultsInSolutionFolderName + "\\" + RepFileName);
+                        //                }
 
-                                        if (SaveResultsInSolutionFolderName != SaveResultstoFolderName)
-                                        {
-                                            if (!string.IsNullOrEmpty(SaveResultstoFolderName))
-                                            {
-                                                System.IO.File.Copy(TempRepFileName, SaveResultstoFolderName + "\\" + RepFileName);
-                                            }
+                        //                if (SaveResultsInSolutionFolderName != SaveResultstoFolderName)
+                        //                {
+                        //                    if (!string.IsNullOrEmpty(SaveResultstoFolderName))
+                        //                    {
+                        //                        System.IO.File.Copy(TempRepFileName, SaveResultstoFolderName + "\\" + RepFileName);
+                        //                    }
 
-                                        }
-                                        if (System.IO.File.Exists(Path.GetTempPath() + RepFileName))
-                                            System.IO.File.Delete(Path.GetTempPath() + RepFileName);
-                                    }
-                                }
-                            }
-                        }
+                        //                }
+                        //                if (System.IO.File.Exists(Path.GetTempPath() + RepFileName))
+                        //                    System.IO.File.Delete(Path.GetTempPath() + RepFileName);
+                        //            }
+                        //        }
+                        //    }
+                        //}
                     }
                 }
                 else

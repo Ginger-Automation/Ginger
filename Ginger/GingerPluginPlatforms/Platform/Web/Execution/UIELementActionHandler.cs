@@ -1,12 +1,11 @@
 ﻿using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Ginger.Plugin.Platform.Web.Actions;
 using Ginger.Plugin.Platform.Web.Elements;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -132,17 +131,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         string Value;
         readonly IWebPlatform PlatformService;
-        Dictionary<string, string> InputParams;
+        Dictionary<string, object> InputParams;
        internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
 
         public string ExecutionInfo { get ; set; }
         public string Error { get; set; }
 
-        public UIELementActionHandler(IWebPlatform mplatformService, Dictionary<string, string> mInputParams)
+        public UIELementActionHandler(IWebPlatform mplatformService, PlatformActionData platformActionData)
         {
             PlatformService = mplatformService;
 
-            InputParams = mInputParams;
+            InputParams = platformActionData.InputParams;
 
         
         }
@@ -176,56 +175,58 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
         internal void PrepareforExecution(NewPayLoad pomPayload)
         {
-            PreparePOMforExecution(pomPayload);
+            // POM should be in Ginger core 
+            //PreparePOMforExecution(pomPayload);
 
 
-            if (!IsPOM)
-            {
-                InputParams.TryGetValue("ElementType", out mElementType);
+            //if (!IsPOM)
+            //{
+            //    mElementType = (string)InputParams["ElementType"];
+            //    ElementLocateBy = (string)InputParams["ElementLocateBy"];
+            //}
 
-                InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
-            }
+            //ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
 
-            ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
+            //string mElementAction;
+            //InputParams.TryGetValue("ElementAction", out mElementAction);
 
-            string mElementAction;
-            InputParams.TryGetValue("ElementAction", out mElementAction);
-
-            ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), mElementAction);
-
+            //ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), mElementAction);
 
 
-            InputParams.TryGetValue("Value", out Value);
+
+            //InputParams.TryGetValue("Value", out Value);
 
          
 
         }
-        
 
 
 
+        public struct Locator
+        {
+            public string By;
+            public string Value;
+        }
 
         internal void ExecuteAction()
         {
-
             try
             {
-                string Locatevalue = InputParams["ElementLocateValue"];
-               
+                // convert the JArray to list
+                List<Locator> locators = ((JArray)InputParams["Locators"]).ToObject<List<Locator>>(); 
+
+                // TODO: loop to find elem
+
                 IGingerWebElement Element = null;
-
-                LocateByValue = Locatevalue;
-
-                if(IsPOM)
-                {
-                    Element = LocateElementByPom(ref ElementType);
-                }
-                else
-                {
-
-
-                    Element = LocateElement(ref ElementType, ElementLocateBy, Locatevalue);
-                }
+                //LocateByValue = Locatevalue;
+                //if(IsPOM)
+                //{
+                //    Element = LocateElementByPom(ref ElementType);
+                //}
+                //else
+                //{
+                //    Element = LocateElement(ref ElementType, ElementLocateBy, Locatevalue);
+                //}
                 bool ActionPerformed = PerformCommonActions(Element);
 
 
@@ -283,7 +284,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             catch (Exception Ex)
             {
                 Error = Ex.Message;
-                ExecutionInfo = Ex.StackTrace;
+                ExecutionInfo = Ex.StackTrace;  // DO not put stacktrace !!!!
             }
         }
 
@@ -439,14 +440,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
         IGingerWebElement GetValidationElement()
         {
-            string ValidationElementLocateBy = InputParams["ValidationElementLocateBy"];
-            string ValidationElementLocatorValue = InputParams["ValidationElementLocatorValue"];
- 
-            string mValidationElement = InputParams["ValidationElement"];
+            string ValidationElementLocateBy = (string)InputParams["ValidationElementLocateBy"];
+            string ValidationElementLocatorValue = (string)InputParams["ValidationElementLocatorValue"]; 
+            string mValidationElement = (string)InputParams["ValidationElement"];
             eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
             IGingerWebElement ValidationElement = LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue);
             return ValidationElement;
         }
+
         private void TableActions(IGingerWebElement element)
         {
             if (element is ITable Element)
@@ -546,7 +547,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             if (element is IWebList Element)
             {
                 string ValueToSelect;
-                InputParams.TryGetValue("ValueToSelect", out ValueToSelect);
+                ValueToSelect = (string)InputParams["ValueToSelect"];
                 switch (ElementAction)
                 {
                     case eElementAction.ClearValue:
@@ -621,7 +622,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             if (element is IComboBox Element)
             {
                 string ValueToSelect;
-                InputParams.TryGetValue("ValueToSelect", out ValueToSelect);
+                ValueToSelect = (string)InputParams["ValueToSelect"];
                 switch (ElementAction)
                 {
                     case eElementAction.ClearValue:
@@ -698,7 +699,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             if (element is IButton Element)
             {
                 string ValueToSelect;
-                InputParams.TryGetValue("ValueToSelect", out ValueToSelect);
+                ValueToSelect = (string)InputParams["ValueToSelect"];
 
                 if (ElementAction.ToString().ToUpper().Contains("CLICK" ) && element is IClick ClickElement)
                 {
@@ -743,8 +744,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     break;
                 case eElementAction.ClickAndValidate:
                     Element.Click();
-                    string ValidationType = InputParams["ValidationType"];
-                    string mClickType = InputParams["ClickType"];
+                    string ValidationType = (string)InputParams["ValidationType"];
+                    string mClickType = (string)InputParams["ClickType"];
                     eElementAction ClickType = (eElementAction)Enum.Parse(typeof(eElementAction), mClickType);
 
                     ClickActions(Element, ClickType);
