@@ -159,10 +159,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if(mContext != null)
             {
-                if (mContext.BusinessFlow.CurrentActivity != null)
+                if (mContext.Activity != null)
                 {
-                    mContext.BusinessFlow.CurrentActivity.PropertyChanged -= Activity_PropertyChanged;
-                    mContext.BusinessFlow.CurrentActivity.PropertyChanged += Activity_PropertyChanged; 
+                    mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                    mContext.Activity.PropertyChanged += Activity_PropertyChanged; 
                 }
 
                 if (mContext.Agent == null)
@@ -342,7 +342,6 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {
                     mBusinessFlow.SaveBackup();
@@ -418,7 +417,10 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
-            mContext.Activity = mBusinessFlow.CurrentActivity;            
+            mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
+            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+            // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
         }
 

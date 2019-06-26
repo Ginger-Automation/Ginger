@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
@@ -26,20 +27,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class SharedRepositoryNavPage : Page
     {
+        public ActivitiesGroupsRepositoryPage ActivitiesGroupsRepoPage;
+        public ActivitiesRepositoryPage ActivitiesRepoPage;
         public ActionsRepositoryPage ActionsRepoPage;
         public VariablesRepositoryPage VariablesRepoPage;
+
         BusinessFlow mBusinessFlow;
 
         Context mContext;
         public Visibility ShowActionsRepository
         {
-            get { return tbiActions.Visibility; }
-            set { tbiActions.Visibility = value; }
+            get { return xTabActions.Visibility; }
+            set { xTabActions.Visibility = value; }
         }
         public Visibility ShowVariablesRepository
         {
-            get { return tbiVariables.Visibility; }
-            set { tbiVariables.Visibility = value; }
+            get { return xTabVariables.Visibility; }
+            set { xTabVariables.Visibility = value; }
         }
 
         public SharedRepositoryNavPage(Context context)     //(BusinessFlow businessFlow = null)
@@ -68,15 +72,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             try
             {
-                if (tabRepository.SelectedItem != null)
+                if (xTabRepository.SelectedItem != null)
                 {
-                    foreach (TabItem tab in tabRepository.Items)
+                    foreach (TabItem tab in xTabRepository.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
 
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
-                                if (tabRepository.SelectedItem == tab)
+                                if (xTabRepository.SelectedItem == tab)
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
@@ -92,40 +96,62 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
 
             // We do load on demand
-            if (tabRepository.SelectedItem == tbiActions)
+            if (xTabRepository.SelectedItem == xTabActivitiesGroups)
             {
-                if (((string)tbiActions.Tag) != "Done")
+                if (((string)xTabActivitiesGroups.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mBusinessFlow);
-                    frmActions.Content = ActionsRepoPage;
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
+                    xFrameActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
-                    tbiActions.Tag = "Done";
+                    xTabActivitiesGroups.Tag = "Done";
                 }
             }
 
-            if (tabRepository.SelectedItem == tbiVariables)
+            if (xTabRepository.SelectedItem == xTabActivities)
             {
-                if (((string)tbiVariables.Tag) != "Done")
+                if (((string)xTabActivities.Tag) != "Done")
+                {
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mBusinessFlow);
+                    xFrameActivities.Content = ActivitiesRepoPage;
+                    // Mark that this tab is loaded with info
+                    xTabActivities.Tag = "Done";
+                }
+            }
+
+            if (xTabRepository.SelectedItem == xTabActions)
+            {
+                if (((string)xTabActions.Tag) != "Done")
+                {
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mBusinessFlow);
+                    xFrameActions.Content = ActionsRepoPage;
+                    // Mark that this tab is loaded with info
+                    xTabActions.Tag = "Done";
+                }
+            }
+
+            if (xTabRepository.SelectedItem == xTabVariables)
+            {
+                if (((string)xTabVariables.Tag) != "Done")
                 {
                     VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
-                    frmVariables.Content = VariablesRepoPage;
+                    xFrameVariables.Content = VariablesRepoPage;
                     // Mark that this tab is loaded with info
-                    tbiVariables.Tag = "Done";
+                    xTabVariables.Tag = "Done";
                 }
             }
         }
 
         public void RefreshCurrentRepo()
         {
-            tbiActions.Tag = string.Empty;
-            tbiVariables.Tag = string.Empty;
+            xTabActions.Tag = string.Empty;
+            xTabVariables.Tag = string.Empty;
 
             //to re-load current
-            if (tabRepository.SelectedItem != null)
+            if (xTabRepository.SelectedItem != null)
             {
-                TabItem selected = (TabItem)tabRepository.SelectedItem;
-                tabRepository.SelectedItem = null;
-                tabRepository.SelectedItem = selected;
+                TabItem selected = (TabItem)xTabRepository.SelectedItem;
+                xTabRepository.SelectedItem = null;
+                xTabRepository.SelectedItem = selected;
             }
         }
     }

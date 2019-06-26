@@ -618,6 +618,9 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml.cs">
+      <DependentUpon>APINavPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml.cs">
       <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
@@ -3054,6 +3057,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
