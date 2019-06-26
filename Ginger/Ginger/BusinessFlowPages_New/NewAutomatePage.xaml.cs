@@ -67,7 +67,7 @@ namespace GingerWPF.BusinessFlowsLib
         ActivityPage mActivityPage;
         MainAddActionsNavigationPage mMainNavigationPage;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(350);
+        GridLength mLastAddActionsColumnWidth = new GridLength(400);
 
         public NewAutomatePage(BusinessFlow businessFlow)
         {

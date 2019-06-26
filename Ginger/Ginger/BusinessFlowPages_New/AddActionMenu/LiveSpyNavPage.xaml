@@ -16,7 +16,7 @@
             <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35" />
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="False" />
+        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="True" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
