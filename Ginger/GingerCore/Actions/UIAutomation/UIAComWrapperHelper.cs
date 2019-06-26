@@ -3587,7 +3587,7 @@ namespace GingerCore.Drivers
                     + " is not enabled.\n\n");
             }
 
-            object vp;
+            object vp, scrollPattern;
 
             string _controlType = element.Current.LocalizedControlType;
 
@@ -3612,12 +3612,12 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case "treeview":
-                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
-                    if (((ScrollPattern)vp).Current.VerticallyScrollable == true)
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out scrollPattern);
+                    if (scrollPattern != null && ((ScrollPattern)scrollPattern).Current.VerticallyScrollable == true)
                     {
-                        if (((ScrollPattern)vp).Current.VerticalScrollPercent < 100)
+                        if (((ScrollPattern)scrollPattern).Current.VerticalScrollPercent < 100)
                         {
-                            ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent + 3);
+                            ((ScrollPattern)scrollPattern).SetScrollPercent(((ScrollPattern)scrollPattern).Current.HorizontalScrollPercent, ((ScrollPattern)scrollPattern).Current.VerticalScrollPercent + 3);
                         }
                     }
                     else
@@ -3643,7 +3643,7 @@ namespace GingerCore.Drivers
                     + " is not enabled.\n\n");
             }
 
-            object vp;
+            object vp, scrollPattern;
 
             string _controlType = element.Current.LocalizedControlType;
 
@@ -3668,12 +3668,12 @@ namespace GingerCore.Drivers
                     }
                     break;
                 case "treeview":
-                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out vp);
-                    if (((ScrollPattern)vp).Current.VerticallyScrollable == true)
+                    element.TryGetCurrentPattern(ScrollPatternIdentifiers.Pattern, out scrollPattern);
+                    if (scrollPattern != null && ((ScrollPattern)scrollPattern).Current.VerticallyScrollable == true)
                     {
-                        if (((ScrollPattern)vp).Current.VerticalScrollPercent > 1)
+                        if (((ScrollPattern)scrollPattern).Current.VerticalScrollPercent > 1)
                         {
-                            ((ScrollPattern)vp).SetScrollPercent(((ScrollPattern)vp).Current.HorizontalScrollPercent, ((ScrollPattern)vp).Current.VerticalScrollPercent - 3);
+                            ((ScrollPattern)scrollPattern).SetScrollPercent(((ScrollPattern)scrollPattern).Current.HorizontalScrollPercent, ((ScrollPattern)scrollPattern).Current.VerticalScrollPercent - 3);
                         }
                     }
                     else
