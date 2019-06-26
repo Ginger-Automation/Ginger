@@ -12,35 +12,36 @@ namespace Ginger.Plugin.Platform.Web.Execution
 {
     public class WebPlatformActionHandler : IPlatformActionHandler
     {
-        public NewPayLoad HandleRunAction(IPlatformService service, NewPayLoad ActionPayload)
+        public NewPayLoad HandleRunAction(IPlatformService service, PlatformActionData platformAction)
         {
-            string actionType = ActionPayload.GetValueString();
+            //NewPayLoad payload = new NewPayLoad("rc");
+            //payload.ClosePackage();
+            //return payload;
+
+
+            //PlatformAction platformAction = 
+
+
+            // NewPayLoad pl2 = new NewPayLoad(ActionPayload.GetBytes());
+
+            // string actionType = ActionPayload.GetValueString();
+
 
             // TODO: split to class and functions, or we use smart reflection to redirect the action
-            Dictionary<string, string> InputParams = new Dictionary<string, string>();
-            List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
+            //Dictionary<string, string> InputParams = new Dictionary<string, string>();
+            //List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
 
-            NewPayLoad PomPayload=null;
-            int i = 0;
-            if(FieldsandParams[0].Name== "POMPayload")
-            {
-                i = 1;
-                PomPayload = FieldsandParams[0];
-            }
-
-            for (; i < FieldsandParams.Count-1; i++)
-            {
-                NewPayLoad Np =FieldsandParams[i];
-                string Name = Np.GetValueString();
-
-                string Value = Np.GetValueString();
-                if (!InputParams.ContainsKey(Name))
-                {
-                    InputParams.Add(Name, Value);
-                }
-            }
-            //foreach (NewPayLoad Np in FieldsandParams)
+            //NewPayLoad PomPayload=null;
+            //int i = 0;
+            //if(FieldsandParams[0].Name== "POMPayload")
             //{
+            //    i = 1;
+            //    PomPayload = FieldsandParams[0];
+            //}
+
+            //for (; i < FieldsandParams.Count-1; i++)
+            //{
+            //    NewPayLoad Np =FieldsandParams[i];
             //    string Name = Np.GetValueString();
 
             //    string Value = Np.GetValueString();
@@ -49,6 +50,22 @@ namespace Ginger.Plugin.Platform.Web.Execution
             //        InputParams.Add(Name, Value);
             //    }
             //}
+            ////foreach (NewPayLoad Np in FieldsandParams)
+            ////{
+            ////    string Name = Np.GetValueString();
+
+            ////    string Value = Np.GetValueString();
+            ////    if (!InputParams.ContainsKey(Name))
+            ////    {
+            ////        InputParams.Add(Name, Value);
+            ////    }
+            ////}
+            //IWebPlatform PlatformService = null;
+            //if (service is IWebPlatform Mservice)
+            //{
+            //    PlatformService = Mservice;
+            //}
+
             IWebPlatform PlatformService = null;
             if (service is IWebPlatform Mservice)
             {
@@ -56,38 +73,24 @@ namespace Ginger.Plugin.Platform.Web.Execution
             }
 
 
-            if (actionType == "BrowserAction")
+            if (platformAction.ActionType == "BrowserAction")
             {
-
-
-
-                BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
-
-                
+                BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, platformAction);
                 Handler.ExecuteAction();
-
-
-                NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo,Handler.Error, Handler.AOVs);
-                return PLRC;
+                NewPayLoad actionResultPayload = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.outputValues);
+                return actionResultPayload;
             }
 
-            if (actionType == "UIElementAction")
+            if (platformAction.ActionType == "UIElementAction")
             {
                 try
                 {
-                  
-
-
-                 
-                    UIELementActionHandler Handler = new UIELementActionHandler(PlatformService,InputParams);
-
-                    Handler.PrepareforExecution(PomPayload);
-
+                    UIELementActionHandler Handler = new UIELementActionHandler(PlatformService, platformAction);
+                    // Handler.PrepareforExecution(PomPayload);
                     Handler.ExecuteAction();
-
                     NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
                     return PLRC;
-     
+
                 }
                 catch (Exception ex)
                 {
@@ -96,21 +99,16 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 }
             }
 
-            
-
-            NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + actionType);
+            NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + platformAction.ActionType);
             return err;
 
-
-            
         }
 
      
 
         private NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> outputValues)
         {
-            return GingerNode.CreateActionResult(exInfo, error, outputValues);
-            
+            return GingerNode.CreateActionResult(exInfo, error, outputValues);            
         }
 
     }

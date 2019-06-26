@@ -579,11 +579,11 @@ namespace Ginger.Repository
             return new TextBoxFormatter(Textblock);
         }
 
-        public string GenerateTemplate(string templatename, object o)
-        {
-            ReportInfo reportInfo = (ReportInfo)o;
-            return ReportTemplate.GenerateReport(templatename, reportInfo);
-        }
+        //public string GenerateTemplate(string templatename, object o)
+        //{
+        //    ReportInfo reportInfo = (ReportInfo)o;
+        //    return ReportTemplate.GenerateReport(templatename, reportInfo);
+        //}
 
        
 
@@ -654,25 +654,25 @@ namespace Ginger.Repository
             return null;
         }
 
-        public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
-        {
-            ReportInfo RI = (ReportInfo)RIf;
-            ReportTemplate RT = (ReportTemplate)RTs;
-            ReportPage RP = new ReportPage(RI, RT.Xaml);
-            string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
+        //public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
+        //{
+        //    ReportInfo RI = (ReportInfo)RIf;
+        //    ReportTemplate RT = (ReportTemplate)RTs;
+        //    ReportPage RP = new ReportPage(RI, RT.Xaml);
+        //    string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
 
-            if (System.IO.File.Exists(FileName))
-                FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
+        //    if (System.IO.File.Exists(FileName))
+        //        FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
 
-            GC.Collect();
-            RP.SaveReport(FileName);
+        //    GC.Collect();
+        //    RP.SaveReport(FileName);
 
-            string PDFFileName = FileName.Replace(".rtf", ".pdf");
+        //    string PDFFileName = FileName.Replace(".rtf", ".pdf");
 
-            RTFtoPDF.Convert(FileName, PDFFileName);
+        //    RTFtoPDF.Convert(FileName, PDFFileName);
 
-            return PDFFileName;
-        }
+        //    return PDFFileName;
+        //}
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,6 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
     public interface IPlatformActionHandler
     {
 
-        NewPayLoad HandleRunAction(IPlatformService service,NewPayLoad ActionPayload);
+        NewPayLoad HandleRunAction(IPlatformService service, PlatformActionData platformAction);
     }
 }
