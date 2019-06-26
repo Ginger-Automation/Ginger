@@ -54,6 +54,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private Act mAction;        
         IWindowExplorer mWindowExplorerDriver;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="context"></param>
         public LiveSpyNavPage(Context context)
         {
             InitializeComponent();
@@ -61,9 +65,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xWinGridUC.mContext = mContext;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethod();
+            InitWinGridUC();
             InitControlPropertiesGridView();
         }
-        
+
+        /// <summary>
+        /// This event is used to initialise the WinGrid
+        /// </summary>
+        private void InitWinGridUC()
+        {
+            xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+            xWinGridUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+            xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+        }
+
         /// <summary>
         /// This method is used to set controls to initialise or set to default
         /// </summary>
@@ -71,19 +86,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             xWinGridUC.IsEnabled = false;
             xSpyingButton.IsEnabled = false;
+            xStartAgentMessage.Visibility = Visibility.Visible;
+            ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
             if (mContext.Agent != null)
             {
                 bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if (isAgentRunning)
                 {
-                    xWinGridUC.IsEnabled = true;
-                    xSpyingButton.IsEnabled = true;
-                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                    xWinGridUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
-                    if (xWinGridUC.WindowsComboBox != null)
+                    xStartAgentMessage.Visibility = Visibility.Collapsed;
+                    xWinGridUC.IsEnabled = true;                                       
+
+                    if(ControlPropertiesGrid.DataSourceList != null)
                     {
-                        xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
-                        xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+                        ControlPropertiesGrid.Visibility = Visibility.Visible;
+                    }
+
+                    if ((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
+                        && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
+                    {
+                        xSpyingButton.IsEnabled = true;
                     }
                 }
             }
@@ -96,28 +117,41 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && e.PropertyName == nameof(Context.BusinessFlow))
-            {
-                mContext = (Context)sender;
-                xWinGridUC.WindowsComboBox.ItemsSource = new List<AppWindow>();                
-                InitMethod();
-            }
-            else if (e.PropertyName == nameof(Context.Activity) ||
-                     e.PropertyName == nameof(Context.AgentStatus) ||
-                     e.PropertyName == nameof(Context.Agent) ||
-                     e.PropertyName == nameof(Context.Target) ||
-                     e.PropertyName == nameof(Context.Platform))
+            if (e.PropertyName == nameof(Context.AgentStatus))
             {
                 InitMethod();
+                if (xWinGridUC.mWindowExplorerDriver == null)
+                {
+                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                }
             }
         }
 
+        /// <summary>
+        /// This event is used to handle the selection event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            xWinGridUC.IsEnabled = true;
+            xStartAgentMessage.Visibility = Visibility.Collapsed;
+            xSpyingButton.IsEnabled = true;
         }
 
+        /// <summary>
+        /// This is the event to handle the spyclick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SpyingButton_Click(object sender, RoutedEventArgs e)
+        {
+            SpyButtonClick();
+        }
+
+        /// <summary>
+        /// This method is used to perform the button click opertion
+        /// </summary>
+        private void SpyButtonClick()
         {
             isSpying = !isSpying;
             UpdateUI();
@@ -138,7 +172,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 else
                 {
                     dispatcherTimer.IsEnabled = false;
-                    //SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
                 }
             }
             else
@@ -169,6 +202,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void timenow(object sender, EventArgs e)
         {
+            if (xWinGridUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
+                && ((GingerCore.Drivers.SeleniumDriver)xWinGridUC.mWindowExplorerDriver).Platform == ePlatformType.Web)
+            {
+                xWinGridUC.mWindowExplorerDriver.StartSpying(); 
+            }
             // Get control info only if control key is pressed
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
@@ -179,16 +217,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     xWinGridUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                     StatusTextBlock.Text = mSpyElement.ElementName;
-                    //if (mSyncControlsViewWithLiveSpy)                     /////////// To Check if mSyncControlsViewWithLiveSpy is LiveSpy specific
-                    //{
-                    //    //TODO: Check Why its here
-                    //    FocusSpyItemOnControlTree();
-                    //}
-                    //else
-                    //{
-                        mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
-                        ShowCurrentControlInfo();
-                    //}
+                    mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
+                    ShowCurrentControlInfo();
                 }
                 else
                 {

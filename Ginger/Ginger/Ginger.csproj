@@ -624,6 +624,7 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ObjectBindingHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMBindingObjectHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>

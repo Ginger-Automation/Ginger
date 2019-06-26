@@ -91,24 +91,43 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
+            mContext.PropertyChanged += Context_PropertyChanged;
             BindEnvsCombo();
             UpdateContext();
+        }
+
+        /// <summary>
+        /// This is the context changed handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e != null && e.PropertyName == nameof(Activity))
+            {
+                UpdateContext();
+            }
         }
 
         private void UpdateContext()
         {
             if(mContext != null)
             {
-                if (mContext.BusinessFlow.CurrentActivity != null)
-                {
-                    mContext.BusinessFlow.CurrentActivity.PropertyChanged -= Activity_PropertyChanged;
-                    mContext.BusinessFlow.CurrentActivity.PropertyChanged += Activity_PropertyChanged; 
-                }
+                ActivityChangedHandle();
 
-                if (mContext.Agent == null)
-                {
-                    SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-                }
+                SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            }
+        }
+
+        /// <summary>
+        /// This method adds the activitychanged handler
+        /// </summary>
+        private void ActivityChangedHandle()
+        {
+            if (mContext.BusinessFlow.CurrentActivity != null)
+            {
+                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
             }
         }
 
@@ -172,10 +191,13 @@ namespace GingerWPF.BusinessFlowsLib
                 TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == targetApp select x).FirstOrDefault();
                 if (tBase != null)
                 {
-                    mContext.Target = tBase;
-                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                    if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
+                    {
+                        mContext.Target = tBase; 
+                        mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
                                                  where x.AppName == targetApp
                                                  select x.Platform).FirstOrDefault();
+                    }                    
                 }
                                
                 if (mContext.Agent != null)
