@@ -73,7 +73,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
                 FillActionsList();
             }
@@ -183,9 +183,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 if (a.IsSelectableAction == false)
                     continue;
-
-                if (mContext.BusinessFlow.CurrentActivity == null)
-                    mContext.BusinessFlow.CurrentActivity = mContext.BusinessFlow.Activities[0];
 
                 TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
