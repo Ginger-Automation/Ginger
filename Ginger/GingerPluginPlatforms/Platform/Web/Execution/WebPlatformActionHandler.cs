@@ -11,6 +11,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
         {
             IWebPlatform webPlatformService = (IWebPlatform)service;
             
+            // using reflection get the attr and run
+
             if (platformAction.ActionHandler == "BrowserActions")
             {
                 //TODO: cache
