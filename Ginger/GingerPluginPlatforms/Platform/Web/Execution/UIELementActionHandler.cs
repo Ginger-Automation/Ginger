@@ -137,13 +137,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
         public string ExecutionInfo { get ; set; }
         public string Error { get; set; }
 
-        public UIELementActionHandler(IWebPlatform mplatformService, PlatformActionData platformActionData)
+        public UIELementActionHandler(IWebPlatform mplatformService, NodePlatformAction platformActionData)
         {
             PlatformService = mplatformService;
-
             InputParams = platformActionData.InputParams;
-
-        
         }
 
         private void PreparePOMforExecution(NewPayLoad pomPayload)
@@ -207,9 +204,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
             public string By;
             public string Value;
         }
-
-        internal void ExecuteAction()
-        {
+        public void ExecuteAction(ref NodePlatformAction platformAction)
+        {         
             try
             {
                 // convert the JArray to list
@@ -861,5 +857,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             return performed;
         }
+
+
     }
 }

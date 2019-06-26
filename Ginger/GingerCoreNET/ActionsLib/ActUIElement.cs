@@ -989,7 +989,7 @@ namespace GingerCore.Actions.Common
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Any", action: "UIElementAction");            
+            PlatformAction platformAction = new PlatformAction(platform: "Any", actionHandler:"BrowserActions", action: "UIElementAction");            
             platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
             platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
