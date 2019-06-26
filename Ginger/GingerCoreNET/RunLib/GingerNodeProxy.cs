@@ -91,10 +91,10 @@ namespace GingerCoreNET.RunLib
             //TODO: Release lock
         }
 
-        public NewPayLoad RunAction(NewPayLoad newPayLoad)
+        public NewPayLoad RunAction(NewPayLoad actionPayload)
         {
-            NewPayLoad RC = SendRequestPayLoad(newPayLoad);
-            return RC;
+            NewPayLoad resultPayload = SendRequestPayLoad(actionPayload);
+            return resultPayload;
         }
 
         public NewPayLoad SendRequestPayLoad(NewPayLoad payload)

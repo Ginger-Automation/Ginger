@@ -202,8 +202,8 @@ namespace GingerCoreNET.DriversLib
 
                 platformService.PlatformActionHandler.HandleRunAction(platformService, ref nodePlatformAction);
 
-                NewPayLoad newPayLoad = CreateActionResult(nodePlatformAction.exInfo, nodePlatformAction.error, nodePlatformAction.Output.OutputValues);
-                return newPayLoad;
+                NewPayLoad actionResult = CreateActionResult(nodePlatformAction.exInfo, nodePlatformAction.error, nodePlatformAction.Output.OutputValues);
+                return actionResult;
             }
 
             NewPayLoad err2 = NewPayLoad.Error("RunPlatformAction: service is not supporting IPlatformService cannot delegate to run action ");
