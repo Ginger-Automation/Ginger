@@ -8,6 +8,7 @@ using GingerCore.Actions.Common;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerPluginCoreTest.CommunicationProtocol
@@ -16,6 +17,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
     // this tests are for checking plugin action pack to payload send via GingerNodeProxy, execute on GingerNode and service then getting response
 
     [TestClass]
+    [Level2]
     public class GingerGridCommTest
     {
         static GingerGrid gingerGrid;
