@@ -47,7 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
-        List<AgentMappingPage> mWinExplorerPageList = null;
+        List<AgentPageMappingHelper> mWinExplorerPageList = null;
         LiveSpyPage CurrentLoadedPage = null;
 
         public LiveSpyNavPage(Context context)
@@ -104,7 +104,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             bool isLoaded = false;
             if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
             {
-                AgentMappingPage objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
+                AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
                                                                                 x.ObjectAgent.ItemName == context.Agent.ItemName).FirstOrDefault();
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
@@ -122,9 +122,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
                     if (mWinExplorerPageList == null)
                     {
-                        mWinExplorerPageList = new List<AgentMappingPage>();
+                        mWinExplorerPageList = new List<AgentPageMappingHelper>();
                     }
-                    mWinExplorerPageList.Add(new AgentMappingPage(context.Agent, CurrentLoadedPage));
+                    mWinExplorerPageList.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage));
                 }
             }
 

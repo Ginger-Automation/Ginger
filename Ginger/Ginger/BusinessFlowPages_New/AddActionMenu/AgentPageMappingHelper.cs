@@ -1,14 +1,8 @@
-﻿using Amdocs.Ginger.Common;
-using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GingerCore;
 
 namespace Ginger.BusinessFlowPages_New
 {
-    public class AgentMappingPage
+    public class AgentPageMappingHelper
     {
         /// <summary>
         /// Gets/Sets ObjectWindowPage
@@ -25,7 +19,7 @@ namespace Ginger.BusinessFlowPages_New
         /// </summary>
         /// <param name="context"></param>
         /// <param name="agent"></param>
-        public AgentMappingPage(Agent agent, object winPage)
+        public AgentPageMappingHelper(Agent agent, object winPage)
         {
             ObjectAgent = agent;
             ObjectWindowPage = winPage;
