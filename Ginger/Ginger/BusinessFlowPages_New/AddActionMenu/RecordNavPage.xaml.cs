@@ -130,7 +130,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xWinGridUC.IsEnabled = false;
             xRecordingButton.IsEnabled = false;
             xStartAgentMessage.Visibility = Visibility.Visible;
-            xPOMPanel.Visibility = Visibility.Hidden;
+            xPOMPanel.Visibility = Visibility.Hidden;            
 
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
@@ -145,7 +145,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if(isAgentRunning)
-                {
+                {                    
                     xStartAgentMessage.Visibility = Visibility.Collapsed;
                     xWinGridUC.IsEnabled = true;
                     if (xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null)
@@ -295,7 +295,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetControlsVisibility();
+            if (((bool)xIntegratePOM.IsChecked))
+            {
+                xIntegratePOM.Visibility = Visibility.Visible;
+                gridPOMListItems.Visibility = Visibility.Visible;
+            }
+            xRecordingButton.IsEnabled = false;
         }
     }    
 }

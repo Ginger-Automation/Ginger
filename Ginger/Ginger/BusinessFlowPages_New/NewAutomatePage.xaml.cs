@@ -76,7 +76,7 @@ namespace GingerWPF.BusinessFlowsLib
         ActivityPage mActivityPage;
         MainAddActionsNavigationPage mMainNavigationPage;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(350);
+        GridLength mLastAddActionsColumnWidth = new GridLength(400);
 
         ObjectId runnerLiteDbId;
         ObjectId runSetLiteDbId;
@@ -154,21 +154,26 @@ namespace GingerWPF.BusinessFlowsLib
             SetEnvsCombo();
             UpdateContext();
         }
-
+        
         private void UpdateContext()
         {
             if(mContext != null)
             {
-                if (mContext.Activity != null)
-                {
-                    mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-                    mContext.Activity.PropertyChanged += Activity_PropertyChanged; 
-                }
+                ActivityChangedHandle();
 
-                if (mContext.Agent == null)
-                {
-                    SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-                }
+                SetContextAgent(mContext.Agent, mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+            }
+        }
+
+        /// <summary>
+        /// This method adds the activitychanged handler
+        /// </summary>
+        private void ActivityChangedHandle()
+        {
+            if (mContext.BusinessFlow.CurrentActivity != null)
+            {
+                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
             }
         }
 
@@ -232,10 +237,13 @@ namespace GingerWPF.BusinessFlowsLib
                 TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == targetApp select x).FirstOrDefault();
                 if (tBase != null)
                 {
-                    mContext.Target = tBase;
-                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                    if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
+                    {
+                        mContext.Target = tBase; 
+                        mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
                                                  where x.AppName == targetApp
                                                  select x.Platform).FirstOrDefault();
+                    }                    
                 }
                                
                 if (mContext.Agent != null)
@@ -248,8 +256,7 @@ namespace GingerWPF.BusinessFlowsLib
                 appAgent.PropertyChanged += AppAgent_PropertyChanged;
             }
         }
-
-
+        
         //private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         //{
         //    switch (EventArgs.EventType)
@@ -435,6 +442,7 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity.PropertyChanged += Activity_PropertyChanged;
             // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
+            UpdateContext();
         }
 
         //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

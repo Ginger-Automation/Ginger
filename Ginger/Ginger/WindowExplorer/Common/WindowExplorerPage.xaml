@@ -9,14 +9,17 @@
     x:Class="Ginger.WindowExplorer.WindowExplorerPage" 
     xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
-      Height="700" Width="450"
-      MinHeight="100" MinWidth="450"
+      Height="700" Width="390"
+      MinHeight="100" MinWidth="390"
 	Title="Ginger Window Explorer">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Width="390" HorizontalAlignment="Left" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="385"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="30" />
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="32"/>
             <RowDefinition x:Name="ControlsViewRow" Height="35*" MinHeight="35"/>
             <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35"/>
             <RowDefinition Height="30"/>
@@ -27,13 +30,13 @@
         <!--Window Selection Area-->
         <Grid Grid.Row="0" x:Name="xWindowGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-           <ComboBox Grid.Column="1" x:Name="WindowsComboBox" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="3,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
             <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">                
             </Button>
             <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -72,6 +75,7 @@
                     </Grid>
             </Expander.Content>
         </Expander>
+        
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0">
             <Button x:Name="ControlsRefreshButton" usercontrols:ImageMaker.Content="Refresh" Click="ControlsRefreshButton_Click" ToolTip="Refresh Controls" Width="20" Height="20" Style="{StaticResource @InputImageButtonStyle_NoBorder}">            
             </Button>

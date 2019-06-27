@@ -5,6 +5,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Agents;
+using Ginger.BusinessFlowPages_New;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
 using GingerCore.DataSource;
@@ -15,6 +16,7 @@ using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -67,7 +69,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (e.PropertyName == nameof(BusinessFlow))
                 {
                     LoadActionFrame(null); 
-                }
+                }                
             }
         }
 
@@ -141,7 +143,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mLiveSpyNavPage == null)
             {
-                mLiveSpyNavPage = new LiveSpyNavPage(mContext);
+                mLiveSpyNavPage = new LiveSpyNavPage(mContext); 
             }
             LoadActionFrame(mLiveSpyNavPage, "Live Spy", eImageType.Spy);
         }

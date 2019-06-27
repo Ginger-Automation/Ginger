@@ -8,72 +8,15 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      d:DesignHeight="700" d:DesignWidth="450"
+      d:DesignHeight="700" d:DesignWidth="410"
       Title="WindowsExplorerNavPage">
 
-    <Grid Background="LightGray">
+    <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="WindowComboboxRow" Height="30" />
-            <RowDefinition x:Name="ControlsViewRow" Height="35*" MinHeight="35"/>
-            <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35"/>
+            <RowDefinition x:Name="WindowComboboxRow" Height="Auto" />            
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="True" />
-
-        <!--Controls Views Area-->
-        <Expander x:Name="ControlsViewsExpander" Grid.Row="1" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
-            <Expander.Header>
-                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Window Elements"/>
-            </Expander.Header>
-            <Expander.Content>
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="127*"/>
-                        <RowDefinition Height="322*"/>
-                    </Grid.RowDefinitions>
-                    <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
-                    <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" Grid.Row="1" />
-                </Grid>
-            </Expander.Content>
-        </Expander>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0">
-            <Button x:Name="ControlsRefreshButton" usercontrols:ImageMaker.Content="Refresh" Click="ControlsRefreshButton_Click" ToolTip="Refresh Controls" Width="20" Height="20" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
-            </Button>
-            <Button x:Name="SyncWithLiveSpyButton" Click="SyncWithLiveSpyButton_Click" ToolTip="Click to Locate Live Spy Found Element" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @WithoutSpyWhite_24x24}"/>
-            </Button>
-            <Button x:Name="GridTreeViewButton" Click="GridTreeViewButton_Click" ToolTip="Switch to Grid View" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @Grid_24x24.png}"/>
-            </Button>
-        </StackPanel>
-
-        <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="3" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
-            <Expander.Header>
-                <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
-            </Expander.Header>
-            <Expander.Content>
-                <TabControl x:Name="ControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <TabItem x:Name="GeneralTab" Header="General">
-                        <Frame x:Name="ControlFrame"/>
-                    </TabItem>
-                    <TabItem x:Name="PropertiesTab" Header="Properties">
-                        <Ginger:ucGrid x:Name="ControlPropertiesGrid" Title="Control Properties" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed"  />
-                    </TabItem>
-                    <TabItem x:Name="ActionsTab" Header="Actions">
-                        <Frame x:Name="ControlActionsFrame"/>
-                    </TabItem>
-                </TabControl>
-            </Expander.Content>
-        </Expander>
-
-        <!--Status Row-->
-        <ScrollViewer Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}">
-                <TextBlock x:Name="StatusTextBlock" Text="Ready"
-                           TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}"/>
-            </Border>
-        </ScrollViewer>
-
+        <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Width="Auto" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        
     </Grid>
 </Page>

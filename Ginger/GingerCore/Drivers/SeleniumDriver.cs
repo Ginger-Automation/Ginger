@@ -7356,8 +7356,11 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.StartSpying()
         {
-            Driver.SwitchTo().DefaultContent();
-            InjectSpyIfNotIngected();
+            if (Driver != null)
+            {
+                Driver.SwitchTo().DefaultContent();
+                InjectSpyIfNotIngected();
+            }            
         }
 
         public string GetElementXpath(ElementInfo EI)
