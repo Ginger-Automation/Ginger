@@ -74,8 +74,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                 //ClickButtonGrid();
-                  GotoURLGrid();
+                 ClickButtonGrid();
+                 // GotoURLGrid();
                 // GotoURLDirect();
             }
         }
@@ -170,10 +170,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
 
             //Assert            
-            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
+             Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
 
-            //FIXME !!!
-            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.ExInfo), "Naviagted to: " + url, "ExInfo");
         }
 
 

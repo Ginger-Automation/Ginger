@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
+using System.Reflection;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -9,55 +10,49 @@ namespace Ginger.Plugin.Platform.Web.Execution
     {
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
+            // add try catch !!!!!!!!!!
+
+
             IWebPlatform webPlatformService = (IWebPlatform)service;
-            
-            // using reflection get the attr and run
+
 
             if (platformAction.ActionHandler == "BrowserActions")
             {
                 //TODO: cache
-                BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);                    
-                Handler.ExecuteAction(ref platformAction);                    
+                BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);
+                Handler.ExecuteAction(ref platformAction);
             }
 
-
+            // using reflection get the attr and run
             // get the relevant handle from the service which will run the action
             //PropertyInfo pi = service.GetType().GetProperty(platformAction.ActionHandler);
             //object obj = pi.GetValue(service);
 
-            //IPlatformActionHandler platformActionHandler = (IPlatformActionHandler)obj;
+            //IActionHandler platformActionHandler = (IActionHandler)obj;
+            //platformActionHandler.ExecuteAction(ref platformAction);
             //NewPayLoad actionResultPayload = platformActionHandler.HandleRunAction(service, platformAction);            
             //return actionResultPayload;
 
 
-            //if (platformAction.ActionType == "BrowserAction")
-            //{
-            //    BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, platformAction);
-            //    Handler.ExecuteAction();
-            //    NewPayLoad actionResultPayload = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.outputValues);
-            //    return actionResultPayload;
-            //}
 
-            //if (platformAction.ActionType == "UIElementAction")
-            //{
-            //    try
-            //    {
-            //        UIELementActionHandler Handler = new UIELementActionHandler(PlatformService, platformAction);
-            //        // Handler.PrepareforExecution(PomPayload);
-            //        Handler.ExecuteAction();
-            //        NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
-            //        return PLRC;
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
-            //        return newPayLoad;
-            //    }
-            //}
+            if (platformAction.ActionType == "UIElementAction")
+            {
+                    UIELementActionHandler Handler = new UIELementActionHandler(webPlatformService);
+                    // Handler.PrepareforExecution(PomPayload);
+                    Handler.ExecuteAction(ref platformAction);
+                    // NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
+                    // return PLRC;
+            }
 
             //NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + platformAction.ActionType);
             //return err;
+
+            //catch (Exception ex)
+            //{
+            //    NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
+            //    return newPayLoad;
+            //}
+
 
         }
 
