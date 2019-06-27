@@ -18,11 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
@@ -138,8 +136,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             DummyAction dummyActionOriginal = new DummyAction() { Name = "post", Age = 999 };
 
             //Act
-            string xml = RS.SerializeToString(dummyActionOriginal);
-            System.IO.File.WriteAllText(@"c:\temp\dummy.txt", xml);
+            string xml = RS.SerializeToString(dummyActionOriginal);            
             DummyAction dummyActionCopy = (DummyAction)NewRepositorySerializer.DeserializeFromText(xml);
 
             //Assert
