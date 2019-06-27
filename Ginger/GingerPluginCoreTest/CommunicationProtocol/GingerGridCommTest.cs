@@ -74,7 +74,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                 ClickButtonGrid();
+                 // ClickButtonGrid();
+                ClickButtonNotExist();
                  // GotoURLGrid();
                 // GotoURLDirect();
             }
@@ -169,9 +170,29 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //Act            
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
 
-            //Assert            
-             Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
+            //Assert                        
+            Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
+            Assert.AreEqual("button was clicked - ByID=button1", actUIElement.ExInfo, "ExInfo");
+        }
 
+
+        // Negative test
+        [TestMethod]
+        public void ClickButtonNotExist()
+        {
+            //Arrange
+
+            ActUIElement actUIElement = new ActUIElement();
+            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
+            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actUIElement.ElementLocateValue = "wrongId";
+            actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+
+            //Act            
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+
+            //Assert                        
+            Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
         }
 
 
