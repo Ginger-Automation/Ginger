@@ -46,7 +46,8 @@ namespace Ginger
             SharedReposiotry = 2,  //Item opened from Shared Repository in which the item iteself supposed to be saved to XML
             Child = 3, //Item opened for edit without save
             ChildWithSave = 4, //Item opened as standalone but in save allows to save it original parent
-            View = 5 //item should be open for read only
+            View = 5, //item should be open for read only
+            Add = 6 //List of Library/SR items to add
         }
 
         public static bool isDesignMode()

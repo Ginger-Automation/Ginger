@@ -129,16 +129,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            if (xTabRepository.SelectedItem == xTabVariables)
-            {
-                if (((string)xTabVariables.Tag) != "Done")
-                {
-                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
-                    xFrameVariables.Content = VariablesRepoPage;
-                    // Mark that this tab is loaded with info
-                    xTabVariables.Tag = "Done";
-                }
-            }
+            //if (xTabRepository.SelectedItem == xTabVariables)
+            //{
+            //    if (((string)xTabVariables.Tag) != "Done")
+            //    {
+            //        VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
+            //        xFrameVariables.Content = VariablesRepoPage;
+            //        // Mark that this tab is loaded with info
+            //        xTabVariables.Tag = "Done";
+            //    }
+            //}
         }
 
         public void RefreshCurrentRepo()

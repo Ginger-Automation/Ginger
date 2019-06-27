@@ -391,7 +391,7 @@ namespace Ginger.Variables
         
         private void AddVar(object sender, RoutedEventArgs e)
         {
-            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, mVariablesParentObj,mContext);
+            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, (RepositoryItemBase)mVariablesParentObj,mContext);
             addVarPage.ShowAsWindow();
 
             RefreshGrid(sender, e);
