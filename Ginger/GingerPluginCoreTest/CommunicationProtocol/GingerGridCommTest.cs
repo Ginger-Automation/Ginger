@@ -74,10 +74,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
+                SetTextBoxText();
                  // ClickButtonGrid();
-                ClickButtonNotExist();
+                 // ClickButtonNotExist();
                  // GotoURLGrid();
-                // GotoURLDirect();
+                 // GotoURLDirect();
             }
         }
 
@@ -193,6 +194,35 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             //Assert                        
             Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
+        }
+
+
+        [TestMethod]
+        public void SetTextBoxText()
+        {
+            //Arrange
+            string text = "John";
+            ActUIElement setTextBoxAction = new ActUIElement();
+            setTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
+            setTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            setTextBoxAction.ElementLocateValue = "user";
+            setTextBoxAction.ElementAction = ActUIElement.eElementAction.SetText;
+            setTextBoxAction.Value = text;
+
+            ActUIElement getTextBoxAction = new ActUIElement();
+            getTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
+            getTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            getTextBoxAction.ElementLocateValue = "user";
+            getTextBoxAction.ElementAction = ActUIElement.eElementAction.GetText;            
+
+            //Act            
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, setTextBoxAction);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, getTextBoxAction);
+            string textBoxValue = getTextBoxAction.GetReturnParam("Actual");
+
+
+            //Assert                        
+            Assert.AreEqual(text, textBoxValue, "textBoxValue");
         }
 
 
