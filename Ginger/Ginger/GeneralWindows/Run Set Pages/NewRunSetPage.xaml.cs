@@ -966,7 +966,7 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.Runner, GingerRunnerConfigurationsPage.ePageContext.RunTab);
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.Runner, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
             rp.UpdateRunnerInfo();
         }
@@ -1970,7 +1970,7 @@ namespace Ginger.Run
 
         public void viewBusinessflow(BusinessFlow businessFlow)
         {
-            BusinessFlowPage w = new BusinessFlowPage(businessFlow, false, General.RepositoryItemPageViewMode.View);
+            BusinessFlowPage w = new BusinessFlowPage(businessFlow, false, General.eRIPageViewMode.View);
             w.Width = 1000;
             w.Height = 800;
             w.ShowAsWindow();
@@ -1987,14 +1987,14 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
+            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.eRIPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
             Act act = actiontoView;
-            ActionEditPage w = new ActionEditPage(act, General.RepositoryItemPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
+            ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
             w.ShowAsWindow();
         }
 

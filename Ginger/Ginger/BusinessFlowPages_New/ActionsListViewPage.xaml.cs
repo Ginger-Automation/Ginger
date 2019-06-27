@@ -25,18 +25,22 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
+using Ginger.ApiModelsFolder;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -47,6 +51,7 @@ namespace GingerWPF.BusinessFlowsLib
     {
         Activity mActivity;
         Context mContext;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
         ActionsListHelper mActionsListHelper;
         UcListView mActionsListView;
@@ -57,12 +62,13 @@ namespace GingerWPF.BusinessFlowsLib
             get { return mActionsListView; }
         }
 
-        public ActionsListViewPage(Activity Activity, Context context)
+        public ActionsListViewPage(Activity Activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mActivity = Activity;
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             SetListView();
             SetSharedRepositoryMark();
@@ -74,7 +80,9 @@ namespace GingerWPF.BusinessFlowsLib
             if (actionToEdit != null)
             {
                 xBackToListPnl.Visibility = Visibility.Visible;
-                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.RepositoryItemPageViewMode.Automation);//need to pass Context?
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, actionToEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, actionToEdit, nameof(Act.Description));
+                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.eRIPageViewMode.Automation);//need to pass Context?
                 xMainFrame.Content = mActionEditPage;
             }
             else
@@ -91,7 +99,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.Title = "Actions";
             mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListHelper(mContext);
+            mActionsListHelper = new ActionsListHelper(mContext, mPageViewMode);
             mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
             mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
@@ -145,7 +153,9 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
-                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo)))
+                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
+                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
+                            || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
                 // OK to drop                         
                 DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
@@ -170,7 +180,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 else if (droppedItem is ApplicationPOMModel)
                 {
-                    ApplicationPOMModel currentPOM = ((DragInfo)sender).Data as ApplicationPOMModel;
+                    ApplicationPOMModel currentPOM = droppedItem as ApplicationPOMModel;
                     foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
                     {
                         HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
@@ -182,6 +192,22 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                     }
                     instance = null;
+                }
+                else if (droppedItem is ApplicationAPIModel || droppedItem is RepositoryFolder<ApplicationAPIModel>)
+                {
+                    ObservableList<ApplicationAPIModel> apiModelsList = new ObservableList<ApplicationAPIModel>();
+                    if (droppedItem is RepositoryFolder<ApplicationAPIModel>)
+                    {
+                        apiModelsList = (droppedItem as RepositoryFolder<ApplicationAPIModel>).GetFolderItems();
+                        apiModelsList = new ObservableList<ApplicationAPIModel>(apiModelsList.Where(a => a.TargetApplicationKey != null && Convert.ToString(a.TargetApplicationKey.ItemName) == mContext.Target.ItemName));
+                    }
+                    else
+                    {
+                        apiModelsList.Add(droppedItem as ApplicationAPIModel);
+                    }
+
+                    AddApiModelActionWizardPage APIModelWizPage = new AddApiModelActionWizardPage(mContext, apiModelsList);
+                    WizardWindow.ShowWizard(APIModelWizPage);
                 }
 
                 if (instance != null)
@@ -206,14 +232,12 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private static Act GenerateRelatedAction(ElementInfo elementInfo)
+        private Act GenerateRelatedAction(ElementInfo elementInfo)
         {
             Act instance;
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
+            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
             {
-                Description = "UIElement Action : " + elementInfo.ItemName,
-                Operation = ActUIElement.eElementAction.NotExist.ToString(),
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
                 ElementValue = "",
@@ -222,26 +246,6 @@ namespace GingerWPF.BusinessFlowsLib
                 ElementGuid = elementInfo.Guid.ToString(),
                 LearnedElementInfo = elementInfo,
             };
-
-            switch (elementInfo.ElementTypeEnum)
-            {
-                case eElementType.Button:
-                case eElementType.CheckBox:
-                case eElementType.RadioButton:
-                case eElementType.HyperLink:
-                case eElementType.Span:
-                case eElementType.Div:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.Click.ToString();
-                    break;
-
-                case eElementType.TextBox:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.SetText.ToString();
-                    break;
-
-                default:
-                    actionConfigurations.Operation = ActUIElement.eElementAction.NotExist.ToString();
-                    break;
-            }
 
             instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
             return instance;

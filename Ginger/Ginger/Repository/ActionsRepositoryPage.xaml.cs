@@ -155,7 +155,7 @@ namespace Ginger.Repository
             if (xActionsGrid.CurrentItem != null)
             {
                 Act a = (Act)xActionsGrid.CurrentItem;
-                ActionEditPage actedit = new ActionEditPage(a, General.RepositoryItemPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
+                ActionEditPage actedit = new ActionEditPage(a, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);             
             }
             else

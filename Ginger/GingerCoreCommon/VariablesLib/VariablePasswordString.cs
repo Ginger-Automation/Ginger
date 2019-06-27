@@ -59,7 +59,10 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Password; } }
-        public override string VariableType() { return "PasswordString"; }
+        public override string VariableType
+        {
+            get { return "PasswordString"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()

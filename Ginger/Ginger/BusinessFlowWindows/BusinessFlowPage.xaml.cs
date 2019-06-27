@@ -56,9 +56,9 @@ namespace Ginger.BusinessFlowFolder
         public bool OKButtonClicked = false;
         private bool saveWasDone = false;
 
-        public General.RepositoryItemPageViewMode mEditMode { get; set; }
+        public General.eRIPageViewMode mEditMode { get; set; }
 
-        public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
+        public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.eRIPageViewMode editMode = General.eRIPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
 
@@ -84,7 +84,7 @@ namespace Ginger.BusinessFlowFolder
             if (!showMiniView)
             {
                 mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode, mContext);
-                if(mEditMode!= General.RepositoryItemPageViewMode.View)
+                if(mEditMode!= General.eRIPageViewMode.View)
                 {
                     mActivitiesPage.grdActivities.ChangeGridView(eAutomatePageViewStyles.Design.ToString());
                     mBusinessFlow.SaveBackup();
@@ -112,7 +112,7 @@ namespace Ginger.BusinessFlowFolder
                 Row5.MinHeight = 0;
                 Row5.Height = new GridLength(0);
             }
-            if(mEditMode == General.RepositoryItemPageViewMode.View)
+            if(mEditMode == General.eRIPageViewMode.View)
             {
                 txtName.IsEnabled = false;
                 txtDescription.IsEnabled = false;
@@ -251,7 +251,7 @@ namespace Ginger.BusinessFlowFolder
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:
+                case General.eRIPageViewMode.Automation:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -261,7 +261,7 @@ namespace Ginger.BusinessFlowFolder
                     winButtons.Add(undoBtn);
                     winButtons.Add(okBtn);
                     break;
-                case General.RepositoryItemPageViewMode.Standalone:
+                case General.eRIPageViewMode.Standalone:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button saveBtn = new Button();
                     saveBtn.Content = "Save";
@@ -272,7 +272,7 @@ namespace Ginger.BusinessFlowFolder
                     winButtons.Add(undoBtnSr);
                     winButtons.Add(saveBtn);
                     break;
-                case General.RepositoryItemPageViewMode.View:
+                case General.eRIPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button okBtnView = new Button();
                     okBtnView.Content = "Ok";

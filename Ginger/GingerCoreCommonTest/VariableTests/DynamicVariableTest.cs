@@ -62,7 +62,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableDynamic variableDynamic = new VariableDynamic();
 
             //Act
-            string varType = variableDynamic.VariableType();
+            string varType = variableDynamic.VariableType;
 
             //Assert            
             Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");

@@ -38,8 +38,12 @@ namespace Amdocs.Ginger.UserControls
 
         public static readonly DependencyProperty ButtonTypeProperty = DependencyProperty.Register("ButtonType", typeof(eButtonType), typeof(ucButton),
                               new FrameworkPropertyMetadata(OnIconPropertyChanged));
+
         public static readonly DependencyProperty ButtonImageTypeProperty = DependencyProperty.Register("ButtonImageType", typeof(eImageType), typeof(ucButton),
-                              new FrameworkPropertyMetadata(OnIconPropertyChanged));        
+                              new FrameworkPropertyMetadata(OnIconPropertyChanged));
+
+        public static readonly DependencyProperty ButtonImageForgroundProperty = DependencyProperty.Register("ButtonImageForground", typeof(SolidColorBrush), typeof(ucButton),
+                      new FrameworkPropertyMetadata(ButtonImageForgroundPropertyChanged));
 
         public eButtonType ButtonType
         {
@@ -53,6 +57,20 @@ namespace Amdocs.Ginger.UserControls
         {
             ucButton ub = (ucButton)d;
             ub.SetButtonLook();
+        }
+
+        public SolidColorBrush ButtonImageForground
+        {
+            get { return xButtonImage.ImageForeground; }
+            set { xButtonImage.ImageForeground = value; }
+        }
+        private static void ButtonImageForgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as ucButton;
+            if (control != null && e.NewValue != null)
+            {
+                control.ButtonImageForground = ((SolidColorBrush)e.NewValue);
+            }
         }
 
         public string ButtonText
@@ -98,11 +116,7 @@ namespace Amdocs.Ginger.UserControls
             set { xButtonImage.Width = value; }
         }
 
-        public SolidColorBrush ButtonImageForground
-        {
-            get { return xButtonImage.ImageForeground; }
-            set { xButtonImage.ImageForeground = value; }
-        }
+
 
         private void SetButtonLook()
         {

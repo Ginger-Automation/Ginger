@@ -19,9 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Run;
+using Amdocs.Ginger.UserControls;
 using Ginger;
+using Ginger.Actions.ActionConversion;
 using Ginger.Agents;
+using Ginger.ALM;
+using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
@@ -38,23 +43,27 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
-using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
+using GingerWPF.WizardLib;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace GingerWPF.BusinessFlowsLib
 {
     /// <summary>
     /// Interaction logic for BusinessFlowPage.xaml
     /// </summary>
-    public partial class NewAutomatePage : Page
+    public partial class NewAutomatePage : Page, INotifyPropertyChanged
     {
         GingerRunner mRunner;
         BusinessFlow mBusinessFlow = null;        
@@ -68,6 +77,54 @@ namespace GingerWPF.BusinessFlowsLib
         MainAddActionsNavigationPage mMainNavigationPage;
 
         GridLength mLastAddActionsColumnWidth = new GridLength(400);
+
+        ObjectId runnerLiteDbId;
+        ObjectId runSetLiteDbId;
+
+        private bool mAutoRunAnalyzer = true;
+        public bool AutoRunAnalyzer
+        {
+            get
+            {
+                return mAutoRunAnalyzer;
+            }
+            set
+            {
+                if (mAutoRunAnalyzer != value)
+                {
+                    mAutoRunAnalyzer = value;
+                    OnPropertyChanged(nameof(AutoRunAnalyzer));
+                }
+            }
+        }
+
+        private bool mAutoGenerateReport = false;
+        public bool AutoGenerateReport
+        {
+            get
+            {
+                return mAutoGenerateReport;
+            }
+            set
+            {
+                if (mAutoGenerateReport != value)
+                {
+                    mAutoGenerateReport = value;
+                    OnPropertyChanged(nameof(AutoGenerateReport));
+                }
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
 
         public NewAutomatePage(BusinessFlow businessFlow)
         {
@@ -90,8 +147,11 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add("Configurations");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
-            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
-            BindEnvsCombo();
+            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+
+            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
+            SetEnvsCombo();
             UpdateContext();
         }
         
@@ -267,6 +327,8 @@ namespace GingerWPF.BusinessFlowsLib
         private void InitAutomatePageRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner.PropertyChanged += MRunner_PropertyChanged;
+
             mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
             // Add Listener so we can do GiveUserFeedback            
@@ -275,6 +337,17 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.RunListeners.Add(automatePageRunnerListener);
 
             mContext.Runner = mRunner;
+        }
+
+        private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
+            {
+                if (!string.IsNullOrEmpty(mRunner.SpecificEnvironmentName))
+                {
+                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mRunner.SpecificEnvironmentName).First());
+                }
+            }
         }
 
         private void LoadBusinessFlowToAutomate(BusinessFlow businessFlowToLoad)
@@ -289,7 +362,6 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                mContext.Activity = mBusinessFlow.CurrentActivity;
                 if (businessFlowToLoad != null)
                 {
                     mBusinessFlow.SaveBackup();
@@ -301,7 +373,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.AttachActivitiesGroupsAndActivities();
                     if (mBfActivitiesPage == null)
                     {
-                        mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext);
+                        mBfActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         //mBfActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         mBfActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mBfActivitiesPage;
@@ -316,7 +388,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                     if (mBfVariabelsPage == null)
                     {
-                        mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext);
+                        mBfVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         //mBfVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xBfVariablesTabFrame.Content = mBfVariabelsPage;
                     }
@@ -366,6 +438,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mBusinessFlow.CurrentActivity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
+            mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+            mContext.Activity.PropertyChanged += Activity_PropertyChanged;
             // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
             UpdateContext();
@@ -434,7 +508,14 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mBusinessFlow != null && mBusinessFlow.CurrentActivity != null)
             {
-                mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.RepositoryItemPageViewMode.Automation);
+                if (mActivityPage == null)
+                {
+                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                }
+                else
+                {
+                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                }
             }
             else
             {
@@ -676,69 +757,65 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void UpdateToNewSolution()
         {
-            //if (mReposiotryPage != null)
-            //{
-            //    mReposiotryPage.RefreshCurrentRepo();
-            //}
-
-            BindEnvsCombo();
+            SetEnvsCombo();
             UpdateAutomatePageRunner();
         }
 
-        private void BindEnvsCombo()
+        private void SetEnvsCombo()
         {
-            xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
+            xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
 
-            if (WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            {
+                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
+                xEnvironmentComboBox.SelectedIndex = 0;
+            }
+            else
             {
                 //select last used environment
-                if (xEnvironmentComboBox.Items != null && xEnvironmentComboBox.Items.Count > 0)
+                if (xEnvironmentComboBox.Items.Count > 1 && WorkSpace.Instance.UserProfile.RecentEnvironment != null && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
                 {
-                    if (xEnvironmentComboBox.Items.Count > 1 && WorkSpace.Instance.UserProfile.RecentEnvironment != null && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
+                    foreach (object env in xEnvironmentComboBox.Items)
                     {
-                        foreach (object env in xEnvironmentComboBox.Items)
+                        if (((ProjEnvironment)env).Guid == WorkSpace.Instance.UserProfile.RecentEnvironment)
                         {
-                            if (((ProjEnvironment)env).Guid == WorkSpace.Instance.UserProfile.RecentEnvironment)
-                            {
-                                xEnvironmentComboBox.SelectedIndex = xEnvironmentComboBox.Items.IndexOf(env);
-                                return;
-                            }
+                            xEnvironmentComboBox.SelectedIndex = xEnvironmentComboBox.Items.IndexOf(env);
+                            return;
                         }
                     }
-
-                    //default selection
-                    xEnvironmentComboBox.SelectedIndex = 0;
                 }
-            }
 
-            //move to top after bind
-            if (xEnvironmentComboBox.Items.Count == 0)
+                //default selection
+                xEnvironmentComboBox.SelectedIndex = 0;
+            }            
+        }
+
+        private void xEnvironmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xEnvironmentComboBox != null)
             {
-                CreateDefaultEnvironment();
-                xEnvironmentComboBox.SelectedItem = xEnvironmentComboBox.Items[0];
+                UpdateUsedEnvironment((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
             }
         }
 
-        public static void CreateDefaultEnvironment()
+        private void UpdateUsedEnvironment(ProjEnvironment env)
         {
-            ObservableList<ProjEnvironment> environments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
-            if (environments.Count == 0)
+            mEnvironment = env;
+            mContext.Environment = env;
+            if (env != null)
             {
-                ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-
-                // Add all solution target app
-                foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
-                {
-                    EnvApplication EA = new EnvApplication();
-                    EA.Name = AP.AppName;
-                    EA.CoreProductName = AP.Core;
-                    EA.CoreVersion = AP.CoreVersion;
-                    EA.Active = true;
-                    newEnv.Applications.Add(EA);
-                }
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
+                mRunner.UseSpecificEnvironment = true;
+                mRunner.ProjEnvironment = env;
+                mRunner.SpecificEnvironmentName = env.Name;
+                WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
+            }
+            else
+            {
+                mRunner.UseSpecificEnvironment = false;
+                mRunner.ProjEnvironment = null;
+                mRunner.SpecificEnvironmentName = string.Empty;
             }
         }
 
@@ -753,29 +830,6 @@ namespace GingerWPF.BusinessFlowsLib
                 });
             });
 
-        }
-
-        private void xEnvironmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xEnvironmentComboBox != null && xEnvironmentComboBox.SelectedItem != null)
-            {
-                UpdateUsedEnvironment((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
-            }
-            else
-            {
-                UpdateUsedEnvironment(null);
-            }
-        }
-
-        private void UpdateUsedEnvironment(ProjEnvironment env)
-        {
-            mEnvironment = env;
-            mContext.Environment = mEnvironment;
-            mRunner.ProjEnvironment = mEnvironment;
-            if (mEnvironment != null)
-            {
-                WorkSpace.Instance.UserProfile.RecentEnvironment = mEnvironment.Guid;
-            }
         }
 
         private void xGoToBFsTreeBtn_Click(object sender, RoutedEventArgs e)
@@ -821,34 +875,33 @@ namespace GingerWPF.BusinessFlowsLib
             mfindAndReplacePageAutomate.ShowAsWindow();
         }
 
-        private void xGenerateReportBtn_Click(object sender, RoutedEventArgs e)
+        private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            AnalyzerPage AP = new AnalyzerPage();
+            AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+            AP.ShowAsWindow();
         }
 
         private void xAutomationRunnerConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            GingerRunnerConfigurationsPage runnerConfigurationsPage = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.AutomatePage, mContext);
+            runnerConfigurationsPage.ShowAsWindow();
         }
 
         private void xResetFlowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
+            mBusinessFlow.Reset();
         }
 
-        private void xRunFlowBtn_Click(object sender, RoutedEventArgs e)
+        private async void xRunFlowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            await RunAutomateTabFlow();
         }
 
         private void xStopRunBtn_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
-        {
-
+            StopAutomateRun();
         }
 
         private void xBusinessFlowItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -869,6 +922,241 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xItemsTabs.SelectedItem = xBfActiVitiesTab;
             }
+        }
+
+        private void xActionsConvertionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);
+        }
+
+        private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (mBusinessFlow != null && mBusinessFlow.ActivitiesGroups != null && mBusinessFlow.ActivitiesGroups.Count > 0)
+            {
+                ALMIntegration.Instance.RefreshAllGroupsFromALM(mBusinessFlow);
+            }
+        }
+
+        private void xExportToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow))
+            {
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                    Reporter.HideStatusMessage();
+                }
+            }
+        }
+
+        private void xExportResultsToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
+            bfs.Add(mBusinessFlow);
+            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
+            ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+        }
+
+        private async Task RunAutomateTabFlow()
+        {
+            if (AutoRunAnalyzer)
+            {
+                //Run Analyzer check if not including any High or Critical issues before execution
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                try
+                {
+                    AnalyzerPage analyzerPage = new AnalyzerPage();
+                    analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+                    await analyzerPage.AnalyzeWithoutUI();
+                    Reporter.HideStatusMessage();
+                    if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                        analyzerPage.ShowAsWindow();
+                        return;
+                    }
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                }
+            }
+            try
+            {
+                //execute preparations
+                SetAutomateTabRunnerForExecution();
+                mRunner.ResetRunnerExecutionDetails();
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+
+                //execute
+                await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                }
+                this.Dispatcher.Invoke(() =>
+                {                    
+                    if (AutoGenerateReport)
+                    {
+                        GenerateReport();
+                    }
+                    //else
+                    //{
+                    //    ShowExecutionSummaryPage();
+                    //}
+                });
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                //enable grids
+                //EnableDisableAutomateTabGrids(true);
+                mRunner.ResetFailedToStartFlagForAgents();
+            }
+        }
+
+        public void SetAutomateTabRunnerForExecution()
+        {
+            mRunner.ProjEnvironment = mEnvironment;
+            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            mRunner.DSList = new ObservableList<DataSourceBase>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mRunner.SolutionAgents = new ObservableList<Agent>(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
+            mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
+        }
+
+        private void xReportMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GenerateReport();
+        }
+
+        private void GenerateReport()
+        {
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                CreateLiteDBReport();
+                return;
+            }
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
+                return;
+            }
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            //create the execution logger files            
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
+
+            if (Directory.Exists(exec_folder))
+            {
+                GingerCore.General.ClearDirectoryContent(exec_folder);
+            }
+            else
+            {
+                Directory.CreateDirectory(exec_folder);
+            }
+
+            if (((ExecutionLoggerManager)mRunner.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
+            {
+                //create the HTML report
+                try
+                {
+                    string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+                    if (reportsResultFolder == string.Empty)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                        return;
+                    }
+                    else
+                    {
+                        foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
+                        {
+                            string fileName = Path.GetFileName(txt_file);
+                            if (fileName.Contains(".html"))
+                            {
+                                System.Diagnostics.Process.Start(reportsResultFolder);
+                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
+            }
+        }
+
+        private void CreateLiteDBReport()
+        {
+            if (runSetLiteDbId != null)
+            {
+                var selectedGuid = runSetLiteDbId;
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+            }
+        }
+
+        private void xSummaryPageMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
+            w.ShowAsWindow();
+        }
+
+        private void xAutoAnalyzeConfigMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AutoRunAnalyzer = !AutoRunAnalyzer;
+        }
+
+        private void xAutoReportConfigMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            AutoGenerateReport = !AutoGenerateReport;
+        }
+
+        private async void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                //EnableDisableAutomateTabGrids(true);
+            }
+        }
+    }
+
+    public class ActiveImageTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((bool)value == false)
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.InActive;
+            }
+            else
+            {
+                return Amdocs.Ginger.Common.Enums.eImageType.Active;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

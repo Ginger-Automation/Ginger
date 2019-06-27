@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
-                AutomatePage.CreateDefaultEnvironment();
+                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
 
                 //show success message to user

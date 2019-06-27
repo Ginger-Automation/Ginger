@@ -335,6 +335,38 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Highlighted">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource $HighlightColor_Purple}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{DynamicResource $HighlightColor_Purple}" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource $HighlightColor_Purple}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_UserMessage">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
@@ -1171,6 +1203,28 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ListBox}" x:Key="$ListBoxTransparntSelectedItem">
+        <Style.Resources>
+            <!-- Background of selected item when focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                         Color="Transparent"/>
+            <!-- Background of selected item when not focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" 
+                         Color="Transparent" />
+        </Style.Resources>
+    </Style>
+
+    <Style TargetType="{x:Type ListView}" x:Key="$ListViewTransparntSelectedItem">
+        <Style.Resources>
+            <!-- Background of selected item when focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" 
+                         Color="Transparent"/>
+            <!-- Background of selected item when not focussed -->
+            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" 
+                         Color="Transparent" />
+        </Style.Resources>
     </Style>
 
     <Style TargetType="Button" x:Key="$WindowButtonStyle">

@@ -1,292 +1,36 @@
-    <Page x:Class="Ginger.Agents.ApplicationAgentsMapPage"
+<Page x:Class="Ginger.Agents.ApplicationAgentsMapPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:local="clr-namespace:Ginger.Agents"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="600" ShowsNavigationUI="False"
 	Title="ApplicationAgentsMapPage">
 
-    <Grid>
-        <ListBox x:Name="AppAgentsListBox" Background="Transparent" MouseDoubleClick="AppAgentsListBox_MouseDoubleClick" Style="{StaticResource @ListBoxTransparntSelectedItem}" VerticalAlignment="Center" BorderThickness="0">            
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Height="21.5" VerticalAlignment="Center">
-                        <Label x:Name="AppNameLbl" Content="{Binding Path=AppName}" ToolTip="{Binding Path=AppName}" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Width="70" FontSize="10.5"/>
-                        
-                        <Image Source="{StaticResource @RightArrow_16x16.png}" Height="16" Width="16" ToolTip="Mapped to Agent">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Style.Setters>
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </Style.Setters>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <Image Source="{StaticResource @RightArrowRed_16x16}" Height="16" Width="16" ToolTip="Mapping to Agent is Missing">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Style.Setters>
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </Style.Setters>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Image.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
+    <Page.Resources>
+        <local:AgentForgroundTypeConverter x:Key="AgentForgroundTypeConverterKey"></local:AgentForgroundTypeConverter>
+        <local:AgentStatusColorTypeConverter x:Key="AgentStatusColorTypeConverterKey"></local:AgentStatusColorTypeConverter>
+        <local:AgentVisibilityTypeConverter x:Key="AgentVisibilityTypeConverterKey"></local:AgentVisibilityTypeConverter>
+        <local:AgentStatusTooltipConverter x:Key="AgentStatusTooltipConverterKey"></local:AgentStatusTooltipConverter>
+    </Page.Resources>
+    
+    <ListBox x:Name="xAppAgentsListBox" Background="Transparent" Style="{DynamicResource $ListBoxTransparntSelectedItem}" VerticalAlignment="Center" BorderThickness="0">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Horizontal" Height="21.5" VerticalAlignment="Center">
+                    <TextBlock x:Name="xAppNameTextBlock" Text="{Binding Path=AppName}" ToolTip="{Binding Path=AppName}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontWeight="Normal" Width="70" FontSize="12" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" Margin="0,2,0,0"/>
 
-                        <Label Content="{Binding Path=AgentName}" ToolTip="{Binding Path=AgentName}" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Width="70" FontSize="10.5"/>
-                                             
-                        <Button x:Name="ConfigAgentButton" Click="ConfigAgentButton_Click" Style="{StaticResource @InputImageButtonStyle_NoBorder}" ToolTip="Change Agent Mapping" VerticalAlignment="Center">
-                            <Image Source="{StaticResource @Config3_16x16.png}" Height="16" Width="16"  ></Image>
-                        </Button>
-                        
-                        <Button x:Name="StartAgentButton" Click="StartAgentButton_Click" ToolTip="Agent is OFF, Click to Start It">
-                            <Image Source="{StaticResource @ToggleOFF_16x16}"></Image>
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-                                    <Setter Property="FontFamily" Value="Open Sans" />
-                                    <!--<Setter Property="Height" Value="25" />-->
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="Transparent" BorderThickness="1">
-                                                    <ContentPresenter 
-                                TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RecognizesAccessKey="True"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="true">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                        <Button x:Name="LoadingAgentButton" ToolTip="Agent is Loading..." Click="LoadingAgentButton_Click">
-                            <Image Source="{StaticResource @ToggleMiddle_16x16}" ></Image>
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-                                    <Setter Property="FontFamily" Value="Open Sans" />
-                                    
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="Transparent" BorderThickness="1">
-                                                    <ContentPresenter 
-                                TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RecognizesAccessKey="True"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="true">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                        <Button x:Name="CloseAgentButton" Click="CloseAgentButton_Click" ToolTip="Agent in ON, Click to Stop It">
-                            <Image Source="{StaticResource @ToggleON_16x16}" ></Image>
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-                                    <Setter Property="FontFamily" Value="Open Sans" />
-                                    <!--<Setter Property="Height" Value="25" />-->
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="Transparent" BorderThickness="1">
-                                                    <ContentPresenter 
-                                TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RecognizesAccessKey="True"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="true">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
-                                            <Setter Property="Button.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
-                                            <Setter Property="Button.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                    <UserControls:ImageMakerControl ImageType="ArrowRight" SetAsFontImageWithSize="12" Width="12" Height="12" ToolTip="Mapped to..." Foreground="{Binding Path=Agent, Converter={StaticResource AgentForgroundTypeConverterKey}}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,2,0"/>
 
-                        <Button x:Name="ExplorerAgentButton" Click="ExplorerAgentButton_Click" ToolTip="Open Window Explorer" VerticalAlignment="Center" >
-                            <Image Source="{StaticResource @Target_24x24.png}" Height="16" Width="16"></Image>                           
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-                                    <Setter Property="FontFamily" Value="Open Sans" />
-                                    <Setter Property="Height" Value="25" />
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="Template">                                        
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="Transparent" BorderThickness="1">
-                                                    <ContentPresenter 
-                                TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RecognizesAccessKey="True"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="true">
-                                                        <Setter Property="Foreground" Value="White" />
-                                                        <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>                                       
-                                        <DataTrigger Binding="{Binding Path=Agent}" Value="{x:Null}">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.IsWindowExplorerSupportReady}" Value="True">
-                                            <Setter Property="Image.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.IsWindowExplorerSupportReady}" Value="False">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="NotStarted">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="FailedToStart">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Starting">
-                                            <Setter Property="Image.Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Ready">
-                                            <Setter Property="Image.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Running">
-                                            <Setter Property="Image.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Agent.Status}" Value="Completed">
-                                            <Setter Property="Image.Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                      
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                    <ComboBox x:Name="xAgentNameComboBox" ContextMenu="{x:Null}" ItemsSource="{Binding Path=PossibleAgents, Mode=OneWay}" SelectedValue="{Binding Path=Agent}" DisplayMemberPath="Name" ToolTip="{Binding Path=AgentName}" Width="100" FontSize="12" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="2,0,0,0" Visibility="{Binding Path=Agent, Converter={StaticResource AgentVisibilityTypeConverterKey}}" DropDownOpened="XAgentNameComboBox_DropDownOpened" VerticalAlignment="Top"/>
 
-                    </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            
-        </ListBox>
-    </Grid>
+                    <UserControls:ucButton x:Name="xStartCloseAgentBtn" ButtonType="ImageButton" HorizontalAlignment="Right" AutomationProperties.AutomationId="AID_StartCloseAgentBtn" ButtonFontImageSize="14" ButtonImageType="Power" Visibility="{Binding Path=Agent, Converter={StaticResource AgentVisibilityTypeConverterKey}}" ToolTip="{Binding Path=Agent.Status, Converter={StaticResource AgentStatusTooltipConverterKey}}" ButtonImageForground="{Binding Path=Agent.Status, Converter={StaticResource AgentStatusColorTypeConverterKey}}" Click="xStartCloseAgentBtn_Click" IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=Tag}" Margin="0,0,0,0"/>
+                </StackPanel>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+
+    </ListBox>
+
 </Page>

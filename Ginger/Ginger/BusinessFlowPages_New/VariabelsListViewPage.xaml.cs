@@ -7,6 +7,7 @@ using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
@@ -21,9 +22,11 @@ namespace Ginger.BusinessFlowPages
     public partial class VariabelsListViewPage : Page
     {
         RepositoryItemBase mVariabelsParent;
+        eVariablesLevel mVariablesLevel;
         Context mContext;
+        General.eRIPageViewMode mPageViewMode;
 
-        VariablesListHelper mVariabelListItemInfo;
+        VariablesListHelper mVariabelListHelper;
         UcListView mVariabelsListView;
         VariableEditPage mVariabelEditPage;
         VariableBase mVarBeenEdit;
@@ -33,12 +36,14 @@ namespace Ginger.BusinessFlowPages
             get { return mVariabelsListView; }
         }
 
-        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context)
+        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mVariabelsParent = variabelsParent;
+            mVariablesLevel = GetVariablesLevel();
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             SetListView();
             ShowHideEditPage(null);
@@ -64,12 +69,34 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
+        private eVariablesLevel GetVariablesLevel()
+        {
+            if (mVariabelsParent is Solution)
+            {
+                return eVariablesLevel.Solution;
+            }
+            else if (mVariabelsParent is BusinessFlow)
+            {
+                return eVariablesLevel.BusinessFlow;
+            }
+            else if (mVariabelsParent is Activity)
+            {
+                return eVariablesLevel.Activity;
+            }
+            else
+            {
+                return eVariablesLevel.Activity; 
+            }
+        }
+
         private void ShowHideEditPage(VariableBase variabelToEdit)
         {
             if (variabelToEdit != null)
             {
                 xBackToListPnl.Visibility = Visibility.Visible;
                 mVarBeenEdit = variabelToEdit;
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, mVarBeenEdit, nameof(VariableBase.Name));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
                 mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
                 if (mVariabelsParent is Solution)
                 {
@@ -100,9 +127,9 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
             mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListItemInfo = new VariablesListHelper(mContext);
-            mVariabelListItemInfo.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
-            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListItemInfo);
+            mVariabelListHelper = new VariablesListHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
+            mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
+            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
             mVariabelsListView.DataSourceList = GetVariablesList();
 
@@ -135,12 +162,18 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsParent != parent)
             {
                 mVariabelsParent = parent;
+                mVariablesLevel = GetVariablesLevel();
                 if (mVariabelsParent != null)
                 {
+                    mVariabelListHelper.VariablesParent = mVariabelsParent;
+                    mVariabelListHelper.VariablesLevel = mVariablesLevel;
+                    mVariabelListHelper.Variables = GetVariablesList();
                     mVariabelsListView.DataSourceList = GetVariablesList();
                 }
                 else
                 {
+                    mVariabelListHelper.VariablesParent = null;
+                    mVariabelListHelper.Variables = null;
                     mVariabelsListView.DataSourceList = null;
                 }
                 ShowHideEditPage(null);
@@ -177,7 +210,9 @@ namespace Ginger.BusinessFlowPages
         private void xGoToList_Click(object sender, RoutedEventArgs e)
         {
             if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
+            {
                 UpdateVariableNameChange(mVarBeenEdit);
+            }
 
             ShowHideEditPage(null);
         }

@@ -93,7 +93,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mBusinessFlowViewPage == null)
                 {
-                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.RepositoryItemPageViewMode.View);
+                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.View);
                 }
                 return mBusinessFlowViewPage;
             }            
@@ -118,9 +118,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 AddSourceControlOptions(mContextMenu);
 
-                MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, "@ALM_16x16.png");
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, "@CSV_16x16.png");
+                MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
                     TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to Java", ExportToJava, null, "");
             }

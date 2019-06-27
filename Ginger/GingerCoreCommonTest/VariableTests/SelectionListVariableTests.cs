@@ -61,7 +61,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSelectionList variableSelectionList = new VariableSelectionList();
 
             //Act
-            string varType = variableSelectionList.VariableType();
+            string varType = variableSelectionList.VariableType;
 
             //Assert
             Assert.AreEqual("Selection List", varType, "Selection List Variable Type");

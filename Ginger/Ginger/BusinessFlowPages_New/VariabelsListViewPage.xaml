@@ -17,11 +17,10 @@
                     <GingerCore:ucTextDicResource Text="Back to [Variables] List"></GingerCore:ucTextDicResource>
                 </UserControls:ucButton.ToolTip>
             </UserControls:ucButton>
-            <Label Style="{StaticResource $HeaderStyle}" VerticalAlignment="Center">
-                <Label.Content>
-                    <GingerCore:ucTextDicResource Text="Back to [Variables] List"></GingerCore:ucTextDicResource>
-                </Label.Content>
-            </Label>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                <Label x:Name="xSelectedItemTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"  />
+            </StackPanel>
         </StackPanel>
 
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>

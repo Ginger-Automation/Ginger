@@ -369,7 +369,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Close);
                     break;
                 case eImageType.Reset:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.RotateLeft);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.RotateRight);
+                    break;
+                case eImageType.Undo:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Undo);
+                    break;
+                case eImageType.Simulate:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Android);
                     break;
                 case eImageType.Delete:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
@@ -400,6 +406,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Automate:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    break;
+                case eImageType.Convert:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
                     break;
                 case eImageType.ParallelExecution:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
@@ -686,7 +695,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Output:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
-
+                case eImageType.Input:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignIn);
+                    break;
                 case eImageType.Spy:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);
                     break;
@@ -751,6 +762,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Paragraph);
                     break;
 
+                case eImageType.Graph:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.LineChart);
+                    break;
+
                 case eImageType.BullsEye:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Bullseye);
                     break;
@@ -776,6 +791,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Mandatory:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle);
+                    break;
+                case eImageType.ALM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
+                    break;
+                case eImageType.CSV:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
                     break;
                 #endregion
 

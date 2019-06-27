@@ -14,6 +14,7 @@ using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ActionsLibraryNavPage mActionsLibraryNavPage = null;
         LiveSpyNavPage mLiveSpyNavPage = null;
         WindowsExplorerNavPage mWindowsExplorerNavPage = null;
+        APINavPage mAPINavPage = null;
+        private bool applicationModelView;
 
         public MainAddActionsNavigationPage(Context context)
         {
@@ -43,23 +46,24 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
             SetRecordButtonAccessebility();
+            xApplicationModelsPnl.Visibility = Visibility.Collapsed;
         }
 
         private void SetRecordButtonAccessebility()
         {
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
-                xRecordItemBtn.IsEnabled = true;
+                xRecordItemBtn.Visibility = Visibility.Visible;
             }
             else
             {
-                xRecordItemBtn.IsEnabled = false;
+                xRecordItemBtn.Visibility = Visibility.Collapsed;
             }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(Activity)))
+            if (e != null && e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Agent))
             {
                 SetRecordButtonAccessebility();
                 if (e.PropertyName == nameof(BusinessFlow))
@@ -73,15 +77,27 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if ((sender as Frame).Content == null)
             {
-                (sender as Frame).Visibility = Visibility.Collapsed;
-                xNavigationBarPnl.Visibility = Visibility.Collapsed;
-                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                if(applicationModelView)
+                {
+                    (sender as Frame).Visibility = Visibility.Collapsed;
+                    xNavigationBarPnl.Visibility = Visibility.Visible;
+                    xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+                    xApplicationModelsPnl.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    (sender as Frame).Visibility = Visibility.Collapsed;
+                    xNavigationBarPnl.Visibility = Visibility.Collapsed;
+                    xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                    xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
                 (sender as Frame).Visibility = Visibility.Visible;
                 xNavigationBarPnl.Visibility = Visibility.Visible;
                 xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+                xApplicationModelsPnl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -96,10 +112,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             if(mPOMNavPage == null)
             {
-                mPOMNavPage = new POMNavPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+                mPOMNavPage = new POMNavPage(mContext);
             }
             LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
@@ -141,17 +156,40 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             LoadActionFrame(mWindowsExplorerNavPage, "Windows Explorer", eImageType.Search);
         }
 
+        private void XAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(mAPINavPage == null)
+            {
+                mAPINavPage = new APINavPage(mContext);
+            }
+            LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
+        }
+
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
-            LoadActionFrame(null);
+            if(xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
+            {
+                applicationModelView = true;
+                LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
+            }
+            else if(xSelectedItemFrame.Content is null)
+            {
+                applicationModelView = false;
+                xNavigationBarPnl.Visibility = Visibility.Collapsed;
+                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+                xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+            }
+            else
+                LoadActionFrame(null);
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
-        {            
+        {
             xSelectedItemFrame.Content = navigationPage;
 
-            if (navigationPage != null)
+            if (navigationPage != null || titleImage is eImageType.ApplicationModel)
             {
+                xNavigationBarPnl.Visibility = Visibility.Visible;
                 xSelectedItemTitlePnl.Visibility = Visibility.Visible;
                 xSelectedItemTitleImage.ImageType = titleImage;
                 xSelectedItemTitleText.Content = titleText;
@@ -160,6 +198,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
             }
-        }        
+        }
+
+        private void XApplicationModelsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xApplicationModelsPnl.Visibility = Visibility.Visible;
+            xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
+
+            LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
+        }
     }
 }

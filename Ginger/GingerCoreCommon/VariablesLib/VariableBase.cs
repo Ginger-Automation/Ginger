@@ -179,7 +179,7 @@ namespace GingerCore.Variables
             }
         }
         public abstract string GetFormula();
-        public abstract string VariableType();
+        public abstract string VariableType { get; }
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
         public virtual eImageType Image { get { return eImageType.Variable; } }
@@ -396,8 +396,20 @@ namespace GingerCore.Variables
             }
         }
 
+        string mLinkedVariableName;
         [IsSerializedForLocalRepository]
-        public string LinkedVariableName { get; set; }
+        public string LinkedVariableName
+        {
+            get
+            {
+                return mLinkedVariableName;
+            }
+            set
+            {
+                mLinkedVariableName = value;
+                OnPropertyChanged(nameof(LinkedVariableName));
+            }
+        }
 
         public override string ItemName
         {

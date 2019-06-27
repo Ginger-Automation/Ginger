@@ -60,7 +60,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableString variableString = new VariableString();
 
             //Act
-            string varType = variableString.VariableType();
+            string varType = variableString.VariableType;
 
             //Assert            
             Assert.AreEqual("String", varType, "String Variable Type");
@@ -188,7 +188,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariablePasswordString variablePasswordString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableType();
+            string varType = variablePasswordString.VariableType;
 
             //Assert            
             Assert.AreEqual("PasswordString", varType, "Password String Type");

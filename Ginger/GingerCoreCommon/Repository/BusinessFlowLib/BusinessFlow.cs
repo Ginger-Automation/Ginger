@@ -364,12 +364,12 @@ namespace GingerCore
         {
             VariableBase var = null;
             if (SolutionVariables != null)
-                var = (from v1 in SolutionVariables where v1.Name == varName && v1.VariableType() == varType select v1).FirstOrDefault();
+                var = (from v1 in SolutionVariables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
             if (var == null)
             {
-                var = (from v1 in Variables where v1.Name == varName && v1.VariableType() == varType select v1).FirstOrDefault();
+                var = (from v1 in Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
                 if (var == null && CurrentActivity != null)
-                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName && v1.VariableType() == varType select v1).FirstOrDefault();
+                    var = (from v1 in CurrentActivity.Variables where v1.Name == varName && v1.VariableType == varType select v1).FirstOrDefault();
             }
 
             //check if linked variable was used and return it instead of original one if yes
@@ -503,9 +503,20 @@ namespace GingerCore
         }
 
 
-
+        bool mEnableActivitiesVariablesDependenciesControl;
         [IsSerializedForLocalRepository]
-        public bool EnableActivitiesVariablesDependenciesControl { get; set; }
+        public bool EnableActivitiesVariablesDependenciesControl
+        {
+            get
+            {
+                return mEnableActivitiesVariablesDependenciesControl;
+            }
+            set
+            {
+                mEnableActivitiesVariablesDependenciesControl = value;
+                OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+            }
+        }
 
         /// <summary>
         /// Function will add the act to the current Activity

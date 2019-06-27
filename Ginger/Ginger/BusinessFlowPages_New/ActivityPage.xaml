@@ -20,7 +20,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"></ColumnDefinition>
             <ColumnDefinition Width="200*"></ColumnDefinition>
-            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="550"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
@@ -30,22 +30,30 @@
         
         <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
             <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                <usercontrols:ucButton x:Name="xSaveBtn" ButtonType="CircleImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="SharedRepositoryItem" >
+                <usercontrols:ucButton x:Name="xResetBtn" ButtonType="CircleImageButton" Click="xResetMenuItem_Click"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Reset" >
                     <usercontrols:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository"/>
+                        <GingerCore:ucTextDicResource Text="Reset [Activity]"/>
                     </usercontrols:ucButton.ToolTip>
                 </usercontrols:ucButton>
-                <Menu x:Name="xOtherOperationsMenu" Background="Transparent">
+                <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
                     <MenuItem Cursor="Hand">
                         <MenuItem.Header>
-                            <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16" Width="16" Height="30" Margin="5,5,5,5"/>
+                            <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Header>
+                        <MenuItem x:Name="xResetRestMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetRestMenuItem_Click">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Reset execution details from this [Activity]"/>
+                            </MenuItem.Header>
+                        </MenuItem>
                         <MenuItem x:Name="xUploadToShareRepoMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xUploadToShareRepoMenuItem_Click">
-                            <MenuItem.Header >
-                                <DockPanel>
-                                    <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" Width="16" HorizontalAlignment="Left" Margin="0 5 5 5"/>
-                                    <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" FontSize="16" Margin="5 5 0 0"/>
-                                </DockPanel>
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" />
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" />
                             </MenuItem.Header>
                         </MenuItem>
                     </MenuItem>
@@ -53,7 +61,8 @@
             </StackPanel>
             <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
             <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run"  ButtonImageType="Run"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                     <usercontrols:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Run [Activity]"/>
                     </usercontrols:ucButton.ToolTip>

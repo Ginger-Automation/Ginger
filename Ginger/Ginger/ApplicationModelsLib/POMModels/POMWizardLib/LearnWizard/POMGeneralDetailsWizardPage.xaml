@@ -52,8 +52,8 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"  Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Right">
-                <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xBrowseImageLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                <UserControls:ucButton x:Name="xTakeScreenShotLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xTakeScreenShotLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xBrowseImageLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                <UserControls:ucButton x:Name="xTakeScreenShotLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xTakeScreenShotLoadButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
             </StackPanel>
 
             <Frame x:Name="xScreenShotFrame" Grid.Row="2" NavigationUIVisibility="Hidden"/>

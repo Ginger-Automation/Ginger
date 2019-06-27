@@ -39,7 +39,7 @@ namespace Ginger
     {
         static HelpWindow mGingerHelpWindow = null;
 
-        public enum RepositoryItemPageViewMode
+        public enum eRIPageViewMode
         {
             Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow
             Standalone = 1, //Allow edit with Save
@@ -47,7 +47,6 @@ namespace Ginger
             Child = 3, //Item opened for edit without save
             ChildWithSave = 4, //Item opened as standalone but in save allows to save it original parent
             View = 5 //item should be open for read only
-
         }
 
         public static bool isDesignMode()

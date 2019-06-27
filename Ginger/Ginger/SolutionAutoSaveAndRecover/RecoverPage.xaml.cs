@@ -173,7 +173,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 RecoveredItem selectedItem = (RecoveredItem)xRecoveredItemsGrid.Grid.SelectedItem;
                 if (selectedItem.RecoveredItemObject is BusinessFlow)
                 {
-                    BusinessFlowPage w = new BusinessFlowPage((BusinessFlow)selectedItem.RecoveredItemObject, false, General.RepositoryItemPageViewMode.View);
+                    BusinessFlowPage w = new BusinessFlowPage((BusinessFlow)selectedItem.RecoveredItemObject, false, General.eRIPageViewMode.View);
                     w.Width = 1000;
                     w.Height = 800;
                     w.ShowAsWindow();

@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowFolder
         BusinessFlow mBusinessFlow;
         Context mContext;
 
-        public ActivitiesPage(BusinessFlow businessFlow, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry, Context context = null)
+        public ActivitiesPage(BusinessFlow businessFlow, General.eRIPageViewMode editMode = General.eRIPageViewMode.SharedReposiotry, Context context = null)
         {
             InitializeComponent();
             
@@ -61,7 +61,7 @@ namespace Ginger.BusinessFlowFolder
                 mContext = new Context();
             }
             UpdateBusinessFlow(businessFlow);
-            if (editMode == General.RepositoryItemPageViewMode.Automation)
+            if (editMode == General.eRIPageViewMode.Automation)
             {                
                 grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
@@ -72,7 +72,7 @@ namespace Ginger.BusinessFlowFolder
             SetActivitiesGridView();
             RefreshActivitiesGrid();
             SetGridRowStyle();
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 grdActivities.ShowToolsBar = Visibility.Collapsed;
                 grdActivities.ToolsTray.Visibility = Visibility.Collapsed;

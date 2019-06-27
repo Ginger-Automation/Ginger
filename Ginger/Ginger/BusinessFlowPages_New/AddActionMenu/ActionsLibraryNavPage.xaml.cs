@@ -49,7 +49,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// </summary>
     public partial class ActionsLibraryNavPage : Page
     {
-        GenericWindow _pageGenericWin = null;
+        //GenericWindow pageGenericWin = null;
         ObservableList<IAct> mActionsList;
         // bool IsPlugInAvailable = false;
         Context mContext;
@@ -59,16 +59,30 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
-            SetActionsGridsView();
-            LoadGridData();
-            LoadPluginsActions();
 
+            mContext.PropertyChanged += MContext_PropertyChanged;
+
+            SetActionsGridsView();
+
+            FillActionsList();
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
+        }
 
+        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            {
+                FillActionsList();
+            }
+        }
 
+        private void FillActionsList()
+        {
+            LoadGridData();
+            LoadPluginsActions();
         }
 
         private void LoadPluginsActions()
@@ -225,7 +239,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //dataTemp.VisualTree = listItemFac;
             //xActionsListView.List.ItemTemplate = dataTemp;
 
-            xActionsListView.SetDefaultListDataTemplate(new ActionsListHelper(mContext));
+            xActionsListView.SetDefaultListDataTemplate(new ActionsListHelper(mContext, General.eRIPageViewMode.Automation));
 
             xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
             //xActionsListView.List.ItemsSource = mActivity.Acts;
@@ -288,17 +302,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
             {
-                if (((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage != null)
+                Act selectedAction = ((ucGrid)ActionsTabs.SelectedContent).CurrentItem as Act;
+
+                if (selectedAction.AddActionWizardPage != null)
                 {
-                    _pageGenericWin.Close();
-                    string classname = ((Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem)).AddActionWizardPage;
+                    //_pageGenericWin.Close();
+                    string classname = selectedAction.AddActionWizardPage;
                     Type t = Assembly.GetExecutingAssembly().GetType(classname);
                     if (t == null)
                     {
                         throw new Exception("Action edit page not found - " + classname);
                     }
 
-                    WizardBase wizard = (GingerWPF.WizardLib.WizardBase)Activator.CreateInstance(t);
+                    WizardBase wizard = (WizardBase)Activator.CreateInstance(t, mContext);
                     WizardWindow.ShowWizard(wizard);
                 }
                 else
@@ -307,8 +323,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                     if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
                     {
-                        Act selectedAction = (Act)(((ucGrid)ActionsTabs.SelectedContent).CurrentItem);
-                        aNew = (Act)selectedAction.CreateCopy();
+                        aNew = selectedAction.CreateCopy() as Act;
                         // copy param ex info
                         for (int i = 0; i < selectedAction.InputValues.Count; i++)
                         {
@@ -324,9 +339,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                     //adding the new act after the selected action in the grid  
                     //TODO: Add should be after the last, Insert should be in the middle...
-
-
-
                     int selectedActIndex = -1;
                     if (mActionsList.CurrentItem != null)
                     {

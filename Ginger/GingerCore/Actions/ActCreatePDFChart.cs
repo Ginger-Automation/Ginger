@@ -16,23 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.Properties;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using PdfSharp;
+using PdfSharp.Charting;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using PdfSharp.Drawing;
-using PdfSharp.Charting;
-using System.IO;
-using PdfSharp.Pdf;
-using PdfSharp;
 using System.Diagnostics;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
 
+using System.IO;
+using System.Linq;
 namespace GingerCore.Actions
 {
     public class ActCreatePDFChart : ActWithoutDriver

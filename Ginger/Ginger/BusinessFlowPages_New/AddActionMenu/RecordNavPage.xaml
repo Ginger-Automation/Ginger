@@ -26,7 +26,7 @@
 
         <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Run" 
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="10" 
-                               ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                               ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
 
         <Label x:Name="xStartAgentMessage"  Grid.Row="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
        
