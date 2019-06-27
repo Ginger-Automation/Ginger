@@ -173,7 +173,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             //Assert                        
             Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
-            Assert.AreEqual("button was clicked - ByID=button1", actUIElement.ExInfo, "ExInfo");
+            Assert.AreEqual("UI Element Located using: ByID=button1", actUIElement.ExInfo, "ExInfo");
         }
 
 
