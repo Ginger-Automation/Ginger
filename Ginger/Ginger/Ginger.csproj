@@ -618,13 +618,16 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml.cs">
+      <DependentUpon>LiveSpyPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml.cs">
       <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\ObjectBindingHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentMappingPage.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMBindingObjectHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
@@ -3057,6 +3060,10 @@
     <Page Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml">
       <SubType>Designer</SubType>

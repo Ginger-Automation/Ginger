@@ -91,24 +91,10 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
             xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mContext);
-            mContext.PropertyChanged += Context_PropertyChanged;
             BindEnvsCombo();
             UpdateContext();
         }
-
-        /// <summary>
-        /// This is the context changed handler
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e != null && e.PropertyName == nameof(Activity))
-            {
-                UpdateContext();
-            }
-        }
-
+        
         private void UpdateContext()
         {
             if(mContext != null)
@@ -210,8 +196,7 @@ namespace GingerWPF.BusinessFlowsLib
                 appAgent.PropertyChanged += AppAgent_PropertyChanged;
             }
         }
-
-
+        
         //private void GingerRunner_GingerRunnerEvent(GingerRunnerEventArgs EventArgs)
         //{
         //    switch (EventArgs.EventType)
@@ -383,6 +368,7 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity = (Activity)mBfActivitiesPage.ListView.CurrentItem;
             // mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
             SetActivityEditPage();
+            UpdateContext();
         }
 
         //private void BfVariables_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

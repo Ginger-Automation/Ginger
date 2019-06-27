@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.BusinessFlowPages_New
 {
-    public class ObjectBindingHelper
+    public class AgentMappingPage
     {
         /// <summary>
         /// Gets/Sets ObjectWindowPage
@@ -25,7 +25,7 @@ namespace Ginger.BusinessFlowPages_New
         /// </summary>
         /// <param name="context"></param>
         /// <param name="agent"></param>
-        public ObjectBindingHelper(Agent agent, object winPage)
+        public AgentMappingPage(Agent agent, object winPage)
         {
             ObjectAgent = agent;
             ObjectWindowPage = winPage;

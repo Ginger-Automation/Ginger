@@ -32,9 +32,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         SharedRepositoryNavPage mSharedRepositoryNavPage = null;
         POMNavPage mPOMNavPage = null;
         ActionsLibraryNavPage mActionsLibraryNavPage = null;
-        List<ObjectBindingHelper> mLiveSpyNavPages = null;
+        LiveSpyNavPage mLiveSpyNavPage = null;
         WindowsExplorerNavPage mWindowsExplorerNavPage = null;
-        bool LiveSpyPageLoaded = false;
 
         public MainAddActionsNavigationPage(Context context)
         {
@@ -48,8 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetRecordButtonAccessebility()
         {
-            Agent mAgent = AgentHelper.GetDriverAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-            if (mAgent != null && (mAgent.IsSupportRecording() || mAgent.Driver is IRecord))
+            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
                 xRecordItemBtn.IsEnabled = true;
             }
@@ -68,12 +66,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     LoadActionFrame(null); 
                 }                
-            }
-
-            if (e.PropertyName == nameof(Agent) && LiveSpyPageLoaded)
-            {
-                LiveSpyNavPage liveSpyNavPage = GetLiveSpyPage();
-                LoadActionFrame(liveSpyNavPage, "Live Spy", eImageType.Spy);
             }
         }
 
@@ -133,37 +125,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavSpy_Click(object sender, RoutedEventArgs e)
         {
-            LiveSpyPageLoaded = true;
-            LiveSpyNavPage liveSpyNavPage = GetLiveSpyPage();
-            LoadActionFrame(liveSpyNavPage, "Live Spy", eImageType.Spy);
-        }
-
-        /// <summary>
-        /// This method is used to get the new LiveSpyPage based on Context and Agent
-        /// </summary>
-        /// <returns></returns>
-        private LiveSpyNavPage GetLiveSpyPage()
-        {
-            LiveSpyNavPage liveSpyNavPage = null;
-            if (mLiveSpyNavPages != null && mLiveSpyNavPages.Count > 0)
+            if (mLiveSpyNavPage == null)
             {
-                ObjectBindingHelper objHelper = mLiveSpyNavPages.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType && x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
-                if (objHelper != null && objHelper.ObjectWindowPage != null)
-                {
-                    liveSpyNavPage = (LiveSpyNavPage)objHelper.ObjectWindowPage;
-                }
+                mLiveSpyNavPage = new LiveSpyNavPage(mContext); 
             }
-
-            if (liveSpyNavPage == null)
-            {
-                liveSpyNavPage = new LiveSpyNavPage(mContext);
-                if(mLiveSpyNavPages == null)
-                {
-                    mLiveSpyNavPages = new List<ObjectBindingHelper>();
-                }
-                mLiveSpyNavPages.Add(new ObjectBindingHelper(mContext.Agent, liveSpyNavPage));
-            }
-            return liveSpyNavPage;
+            LoadActionFrame(mLiveSpyNavPage, "Live Spy", eImageType.Spy);
         }
 
         private void XNavWinExp_Click(object sender, RoutedEventArgs e)
@@ -178,7 +144,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
             LoadActionFrame(null);
-            LiveSpyPageLoaded = false;
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)

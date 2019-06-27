@@ -36,7 +36,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
-        List<ObjectBindingHelper> mWinExplorerPageList = null;
+        List<AgentMappingPage> mWinExplorerPageList = null;
         WindowExplorerPage CurrentLoadedPage = null;
 
         public WindowsExplorerNavPage(Context context)
@@ -102,7 +102,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             bool isLoaded = false;
             if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
             {
-                ObjectBindingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType && 
+                AgentMappingPage objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType && 
                                                                                 x.ObjectAgent.ItemName == context.Agent.ItemName).FirstOrDefault();
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
@@ -120,9 +120,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
                     if (mWinExplorerPageList == null)
                     {
-                        mWinExplorerPageList = new List<ObjectBindingHelper>();
+                        mWinExplorerPageList = new List<AgentMappingPage>();
                     }
-                    mWinExplorerPageList.Add(new ObjectBindingHelper(context.Agent, CurrentLoadedPage)); 
+                    mWinExplorerPageList.Add(new AgentMappingPage(context.Agent, CurrentLoadedPage)); 
                 }
             }
 
