@@ -104,6 +104,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if(mSharedRepositoryNavPage == null)
             {
                 mSharedRepositoryNavPage = new SharedRepositoryNavPage(mContext);
+                mSharedRepositoryNavPage.ShowVariablesRepository = Visibility.Collapsed;
             }
             LoadActionFrame(mSharedRepositoryNavPage, "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }

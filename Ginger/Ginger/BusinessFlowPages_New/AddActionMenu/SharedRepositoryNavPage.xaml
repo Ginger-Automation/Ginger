@@ -61,7 +61,7 @@
                 </TabItem.Header>
                 <Frame  x:Name="xFrameActions" Background="White"></Frame>
             </TabItem>
-            <!--<TabItem x:Name="xTabVariables" Margin="14,0,-18,0">
+            <TabItem x:Name="xTabVariables" Margin="14,0,-18,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Variable_16x16 }" Height="16" Width="16" />
@@ -69,7 +69,7 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Frame  x:Name="xFrameVariables" Background="White"></Frame>
-            </TabItem>-->
+            </TabItem>
         </TabControl>
     </Grid>
 </Page>

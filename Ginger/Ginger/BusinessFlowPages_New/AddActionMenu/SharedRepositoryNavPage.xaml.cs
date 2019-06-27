@@ -6,19 +6,9 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -129,16 +119,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            //if (xTabRepository.SelectedItem == xTabVariables)
-            //{
-            //    if (((string)xTabVariables.Tag) != "Done")
-            //    {
-            //        VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
-            //        xFrameVariables.Content = VariablesRepoPage;
-            //        // Mark that this tab is loaded with info
-            //        xTabVariables.Tag = "Done";
-            //    }
-            //}
+            if (xTabRepository.SelectedItem == xTabVariables)
+            {
+                if (((string)xTabVariables.Tag) != "Done")
+                {
+                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
+                    xFrameVariables.Content = VariablesRepoPage;
+                    // Mark that this tab is loaded with info
+                    xTabVariables.Tag = "Done";
+                }
+            }
         }
 
         public void RefreshCurrentRepo()
