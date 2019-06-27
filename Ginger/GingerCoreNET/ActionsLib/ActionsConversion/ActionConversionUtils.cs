@@ -234,16 +234,20 @@ namespace Amdocs.Ginger.CoreNET
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                         {
-                            ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                            newConvertibleActionType.SourceActionType = act.GetType();
-                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                            newConvertibleActionType.ActionCount = count;
-                            newConvertibleActionType.Actions.Add(act);
-                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                            lst.Add(newConvertibleActionType);
-                            count++;
+                            ConvertableActionDetails det = lst.Where(x => x.SourceActionType.Name == act.GetType().Name && x.ActivityList.Contains(convertibleActivity.ActivityName)).FirstOrDefault();
+                            if (det == null)
+                            {
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                                newConvertibleActionType.SourceActionType = act.GetType();
+                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                                newConvertibleActionType.ActionCount = count;
+                                newConvertibleActionType.Actions.Add(act);
+                                newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                lst.Add(newConvertibleActionType);
+                                count++; 
+                            }
                         }
                     }
                 }
