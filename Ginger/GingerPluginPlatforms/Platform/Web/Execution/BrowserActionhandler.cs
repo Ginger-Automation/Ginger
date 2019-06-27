@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
-    class BrowserActionhandler:IActionHandler
+    class BrowserActionhandler : IActionHandler
     {
         public enum eControlAction   // name need to be eBrowserAction !!
         {            
@@ -35,54 +35,34 @@ namespace Ginger.Plugin.Platform.Web.Execution
             SetAlertBoxText, // ?? need to be in alert
             RunJavaScript // ?? need to be in alert
         }
-
-        eControlAction ElementAction;
-        internal List<NodeActionOutputValue> outputValues = new List<NodeActionOutputValue>();
-        string Value;
+        
+      
         
         IBrowserActions BrowserService = null;
 
-        public string ExecutionInfo { get; set; }
-        public string Error { get ; set; }
+        
         readonly IWebPlatform PlatformService;
+        
 
-        PlatformActionData mPlatformAction;
-
-        public BrowserActionhandler(IWebPlatform mPlatformService, PlatformActionData platformAction)
+        public BrowserActionhandler(IWebPlatform mPlatformService)
         {
-            PlatformService = mPlatformService;
-            mPlatformAction = platformAction;
-
-            // InputParams = minputParams;
+            PlatformService = mPlatformService;            
             BrowserService = PlatformService.BrowserActions;
-            // InputParams.TryGetValue("Value", out Value);  // Need to be ValueForDriver !!!
-            ElementAction = eControlAction.GotoURL;  // !!!!!!!!!!!!!!!!!!!
-            string val = (string)platformAction.InputParams["URL"];
-
-            // ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"]);
-
-            // platformAction
         }
 
-
-        internal void ExecuteAction()
-        {
-
+        public void ExecuteAction(ref NodePlatformAction platformAction)
+        {            
             try
             {
-
+                // use enum or string/const ??? 
+                eControlAction ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), platformAction.ActionType);
                 switch (ElementAction)
                 {
-
-                    case eControlAction.GotoURL:
-                        // Console.WriteLine();
-
+                    case eControlAction.GotoURL:                    
                         string GotoURLType;
 
                         // InputParams.TryGetValue("GotoURLType", out GotoURLType);
                         //GotoURLType = (string)mPlatformAction.InputValues["URLType"];
-
-                        
 
                         //if (string.IsNullOrEmpty(GotoURLType))
                         //{
@@ -90,19 +70,15 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         //}
 
-                        string url = (string)mPlatformAction.InputParams["URL"];
+                        string url = (string)platformAction.InputParams["URL"];
 
                         BrowserService.Navigate(url, GotoURLType);
-                        ExecutionInfo += "Navigated to: " + url;
-                        
-
+                        platformAction.exInfo +=  "Navigated to: " + url;
+                        platformAction.Output.Add("url", url);
                         break;
 
                     case eControlAction.GetPageURL:
-
-
-                        outputValues.Add(new NodeActionOutputValue() { Param = "PageUrl", Value = BrowserService.GetCurrentUrl() });
-
+                        platformAction.Output.Add("PageUrl", BrowserService.GetCurrentUrl());
                         break;
                     case eControlAction.Maximize:
                         BrowserService.Maximize();
@@ -125,22 +101,18 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.DeleteAllCookies:
                         BrowserService.DeleteAllCookies();
                         break;
-
                     case eControlAction.AcceptMessageBox:
-
                         BrowserService.AcceptMessageBox();
                         break;
                     case eControlAction.GetWindowTitle:
-
                         BrowserService.GetTitle();
                         break;
                     case eControlAction.GetMessageBoxText:
-
                         BrowserService.GetTitle();
                         break;
                     case eControlAction.SetAlertBoxText:
-
-                        BrowserService.SetAlertBoxText(Value);
+                        string value = (string)platformAction.InputParams["Value"];
+                        BrowserService.SetAlertBoxText(value);
                         break;
                     case eControlAction.SwitchFrame:
                         //string ElementLocateBy;
@@ -158,21 +130,18 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         //BrowserService.SwitchToFrame(Element);
                         break;
                     case eControlAction.RunJavaScript:
-
-                        object Output = BrowserService.ExecuteScript(Value);
+                        string javascript = (string)platformAction.InputParams["javascript"];
+                        object Output = BrowserService.ExecuteScript(javascript);
                         if (Output != null)
                         {
-                            outputValues.Add(new NodeActionOutputValue() { Param = "Actual", Value = Output.ToString() });
+                            platformAction.Output.Add("Actual", Output.ToString());
                         }
                         break;
                 }
             }
-
-
             catch(Exception ex)
             {
-                Error = ex.Message;
-                ExecutionInfo = ex.StackTrace;
+                platformAction.addError(ex.Message);                
             }
         }
         private IGingerWebElement LocateElement(eElementType ElementType, string ElementLocateBy, string LocateByValue)
@@ -181,31 +150,22 @@ namespace Ginger.Plugin.Platform.Web.Execution
             switch (ElementLocateBy)
             {
                 case "ByID":
-
                     Element = PlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
                     break;
                 case "ByCSSSelector":
                 case "ByCSS":
-
                     Element = PlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
-
                     break;
                 case "ByLinkText":
                     Element = PlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
-
                     break;
-
                 case "ByXPath":
                     Element = PlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
-
                     break;
-
-
-
             }
-
             return Element;
         }
+
 
     }
 }
