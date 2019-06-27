@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -166,7 +167,15 @@ namespace Ginger.Run.RunSetActions
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
             Email.alternateView = null;
+            LiteDbRunSet liteDbRunSet = null;
             var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
+
+            if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
+            }
+
             if (!System.IO.Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
             {
                 System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
@@ -187,7 +196,7 @@ namespace Ginger.Run.RunSetActions
                     runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                     AutoLogProxy.UserOperationStart("Offline Report");
                 }
-                
+
             }
 
             var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
@@ -230,6 +239,15 @@ namespace Ginger.Run.RunSetActions
                         Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                         return;
                     }
+                }
+                else if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                    GingerRunner gr = new GingerRunner();
+                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
+                    CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                    WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                    Directory.Delete(runSetFolder,true);
                 }
             }
 
@@ -294,10 +312,7 @@ namespace Ginger.Run.RunSetActions
                         }
                         else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                         {
-                            WebReportGenerator webReporterRunner = new WebReportGenerator();
-                            webReporterRunner.RunNewHtmlReport(null, null, false);
                             reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
-                            emailReadyHtml = "Ginger automation execution report attached";
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
                         {
@@ -417,6 +432,12 @@ namespace Ginger.Run.RunSetActions
                 Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
             }
         }
+
+        private void SetReportInfoFromLiteDb(ReportInfo reportInfoLiteDb, LiteDbRunSet liteDbRunSet)
+        {
+            reportInfoLiteDb.reportInfoLevel = ReportInfo.ReportInfoLevel.GingerLevel;
+        }
+
         public void CreateSummaryViewReportForEmailAction(ReportInfo RI)
         {
             reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
