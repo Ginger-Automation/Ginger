@@ -60,8 +60,7 @@ jobs:
   inputs:
     command: test
     projects: '**/GingerCoreNETUnitTest.dll'
-
-
+    arguments: '--configuration $(buildConfiguration)'
 
       
 
