@@ -127,7 +127,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Arrange
             PrepareForCLIExecution();
             //Create config file       
-            string dynamicXML= System.IO.File.ReadAllText(TestResources.GetTestResourcesFile(@"CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml"));
+            string dynamicXML= Path.Combine(System.IO.File.ReadAllText(TestResources.GetTestResourcesFolder("CLI") ,"CLI-Default Run Set.Ginger.AutoRunConfigs.xml"));
             dynamicXML = dynamicXML.Replace("SOLUTION_PATH", mSolutionFolder);
             string configFile = TestResources.GetTempFile("CLI-Default Run Set.Ginger.AutoRunConfigs.xml");
             System.IO.File.WriteAllText(configFile, dynamicXML);
