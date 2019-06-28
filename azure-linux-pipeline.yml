@@ -54,10 +54,10 @@ jobs:
 # ------------------------------------------------------------------------------------------------------    
     # TODO: run unit test by level 1,2,3 continue on success only
     - task: DotNetCoreCLI@2
-    displayName: Test zzzzzzzzzzzzzz
-    inputs:
-      command: test
-      projects: '**/GingerCoreNETUnitTest.dll'
+  displayName: Test zzzzzzzzzzzzzz
+  inputs:
+    command: test
+    projects: '**/GingerCoreNETUnitTest.dll'
       
 
 
