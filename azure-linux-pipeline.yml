@@ -56,15 +56,15 @@ jobs:
   #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
 
   - task: VSTest@2
-  displayName: Test Assemblies 99999999999999
-  inputs:
-    testAssemblyVer2: |
-     **\$(BuildConfiguration)\GingerCoreNETUnitTest.dll     
-    runOnlyImpactedTests: false
-    runInParallel: true
-    runTestsInIsolation: false
-    codeCoverageEnabled: true    
-    configuration: '$(BuildConfiguration)'
+    displayName: Test Assemblies 99999999999999
+    inputs:
+      testAssemblyVer2: |
+       **\$(BuildConfiguration)\GingerCoreNETUnitTest.dll     
+      runOnlyImpactedTests: false
+      runInParallel: true
+      runTestsInIsolation: false
+      codeCoverageEnabled: true    
+      configuration: '$(BuildConfiguration)'
 
 
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
