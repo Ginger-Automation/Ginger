@@ -28,7 +28,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassInitialize(TestContext TestContext)
         {
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
-            mSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
+            mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "CLI");
         }
 
         [ClassCleanup]
