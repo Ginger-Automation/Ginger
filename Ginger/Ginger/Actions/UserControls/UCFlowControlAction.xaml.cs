@@ -127,8 +127,12 @@ namespace Ginger.Actions.UserControls
 
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            FC.FlowControlAction = (eFlowControlAction)ActionComboBox.SelectedValue;
-            SetActionValueComboData();
+            //On mouse scroll default selected FC's ActionComboBox SelectedValue is changing causes exception
+            if (ActionComboBox.SelectedIndex != -1)
+            {
+                FC.FlowControlAction = (eFlowControlAction)ActionComboBox.SelectedValue;
+                SetActionValueComboData();
+            }
         }
 
         private void ActionValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
