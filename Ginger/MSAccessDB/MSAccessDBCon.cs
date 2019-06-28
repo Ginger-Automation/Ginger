@@ -1,0 +1,354 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.OleDb;
+using Amdocs.Ginger.CoreNET;
+using System.Data.Common;
+using Amdocs.Ginger.Common;
+using System.Data;
+
+using GingerCore;
+
+
+
+namespace MSAccessDB
+{
+    public class MSAccessDBCon : Amdocs.Ginger.CoreNET.IDatabase
+    {
+        private DbConnection conn = null;
+        private DbTransaction tran = null;
+        private DateTime LastConnectionUsedTime;
+        public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+        public void CloseConnection()
+        {
+            try
+            {
+                if (conn != null)
+                {
+                    conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+                throw (e);
+            }
+            finally
+            {
+                conn?.Dispose();
+            }
+        }
+
+        public List<object> DBQuery(string Query)
+        {
+            MakeSureConnectionIsOpen();
+            List<string> Headers = new List<string>();
+            List<List<string>> Records = new List<List<string>>();
+            bool IsConnected = false;
+            List<object> ReturnList = new List<object>();
+
+            DbDataReader reader = null;
+            try
+            {
+                if (conn == null)
+                    IsConnected = OpenConnection(KeyvalParamatersList);
+                if (IsConnected || conn != null)
+                {
+                    DbCommand command = conn.CreateCommand();
+                    command.CommandText = Query;
+                    command.CommandType = CommandType.Text;
+                    
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+
+                    // Create columns headers
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        Headers.Add(reader.GetName(i));
+                    }
+
+                    while (reader.Read())
+                    {
+
+                        List<string> record = new List<string>();
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            record.Add(reader[i].ToString());
+                        }
+                        Records.Add(record);
+                    }
+
+                    ReturnList.Add(Headers);
+                    ReturnList.Add(Records);
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
+                throw e;
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+            }
+            return ReturnList;
+        }
+       
+        public string GetConnectionString(Dictionary<string,string> parameters)
+        {
+            string connStr = null;
+            bool res;
+            res = false;
+
+            string ConnectionString= parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
+            string User= parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
+            string Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
+            string TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
+
+            if (String.IsNullOrEmpty(ConnectionString) == false)
+            {
+                connStr = ConnectionString.Replace("{USER}", User);
+
+                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                if (res == true)
+                { connStr = connStr.Replace("{PASS}", deCryptValue); }
+                else
+                { connStr = connStr.Replace("{PASS}", Password); }
+            }
+            else
+            {
+                String strConnString = TNS;
+                String strProvider;
+                connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
+
+                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+
+                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
+                else { connStr = connStr + "Password=" + Password + ";"; }
+
+
+                if (strConnString.Contains(".accdb"))
+                {
+                    strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+                }
+                else { strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;"; }
+
+                connStr = strProvider + connStr;
+            }
+            return connStr;
+        }
+
+        public string GetSingleValue(string Table, string Column, string Where)
+        {
+            string sql = "SELECT {0} FROM {1} WHERE {2}";
+            sql = String.Format(sql, Column, Table, Where);
+            String rc = null;
+            DbDataReader reader = null;
+            if (MakeSureConnectionIsOpen())
+            {
+                try
+                {
+                    DbCommand command = conn.CreateCommand();
+                    command.CommandText = sql;
+                    command.CommandType = CommandType.Text;
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        rc = reader[0].ToString();
+                        break; // We read only first row
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+            return rc;
+        }
+
+        public List<string> GetTablesColumns(string table)
+        {
+            DbDataReader reader = null;
+            List<string> rc = new List<string>() { "" };
+                try
+                {
+                    DbCommand command = conn.CreateCommand();
+                    // Do select with zero records
+                    command.CommandText = "select * from " + table + " where 1 = 0";
+                    command.CommandType = CommandType.Text;
+
+                    reader = command.ExecuteReader();
+                    // Get the schema and read the cols
+                    DataTable schemaTable = reader.GetSchemaTable();
+                    foreach (DataRow row in schemaTable.Rows)
+                    {
+                        string ColName = (string)row[0];
+                        rc.Add(ColName);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "", e);
+                    throw (e);
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            return rc;
+        }
+
+        
+
+        public List<string> GetTablesList()
+        {
+            List<string> rc = new List<string>() { "" };
+            if (MakeSureConnectionIsOpen())
+            {
+                try
+                {
+                    DataTable table = conn.GetSchema("Tables");
+                    string tableName = "";
+                    foreach (DataRow row in table.Rows)
+                    {
+                        tableName = (string)row[2];
+                    }
+                    rc.Add(tableName);
+                }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list " + e);
+                    throw (e);
+                }
+            }
+            return rc;
+        }
+
+        public bool MakeSureConnectionIsOpen()
+        {
+            Boolean isCoonected = true;
+
+            if ((conn == null) || (conn.State != ConnectionState.Open))
+            {
+                isCoonected = OpenConnection(KeyvalParamatersList);
+            }
+            //make sure that the connection was not refused by the server               
+            TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
+            if (timeDiff.TotalMinutes > 5)
+            {
+                isCoonected = OpenConnection(KeyvalParamatersList);
+            }
+            else
+            {
+                LastConnectionUsedTime = DateTime.Now;
+            }
+            return isCoonected;
+        }
+
+        public bool OpenConnection(Dictionary<string, string> parameters)
+        {
+            
+            KeyvalParamatersList = parameters;
+            string connectConnectionString = GetConnectionString(parameters);
+            try
+            {
+                conn = new OleDbConnection(connectConnectionString);
+                conn.Open();
+                
+                if ((conn != null) && (conn.State == ConnectionState.Open))
+                {
+                    LastConnectionUsedTime = DateTime.Now;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, Connection String =" + connectConnectionString, ex);
+                throw (ex);
+            }
+            return false;
+        }
+
+        public string RunUpdateCommand(string updateCmd, bool commit = true)
+        {
+            string result = "";
+            //if (conn == null) Connect();
+            if (MakeSureConnectionIsOpen())
+            {
+                using (DbCommand command = conn.CreateCommand())
+                {
+                    try
+                    {
+                        if (commit)
+                        {
+                            tran = conn.BeginTransaction();
+                            // to Command object for a pending local transaction
+                            command.Connection = conn;
+                            command.Transaction = tran;
+                        }
+                        command.CommandText = updateCmd;
+                        command.CommandType = CommandType.Text;
+
+                        result = command.ExecuteNonQuery().ToString();
+                        if (commit)
+                        {
+                            tran.Commit();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        tran.Rollback();
+                        Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
+                        throw e;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public int GetRecordCount(string Query)
+        {
+            string sql = "SELECT COUNT(1) FROM " + Query;
+
+            String rc = null;
+            DbDataReader reader = null;
+            if (MakeSureConnectionIsOpen())
+            {
+                try
+                {
+                    DbCommand command = conn.CreateCommand();
+                    command.CommandText = sql;
+                    command.CommandType = CommandType.Text;
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        rc = reader[0].ToString();
+                        break; // We read only first row = count of records
+                    }
+                }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
+                    throw e;
+                }
+                finally
+                {
+                    reader.Close();
+                }
+            }
+
+            return Convert.ToInt32(rc);
+        }
+    }
+}

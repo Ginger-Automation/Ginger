@@ -67,6 +67,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWeb", "GingerWeb\Ging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "GingerPluginPlatforms\GingerPluginPlatforms.csproj", "{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSAccessDB", "MSAccessDB\MSAccessDB.csproj", "{B8BDF167-9BCA-4C19-85C6-87B338781F91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUnitTest", "MSdatabaseUT\DatabaseUnitTest.csproj", "{5230B930-5E96-4EAD-8970-48AE8DA0C452}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -224,6 +228,18 @@ Global
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BDF167-9BCA-4C19-85C6-87B338781F91}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5230B930-5E96-4EAD-8970-48AE8DA0C452}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
