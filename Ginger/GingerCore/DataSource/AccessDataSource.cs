@@ -55,9 +55,9 @@ namespace GingerCore.DataSource
         private string GetConnectionString(string sFilePath, string sMode = "Write")
         {
             FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
+            mFilePath = FileFullPath;
 
             string strAccessConn = "";
-            mFilePath = FileFullPath;
 
             if (sMode == "Read")
                 strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Mode=" + sMode + ";Data Source=" + mFilePath;
@@ -93,7 +93,9 @@ namespace GingerCore.DataSource
                 using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
+                    {
                         connObj.Open();
+                    }
                     DataTable dataTable = connObj.GetSchema("Tables");
                     foreach (DataRow row in dataTable.Rows)
                     {
@@ -197,7 +199,9 @@ namespace GingerCore.DataSource
                 using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
+                    {
                         connObj.Open();
+                    }
                     string strAccessSelect = "SELECT * FROM " + tableName;
                     OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
                     DataSet myDataSet = new DataSet();
@@ -225,7 +229,9 @@ namespace GingerCore.DataSource
                 using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
+                    {
                         connObj.Open();
+                    }
                     OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(query, connObj);
                     myDataAdapterTest.AcceptChangesDuringUpdate = true;
                     myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;

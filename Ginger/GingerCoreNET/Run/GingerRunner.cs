@@ -1166,11 +1166,6 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                //if (DataSource.FilePath.StartsWith("~"))
-                //{
-                //    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
-                //}
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
 
                 ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
