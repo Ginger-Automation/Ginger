@@ -5982,11 +5982,20 @@ namespace GingerCore.Drivers
                         {
                             if(dict.ContainsKey("name"))
                             {
-                                var urlArray = dict.Where(x => x.Key == "name").ToArray()[0].Value.ToString().Split('/');
-                                var urlString = urlArray[urlArray.Length-1];
-                                foreach (var val in dict)
+                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+
+                                var urlString = string.Empty;
+                                if (urlArray.Length>0)
                                 {
-                                    act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":["+val.Key +"]"),Convert.ToString(val.Value));
+                                    urlString = urlArray[urlArray.Length - 1];
+                                    if(string.IsNullOrEmpty(urlString) && urlArray.Length>1)
+                                    {
+                                        urlString = urlArray[urlArray.Length - 2];
+                                    }
+                                    foreach (var val in dict)
+                                    {
+                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                                    }
                                 }
                             }
                             
