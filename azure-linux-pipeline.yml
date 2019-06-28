@@ -56,6 +56,11 @@ jobs:
   #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
 
+  - task: VSTest@2
+  displayName: Test zzzzzzzzzzzzzz 22222222222
+  inputs:
+    testSelector: '**/GingerCoreNETUnitTest.dll'
+
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
     displayName: 'Run tests on Ginger solution'
 
