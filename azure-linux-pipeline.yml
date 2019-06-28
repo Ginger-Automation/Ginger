@@ -42,30 +42,22 @@ jobs:
   #- script: dotnet build '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'
   #  displayName: Build Ginger DLLs
 
-  - task: DotNetCoreCLI@2
-  displayName: Build GingerCoreNETUnitTest
-  inputs:
-    command: build
-    projects: '**/GingerCoreNETUnitTest.csproj'
-    arguments: '--configuration Release' # Update this to match your need
-
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
-# ------------------------------------------------------------------------------------------------------    
-
+# ------------------------------------------------------------------------------------------------------
+    
     # TODO: run unit test by level 1,2,3 continue on success only
-     
-  #- task: VSTest@2
-  #displayName: Test zzzzzzzzzzzzzz 22222222222
-  #inputs:
-  #  testSelector: '**/GingerCoreNETUnitTest.dll'
+
+  #- task: DotNetCoreCLI@2
+  #  displayName: 'Run Unit tests Level for .Net Core test DLLs'
+  #  inputs:
+  #    command: test
+  #    projects: '**/**/*Test.csproj'          # test all csproj, it will skip .Net Framework
+  #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
 
-  - script: dotnet test Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
     displayName: 'Run tests on Ginger solution'
-
-  - script: echo ***** Test execution completed *****
-    displayName: 'ECHO 123'
 
   - task: PublishTestResults@2
     displayName: Publish test result
@@ -73,8 +65,6 @@ jobs:
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
-
-  
 
   #- task: PublishBuildArtifacts@1
 
@@ -97,5 +87,3 @@ jobs:
  #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
  #   ArtifactName: app
  #   publishLocation: Container
-
- 
