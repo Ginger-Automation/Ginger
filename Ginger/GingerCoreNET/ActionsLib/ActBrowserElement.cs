@@ -279,7 +279,7 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Web", actionHandler: "BrowserActions", action: "GotoURL" );                                    
+            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
             platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
             platformAction.InputParams.Add("URL", Value);
             return platformAction;            
