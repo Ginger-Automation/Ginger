@@ -74,10 +74,10 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                SetTextBoxText();
+                // SetTextBoxText();
                  // ClickButtonGrid();
                  // ClickButtonNotExist();
-                 // GotoURLGrid();
+                  GotoURLGrid();
                  // GotoURLDirect();
             }
         }
