@@ -27,13 +27,13 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Run
@@ -178,16 +178,16 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {
-            // Get the action payload
-            // NewPayLoad p = actPlugin.GetActionPayload();
-            NewPayLoad p = GeneratePlatformActionPayload(actPlugin, agent);
+        {                        
+            NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
+
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
-
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
-
-            // Pasrse the result
+            NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+            
             ParseActionResult(RC, (Act)actPlugin);
         }
 
@@ -397,41 +397,17 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
         {
+            PlatformAction platformAction = ACT.GetAsPlatformAction();
 
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue(ACT.GetName());
-            if (ACT is Act actPlugin)
-            {
-                List<NewPayLoad> PLParams = new List<NewPayLoad>();
+            // TODO: calculate VE ??!!            
 
-                if (ACT is ActUIElement ActUi)
-                {
-                    if (ActUi.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
-                    {
-                        NewPayLoad PomPayload = GetPOMPayload(ref ActUi, agent.ProjEnvironment, agent.BusinessFlow);
-                        PLParams.Add(PomPayload);
-                    }
-                }
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");
+            payload.AddJSONValue<PlatformAction>(platformAction);
+            payload.ClosePackage();
 
-           
+            // TODO: Process Valuefordriver!!!!
 
-                foreach (ActInputValue AIV in actPlugin.InputValues)
-                {
-                    if (!string.IsNullOrEmpty(AIV.ValueForDriver))
-                    {
-                        NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                        PLParams.Add(AIVPL);
-                    }
-                }
-
-
-
-
-                PL.AddListPayLoad(PLParams);
-            }
-            PL.ClosePackage();
-
-            return PL;
+            return payload;
         }
 
         private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
