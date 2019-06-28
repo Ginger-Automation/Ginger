@@ -404,13 +404,21 @@ namespace GingerCore
                 va.ResetValue();
         }
 
-        public void AddVariable(VariableBase v)
+        public void AddVariable(VariableBase v, int insertIndex = -1)
         {
             if (v != null)
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
-                SetUniqueVariableName(v);                
-                Variables.Add(v);
+                SetUniqueVariableName(v);
+
+                if (insertIndex < 0 || insertIndex > Variables.Count - 1)
+                {
+                    Variables.Add(v);
+                }
+                else
+                {
+                    Variables.Insert(insertIndex, v);
+                }
             }
         }
 

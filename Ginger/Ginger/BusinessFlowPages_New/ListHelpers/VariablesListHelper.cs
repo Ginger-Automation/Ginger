@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
@@ -111,7 +112,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            if (mPageViewMode != General.eRIPageViewMode.View)
+            if (mPageViewMode != General.eRIPageViewMode.View && mPageViewMode != General.eRIPageViewMode.Add)
             {
                 ListItemOperation addNew = new ListItemOperation();
                 addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
@@ -126,6 +127,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 operationsList.Add(deleteAll);
             }
 
+            if (mPageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                ListItemOperation save = new ListItemOperation();
+                save.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Save;
+                save.ToolTip = "Save All Changes";
+                save.OperationHandler = SaveAllHandler;
+                operationsList.Add(save);
+            }
+
             return operationsList;
         }
 
@@ -133,7 +143,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            if (mPageViewMode != General.eRIPageViewMode.View)
+            if (mPageViewMode != General.eRIPageViewMode.View && mPageViewMode != General.eRIPageViewMode.Add)
             {
                 ListItemOperation resetAll = new ListItemOperation();
                 resetAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
@@ -192,7 +202,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            if (mPageViewMode != General.eRIPageViewMode.View)
+            if (mPageViewMode != General.eRIPageViewMode.View && mPageViewMode != General.eRIPageViewMode.Add)
             {
                 ListItemOperation edit = new ListItemOperation();
                 edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
@@ -227,7 +237,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            if (mPageViewMode != General.eRIPageViewMode.View)
+            if (mPageViewMode != General.eRIPageViewMode.View && mPageViewMode != General.eRIPageViewMode.Add)
             {
                 ListItemOperation reset = new ListItemOperation();
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
@@ -264,12 +274,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(output);
             }
 
-            ListItemOperation addToSR = new ListItemOperation();
-            addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            addToSR.Header = "Add to Shared Repository";
-            addToSR.ToolTip = "Add to Shared Repository";
-            addToSR.OperationHandler = AddToSRHandler;
-            extraOperationsList.Add(addToSR);
+            if (mPageViewMode != General.eRIPageViewMode.Add)
+            {
+                ListItemOperation addToSR = new ListItemOperation();
+                addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                addToSR.Header = "Add to Shared Repository";
+                addToSR.ToolTip = "Add to Shared Repository";
+                addToSR.OperationHandler = AddToSRHandler;
+                extraOperationsList.Add(addToSR);
+            }
 
             return extraOperationsList;
         }
@@ -286,9 +299,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddNewHandler(object sender, RoutedEventArgs e)
         {
-            //SetItem(sender);
             AddVariablePage addVarPage = new AddVariablePage(VariablesLevel, VariablesParent, mContext);
-            addVarPage.ShowEditPage = false;
             addVarPage.ShowAsWindow();
         }
 
@@ -300,6 +311,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 {
                     Variables.Clear();
                 }
+            }
+        }
+
+        private void SaveAllHandler(object sender, RoutedEventArgs e)
+        {
+            switch(VariablesLevel)
+            {
+                case eVariablesLevel.Solution:
+                    ((Solution)VariablesParent).SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
+                    break;
             }
         }
 

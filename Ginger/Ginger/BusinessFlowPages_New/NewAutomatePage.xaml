@@ -7,7 +7,7 @@
         xmlns:local1="clr-namespace:GingerWPF.GeneralLib"       
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
-        d:DesignHeight="800" d:DesignWidth="1200"
+        d:DesignHeight="800" d:DesignWidth="1500"
         Title="AutomatePage">
     
     <Page.Resources>
@@ -120,6 +120,14 @@
                                     <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
                                 </MenuItem.Header>
                             </MenuItem>
+                            <MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Produce Last Execution Item Report" />
+                                </MenuItem.Header>
+                            </MenuItem>
                             <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
@@ -128,12 +136,56 @@
                                     <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Report" />
                                 </MenuItem.Header>
                             </MenuItem>
+                            <MenuItem x:Name="xTimelineReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xTimelineReportMenuItem_Click" Visibility="Collapsed">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Timer" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Timeline Report" />
+                                </MenuItem.Header>
+                            </MenuItem>
                             <MenuItem x:Name="xAutoReportConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoReportConfigMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+
+
+                    <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="BDD Options">
+                        <MenuItem Cursor="Hand">
+                            <MenuItem.Icon>
+                                <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Header>
+                            <MenuItem x:Name="xBDDGenerateScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDGenerateScenarioMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Action" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Generate BDD Scenarios" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xBDDCleanScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDCleanScenariosMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Clean BDD Scenarios" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xBDDOpenFeatureFileMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDOpenFeatureFileMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl  ImageType="Open" SetAsFontImageWithSize="13" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Open Linked Feature File" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>

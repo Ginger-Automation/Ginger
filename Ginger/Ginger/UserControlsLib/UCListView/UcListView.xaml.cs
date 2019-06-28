@@ -118,6 +118,18 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        public SelectionMode ListSelectionMode
+        {
+            get
+            {
+                return xListView.SelectionMode;
+            }
+            set
+            {
+                xListView.SelectionMode = value;
+            }
+        }
+
         public IObservableList DataSourceList
         {
             set

@@ -622,23 +622,21 @@ namespace GingerCore
             }
         }
 
-        public void AddVariable(VariableBase v)
+        public void AddVariable(VariableBase v, int insertIndex = -1)
         {
-            //if (v.Name == null)
-            //{
-            //    //make sure the new name is unique
-            //    int counter = Variables.Count + 1;
-            //    while ((Variables.Where(c => c.Name == "NewVar" + counter).FirstOrDefault()) != null)
-            //        counter++;
-            //    v.Name = "NewVar" + counter;
-            //}
-            //Variables.Add(v);
-
             if (v != null)
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
-                Variables.Add(v);
+                
+                if (insertIndex < 0 || insertIndex > Variables.Count - 1)
+                {
+                    Variables.Add(v);
+                }
+                else
+                {
+                    Variables.Insert(insertIndex, v);
+                }
             }
         }
 

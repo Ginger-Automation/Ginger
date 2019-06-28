@@ -7,56 +7,15 @@
       xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
       xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="410"
       Title="LiveSpyNavAction">
 
-    <Grid>
+    <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35" />
+            <RowDefinition x:Name="WindowComboboxRow" Height="Auto" />
         </Grid.RowDefinitions>
 
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="False" />
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="165" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="xSpyingButton" Click="SpyingButton_Click" IsEnabled="true" ToolTip="Start Recording" HorizontalAlignment="Left" VerticalAlignment="Top" Width="Auto" Margin="10,10,0,0" UseLayoutRounding="True" Background="DeepSkyBlue" Grid.Column="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <usercontrols:ImageMakerControl Height="25" Width="25" FontSize="25" ImageType="Spy" SetBorder="False" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Margin="0,10" />
-                    <Label Name="lblRecording" Grid.Column="1" Content="Start Spying" FontSize="15" FontWeight="Bold" Foreground="White" />
-                </Grid>
-            </Button>
-
-            <TextBlock Name="StatusTextBlock" Grid.Column="1" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center" Width="Auto" Foreground="Red" />
-        </Grid>
-        <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,1,0,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
-            <Expander.Header>
-                <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
-            </Expander.Header>
-            <Expander.Content>
-                <TabControl x:Name="ControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <TabItem x:Name="GeneralTab" Header="General">
-                        <Frame x:Name="ControlFrame"/>
-                    </TabItem>
-                    <TabItem x:Name="PropertiesTab" Header="Properties">
-                        <Ginger:ucGrid x:Name="ControlPropertiesGrid" Title="Control Properties" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed"  />
-                    </TabItem>
-                    <TabItem x:Name="ActionsTab" Header="Actions">
-                        <Frame x:Name="ControlActionsFrame"/>
-                    </TabItem>
-                </TabControl>
-            </Expander.Content>
-        </Expander>
+        <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Width="Auto" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
 
     </Grid>
 </Page>

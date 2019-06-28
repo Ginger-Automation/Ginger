@@ -140,13 +140,24 @@ namespace Ginger.WindowExplorer
 
             InitControlPropertiesGridView();
             ControlPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
-            
+
             UpdateWindowsList();
 
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
-            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
+            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
+        }
+
+        /// <summary>
+        /// This method will set the explorer page to be fit in new right panel
+        /// </summary>
+        /// <param name="windowExplorerDriver"></param>
+        public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
+        {
+            RecordingButton.Visibility = Visibility.Collapsed;
+            mWindowExplorerDriver = windowExplorerDriver;
+            UpdateWindowsList();
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -160,31 +171,34 @@ namespace Ginger.WindowExplorer
         {
             try
             {
-                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
-                WindowsComboBox.ItemsSource = list;
-                WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
-
-                if (ActiveWindow != null)
+                if (mWindowExplorerDriver != null)
                 {
-                    foreach (AppWindow w in list)
+                    List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                    WindowsComboBox.ItemsSource = list;
+                    WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                    AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+
+                    if (ActiveWindow != null)
                     {
-                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                        foreach (AppWindow w in list)
                         {
-                            WindowsComboBox.SelectedValue = w;
-                            return;
+                            if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                            {
+                                WindowsComboBox.SelectedValue = w;
+                                return;
+                            }
                         }
                     }
-                }
 
-                //TODO: If no selection then select the first if only one window exist in list
-                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
-                {
-                    if (WindowsComboBox.Items.Count == 1)
+                    //TODO: If no selection then select the first if only one window exist in list
+                    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
-                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                    }
+                        if (WindowsComboBox.Items.Count == 1)
+                        {
+                            WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
+                        }
+                    } 
                 }
             }
             catch (Exception ex)
