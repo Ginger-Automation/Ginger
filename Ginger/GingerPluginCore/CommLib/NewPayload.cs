@@ -550,13 +550,15 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// <param name="structValue"></param>
         public void AddJSONValue<T>(T structValue) where T : struct
         {
-            var json = JsonConvert.SerializeObject(structValue);            
+            var json = JsonConvert.SerializeObject(structValue);                        
             WriteValueType(JSONStruct);
             WriteString(json);            
         }
 
         public T GetJSONValue<T>() where T : struct
         {
+            // Add try/catch - can crash? add unit test to crash it fake/bad json
+
             byte b = ReadValueType();
 
             if (b == JSONStruct)
@@ -794,16 +796,57 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             return PL;
         }
 
-        //For Easy debugging and enable to see the payload we override toString
-        public override string ToString()
+
+
+
+
+        /// <summary>
+        /// Show the buffer with human readable text - translated based on payload data
+        /// </summary>
+        public string BufferInfo
         {
+            get
+            {
+                if(VerifyPaylod())
+                {                    
+                    return ToString2();
+                }
+                else
+                {
+                    return "Payload verify failed, not closed or bad length check";
+                }                
+            }
+        }
+
+        private bool VerifyPaylod()
+        {
+            int len = GetDataLen();
+            if (mBuffer.Length != len + 4) //                 
+            {
+                return false;
+            }
+            if (mBuffer[len+3] != LastByteMarker)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        //For Easy debugging and enable to see the payload we override toString
+        public string ToString2()
+        {
+            // make a copy so we don't mess the original
+            // NewPayLoad copy = new NewPayLoad(this.GetBytes());
+
+            //add try catch return buffer index safe
+
             string s = "Packet Dump: " + Environment.NewLine;
             int CurrentBufferIndex = mBufferIndex; // Keep the current index and restore later
             mBufferIndex = 4;
             s += "Len = " + GetDataLen() + Environment.NewLine;
             ReadPayloadType();
             s += "PayloadType = " + PaylodType.ToString() + Environment.NewLine;
-            s += ",Name = " + ReadString() + Environment.NewLine;
+            s += ",Name = " + ReadString() + Environment.NewLine;            
 
             byte ValueType = mBuffer[mBufferIndex];
             int idx = 0;
@@ -844,7 +887,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         for (PLi = 0; PLi < PLs.Count; PLi++)
                         {
 
-                            string PLDump = PLs[PLi].ToString();
+                            string PLDump = PLs[PLi].BufferInfo;
                             sPLList += "Payload #" + PLi + Environment.NewLine + PLDump + Environment.NewLine;
                         }
                         s += "List of Payloads= " + sPLList + Environment.NewLine;
@@ -864,13 +907,15 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     case 10: // bool true                        
                         s += "bool=true " + Environment.NewLine;
                         break;
-                    //case 11: // Struct // FIXME !!!
-                    //    // TODO: Create display for struct!?
-                    //    int len = ReadInt();
-                    //    mBufferIndex += len; // skip the bytes
-                    //    s += "struct=true " + Environment.NewLine;
-                    //    break;
-                    case 12: // JSONStruct                         
+                    case Struct:
+                        mBufferIndex++;
+                             //    // TODO: Create display for struct!?
+                        int structlen = ReadInt();                                                
+                        mBufferIndex += structlen;                        
+                        s += "struct binary len=" + structlen +  Environment.NewLine;
+                        break;
+                    case JSONStruct:
+                        mBufferIndex++;
                         string json = ReadString();                        
                         s += "jsonstruct= " + json + Environment.NewLine;
                         break;
@@ -888,7 +933,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public void DumpToConsole()
         {
-            String s = this.ToString();
+            String s = this.BufferInfo;
             Console.WriteLine(s);
         }
 
