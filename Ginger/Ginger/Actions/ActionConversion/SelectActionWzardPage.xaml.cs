@@ -56,9 +56,32 @@ namespace Ginger.Actions.ActionConversion
                 case EventType.Active:
                     Init();
                     break;
+                case EventType.LeavingForNextPage:
+                    SetSelectedActionsForConversion();
+                    break;
             }
         }
-        
+
+        /// <summary>
+        /// This method will update the selected actions for conversion
+        /// </summary>
+        private void SetSelectedActionsForConversion()
+        {
+            foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
+            {
+                if(act.Selected)
+                {
+                    foreach (var convertableAction in mWizard.ActionToBeConverted)
+                    {
+                        if(act.SourceActionTypeName == convertableAction.SourceActionTypeName && act.TargetActionTypeName == convertableAction.TargetActionTypeName)
+                        {
+                            convertableAction.Selected = act.Selected;
+                        }
+                    }
+                }
+            }
+        }
+
         private void Init()
         {
             // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
@@ -72,7 +95,7 @@ namespace Ginger.Actions.ActionConversion
                 mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
-                    xGridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;
+                    xGridConvertibleActions.DataSourceList = GetDistinctList(mWizard.ActionToBeConverted);
                     SetGridView();
                     return;
                 }
@@ -88,6 +111,25 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
+        /// <summary>
+        /// This method is used to get the distinct list
+        /// </summary>
+        /// <param name="actionToBeConverted"></param>
+        /// <returns></returns>
+        private IObservableList GetDistinctList(ObservableList<ConvertableActionDetails> actionToBeConverted)
+        {
+            ObservableList<ConvertableActionDetails> list = new ObservableList<ConvertableActionDetails>();
+            foreach (var act in actionToBeConverted)
+            {
+                ConvertableActionDetails det = list.Where(x => x.SourceActionTypeName == act.SourceActionTypeName && x.TargetActionTypeName == act.TargetActionTypeName).FirstOrDefault();
+                if (det == null)
+                {
+                    list.Add(act);
+                } 
+            }
+            return list;
+        }
+
         private void SetGridView()
         {
             //Set the Data Grid columns
@@ -96,7 +138,7 @@ namespace Ginger.Actions.ActionConversion
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
