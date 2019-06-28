@@ -8,6 +8,7 @@ using GingerCore.Actions.Common;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerPluginCoreTest.CommunicationProtocol
@@ -16,6 +17,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
     // this tests are for checking plugin action pack to payload send via GingerNodeProxy, execute on GingerNode and service then getting response
 
     [TestClass]
+    [Level2]
     public class GingerGridCommTest
     {
         static GingerGrid gingerGrid;
@@ -72,7 +74,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
             for (int i = 0; i < 10000;i++)
             {
-                 ClickButtonGrid();
+                 // ClickButtonGrid();
+                ClickButtonNotExist();
                  // GotoURLGrid();
                 // GotoURLDirect();
             }
@@ -109,7 +112,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
             Assert.AreEqual("Navigated to: " + url, actBrowserElement.ExInfo, "ExInfo");            
-            Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
+            Assert.AreEqual(1, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
         }
 
         [Ignore] // Failing need GR + VE, Create test with GR
@@ -167,11 +170,29 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //Act            
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
 
-            //Assert            
-            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
+            //Assert                        
+            Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
+            Assert.AreEqual("button was clicked - ByID=button1", actUIElement.ExInfo, "ExInfo");
+        }
 
-            //FIXME !!!
-            // Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.ExInfo), "Naviagted to: " + url, "ExInfo");
+
+        // Negative test
+        [TestMethod]
+        public void ClickButtonNotExist()
+        {
+            //Arrange
+
+            ActUIElement actUIElement = new ActUIElement();
+            actUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Button;
+            actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
+            actUIElement.ElementLocateValue = "wrongId";
+            actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+
+            //Act            
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+
+            //Assert                        
+            Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
         }
 
 

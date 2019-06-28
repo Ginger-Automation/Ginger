@@ -6,21 +6,23 @@ namespace GingerCore.Platforms
 {
 
     /// <summary>
-    ///  Use this struct to pack platform action before sendign to Ginger node
+    ///  Use this struct to pack platform action before sending to Ginger node
     //  Fields must match exectly PlatformActionData
     /// </summary>
     public struct PlatformAction
     {
-        public string Platform;
+        public string Platform { get; }
 
-        public string ActionType;
+        public string ActionHandler { get; }
+
+        public string ActionType { get; }
 
         public Dictionary<string, object> InputParams;
-
-
-        public PlatformAction(string platform, string action)
+        
+        public PlatformAction(string platform, string actionHandler, string action)
         {
             Platform = platform;
+            ActionHandler = actionHandler;
             ActionType = action;
             InputParams = new Dictionary<string, object>();
         }

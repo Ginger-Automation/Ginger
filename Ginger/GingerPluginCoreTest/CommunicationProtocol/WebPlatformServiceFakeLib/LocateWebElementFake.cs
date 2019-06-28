@@ -10,9 +10,14 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
         }
 
         public IGingerWebElement LocateElementByID(eElementType elementType, string id)
-        {            
-            GingerWebElementFake gingerWebElement = new GingerWebElementFake();
-            return gingerWebElement;
+        {
+            if (elementType == eElementType.Button && id == "button1")
+            {
+                WebButtonFake gingerWebElement = new WebButtonFake();
+                return gingerWebElement;
+            }
+
+            return null;
         }
 
         public IGingerWebElement LocateElementByLinkTest(eElementType elementType, string LocateValue)
