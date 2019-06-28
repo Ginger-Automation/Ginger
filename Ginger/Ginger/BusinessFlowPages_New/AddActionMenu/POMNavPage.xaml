@@ -13,7 +13,7 @@
 
     <Grid Name="PageGrid">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="xPOMItems" Height="*"/>
+            <RowDefinition x:Name="xPOMItems" Height="Auto"/>
             <RowDefinition />
             <RowDefinition x:Name="xPOMDetails" Height="*"/>
         </Grid.RowDefinitions>
