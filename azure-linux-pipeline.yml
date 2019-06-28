@@ -55,13 +55,10 @@ jobs:
 
     # TODO: run unit test by level 1,2,3 continue on success only
      
-  - task: DotNetCoreCLI@2
-  displayName: Test zzzzzzzzzzzzzz
+  - task: VSTest@2
+  displayName: Test zzzzzzzzzzzzzz 22222222222
   inputs:
-    command: test
-    projects: '**/GingerCoreNETUnitTest.dll'
-    arguments: '--configuration $(buildConfiguration)'
-
+    testSelector: '**/GingerCoreNETUnitTest.dll'
       
 
   - script: dotnet test Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
