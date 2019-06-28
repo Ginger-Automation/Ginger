@@ -163,7 +163,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     DataSourceBase DSDetails = ((DataSourceTreeItem)node).DSDetails;
                     if (File.Exists(DSDetails.FileFullPath))
                     {
-                        DSDetails.DSC.Close();                        
+                       // DSDetails.CloseConnection();                        
                     }
                 }
             }

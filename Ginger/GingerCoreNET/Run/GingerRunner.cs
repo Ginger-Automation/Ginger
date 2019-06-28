@@ -1173,8 +1173,7 @@ namespace Ginger.Run
                 //}
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
 
-                DataSource.Init(DataSource.FileFullPath);
-                ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
+                ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
                 foreach(DataSourceTable dst in dstTables)
                 {
                     if(dst.Name ==  act.OutDataSourceTableName)
@@ -1219,7 +1218,7 @@ namespace Ginger.Run
                 foreach (ActOutDataSourceConfig ADSC in mADCS)
                 {
                     if (mColList.Contains(ADSC.TableColumn) == false)
-                        DataSource.DSC.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
+                        DataSource.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
                 }
                 if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToCol.ToString())
                 {
@@ -1252,7 +1251,7 @@ namespace Ginger.Run
                         if (sColList == "")
                             break;
                         sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
-                        DataSource.DSC.RunQuery(sQuery);
+                        DataSource.RunQuery(sQuery);
                         //Next Path
                         iPathCount++;
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
@@ -1287,7 +1286,7 @@ namespace Ginger.Run
                                     sKeyValue = sKeyValue == null ? "" : sKeyValue.ToString();
                                     sKeyValue = sKeyValue.Replace("'", "''");
                                 }
-                                DataTable dtOut = DataSource.DSC.GetQueryOutput("Select Count(*) from " + DataSourceTable.Name + " Where GINGER_KEY_NAME='" + sKeyName + "'");
+                                DataTable dtOut = DataSource.GetQueryOutput("Select Count(*) from " + DataSourceTable.Name + " Where GINGER_KEY_NAME='" + sKeyName + "'");
                                 if (dtOut.Rows[0].ItemArray[0].ToString() == "1")
                                 {
                                     sQuery = "UPDATE " + DataSourceTable.Name + " SET GINGER_KEY_VALUE='" + sKeyValue + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' Where GINGER_KEY_NAME='" + sKeyName + "'";
@@ -1315,10 +1314,10 @@ namespace Ginger.Run
                                     }
 
                                 }
-                                sQuery = DataSource.DSC.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
+                                sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
                             }
-                            DataSource.DSC.RunQuery(sQuery);
+                            DataSource.RunQuery(sQuery);
                         }
                     }
                 }

@@ -362,11 +362,10 @@ namespace GingerCore
                 //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 //}
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-                DataSource.Init(DataSource.FileFullPath);
                 try
                 {
                     DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
-                    mColList = DataSource.DSC.GetColumnList(DSTable);
+                    mColList = DataSource.GetColumnList(DSTable);
                     p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
 
                     if (p.IndexOf("ACT=") != -1)
@@ -409,8 +408,8 @@ namespace GingerCore
                     }
                     if (p.IndexOf("EP=") != -1)
                     {
-                        ExcelPath = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ") - 3);
-                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        ExcelPath = p.Substring(p.IndexOf("EP=") + 3, p.IndexOf(" ES") - 3);
+                        p = p.Substring(p.TrimStart().IndexOf(" ES")).Trim();
                         ExcelSheet = p.Substring(p.IndexOf("ES=") + 3, p.IndexOf("}") - 3);
                     }
                     else if (p.IndexOf("KEY=") != -1)
@@ -422,7 +421,7 @@ namespace GingerCore
                         {
                             if (bUpdate == true)
                             {
-                                DataTable dtTemp = DataSource.DSC.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
+                                DataTable dtTemp = DataSource.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
                                 if (dtTemp.Rows[0].ItemArray[0].ToString() != "0")
                                     updateQuery = "UPDATE " + DSTable + " SET GINGER_KEY_VALUE = '" + updateValue.Replace("'", "''") + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' WHERE GINGER_KEY_NAME = '" + KeyName + "'";
                                 else
@@ -550,11 +549,11 @@ namespace GingerCore
                 }
                 if (Query != "")
                 {
-                    DataTable dt = DataSource.DSC.GetQueryOutput(Query);
+                    DataTable dt = DataSource.GetQueryOutput(Query);
                     if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
                     {
-                        DataSource.DSC.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
-                        dt = DataSource.DSC.GetQueryOutput(Query);
+                        DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
+                        dt = DataSource.GetQueryOutput(Query);
                     }
                     if (dt.Rows.Count == 0)
                     {
@@ -605,18 +604,18 @@ namespace GingerCore
 
                             updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
                         }
-                        DataSource.DSC.RunQuery(updateQuery);
+                        DataSource.RunQuery(updateQuery);
                     }
                     if (bMarkAsDone == "Y" && bDone == true)
                     {
-                        DataSource.DSC.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
+                        DataSource.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
                     }
                     else if (sAct == "DR" && bDone == true)
-                        DataSource.DSC.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
+                        DataSource.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
                 }
                 else if (updateQuery != "" && bDone == true)
                 {
-                    DataSource.DSC.RunQuery(updateQuery);
+                    DataSource.RunQuery(updateQuery);
                     mValueCalculated = "";
                 }
                 else if (sAct == "ETE" && bDone == true)
@@ -625,7 +624,7 @@ namespace GingerCore
                         ExcelSheet = DSTable;
                     if (ExcelPath.ToLower().EndsWith(".xlsx"))
                     {
-                        DataSource.DSC.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
+                        DataSource.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
                         mValueCalculated = "";
                     }
                     else
@@ -639,8 +638,7 @@ namespace GingerCore
                     //DataBase connection 
                     GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                     liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-                    liteDB.Init(liteDB.FileFullPath);
-                    liteDB.DSC = liteDB;
+                    liteDB.OpenConnection();
 
                     // Getting all values to execute query
                     int rowNumber = 0;
@@ -726,7 +724,6 @@ namespace GingerCore
                     Console.WriteLine(e.StackTrace);
                 }
             }
-            DataSource.Close();
         }
 
         

@@ -102,12 +102,12 @@ namespace GingerCoreNET.DataSource
                 }
             }
         }
-        public override void Init(string sFilePath, string sMode = "Read")
+        public override void OpenConnection()
         {
-            mFilePath = sFilePath;
+            mFilePath = FileFullPath;
             try
             {
-                Database = new LiteDatabase(sFilePath);
+                Database = new LiteDatabase(FileFullPath);
                 InitConnection();
             }
             catch(Exception ex)
@@ -157,7 +157,7 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override void Close()
+        public override void CloseConnection()
         {
             Database = new LiteDatabase(mFilePath);
             Database.Dispose();
@@ -1124,8 +1124,7 @@ namespace GingerCoreNET.DataSource
             {
                 FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
             }
-            ADC.Init(FileFullPath);
-            DSC = ADC;
+            ADC.OpenConnection();
         }
 
         public override string AddNewCustomizedTableQuery()
