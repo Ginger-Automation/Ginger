@@ -42,6 +42,14 @@ jobs:
   #- script: dotnet build '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'
   #  displayName: Build Ginger DLLs
 
+  - task: DotNetCoreCLI@2
+  displayName: Build GingerCoreNETUnitTest
+  inputs:
+    command: build
+    projects: '**/GingerCoreNETUnitTest.csproj'
+    arguments: '--configuration Release' # Update this to match your need
+
+
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
 # ------------------------------------------------------------------------------------------------------
@@ -52,7 +60,7 @@ jobs:
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
     inputs:
       command: test
-      projects: '**/**/GingerCoreNETUnitTest.csproj'          # test all csproj, it will skip .Net Framework
+      projects: '**/**/GingerCoreNETUnitTest.dll'          # test all csproj, it will skip .Net Framework
   #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
 
