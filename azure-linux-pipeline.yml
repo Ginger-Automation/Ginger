@@ -57,13 +57,13 @@ jobs:
 
   
 
+  - script: Linuxbuild.ps1
+    displayName: 'Linuxbuild.ps1'
+    
 
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
     displayName: 'Run tests on Ginger solution'
 
-
-  - script: Linuxbuild.ps1
-    displayName: 'Linuxbuild.ps1'
 
     
 
