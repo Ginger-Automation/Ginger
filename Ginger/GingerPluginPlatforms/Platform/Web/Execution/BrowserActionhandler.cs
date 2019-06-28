@@ -108,7 +108,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                             GotoURLType = "Current";
 
                         }
-     
+
                         BrowserService.Navigate(Value, GotoURLType);
 
 
@@ -148,11 +148,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         break;
                     case eControlAction.GetWindowTitle:
 
-                        BrowserService.GetTitle();
+                        string Title = BrowserService.GetTitle();
+
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Title });
                         break;
                     case eControlAction.GetMessageBoxText:
 
-                        BrowserService.GetTitle();
+                       string AlertText= BrowserService.GetAlertText();
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = AlertText });
                         break;
                     case eControlAction.SetAlertBoxText:
 
@@ -162,22 +165,22 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         string ElementLocateBy;
                         string Locatevalue;
                         string mElementType;
-                                           InputParams.TryGetValue("LocateValue", out Locatevalue);
+                        InputParams.TryGetValue("LocateValue", out Locatevalue);
                         InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
-                        if(string.IsNullOrEmpty(ElementLocateBy))
+                        if (string.IsNullOrEmpty(ElementLocateBy))
                         {
                             InputParams.TryGetValue("LocateBy", out ElementLocateBy);
                         }
-     
+
                         if (string.IsNullOrEmpty(Locatevalue))
                         {
                             InputParams.TryGetValue("Value", out Locatevalue);
                         }
                         InputParams.TryGetValue("ElementType", out mElementType);
-              
+
                         eElementType ElementType = eElementType.WebElement;
-                            _=Enum.TryParse<eElementType>( mElementType,out ElementType);
-                        IGingerWebElement   Element = LocateElement(ElementType, ElementLocateBy, Locatevalue);
+                        _ = Enum.TryParse<eElementType>(mElementType, out ElementType);
+                        IGingerWebElement Element = LocateElement(ElementType, ElementLocateBy, Locatevalue);
                         BrowserService.SwitchToFrame(Element);
                         break;
                     case eControlAction.RunJavaScript:
@@ -187,6 +190,13 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         {
                             AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Output.ToString() });
                         }
+                        break;
+
+                    case eControlAction.GetPageSource:
+
+                        string PageSource = BrowserService.GetPageSource();
+                        AOVs.Add(new NodeActionOutputValue() { Param = "PageSource", Value = PageSource });
+
                         break;
                 }
             }

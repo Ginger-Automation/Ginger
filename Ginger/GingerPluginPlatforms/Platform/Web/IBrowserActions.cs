@@ -100,5 +100,6 @@ namespace Ginger.Plugin.Platform.Web
         /// Deletes AllCookies .
         /// </summary>
         void DeleteAllCookies();
+        string GetPageSource();
     }
 }
