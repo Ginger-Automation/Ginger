@@ -61,7 +61,7 @@ jobs:
   inputs:
     command: test
     projects: '**/**/GingerCoreNETUnitTest.dll'          # test all csproj, it will skip .Net Framework
-  #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
+    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
 
   - script: dotnet test Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
