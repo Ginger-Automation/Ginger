@@ -57,10 +57,10 @@ jobs:
     # TODO: run unit test by level 1,2,3 continue on success only
 
   - task: DotNetCoreCLI@2
-    displayName: 'Run Unit tests Level for .Net Core test DLLs'
-    inputs:
-      command: test
-      projects: '**/**/GingerCoreNETUnitTest.dll'          # test all csproj, it will skip .Net Framework
+  displayName: 'Run Unit tests Level for .Net Core test DLLs'
+  inputs:
+    command: test
+    projects: '**/**/GingerCoreNETUnitTest.dll'          # test all csproj, it will skip .Net Framework
   #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
       
 
