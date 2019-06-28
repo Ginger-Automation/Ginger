@@ -870,6 +870,77 @@ namespace UnitTests.UITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
         }
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void SetEmulationDeviceNameTest()
+        {
+            //arrange
+            //GingerRunner gingerRunner = new GingerRunner();
+            //gingerRunner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+
+            //BusinessFlow businessFlow = new BusinessFlow();
+            //businessFlow.Activities = new ObservableList<Activity>();
+            //businessFlow.Name = "Device Emulation Test";
+            //businessFlow.Active = true;
+
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulation" });
+            mBF.CurrentActivity.TargetApplication = "DeviceEmulation";
+
+            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
+            mDriver.AutoDetect = true;
+            mDriver.HttpServerTimeOut = 60;
+            //Set emulation device name
+            mDriver.EmulationDeviceName = "iPad";
+            mDriver.StartDriver();
+
+            Agent agent = new Agent();
+            agent.Active = true;
+            agent.Driver = mDriver;
+            agent.DriverType = Agent.eDriverType.SeleniumChrome;
+
+            //gingerRunner.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents.Add(agent);
+
+            ApplicationAgent AA = new ApplicationAgent();
+            AA.AppName = "DeviceEmulation";
+            AA.Agent = agent;
+
+            mGR.ApplicationAgents.Add(AA);
+            mGR.CurrentBusinessFlow = mBF;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+
+            mGR.SetCurrentActivityAgent();
+
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
+            actBrowser.Active = true;
+
+            activity.Acts.Add(actBrowser);
+           
+            //act
+            mGR.RunAction(actBrowser);
+
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            actBrowser2.GetOrCreateInputParam("Value", "navigator.userAgent");
+            actBrowser.Active = true;
+            actBrowser2.AddNewReturnParams = true;
+
+            activity.Acts.Add(actBrowser2);
+
+            mGR.RunAction(actBrowser2);
+
+            //assert
+            var act = 10;
+        }
     }
 }
 
