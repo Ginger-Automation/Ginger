@@ -58,7 +58,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.SolutionRepository = SR;
 
             // add Example4 Plugin to solution
-            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages\PluginDriverExample4"));            
+            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "PluginDriverExample4"));            
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
 
             // Start a Ginger Services grid
