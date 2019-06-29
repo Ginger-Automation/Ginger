@@ -58,11 +58,11 @@ jobs:
   
 
   - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
-    displayName: 'dotnet test 33333333333'
+    displayName: 'Testing GingerCoreCommonTest'
     
 
-  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-    displayName: 'Run tests on Ginger solution'
+  # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  #  displayName: 'Run tests on Ginger solution'
 
 
     
