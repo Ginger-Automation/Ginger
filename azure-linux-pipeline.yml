@@ -57,8 +57,8 @@ jobs:
 
   
 
-  - script: Linuxbuild.ps1
-    displayName: 'Linuxbuild.ps1'
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest/bin/Release/netcoreapp2.2/GingerCoreNETUnitTest.dll --configuration $(buildConfiguration) --logger trx
+    displayName: 'dotnet test 33333333333'
     
 
   - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
