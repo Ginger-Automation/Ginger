@@ -24,6 +24,7 @@ jobs:
       **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerConsoleTest.dll
       **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerAutoPilotTest.dll
       **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll           
+      **\UnitTests\bin\$(buildConfiguration)\netcoreapp2.2\UnitTests.dll           
      
     artifactsFolder: 'D:\a\1\a' 
   
