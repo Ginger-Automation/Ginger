@@ -59,6 +59,9 @@ jobs:
 
   - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
     displayName: 'Testing GingerCoreCommonTest'
+
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerCoreNETUnitTest'
     
 
   # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
