@@ -42,7 +42,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions\BasicSimple\DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
+            string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
             liteDB.Init(Connectionstring);
         }
 
