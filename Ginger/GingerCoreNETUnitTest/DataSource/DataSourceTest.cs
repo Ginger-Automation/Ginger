@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCoreNET.DataSource;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Data;
-using GingerCore;
-using Ginger.Run;
-using GingerCore.Actions;
-using Amdocs.Ginger.Repository;
 
 namespace UnitTests.NonUITests
 {
