@@ -23,8 +23,7 @@ jobs:
       **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerCoreNETUnitTest.dll
       **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerConsoleTest.dll
       **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll           
-      **\UnitTests\bin\$(buildConfiguration)\UnitTests.dll           
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a' 
   
@@ -109,6 +108,15 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1 for .NET Framework
 # ------------------------------------------------------------------------------------------------------
+
+  - task: VSTest@2
+    displayName: 'Run Unit tests Level for test Framework DLLs <<<<<<<<<<'
+    inputs:      
+      testAssemblyVer2: '**\Unit Tests\bin\$(buildConfiguration)\UnitTests.dll'
+      # Framework: Framework45
+      # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
+      
+
 
 # We run .Net Framework tests 
 
