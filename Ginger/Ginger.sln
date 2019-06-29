@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginCoreTest", "Gin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "GingerPluginPlatforms\GingerPluginPlatforms.csproj", "{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWeb", "..\..\GingerWeb\GingerWeb\GingerWeb.csproj", "{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +218,12 @@ Global
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CDBE9F5B-6BD0-4910-85DF-E47C1B159D32}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5A56A0E-EE51-4653-A1CB-34E0391E7AE3}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
