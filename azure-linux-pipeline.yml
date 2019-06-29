@@ -57,7 +57,7 @@ jobs:
 
   
 
-  - script: dotnet test  Ginger/GingerCoreNETUnitTest/bin/Release/netcoreapp2.2/GingerCoreNETUnitTest.dll --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest/GingerCoreNETUnitTest.csproj --configuration $(buildConfiguration) --logger trx
     displayName: 'dotnet test 33333333333'
     
 
