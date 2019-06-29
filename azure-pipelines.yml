@@ -3,7 +3,7 @@
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
-# Request Windows VM Windows 2016 with Visual Studio 2017 - set Ginger solution
+# Request Windows VM Windows 2019 with Visual Studio 2019 - set Ginger solution
 # ------------------------------------------------------------------------------------------------------
 
 - job: Windows
@@ -113,7 +113,7 @@ jobs:
     displayName: 'Run Unit tests Level for test Framework DLLs <<<<<<<<<<'
     inputs:      
       testAssemblyVer2: '**\Unit Tests\bin\$(buildConfiguration)\UnitTests.dll'
-      # Framework: Framework45
+      Framework: Framework461
       # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
       
 
