@@ -48,7 +48,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Create temp solution
             SolutionRepository SR;
-            string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions\AgentTestSolution"));
+            string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "AgentTestSolution"));
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
