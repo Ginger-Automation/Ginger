@@ -117,12 +117,13 @@ jobs:
   #    # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
       
   - task: VSTest@2
-    displayName: Test Assemblies v2
+    displayName: Test Assemblies v3
     inputs:
       testAssemblyVer2: |
        **\$(BuildConfiguration)\*Test*.dll
+       **\Unit Tests\bin\$(buildConfiguration)\*Test*.dll
        !**\$(BuildConfiguration)\*IntegrationTests*.dll
-       !**\obj\**
+       !**\obj\**       
        !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
       runOnlyImpactedTests: false
       runInParallel: true
