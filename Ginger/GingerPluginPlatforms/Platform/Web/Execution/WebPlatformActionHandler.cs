@@ -2,7 +2,6 @@
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
-using System.Reflection;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -10,17 +9,25 @@ namespace Ginger.Plugin.Platform.Web.Execution
     {
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
-            // add try catch !!!!!!!!!!
-
+            // add try catch !!!!!!!!!
 
             IWebPlatform webPlatformService = (IWebPlatform)service;
 
 
-            if (platformAction.ActionHandler == "BrowserActions")
+            switch (platformAction.ActionHandler)
             {
-                //TODO: cache
-                BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);
-                Handler.ExecuteAction(ref platformAction);
+                case "BrowserActions":
+                    //TODO: cache
+                    BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);
+                    Handler.ExecuteAction(ref platformAction);
+                    break;
+                case "UIElementAction":                    
+                    UIELementActionHandler Handler2 = new UIELementActionHandler(webPlatformService);                    
+                    Handler2.ExecuteAction(ref platformAction);
+                    break;
+                default:
+                    platformAction.error += "HandleRunAction: handler not found: " + platformAction.ActionHandler;
+                    break;
             }
 
             // using reflection get the attr and run
@@ -30,30 +37,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             //IActionHandler platformActionHandler = (IActionHandler)obj;
             //platformActionHandler.ExecuteAction(ref platformAction);
-            //NewPayLoad actionResultPayload = platformActionHandler.HandleRunAction(service, platformAction);            
-            //return actionResultPayload;
-
-
-
-            if (platformAction.ActionType == "UIElementAction")
-            {
-                    UIELementActionHandler Handler = new UIELementActionHandler(webPlatformService);
-                    // Handler.PrepareforExecution(PomPayload);
-                    Handler.ExecuteAction(ref platformAction);
-                    // NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
-                    // return PLRC;
-            }
-
-            //NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + platformAction.ActionType);
-            //return err;
-
-            //catch (Exception ex)
-            //{
-            //    NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
-            //    return newPayLoad;
-            //}
-
-
+            
         }
 
      
