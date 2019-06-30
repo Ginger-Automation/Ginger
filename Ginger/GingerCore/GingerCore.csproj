@@ -198,15 +198,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>D:\Sandesh workspace\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
-    <Reference Include="MigraDoc.DocumentObjectModel-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.DocumentObjectModel-wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="MigraDoc.Rendering-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.Rendering-wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="MigraDoc.RtfRendering-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\MigraDoc.RtfRendering-wpf.dll</HintPath>
-    </Reference>
     <Reference Include="MongoDB.Bson, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Bson.2.8.1\lib\net452\MongoDB.Bson.dll</HintPath>
     </Reference>
@@ -238,11 +229,11 @@
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.19.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\PdfSharp-wpf.dll</HintPath>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PdfSharp.Charting-wpf, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFsharp-MigraDoc-wpf.1.50.5147\lib\net30\PdfSharp.Charting-wpf.dll</HintPath>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
     </Reference>
     <Reference Include="PerfectoLab, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PerfectoLab.18.4.0.1\lib\PerfectoLab.dll</HintPath>

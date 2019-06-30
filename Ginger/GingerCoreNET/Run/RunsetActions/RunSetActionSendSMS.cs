@@ -29,7 +29,7 @@ namespace Ginger.Run.RunSetActions
     {
         [IsSerializedForLocalRepository]
         public Email SMSEmail = new Email();
-
+      
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
@@ -42,11 +42,20 @@ namespace Ginger.Run.RunSetActions
         {
             get { return true; }
         }
-
+      
         public override void Execute(ReportInfo RI)
         {
-            //TODO: check number of chars and show err if more or update Errors field
-            SMSEmail.Send();
+            //TODO: check number of chars and show err if more or update Errors field           
+            SMSEmail.IsBodyHTML = false;
+
+            bool isSuccess;
+            isSuccess = SMSEmail.Send();
+            if (isSuccess == false)
+            {
+                Errors = SMSEmail.Event;
+                Reporter.HideStatusMessage();
+                Status = RunSetActionBase.eRunSetActionStatus.Failed;
+            }            
         }
 
         public override string GetEditPage()

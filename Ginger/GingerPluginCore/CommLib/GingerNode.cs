@@ -21,7 +21,6 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Amdocs.Ginger.Plugin.Core.Attributes;
-using Amdocs.Ginger.Plugin.Core.Drivers;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
@@ -117,8 +116,12 @@ namespace GingerCoreNET.DriversLib
             }
         }
 
+        
+
         public static NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> aOVs)
         {
+            // TODO: use struct to return output check if faster than list of payload 
+
             // We send back only item which can change - ExInfo and Output values
             NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
             PLRC.AddValue(exInfo);  // ExInfo
@@ -163,7 +166,7 @@ namespace GingerCoreNET.DriversLib
                     break;
                 case "RunPlatformAction":
                     gingerSocketInfo.Response = RunPlatformAction(pl);
-                    break;
+                    break;                
                 case "StartDriver":
                     gingerSocketInfo.Response = StartDriver(pl);
                     break;
@@ -193,8 +196,14 @@ namespace GingerCoreNET.DriversLib
             // GingerNode needs to remain generic so we have one entry point and delagate the work to the platform handler
             if (mService is IPlatformService platformService)
             {
-                NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService, payload);
-                return newPayLoad;
+                NodePlatformAction nodePlatformAction = payload.GetJSONValue<NodePlatformAction>();
+                nodePlatformAction.Output = new NodeActionOutput();
+                // Verify platformActionData is valid !!!
+
+                platformService.PlatformActionHandler.HandleRunAction(platformService, ref nodePlatformAction);
+
+                NewPayLoad actionResult = CreateActionResult(nodePlatformAction.exInfo, nodePlatformAction.error, nodePlatformAction.Output.OutputValues);
+                return actionResult;
             }
 
             NewPayLoad err2 = NewPayLoad.Error("RunPlatformAction: service is not supporting IPlatformService cannot delegate to run action ");
@@ -263,8 +272,6 @@ namespace GingerCoreNET.DriversLib
         static NewPayLoad BitmapToPayload(Bitmap bitmap)
         {
             MemoryStream ms = new MemoryStream();
-
-
             bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
             string Base64Image = Convert.ToBase64String(ms.GetBuffer());
             return new NewPayLoad("ScreenShot", Base64Image);

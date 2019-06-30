@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using LiteDB;
-using System.Threading;
-using LiteDB.Shell;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using Newtonsoft.Json.Linq;
-using GingerCore.Actions;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using static GingerCore.Actions.ActDSTableElement;
-using Amdocs.Ginger.Repository;
 
 namespace GingerCoreNET.DataSource
 {
