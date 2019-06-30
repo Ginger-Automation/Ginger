@@ -70,6 +70,23 @@ namespace UnitTests.NonUITests
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
+
+        public static void AddApplicationAgent()
+        {
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
+
+            Agent a = new Agent();
+            a.DriverType = Agent.eDriverType.SeleniumChrome;
+
+            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents.Add(a);
+
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "Web", Agent = a });
+            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
+        }
         [TestMethod]
         [Timeout(60000)]
         public void ActXMLProcessingTest()
@@ -174,6 +191,51 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
             Assert.AreEqual(1, actScript.ReturnValues.Count);
             Assert.AreEqual("\n\nHello\nSNO=1\n\n", actScript.ReturnValues[0].Actual);
+        }
+
+        [TestMethod]
+        public void CloseAgentNullCheck()
+        {
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType);
+            actAgentManipulation.Active = true;
+            mGR.RunAction(actAgentManipulation);
+            Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");            
+        }        
+
+        [TestMethod]
+        public void RestartAgentNullCheck()
+        {
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType, "RestartAgent");
+            actAgentManipulation.Active = true;
+            mGR.RunAction(actAgentManipulation);
+            Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");          
+        }
+
+        [TestMethod]
+        public void CloseAgent()
+        {
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType);
+            actAgentManipulation.Active = true;
+            AddApplicationAgent();
+            mGR.SetCurrentActivityAgent();
+            mGR.RunAction(actAgentManipulation);
+            Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
+            Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
+        }
+        [TestMethod]
+        public void RestartAgent()
+        {
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType, "RestartAgent");
+            actAgentManipulation.Active = true;
+            AddApplicationAgent();
+            mGR.SetCurrentActivityAgent();
+            mGR.RunAction(actAgentManipulation);
+            Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
+            Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
         }
     }
 }
