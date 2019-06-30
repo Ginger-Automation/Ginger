@@ -166,7 +166,9 @@ namespace Ginger.UserControlsLib.UCListView
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
                         }
-                    });
+
+                        xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                    });                    
                 }
                 catch (Exception ex)
                 {
