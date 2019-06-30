@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,8 +46,55 @@ namespace GingerWPF.BusinessFlowsLib
             mBusinessFlow = businessFlow;
             mContext = context;
 
+            mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
+            TrackBusinessFlowAutomationPrecentage();
             BindControls();
         }
+
+        private void TrackBusinessFlowAutomationPrecentage()
+        {
+            foreach (Activity activity in mBusinessFlow.Activities)
+            {
+                activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged;
+                activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
+            }
+        }
+
+        private void mBusinessFlowActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Activity.AutomationStatus))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
+                Activity changedActivity = (Activity)sender;
+                if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
+                {
+                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == changedActivity.ActivitiesGroupID).FirstOrDefault();
+                    if(actGroup != null)
+                    {
+                        actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
+                    }                    
+                }
+            }
+        }
+
+        private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
+
+            //Perf imrprovements
+            //if (WorkSpace.Instance.BetaFeatures.BFPageActivitiesHookOnlyNewActivities)
+            //{
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                {
+                    foreach (object o in e.NewItems)
+                    {
+                        Activity activity = (Activity)o;
+                        activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
+                    }
+                }
+            //}            
+        }
+        
 
         private void BindControls()
         {
