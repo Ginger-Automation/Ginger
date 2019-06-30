@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem>
+  <Header ItemGuid="6b5cd2df-a8fb-4b39-894f-d9c7da49791b" ItemType="DummyAction" CreatedBy="YARONWE" Created="201906272051" GingerVersion="3.3.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201906272052" />
+  <DummyAction OldAge="7" Guid="6b5cd2df-a8fb-4b39-894f-d9c7da49791b" Name="Tom" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</GingerRepositoryItem>

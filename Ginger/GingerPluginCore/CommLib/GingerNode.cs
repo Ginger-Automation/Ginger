@@ -116,8 +116,12 @@ namespace GingerCoreNET.DriversLib
             }
         }
 
+        
+
         public static NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> aOVs)
         {
+            // TODO: use struct to return output check if faster than list of payload 
+
             // We send back only item which can change - ExInfo and Output values
             NewPayLoad PLRC = new NewPayLoad("ActionResult");   //TODO: use const
             PLRC.AddValue(exInfo);  // ExInfo
@@ -192,11 +196,14 @@ namespace GingerCoreNET.DriversLib
             // GingerNode needs to remain generic so we have one entry point and delagate the work to the platform handler
             if (mService is IPlatformService platformService)
             {
-                PlatformActionData platformActionData = payload.GetJSONValue<PlatformActionData>();
+                NodePlatformAction nodePlatformAction = payload.GetJSONValue<NodePlatformAction>();
+                nodePlatformAction.Output = new NodeActionOutput();
                 // Verify platformActionData is valid !!!
 
-                NewPayLoad newPayLoad = platformService.PlatformActionHandler.HandleRunAction(platformService, platformActionData);
-                return newPayLoad;
+                platformService.PlatformActionHandler.HandleRunAction(platformService, ref nodePlatformAction);
+
+                NewPayLoad actionResult = CreateActionResult(nodePlatformAction.exInfo, nodePlatformAction.error, nodePlatformAction.Output.OutputValues);
+                return actionResult;
             }
 
             NewPayLoad err2 = NewPayLoad.Error("RunPlatformAction: service is not supporting IPlatformService cannot delegate to run action ");

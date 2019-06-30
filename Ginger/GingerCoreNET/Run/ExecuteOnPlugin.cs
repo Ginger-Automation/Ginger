@@ -181,6 +181,10 @@ namespace Amdocs.Ginger.CoreNET.Run
         {                        
             NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
 
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
+
             // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
             

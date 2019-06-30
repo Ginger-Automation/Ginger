@@ -985,6 +985,9 @@ namespace GingerCore.Actions.Common
         }
 
 
+
+        // Dup put in centralized location !!!
+
         public struct Locator
         {
             public string By;
@@ -994,13 +997,15 @@ namespace GingerCore.Actions.Common
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Any", action: "UIElementAction");            
+            // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
+
+            PlatformAction platformAction = new PlatformAction(actionHandler:"UIElementAction", action: "UIElementAction");            
             platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
             platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
             // Add elem type POM data etc.
             List<Locator> locators = new List<Locator>();
-            locators.Add(new Locator() { By = "ID", Value = "aaa" });
+            locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
             
             platformAction.InputParams.Add("Locators", locators);
 
