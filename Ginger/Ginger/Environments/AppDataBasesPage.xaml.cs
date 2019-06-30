@@ -30,6 +30,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginger.Environments
 {
@@ -67,7 +68,7 @@ namespace Ginger.Environments
             }
         }
 
-        private void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private async void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if (e.Column.Header.ToString() == "User Password")
             {
@@ -97,7 +98,7 @@ namespace Ginger.Environments
             }
         }
 
-        public void UpdateDatabaseNameChange(Database db)
+        public async Task UpdateDatabaseNameChange(Database db)
         {
             if (db == null)
             {
@@ -107,19 +108,22 @@ namespace Ginger.Environments
             Reporter.ToStatus(eStatusMsgKey.SaveItem, null, db.Name, "Database");
             try
             {
-                ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                foreach (BusinessFlow businessFlow in allBF)
+                ObservableList<BusinessFlow> allBF = null;
+                await Task.Run(() =>
+                 allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
+                );
+                
+                Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
-                    foreach (Activity activity in businessFlow.Activities)
+                    Parallel.ForEach(BF.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
                     {
                         List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
-                        foreach (ActDBValidation action in dbActs)
+                        Parallel.ForEach(dbActs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                         {
-                            Database.UpdateDatabaseNameChangeInItem(action, db.NameBeforeEdit, db.Name);
-                        }
-                    }
-                }
-
+                            Database.UpdateDatabaseNameChangeInItem((ActDBValidation)iaction, db.NameBeforeEdit, db.Name);
+                        });
+                    });
+                });
                 db.NameBeforeEdit = db.Name;
             }
             catch (Exception ex)
