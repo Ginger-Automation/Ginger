@@ -16,20 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Java;
+using GingerCore.Drivers.CommunicationProtocol;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GingerCore.Actions;
-using GingerCore.Actions.Java;
-using GingerCore.Drivers.CommunicationProtocol;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using GingerCore.Drivers.JavaDriverLib;
-using GingerTestHelper;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace UnitTests.NonUITests.PayLoadTest
 {
@@ -39,7 +33,7 @@ namespace UnitTests.NonUITests.PayLoadTest
     {
 
         //static JavaDriver mDriver = null;
-        //static String AppName="Foxtel Test App";
+        //static String AppName="Test App";
 
         //[ClassInitialize()]
         //public static void ClassInit(TestContext context)
@@ -50,7 +44,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //    LJA.LaunchWithAgent = true;
         //    LJA.WaitForWindowTitle = AppName;
         //    LJA.Port = "7575";
-        //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\Foxtel Test App.jar";
+        //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\Test App.jar";
         //    LJA.Execute();
 
         //    mDriver = new JavaDriver(null);

@@ -337,7 +337,6 @@
     <Compile Include="UITests\MiniBrowserWindow.xaml.cs">
       <DependentUpon>MiniBrowserWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NonUITests\PayLoadTest.cs" />
     <Compile Include="UITests\PBDriverTest.cs" />
     <Compile Include="NonUITests\QCTest.cs" />
     <Compile Include="NonUITests\RepositoryXMLConverterTest.cs" />
