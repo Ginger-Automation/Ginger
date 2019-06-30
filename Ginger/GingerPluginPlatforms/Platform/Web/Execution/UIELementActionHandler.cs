@@ -118,19 +118,31 @@ namespace Ginger.Plugin.Platform.Web.Execution
         //#endregion
   
 
-        string Value;
-        readonly IWebPlatform PlatformService;
+        string Value
+        {
+            get
+            {
+                return (string)mPlatformAction.InputParams["Value"];
+            }
+        }
+        readonly IWebPlatform mPlatformService;
 
         // Remove !!!!!!!!!!!!!
         Dictionary<string, object> InputParams;
+
+
+        // Remove !!!!!!!!!!!
         internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
 
+        // Remove !!!!!!!!!!!
         public string ExecutionInfo { get ; set; }
+
+        // Remove !!!!!!!!!!!
         public string Error { get; set; }
 
-        public UIELementActionHandler(IWebPlatform mplatformService)
+        public UIELementActionHandler(IWebPlatform platformService)
         {
-            PlatformService = mplatformService;
+            mPlatformService = platformService;
             // InputParams = platformActionData.InputParams;
         }
 
@@ -195,10 +207,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
             public string By;
             public string Value;
         }
+
+        NodePlatformAction mPlatformAction;
+
         public void ExecuteAction(ref NodePlatformAction platformAction)
         {         
             try
             {
+                mPlatformAction = platformAction;
                 // convert the JArray to list of locators
                 List<Locator> locators = ((JArray)platformAction.InputParams["Locators"]).ToObject<List<Locator>>();                
                 eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)platformAction.InputParams["ElementType"]);
@@ -211,7 +227,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     uiElement = LocateElement(ref ElementType, locator.By, locator.Value);
                     if (uiElement != null)
                     {
-                        platformAction.exInfo += "button was clicked - " + locator.By + "=" + locator.Value;                        
+                        platformAction.exInfo += "UI Element Located using: " + locator.By + "=" + locator.Value;                        
                         break;
                     }                    
                 }
@@ -223,56 +239,12 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     return;
                 }
 
-                // Try if it is common action first
-                bool ActionPerformed = PerformCommonActions(uiElement);
+                RunActionOnUIElement(uiElement, ElementType);
 
-
-                if (!ActionPerformed)
+                //TODO: remove  // update output values - TODO: do it directlyon platformAction !!!
+                foreach (NodeActionOutputValue nodeActionOutputValue in AOVs)
                 {
-                    switch (ElementType)
-                    {
-                        case eElementType.Button:
-                            ButtonActions((IButton)uiElement);                            
-                            break;
-                        case eElementType.Canvas:
-                            CanvasAction(uiElement);
-                            break;
-                        case eElementType.CheckBox:
-                            CheckBoxActions(uiElement);
-                            break;
-                        case eElementType.ComboBox:
-                            ComboBoxActions(uiElement);
-                            break;
-                        case eElementType.Div:
-                            DivActions(uiElement);
-                            break;
-                        case eElementType.Image:
-                            ImageActions(uiElement);
-                            break;
-                        case eElementType.Label:
-                            LabelActions(uiElement);
-                            break;
-                        case eElementType.List:
-                            ListActions(uiElement);
-                            break;
-                        case eElementType.RadioButton:
-                            RadioButtonActions(uiElement);
-                            break;
-                        case eElementType.Span:
-                            SpanActions(uiElement);
-                            break;
-                        case eElementType.Table:
-                            TableActions(uiElement);
-                            break;
-                        case eElementType.TextBox:
-                            TextBoxActions(uiElement);
-                            break;
-                        case eElementType.HyperLink:
-                            HyperLinkActions(uiElement, ElementAction);
-                            break;
-
-
-                    }
+                    platformAction.Output.Add(nodeActionOutputValue.Param, (string)nodeActionOutputValue.Value); // TODO: add path !!!
                 }
             }
 
@@ -280,6 +252,60 @@ namespace Ginger.Plugin.Platform.Web.Execution
             {
                 Error = Ex.Message;
                 ExecutionInfo = Ex.StackTrace;  // DO not put stacktrace !!!!
+            }
+        }
+
+        private void RunActionOnUIElement(IGingerWebElement uiElement, eElementType ElementType)
+        {
+        // Try if it is common action first
+            bool ActionPerformed = PerformCommonActions(uiElement);
+
+            if (!ActionPerformed)
+            {
+                switch (ElementType)
+                {
+                    case eElementType.Button:
+                        ButtonActions((IButton)uiElement);                            
+                        break;
+                    case eElementType.Canvas:
+                        CanvasAction(uiElement);
+                        break;
+                    case eElementType.CheckBox:
+                        CheckBoxActions(uiElement);
+                        break;
+                    case eElementType.ComboBox:
+                        ComboBoxActions(uiElement);
+                        break;
+                    case eElementType.Div:
+                        DivActions(uiElement);
+                        break;
+                    case eElementType.Image:
+                        ImageActions(uiElement);
+                        break;
+                    case eElementType.Label:
+                        LabelActions(uiElement);
+                        break;
+                    case eElementType.List:
+                        ListActions(uiElement);
+                        break;
+                    case eElementType.RadioButton:
+                        RadioButtonActions(uiElement);
+                        break;
+                    case eElementType.Span:
+                        SpanActions(uiElement);
+                        break;
+                    case eElementType.Table:
+                        TableActions(uiElement);
+                        break;
+                    case eElementType.TextBox:
+                        TextBoxActions((ITextBox)uiElement);
+                        break;
+                    case eElementType.HyperLink:
+                        HyperLinkActions(uiElement, ElementAction);
+                        break;
+
+
+                }
             }
         }
 
@@ -297,21 +323,21 @@ namespace Ginger.Plugin.Platform.Web.Execution
             switch (ElementLocateBy)
             {
                 case "ByID":
-                    Element = PlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
+                    Element = mPlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
                     break;
                 case "ByCSSSelector":
                 case "ByCSS":
-                    Element = PlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
+                    Element = mPlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
                     break;
                 case "ByLinkText":
-                    Element = PlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
+                    Element = mPlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
                     break;
                 case "ByName":
-                    Element = PlatformService.LocateWebElement.LocateElementByName(ElementType, LocateByValue);
+                    Element = mPlatformService.LocateWebElement.LocateElementByName(ElementType, LocateByValue);
                     break;
                 case "ByRelXPath":
                 case "ByXPath":
-                    Element = PlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
+                    Element = mPlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
                     break;
             }
 
@@ -425,40 +451,33 @@ namespace Ginger.Plugin.Platform.Web.Execution
             }
         }
 
-        private void TextBoxActions(IGingerWebElement element)
-        {
-
-            ITextBox TextBox = (ITextBox)element;
+        private void TextBoxActions(ITextBox TextBox)
+        {            
             switch (ElementAction)
             {
                 case eElementAction.SetValue:
-
                     TextBox.SetValue(Value);
                     break;
                 case eElementAction.GetValue:
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetValue() });
-
                     break;
-
                 case eElementAction.GetTextLength:
-                    AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetTextLength() });
-                    
+                    AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetTextLength() });                    
                     break;
                 case eElementAction.SendKeys:
-
                     TextBox.SendKeys(Value);
                     break;
                 case eElementAction.SetText:
-
-                    TextBox.SendKeys(Value);
+                    TextBox.SetText(Value);
                     break;
-
+                case eElementAction.GetText:
+                    string txt = TextBox.GetText();
+                    AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = txt });
+                    break;
                 case eElementAction.GetFont:
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetFont() });
-
                     break;
                 case eElementAction.ClearValue:
-
                     TextBox.ClearValue();
                     break;
                 case eElementAction.IsValuePopulated:
