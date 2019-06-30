@@ -117,11 +117,11 @@ jobs:
   #    # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
       
   - task: VSTest@2
-    displayName: Test Assemblies v4
+    displayName: Test Assemblies v5
     inputs:
       testAssemblyVer2: |
-       **\$(BuildConfiguration)\*Test*.dll
-       **\**\UnitTests.dll
+       !**\$(BuildConfiguration)\*Test*.dll
+       **\Ginger\Unit Tests\bin\Release\UnitTests.dll
        !**\$(BuildConfiguration)\*IntegrationTests*.dll
        !**\obj\**       
        !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
