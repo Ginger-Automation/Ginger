@@ -81,10 +81,13 @@ jobs:
 
 
   - task: VSTest@2
-    displayName: GC 3
+    displayName: GC 4
     inputs:
-      testAssemblyVer2: |
-       **\$(BuildConfiguration)\GingerCoreTest.dll
+      testAssemblyVer2: |       
+	   **\*Test*.dll
+       !**\*TestAdapter.dll
+       !**\obj\** 
+	   # **\$(BuildConfiguration)\GingerCoreTest.dll
 	   # /TestAdapterPath:".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
 
   # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
