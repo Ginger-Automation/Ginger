@@ -78,11 +78,12 @@ jobs:
       # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
+# ------------------------------------------------------------------------------------------------------
+# Run .Net Framework tests
+# ------------------------------------------------------------------------------------------------------
 
-
-	
   - task: VSTest@2
-    displayName: GC 6
+    displayName: GC 7
     inputs:
       testAssemblyVer2: |
        !**\$(BuildConfiguration)\*Test*.dll
