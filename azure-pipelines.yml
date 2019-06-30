@@ -121,7 +121,7 @@ jobs:
     inputs:
       testAssemblyVer2: |
        !**\$(BuildConfiguration)\*Test*.dll
-       **\Ginger\Unit Tests\bin\Release\UnitTests.dll
+       **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
        !**\$(BuildConfiguration)\*IntegrationTests*.dll
        !**\obj\**       
        !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
