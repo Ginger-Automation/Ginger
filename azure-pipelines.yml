@@ -80,7 +80,7 @@ jobs:
 
 
 
-  - script: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
+  - script: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
     displayName: UnitTest tests c:\
 
 # ------------------------------------------------------------------------------------------------------
