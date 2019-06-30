@@ -994,7 +994,7 @@ namespace GingerCore.Actions.Common
         {
             // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
 
-            PlatformAction platformAction = new PlatformAction(platform: "Any", actionHandler:"UIElementAction", action: "UIElementAction");            
+            PlatformAction platformAction = new PlatformAction(actionHandler:"UIElementAction", action: "UIElementAction");            
             platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
             platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 

@@ -13,11 +13,14 @@ using System.Text;
 
 namespace GingerCoreNETUnitTest.ClientAppReport
 {
+    [Ignore]
     [TestClass]
     public class WebReportTest
     {
         private SolutionRepository sr;
 
+
+        //TODO: use test class init
         public WebReportTest()
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
