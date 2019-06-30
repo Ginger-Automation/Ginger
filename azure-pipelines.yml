@@ -83,7 +83,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: VSTest@2
-    displayName: GC 7
+    displayName: GC 8
     inputs:
       testAssemblyVer2: |
        !**\$(BuildConfiguration)\*Test*.dll
@@ -93,8 +93,8 @@ jobs:
        !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
       runOnlyImpactedTests: false
       runInParallel: true
-      runTestsInIsolation: false
-	  TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
+      # runTestsInIsolation: false
+	  # TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
       # codeCoverageEnabled: true
       platform: '$(BuildPlatform)'
       configuration: '$(BuildConfiguration)'
