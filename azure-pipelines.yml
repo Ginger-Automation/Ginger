@@ -79,15 +79,26 @@ jobs:
     displayName: Build Ginger solution
 
 
+
+	
   - task: VSTest@2
-    displayName: GC 4
+    displayName: GC 6
     inputs:
-      testAssemblyVer2: |       
-	   **\*Test*.dll
-       !**\*TestAdapter.dll
-       !**\obj\** 
-	   # **\$(BuildConfiguration)\GingerCoreTest.dll
-	   # /TestAdapterPath:".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
+      testAssemblyVer2: |
+       !**\$(BuildConfiguration)\*Test*.dll
+       **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
+       !**\$(BuildConfiguration)\*IntegrationTests*.dll
+       !**\obj\**       
+       !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+      runOnlyImpactedTests: false
+      runInParallel: true
+      runTestsInIsolation: false
+	  TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
+      # codeCoverageEnabled: true
+      platform: '$(BuildPlatform)'
+      configuration: '$(BuildConfiguration)'
+
+  
 
   # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
 #    displayName: UnitTest tests c:\
@@ -97,6 +108,8 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
     
     # TODO: run unit test by level 1,2,3 continue on sucess only
+
+
 
   - task: VSTest@2
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
