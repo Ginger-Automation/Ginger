@@ -955,7 +955,7 @@ namespace Ginger
                         mCurrentActivity.PropertyChanged += MCurrentActivity_PropertyChanged;
                     }                                  
                 }
-                else if(e.PropertyName == BusinessFlow.Fields.Name)
+                else if(e.PropertyName == nameof(BusinessFlow.Name))
                 {
                     UpdateMainBFLabel();
                 }

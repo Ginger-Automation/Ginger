@@ -53,9 +53,9 @@ namespace GingerWPF.BusinessFlowsLib
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
             General.FillComboFromEnumObj(xStatusComboBox, mBusinessFlow.Status);
-            BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);
+            BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
-            BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
 
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
