@@ -78,6 +78,11 @@ jobs:
       # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
+
+
+  - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
+    displayName: UnitTest tests c:\
+
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
 # ------------------------------------------------------------------------------------------------------
@@ -134,7 +139,7 @@ jobs:
 
 # We run .Net Framework tests 
 
-  # FIXME make unti test work - 40 TCs fails  !!!!!!!!!!!!!!!!!!!!!!!!!!
+  # FIXME make unit test work - 40 TCs fails  !!!!!!!!!!!!!!!!!!!!!!!!!!
   #- script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
   #  displayName: UnitTest tests
   #- script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\Release\GingerTest.dll" 
