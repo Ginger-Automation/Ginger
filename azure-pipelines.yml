@@ -80,13 +80,13 @@ jobs:
 
 
   - task: VSTest@2
-    displayName: GC 2
+    displayName: GC 3
     inputs:
       testAssemblyVer2: |
-       **\$(BuildConfiguration)\UnitTests.dll
+       **\$(BuildConfiguration)\GingerCoreTest.dll
 
-  - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
-    displayName: UnitTest tests c:\
+  # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
+#    displayName: UnitTest tests c:\
 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1,2,3 for .NET Core testDLLs
