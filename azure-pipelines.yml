@@ -117,7 +117,7 @@ jobs:
   #    # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
       
   - task: VSTest@2
-    displayName: Test Assemblies v5
+    displayName: GingerCoreTest v1
     inputs:
       testAssemblyVer2: |
        !**\$(BuildConfiguration)\*Test*.dll
@@ -128,7 +128,7 @@ jobs:
       runOnlyImpactedTests: false
       runInParallel: true
       runTestsInIsolation: false
-      codeCoverageEnabled: true
+      # codeCoverageEnabled: true
       platform: '$(BuildPlatform)'
       configuration: '$(BuildConfiguration)'
 
