@@ -678,10 +678,6 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
        {
-            //if (string.IsNullOrEmpty(xSearchTextBox.Text))
-            //{
-            //    ResetListViewItems();
-            //}
             // this inner method checks if user is still typing
             async Task<bool> UserKeepsTyping()
             {
@@ -694,138 +690,25 @@ namespace Ginger.UserControlsLib.UCListView
             mSearchString = xSearchTextBox.Text;
             CollectFilterData();
             filteredView.Refresh();
-            //await SearchAsync();
         }
 
-        private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
+        private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
             xSearchTextBox.Text = "";
             mSearchString = null;
-
-            if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
-            {
-                await CancelSearchAsync();
-            }
-            else
-            {
-                //if search is already complete and user trying to clear text we collapse the unselected nodes
-                //List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-                //if (xTreeViewTree.LastSelectedTVI != null)
-                //{
-                //    pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);
-                //}
-                //UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
-            }
         }
 
-        public void SearchList(string txt)
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            xSearchTextBox.Text = txt;
-        }
-
-        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
+            if (!string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
-                await SearchAsync();
+                mSearchString = xSearchTextBox.Text;
+                CollectFilterData();
+                filteredView.Refresh();
             }
         }
-
-        private async Task SearchAsync()
-        {
-
-            if (string.IsNullOrEmpty(mSearchString))
-            {
-                return;
-            }
-
-            if (mSearchTask?.IsCanceled == false && mSearchTask?.IsCompleted == false)
-            {
-                //Cancel if previous search is running 
-                await CancelSearchAsync();
-            }
-
-            xSearchBtn.Visibility = Visibility.Collapsed;
-            xSearchClearBtn.Visibility = Visibility.Visible;
-            mCancellationTokenSource = new CancellationTokenSource();
-            mSearchTask = new Task(() =>
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    try
-                    {
-                        mCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        if (SearchStarted == null)
-                        {
-                            //If event is not hooked we say searching status on main window
-                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
-                        }
-                        else
-                        {
-                            //If event is hookded then no point in showing status on main window. 
-                            //child window need to handle it in the window. E.g. Windows Explorer
-                            SearchStarted.Invoke(xListView, new EventArgs());
-                        }
-                        Mouse.OverrideCursor = Cursors.Wait;
-                        //FilterItemsByText(mOrigObjList, mSearchString, mCancellationTokenSource.Token); //To implement
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
-                    }
-                    finally
-                    {
-
-                        if (SearchStarted == null)
-                        {
-                            Reporter.HideStatusMessage();
-                        }
-                        else
-                        {
-                            SearchCompleted.Invoke(xListView, new EventArgs());
-                        }
-
-                        Mouse.OverrideCursor = null;
-                        mCancellationTokenSource.Dispose();
-                    }
-                });
-            }, mCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
-
-            mSearchTask.Start();
-
-        }
-
-        public async Task CancelSearchAsync()
-        {
-
-            mCancellationTokenSource?.Cancel();
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            while (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false && mSearchTask.IsFaulted == false)
-            {
-                await Task.Delay(1000);
-                if (st.ElapsedMilliseconds > 5000)
-                {
-                    break;
-                }
-            }
-
-            mCancellationTokenSource?.Dispose();
-            mSearchTask = null;
-            if (SearchCancelled == null)
-            {
-                SearchCancelled.Invoke(xListView, new EventArgs());
-            }
-            else
-            {
-                Reporter.HideStatusMessage();
-            }
-            Mouse.OverrideCursor = null;
-        }
-
     }
 
     public class UcListViewEventArgs

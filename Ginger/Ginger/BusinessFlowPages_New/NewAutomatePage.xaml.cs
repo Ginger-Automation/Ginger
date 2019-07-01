@@ -47,6 +47,7 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
 using GingerWPF.WizardLib;
 using LiteDB;
@@ -433,6 +434,9 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
                         mContext.Activity = mBusinessFlow.CurrentActivity;
+
+                        if (mContext.Platform == ePlatformType.NA)
+                            UpdateContextWithActivityDependencies();
                     }
                     SetActivityEditPage();
 
