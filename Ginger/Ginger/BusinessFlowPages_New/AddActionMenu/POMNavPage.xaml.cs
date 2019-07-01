@@ -123,6 +123,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MainTreeView_ItemSelected(object sender, SelectionTreeEventArgs e)
         {
+            GridLength POMItemsSelected = new GridLength(1, GridUnitType.Auto);
+            GridLength POMDetailsPanelLoaded = new GridLength(100, GridUnitType.Star);
+
             if (e.SelectedItems != null && e.SelectedItems.Count == 1)
             {
                 mPOM = e.SelectedItems[0] as ApplicationPOMModel;
@@ -135,12 +138,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                     xMainElementsGrid.Visibility = Visibility.Visible;
                     xPOMSplitter.Visibility = Visibility.Visible;
+
+                    if (xPOMDetails.Height != POMDetailsPanelLoaded)
+                    {
+                        xPOMItems.Height = POMItemsSelected;
+                        xPOMDetails.Height = POMDetailsPanelLoaded;
+                    }
                 }
             }
             else
             {
                 xMainElementsGrid.Visibility = Visibility.Collapsed;
                 xPOMSplitter.Visibility = Visibility.Collapsed;
+                xPOMItems.Height = new GridLength(100, GridUnitType.Star);
+                xPOMDetails.Height = new GridLength(0);
             }
         }
 

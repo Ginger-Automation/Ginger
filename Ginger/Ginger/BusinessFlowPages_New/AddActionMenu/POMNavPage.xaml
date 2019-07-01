@@ -13,7 +13,7 @@
 
     <Grid Name="PageGrid">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="xPOMItems" Height="*"/>
+            <RowDefinition x:Name="xPOMItems" Height="Auto"/>
             <RowDefinition />
             <RowDefinition x:Name="xPOMDetails" Height="*"/>
         </Grid.RowDefinitions>
@@ -26,8 +26,8 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <Frame x:Name="xPOMFrame" NavigationUIVisibility="Hidden" VerticalAlignment="Top" />
-        
+        <Frame x:Name="xPOMFrame" NavigationUIVisibility="Hidden" VerticalAlignment="Top" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+
         <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="Black" IsEnabled="True" />
         <Ginger:ucGrid x:Name="xMainElementsGrid" Visibility="Collapsed" Grid.Row="2" Title="Mapped Elements" ShowTitle="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" Margin="0,5,0,0" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowSearch="Collapsed" />
 
