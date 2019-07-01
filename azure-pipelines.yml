@@ -82,9 +82,9 @@ jobs:
 # Run .Net Framework tests
 # ------------------------------------------------------------------------------------------------------
 
-  - powershell:  inline Write-Host "Hello World 1"       
-    workingDirectory:   D:\a\1\s\Ginger\Unit Tests\bin\Release
-    displayName:  inline script 3
+  - powershell:  inline "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" GingerCoreTest.dll /Logger:trx    
+    workingDirectory:   C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\
+    displayName:  inline script 4
     failOnStderr:  true
     errorActionPreference:  stop    
 
