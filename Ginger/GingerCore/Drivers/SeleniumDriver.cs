@@ -6012,6 +6012,40 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.CloseAll:
                     Driver.Quit();
                     break;
+                case ActBrowserElement.eControlAction.GetBrowserLog:
+
+                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                    
+                    foreach (var item in networkLogs)
+                    {
+                        Dictionary<string, object> dict = item as Dictionary<string, object>;
+                        if (dict != null)
+                        {
+                            if(dict.ContainsKey("name"))
+                            {
+                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+
+                                var urlString = string.Empty;
+                                if (urlArray.Length>0)
+                                {
+                                    urlString = urlArray[urlArray.Length - 1];
+                                    if(string.IsNullOrEmpty(urlString) && urlArray.Length>1)
+                                    {
+                                        urlString = urlArray[urlArray.Length - 2];
+                                    }
+                                    foreach (var val in dict)
+                                    {
+                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                    }
+
+                    break;
                 case ActBrowserElement.eControlAction.NavigateBack:
                     Driver.Navigate().Back();
                     break;

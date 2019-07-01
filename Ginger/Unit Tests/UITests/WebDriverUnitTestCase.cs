@@ -157,6 +157,28 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
 
+        [TestMethod]
+        public void GetBrowserLogTest()
+        {
+            //arrange
+            ActBrowserElement actBrowser = new ActBrowserElement() { Active = true };
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.GetOrCreateInputParam("Value", "www.facebook.com");
+
+            mGR.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser);
+
+            ActBrowserElement actBrowser2 = new ActBrowserElement() { Active = true, AddNewReturnParams=true};
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetBrowserLog;
+            mGR.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser2);
+
+            //act
+            mGR.RunActivity(mGR.CurrentBusinessFlow.CurrentActivity);
+
+            //assert
+            Assert.AreNotEqual(0, actBrowser2.ReturnValues.Count);
+            Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().FileName.Contains("www.facebook.com"));
+        }
+
         public ActBrowserElement ValidatePageURL()
         {
             ActBrowserElement actBrowser = new ActBrowserElement();
