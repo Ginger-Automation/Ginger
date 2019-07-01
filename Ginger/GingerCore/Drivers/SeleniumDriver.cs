@@ -122,6 +122,26 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
+        public string EmulationDeviceName { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome & Firefox : A browser's user agent string (UA) helps identify which browser is being used, what version, and on which operating system")]
+        public string BrowserUserAgent { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The height in pixels of the browser's viewable area")]
+        public string BrowserHeight { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The width in pixels of the browser's viewable area")]
+        public string BrowserWidth { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
@@ -358,10 +378,17 @@ namespace GingerCore.Drivers
                             SetProxy(FirefoxOption);
                         }
 
+                        if (!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            var profile = new FirefoxProfile();
+                            profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
+                            FirefoxOption.Profile = profile;
+                        }
+
+
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
 
                     #endregion
@@ -401,13 +428,23 @@ namespace GingerCore.Drivers
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
 
+                        if (!string.IsNullOrEmpty(EmulationDeviceName))
+                        {
+                            options.EnableMobileEmulation(EmulationDeviceName);
+                        }
+                        else if(!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
+                            { UserAgent = BrowserUserAgent.Trim() };
+                            options.EnableMobileEmulation(chromeMobileEmulationDevice);
+                        }
+
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
                         }
                         Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
 
                     #endregion
@@ -490,6 +527,11 @@ namespace GingerCore.Drivers
 
                 if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
                     Driver.Manage().Window.Minimize();
+
+                if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
+                {
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight),Width=Convert.ToInt32(BrowserWidth) };
+                }
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 

@@ -9,12 +9,24 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new System.NotImplementedException();
         }
 
+
+        WebTextBoxFake userTextBox;
         public IGingerWebElement LocateElementByID(eElementType elementType, string id)
         {
             if (elementType == eElementType.Button && id == "button1")
             {
                 WebButtonFake gingerWebElement = new WebButtonFake();
                 return gingerWebElement;
+            }
+
+            if (elementType == eElementType.TextBox && id == "user")
+            {
+                // Cache it so we can do get/set value on same object
+                if (userTextBox == null)
+                {
+                    userTextBox = new WebTextBoxFake();
+                }
+                return userTextBox;
             }
 
             return null;

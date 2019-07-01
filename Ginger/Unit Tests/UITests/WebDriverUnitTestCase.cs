@@ -892,6 +892,123 @@ namespace UnitTests.UITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
         }
+
+        [TestMethod]
+        public void SetEmulationDeviceNameTest()
+        {
+            //arrange
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulation" });
+            mBF.CurrentActivity.TargetApplication = "DeviceEmulation";
+
+            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
+            mDriver.AutoDetect = true;
+            mDriver.HttpServerTimeOut = 60;
+            //Set emulation device name
+            mDriver.EmulationDeviceName = "iPad";
+            mDriver.StartDriver();
+
+            Agent agent = new Agent();
+            agent.Active = true;
+            agent.Driver = mDriver;
+            agent.DriverType = Agent.eDriverType.SeleniumChrome;
+            mGR.SolutionAgents.Add(agent);
+
+            ApplicationAgent AA = new ApplicationAgent();
+            AA.AppName = "DeviceEmulation";
+            AA.Agent = agent;
+
+            mGR.ApplicationAgents.Add(AA);
+            mGR.CurrentBusinessFlow = mBF;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+
+            mGR.SetCurrentActivityAgent();
+
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
+            actBrowser.Active = true;
+            activity.Acts.Add(actBrowser);
+           
+            //act
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            actBrowser2.GetOrCreateInputParam("Value", "navigator.userAgent");
+            actBrowser2.Active = true;
+            actBrowser2.AddNewReturnParams = true;
+            activity.Acts.Add(actBrowser2);
+
+            mGR.RunActivity(activity);
+
+            //assert
+            Assert.AreEqual(true,actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
+        }
+
+        [TestMethod]
+        public void SetUserAgentTest()
+        {
+            //arrange
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulationUserAgent" });
+            mBF.CurrentActivity.TargetApplication = "DeviceEmulationUserAgent";
+
+            var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
+            mDriver.AutoDetect = true;
+            mDriver.HttpServerTimeOut = 60;
+            //Set Browser User Agent
+            mDriver.BrowserUserAgent = "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1";
+            mDriver.BrowserHeight = "960";
+            mDriver.BrowserWidth = "600";
+
+            mDriver.StartDriver();
+
+            Agent agent = new Agent();
+            agent.Active = true;
+            agent.Driver = mDriver;
+            agent.DriverType = Agent.eDriverType.SeleniumChrome;
+            mGR.SolutionAgents.Add(agent);
+
+            ApplicationAgent AA = new ApplicationAgent();
+            AA.AppName = "DeviceEmulationUserAgent";
+            AA.Agent = agent;
+
+            mGR.ApplicationAgents.Add(AA);
+            mGR.CurrentBusinessFlow = mBF;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+
+            mGR.SetCurrentActivityAgent();
+
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
+            actBrowser.Active = true;
+            activity.Acts.Add(actBrowser);
+
+            //act
+
+            //get user agent string
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+            actBrowser2.GetOrCreateInputParam("Value", "navigator.userAgent");
+            actBrowser2.Active = true;
+            actBrowser2.AddNewReturnParams = true;
+            activity.Acts.Add(actBrowser2);
+
+            mGR.RunActivity(activity);
+
+            //assert
+            Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
+        }
     }
 }
 
