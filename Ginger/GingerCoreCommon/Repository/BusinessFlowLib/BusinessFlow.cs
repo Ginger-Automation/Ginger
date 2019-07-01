@@ -645,11 +645,7 @@ namespace GingerCore
                 activitiesGroup = new ActivitiesGroup();
                 activitiesGroup.Name = "Group";
             }
-            SetUniqueActivitiesGroupName(activitiesGroup);
-            //if (string.IsNullOrEmpty(activitiesGroup.GroupColor))
-            //{
-            //    SetUniqueGroupColor(activitiesGroup);
-            //}            
+            SetUniqueActivitiesGroupName(activitiesGroup);     
 
             if ((index != -1) && (ActivitiesGroups.Count > index))
             {
@@ -722,7 +718,7 @@ namespace GingerCore
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
-                        //actInstance.ActivitiesGroupColor = activitiesGroup.GroupColor;
+                        
                         if (keepOriginalTargetApplicationMapping == false)
                         {
                             SetActivityTargetApplication(actInstance);
@@ -730,7 +726,6 @@ namespace GingerCore
 
                         this.AddActivity(actInstance);
                         actIdent.IdentifiedActivity = actInstance;
-
                     }
                     else
                     {
@@ -742,15 +737,20 @@ namespace GingerCore
                 if (missingActivities != string.Empty && inSilentMode == false)
                 {
                     missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
-                    // AppReporter.ToUser(eUserMsgKey.PartOfActivitiesGroupActsNotFound, missingActivities);
+                    Reporter.ToUser(eUserMsgKey.PartOfActivitiesGroupActsNotFound, missingActivities);
                     return false;
                 }
                 else
+                {
                     return true;
+                }
             }
 
-            //if (inSilentMode == false)
-            //    AppReporter.ToUser(eUserMsgKey.ActivitiesGroupActivitiesNotFound);
+            if (inSilentMode == false)
+            {
+                Reporter.ToUser(eUserMsgKey.ActivitiesGroupActivitiesNotFound);
+            }
+
             return false;
         }
 
@@ -1105,7 +1105,9 @@ namespace GingerCore
         public void SetActivityTargetApplication(Activity activity)
         {
             if (this.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+            {
                 activity.TargetApplication = this.MainApplication;
+            }
         }
 
         public override string ItemName

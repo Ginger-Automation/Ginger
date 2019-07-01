@@ -5,7 +5,11 @@ using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
+using GingerCore.Activities;
+using GingerWPF.DragDropLib;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -54,7 +58,53 @@ namespace Ginger.BusinessFlowPages
 
             //List Grouping
             xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+
+            xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
+            xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
         }
+
+        private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
+        {
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
+                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            {
+                // OK to drop                         
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+            }
+        }
+
+        private void ActivitiesListView_ItemDropped(object sender, EventArgs e)
+        {
+            object droppedItem = ((DragInfo)sender).Data as object;
+            if (droppedItem != null)
+            {                
+                if (droppedItem is Activity)
+                {
+                    Activity droppedActivityIns = (Activity)((Activity)droppedItem).CreateInstance(true);
+                    ActivitiesGroup parentGroup = null;
+                    droppedActivityIns.Active = true;
+                    if (mBusinessFlow.CurrentActivity != null)
+                    {                        
+                        parentGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == mBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                    }
+                    else
+                    {                        
+                        parentGroup = mBusinessFlow.AddActivitiesGroup();
+                    }
+                    mBusinessFlow.SetActivityTargetApplication(droppedActivityIns);
+                    mBusinessFlow.AddActivity(droppedActivityIns, parentGroup);
+                    mBusinessFlow.CurrentActivity = droppedActivityIns;
+                }
+                else if (droppedItem is ActivitiesGroup)
+                {
+                    ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
+                    mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
+                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                }               
+            }
+        }       
 
         private void ActivityListItemInfo_ActivityListItemEvent(ActivityListItemEventArgs EventArgs)
         {
