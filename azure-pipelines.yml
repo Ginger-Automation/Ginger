@@ -82,19 +82,22 @@ jobs:
 # Run .Net Framework tests
 # ------------------------------------------------------------------------------------------------------
 
-  - task: VSTest@2
-    displayName: GC 9
-    inputs:
-      testAssemblyVer2: |
-       !**\$(BuildConfiguration)\*Test*.dll
-       **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
-       !**\$(BuildConfiguration)\*IntegrationTests*.dll
-       !**\obj\**       
-       !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-      runOnlyImpactedTests: false
-      runInParallel: true      
-      platform: '$(BuildPlatform)'
-      configuration: '$(BuildConfiguration)'
+  - script: TestDotNetFramework.ps1
+    displayName: TestDotNetFramework.ps1 v1
+
+  #- task: VSTest@2
+  #  displayName: GC 9
+  #  inputs:
+  #    testAssemblyVer2: |
+  #     !**\$(BuildConfiguration)\*Test*.dll
+  #     **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
+  #     !**\$(BuildConfiguration)\*IntegrationTests*.dll
+  #     !**\obj\**       
+  #     !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+  #    runOnlyImpactedTests: false
+  #    runInParallel: true      
+  #    platform: '$(BuildPlatform)'
+  #    configuration: '$(BuildConfiguration)'
 
   # runTestsInIsolation: false
 	  # TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
