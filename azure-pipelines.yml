@@ -83,7 +83,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - script: TestDotNetFramework.ps1
-    displayName: TestDotNetFramework.ps1 v2
+    displayName: TestDotNetFramework.ps1 v3
 
   #- task: VSTest@2
   #  displayName: GC 9
