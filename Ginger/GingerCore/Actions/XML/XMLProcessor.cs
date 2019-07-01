@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +93,14 @@ namespace GingerCore.Actions.XML
                         act.AddOrUpdateReturnParamActualWithPath(xmlElement, xmlReader.Value, "/" + string.Join("/", elementArrayList.ToArray().Take(xmlReader.Depth)));
                     }
                 }
+            }
+        }
+
+        public void ParseFileToReturnValues(string filecontent, Act act)
+        {
+            if(!string.IsNullOrEmpty(filecontent))
+            {
+                act.AddOrUpdateReturnParamActualWithPath("Processed file", filecontent, null);
             }
         }
     }
