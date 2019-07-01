@@ -95,13 +95,5 @@ namespace GingerCore.Actions.XML
                 }
             }
         }
-
-        public void ParseFileToReturnValues(string filecontent, Act act)
-        {
-            if(!string.IsNullOrEmpty(filecontent))
-            {
-                act.AddOrUpdateReturnParamActualWithPath("Processed file", filecontent, null);
-            }
-        }
     }
 }

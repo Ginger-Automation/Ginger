@@ -121,7 +121,14 @@ namespace GingerCore.Actions.XML
                 }
                 else
                 {
-                    xmlProcessor.ParseFileToReturnValues(fileContents, this);
+                   ParseFileToReturnValues(fileContents, this);
+                }
+            }
+            private void ParseFileToReturnValues(string filecontent, Act act)
+            {
+                if (!string.IsNullOrEmpty(filecontent))
+                {
+                    act.AddOrUpdateReturnParamActualWithPath("Processed file", filecontent, null);
                 }
             }
 
