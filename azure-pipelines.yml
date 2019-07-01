@@ -83,7 +83,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - script: TestDotNetFramework.ps1
-    displayName: TestDotNetFramework.ps1 v1
+    displayName: TestDotNetFramework.ps1 v2
 
   #- task: VSTest@2
   #  displayName: GC 9
@@ -100,10 +100,10 @@ jobs:
   #    configuration: '$(BuildConfiguration)'
 
   # runTestsInIsolation: false
-	  # TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
-      # codeCoverageEnabled: true
-
-
+  # TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
+  # codeCoverageEnabled: true
+  #
+  #
   # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
 #    displayName: UnitTest tests c:\
 
