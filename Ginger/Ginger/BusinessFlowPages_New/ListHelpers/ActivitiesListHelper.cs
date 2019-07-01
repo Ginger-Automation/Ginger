@@ -69,7 +69,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameExtentionField()
         {
-            return null;//nameof(Activity.ActivitiesGroupID);
+            return nameof(Activity.TargetApplication);
         }
 
         public string GetItemTagsField()
@@ -90,14 +90,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-            //if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-            //{
-            //    return new ListItemUniqueIdentifier() { Color = mActivity.ActivitiesGroupColor, Tooltip = mActivity.ActivitiesGroupID };
-            //}
-            //else 
+
             if (mActivity.AddDynamicly)
+            {//Brushes.MediumPurple
+                return new ListItemUniqueIdentifier() { Color = "MediumPurple", Tooltip = "Added Dynamically from Shared Repository" };
+            }
+            else if (!mActivity.IsNotGherkinOptimizedActivity)
             {
-                return new ListItemUniqueIdentifier() { Color = "Plum", Tooltip = "Added Dynamically from Shared Repository" };
+                return new ListItemUniqueIdentifier() { Color = "Goldenrod", Tooltip = "This is a Gherkin Optimized " + GingerDicser.GetTermResValue(eTermResKey.Activity) };
             }
             else
             {
@@ -122,6 +122,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation addNew = new ListItemOperation();
+                addNew.AutomationID = "addNew";
                 addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
                 addNew.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 addNew.OperationHandler = AddNewHandler;
@@ -138,6 +139,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation deleteAll = new ListItemOperation();
+                deleteAll.AutomationID = "deleteAll";
                 deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
                 deleteAll.Header = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
                 deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -145,6 +147,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(deleteAll);
 
                 ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
+                activeUnactiveAllActivities.AutomationID = "activeUnactiveAllActivities";
                 activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
                 activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
                 activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -152,6 +155,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(activeUnactiveAllActivities);
 
                 ListItemOperation activitiesVarsDep = new ListItemOperation();
+                activitiesVarsDep.AutomationID = "activitiesVarsDep";
                 activitiesVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
                 activitiesVarsDep.Header = string.Format("{0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
                 activitiesVarsDep.ToolTip = string.Format("Set {0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
@@ -168,6 +172,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
             ListItemNotification activitiesVarsDepInd = new ListItemNotification();
+            activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
             activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
             activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
             activitiesVarsDepInd.ImageSize = 14;
@@ -177,6 +182,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(activitiesVarsDepInd);
 
             ListItemNotification mandatoryInd = new ListItemNotification();
+            mandatoryInd.AutomationID = "mandatoryInd";
             mandatoryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Mandatory;
             mandatoryInd.ToolTip = string.Format("{0} is Mandatory", GingerDicser.GetTermResValue(eTermResKey.Activity));
             mandatoryInd.ImageSize = 14;
@@ -186,6 +192,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(mandatoryInd);
 
             ListItemNotification sharedRepoInd = new ListItemNotification();
+            sharedRepoInd.AutomationID = "sharedRepoInd";
             sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
             sharedRepoInd.ImageForeground = Brushes.Orange;
@@ -205,30 +212,34 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation moveUp = new ListItemOperation();
+                moveUp.AutomationID = "moveUp";
                 moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
                 moveUp.ToolTip = "Move Up";
                 moveUp.OperationHandler = MoveUpHandler;
                 operationsList.Add(moveUp);
 
                 ListItemOperation moveDown = new ListItemOperation();
+                moveDown.AutomationID = "moveDown";
                 moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
                 moveDown.ToolTip = "Move Down";
                 moveDown.OperationHandler = MoveDownHandler;
                 operationsList.Add(moveDown);
 
                 ListItemOperation delete = new ListItemOperation();
+                delete.AutomationID = "delete";
                 delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
                 delete.ToolTip = "Delete";
                 delete.OperationHandler = DeleteHandler;
                 operationsList.Add(delete);
 
                 ListItemOperation active = new ListItemOperation();
+                active.AutomationID = "active";
                 active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
                 active.ImageBindingObject = mActivity;
                 active.ImageBindingFieldName = nameof(Activity.Active);
                 active.ImageBindingConverter = new ActiveImageTypeConverter();
                 active.ToolTip = "Active";
-                //active.ImageSize = 15;
+                active.IsEnabeled = mActivity.IsNotGherkinOptimizedActivity;
                 active.OperationHandler = ActiveHandler;
                 operationsList.Add(active);
             }
@@ -244,6 +255,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation mandatory = new ListItemOperation();
+                mandatory.AutomationID = "mandatory";
                 mandatory.Header = "Mandatory";
                 mandatory.ToolTip = string.Format("If {0} fails so stop execution", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
@@ -254,6 +266,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(mandatory);
 
                 ListItemOperation reset = new ListItemOperation();
+                reset.AutomationID = "reset";
                 reset.Group = "Reset Operations";
                 reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
@@ -263,6 +276,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(reset);
 
                 ListItemOperation resetRest = new ListItemOperation();
+                resetRest.AutomationID = "resetRest";
                 resetRest.Group = "Reset Operations";
                 resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 resetRest.Header = string.Format("Reset execution details from this {0}", GingerDicser.GetTermResValue(eTermResKey.Activity));
@@ -272,6 +286,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
 
             ListItemOperation addToSR = new ListItemOperation();
+            addToSR.AutomationID = "addToSR";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.Header = "Add to Shared Repository";
             addToSR.ToolTip = "Add to Shared Repository";
@@ -289,18 +304,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation runAction = new ListItemOperation();
+                runAction.AutomationID = "runAction";
                 runAction.ImageType = Amdocs.Ginger.Common.Enums.eImageType.RunSingle;
                 runAction.ToolTip = "Run Current Action";
                 runAction.OperationHandler = RunActionHandler;
                 executionOperationsList.Add(runAction);
 
                 ListItemOperation run = new ListItemOperation();
+                run.AutomationID = "run";
                 run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
                 run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 run.OperationHandler = RunHandler;
                 executionOperationsList.Add(run);
 
                 ListItemOperation continueRun = new ListItemOperation();
+                continueRun.AutomationID = "continueRun";
                 continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
                 continueRun.ToolTip = "Continue Run from " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 continueRun.OperationHandler = ContinueRunHandler;
@@ -317,6 +335,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemGroupOperation addNewActivity = new ListItemGroupOperation();
+                addNewActivity.AutomationID = "addNewGroupActivity";
                 addNewActivity.Header = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 addNewActivity.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
                 addNewActivity.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -324,6 +343,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 groupOperationsList.Add(addNewActivity);
 
                 ListItemGroupOperation rename = new ListItemGroupOperation();
+                rename.AutomationID = "renameGroup";
                 rename.Header = "Rename Group";
                 rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
                 rename.ToolTip = "Rename group";
@@ -331,6 +351,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 groupOperationsList.Add(rename);
 
                 ListItemGroupOperation moveUp = new ListItemGroupOperation();
+                moveUp.AutomationID = "moveGroupUp";
                 moveUp.Header = "Move Group Up";
                 moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
                 moveUp.ToolTip = "Move all group up";
@@ -338,6 +359,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 groupOperationsList.Add(moveUp);
 
                 ListItemGroupOperation moveDown = new ListItemGroupOperation();
+                moveDown.AutomationID = "moveGroupDown";
                 moveDown.Header = "Move Group Down";
                 moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
                 moveDown.ToolTip = "Move all group down";
@@ -345,6 +367,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 groupOperationsList.Add(moveDown);
 
                 ListItemGroupOperation delete = new ListItemGroupOperation();
+                delete.AutomationID = "deleteGroup";
                 delete.Header = "Delete Group";
                 delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
                 delete.ToolTip = "Delete all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -353,6 +376,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
 
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
+            addToSR.AutomationID = "addGroupToSR";
             addToSR.Header = "Add Group to Shared Repository";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.ToolTip = "Add group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to Shared Repository";
@@ -360,6 +384,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             groupOperationsList.Add(addToSR);
 
             ListItemGroupOperation export = new ListItemGroupOperation();
+            export.AutomationID = "exportGroup";
             export.Header = "Export Group";
             export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
@@ -490,10 +515,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         }
 
         private void RenameGroupHandler(object sender, RoutedEventArgs e)
-        {
+        {            
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
 
+            if (activitiesGroup.Name.Contains("Optimized Activities"))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "This is an automaic group created from Gherkin file and can not be modified");
+                return;
+            }
             string newName = activitiesGroup.Name;
+
+            
             if (InputBoxWindow.GetInputWithValidation("Rename Group", "New Group Name:", ref newName))
             {
                 if (!string.IsNullOrEmpty(newName))

@@ -471,10 +471,13 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
             }
             Activity selectedActivity= (Activity)mActivitiesPage.ListView.CurrentItem;
-
+          
             mBusinessFlow.CurrentActivity = selectedActivity;
-            selectedActivity.PropertyChanged -= Activity_PropertyChanged;
-            selectedActivity.PropertyChanged += Activity_PropertyChanged;
+            if (selectedActivity != null)
+            {
+                selectedActivity.PropertyChanged -= Activity_PropertyChanged;
+                selectedActivity.PropertyChanged += Activity_PropertyChanged;
+            }
 
             mContext.Activity = selectedActivity;
             UpdateContextWithActivityDependencies();

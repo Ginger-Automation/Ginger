@@ -116,6 +116,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation deleteAll = new ListItemOperation();
+                deleteAll.AutomationID = "deleteAll";
                 deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
                 deleteAll.ToolTip = "Delete All Actions";
                 deleteAll.OperationHandler = DeleteAllHandler;
@@ -132,6 +133,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation actionVarsDep = new ListItemOperation();
+                actionVarsDep.AutomationID = "actionVarsDep";
                 actionVarsDep.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
                 actionVarsDep.Header = "Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
                 actionVarsDep.ToolTip = "Set Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies";
@@ -139,6 +141,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(actionVarsDep);
 
                 ListItemOperation activeUnactiveAllActions = new ListItemOperation();
+                activeUnactiveAllActions.AutomationID = "activeUnactiveAllActions";
                 activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
                 activeUnactiveAllActions.Header = "Activate/Un-Activate all Actions";
                 activeUnactiveAllActions.ToolTip = "Activate/Un-Activate all Actions";
@@ -146,6 +149,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(activeUnactiveAllActions);
 
                 ListItemOperation takeUntakeSS = new ListItemOperation();
+                takeUntakeSS.AutomationID = "takeUntakeSS";
                 takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
                 takeUntakeSS.Header = "Take/Un-Take Screen Shots";
                 takeUntakeSS.ToolTip = "Set Take/Un-Take Screen Shots to all Actions";
@@ -162,6 +166,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
             ListItemNotification simulationInd = new ListItemNotification();
+            simulationInd.AutomationID = "simulationInd";
             simulationInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate;
             simulationInd.ToolTip = "Action support Simulation mode";
             simulationInd.ImageSize = 14;
@@ -171,6 +176,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(simulationInd);
 
             ListItemNotification flowControlInd = new ListItemNotification();
+            flowControlInd.AutomationID = "flowControlInd";
             flowControlInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
             flowControlInd.ToolTip = "Action contains Flow Control conditions";
             flowControlInd.ImageSize = 14;
@@ -180,6 +186,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(flowControlInd);
 
             ListItemNotification actionsVarsDepInd = new ListItemNotification();
+            actionsVarsDepInd.AutomationID = "actionsVarsDepInd";
             actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
             actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
             actionsVarsDepInd.ImageSize = 14;
@@ -189,6 +196,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(actionsVarsDepInd);
 
             ListItemNotification outputValuesInd = new ListItemNotification();
+            outputValuesInd.AutomationID = "outputValuesInd";
             outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;
             outputValuesInd.ToolTip = "Action contains Output Values";
             outputValuesInd.BindingObject = mAction;
@@ -197,33 +205,34 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             notificationsList.Add(outputValuesInd);
 
             ListItemNotification waitInd = new ListItemNotification();
+            waitInd.AutomationID = "waitInd";
             waitInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Clock;
             waitInd.ToolTip = "Action contains Wait time before execution starts";
-            //waitInd.ImageSize = 14;
             waitInd.BindingObject = mAction;
             waitInd.BindingFieldName = nameof(Act.WaitVE);
             waitInd.BindingConverter = new WaitVisibilityConverter();
             notificationsList.Add(waitInd);
 
             ListItemNotification retryInd = new ListItemNotification();
+            retryInd.AutomationID = "retryInd";
             retryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retry;
-            retryInd.ToolTip = "Action configured to Rerun in case of failure";
-            //retryInd.ImageSize = 14;
+            retryInd.ToolTip = "Action configured to Rerun in case of failure";            
             retryInd.BindingObject = mAction;
             retryInd.BindingFieldName = nameof(Act.EnableRetryMechanism);
             retryInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(retryInd);
 
             ListItemNotification screenshotInd = new ListItemNotification();
+            screenshotInd.AutomationID = "screenshotInd";
             screenshotInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
             screenshotInd.ToolTip = "Action configured to take Screenshot";
-            //retryInd.ImageSize = 14;
             screenshotInd.BindingObject = mAction;
             screenshotInd.BindingFieldName = nameof(Act.TakeScreenShot);
             screenshotInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(screenshotInd);
 
             ListItemNotification sharedRepoInd = new ListItemNotification();
+            sharedRepoInd.AutomationID = "sharedRepoInd";
             sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             sharedRepoInd.ToolTip = "Action source is from Shared Repository";
             sharedRepoInd.ImageForeground = Brushes.Orange;
@@ -243,30 +252,35 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation edit = new ListItemOperation();
+                edit.AutomationID = "edit";
                 edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
                 edit.ToolTip = "Edit Action";
                 edit.OperationHandler = EditHandler;
                 operationsList.Add(edit);
 
                 ListItemOperation moveUp = new ListItemOperation();
+                moveUp.AutomationID = "moveUp";
                 moveUp.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUp;
                 moveUp.ToolTip = "Move Up";
                 moveUp.OperationHandler = MoveUpHandler;
                 operationsList.Add(moveUp);
 
                 ListItemOperation moveDown = new ListItemOperation();
+                moveDown.AutomationID = "moveDown";
                 moveDown.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveDown;
                 moveDown.ToolTip = "Move Down";
                 moveDown.OperationHandler = MoveDownHandler;
                 operationsList.Add(moveDown);
 
                 ListItemOperation delete = new ListItemOperation();
+                delete.AutomationID = "delete";
                 delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
                 delete.ToolTip = "Delete";
                 delete.OperationHandler = DeleteHandler;
                 operationsList.Add(delete);
 
                 ListItemOperation active = new ListItemOperation();
+                active.AutomationID = "active";
                 active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
                 active.ImageBindingObject = mAction;
                 active.ImageBindingFieldName = nameof(Act.Active);
@@ -287,6 +301,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation breakPoint = new ListItemOperation();
+                breakPoint.AutomationID = "breakPoint";
                 breakPoint.Header = "Break Point";
                 breakPoint.ToolTip = "Stop execution on that Action";
                 breakPoint.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
@@ -297,6 +312,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(breakPoint);
 
                 ListItemOperation reset = new ListItemOperation();
+                reset.AutomationID = "reset";
                 reset.Group = "Reset Operations";
                 reset.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
@@ -306,6 +322,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 extraOperationsList.Add(reset);
 
                 ListItemOperation resetRest = new ListItemOperation();
+                resetRest.AutomationID = "resetRest";
                 resetRest.Group = "Reset Operations";
                 resetRest.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 resetRest.Header = "Reset execution details from this Action";
@@ -315,6 +332,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
 
             ListItemOperation addToSR = new ListItemOperation();
+            addToSR.AutomationID = "addToSR";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.Header = "Add to Shared Repository";
             addToSR.ToolTip = "Add to Shared Repository";
@@ -332,12 +350,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mPageViewMode != General.eRIPageViewMode.View)
             {
                 ListItemOperation run = new ListItemOperation();
+                run.AutomationID = "run";
                 run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
                 run.ToolTip = "Run Action";
                 run.OperationHandler = RunHandler;
                 executionOperationsList.Add(run);
 
                 ListItemOperation continueRun = new ListItemOperation();
+                continueRun.AutomationID = "continueRun";
                 continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
                 continueRun.ToolTip = "Continue Run from Action";
                 continueRun.OperationHandler = ContinueRunHandler;
@@ -364,9 +384,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             mAction.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             mAction.Context = mContext;
-            //ActionEditPage actedit = new ActionEditPage(mAction, General.RepositoryItemPageViewMode.Automation);//TODO: check if need diifrent mode
-            //actedit.ap = this;
-            //actedit.ShowAsWindow();
             OnActionListItemEvent(ActionListItemEventArgs.eEventType.ShowActionEditPage, mAction);
         }
 

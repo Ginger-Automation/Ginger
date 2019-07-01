@@ -164,18 +164,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
 
-
             var ActTypes = new List<Type>();
             foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
-
             {
-
                 var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
                 ActTypes.AddRange(types);
             }
-
-
-
 
             foreach (Type t in ActTypes)
             {
@@ -184,6 +178,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (a.IsSelectableAction == false)
                     continue;
 
+                if (mContext.BusinessFlow.CurrentActivity == null)
+                {
+                    return null;
+                }
                 TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
