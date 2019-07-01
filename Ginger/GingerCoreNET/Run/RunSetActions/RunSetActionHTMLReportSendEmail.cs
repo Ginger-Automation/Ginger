@@ -247,7 +247,8 @@ namespace Ginger.Run.RunSetActions
                     runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                     CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
                     WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                    Directory.Delete(runSetFolder,true);
+                    if (Directory.Exists(runSetFolder))
+                        Directory.Delete(runSetFolder, true);
                 }
             }
 
@@ -313,6 +314,14 @@ namespace Ginger.Run.RunSetActions
                         else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                         {
                             reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
+                            if (rReport.IsAlternameFolderUsed)
+                            {
+                                var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client");
+                                if (Directory.Exists(path))
+                                    Directory.Delete(path, true);
+                                WorkSpace.Instance.CopyFolderRec(reportsResultFolder, path, true);
+                                reportsResultFolder = path;
+                            }
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
                         {
@@ -335,7 +344,10 @@ namespace Ginger.Run.RunSetActions
                         }
                         if (!string.IsNullOrEmpty(reportsResultFolder))
                         {
-                            emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + "\\GingerExecutionReport.html'" + " style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Full Report </a>");
+                            string reportName = "\\GingerExecutionReport.html'";
+                            if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                                reportName = "\\index.html'";
+                            emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + reportName + " style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Full Report </a>");
                             emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                         }
                     }
