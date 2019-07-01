@@ -1,116 +1,50 @@
 ﻿using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
-using Ginger.Plugin.Platform.Web.Elements;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
     public class WebPlatformActionHandler : IPlatformActionHandler
     {
-        public NewPayLoad HandleRunAction(IPlatformService service, NewPayLoad ActionPayload)
+        public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
-            string actionType = ActionPayload.GetValueString();
+            // add try catch !!!!!!!!!
 
-            // TODO: split to class and functions, or we use smart reflection to redirect the action
-            Dictionary<string, string> InputParams = new Dictionary<string, string>();
-            List<NewPayLoad> FieldsandParams = ActionPayload.GetListPayLoad();
+            IWebPlatform webPlatformService = (IWebPlatform)service;
 
-            NewPayLoad PomPayload=null;
-            int i = 0;
-            if(FieldsandParams[0].Name== "POMPayload")
+
+            switch (platformAction.ActionHandler)
             {
-                i = 1;
-                PomPayload = FieldsandParams[0];
+                case "BrowserActions":
+                    //TODO: cache
+                    BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);
+                    Handler.ExecuteAction(ref platformAction);
+                    break;
+                case "UIElementAction":                    
+                    UIELementActionHandler Handler2 = new UIELementActionHandler(webPlatformService);                    
+                    Handler2.ExecuteAction(ref platformAction);
+                    break;
+                default:
+                    platformAction.error += "HandleRunAction: handler not found: " + platformAction.ActionHandler;
+                    break;
             }
 
-            for (; i < FieldsandParams.Count-1; i++)
-            {
-                NewPayLoad Np =FieldsandParams[i];
-                string Name = Np.GetValueString();
+            // using reflection get the attr and run
+            // get the relevant handle from the service which will run the action
+            //PropertyInfo pi = service.GetType().GetProperty(platformAction.ActionHandler);
+            //object obj = pi.GetValue(service);
 
-                string Value = Np.GetValueString();
-                if (!InputParams.ContainsKey(Name))
-                {
-                    InputParams.Add(Name, Value);
-                }
-            }
-            //foreach (NewPayLoad Np in FieldsandParams)
-            //{
-            //    string Name = Np.GetValueString();
-
-            //    string Value = Np.GetValueString();
-            //    if (!InputParams.ContainsKey(Name))
-            //    {
-            //        InputParams.Add(Name, Value);
-            //    }
-            //}
-            IWebPlatform PlatformService = null;
-            if (service is IWebPlatform Mservice)
-            {
-                PlatformService = Mservice;
-            }
-
-
-            if (actionType == "BrowserAction")
-            {
-
-
-
-                BrowserActionhandler Handler = new BrowserActionhandler(PlatformService, InputParams);
-
-                
-                Handler.ExecuteAction();
-
-
-                NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo,Handler.Error, Handler.AOVs);
-                return PLRC;
-            }
-
-            if (actionType == "UIElementAction")
-            {
-                try
-                {
-                  
-
-
-                 
-                    UIELementActionHandler Handler = new UIELementActionHandler(PlatformService,InputParams);
-
-                    Handler.PrepareforExecution(PomPayload);
-
-                    Handler.ExecuteAction();
-
-                    NewPayLoad PLRC = CreateActionResult(Handler.ExecutionInfo, Handler.Error, Handler.AOVs);
-                    return PLRC;
-     
-                }
-                catch (Exception ex)
-                {
-                    NewPayLoad newPayLoad = NewPayLoad.Error(ex.Message);
-                    return newPayLoad;
-                }
-            }
-
-            
-
-            NewPayLoad err = NewPayLoad.Error("RunPlatformAction: Unknown action type: " + actionType);
-            return err;
-
-
+            //IActionHandler platformActionHandler = (IActionHandler)obj;
+            //platformActionHandler.ExecuteAction(ref platformAction);
             
         }
 
      
 
-        private NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> outputValues)
+        private NewPayLoad CreateActionResult(NodePlatformAction platformAction)
         {
-            return GingerNode.CreateActionResult(exInfo, error, outputValues);
-            
+            return GingerNode.CreateActionResult(platformAction.exInfo, platformAction.error, null);              // platformAction.outputValues
         }
 
     }

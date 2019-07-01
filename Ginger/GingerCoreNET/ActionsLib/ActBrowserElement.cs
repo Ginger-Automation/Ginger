@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using GingerCore.Helpers;
-
 using Amdocs.Ginger.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace GingerCore.Actions
@@ -152,6 +151,8 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
+            [EnumValueDescription("Get Browser Logs")]
+            GetBrowserLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
@@ -183,8 +184,6 @@ namespace GingerCore.Actions
 
         public NewPayLoad GetActionPayload()
         {
-
-
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue("BrowserAction");
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
@@ -256,7 +255,7 @@ namespace GingerCore.Actions
         {
             return "BrowserAction";
         }
-
+        
         public override String ActionType
         {
             get
@@ -278,6 +277,16 @@ namespace GingerCore.Actions
             }
         }
 
-       
+
+
+        public PlatformAction GetAsPlatformAction()
+        {
+            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
+            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
+            platformAction.InputParams.Add("URL", Value);
+            return platformAction;            
+        }
+
+
     }
 }

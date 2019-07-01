@@ -120,6 +120,12 @@
     <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
+    <Reference Include="SharpSvn, Version=1.8019.4006.503, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8019.4006.503\lib\net40\SharpSvn.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpSvn.UI, Version=1.8019.4006.503, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpSvn.1.8-x64.1.8019.4006.503\lib\net40\SharpSvn.UI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -286,6 +292,7 @@
     <Compile Include="NonUITests\ExpectedWithActual.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerActionLogTest.cs" />
     <Compile Include="NonUITests\GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />
+    <Compile Include="NonUITests\SourceControlUnitTest.cs" />
     <Compile Include="NonUITests\OutputSimulation.cs" />
     <Compile Include="NonUITests\RepositoryTest.cs" />
     <Compile Include="NonUITests\Script\VBSDateTimeTests.cs" />
@@ -446,6 +453,15 @@
     <None Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TestResources\Script\ScriptWithoutOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Script\ScriptWithGingerOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Script\ScriptWithGingerOutputIndexZero.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
