@@ -2409,12 +2409,11 @@ namespace Ginger.Run
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
-                CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-                CurrentBusinessFlow.AddActivity(sharedActivityInstance);
+                sharedActivityInstance.TargetApplication = CurrentBusinessFlow.CurrentActivity.TargetApplication;                
+                CurrentBusinessFlow.AddActivity(sharedActivityInstance, CurrentBusinessFlow.ActivitiesGroups.Where(x=>x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault());
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
                   
-
                 //set it as next activity to run           
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();

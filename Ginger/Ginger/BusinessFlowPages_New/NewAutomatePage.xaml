@@ -156,7 +156,7 @@
                     </Menu>
 
 
-                    <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="BDD Options">
+                    <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
                                 <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
@@ -169,7 +169,7 @@
                                     <UserControls:ImageMakerControl ImageType="Action" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Generate BDD Scenarios" />
+                                    <GingerCore:ucTextDicResource Text="Generate Feature File Scenarios" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem x:Name="xBDDCleanScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDCleanScenariosMenuItem_Click">
@@ -177,7 +177,7 @@
                                     <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Clean BDD Scenarios" />
+                                    <GingerCore:ucTextDicResource Text="Delete Feature File Scenarios" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem x:Name="xBDDOpenFeatureFileMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDOpenFeatureFileMenuItem_Click">

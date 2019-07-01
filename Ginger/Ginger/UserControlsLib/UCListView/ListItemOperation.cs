@@ -17,8 +17,10 @@ namespace Ginger.UserControlsLib.UCListView
         public object ImageBindingObject;
         public string ImageBindingFieldName;
         public IValueConverter ImageBindingConverter;
+        public bool IsEnabeled = true;
 
         public string ToolTip;
+        public string AutomationID;
 
         public RoutedEventHandler OperationHandler;
 

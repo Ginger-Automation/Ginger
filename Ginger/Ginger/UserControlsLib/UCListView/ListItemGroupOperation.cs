@@ -12,6 +12,7 @@ namespace Ginger.UserControlsLib.UCListView
         public double ImageSize = 16;
 
         public string ToolTip;
+        public string AutomationID;
 
         public RoutedEventHandler OperationHandler;
     }
