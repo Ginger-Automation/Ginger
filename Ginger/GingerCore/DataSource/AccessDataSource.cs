@@ -34,10 +34,6 @@ namespace GingerCore.DataSource
     {
         private static readonly Object thisObj = new object();
 
-        public override void OpenConnection()
-        {
-        }
-
         private string GetConnectionString(string sFilePath, string sMode = "Write")
         {
             FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
@@ -50,10 +46,6 @@ namespace GingerCore.DataSource
                 strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileFullPath;
 
             return strAccessConn;
-        }
-
-        public override void CloseConnection()
-        {
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
@@ -209,16 +201,23 @@ namespace GingerCore.DataSource
 
         public override void RunQuery(string query)
         {
-            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
+            try
             {
-                if (connObj.State != System.Data.ConnectionState.Open)
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
                 {
-                    connObj.Open();
+                    if (connObj.State != System.Data.ConnectionState.Open)
+                    {
+                        connObj.Open();
+                    }
+                    OleDbCommand myCommand = new OleDbCommand();
+                    myCommand.Connection = connObj;
+                    myCommand.CommandText = query;
+                    myCommand.ExecuteNonQuery();
                 }
-                OleDbCommand myCommand = new OleDbCommand();
-                myCommand.Connection = connObj;
-                myCommand.CommandText = query;
-                myCommand.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Execute Query", ex);
             }
         }
 
@@ -474,7 +473,6 @@ namespace GingerCore.DataSource
             ADC = new AccessDataSource();
             ADC.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
-            ADC.OpenConnection();
         }
 
         public override string AddNewCustomizedTableQuery()

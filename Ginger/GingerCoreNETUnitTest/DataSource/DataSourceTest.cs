@@ -44,7 +44,6 @@ namespace UnitTests.NonUITests
         {
             string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions\BasicSimple\DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
             liteDB.FileFullPath = Connectionstring;
-            liteDB.OpenConnection();
         }
 
         [TestMethod]

@@ -638,7 +638,6 @@ namespace GingerCore
                     //DataBase connection 
                     GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                     liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-                    liteDB.OpenConnection();
 
                     // Getting all values to execute query
                     int rowNumber = 0;

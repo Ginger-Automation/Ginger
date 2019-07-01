@@ -152,23 +152,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddSourceControlOptions(mContextMenu, false, false);
         }
 
-        public override void PreDeleteTreeItemHandler()
-        {
-            List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-
-            foreach (ITreeViewItem node in childNodes)
-            {
-                if (node != null && node is DataSourceTreeItem)
-                {
-                    DataSourceBase DSDetails = ((DataSourceTreeItem)node).DSDetails;
-                    if (File.Exists(DSDetails.FileFullPath))
-                    {
-                       // DSDetails.CloseConnection();                        
-                    }
-                }
-            }
-        }
-        
         public override void PostSaveTreeItemHandler()
         {
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);

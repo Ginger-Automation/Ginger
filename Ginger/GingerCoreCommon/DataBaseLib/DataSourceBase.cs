@@ -115,9 +115,7 @@ namespace GingerCore.DataSource
         {
             return Name;
         }
-        public abstract void OpenConnection();
-
-        public abstract void CloseConnection();
+       
         public abstract ObservableList<DataSourceTable> GetTablesList();
 
         public abstract void UpdateTableList(ObservableList<DataSourceTable> dsTableList);
