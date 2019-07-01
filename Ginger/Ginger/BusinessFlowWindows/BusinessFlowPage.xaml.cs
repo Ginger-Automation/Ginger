@@ -64,7 +64,7 @@ namespace Ginger.BusinessFlowFolder
 
             mBusinessFlow = BizFlow;
             mContext = new Context() { BusinessFlow = BizFlow, Activity= BizFlow.CurrentActivity };
-            RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
+            RunDescritpion.Init(mContext, BizFlow, nameof(BusinessFlow.RunDescription));
             mEditMode = editMode;
             LoadBizFlowData();            
 
@@ -142,7 +142,7 @@ namespace Ginger.BusinessFlowFolder
         }
         private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            mBusinessFlow.OnPropertyChanged(BusinessFlow.Fields.AutomationPrecentage);
+            mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
             
             //Perf imrprovements
             if (WorkSpace.Instance.BetaFeatures.BFPageActivitiesHookOnlyNewActivities)
@@ -169,7 +169,7 @@ namespace Ginger.BusinessFlowFolder
         {
             if (e.PropertyName == nameof(Activity.AutomationStatus))
             {
-                mBusinessFlow.OnPropertyChanged(BusinessFlow.Fields.AutomationPrecentage);
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
                 Activity changedActivity= (Activity)sender;
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
@@ -185,12 +185,12 @@ namespace Ginger.BusinessFlowFolder
        
         private void LoadBizFlowData()
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             GingerCore.General.FillComboFromEnumObj(StatusComboBox, mBusinessFlow.Status);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));                     
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);            
             
             // Per source we can show specific source page info
             if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)

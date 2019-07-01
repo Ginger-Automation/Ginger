@@ -39,6 +39,12 @@ namespace Amdocs.Ginger.Repository
         public Guid newGuid { get; set; } // pointer to obj
     }
 
+    public enum SerializationErrorType
+    {
+        PropertyNotFound,
+        SetValueException   // if type changed, and we can add more handling...
+    }
+
     public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1091,8 +1097,38 @@ namespace Amdocs.Ginger.Repository
         {
             // from old RI
         }
-       
-      
+
+        /// <summary>
+        /// This method is being called when object type is read in xml which is being serialzied and before the properties/fields are updated
+        /// Overrid this method if you need to initial repository item as soon as it is created to set default for example
+        /// </summary>
+        public virtual void PreSerialization()
+        {            
+        }
+
+        /// <summary>
+        /// This method is being called afetr object type is read from xml and all properties/fields been serialzied
+        /// Use this method to do updates to the object being serialzied 
+        /// </summary>
+        public virtual void PostSerialization()
+        {
+        }
+
+        /// <summary>
+        // When xml contain field/property which doesn't exist in the object being deserialzed to, then this method will be called
+        // Use it when you need to convert old property to new name or type
+        // if handled return true
+        /// </summary>
+        /// <param name="errorType"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>        
+        public virtual bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            // override method in sub class need to impelment and return true if handled
+            return false;
+        }
+
+        
 
     }
 }

@@ -3,19 +3,9 @@ using Ginger.Plugin.Platform.Web.Elements;
 
 namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 {
-    internal class GingerWebElementFake : IGingerWebElement, IButton // temp IBUTTON remove !!!!!!!!!!!
+    public class GingerWebElementFake : IGingerWebElement
     {
         public object Element { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
-        public void Click()
-        {
-            // throw new System.NotImplementedException();
-        }
-
-        public void DoubleClick()
-        {
-            throw new System.NotImplementedException();
-        }
 
         public void DragAndDrop(string DragDropType, IGingerWebElement Element)
         {
@@ -42,11 +32,6 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new System.NotImplementedException();
         }
 
-        public string GetValue()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public int GetWidth()
         {
             throw new System.NotImplementedException();
@@ -63,21 +48,6 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
         }
 
         public bool IsVisible()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void JavascriptClick()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void MouseClick()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void MultiClick()
         {
             throw new System.NotImplementedException();
         }
@@ -102,9 +72,6 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new System.NotImplementedException();
         }
 
-        public void Submit()
-        {
-            throw new System.NotImplementedException();
-        }
+       
     }
 }

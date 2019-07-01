@@ -130,7 +130,7 @@ namespace Ginger.Activities
 
         private void BusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == BusinessFlow.Fields.ActivitiesGroups)
+            if (e.PropertyName == nameof(BusinessFlow.ActivitiesGroups))
             {
                 RefreshActivitiesGroupsGrid();
             }

@@ -87,27 +87,6 @@ namespace GingerCore
             Gherkin     // From Gherking Feature file
         }
 
-        public static partial class Fields
-        {
-            public static string Active = "Active";
-            public static string Mandatory = "Mandatory";
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string RunDescription = "RunDescription";
-            public static string Status = "Status";
-            public static string Activities = "Activities";
-            public static string Variables = "Variables";
-            public static string RunStatus = "RunStatus";
-            public static string Elapsed = "ElapsedSecs";
-            public static string Platforms = "Platforms";
-            public static string EnableActivitiesVariablesDependenciesControl = "EnableActivitiesVariablesDependenciesControl";
-            public static string ActivitiesGroups = "ActivitiesGroups";
-            public static string AutomationPrecentage = "AutomationPrecentage";
-            public static string ExternalID = "ExternalID";
-            public static string PublishStatus = "PublishStatus";
-            public static string Source = "Source";
-        }
-
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
@@ -127,14 +106,14 @@ namespace GingerCore
                 if (mName != value)
                 {
                     mName = value;
-                    OnPropertyChanged(Fields.Name);
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(Fields.Description); } } }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private Guid instanceGuid;
         public Guid InstanceGuid { get { return instanceGuid; } set { if (instanceGuid != value) { instanceGuid = value; OnPropertyChanged(nameof(instanceGuid)); } } }
@@ -155,7 +134,7 @@ namespace GingerCore
                 if (mRunDescription != value)
                 {
                     mRunDescription = value;
-                    OnPropertyChanged(Fields.RunDescription);
+                    OnPropertyChanged(nameof(RunDescription));
                 }
             }
         }
@@ -170,7 +149,7 @@ namespace GingerCore
                 if (mElapsed != value)
                 {
                     mElapsed = value;
-                    OnPropertyChanged(Fields.Elapsed);
+                    OnPropertyChanged(nameof(Elapsed));
                 }
             }
         }
@@ -201,7 +180,7 @@ namespace GingerCore
                 if (mStatus != value)
                 {
                     mStatus = value;
-                    OnPropertyChanged(Fields.Status);
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -231,7 +210,7 @@ namespace GingerCore
                 if (mMandatory != value)
                 {
                     mMandatory = value;
-                    OnPropertyChanged(Fields.Mandatory);
+                    OnPropertyChanged(nameof(Mandatory));
                 }
             }
         }
@@ -245,7 +224,7 @@ namespace GingerCore
                 if (mRunStatus != value)
                 {
                     mRunStatus = value;
-                    OnPropertyChanged(Fields.RunStatus);
+                    OnPropertyChanged(nameof(RunStatus));
                 }
             }
         }
@@ -262,7 +241,7 @@ namespace GingerCore
                 if (mSource != value)
                 {
                     mSource = value;
-                    OnPropertyChanged(Fields.Source);
+                    OnPropertyChanged(nameof(Source));
                 }
             }
         }
@@ -1021,12 +1000,6 @@ namespace GingerCore
             CleanDynamicAddedItems();
         }
 
-        public void InvokPropertyChanngedForAllFields()
-        {
-            foreach (var field in typeof(Fields).GetFields())
-                OnPropertyChanged(field.Name);
-        }
-
         public string AutomationPrecentage
         {
             get
@@ -1163,7 +1136,7 @@ namespace GingerCore
             set
             {
                 if (mPublishStatus != value)
-                { mPublishStatus = value; OnPropertyChanged(Fields.PublishStatus); }
+                { mPublishStatus = value; OnPropertyChanged(nameof(PublishStatus)); }
             }
         }
 

@@ -125,7 +125,7 @@
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Produce Last Execution Item Report" />
+                                    <GingerCore:ucTextDicResource Text="Produce Last Executed Item Report" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
