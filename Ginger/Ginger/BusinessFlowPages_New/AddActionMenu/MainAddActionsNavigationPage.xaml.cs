@@ -71,6 +71,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     LoadActionFrame(null); 
                 }                
             }
+            else if(e.PropertyName is nameof(mContext.Environment))
+            {
+                ResetAddActionPages();
+            }
+        }
+
+        void ResetAddActionPages()
+        {
+            mRecordPage = null;
+            mSharedRepositoryNavPage = null;
+            mPOMNavPage = null;
+            mActionsLibraryNavPage = null;
+            mLiveSpyNavPage = null;
+            mWindowsExplorerNavPage = null;
+            mAPINavPage = null;
         }
 
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)

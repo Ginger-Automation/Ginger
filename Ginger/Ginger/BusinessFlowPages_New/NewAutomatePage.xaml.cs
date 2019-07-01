@@ -287,24 +287,9 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     mContext.Agent = appAgent.Agent;
                 }
-                
-                TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
-                if (tBase != null)
-                {
-                    if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
-                    {
-                        mContext.Target = tBase; 
-                        mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                                 where x.AppName == mContext.Activity.TargetApplication
-                                                                select x.Platform).FirstOrDefault();
-                    }                    
-                }
-                else
-                {
-                    mContext.Target = null;
-                    mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
-                }
-                               
+
+                UpdateTargetAndPlatform();
+
                 if (mContext.Agent != null)
                 {
                     mContext.Agent.PropertyChanged -= Agent_PropertyChanged;
@@ -315,7 +300,27 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mContext.Agent = null;
             }
-        }       
+        }
+
+        private void UpdateTargetAndPlatform()
+        {
+            TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (tBase != null)
+            {
+                if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
+                {
+                    mContext.Target = tBase;
+                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                         where x.AppName == mContext.Activity.TargetApplication
+                                         select x.Platform).FirstOrDefault();
+                }
+            }
+            else
+            {
+                mContext.Target = null;
+                mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
+            }
+        }
 
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
