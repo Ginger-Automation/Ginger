@@ -66,6 +66,11 @@ namespace GingerCore.Variables
             }
         }
 
+        public override void PostSerialization()
+        {
+           // No operation has been added for now for postserialize event
+        }
+
         public override string GetFormula()
         {
             string formula = "Options: ";

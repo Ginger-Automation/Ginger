@@ -143,6 +143,11 @@ namespace GingerCore.Variables
             }
         }
 
+        public override void PostSerialization()
+        {
+            ResetValue();
+        }
+
         private string mFormula;
         public string Formula
         {
