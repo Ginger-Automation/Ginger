@@ -151,6 +151,8 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
+            [EnumValueDescription("Get Browser Logs")]
+            GetBrowserLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
