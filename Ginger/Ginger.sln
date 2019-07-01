@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSAccessDB", "MSAccessDB\MSAccessDB.csproj", "{B8BDF167-9BCA-4C19-85C6-87B338781F91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUnitTest", "MSdatabaseUT\DatabaseUnitTest.csproj", "{5230B930-5E96-4EAD-8970-48AE8DA0C452}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUnitTest", "DatabaseUnitTest\DatabaseUnitTest.csproj", "{5230B930-5E96-4EAD-8970-48AE8DA0C452}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
