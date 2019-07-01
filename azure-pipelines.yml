@@ -82,8 +82,16 @@ jobs:
 # Run .Net Framework tests
 # ------------------------------------------------------------------------------------------------------
 
-  - script: TestDotNetFramework.ps1
-    displayName: TestDotNetFramework.ps1 v3
+  - powershell:  inline Write-Host "Hello World 1"       
+    workingDirectory:   "D:\a\1\s\Ginger\Unit Tests\bin\Release
+    displayName:  inline script 1
+    failOnStderr:  true
+    errorActionPreference:  stop
+    
+    env:  # mapping of environment variables to add
+
+  # - script: TestDotNetFramework.ps1
+  #  displayName: TestDotNetFramework.ps1 v4
 
   #- task: VSTest@2
   #  displayName: GC 9

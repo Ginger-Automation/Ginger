@@ -1,2 +1,2 @@
-echo *** Start ***
-echo **** End  ***
+Write-Host "Hello World from $Env:AGENT_NAME."
+Write-Host "Hello World from $Env:AGENT_NAME."
