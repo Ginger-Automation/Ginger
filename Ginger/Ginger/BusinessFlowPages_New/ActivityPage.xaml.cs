@@ -230,7 +230,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xResetRestMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mActivity); indx <= mContext.BusinessFlow.Activities.Count; indx++)
+            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mActivity); indx < mContext.BusinessFlow.Activities.Count; indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
             }

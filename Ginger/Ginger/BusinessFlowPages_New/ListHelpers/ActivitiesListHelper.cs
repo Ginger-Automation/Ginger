@@ -458,7 +458,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void ResetResetHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);            
-            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx <= mContext.BusinessFlow.Activities.Count;indx++)
+            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx < mContext.BusinessFlow.Activities.Count;indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
             }

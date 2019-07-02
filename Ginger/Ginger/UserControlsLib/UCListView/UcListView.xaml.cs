@@ -147,7 +147,10 @@ namespace Ginger.UserControlsLib.UCListView
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            {
+                                mObjList.CurrentItem = value[0];
+                            }
                         }
 
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
