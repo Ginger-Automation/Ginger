@@ -41,11 +41,11 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 2.2
 # ------------------------------------------------------------------------------------------------------
-  #- task: DotNetCoreInstaller@0
-  #  inputs:
-  #    packageType: 'sdk' # Options: runtime, sdk
-  #    version: '2.2.100' 
-  #    displayName: Install .Net Core 2.2      
+  - task: DotNetCoreInstaller@0
+    inputs:
+      packageType: 'sdk' # Options: runtime, sdk
+      version: '2.2.100' 
+      displayName: Install .Net Core 2.2      
 
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
