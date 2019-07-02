@@ -126,11 +126,11 @@ jobs:
 
 
   - task: VSTest@2
-    displayName:  vstest again 4
+    displayName:  vstest again 5
     inputs:
       testSelector: 'testAssemblies'
-      testAssemblyVer2: '**\*GingerCoreTest*.dll
-        **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
+      testAssemblyVer2: |
+        **\$(BuildConfiguration)\GingerCoreTest.dll        
         !**\*TestAdapter.dll
         !**\obj\**'      
       vsTestVersion: '16.0'
