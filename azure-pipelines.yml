@@ -78,14 +78,7 @@ jobs:
       # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
-# ------------------------------------------------------------------------------------------------------
-# Run .Net Framework tests
-# ------------------------------------------------------------------------------------------------------
 
-  - task: PowerShell@2
-    displayName:  ps script 2
-    inputs:
-      filePath: TestDotNetFramework.ps1
 
 
   # - powershell: | 
@@ -150,6 +143,15 @@ jobs:
       # configuration: '$(buildConfiguration)'
       # testFiltercriteria:
 
+
+# ------------------------------------------------------------------------------------------------------
+# Run .Net Framework tests
+# ------------------------------------------------------------------------------------------------------
+
+  - task: PowerShell@2
+    displayName:  ps script 2
+    inputs:
+      filePath: TestDotNetFramework.ps1
 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1 for .NET Framework
