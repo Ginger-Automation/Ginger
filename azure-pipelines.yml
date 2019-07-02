@@ -120,24 +120,21 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName:  ps script 3
+    displayName:  ps script 4
     inputs:
       filePath: TestDotNetFramework.ps1
 
+       
 
-  - task: VSTest@2
-    displayName: vstest again 8
+  - task: PublishTestResults@2
+    displayName: Publish test result
+    condition: succeededOrFailed()
     inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: |
-        **\$(BuildConfiguration)\GingerCoreTest.dll        
-        **\$(BuildConfiguration)\UnitTests.dll        
-        !**\*TestAdapter.dll
-        !**\obj\**'            
-      vsTestVersion: '16.0'
-      runInParallel: true
-      codeCoverageEnabled: true
-      testRunTitle: 'aaa1'
+      testRunner: VSTest
+     
+
+
+  
 
   
 
