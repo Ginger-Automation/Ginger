@@ -94,11 +94,9 @@ namespace GingerCore.DataSource
         [IsSerializedForLocalRepository]
         public eDSType DSType { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //Do not use this Observable List
         public ObservableList<DataSourceTable> DSTableList = new ObservableList<DataSourceTable>();
         
-        public DataSourceBase DSC { get; set; }
-
 
         public override string ItemName
         {
@@ -117,9 +115,7 @@ namespace GingerCore.DataSource
         {
             return Name;
         }
-        public abstract void Init(string sFilePath, string sMode = "Read");
-
-        public abstract void Close();
+       
         public abstract ObservableList<DataSourceTable> GetTablesList();
 
         public abstract void UpdateTableList(ObservableList<DataSourceTable> dsTableList);
