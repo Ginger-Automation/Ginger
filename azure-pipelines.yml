@@ -155,19 +155,19 @@ jobs:
 
 
   - task: VSTest@2
-    displayName:  vstest again 2
+    displayName:  vstest again 3
     inputs:
       testSelector: 'testAssemblies'
       testAssemblyVer2: '**\*GingerCoreTest*.dll
         **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
         !**\*TestAdapter.dll
-        !**\obj\**'
-      searchFolder: '$(System.DefaultWorkingDirectory)'
+        !**\obj\**'      
       vsTestVersion: '16.0'
       runInParallel: true
       codeCoverageEnabled: true
       testRunTitle: 'aaa1'
 
+  
 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1 for .NET Framework
@@ -181,7 +181,7 @@ jobs:
   #    # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
       
   - task: VSTest@2
-    displayName: GingerCoreTest v1
+    displayName: GingerCoreTest v1 2
     inputs:
       testAssemblyVer2: |
        !**\$(BuildConfiguration)\*Test*.dll
@@ -190,6 +190,7 @@ jobs:
        !**\obj\**       
        !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
       runOnlyImpactedTests: false
+      vsTestVersion: '16.0'
       runInParallel: true
       runTestsInIsolation: false
       # codeCoverageEnabled: true
