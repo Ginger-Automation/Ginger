@@ -41,11 +41,11 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 2.2
 # ------------------------------------------------------------------------------------------------------
-  - task: DotNetCoreInstaller@0
-    inputs:
-      packageType: 'sdk' # Options: runtime, sdk
-      version: '2.2.100' 
-      displayName: Install .Net Core 2.2      
+  #- task: DotNetCoreInstaller@0
+  #  inputs:
+  #    packageType: 'sdk' # Options: runtime, sdk
+  #    version: '2.2.100' 
+  #    displayName: Install .Net Core 2.2      
 
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
@@ -126,14 +126,14 @@ jobs:
 
 
   - task: VSTest@2
-    displayName:  vstest again 6
+    displayName:  vstest again 7
     inputs:
       testSelector: 'testAssemblies'
       testAssemblyVer2: |
         **\$(BuildConfiguration)\GingerCoreTest.dll        
         **\$(BuildConfiguration)\UnitTests.dll        
         !**\*TestAdapter.dll
-        !**\obj\**'      
+        !**\obj\**'            
       vsTestVersion: '16.0'
       runInParallel: true
       codeCoverageEnabled: true
