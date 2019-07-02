@@ -60,12 +60,12 @@ namespace GingerCore.Actions
                 case eAgenTManipulationActionType.CloseAgent:
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent)==null)
                     {
-                        this.Error="Agent not running";
+                        this.Error= "Agent is not mapped for the activity";
                     }
 
                     if(((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.Completed || ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
                     {
-                        this.Error = "Agent not running";
+                        this.ExInfo = "Agent is not running";
                     }
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.FailedToStart)
                     {
@@ -94,12 +94,12 @@ namespace GingerCore.Actions
                 case eAgenTManipulationActionType.RestartAgent:
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent) == null)
                     {
-                        this.Error = "Agent not running";
+                        this.Error = "Agent is not mapped for the activity";
                     }
 
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.Completed || ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
                     {
-                        this.Error = "Agent not running";
+                        this.ExInfo = "Agent is not running";
                     }
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.FailedToStart)
                     {
@@ -109,7 +109,7 @@ namespace GingerCore.Actions
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Status != Agent.eStatus.FailedToStart)
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).Close();
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
-                    ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).StartDriver();
+                    ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).StartDriver();              
                     break;
             }
         }
