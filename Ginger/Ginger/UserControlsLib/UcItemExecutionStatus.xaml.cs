@@ -62,7 +62,7 @@ namespace Ginger.UserControlsLib.UCListView
                 case eRunStatus.Stopped:
                     statusBrush = FindResource("$StoppedStatusColor") as Brush;
                     statusImage = eImageType.Stop;
-                    imageSize = 11;
+                    imageSize = 10;
                     break;
                 case eRunStatus.Blocked:
                     statusBrush = FindResource("$BlockedStatusColor") as Brush;

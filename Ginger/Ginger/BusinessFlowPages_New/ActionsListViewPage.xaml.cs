@@ -23,24 +23,22 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.ApiModelsFolder;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
-using Ginger.ApiModelsFolder;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
 
 namespace GingerWPF.BusinessFlowsLib
 {
