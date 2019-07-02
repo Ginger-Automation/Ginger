@@ -85,9 +85,6 @@ namespace GingerCore.Actions
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                 string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-                liteDB.Init(liteDB.FileFullPath);
-                liteDB.DSC = liteDB;
-
                 liteDB.Execute(this, Query);
               
 
