@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
 
@@ -138,7 +139,7 @@ namespace Ginger.Actions.ActionConversion
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();

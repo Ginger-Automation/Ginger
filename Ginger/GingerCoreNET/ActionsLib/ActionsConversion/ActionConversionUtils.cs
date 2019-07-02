@@ -228,23 +228,36 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
                 {
-                    int count = 1;
                     foreach (Act act in convertibleActivity.Acts)
                     {
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                            (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
-                        {                            
-                            ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                            newConvertibleActionType.SourceActionType = act.GetType();
-                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                            newConvertibleActionType.ActionCount = count;
-                            newConvertibleActionType.Actions.Add(act);
-                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                            lst.Add(newConvertibleActionType);
-                            count++; 
-                        }
+                                                (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
+                        {
+                            ConvertableActionDetails existingConvertibleActionType = lst.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            if (existingConvertibleActionType == null)
+                            {
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                                newConvertibleActionType.SourceActionType = act.GetType();
+                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                if (newConvertibleActionType.TargetActionType == null)
+                                    continue;
+                                newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                                newConvertibleActionType.ActionCount = 1;
+                                newConvertibleActionType.Actions.Add(act);
+                                newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                lst.Add(newConvertibleActionType);
+                            }
+                            else
+                            {
+                                if (!existingConvertibleActionType.Actions.Contains(act))
+                                {
+                                    existingConvertibleActionType.ActionCount++;
+                                    existingConvertibleActionType.Actions.Add(act);
+                                    existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                }
+                            }
+                        }                        
                     }
                 }
             }
