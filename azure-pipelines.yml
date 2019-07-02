@@ -151,14 +151,15 @@ jobs:
   #- task: PowerShell@2
   # displayName:  ps script 2
   # inputs:
-  #   filePath: TestDotNetFramework.ps1
+   #   filePath: TestDotNetFramework.ps1
 
 
   - task: VSTest@2
-    displayName:  vstest again 1
+    displayName:  vstest again 2
     inputs:
       testSelector: 'testAssemblies'
       testAssemblyVer2: '**\*GingerCoreTest*.dll
+        **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
         !**\*TestAdapter.dll
         !**\obj\**'
       searchFolder: '$(System.DefaultWorkingDirectory)'
