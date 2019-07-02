@@ -98,7 +98,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     string cols = GetColumnNameListForTableCreation(dt);
                     AddDefaultColumn(dt);
                     CreateTable(dt.TableName, cols);                    
-                    mDSDetails.DSC.SaveTable(dt);
+                    mDSDetails.SaveTable(dt);
                 }                
             }
             catch (System.Exception ex)
@@ -117,14 +117,14 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             try
             {
                 StringBuilder colList = new StringBuilder();
-                colList.Append(mDSDetails.DSC.AddNewCustomizedTableQuery()+",");
+                colList.Append(mDSDetails.AddNewCustomizedTableQuery()+",");
                 foreach (DataColumn col in dt.Columns)
                 {
                     if(col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                     {
                         continue;
                     }
-                    colList.Append(mDSDetails.DSC.AddColumnName(col.ColumnName));
+                    colList.Append(mDSDetails.AddColumnName(col.ColumnName));
                     
                 }
                 cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
@@ -183,7 +183,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 DataSourceTable dsTableDetails = new DataSourceTable();
                 dsTableDetails.DSTableType = DataSourceTable.eDSTableType.Customized;
                 dsTableDetails.Name = name;
-                dsTableDetails.DSC = mDSDetails.DSC;
+                dsTableDetails.DSC = mDSDetails;
                 DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
                 DSTTI.DSTableDetails = dsTableDetails;
                 DSTTI.DSDetails = mDSDetails;
