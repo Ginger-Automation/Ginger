@@ -70,6 +70,23 @@ namespace UnitTests.NonUITests
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
+
+        public static void AddApplicationAgent()
+        {
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
+
+            Agent a = new Agent();
+            a.DriverType = Agent.eDriverType.SeleniumChrome;
+
+            mGR.SolutionAgents = new ObservableList<Agent>();
+            mGR.SolutionAgents.Add(a);
+
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "Web", Agent = a });
+            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
+        }
         [TestMethod]
         [Timeout(60000)]
         public void ActXMLProcessingTest()
@@ -165,7 +182,7 @@ namespace UnitTests.NonUITests
             //Act
             mGR.RunAction(actScript);
 
-            //Arrange
+            //Assert
             Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
             Assert.AreEqual(2, actScript.ReturnValues.Count);
             Assert.AreEqual("OK", actScript.ReturnValues[0].Actual);
@@ -186,7 +203,7 @@ namespace UnitTests.NonUITests
             //Act
             mGR.RunAction(actScript);
 
-            //Arrange
+            //Assert
             Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
             Assert.AreEqual(2, actScript.ReturnValues.Count);
             Assert.AreEqual("OK", actScript.ReturnValues[0].Actual);
@@ -207,10 +224,82 @@ namespace UnitTests.NonUITests
             //Act
             mGR.RunAction(actScript);
 
-            //Arrange
+            //Assert
             Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
             Assert.AreEqual(1, actScript.ReturnValues.Count);
             Assert.AreEqual("\n\nHello\nSNO=1\n\n", actScript.ReturnValues[0].Actual);
+        }
+
+        [TestMethod]
+        public void CloseAgentNullTest()
+        {
+            //Arrange
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType);
+            actAgentManipulation.Active = true;
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+
+            //Act
+            mGR.RunAction(actAgentManipulation);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void CloseAgentNotRunningTest()
+        {
+            //Arrange
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType);
+            actAgentManipulation.Active = true;
+            AddApplicationAgent();
+            mGR.SetCurrentActivityAgent();
+
+            //Act
+            mGR.RunAction(actAgentManipulation);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
+            Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
+        }
+
+        [TestMethod]
+        public void RestartAgentNullTest()
+        {
+            //Arrange
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType, "RestartAgent");
+            actAgentManipulation.Active = true;
+            Activity activity = new Activity();
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+
+            //Act
+            mGR.RunAction(actAgentManipulation);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void RestartAgentNotRunningTest()
+        {
+            //Arrange
+            ActAgentManipulation actAgentManipulation = new ActAgentManipulation();
+            actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType, "RestartAgent");
+            actAgentManipulation.Active = true;
+            AddApplicationAgent();
+            mGR.SetCurrentActivityAgent();
+
+            //Act
+            mGR.RunAction(actAgentManipulation);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
+            Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
         }
     }
 }
