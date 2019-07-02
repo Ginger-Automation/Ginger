@@ -126,7 +126,7 @@ jobs:
 
 
   - task: VSTest@2
-    displayName:  vstest again 7
+    displayName: vstest again 8
     inputs:
       testSelector: 'testAssemblies'
       testAssemblyVer2: |
