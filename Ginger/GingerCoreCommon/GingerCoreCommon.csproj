@@ -10,8 +10,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
-    <AssemblyVersion>3.3.3.1</AssemblyVersion>
-    <FileVersion>3.3.3.1</FileVersion>
+    <AssemblyVersion>3.3.5.1</AssemblyVersion>
+    <FileVersion>3.3.5.1</FileVersion>
     <PackageId>Ginger by Amdocs</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
