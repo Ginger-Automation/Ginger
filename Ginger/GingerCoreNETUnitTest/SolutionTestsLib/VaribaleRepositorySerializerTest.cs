@@ -32,7 +32,7 @@ using System.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
-   
+
     [Level1]
     [TestClass]
     public class VaribaleRepositorySerializerTest
@@ -46,17 +46,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions"+ Path.DirectorySeparatorChar+ "Variables");
-            if (Directory.Exists(TempSolutionFolder))
-            {
-                Directory.Delete(TempSolutionFolder, true);
-            }
-            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-
-            SR.CreateRepository(TempSolutionFolder);
             NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);
-            SR.Open(TempSolutionFolder);
-            string FileName = TestResources.GetTestResourcesFile(@"Solutions"+ Path.DirectorySeparatorChar+ "Variables" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Business Flow 1.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "Variables" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Business Flow 1.Ginger.BusinessFlow.xml");
 
             BusinessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
             varList = BusinessFlow.GetVariables();
@@ -70,85 +61,75 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         }
 
         [TestMethod]
+        public void VariablePassword()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestPasswordVar");
+            //Assert
+            Assert.AreEqual("+S+B0OE+KDopqrquyaOF2Q==", var.Value, "var string");
+        }
+
+        [TestMethod]
+        public void VariableDynamic()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestDynamicVar");
+            //Assert
+            Assert.AreEqual("12", var.Formula, "var dynamic");
+        }
+        [TestMethod]
+        public void VariableSelectionList()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestListVar");
+            //Assert
+            Assert.AreEqual("Apple", var.Value, "List");
+        }
+        [TestMethod]
+        public void VariableRandomNum()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestRandomNumVar");
+            //Assert
+            Assert.AreNotEqual(var.Formula, var.Value, "var Ramndom number");
+        }
+
+        [TestMethod]
+        public void VariableRandomstr()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestRandomStrVar");
+            //Assert
+            Assert.AreNotEqual(var.Formula, var.Value, "var Ramndom number");
+        }
+
+        [TestMethod]
+        public void VariableSequenceVar()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestSequenceVar");
+            //Assert
+            Assert.AreEqual("11", var.Value, "var sequence");
+        }
+        [TestMethod]
+        public void VariableTimer()
+        {
+            //Act
+            var = BusinessFlow.GetVariable("TestTimerVar");
+            //Assert
+            Assert.AreEqual("0", var.Value, "var Selection List");
+        }
+        [TestMethod]
         public void VariableString()
         {
-            foreach (VariableBase variable in varList)
-            {
-                switch (variable.VariableUIType)
-                {
-                    case "Variable String":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("hello", var.Value, "var string");
-
-                        break;
-
-                    case "Variable Dynamic":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("12", var.Formula, "var dynamic");
-
-                        break;
-
-                    case "Variable List":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("Apple", var.Value, "var List");
-
-                        break;
-                    case "Variable Random Number":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreNotEqual(var.Formula, var.Value, "var Ramndom number");
-
-                        break;
-
-                    case "Variable Random String":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreNotEqual(var.Formula, var.Value, "var Ramndom string");
-
-                        break;
-
-                    case "Variable Sequence":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("11", var.Value, "var sequence");
-
-                        break;
-                    case "Variable Timer":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("0", var.Value, "var Timer");
-
-                        break;
-                    case "Variable Selection List":
-                        //Act
-                        var = variable;
-
-                        //Assert
-                        Assert.AreEqual("a", var.Value, "var Selection List");
-
-                        break;
-                }
-            }
+            //Act
+            var = BusinessFlow.GetVariable("TestStringVar");
+            //Assert
+            Assert.AreEqual("hello", var.Value, "var string");
         }
     }
 }
+
 
 
 
