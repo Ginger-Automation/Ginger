@@ -8,7 +8,7 @@ jobs:
 
 - job: Windows
   pool:
-   vmImage: 'vs2017-win2016'
+   vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
 
 # ------------------------------------------------------------------------------------------------------
 # Job Variables
