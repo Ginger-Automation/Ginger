@@ -132,6 +132,43 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
+        [Timeout(60000)]
+        public void ActFileNonXmlProcessingTest()
+        {
+            //Arrange
+            ActXMLProcessing action = new ActXMLProcessing();
+
+            var templateFile = TestResources.GetTestResourcesFile(@"XML\BATCH_TEMPLATE.XML");
+            action.GetOrCreateInputParam(ActXMLProcessing.Fields.TemplateFileName, templateFile);
+            action.TemplateFileName.ValueForDriver = templateFile;
+
+            var targetFile = TestResources.GetTestResourcesFile(@"XML\BATCH_FILE.BAT");
+            action.GetOrCreateInputParam(ActXMLProcessing.Fields.TargetFileName, targetFile);
+            action.TargetFileName.ValueForDriver = targetFile;
+
+            ObservableList<ActInputValue> paramList = new ObservableList<ActInputValue>();
+            paramList.Add(new ActInputValue() { Param = "VAR_DIR_NAME", Value = "ginger" });
+            paramList.Add(new ActInputValue() { Param = "VAR_ENV_COMMAND", Value = "abc" });
+            paramList.Add(new ActInputValue() { Param = "VAR_CLASS_FILE_NAME", Value = "abc123" });
+            paramList.Add(new ActInputValue() { Param = "VAR_IDENTIFIER_NAME", Value = "pqrst" });
+
+            action.DynamicElements = paramList;
+            action.Active = true;
+            action.AddNewReturnParams = true;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(1, action.ReturnValues.Count);
+            Assert.AreEqual(true, action.ReturnValues[0].Actual.Contains("ginger"));
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
+
+        [TestMethod]
         public void ActScriptTestWithIndexZero()
         {
             //Arrange

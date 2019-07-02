@@ -115,7 +115,7 @@ namespace GingerCore.Actions.XML
 
                 string fileContents = System.IO.File.ReadAllText(fileName);
                 XMLProcessor xmlProcessor = new XMLProcessor();
-                if (System.IO.Path.GetExtension(fileName).ToLower().Equals("xml"))
+                if (System.IO.Path.GetExtension(fileName).ToLower().Equals(".xml"))
                 {
                    xmlProcessor.ParseToReturnValues(fileContents, this);
                 }
