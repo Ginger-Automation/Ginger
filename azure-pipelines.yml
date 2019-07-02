@@ -83,7 +83,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName:  ps script 1
+    displayName:  ps script 2
     inputs:
       filePath: TestDotNetFramework.ps1
 
