@@ -153,6 +153,21 @@ jobs:
     inputs:
       filePath: TestDotNetFramework.ps1
 
+
+  - task: VSTest@2
+    displayName:  vstest again 1
+    inputs:
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\*GingerCoreTest*.dll
+        !**\*TestAdapter.dll
+        !**\obj\**'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      vsTestVersion: '16.0'
+      runInParallel: true
+      codeCoverageEnabled: true
+      testRunTitle: 'aaa1'
+
+
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test Level 1 for .NET Framework
 # ------------------------------------------------------------------------------------------------------
