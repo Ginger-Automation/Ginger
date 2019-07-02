@@ -82,11 +82,18 @@ jobs:
 # Run .Net Framework tests
 # ------------------------------------------------------------------------------------------------------
 
-  - powershell:  inline "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" GingerCoreTest.dll /Logger:trx    
-    workingDirectory:   C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\
-    displayName:  inline script 4
-    failOnStderr:  true
-    errorActionPreference:  stop    
+  - task: PowerShell@2
+    displayName:  ps script 1
+    inputs:
+      filePath: TestDotNetFramework.ps1
+
+
+  # - powershell: | 
+  # inline "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" GingerCoreTest.dll /Logger:trx    
+  #  workingDirectory:   C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\
+  #  displayName:  inline script 4
+  #  failOnStderr:  true
+  #  errorActionPreference:  stop    
 
   # env:  # mapping of environment variables to add
 
