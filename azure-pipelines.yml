@@ -131,6 +131,7 @@ jobs:
     condition: succeededOrFailed()
     inputs:
       testRunner: VSTest
+      testResultsFormat: VSTest
      
 
 
