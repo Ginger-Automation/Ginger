@@ -119,10 +119,10 @@ jobs:
 # Run .Net Framework tests
 # ------------------------------------------------------------------------------------------------------
 
-  #- task: PowerShell@2
-  # displayName:  ps script 2
-  # inputs:
-   #   filePath: TestDotNetFramework.ps1
+  - task: PowerShell@2
+    displayName:  ps script 3
+    inputs:
+      filePath: TestDotNetFramework.ps1
 
 
   - task: VSTest@2
