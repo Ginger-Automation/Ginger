@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
@@ -319,7 +320,7 @@ namespace Ginger.Run.RunSetActions
                                 var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client");
                                 if (Directory.Exists(path))
                                     Directory.Delete(path, true);
-                                WorkSpace.Instance.CopyFolderRec(reportsResultFolder, path, true);
+                                IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
                                 reportsResultFolder = path;
                             }
                         }

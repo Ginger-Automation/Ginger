@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -182,7 +183,7 @@ namespace amdocs.ginger.GingerCoreNET
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
                     if (Directory.Exists(rootUserFolder))
                         TryFolderDelete(rootUserFolder);
-                    CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
                 }
             }
             catch(Exception ex)
@@ -200,44 +201,6 @@ namespace amdocs.ginger.GingerCoreNET
             catch (Exception ex)
             {
 
-            }
-        }
-
-        public void CopyFolderRec(string sourceFolder, string destinationFolder, bool copySubDirs)
-        {
-            // Get the subdirectories for the specified directory.
-            DirectoryInfo dir = new DirectoryInfo(sourceFolder);
-
-            if (!dir.Exists)
-            {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceFolder);
-            }
-
-            DirectoryInfo[] dirs = dir.GetDirectories();
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destinationFolder))
-            {
-                Directory.CreateDirectory(destinationFolder);
-            }
-
-            // Get the files in the directory and copy them to the new location.
-            FileInfo[] files = dir.GetFiles();
-            foreach (FileInfo file in files)
-            {
-                string temppath = Path.Combine(destinationFolder, file.Name);
-                file.CopyTo(temppath, false);
-            }
-
-            // If copying subdirectories, copy them and their contents to new location.
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string temppath = Path.Combine(destinationFolder, subdir.Name);
-                    CopyFolderRec(subdir.FullName, temppath, copySubDirs);
-                }
             }
         }
 
