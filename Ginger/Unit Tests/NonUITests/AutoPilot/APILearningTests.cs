@@ -150,7 +150,7 @@ namespace UnitTests.NonUITests.AutoPilot
         }
 
         [TestMethod]
-        //[Timeout(60000)]
+        [Timeout(60000)]
         public void APILearnJSONParseWithArrayTest()
         {
             //Arrange
