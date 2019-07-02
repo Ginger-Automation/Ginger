@@ -47,6 +47,11 @@ namespace Ginger.Agents
 
         bool AllowAgentsManipulation;
 
+        public ListBox MappingList
+        {
+            get { return xAppAgentsListBox; }
+        }
+
         public ApplicationAgentsMapPage(GingerRunner runner, Context context, bool allowAgentsManipulation=true)
         {
             InitializeComponent();

@@ -116,12 +116,6 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
-        {
-            ActivitiesGroupsManagerPage activitiesGroupsManagerPage = new ActivitiesGroupsManagerPage(mBusinessFlow);
-            activitiesGroupsManagerPage.ShowAsWindow();
-            xActivitiesListView.UpdateGrouping();
-        }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
@@ -130,7 +124,7 @@ namespace Ginger.BusinessFlowPages
             if (mBusinessFlow != null)
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-                xActivitiesListView.UpdateGrouping();
+                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
                 SetSharedRepositoryMark();
             }
             else

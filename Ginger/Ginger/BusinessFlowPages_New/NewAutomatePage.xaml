@@ -51,21 +51,27 @@
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <!--<UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>-->
                     <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
+                <!--<GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>-->
 
-                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
                     <StackPanel VerticalAlignment="Center" >
                         <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
                         <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" />
+                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
+                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                    <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
                 </StackPanel>
 
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
@@ -241,28 +247,10 @@
                 </StackPanel>
             </DockPanel>
         </ScrollViewer>
-       
-
-        <!--<Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="0">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
-                    <GradientStop Color="DarkGray" Offset="0"/>
-                    <GradientStop Color="LightGray" Offset="0.6"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>-->
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
-                    <!--<TabItem.Header>
-                        <Border Style="{StaticResource $CoolTabBorderStyle}" Margin="-15,0,0,0">
-                            <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock x:Name="xBfActiVitiesTabHeaderText" Text="Activities (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
-                            </DockPanel>
-                        </Border>
-                    </TabItem.Header>-->
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="400"/>
@@ -274,14 +262,7 @@
                             <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                         </Border>
 
-                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0">
-                            <!--<GridSplitter.Background>
-                                --><!--<LinearGradientBrush EndPoint="0,5" StartPoint="0,1">
-                                    <GradientStop Color="DarkGray" Offset="0.2"/>
-                                    <GradientStop Color="LightGray" Offset="0.2"/>
-                                </LinearGradientBrush>--><!--
-                            </GridSplitter.Background>-->
-                        </GridSplitter>
+                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
 
                         <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 

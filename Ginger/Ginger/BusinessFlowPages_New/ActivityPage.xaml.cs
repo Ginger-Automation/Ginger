@@ -17,17 +17,17 @@ limitations under the License.
 #endregion
 
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.Activities;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
-using GingerCore.Platforms;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,6 +48,11 @@ namespace GingerWPF.BusinessFlowsLib
         ActionsListViewPage mActionsPage;
         VariabelsListViewPage mVariabelsPage;
         ActivityConfigurationsPage mConfigurationsPage;
+
+        public UcListView ActionListView
+        {
+            get { return mActionsPage.ListView; }
+        }
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
         public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
@@ -172,16 +177,13 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void xRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            mContext.BusinessFlow.CurrentActivity = mActivity;
-            mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null);
+        {           
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, mActivity);
         }
 
         private void xContinueRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            mContext.BusinessFlow.CurrentActivity = mActivity;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, null);
+        {            
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, mActivity);
         }
 
         private void Acts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -211,7 +213,14 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
+            if (mActionsPage.ListView.CurrentItem != null)
+            {
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, (Act)mActionsPage.ListView.CurrentItem));
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void xResetMenuItem_Click(object sender, RoutedEventArgs e)

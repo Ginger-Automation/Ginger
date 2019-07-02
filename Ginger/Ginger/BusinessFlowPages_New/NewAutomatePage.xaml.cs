@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
@@ -48,7 +49,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.GeneralLib;
 using GingerWPF.WizardLib;
 using LiteDB;
 using System;
@@ -71,22 +71,27 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class NewAutomatePage : Page, INotifyPropertyChanged
     {
         GingerRunner mRunner;
-        BusinessFlow mBusinessFlow = null;        
         ProjEnvironment mEnvironment = null;
+        BusinessFlow mBusinessFlow;
+        Activity mActivity = null;
         Context mContext = new Context();
 
+        ApplicationAgentsMapPage mApplicationAgentsMapPage;
         ActivitiesListViewPage mActivitiesPage;
         VariabelsListViewPage mVariabelsPage;
         BusinessFlowConfigurationsPage mConfigurationsPage;
         ActivityPage mActivityPage;
         MainAddActionsNavigationPage mAddActionMainPage;
 
+        bool mExecutionIsInProgress = false;
+        bool mSyncSelectedItemWithExecution = true;
+
         GridLength mLastAddActionsColumnWidth = new GridLength(400);
 
         ObjectId mRunnerLiteDbId;
-        ObjectId mRunSetLiteDbId;
+        ObjectId mRunSetLiteDbId;                
 
-        private bool mAutoRunAnalyzer = true;
+        bool mAutoRunAnalyzer = true;
         public bool AutoRunAnalyzer
         {
             get
@@ -103,7 +108,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private bool mAutoGenerateReport = false;
+        bool mAutoGenerateReport = false;
         public bool AutoGenerateReport
         {
             get
@@ -228,8 +233,9 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
-            xAppsAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
-            SetEnvsCombo();            
+            mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
+            xAppsAgentsMappingFrame.Content = mApplicationAgentsMapPage;
+            SetEnvsCombo();
         }
 
 
@@ -271,7 +277,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext.AgentStatus = Convert.ToString(((Agent)sender).Status);
             }
         }
-        
+
         /// <summary>
         /// This method will set the Agent, Target and Platform for current activity in Context
         /// </summary>
@@ -287,24 +293,24 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     mContext.Agent = appAgent.Agent;
                 }
-                
+
                 TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
                 if (tBase != null)
                 {
                     if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
                     {
-                        mContext.Target = tBase; 
+                        mContext.Target = tBase;
                         mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                                 where x.AppName == mContext.Activity.TargetApplication
-                                                                select x.Platform).FirstOrDefault();
-                    }                    
+                                             where x.AppName == mContext.Activity.TargetApplication
+                                             select x.Platform).FirstOrDefault();
+                    }
                 }
                 else
                 {
                     mContext.Target = null;
                     mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
                 }
-                               
+
                 if (mContext.Agent != null)
                 {
                     mContext.Agent.PropertyChanged -= Agent_PropertyChanged;
@@ -315,29 +321,41 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mContext.Agent = null;
             }
-        }       
+        }
 
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
             {
-                //Expand
-                xAddActionsColumn.Width = mLastAddActionsColumnWidth;
-                xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
-                xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
-                xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
-                xAddActionSectionSpliter.IsEnabled = true;                
+                ExpandAddActionsPnl();
             }
             else
             {
-                //Collapse
-                mLastAddActionsColumnWidth = xAddActionsColumn.Width;
-                xAddActionsColumn.Width = new GridLength(10);
-                xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-                xAddActionsBtn.ToolTip = "Add Actions";
-                xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
-                xAddActionSectionSpliter.IsEnabled = false;
+                CollapseAddActionsPnl();
             }
+        }
+
+        private void ExpandAddActionsPnl()
+        {
+            //Expand
+            xAddActionsColumn.Width = mLastAddActionsColumnWidth;
+            xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ArrowRight;
+            xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
+            xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
+            xAddActionSectionSpliter.IsEnabled = true;
+        }
+
+        private void CollapseAddActionsPnl()
+        {
+            //Collapse
+            mLastAddActionsColumnWidth = xAddActionsColumn.Width;
+            xAddActionsColumn.Width = new GridLength(10);
+            xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            xAddActionsBtn.ToolTip = "Add Actions";
+            xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
+            xAddActionSectionSpliter.IsEnabled = false;
         }
 
         private void InitAutomatePageRunner()
@@ -366,7 +384,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void LoadBusinessFlowToAutomate(BusinessFlow businessFlowToLoad)
         {
-            StopAutomateRun();
+            if (mExecutionIsInProgress)
+            {
+                StopAutomateRun();
+            }
+            
             if (mBusinessFlow != businessFlowToLoad)
             {
                 RemoveCurrentBusinessFlow();
@@ -432,8 +454,9 @@ namespace GingerWPF.BusinessFlowsLib
 
                     if (mBusinessFlow.Activities.Count > 0)
                     {
-                        mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
-                        mContext.Activity = mBusinessFlow.CurrentActivity;
+                        mActivity = mBusinessFlow.Activities[0];
+                        mBusinessFlow.CurrentActivity = mActivity;
+                        mContext.Activity = mActivity;
 
                         if (mContext.Platform == ePlatformType.NA)
                             UpdateContextWithActivityDependencies();
@@ -457,6 +480,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ResetPageUI()
         {
             xBDDOperationsMenu.Visibility = Visibility.Collapsed;
+            xContinueRunBtn.Visibility = Visibility.Collapsed;
         }
 
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -465,16 +489,20 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
             }
-            Activity selectedActivity= (Activity)mActivitiesPage.ListView.CurrentItem;
+            mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
           
-            mBusinessFlow.CurrentActivity = selectedActivity;
-            if (selectedActivity != null)
+            if (mBusinessFlow.Activities.SyncCurrentItemWithViewSelectedItem)
             {
-                selectedActivity.PropertyChanged -= Activity_PropertyChanged;
-                selectedActivity.PropertyChanged += Activity_PropertyChanged;
+                mBusinessFlow.CurrentActivity = mActivity;
+            }
+            
+            if (mActivity != null)
+            {
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged += Activity_PropertyChanged;
             }
 
-            mContext.Activity = selectedActivity;
+            mContext.Activity = mActivity;
             UpdateContextWithActivityDependencies();
 
             SetActivityEditPage();            
@@ -493,15 +521,15 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetActivityEditPage()
         {
-            if (mBusinessFlow != null && mBusinessFlow.CurrentActivity != null)
+            if (mContext.Activity != null)
             {
                 if (mActivityPage == null)
                 {
-                    mActivityPage = new ActivityPage(mBusinessFlow.CurrentActivity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                    mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
                 }
                 else
                 {
-                    mActivityPage.UpdateActivity(mBusinessFlow.CurrentActivity);
+                    mActivityPage.UpdateActivity(mContext.Activity);
                 }
             }
             else
@@ -573,17 +601,100 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.UpdateApplicationAgents();
         }
 
+        private void SetUIElementsBehaverDuringExecution()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (mExecutionIsInProgress)
+                {
+                    xRunFlowBtn.ButtonImageType = eImageType.Running;
+                    xRunFlowBtn.ButtonText = "Running";
+                    xRunFlowBtn.ToolTip = "Execution is in progress";
+                    xRunFlowBtn.IsEnabled = false;
+                    xStopRunBtn.Visibility = Visibility.Visible;
+
+                    xEnvironmentComboBox.IsEnabled = false;
+                    if (mApplicationAgentsMapPage != null)
+                    {
+                        mApplicationAgentsMapPage.MappingList.IsEnabled = false;
+                    }
+
+                    if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add)
+                    {
+                        CollapseAddActionsPnl();
+                    }
+
+                    if (mBusinessFlow != null)
+                    {
+                        mBusinessFlow.Activities.SyncCurrentItemWithViewSelectedItem = false;
+                        mBusinessFlow.Activities.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
+                        foreach (Activity activity in mBusinessFlow.Activities)
+                        {
+                            activity.Acts.SyncCurrentItemWithViewSelectedItem = false;
+                            activity.Acts.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
+                        }
+                    }
+                }
+                else
+                {
+                    xRunFlowBtn.ButtonImageType = eImageType.Run;
+                    xRunFlowBtn.ButtonText = "Run";
+                    xRunFlowBtn.ToolTip = "Reset & Run Flow";
+                    xRunFlowBtn.IsEnabled = true;
+                    xStopRunBtn.Visibility = Visibility.Collapsed;
+
+                    xEnvironmentComboBox.IsEnabled = true;
+                    if (mApplicationAgentsMapPage != null)
+                    {
+                        mApplicationAgentsMapPage.MappingList.IsEnabled = true;
+                    }
+
+                    if (mBusinessFlow != null)
+                    {
+                        mBusinessFlow.Activities.SyncCurrentItemWithViewSelectedItem = true;
+                        mBusinessFlow.Activities.SyncViewSelectedItemWithCurrentItem = true;
+                        foreach (Activity activity in mBusinessFlow.Activities)
+                        {
+                            activity.Acts.SyncCurrentItemWithViewSelectedItem = true;
+                            activity.Acts.SyncViewSelectedItemWithCurrentItem = true;
+                        }
+                    }
+                }
+
+                xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+            });
+        }
+
+        private bool CheckIfExecutionIsInProgress()
+        {
+            if (mExecutionIsInProgress)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done during execution.");
+                return true;
+            }
+
+            return false;
+        }
+
         public void StopAutomateRun()
         {
             try
             {
                 mRunner.StopRun();
+                this.Dispatcher.Invoke(() =>
+                {
+                    xContinueRunBtn.Visibility = Visibility.Visible;
+                });
+                
             }
             finally
             {
-                //EnableDisableAutomateTabGrids(true);
+                mExecutionIsInProgress = false;
+                SetUIElementsBehaverDuringExecution();
             }
         }
+
+
 
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
@@ -603,16 +714,16 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    RunAutomatePageAction(false);
+                    RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
-                    RunAutomatePageActivity();
+                    RunAutomatePageActivity((Activity)args.Object);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificAction);
+                    ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity);
+                    ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();
@@ -641,35 +752,41 @@ namespace GingerWPF.BusinessFlowsLib
 
         private async Task RunAutomateTabFlow()
         {
-            if (AutoRunAnalyzer)
-            {
-                //Run Analyzer check if not including any High or Critical issues before execution
-                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                try
+            if (CheckIfExecutionIsInProgress()) return;
+
+            try
+            {                
+                mExecutionIsInProgress = true;
+                SetUIElementsBehaverDuringExecution();
+
+                if (AutoRunAnalyzer)
                 {
-                    AnalyzerPage analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
-                    await analyzerPage.AnalyzeWithoutUI();
-                    Reporter.HideStatusMessage();
-                    if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                    //Run Analyzer check if not including any High or Critical issues before execution
+                    Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    try
                     {
-                        Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
-                        analyzerPage.ShowAsWindow();
-                        return;
+                        AnalyzerPage analyzerPage = new AnalyzerPage();
+                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+                        await analyzerPage.AnalyzeWithoutUI();
+                        Reporter.HideStatusMessage();
+                        if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                        {
+                            Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                            analyzerPage.ShowAsWindow();
+                            return;
+                        }
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
                     }
                 }
-                finally
-                {
-                    Reporter.HideStatusMessage();
-                }
-            }
-            try
-            {
-                //execute preparations
+
+                //execute preparations               
                 mRunner.ResetRunnerExecutionDetails();
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
 
-                //execute
+                //execute                
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -694,87 +811,128 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //enable grids
-                //EnableDisableAutomateTabGrids(true);
+                mExecutionIsInProgress = false;
+                SetUIElementsBehaverDuringExecution();
                 mRunner.ResetFailedToStartFlagForAgents();
             }
         }
-        public async Task RunAutomatePageActivity()
-        {
-            await mRunner.RunActivityAsync((Activity)mBusinessFlow.CurrentActivity, false).ConfigureAwait(false);
 
-            //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
-            foreach (Act act in mBusinessFlow.CurrentActivity.Acts)
-            {
-                if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+        public async Task RunAutomatePageActivity(Activity activity)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            try
+            {                
+                mExecutionIsInProgress = true;
+                SetUIElementsBehaverDuringExecution();
+
+                mContext.BusinessFlow.CurrentActivity = activity;
+                mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
+
+                await mRunner.RunActivityAsync((Activity)activity, false).ConfigureAwait(false);
+
+                //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
+                foreach (Act act in activity.Acts)
                 {
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                    {
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
+                }
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
             }
-            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            finally
             {
-                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
-                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                mExecutionIsInProgress = false;
+                SetUIElementsBehaverDuringExecution();
             }
         }
 
-        public async Task RunAutomatePageAction(bool checkIfActionAllowedToRun = true)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true)
         {
-            if (mBusinessFlow.CurrentActivity.Acts.Count() == 0)
+            if (CheckIfExecutionIsInProgress()) return;
+
+            Activity parentActivity = actionToExecuteInfo.Item1;
+            Act actionToExecute = actionToExecuteInfo.Item2;
+            if (parentActivity.Acts.Count() == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
             }            
 
             // If no action selected move to the first.
-            if (mBusinessFlow.CurrentActivity.Acts.CurrentItem == null && mBusinessFlow.CurrentActivity.Acts.Count() > 0)
+            if (actionToExecute == null)
             {
-                mBusinessFlow.CurrentActivity.Acts.CurrentItem = mBusinessFlow.CurrentActivity.Acts[0];
+                actionToExecute = (Act)parentActivity.Acts[0];                
             }
-
-            //No need of agent for actions like DB and read for excel. For other need agent  
-            Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
-            if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
+            
+            try
             {
-                mRunner.SetCurrentActivityAgent();
+                mExecutionIsInProgress = true;
+                SetUIElementsBehaverDuringExecution();
+
+                //No need of agent for actions like DB and read for excel. For other need agent  
+                Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
+                if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
+                {
+                    mRunner.SetCurrentActivityAgent();
+                }
+                else if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
+                {
+                    mRunner.SetCurrentActivityAgent();
+                }
+
+                mBusinessFlow.CurrentActivity = parentActivity;
+                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
+
+                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                {
+                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                }
+
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    mRunner.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
+                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                }
             }
-            else if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
+            finally
             {
-                mRunner.SetCurrentActivityAgent();
-            }
-
-            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-
-            var result = await mRunner.RunActionAsync((Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem, checkIfActionAllowedToRun, true).ConfigureAwait(false);
-
-            if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
-            {
-                ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
-            }
-
-            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-            {
-                mRunner.ExecutionLoggerManager.ActivityEnd(0, mBusinessFlow.CurrentActivity);
-                mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
-                mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                mExecutionIsInProgress = false;
+                SetUIElementsBehaverDuringExecution();
             }
         }
 
-        private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom)
+        private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             try
             {
+                mExecutionIsInProgress = true;
+                SetUIElementsBehaverDuringExecution();
+
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
+                
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
                         await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
-                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity, (Act)mBusinessFlow.CurrentActivity.Acts.CurrentItem);
+                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)((Tuple<Activity,Act>)executedItem).Item1, (Act)((Tuple<Activity, Act>)executedItem).Item2);
                         break;
                     case eContinueFrom.SpecificActivity:
-                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, mBusinessFlow, (Activity)mBusinessFlow.CurrentActivity);
+                        mBusinessFlow.CurrentActivity = (Activity)executedItem;
+                        await mRunner.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificActivity, mBusinessFlow, (Activity)executedItem);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -786,6 +944,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
+                mExecutionIsInProgress = false;
+                SetUIElementsBehaverDuringExecution();
             }
         }
 
@@ -909,6 +1069,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mBusinessFlow != null && Reporter.ToUser(eUserMsgKey.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 Reporter.ToStatus(eStatusMsgKey.UndoChanges, null, mBusinessFlow.Name);
@@ -930,6 +1092,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             AnalyzerPage AP = new AnalyzerPage();
             AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
             AP.ShowAsWindow();
@@ -937,12 +1101,16 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutomationRunnerConfigBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             GingerRunnerConfigurationsPage runnerConfigurationsPage = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.AutomatePage, mContext);
             runnerConfigurationsPage.ShowAsWindow();
         }
 
         private void xResetFlowBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
             mBusinessFlow.Reset();
         }
@@ -979,11 +1147,15 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xActionsConvertionMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mBusinessFlow != null && mBusinessFlow.ActivitiesGroups != null && mBusinessFlow.ActivitiesGroups.Count > 0)
             {
                 ALMIntegration.Instance.RefreshAllGroupsFromALM(mBusinessFlow);
@@ -992,6 +1164,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xExportToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow))
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
@@ -1005,6 +1179,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xExportResultsToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);
             ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
@@ -1013,11 +1189,13 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             GenerateReport();
         }
 
         private void GenerateReport()
-        {
+        {            
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();
@@ -1089,13 +1267,15 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void ShowExecutionSummaryPage()
-        {
+        {            
             ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
             w.ShowAsWindow();
         }
 
         private void xSummaryPageMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             ShowExecutionSummaryPage();
         }
 
@@ -1116,6 +1296,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDGenerateScenarioMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mBusinessFlow != null)
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -1134,6 +1316,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDCleanScenariosMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             ScenariosGenerator SG = new ScenariosGenerator();
             SG.ClearOptimizedScenariosVariables(mBusinessFlow);
             SG.ClearGeneretedActivites(mBusinessFlow);
@@ -1141,6 +1325,8 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDOpenFeatureFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             DocumentEditorPage documentEditorPage = new DocumentEditorPage(mRunner.CurrentBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
@@ -1150,11 +1336,13 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xLastItemReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             GenerateLastExecutedItemReport();
         }
 
         private void GenerateLastExecutedItemReport()
-        {
+        {            
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();
@@ -1191,9 +1379,36 @@ namespace GingerWPF.BusinessFlowsLib
         }
         private void xTimelineReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in mRunner.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
+        }
+
+        private void xSelectedItemExecutionSyncBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mSyncSelectedItemWithExecution)
+            {
+                mSyncSelectedItemWithExecution = false;
+                xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Invisible;
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is not Synced with Execution Progress, Click to Sync it";
+            }
+            else
+            {
+                mSyncSelectedItemWithExecution = true;
+                xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Visible;
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it";
+            }
+
+            if (mBusinessFlow != null)
+            {                
+                mBusinessFlow.Activities.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
+                foreach (Activity activity in mBusinessFlow.Activities)
+                {                    
+                    activity.Acts.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
+                }
+            }
         }
     }
 
