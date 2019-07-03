@@ -115,6 +115,14 @@ jobs:
   # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
 #    displayName: UnitTest tests c:\
 
+# ------------------------------------------------------------------------------------------------------
+# Run .Net Framework tests using powershell
+# ------------------------------------------------------------------------------------------------------
+
+  - task: PowerShell@2
+    displayName:  ps script 6
+    inputs:
+      filePath: TestDotNetFramework.ps1
 
 
   
@@ -186,14 +194,6 @@ jobs:
       configuration: '$(BuildConfiguration)'
 
 
-      # ------------------------------------------------------------------------------------------------------
-# Run .Net Framework tests
-# ------------------------------------------------------------------------------------------------------
-
-  - task: PowerShell@2
-    displayName:  ps script 5
-    inputs:
-      filePath: TestDotNetFramework.ps1
 
 
 
