@@ -120,7 +120,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName:  ps script 7
+    displayName:  ps script 8
     inputs:
       filePath: TestDotNetFramework.ps1
 
@@ -138,8 +138,7 @@ jobs:
   - task: PublishTestResults@2
     displayName: Publish test result
     condition: succeededOrFailed()
-    inputs:
-      testRunner: VSTest
+    inputs:      
       testResultsFormat: VSTest
       testResultsFiles: '**/*.trx'
   
