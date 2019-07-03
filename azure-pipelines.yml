@@ -119,12 +119,10 @@ jobs:
 
   
   - task: VSTest@2
-    displayName: 'UnitTestProject1 v2'
+    displayName: 'UnitTestProject1 v3'
     inputs:
       testSelector: 'testAssemblies'
-      testAssemblyVer2: |
-       Ginger\UnitTestProject1\bin\Release\UnitTestProject1.dll
-      testAdapterPath:"d:\a\1\s"
+      testAssemblyVer2: Ginger\UnitTestProject1\bin\Release\UnitTestProject1.dll             
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
 
