@@ -127,11 +127,11 @@ jobs:
 
   
   - task: VSTest@2
-    displayName: 'UnitTestProject1 v3'
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: Ginger\UnitTestProject1\bin\Release\UnitTestProject1.dll             
-      searchFolder: '$(System.DefaultWorkingDirectory)'
+    displayName: 'UnitTestProject1 v4'
+    inputs:      
+      testAssemblyVer2: |
+       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
+      
 
 
 
