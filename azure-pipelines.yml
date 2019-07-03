@@ -118,12 +118,12 @@ jobs:
 
 
   
-- task: VSTest@2
-  displayName: 'Ornit 1'
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll !**\*TestAdapter.dll !**\obj\**'
-    searchFolder: '$(System.DefaultWorkingDirectory)'
+  - task: VSTest@2
+    displayName: 'Ornit 2'
+    inputs:
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll !**\*TestAdapter.dll !**\obj\**'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
 
 
 
