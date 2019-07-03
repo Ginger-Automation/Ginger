@@ -116,19 +116,24 @@ jobs:
 #    displayName: UnitTest tests c:\
 
 
-       
-
-  # - task: PublishTestResults@2
-  #  displayName: Publish test result
-  #  condition: succeededOrFailed()
-  #  inputs:
-  #    testRunner: VSTest
-  #    testResultsFormat: VSTest
-     
-
 
   
+- task: VSTest@2
+  displayName: 'Ornit 1'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: '**\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll !**\*TestAdapter.dll !**\obj\**'
+    searchFolder: '$(System.DefaultWorkingDirectory)'
 
+
+
+  - task: PublishTestResults@2
+    displayName: Publish test result
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: VSTest
+      testResultsFormat: VSTest
+      testResultsFiles: '**/*.trx'
   
 
 # ------------------------------------------------------------------------------------------------------
