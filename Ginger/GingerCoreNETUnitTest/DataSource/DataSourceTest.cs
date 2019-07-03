@@ -192,6 +192,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual( "1", a, "RowCount");
         }
 
+        [Ignore]
         [TestMethod]
         public void ExecuteGetValueNextAvailable()
         {
@@ -214,6 +215,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual( "1", value.Actual);
         }
 
+        [Ignore]
         [TestMethod]
         public void ExecuteGetValueByRowNum()
         {
@@ -237,6 +239,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("1", value.Actual);
         }
 
+        [Ig]
         [TestMethod]
         public void ExecuteGetValueByQuery()
         {
