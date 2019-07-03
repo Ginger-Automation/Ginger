@@ -343,6 +343,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
 
+        [Ignore]
         [TestMethod,Timeout(60000)]
         public void DumpTest()
         {
