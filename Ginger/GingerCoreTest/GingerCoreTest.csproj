@@ -698,12 +698,12 @@
     <None Include="TestResources\PBTestApp\pb_test_app.pbt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="TestResources\PBTestApp\pb_test_app.usr.opt">
+    <Content Include="TestResources\PBTestApp\pb_test_app.usr.opt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\PBTestApp\pb_test_ws.pbw">
+    </Content>
+    <Content Include="TestResources\PBTestApp\pb_test_ws.pbw">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.Actions.json" />
     <None Include="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
