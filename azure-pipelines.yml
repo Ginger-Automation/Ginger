@@ -119,6 +119,21 @@ jobs:
 # Run .Net Framework tests using powershell
 # ------------------------------------------------------------------------------------------------------
 
+
+  - task: VisualStudioTestPlatformInstaller@1
+    displayName:  VisualStudioTestPlatformInstaller
+    inputs:
+      packageFeedSelector: 'nugetOrg'
+      versionSelector: 'latestStable'
+
+  - task: VSTest@2
+    displayName: 'UnitTestProject1 v4'
+    inputs:      
+      testAssemblyVer2: |
+       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
+      
+
+
   - task: PowerShell@2
     displayName:  ps script 8
     inputs:
@@ -126,12 +141,7 @@ jobs:
 
 
   
-#  - task: VSTest@2
-#    displayName: 'UnitTestProject1 v4'
-#    inputs:      
-#      testAssemblyVer2: |
-#       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
-      
+
 
 
 
