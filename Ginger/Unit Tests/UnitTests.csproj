@@ -530,10 +530,10 @@
     <Content Include="TestResources\IEBrowser\ScriptSnippests\SetValue.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\JavaTestApp\Foxtel Test App.jar">
+    <Content Include="TestResources\JavaTestApp\Test App.jar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestResources\JavaTestApp\FoxtelEditorPaneTestApp.html">
+    <Content Include="TestResources\JavaTestApp\EditorPaneTestApp.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\JavaTestApp\JavaTestApp.jar">

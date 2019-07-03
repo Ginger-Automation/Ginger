@@ -40,7 +40,7 @@ namespace UnitTests.NonUITests.PayLoadTest
     {
 
         //static JavaDriver mDriver = null;
-        //static String AppName="Foxtel Test App";
+        //static String AppName="Test App";
 
         //[ClassInitialize()]
         //public static void ClassInit(TestContext context)
@@ -51,7 +51,7 @@ namespace UnitTests.NonUITests.PayLoadTest
         //    LJA.LaunchWithAgent = true;
         //    LJA.WaitForWindowTitle = AppName;
         //    LJA.Port = "7575";
-        //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\Foxtel Test App.jar";
+        //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\Test App.jar";
         //    LJA.Execute();
 
         //    mDriver = new JavaDriver(null);
