@@ -74,10 +74,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
              List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            
-                      
+
             //Get Data Source Tables List
-            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
+            DSDetails.DSTableList = DSDetails.GetTablesList();
             if (DSDetails.DSTableList == null)
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
             
@@ -138,7 +137,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
 
-            if (DSDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
                 TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
@@ -228,7 +227,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 DataSourceTable dsTableDetails = new DataSourceTable();                
                 dsTableDetails.Name = name;
-                dsTableDetails.DSC = DSDetails.DSC;
+                dsTableDetails.DSC = DSDetails;
                 dsTableDetails.DSTableType = DSTableType;
                 DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
                 DSTTI.DSTableDetails = dsTableDetails;
@@ -267,10 +266,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return;
             }
-            
-                
+
+
             //Add Data Source Tables List
-            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
+            DSDetails.DSTableList = DSDetails.GetTablesList();
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
@@ -300,7 +299,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             base.DeleteTreeItem(DSDetails);            
             if (File.Exists(DSDetails.FileFullPath))
             {
-                DSDetails.DSC.Close();
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
@@ -334,7 +332,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Duplicate(object sender, RoutedEventArgs e)
         {
             //TODO: Need to move code from if else to the respective classes.
-            if (DSDetails.DSC.DSType == DataSourceBase.eDSType.MSAccess)
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
                 if (dsDetailsCopy == null)

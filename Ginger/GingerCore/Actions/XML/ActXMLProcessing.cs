@@ -33,18 +33,17 @@ namespace GingerCore.Actions.XML
             {
                 public static string TemplateFileName = "TemplateFileName";
                 public static string TargetFileName = "TargetFileName";
-                public static string ProcessedFileName = "ProcessedFileName";                                
             }
 
-            public override string ActionDescription { get { return "XML Processing Action"; } }
-            public override string ActionUserDescription { get { return "Performs XML Processing action"; } }
+            public override string ActionDescription { get { return "File Processing Action"; } }
+            public override string ActionUserDescription { get { return "Performs File Processing action"; } }
 
             public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
             {
-                TBH.AddText("Use this action in case you want to perform any XML Processing.");
+                TBH.AddText("Use this action in case you want to perform any File Processing.");
                 TBH.AddLineBreak();
                 TBH.AddLineBreak();
-                TBH.AddText("To perform a XML Processing action, enter XML Template File,Target File Name and Processed File Name.");
+                TBH.AddText("To perform a File Processing action, enter File Template File and Target File Name.");
             }
 
             public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -68,8 +67,6 @@ namespace GingerCore.Actions.XML
            
             public ActInputValue TargetFileName { get { return GetOrCreateInputParam(Fields.TargetFileName); } }
             
-            public ActInputValue ProcessedFileName { get { return GetOrCreateInputParam(Fields.ProcessedFileName); } }
-
             [IsSerializedForLocalRepository]
             public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
 
@@ -116,9 +113,23 @@ namespace GingerCore.Actions.XML
             {
                 string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
 
-                string xml = System.IO.File.ReadAllText(fileName);
+                string fileContents = System.IO.File.ReadAllText(fileName);
                 XMLProcessor xmlProcessor = new XMLProcessor();
-                xmlProcessor.ParseToReturnValues(xml, this);
+                if (System.IO.Path.GetExtension(fileName).ToLower().Equals(".xml"))
+                {
+                   xmlProcessor.ParseToReturnValues(fileContents, this);
+                }
+                else
+                {
+                   ParseFileToReturnValues(fileContents, this);
+                }
+            }
+            private void ParseFileToReturnValues(string filecontent, Act act)
+            {
+                if (!string.IsNullOrEmpty(filecontent))
+                {
+                    act.AddOrUpdateReturnParamActualWithPath("Processed file", filecontent, null);
+                }
             }
 
             private string PrepareFile()

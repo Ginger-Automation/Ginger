@@ -400,6 +400,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="TestResources\XML\BATCH_FILE.BAT">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj">
@@ -453,6 +456,18 @@
     <None Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="TestResources\Script\ScriptWithoutOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Script\ScriptWithGingerOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Script\ScriptWithGingerOutputIndexZero.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\XML\BATCH_TEMPLATE.XML">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\XML\calculator_soapui_project.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
