@@ -207,32 +207,6 @@ namespace MSAccessDB
             return rc;
         }
 
-        
-
-        public List<string> GetTablesList()
-        {
-            List<string> rc = new List<string>() { "" };
-            if (MakeSureConnectionIsOpen())
-            {
-                try
-                {
-                    DataTable table = conn.GetSchema("Tables");
-                    string tableName = "";
-                    foreach (DataRow row in table.Rows)
-                    {
-                        tableName = (string)row[2];
-                    }
-                    rc.Add(tableName);
-                }
-                catch (Exception e)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list " + e);
-                    throw (e);
-                }
-            }
-            return rc;
-        }
-
         public bool MakeSureConnectionIsOpen()
         {
             Boolean isCoonected = true;
@@ -349,6 +323,30 @@ namespace MSAccessDB
             }
 
             return Convert.ToInt32(rc);
+        }
+
+        public List<string> GetTablesList(string Name = null)
+        {
+            List<string> rc = new List<string>() { "" };
+            if (MakeSureConnectionIsOpen())
+            {
+                try
+                {
+                    DataTable table = conn.GetSchema("Tables");
+                    string tableName = "";
+                    foreach (DataRow row in table.Rows)
+                    {
+                        tableName = (string)row[2];
+                    }
+                    rc.Add(tableName);
+                }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list " + e);
+                    throw (e);
+                }
+            }
+            return rc;
         }
     }
 }
