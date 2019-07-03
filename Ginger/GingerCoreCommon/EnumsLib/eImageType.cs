@@ -37,6 +37,7 @@ namespace Amdocs.Ginger.Common.Enums
         Ginger,
         GingerLogo,
         GingerLogoGray,
+        GingerLogoWhiteSmall,
         GingerIconWhite,
         GingerIconGray,
         GingerSplash,
