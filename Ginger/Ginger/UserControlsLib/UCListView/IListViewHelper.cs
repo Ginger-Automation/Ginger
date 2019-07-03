@@ -4,6 +4,8 @@ namespace Ginger.UserControlsLib.UCListView
 {
     public interface IListViewHelper
     {        
+        UcListView ListView { get; set; }
+
         void SetItem(object item);
 
         string GetItemNameField();

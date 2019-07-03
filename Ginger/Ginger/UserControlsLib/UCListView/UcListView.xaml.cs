@@ -18,7 +18,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl, IDragDrop
+    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations
     {
         IObservableList mObjList;
         CollectionView filteredView;
@@ -44,6 +44,8 @@ namespace Ginger.UserControlsLib.UCListView
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
 
         public event EventHandler PreviewDragItem;
+        public event PasteItemEventHandler PasteItemEvent;
+
         public delegate void PreviewDragItemEventHandler(DragInfo DragInfo);
 
         private bool mIsDragDropCompatible;
@@ -413,6 +415,7 @@ namespace Ginger.UserControlsLib.UCListView
         public void SetDefaultListDataTemplate(IListViewHelper listViewHelper)
         {
             mListViewHelper = listViewHelper;
+            mListViewHelper.ListView = this;
             this.Dispatcher.Invoke(() =>
             {
                 DataTemplate dataTemp = new DataTemplate();
@@ -614,8 +617,41 @@ namespace Ginger.UserControlsLib.UCListView
                     menuitem.Click += operation.OperationHandler;
 
                     menuitem.Tag = menu.Tag;
-
-                    ((MenuItem)menu.Items[0]).Items.Add(menuitem);
+                    
+                    if (string.IsNullOrEmpty(operation.Group))
+                    {
+                        ((MenuItem)menu.Items[0]).Items.Add(menuitem);
+                    }
+                    else
+                    {
+                        //need to add to Group
+                        bool addedToGroup = false;
+                        foreach (MenuItem item in (((MenuItem)menu.Items[0]).Items))
+                        {
+                            if (item.Header.ToString() == operation.Group)
+                            {
+                                //adding to existing group
+                                item.Items.Add(menuitem);
+                                addedToGroup = true;
+                                break;
+                            }
+                        }
+                        if (!addedToGroup)
+                        {
+                            //creating the group and adding
+                            MenuItem groupMenuitem = new MenuItem();
+                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                            ImageMakerControl groupIconImage = new ImageMakerControl();
+                            groupIconImage.ImageType = operation.GroupImageType;
+                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            groupMenuitem.Icon = groupIconImage;
+                            groupMenuitem.Header = operation.Group;
+                            groupMenuitem.ToolTip = operation.Group;
+                            ((MenuItem)menu.Items[0]).Items.Add(groupMenuitem);
+                            groupMenuitem.Items.Add(menuitem);
+                        }
+                    }
                 }
             }
 
@@ -661,6 +697,31 @@ namespace Ginger.UserControlsLib.UCListView
                 CollectFilterData();
                 filteredView.Refresh();
             }
+        }
+
+        public ObservableList<RepositoryItemBase> GetSelectedItems()
+        {
+            ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
+            foreach (object selectedItem in xListView.SelectedItems)
+            {
+                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+            }
+            return selectedItemsList;
+        }
+
+        public IObservableList GetItemsSourceList()
+        {
+            return DataSourceList;
+        }
+
+        public void SetSelectedIndex(int index)
+        {
+            xListView.SelectedIndex = index;
+        }
+
+        public void OnPasteItemEvent(PasteItemEventArgs.ePasteType pasteType, RepositoryItemBase item)
+        {
+            PasteItemEvent?.Invoke(new PasteItemEventArgs(pasteType, item));
         }
     }
 

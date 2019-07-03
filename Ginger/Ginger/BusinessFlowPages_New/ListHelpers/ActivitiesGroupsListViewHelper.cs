@@ -6,12 +6,14 @@ using System.Collections.Generic;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
 {
-    public class ActivitiesGroupsListHelper : IListViewHelper
+    public class ActivitiesGroupsListViewHelper : IListViewHelper
     {
         ActivitiesGroup mActivitiesGroup;
         Context mContext;
 
-        public ActivitiesGroupsListHelper(Context context)
+        public UcListView ListView { get; set; }
+
+        public ActivitiesGroupsListViewHelper(Context context)
         {
             mContext = context;
         }

@@ -380,6 +380,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Simulate:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Android);
                     break;
+                case eImageType.Copy:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Copy);
+                    break;
+                case eImageType.Cut:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cut);
+                    break;
+                case eImageType.Paste:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Paste);
+                    break;
                 case eImageType.Delete:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
                     break;
@@ -800,6 +809,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
+                    break;
+                case eImageType.Clipboard:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Clipboard);
                     break;
                 #endregion
 

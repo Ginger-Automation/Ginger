@@ -172,6 +172,9 @@ namespace Amdocs.Ginger.Common.Enums
         Spy,
         Undo,
         Simulate,
+        Copy,
+        Cut,
+        Paste,
         #endregion
 
         #region Items Images
@@ -255,6 +258,7 @@ namespace Amdocs.Ginger.Common.Enums
         Mandatory,
         ALM,
         CSV,
+        Clipboard,
         #endregion
 
         #region Source control Images     

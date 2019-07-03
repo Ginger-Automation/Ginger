@@ -6,6 +6,9 @@ namespace Ginger.UserControlsLib.UCListView
 {
     public class ListItemGroupOperation
     {
+        public string Group = null;
+        public eImageType GroupImageType;
+
         public string Header;
         public eImageType ImageType;
         public SolidColorBrush ImageForeground;
