@@ -120,17 +120,17 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName:  ps script 6
+    displayName:  ps script 7
     inputs:
       filePath: TestDotNetFramework.ps1
 
 
   
-  - task: VSTest@2
-    displayName: 'UnitTestProject1 v4'
-    inputs:      
-      testAssemblyVer2: |
-       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
+#  - task: VSTest@2
+#    displayName: 'UnitTestProject1 v4'
+#    inputs:      
+#      testAssemblyVer2: |
+#       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
       
 
 
