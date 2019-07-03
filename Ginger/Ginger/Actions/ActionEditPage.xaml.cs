@@ -1549,7 +1549,6 @@ namespace Ginger.Actions
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                    ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();
                     mDSTableList = ds.GetTablesList();

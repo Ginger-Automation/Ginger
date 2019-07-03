@@ -6,6 +6,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
@@ -34,7 +35,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 handler(new ActivityListItemEventArgs(eventType, eventObject));
             }
         }
-
         public ActivitiesListHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
@@ -412,24 +412,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void RunActionHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            mContext.BusinessFlow.CurrentActivity = mActivity;
-            mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, null);
+           
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, (Act)mActivity.Acts.CurrentItem));
         }
 
         private void RunHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            mContext.BusinessFlow.CurrentActivity = mActivity;
-            mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, null);
+          
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, mActivity);
         }
 
         private void ContinueRunHandler(object sender, RoutedEventArgs e)
         {
-            SetItem(sender);
-            mContext.BusinessFlow.CurrentActivity = mActivity;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, null);
+            SetItem(sender);           
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, mActivity);
         }
 
         private void ActiveHandler(object sender, RoutedEventArgs e)
@@ -461,7 +458,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void ResetResetHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);            
-            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx <= mContext.BusinessFlow.Activities.Count;indx++)
+            for(int indx=mContext.BusinessFlow.Activities.IndexOf(mActivity); indx < mContext.BusinessFlow.Activities.Count;indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
             }

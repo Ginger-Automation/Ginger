@@ -95,7 +95,7 @@ namespace Ginger.DataSource
         
         private void SetGridData()
         {
-            mDSTableList = mDSDetails.DSC.GetTablesList();           
+            mDSTableList = mDSDetails.GetTablesList();           
             grdTableList.DataSourceList = mDSTableList;           
         }
         
@@ -126,16 +126,16 @@ namespace Ginger.DataSource
             }
             if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                mDSTableList = mDSDetails.DSC.GetTablesList();
+                mDSTableList = mDSDetails.GetTablesList();
                 foreach (DataSourceTable dsTable in mDSTableList)
-                    mDSDetails.DSC.DeleteTable(dsTable.Name);
+                    mDSDetails.DeleteTable(dsTable.Name);
 
                 SetGridData();
             }           
         }
         private void SaveAllTables(object sender, RoutedEventArgs e)
         {
-            mDSTableList = mDSDetails.DSC.GetTablesList();
+            mDSTableList = mDSDetails.GetTablesList();
             foreach (DataSourceTable dsTable in mDSTableList)
             {
                 if (dsTable.DataTable != null)
@@ -180,7 +180,7 @@ namespace Ginger.DataSource
 
             if (dsTableDetails != null)
             {
-                dsTableDetails.DSC = mDSDetails.DSC;
+                dsTableDetails.DSC = mDSDetails;
                                 
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
                     dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");

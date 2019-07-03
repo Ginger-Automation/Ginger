@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
-using GingerCore;
-using GingerCore.DataSource;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,7 +26,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Amdocs.Ginger.Repository;
-using GingerCore.DataSource;
 
 
 namespace Amdocs.Ginger.Common
@@ -398,6 +393,9 @@ namespace Amdocs.Ginger.Common
                 return Items.Cast<object>().ToList();
             }
         }
+
+        public bool SyncCurrentItemWithViewSelectedItem { get; set; } = true;
+        public bool SyncViewSelectedItemWithCurrentItem { get; set; } = true;
 
         public ObservableList<NewType> ListItemsCast<NewType>()
         {

@@ -490,13 +490,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void RunHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentAction, null);
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mContext.Activity, (Act)mAction));
         }
 
         private void ContinueRunHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, null);
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.ContinueActionRun, new Tuple<Activity, Act>(mContext.Activity, (Act)mAction));
         }
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)

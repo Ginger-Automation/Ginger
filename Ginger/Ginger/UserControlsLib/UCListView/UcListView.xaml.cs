@@ -6,17 +6,12 @@ using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -28,13 +23,10 @@ namespace Ginger.UserControlsLib.UCListView
         IObservableList mObjList;
         CollectionView filteredView;
 
-        public event EventHandler SearchStarted;
-        public event EventHandler SearchCancelled;
-        public event EventHandler SearchCompleted;
-        private Task mSearchTask = null;
-        private CancellationTokenSource mCancellationTokenSource = null;
         private string mSearchString;
         public ObservableList<Guid> Tags = null;
+
+        CollectionView mGroupView;
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
@@ -142,23 +134,6 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     mObjList = value;
-                    //mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
-
-                    //if (mCollectionView != null)
-                    //{
-                    //    try
-                    //    {
-                    //        CollectFilterData();
-                    //        mCollectionView.Filter = FilterGridRows;
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        grdMain.CommitEdit();
-                    //        grdMain.CancelEdit();
-                    //        mCollectionView.Filter = FilterGridRows;
-                    //        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    //    }
-                    //}
                     this.Dispatcher.Invoke(() =>
                     {
                         xListView.ItemsSource = mObjList;
@@ -172,7 +147,10 @@ namespace Ginger.UserControlsLib.UCListView
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            {
+                                mObjList.CurrentItem = value[0];
+                            }
                         }
 
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
@@ -244,16 +222,25 @@ namespace Ginger.UserControlsLib.UCListView
             GingerCore.General.DoEvents();
             if (e.PropertyName == nameof(IObservableList.CurrentItem))
             {
-                this.Dispatcher.Invoke(() =>
+                if (mObjList.SyncViewSelectedItemWithCurrentItem)
                 {
-                    if (mObjList.CurrentItem != xListView.SelectedItem)
-                    {
-                        xListView.SelectedItem = mObjList.CurrentItem;
-                        int index = xListView.Items.IndexOf(mObjList.CurrentItem);
-                        xListView.SelectedIndex = index;
-                    }
-                });
+                    SetListSelectedItemAsSourceCurrentItem();
+                }
             }
+        }
+
+        private void SetListSelectedItemAsSourceCurrentItem()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (mObjList.CurrentItem != xListView.SelectedItem)
+                {
+                    xListView.SelectedItem = mObjList.CurrentItem;
+                    int index = xListView.Items.IndexOf(mObjList.CurrentItem);
+                    xListView.SelectedIndex = index;
+                    ScrollToViewCurrentItem();
+                }
+            });
         }
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
@@ -375,57 +362,29 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        //private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (mObjList.Count == 0)
-        //    {
-        //        Reporter.ToUser(eUserMsgKey.NoItemToDelete);
-        //        return;
-        //    }
-
-        //    if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-        //    {
-        //        mObjList.SaveUndoData();
-        //        mObjList.ClearAll();
-        //    }
-        //}
-
-        //private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int currentIndx = CurrentItemIndex;
-        //    if (currentIndx >= 1)
-        //    {
-        //        mObjList.Move(currentIndx, currentIndx - 1);
-        //        ScrollToViewCurrentItem();
-        //    }
-        //}
-
-        //private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int currentIndx = CurrentItemIndex;
-        //    if (currentIndx >= 0)
-        //    {
-        //        mObjList.Move(currentIndx, currentIndx + 1);
-        //        ScrollToViewCurrentItem();
-        //    }
-        //}
-
         public void ScrollToViewCurrentItem()
         {
             if (mObjList.CurrentItem != null)
             {
-                xListView.ScrollIntoView(mObjList.CurrentItem);
+                this.Dispatcher.Invoke(() =>
+                {
+                    xListView.ScrollIntoView(mObjList.CurrentItem);
+                });
             }
         }
 
         private void xListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (SkipItemSelection)//avoid user item selection in run time 
-            //{
-            //    SkipItemSelection = false;
-            //    return;
-            //}
+            if (mObjList.SyncCurrentItemWithViewSelectedItem)
+            {
+                SetSourceCurrentItemAsListSelectedItem();
+            }
+            
+            //e.Handled = true;
+        }
 
+        private void SetSourceCurrentItemAsListSelectedItem()
+        {
             if (mObjList == null) return;
 
             if (mObjList.CurrentItem == xListView.SelectedItem) return;
@@ -435,8 +394,6 @@ namespace Ginger.UserControlsLib.UCListView
                 mObjList.CurrentItem = xListView.SelectedItem;
                 ScrollToViewCurrentItem();
             }
-
-            //e.Handled = true;
         }
 
         private void XExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -622,24 +579,20 @@ namespace Ginger.UserControlsLib.UCListView
         {
             mGroupByProperty = groupByProperty;
             DoGrouping();
-            //List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
-            //if (groupOperations == null || groupOperations.Count == 0)
-            //{
-
-            //}
         }
 
         public void UpdateGrouping()
         {
-            DoGrouping();
+            //DoGrouping();
+            mGroupView.Refresh();            
         }
-
+        
         private void DoGrouping()
         {
-            CollectionView groupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
+            mGroupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription(mGroupByProperty);
-            groupView.GroupDescriptions.Clear();
-            groupView.GroupDescriptions.Add(groupDescription);
+            mGroupView.GroupDescriptions.Clear();
+            mGroupView.GroupDescriptions.Add(groupDescription);            
         }
 
         private void SetGroupOperations(Menu menu)

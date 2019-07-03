@@ -209,7 +209,7 @@ namespace Ginger.ApiModelsFolder
 
                 foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
                 {
-                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
+                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "").Replace("<","").Replace(">","");
                     inputVal.Value = "{DS Name=" + dataSourceTablesListPage.DSName + " DST=" + dataSourceTablesListPage.DSTableName + " ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=" + sColName + " IROW=NxtAvail}";
                 }
 
