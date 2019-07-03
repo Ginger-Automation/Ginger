@@ -38,6 +38,7 @@ using System.Linq;
 
 namespace UnitTests.UITests
 {
+    [Ignore]
     [TestClass]
     [Level3]
     public class WebDriverUnitTest
@@ -473,7 +474,7 @@ namespace UnitTests.UITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
         }
-
+        
         [TestMethod]
         public void RunJavaScript()
         {

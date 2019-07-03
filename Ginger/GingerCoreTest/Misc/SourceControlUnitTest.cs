@@ -31,6 +31,7 @@ using System.Reflection;
 
 namespace UnitTests.NonUITests
 {
+    [Ignore]
     [TestClass]
     public class SourceControlUnitTest
     {
