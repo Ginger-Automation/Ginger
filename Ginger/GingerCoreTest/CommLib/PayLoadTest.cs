@@ -356,6 +356,7 @@ namespace UnitTests.NonUITests.PayLoadTest
             //Assert
         }
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void ActJavaElementAction()
         {
