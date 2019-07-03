@@ -115,34 +115,27 @@ jobs:
   # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
 #    displayName: UnitTest tests c:\
 
+# ------------------------------------------------------------------------------------------------------
+# Run .Net Framework tests using powershell and publish the results
+# ------------------------------------------------------------------------------------------------------
 
-
-  
-  - task: VSTest@2
-    displayName: 'UnitTestProject1 v4'
-    inputs:      
-      testAssemblyVer2: |
-       **\UnitTestProject1\bin\$(buildConfiguration)\UnitTestProject1.dll             
-      
-
+  - task: PowerShell@2
+    displayName: Run .NetFramework Tests
+    inputs:
+      filePath: TestDotNetFramework.ps1
 
 
   - task: PublishTestResults@2
-    displayName: Publish test result
+    displayName: Publish .Net Framework test result
     condition: succeededOrFailed()
-    inputs:
-      testRunner: VSTest
+    inputs:      
       testResultsFormat: VSTest
       testResultsFiles: '**/*.trx'
   
 
 # ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1,2,3 for .NET Core testDLLs
-# ------------------------------------------------------------------------------------------------------
-    
-    # TODO: run unit test by level 1,2,3 continue on sucess only
-
-
+# Run Unit Test for .NET Core test DLLs
+# ------------------------------------------------------------------------------------------------------        
 
   - task: VSTest@2
     displayName: 'Run Unit tests Level for .Net Core test DLLs'
@@ -186,29 +179,6 @@ jobs:
       configuration: '$(BuildConfiguration)'
 
 
-      # ------------------------------------------------------------------------------------------------------
-# Run .Net Framework tests
-# ------------------------------------------------------------------------------------------------------
-
-  - task: PowerShell@2
-    displayName:  ps script 5
-    inputs:
-      filePath: TestDotNetFramework.ps1
-
-
-
-      # testAssemblyVer2: '**\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll'
-      # testSelection: 'testAssembly'     
-      # sourcefilters: '**\Ginger*Test.dll' # Required when testSelection == TestAssembly
-      # vstestLocationMethod: 'location'
-      # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
-      # codeCoverageEnabled: True
-      # otherConsoleOptions: '/platform:x64 /Framework:.NETCoreApp,Version=v2.1 /logger:console;verbosity="normal" '
-      # platform: '$(buildPlatform)'
-      # configuration: '$(buildConfiguration)'
-      # testFiltercriteria:
-
-
 
 # We run .Net Framework tests 
 
@@ -218,8 +188,7 @@ jobs:
   #- script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\Release\GingerTest.dll" 
   #  displayName: GingerTest tests
   
-
-    
+      
   # - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
   # - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\Release\GingerTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
 
