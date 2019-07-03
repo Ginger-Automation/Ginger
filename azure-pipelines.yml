@@ -78,49 +78,27 @@ jobs:
       # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
+  
+# ------------------------------------------------------------------------------------------------------
+# Run Unit Test for .NET Core test DLLs
+# ------------------------------------------------------------------------------------------------------        
+
+  - task: VSTest@2
+    displayName: 'Run tests for Ginger .Net Core *Test DLLs'
+    inputs:      
+      testAssemblyVer2: $(testDLLs)
+      runInParallel: True
+      codeCoverageEnabled: True
+      
 
 
-
-  # - powershell: | 
-  # inline "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" GingerCoreTest.dll /Logger:trx    
-  #  workingDirectory:   C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\Extensions\TestPlatform\
-  #  displayName:  inline script 4
-  #  failOnStderr:  true
-  #  errorActionPreference:  stop    
-
-  # env:  # mapping of environment variables to add
-
-  # - script: TestDotNetFramework.ps1
-  #  displayName: TestDotNetFramework.ps1 v4
-
-  #- task: VSTest@2
-  #  displayName: GC 9
-  #  inputs:
-  #    testAssemblyVer2: |
-  #     !**\$(BuildConfiguration)\*Test*.dll
-  #     **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
-  #     !**\$(BuildConfiguration)\*IntegrationTests*.dll
-  #     !**\obj\**       
-  #     !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-  #    runOnlyImpactedTests: false
-  #    runInParallel: true      
-  #    platform: '$(BuildPlatform)'
-  #    configuration: '$(BuildConfiguration)'
-
-  # runTestsInIsolation: false
-  # TestAdapter: ".\BuildOutput\Debug14.0\Binaries\TestAdapter\"
-  # codeCoverageEnabled: true
-  #
-  #
-  # - script: vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
-#    displayName: UnitTest tests c:\
 
 # ------------------------------------------------------------------------------------------------------
 # Run .Net Framework tests using powershell and publish the results
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName: Run .NetFramework Tests
+    displayName: Run tests for Ginger .NetFramework *Test Dlls
     inputs:
       filePath: TestDotNetFramework.ps1
 
@@ -133,50 +111,8 @@ jobs:
       testResultsFiles: '**/*.trx'
   
 
-# ------------------------------------------------------------------------------------------------------
-# Run Unit Test for .NET Core test DLLs
-# ------------------------------------------------------------------------------------------------------        
-
-  - task: VSTest@2
-    displayName: 'Run Unit tests Level for .Net Core test DLLs'
-    inputs:      
-      testAssemblyVer2: $(testDLLs)
-      runInParallel: True
-      codeCoverageEnabled: True
-      
-      
 
 
-
-
-
-# ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1 for .NET Framework
-# ------------------------------------------------------------------------------------------------------
-
-  #- task: VSTest@2
-  #  displayName: 'Run Unit tests Level for test Framework DLLs <<<<<<<<<<'
-  #  inputs:      
-  #    testAssemblyVer2: '**\Unit Tests\bin\$(buildConfiguration)\UnitTests.dll'
-  #    Framework: Framework461
-  #    # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
-      
-  - task: VSTest@2
-    displayName: GingerCoreTest v7
-    inputs:
-      testAssemblyVer2: |
-       !**\$(BuildConfiguration)\*Test*.dll
-       **\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll
-       !**\$(BuildConfiguration)\*IntegrationTests*.dll
-       !**\obj\**       
-       !**\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-      runOnlyImpactedTests: false
-      vsTestVersion: '16.0'
-      runInParallel: true
-      runTestsInIsolation: false
-      # codeCoverageEnabled: true
-      platform: '$(BuildPlatform)'
-      configuration: '$(BuildConfiguration)'
 
 
 

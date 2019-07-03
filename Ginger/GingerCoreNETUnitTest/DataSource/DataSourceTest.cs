@@ -239,7 +239,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("1", value.Actual);
         }
 
-        [Ig]
+        [Ignore]
         [TestMethod]
         public void ExecuteGetValueByQuery()
         {
