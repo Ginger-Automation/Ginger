@@ -119,10 +119,10 @@ jobs:
 
   
   - task: VSTest@2
-    displayName: 'Ornit 2'
+    displayName: 'Ornit 3'
     inputs:
       testSelector: 'testAssemblies'
-      testAssemblyVer2: '**\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll !**\*TestAdapter.dll !**\obj\**'
+      testAssemblyVer2: '**\Ginger\GingerCoreTest\bin\Release\GingerCoreTest.dll'
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
 
