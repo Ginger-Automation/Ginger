@@ -335,7 +335,7 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(loc.ToString(), Loc2);
         }
 
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void DumpTest()
         {
