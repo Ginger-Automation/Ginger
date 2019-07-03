@@ -27,7 +27,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers;
 using GingerCore.Platforms;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;

@@ -737,7 +737,7 @@ namespace UnitTests.UITests.PBDriverTest
             mGR.RunAction(actGen, false);
         }
 
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void GetURL_Testing()
         {
