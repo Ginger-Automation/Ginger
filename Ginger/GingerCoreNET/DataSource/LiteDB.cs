@@ -919,7 +919,11 @@ namespace GingerCoreNET.DataSource
 
         public void Execute(ActDSTableElement actDSTable, string Query)
         {
-            int DSCondition = actDSTable.ActDSConditions.Count;
+            int DSCondition = 0;
+            if (actDSTable.ActDSConditions != null)
+            {
+                DSCondition = actDSTable.ActDSConditions.Count;
+            }
             DataTable dt = new DataTable();
             
             switch (actDSTable.ControlAction)
