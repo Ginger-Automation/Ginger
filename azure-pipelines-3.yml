@@ -20,21 +20,23 @@ steps:
 - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
   displayName: 'Testing GingerCoreCommonTest'
 
+- script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerCoreNETUnitTest'
 
-- task: NuGetToolInstaller@0
+- script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerPluginCoreTest'
 
-- task: NuGetCommand@2
+- script: dotnet test  Ginger/GingerConsoleTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerConsoleTest'
+
+- script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerAutoPilotTest'
+    
+
+- task: PublishTestResults@2
+  displayName: Publish test result
+  condition: succeededOrFailed()
   inputs:
-    restoreSolution: '$(solution)'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
