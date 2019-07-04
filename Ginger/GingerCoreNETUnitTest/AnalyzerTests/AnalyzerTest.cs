@@ -3,14 +3,11 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
-using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace GingerCoreNETUnitTest.AnalyzerTests
 {
@@ -29,7 +26,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
 
             //WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
-            string path = TestResources.GetTestResourcesFolder(@"Solutions\AnalyzerTestSolution");
+            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
         }
@@ -42,7 +39,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             //Put the BF in Test Resource
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
 
-            string FileName = TestResources.GetTestResourcesFile(@"Solutions\AnalyzerTestSolution\BusinessFlows\Demo Flow 01.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Demo Flow 01.Ginger.BusinessFlow.xml");
 
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
