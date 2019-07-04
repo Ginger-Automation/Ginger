@@ -68,6 +68,7 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
             Assert.AreEqual(308, lXD.Count);
         }
 
+        [Ignore]
         [Level2]
         [TestMethod]  [Timeout(60000)]
         public void XMLDocExtendedValidateXpathGenerated()
