@@ -422,33 +422,6 @@
             Handles the Browser Action
             </summary>
         </member>
-        <member name="T:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler">
-            <summary>
-            Class having logic for converting the payloads and calling relevent functions from different element Interfaces to execute actions
-            </summary>
-        </member>
-        <member name="T:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler.eElementAction">
-            <summary>
-            Enum Having all the possible Element Action
-            </summary>
-        </member>
-        <member name="P:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler.ExecutionInfo">
-            <summary>
-            Execution details are stored in this.
-            </summary>
-        </member>
-        <member name="P:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler.Error">
-            <summary>
-            If an error happens during execution you should store in this proeprty and it will be 
-            </summary>
-        </member>
-        <member name="M:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler.#ctor(Ginger.Plugin.Platform.Web.IWebPlatform,System.Collections.Generic.Dictionary{System.String,System.String})">
-            <summary>
-            Instantiate the UIElementAction Handler with wervice implementing IWebplatform and Dictionary of InputParams
-            </summary>
-            <param name="mplatformService"></param>
-            <param name="mInputParams"></param>
-        </member>
         <member name="M:Ginger.Plugin.Platform.Web.Execution.UIELementActionHandler.PerformCommonActions(Ginger.Plugin.Platform.Web.Elements.IGingerWebElement)">
             <summary>
             Perform Common action on GngerWebelement return true if iction is perfomed 
@@ -461,14 +434,14 @@
             Default Implementation of IPlatformActionHandler for WebPlatform. A Plugin Implementing IwebPlatform can use this.
             </summary>
         </member>
-        <member name="M:Ginger.Plugin.Platform.Web.Execution.WebPlatformActionHandler.HandleRunAction(Amdocs.Ginger.Plugin.Core.ActionsLib.IPlatformService,GingerCoreNET.Drivers.CommunicationProtocol.NewPayLoad)">
+        <member name="M:Ginger.Plugin.Platform.Web.Execution.WebPlatformActionHandler.HandleRunAction(Amdocs.Ginger.Plugin.Core.ActionsLib.IPlatformService,Amdocs.Ginger.CoreNET.RunLib.NodePlatformAction@)">
             <summary>
             It Takes an instance of IWebPlatform(ehich extends IPlatformService ) and Action payload and call the required functions for execution.
             Supported actions are Browser Action and Ui Element action with Page object Model Support
             
             </summary>
             <param name="service"></param>
-            <param name="ActionPayload"></param>
+            <param name="platformAction"></param>
             <returns></returns>
         </member>
         <member name="T:Ginger.Plugin.Platform.Web.IAlerts">

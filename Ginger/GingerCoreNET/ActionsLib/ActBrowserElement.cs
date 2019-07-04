@@ -294,9 +294,19 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Web", actionHandler: "BrowserActions", action: "GotoURL" );                                    
-            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
-            platformAction.InputParams.Add("URL", Value);
+            PlatformAction platformAction = new PlatformAction(platform: "Web", actionHandler: "BrowserActions", action: "GotoURL" );
+
+
+            Dictionary<string, string> InputValueCalculated = new Dictionary<string, string>();
+
+            foreach(ActInputValue aiv in this.InputValues)
+            {
+                if(!InputValueCalculated.ContainsKey(aiv.Param))
+                InputValueCalculated.Add(aiv.Param, aiv.ValueForDriver);
+            }
+            platformAction.InputParams.Add("InputValues", InputValueCalculated);
+            //platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
+            //platformAction.InputParams.Add("URL", Value);
             return platformAction;            
         }
 

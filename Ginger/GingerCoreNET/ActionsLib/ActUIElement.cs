@@ -1038,20 +1038,20 @@ namespace GingerCore.Actions.Common
         {
             // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
 
-            PlatformAction platformAction = new PlatformAction(platform: "Any", actionHandler:"UIElementAction", action: "UIElementAction");            
-            platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
-            platformAction.InputParams.Add("ElementType", ElementType.ToString());            
+            PlatformAction platformAction = new PlatformAction(platform: "Any", actionHandler:"", action: "UIElementAction");            
+            //platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
+            //platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
-            // Add elem type POM data etc.
-            List<Locator> locators = new List<Locator>();
-            locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
+            //// Add elem type POM data etc.
+            //List<Locator> locators = new List<Locator>();
+            //locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
             
-            platformAction.InputParams.Add("Locators", locators);
+            platformAction.InputParams.Add("InputValues", this.InputValues);
 
-            if (!string.IsNullOrEmpty(Value))
-            {
-                platformAction.InputParams.Add(nameof(Value), Value);
-            }
+            //if (!string.IsNullOrEmpty(Value))
+            //{
+            //    platformAction.InputParams.Add(nameof(Value), Value);
+            //}
             
             //TODO: bsaed on elementtpye and action type add the extra fields
 

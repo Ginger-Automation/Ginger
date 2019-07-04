@@ -44,7 +44,6 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         
         readonly IWebPlatform PlatformService;
-        
 
         public BrowserActionhandler(IWebPlatform mPlatformService)
         {
@@ -53,7 +52,11 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
 
         public void ExecuteAction(ref NodePlatformAction platformAction)
-        {            
+        {
+
+            string Value = (string)platformAction.InputParams["Value"];
+            List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
+           Dictionary<string,object> InputParams = platformAction.InputParams;
             try
             {
                 // use enum or string/const ??? 
@@ -63,8 +66,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.GotoURL:                    
                         string GotoURLType;
 
-                        InputParams.TryGetValue("GotoURLType", out GotoURLType);
-                        GotoURLType = (string)mPlatformAction.InputValues["URLType"];
+        
+                        GotoURLType = (string)platformAction.InputParams["GotoURLType"];
 
                         if (string.IsNullOrEmpty(GotoURLType))
                         {
@@ -112,7 +115,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.GetWindowTitle:
 
                         string Title = BrowserService.GetTitle();
-
+                     
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Title });
                         break;
                     case eControlAction.GetMessageBoxText:
@@ -122,26 +125,29 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         break;
                     case eControlAction.SetAlertBoxText:
 
-                        BrowserService.SendAlertText(Value);
+             
                         string value = (string)platformAction.InputParams["Value"];
-                        BrowserService.SetAlertBoxText(value);
+                        BrowserService.SendAlertText(value);
                         break;
                     case eControlAction.SwitchFrame:
                         string ElementLocateBy;
                         string Locatevalue;
-                        string mElementType;
-                        InputParams.TryGetValue("LocateValue", out Locatevalue);
-                        InputParams.TryGetValue("ElementLocateBy", out ElementLocateBy);
+                        string mElementType= (string)platformAction.InputParams["ElementType"];
+                        Locatevalue = (string)platformAction.InputParams["LocateValue"];
+                        ElementLocateBy = (string)platformAction.InputParams["ElementLocateBy"];
+   
                         if (string.IsNullOrEmpty(ElementLocateBy))
                         {
-                            InputParams.TryGetValue("LocateBy", out ElementLocateBy);
+                            ElementLocateBy = (string)platformAction.InputParams["LocateBy"];
+        
                         }
 
                         if (string.IsNullOrEmpty(Locatevalue))
                         {
-                            InputParams.TryGetValue("Value", out Locatevalue);
+                            Locatevalue = (string)platformAction.InputParams["Value"];
+                  
                         }
-                        InputParams.TryGetValue("ElementType", out mElementType);
+
 
                         eElementType ElementType = eElementType.WebElement;
                         _ = Enum.TryParse<eElementType>(mElementType, out ElementType);
@@ -168,6 +174,11 @@ namespace Ginger.Plugin.Platform.Web.Execution
             catch(Exception ex)
             {
                 platformAction.addError(ex.Message);                
+            }
+
+            finally
+            {
+                platformAction.Output.OutputValues = AOVs;
             }
         }
         private IGingerWebElement LocateElement(eElementType ElementType, string ElementLocateBy, string LocateByValue)

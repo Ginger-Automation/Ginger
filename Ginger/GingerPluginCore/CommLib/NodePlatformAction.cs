@@ -9,7 +9,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public struct NodePlatformAction
     {
         public string Platform;
-        public string ActionHandler;
+       // public string ActionHandler;
         public string ActionType;
         public Dictionary<string, object> InputParams;
         public string error;
