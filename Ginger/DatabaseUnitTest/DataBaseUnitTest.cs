@@ -31,12 +31,13 @@ namespace GingerCoreNETUnitTest.Database
     public class DataBaseUnitTest
     {
         public static MSAccessDBCon db = new MSAccessDBCon();
+        static string FilePath = null;
 
         [ClassInitialize]
         public static void ClassInit(TestContext context)
         {
             Dictionary<string, string> param = new Dictionary<string, string>();
-            string FilePath = TestResources.GetTestResourcesFile(@"SignUp.accdb");
+            FilePath = TestResources.GetTestResourcesFile(@"SignUp.accdb");
             param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath +";");
             db.KeyvalParamatersList = param;
             Boolean testconn = db.OpenConnection(param);
@@ -48,13 +49,13 @@ namespace GingerCoreNETUnitTest.Database
         {
             //Arrange
             Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source= C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\WOEI\SignUp.accdb;");
+            param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";");
 
             //Act
             Boolean testconn = db.OpenConnection(param);
 
             //Assert
-            Assert.AreEqual(testconn, true);
+            Assert.IsTrue(testconn);
         }
 
         [TestMethod]
@@ -65,11 +66,11 @@ namespace GingerCoreNETUnitTest.Database
             List<string> Tables= null;
             
             //Act
-
              Tables= db.GetTablesList();
            
             //Assert
-            Assert.AreEqual(Tables.Count, 2);
+            Assert.AreEqual(2,Tables.Count);
+            Assert.AreEqual("Person", Tables[1].ToString());
         }
 
         [TestMethod]
@@ -83,7 +84,15 @@ namespace GingerCoreNETUnitTest.Database
             Columns = db.GetTablesColumns(tablename);
            
             //Assert
-            Assert.AreEqual(Columns.Count, 9);
+            Assert.AreEqual(9,Columns.Count);
+            Assert.AreEqual("ID", Columns[1].ToString());
+            Assert.AreEqual("FName", Columns[2].ToString());
+            Assert.AreEqual("LName", Columns[3].ToString());
+            Assert.AreEqual("Password", Columns[4].ToString());
+            Assert.AreEqual("EmailId", Columns[5].ToString());
+            Assert.AreEqual("Day", Columns[6].ToString());
+            Assert.AreEqual("Year", Columns[7].ToString());
+            Assert.AreEqual("Mobile", Columns[8].ToString());
         }
 
         [TestMethod]
@@ -92,12 +101,16 @@ namespace GingerCoreNETUnitTest.Database
             //Arrange
             string upadateCommand = "update Person set LName=\"EFGH\" where ID=1";
             string result = null;
+            string updatedval = null;
             
             //Act
             result = db.RunUpdateCommand(upadateCommand, false);
-           
+            updatedval = db.GetSingleValue("Person", "LName", "ID=1");
+
             //Assert
-            Assert.AreEqual(result, "1");
+            Assert.AreEqual( "1", result);
+            Assert.AreEqual("EFGH", updatedval);
+            
         }
 
         [TestMethod]
@@ -110,7 +123,7 @@ namespace GingerCoreNETUnitTest.Database
             result = db.GetSingleValue("Person", "FName", "ID=2");
             
             //Assert
-            Assert.AreEqual(result, "LMPO");
+            Assert.AreEqual( "LMPO", result);
         }
 
         [TestMethod]
@@ -123,7 +136,7 @@ namespace GingerCoreNETUnitTest.Database
             result = db.DBQuery("Select * from Person");
             
             //Assert
-            Assert.AreEqual(result.Count, 2);
+            Assert.AreEqual(2,result.Count);
         }
 
         [TestMethod]
@@ -133,17 +146,17 @@ namespace GingerCoreNETUnitTest.Database
              int a = 0;
             
             //Act
-                a = db.GetRecordCount("Person");
+             a = db.GetRecordCount("Person");
             
             //Assert
-            Assert.AreEqual(a, 2);
+            Assert.AreEqual(2,a);
         }
 
         [TestCleanup]
         public void CloseConnection()
         {
             Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source= C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\WOEI\SignUp.accdb;");
+            param.Add("ConnectionString", FilePath);
 
             db.CloseConnection();
         }
