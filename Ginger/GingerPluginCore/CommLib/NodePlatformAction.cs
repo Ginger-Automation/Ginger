@@ -11,6 +11,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public string Platform;
        // public string ActionHandler;
         public string ActionType;
+
+        // TODO: use List<NodeActionOutputValue> !!!!!!!!!!!!!!!!!
         public Dictionary<string, object> InputParams;
         public string error;
         public NodeActionOutput Output;

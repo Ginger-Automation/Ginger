@@ -10,18 +10,16 @@ namespace GingerCore.Platforms
     //  Fields must match exectly PlatformActionData
     /// </summary>
     public struct PlatformAction
-    {
-
-      
+    {        
+        public string ActionHandler { get; }
 
         public string ActionType { get; }
 
         public Dictionary<string, object> InputParams;
         
-        public PlatformAction(string action)
-        {
-        
-         
+        public PlatformAction(string actionHandler, string action)
+        {            
+            ActionHandler = actionHandler;
             ActionType = action;
             InputParams = new Dictionary<string, object>();
         }
