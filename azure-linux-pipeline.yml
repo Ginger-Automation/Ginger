@@ -28,7 +28,11 @@ jobs:
   - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
     displayName: 'Testing GingerPluginCoreTest'
 
+  - script: dotnet test  Ginger/GingerConsoleTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerConsoleTest'
 
+  - script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerAutoPilotTest'
     
 
   - task: PublishTestResults@2
