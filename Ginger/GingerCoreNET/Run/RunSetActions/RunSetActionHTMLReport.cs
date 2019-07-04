@@ -30,6 +30,7 @@ using GingerCore.DataSource;
 using Ginger.Reports.GingerExecutionReport;
 using Amdocs.Ginger.CoreNET.Logger;
 using System.IO;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -182,20 +183,20 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!Directory.Exists(reportsResultFolder))
                 {
-                    WorkSpace.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
+                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
                 }
                 else
                 {
                     webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "Execution_Data"));
                     webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "screenshots"));
-                    WorkSpace.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"), Path.Combine(reportsResultFolder, "assets", "Execution_Data"), true);
-                    WorkSpace.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "screenshots"), Path.Combine(reportsResultFolder, "assets", "screenshots"), true);
+                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"), Path.Combine(reportsResultFolder, "assets", "Execution_Data"), true);
+                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "screenshots"), Path.Combine(reportsResultFolder, "assets", "screenshots"), true);
 
                 }
             }
             else
             {
-                WorkSpace.Instance.CopyFolderRec(clientAppFolderPath, $"{reportsResultFolder}_{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}", true);
+                IoHandler.Instance.CopyFolderRec(clientAppFolderPath, $"{reportsResultFolder}_{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}", true);
             }
         }
 
