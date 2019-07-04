@@ -55,6 +55,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //[TestMethod]  [Timeout(60000)]
         //public void AddPluginPackage()
         
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void InstalledPluginPackageFromOnline()
         {
