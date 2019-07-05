@@ -237,7 +237,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //dataTemp.VisualTree = listItemFac;
             //xActionsListView.List.ItemTemplate = dataTemp;
 
-            xActionsListView.SetDefaultListDataTemplate(new ActionsListHelper(mContext, General.eRIPageViewMode.Automation));
+            xActionsListView.SetDefaultListDataTemplate(new ActionsListViewHelper(mContext, General.eRIPageViewMode.Automation));
 
             xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
             //xActionsListView.List.ItemsSource = mActivity.Acts;

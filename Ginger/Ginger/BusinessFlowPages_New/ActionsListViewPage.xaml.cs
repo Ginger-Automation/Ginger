@@ -51,7 +51,7 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
-        ActionsListHelper mActionsListHelper;
+        ActionsListViewHelper mActionsListHelper;
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
 
@@ -97,7 +97,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.Title = "Actions";
             mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListHelper(mContext, mPageViewMode);
+            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
             mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
             mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 

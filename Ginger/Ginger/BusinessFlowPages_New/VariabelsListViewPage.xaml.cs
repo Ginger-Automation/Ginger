@@ -26,7 +26,7 @@ namespace Ginger.BusinessFlowPages
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
 
-        VariablesListHelper mVariabelListHelper;
+        VariablesListViewHelper mVariabelListHelper;
         UcListView mVariabelsListView;
         VariableEditPage mVariabelEditPage;
         VariableBase mVarBeenEdit;
@@ -127,7 +127,7 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
             mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListHelper = new VariablesListHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
+            mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
             mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
             mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 

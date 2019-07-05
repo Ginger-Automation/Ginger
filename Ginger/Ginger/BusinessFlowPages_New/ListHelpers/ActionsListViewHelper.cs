@@ -17,11 +17,13 @@ using System.Windows.Media;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
 {
-    public class ActionsListHelper : IListViewHelper
+    public class ActionsListViewHelper : IListViewHelper
     {
         Act mAction;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
+
+        public UcListView ListView { get; set; }
 
         public delegate void ActionListItemEventHandler(ActionListItemEventArgs EventArgs);
         public event ActionListItemEventHandler ActionListItemEvent;
@@ -34,7 +36,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public ActionsListHelper(Context context, General.eRIPageViewMode pageViewMode)
+        public ActionsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
             mPageViewMode = pageViewMode;

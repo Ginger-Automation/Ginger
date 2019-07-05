@@ -49,7 +49,7 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext, mPageViewMode);
+            ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 

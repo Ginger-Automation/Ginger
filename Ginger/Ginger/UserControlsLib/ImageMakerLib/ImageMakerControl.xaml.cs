@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.UserControls
         // Icon Property
         // We list all available icons for Ginger, this icons can be resized and will automatically match
         public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register("ImageType", typeof(eImageType), typeof(ImageMakerControl),
-                        new FrameworkPropertyMetadata(eImageType.Ginger, OnIconPropertyChanged));
+                        new FrameworkPropertyMetadata(eImageType.Unknown, OnIconPropertyChanged));
 
         private static void OnIconPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -174,6 +174,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.GingerLogoGray:
                     SetAsStaticImage("GingerByAmdocsLogoGray.png");
+                    break;
+                case eImageType.GingerLogoWhiteSmall:
+                    SetAsStaticImage("GingerByAmdocsLogoWhiteSmall.png");
                     break;
                 case eImageType.GingerSplash:
                     SetAsStaticImage("GingerSplashImageNew.png");
@@ -376,6 +379,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Simulate:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Android);
+                    break;
+                case eImageType.Copy:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Copy);
+                    break;
+                case eImageType.Cut:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cut);
+                    break;
+                case eImageType.Paste:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Paste);
                     break;
                 case eImageType.Delete:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
@@ -797,6 +809,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
+                    break;
+                case eImageType.Clipboard:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Clipboard);
                     break;
                 #endregion
 

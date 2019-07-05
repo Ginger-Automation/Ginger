@@ -15,7 +15,7 @@ using System.Windows.Media;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
 {
-    public class VariablesListHelper : IListViewHelper
+    public class VariablesListViewHelper : IListViewHelper
     {
         public eVariablesLevel VariablesLevel;
         public RepositoryItemBase VariablesParent;
@@ -24,6 +24,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         VariableBase mVariable;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
+
+        public UcListView ListView { get; set; }
 
         public delegate void VariabelListItemEventHandler(VariabelListItemEventArgs EventArgs);
         public event VariabelListItemEventHandler VariabelListItemEvent;
@@ -36,7 +38,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        public VariablesListHelper(ObservableList<VariableBase> variables, RepositoryItemBase variablesParent, eVariablesLevel variablesLevel, Context context, General.eRIPageViewMode pageViewMode)
+        public VariablesListViewHelper(ObservableList<VariableBase> variables, RepositoryItemBase variablesParent, eVariablesLevel variablesLevel, Context context, General.eRIPageViewMode pageViewMode)
         {
             Variables = variables;
             VariablesParent = variablesParent;

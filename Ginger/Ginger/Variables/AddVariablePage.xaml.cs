@@ -35,9 +35,9 @@ namespace Ginger.Variables
     /// </summary>
     public partial class AddVariablePage : Page
     {
-        VariablesListHelper mLibraryVarsHelper;
+        VariablesListViewHelper mLibraryVarsHelper;
         ObservableList<VariableBase> mLibraryVarsList;
-        VariablesListHelper mSharedRepoVarsHelper;
+        VariablesListViewHelper mSharedRepoVarsHelper;
         ObservableList<VariableBase> mSharedRepoVarsList;
         GenericWindow _pageGenericWin = null;
         eVariablesLevel mVariablesLevel;
@@ -58,14 +58,14 @@ namespace Ginger.Variables
         private void SetUIControlsContent()
         {
             mLibraryVarsList = LoadLibraryVarsList();
-            mLibraryVarsHelper = new VariablesListHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mLibraryVarsList.Count);
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
             xLibraryTabListView.DataSourceList = mLibraryVarsList;
             xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
 
             mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            mSharedRepoVarsHelper = new VariablesListHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
             xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
             xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
