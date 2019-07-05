@@ -55,7 +55,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //[TestMethod]  [Timeout(60000)]
         //public void AddPluginPackage()
         
-        [Ignore]
+        
         [TestMethod]  [Timeout(60000)]
         public void InstalledPluginPackageFromOnline()
         {
@@ -64,7 +64,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             // TODO: create a simple plugin for unit test which will download faster.
 
             string PluginId = "PACT";            
-            string path = TestResources.GetTestTempFolder(@"Solutions\PluginsManagerSR1");
+            string path = TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "PluginsManagerSR1");
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
