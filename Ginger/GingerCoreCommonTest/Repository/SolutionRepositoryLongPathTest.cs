@@ -29,9 +29,8 @@ using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
 {
-    [Ignore]
-    [TestClass]
-    [Level1]
+    
+    [TestClass]    
     public class SolutionRepositoryLongPathTest
     {
         static SolutionRepository mSolutionRepository;
