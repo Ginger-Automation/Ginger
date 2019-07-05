@@ -31,7 +31,7 @@ namespace MongoDBTest
             Boolean testconn = db.OpenConnection(param);
 
             //Assert
-            Assert.AreEqual(testconn, true);
+            Assert.IsTrue(testconn);
         }
 
         [TestMethod]
@@ -44,7 +44,8 @@ namespace MongoDBTest
             Tables = db.GetTablesList();
 
             //Assert
-            Assert.AreEqual(Tables.Count, 1);
+            Assert.AreEqual(1,Tables.Count);
+            Assert.AreEqual("mycollection", Tables[0].ToString());
         }
 
         [TestMethod]
@@ -58,7 +59,10 @@ namespace MongoDBTest
             Columns = db.GetTablesColumns(tablename);
 
             //Assert
-            Assert.AreEqual(Columns.Count, 3);
+            Assert.AreEqual(3,Columns.Count);
+            Assert.AreEqual("name", Columns[0].ToString());
+            Assert.AreEqual("age", Columns[1].ToString());
+            Assert.AreEqual("website", Columns[2].ToString());
         }
 
         [TestMethod]
