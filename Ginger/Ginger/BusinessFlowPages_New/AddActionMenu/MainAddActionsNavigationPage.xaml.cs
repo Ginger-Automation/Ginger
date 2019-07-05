@@ -71,7 +71,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     LoadActionFrame(null); 
                 }                
             }
-            else if(e.PropertyName is nameof(mContext.Environment))
+            else if(e.PropertyName is nameof(mContext.Environment) && mContext.Environment is null)
             {
                 ResetAddActionPages();
             }
