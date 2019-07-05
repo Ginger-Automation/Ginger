@@ -42,7 +42,7 @@ namespace GingerCoreCommonTest.Repository
         public static void ClassInitialize(TestContext TC)
         {
 
-            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTempLongPath");
+            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions" +Path.DirectorySeparatorChar + "SRTestTempLongPath");
 
             int i = 1;
             while (TempRepositoryFolder.Length < 300)
