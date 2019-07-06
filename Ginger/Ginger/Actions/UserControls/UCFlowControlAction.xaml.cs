@@ -349,7 +349,7 @@ namespace Ginger.Actions.UserControls
                     case eFlowControlAction.SetVariableValue:
                         {
                             ActionValueTextBox.Visibility = System.Windows.Visibility.Visible;
-                            ActionValueComboBox.Visibility = System.Windows.Visibility.Collapsed;
+                            ActionValueComboBox.Visibility = System.Windows.Visibility.Hidden;
                             break;
                         }
                     case eFlowControlAction.RunSharedRepositoryActivity:
