@@ -40,7 +40,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static GingerRunner mGingerRunner;
 
         const string cWebApp = "Web";
-
+        static string mPluginId = "DummyPluginId";
+        static  string mServiceId = "DummyService";
         static Agent agent;
 
         [ClassInitialize]
@@ -68,15 +69,15 @@ namespace GingerCoreNETUnitTest.RunTestslib
                 Thread.Sleep(100);
             }
 
+            WorkSpace.Instance.PlugInsManager.PluginServiceIsSeesionDictionary.Add(mPluginId + "." + mServiceId, false);
+
             //TODO: handle no GG node found
 
             agent = new Agent();
             agent.Name = "agent 1";
             agent.AgentType = Agent.eAgentType.Service;
-            agent.ServiceId = "P1.DummyService";
-
-            // agent.GingerNodeProxy = new GingerNodeProxy(mGingerGrid.NodeList[0]);            
-            // agent.StartDriver();
+            agent.PluginId = mPluginId;
+            agent.ServiceId = mServiceId;
 
             mGingerRunner = new GingerRunner();
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
@@ -102,8 +103,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         }
 
-
-        [Ignore]   //TODO: FIXME !!!!!!!!!!!!!!!
+        
         [TestMethod]
         [Timeout(60000)]
         public void RunFlow()
@@ -112,14 +112,14 @@ namespace GingerCoreNETUnitTest.RunTestslib
             BusinessFlow BF = new BusinessFlow("BF1");
             BF.TargetApplications.Add(new TargetApplication() { AppName = cWebApp });
             BF.Activities[0].TargetApplication = cWebApp;
-            ActPlugIn a1 = new ActPlugIn() { PluginId = "P1", ServiceId = "DummyService", ActionId = "A1" , Active = true};            
+            ActPlugIn a1 = new ActPlugIn() { PluginId = mPluginId, ServiceId = mServiceId, ActionId = "A1" , Active = true};            
             BF.Activities[0].Acts.Add(a1);
 
             //Act            
             mGingerRunner.RunBusinessFlow(BF);
 
             //Assert
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);
+            Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
             Assert.AreEqual(BF.Activities[0].Status, eRunStatus.Passed, "Activity Status = Pass");
             Assert.AreEqual(a1.Error, null, "Action.Error=null");
         }

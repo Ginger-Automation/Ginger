@@ -74,7 +74,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
             solutionRepository.CreateRepository(path);
             solutionRepository.Open(path);            
             
-            PluginsManager pluginsManager = new PluginsManager(solutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(solutionRepository);            
             ObservableList<PluginPackage> pluginPackages =  solutionRepository.GetAllRepositoryItems<PluginPackage>();
 
             // Act            
