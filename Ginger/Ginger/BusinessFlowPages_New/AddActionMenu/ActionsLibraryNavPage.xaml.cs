@@ -83,6 +83,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             LoadGridData();
             LoadPluginsActions();
+            mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
         }
 
         private void LoadPluginsActions()
@@ -302,6 +303,30 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 Act selectedAction = ((ucGrid)ActionsTabs.SelectedContent).CurrentItem as Act;
 
+                //warn regarding Leagacy Actions
+                if (LegacyActionsTab.IsSelected)
+                {
+                    if (selectedAction is Amdocs.Ginger.CoreNET.IObsoleteAction)
+                    {
+                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((Amdocs.Ginger.CoreNET.IObsoleteAction)selectedAction).TargetActionTypeName());
+                        if (userSelection == eUserMsgSelection.Yes)
+                        {
+                            selectedAction = ((Amdocs.Ginger.CoreNET.IObsoleteAction)selectedAction).GetNewAction();
+                        }
+                        else if (userSelection == eUserMsgSelection.Cancel)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                    else
+                    {
+                        if (Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction) == eUserMsgSelection.No)
+                        {
+                            return;//do not add any action
+                        }
+                    }
+                }
+
                 if (selectedAction.AddActionWizardPage != null)
                 {
                     //_pageGenericWin.Close();
@@ -351,8 +376,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     //_pageGenericWin.Close();
 
                     //allowing to edit the action
-                    ActionEditPage actedit = new ActionEditPage(aNew);
-                    actedit.ShowAsWindow();
+                    //ActionEditPage actedit = new ActionEditPage(aNew);
+                    //actedit.ShowAsWindow();
 
                     if (aNew is ActPlugIn)
                     {

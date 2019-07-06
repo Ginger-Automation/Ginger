@@ -168,8 +168,36 @@ namespace GingerWPF.BusinessFlowsLib
                 Act instance = null;
                 if (droppedItem is Act)
                 {
-                    Act a = droppedItem as Act;
-                    instance = (Act)a.CreateInstance(true);
+                    Act selectedAction = droppedItem as Act;
+                    if (selectedAction.AddActionWizardPage != null)
+                    {
+                        //_pageGenericWin.Close();
+                        string classname = selectedAction.AddActionWizardPage;
+                        Type t = System.Reflection.Assembly.GetExecutingAssembly().GetType(classname);
+                        if (t == null)
+                        {
+                            throw new Exception("Action edit page not found - " + classname);
+                        }
+
+                        WizardBase wizard = (WizardBase)Activator.CreateInstance(t, mContext);
+                        WizardWindow.ShowWizard(wizard);
+                    }
+                    else
+                    {
+                        instance = (Act)selectedAction.CreateInstance(true);
+                        if (selectedAction is IObsoleteAction)
+                        {
+                            eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
+                            if (userSelection == eUserMsgSelection.Yes)
+                            {
+                                instance = ((IObsoleteAction)selectedAction).GetNewAction();
+                            }
+                            else if (userSelection == eUserMsgSelection.Cancel)
+                            {
+                                return;//do not add any action
+                            }
+                        }
+                    }
                 }
                 else if (droppedItem is ElementInfo)
                 {
