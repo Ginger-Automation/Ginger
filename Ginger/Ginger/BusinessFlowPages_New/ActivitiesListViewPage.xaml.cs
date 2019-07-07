@@ -111,7 +111,7 @@ namespace Ginger.BusinessFlowPages
             switch (EventArgs.EventType)
             {
                 case ActivityListItemEventArgs.eEventType.UpdateGrouping:
-                    xActivitiesListView.UpdateGrouping();
+                    xActivitiesListView.UpdateGrouping();                    
                     break;
             }
         }

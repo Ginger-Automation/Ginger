@@ -1,24 +1,26 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.UserControlsLib
 {
     public class ClipboardOperationsHandler
     {
-        public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
-        public static IObservableList mCutSourceList = null;
+        public static ObservableList<RepositoryItemBase> CopiedorCutItems = new ObservableList<RepositoryItemBase>();
+        public static IObservableList CutSourceList = null;
 
-        public static void CopySelectedItems(IClipboardOperations control)
+        public static void CopySelectedItems(IClipboardOperations containerControl)
         {
             try
             {
-                mCutSourceList = null;
-                mCopiedorCutItems.Clear();
-                foreach (RepositoryItemBase item in control.GetSelectedItems())
+                CutSourceList = null;
+                CopiedorCutItems.Clear();
+                foreach (RepositoryItemBase item in containerControl.GetSelectedItems())
                 {
-                    mCopiedorCutItems.Add(item);
+                    CopiedorCutItems.Add(item);
                 }
             }
             catch (Exception ex)
@@ -32,11 +34,11 @@ namespace Ginger.UserControlsLib
         {
             try
             {
-                mCutSourceList = null;
-                mCopiedorCutItems.Clear();
+                CutSourceList = null;
+                CopiedorCutItems.Clear();
                 foreach (RepositoryItemBase item in items)
                 {
-                    mCopiedorCutItems.Add(item);
+                    CopiedorCutItems.Add(item);
                 }
             }
             catch (Exception ex)
@@ -46,15 +48,15 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public static void CutSelectedItems(IClipboardOperations control)
+        public static void CutSelectedItems(IClipboardOperations containerControl)
         {
             try
             {
-                mCutSourceList = control.GetItemsSourceList();
-                mCopiedorCutItems.Clear();
-                foreach (RepositoryItemBase item in control.GetSelectedItems())
+                CutSourceList = containerControl.GetSourceItemsAsIList();
+                CopiedorCutItems.Clear();
+                foreach (RepositoryItemBase item in containerControl.GetSelectedItems())
                 {
-                    mCopiedorCutItems.Add(item);
+                    CopiedorCutItems.Add(item);
                 }
             }
             catch (Exception ex)
@@ -64,15 +66,15 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public static void SetCutItems(IClipboardOperations control, ObservableList<RepositoryItemBase> items)
+        public static void SetCutItems(IClipboardOperations containerControl, ObservableList<RepositoryItemBase> items)
         {
             try
             {
-                mCutSourceList = control.GetItemsSourceList();
-                mCopiedorCutItems.Clear();
+                CutSourceList = containerControl.GetSourceItemsAsIList();
+                CopiedorCutItems.Clear();
                 foreach (RepositoryItemBase item in items)
                 {
-                    mCopiedorCutItems.Add(item);
+                    CopiedorCutItems.Add(item);
                 }
             }
             catch (Exception ex)
@@ -82,133 +84,112 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public static void PasteItems(IClipboardOperations control)
+        /// <summary>
+        /// Paste the Copied or Cut Items
+        /// </summary>
+        /// <param name="containerControl">The UI control which paste is done on (DataGrid/TreeView/ListView)</param>
+        /// <param name="propertiesToSet">List of properties PropertyName-Value to set in reflection to they paste item</param>
+        public static void PasteItems(IClipboardOperations containerControl,  List<Tuple<string,object>> propertiesToSet = null, int currentIndex = -1)
         {
-            ((Control)control).Dispatcher.Invoke(() =>
+            ((Control)containerControl).Dispatcher.Invoke(() =>
             {
                 try
                 {
-                    if (mCutSourceList != null)
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    if (CutSourceList != null)
                     {
                         //CUT
                         //first remove from cut source
-                        foreach (RepositoryItemBase item in mCopiedorCutItems)
+                        foreach (RepositoryItemBase item in CopiedorCutItems)
                         {
-                            if (control.GetItemsSourceList().Contains(item))//cut & paste on same grid
-                            {
-                                //move item
-                                control.SetSelectedIndex(MoveItemAfterCurrent(control, item));
-                            }
-                            else
+                            //clear from source
+                            CutSourceList.Remove(item);
+                            //set needed properties if any
+                            SetProperties(item, propertiesToSet);
+                            if (!containerControl.GetSourceItemsAsIList().Contains(item))//Not cut & paste on same grid
                             {
                                 //set unique name
-                                SetItemUniqueName(control, item, string.Empty);
-                                //Trigger event for changing sub classes fields
-                                control.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
-                                //paste on target
-                                AddItemAfterCurrent(control, item);
-                                //clear from source
-                                mCutSourceList.Remove(item);
+                                GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), item);
                             }
+                            //paste on target and select                           
+                            containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, item, currentIndex));
+                            //Trigger event for changing sub classes fields
+                            containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
                         }
 
                         //clear so will be past only once
-                        mCutSourceList = null;
-                        mCopiedorCutItems.Clear();
+                        CutSourceList = null;
+                        CopiedorCutItems.Clear();
                     }
                     else
                     {
                         //COPY
                         //paste on target
-                        foreach (RepositoryItemBase item in mCopiedorCutItems)
+                        foreach (RepositoryItemBase item in CopiedorCutItems)
                         {
                             RepositoryItemBase copiedItem = item.CreateCopy();
                             //set unique name
-                            SetItemUniqueName(control, copiedItem, "_Copy");
+                            GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), copiedItem, "_Copy");
+                            //set needed properties if any
+                            SetProperties(copiedItem, propertiesToSet);
+                            //add and select                      
+                            containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, copiedItem, currentIndex));
                             //Trigger event for changing sub classes fields
-                            control.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
-                            //add                        
-                            AddItemAfterCurrent(control, copiedItem);
+                            containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
+                    Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied/cut items type and destination type is matching." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
-                    mCutSourceList = null;
-                    mCopiedorCutItems.Clear();                    
+                    CutSourceList = null;
+                    CopiedorCutItems.Clear();                    
+                }
+                finally
+                {
+                    Mouse.OverrideCursor = null;
                 }
             });
         }
 
-        private static void SetItemUniqueName(IClipboardOperations control, RepositoryItemBase item, string suffix = "_Copy")
+        private static void SetProperties(RepositoryItemBase item, List<Tuple<string, object>> propertiesToSet)
         {
-            string originalName = item.ItemName;
-            bool nameUnique = false;
-            int counter = 0;
-            while (nameUnique == false)
+            if (propertiesToSet != null)
             {
-                nameUnique = true;
-                foreach (RepositoryItemBase t in control.GetItemsSourceList())
-                    if (t.ItemName == item.ItemName)
-                    {
-                        nameUnique = false;
-                        break;
-                    }
-                if (nameUnique)
-                    break;
-                else
+                try
                 {
-                    if (counter == 0)
+                    foreach (Tuple<string, object> property in propertiesToSet)
                     {
-                        item.ItemName = originalName + suffix;
-                        counter = 2;
+                        item.GetType().GetProperty(property.Item1).SetValue(item, property.Item2);
                     }
-                    else
-                    {
-                        item.ItemName = originalName + suffix + counter;
-                        counter++;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to set the property to the item {0} as part of Paste process", item.ItemName), ex);
                 }
             }
         }
 
-        private static void AddItemAfterCurrent(IClipboardOperations control, RepositoryItemBase item)
+        private static int AddItemAfterCurrent(IClipboardOperations containerControl, RepositoryItemBase item, int currentIndex = -1)
         {
-            //adding the new item after current selected item
-            int currentIndex = -1;
-            if (control.GetItemsSourceList().CurrentItem != null)
+            int insertIndex = 0;
+
+            //adding the new item after current selected item            
+            if (currentIndex == -1 && containerControl.GetSourceItemsAsIList().CurrentItem != null) 
             {
-                currentIndex = control.GetItemsSourceList().IndexOf((RepositoryItemBase)control.GetItemsSourceList().CurrentItem);
+                currentIndex = containerControl.GetSourceItemsAsIList().IndexOf((RepositoryItemBase)containerControl.GetSourceItemsAsIList().CurrentItem);
             }
-
-            control.GetItemsSourceList().Insert(currentIndex + 1, item);
-
-            control.SetSelectedIndex(currentIndex + 1);
-        }
-
-        private static int MoveItemAfterCurrent(IClipboardOperations control, RepositoryItemBase item)
-        {
-            int itemIndex = control.GetItemsSourceList().IndexOf(item);
-            int currentIndex = control.GetItemsSourceList().IndexOf((RepositoryItemBase)control.GetItemsSourceList().CurrentItem);
 
             if (currentIndex >= 0)
             {
-                if (itemIndex < currentIndex)
-                {
-                    control.GetItemsSourceList().Move(itemIndex, currentIndex);
-                    return currentIndex;
-                }
-                else
-                {
-                    control.GetItemsSourceList().Move(itemIndex, currentIndex + 1);
-                    return currentIndex + 1;
-                }
+                insertIndex = currentIndex + 1;
             }
-            else
-            {
-                return itemIndex;
-            }
+
+            containerControl.GetSourceItemsAsIList().Insert(insertIndex, item);
+
+            return insertIndex;            
         }
+
     }
 }

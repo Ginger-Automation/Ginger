@@ -10,7 +10,9 @@ namespace Ginger.UserControlsLib
     {
         ObservableList<RepositoryItemBase> GetSelectedItems();
 
-        IObservableList GetItemsSourceList();
+        IObservableList GetSourceItemsAsIList();
+
+        ObservableList<RepositoryItemBase> GetSourceItemsAsList();
 
         void SetSelectedIndex(int index);
 
