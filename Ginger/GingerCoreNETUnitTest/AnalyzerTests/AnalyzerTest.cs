@@ -55,6 +55,64 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
 
         }
 
+        [TestMethod]
+        //[Timeout(60000)]
+        public void AnalyzerVariableUsedOnlyInSetVariableTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+
+             string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "BF_MissingVariableTest.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+                   
+            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            //Run Analyzer
+            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
+            //Asert
+            Assert.AreEqual(0, mIssues.Count);
+
+        }
+
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void AnalyzerVariableMisssingTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "BF_MissingVariableTest.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+
+            ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
+            AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            businessFlow.Variables.Remove(businessFlow.GetVariable("username"));
+
+
+            //Run Analyzer
+            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
+            //Asert
+            Assert.AreEqual(1, mIssues.Count);
+            Assert.AreEqual(AnalyzerItemBase.eSeverity.High, mIssues[0].Severity);
+            Assert.AreEqual("The Variable 'username' is missing", mIssues[0].Description);
+            Assert.AreEqual(AnalyzerItemBase.eType.Error, mIssues[0].IssueType);
+            Assert.AreEqual(AnalyzerItemBase.eCanFix.Yes, mIssues[0].CanAutoFix);
+
+        }
+
 
     }
 
