@@ -148,5 +148,35 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(AAMSList[0].AppModelParameters[6].PlaceHolder, "<NAME2>", "Is parameter name equal");
             Assert.AreEqual(AAMSList[0].AppModelParameters[7].PlaceHolder, "<STATUS>", "Is parameter name equal");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void APILearnJSONParseWithArrayTest()
+        {
+            //Arrange
+            var jsonString = @"{
+                                'cars': {
+                                    'Nissan': [
+                                        {'model':'Sentra', 'doors':4},
+                                        {'model':'Maxima', 'doors':4},
+                                        {'model':'Skyline', 'doors':2}
+                                    ],
+                                    'Ford': [
+                                        {'model':'Taurus', 'doors':4},
+                                        {'model':'Escort', 'doors':4}
+                                    ],
+		                            'NewCar':[ ],
+                                    'NewCar2':['item1','item2']
+                                    }
+                                  }";
+
+            //Act
+            object[] jsonNodeList = JSONTemplateParser.GenerateBodyANdModelParameters(jsonString);
+
+
+            //Assert
+            Assert.AreEqual(2, jsonNodeList.Length);
+            
+        }
     }
 }
