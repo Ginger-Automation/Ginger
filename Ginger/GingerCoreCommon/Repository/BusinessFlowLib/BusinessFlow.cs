@@ -108,6 +108,20 @@ namespace GingerCore
             public static string Source = "Source";
         }
 
+        bool mSelectedForConversion;
+        public bool SelectedForConversion
+        {
+            get { return mSelectedForConversion; }
+            set
+            {
+                if (mSelectedForConversion != value)
+                {
+                    mSelectedForConversion = value;
+                    OnPropertyChanged(nameof(SelectedForConversion));
+                }
+            }
+        }
+
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }

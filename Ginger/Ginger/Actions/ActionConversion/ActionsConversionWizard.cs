@@ -45,6 +45,17 @@ namespace Ginger.Actions.ActionConversion
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
 
         public bool NewActivityChecked { get; set; }
+        public ObservableList<BusinessFlow> ListOfBusinessFlow = null;
+
+        public enum eActionConversionType
+        {
+            SingleBusinessFlow,
+            MultipleBusinessFlow
+        }
+
+        public eActionConversionType ConversionType { get; set; }
+
+        public object BusinessFlowFolder { get; set; }
 
         private bool mSameActivityChecked = true;
         public bool SameActivityChecked
@@ -64,7 +75,7 @@ namespace Ginger.Actions.ActionConversion
         public string SelectedTargetApp { get; set; }
 
         public bool ConvertToPOMAction { get; set; }
-
+        
         private string mSelectedPOMObjectName = string.Empty;
         public string SelectedPOMObjectName
         {
@@ -78,13 +89,22 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
-        public ActionsConversionWizard(Context context)
+        public ActionsConversionWizard(Context context, object businessFlowFolder = null, eActionConversionType conversionType = eActionConversionType.SingleBusinessFlow)
         {
             Context = context;
+            ConversionType = conversionType;
+            BusinessFlowFolder = businessFlowFolder;
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
-            AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+            if (ConversionType == eActionConversionType.MultipleBusinessFlow && businessFlowFolder != null)
+            {
+                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage());
+            }
+            else if (ConversionType == eActionConversionType.SingleBusinessFlow)
+            {
+                AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+            }
 
             AddPage(Name: "Select Legacy Actions Type for Conversion", Title: "Select Legacy Actions Type for Conversion", SubTitle: "Select Legacy Actions Type for Conversion", Page: new SelectActionWzardPage());
 

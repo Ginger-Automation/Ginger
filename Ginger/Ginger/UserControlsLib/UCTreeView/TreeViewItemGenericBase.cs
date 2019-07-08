@@ -19,10 +19,13 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions.ActionConversion;
 using Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -62,7 +65,7 @@ namespace GingerWPF.TreeViewItemsLib
         public enum eFolderNodePastOperations { None, Copy, Cut, CopyItems, CutItems }
         public static eFolderNodePastOperations mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
 
-        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true)
+        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowActionConversion = false)
         {
             if (allowSave)
             {
@@ -98,6 +101,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Containing Folder", OpenTreeItemFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Containing Folder", OpenTreeItemFolderHandler);
+            }
+            if (allowActionConversion)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Actions Conversion", ActionsConversionHandler, null, "@Connection_32x32.png");
+                mTreeView.AddToolbarTool("@Connection_32x32.png", "Actions Conversion", ActionsConversionHandler);
             }
         }
 
@@ -184,7 +192,7 @@ namespace GingerWPF.TreeViewItemsLib
         }
 
         
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true)
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowActionConversion = false)
         {
             if (allowRefresh)
             {
@@ -235,6 +243,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Folder in File Explorer", OpenTreeFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Folder in File Explorer", OpenTreeFolderHandler);
+            }
+            if (allowActionConversion)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Actions Conversion", ActionsConversionHandler, null, "@Connection_32x32.png");
+                mTreeView.AddToolbarTool("@Connection_32x32.png", "Actions Conversion", ActionsConversionHandler);
             }
         }
 
@@ -338,6 +351,11 @@ namespace GingerWPF.TreeViewItemsLib
                     }
                 }
             }
+        }
+
+        private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            WizardWindow.ShowWizard(new ActionsConversionWizard(new Context(), ((ITreeViewItem)this).NodeObject(), ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow), 900, 700);
         }
 
         public abstract bool RenameTreeFolder(string originalName, string newFolderName, string newPath);

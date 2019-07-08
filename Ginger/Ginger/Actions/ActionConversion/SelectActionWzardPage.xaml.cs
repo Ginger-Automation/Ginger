@@ -64,8 +64,17 @@ namespace Ginger.Actions.ActionConversion
             // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
             mWizard.ActionToBeConverted.Clear();
 
+            List<Activity> lstSelectedActivities = null;
             // fetching list of selected convertible activities from the first grid
-            List<Activity> lstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
+            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+            {
+                lstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList(); 
+            }
+            else
+            {
+                lstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.SelectedForConversion).SelectMany(y => y.Activities).Where(z => z.SelectedForConversion).ToList();
+            }
+
             if (lstSelectedActivities.Count != 0)
             {
                 ActionConversionUtils utils = new ActionConversionUtils();

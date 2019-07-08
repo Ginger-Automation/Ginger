@@ -115,7 +115,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
                 
-                AddItemNodeBasicManipulationsOptions(mContextMenu);
+                AddItemNodeBasicManipulationsOptions(mContextMenu, allowActionConversion: true);
                 AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
