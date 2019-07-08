@@ -600,7 +600,6 @@ namespace Ginger
                 //}
                 ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
                 if (ds.DSType == DataSourceBase.eDSType.MSAccess)
                     SetItemView(tviDataSource, ds.Name, ds.Name, "@AccessDataSource_16x16.png");                

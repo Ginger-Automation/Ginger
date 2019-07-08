@@ -33,8 +33,6 @@ namespace GingerCoreNET.GeneralLib
 {
     public class General
     {
-        
-        
         #region ENUM
 
         public static List<string> GetEnumValues(Type EnumType)
@@ -309,15 +307,16 @@ namespace GingerCoreNET.GeneralLib
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
                 DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-
-                DataSource.Init(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
+               
                 foreach (DataSourceTable dst in dsTables)
+                {
                     if (dst.Name == DSTableName)
                     {
                         DSTable = dst;
                         break;
                     }
+                }
                 if (DSTable == null)
                 {
                     return "Data Source Table : '" + DSTableName + "' used in '" + DataSourceVE + "' not found in solution.";

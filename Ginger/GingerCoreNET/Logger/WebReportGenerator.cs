@@ -23,14 +23,15 @@ namespace Amdocs.Ginger.CoreNET.Logger
             this.browserPath = browserNewPath;
         }
 
-        public bool RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
+        public LiteDbRunSet RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
+            LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
             bool response = false;
             try
             {
                 string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
                 if (!Directory.Exists(clientAppFolderPath))
-                    return false;
+                    return lightDbRunSet;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
@@ -42,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 else
                     filterData = dbManager.FilterCollection(result, Query.All());
-                LiteDbRunSet lightDbRunSet = filterData.Last();
+                lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
                 response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
@@ -51,8 +52,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
 
             }
-            return response;
-
+            return lightDbRunSet;
         }
 
         private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldDisplayReport)

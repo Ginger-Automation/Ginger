@@ -25,7 +25,7 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <Label Style="{StaticResource @InputFieldLabelStyle}">XML Template File</Label>                            
+        <Label Style="{StaticResource @InputFieldLabelStyle}">Template File</Label>                            
         <TextBox x:Name="XMLTemplateFileTextBox" Grid.Column="1" Margin="3"/>
         <Button x:Name="BrowseFileButton" Content="Browse" Click="BrowseButton_Click" Grid.Column="2"/>
                                 
