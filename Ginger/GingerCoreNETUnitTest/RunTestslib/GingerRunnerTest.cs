@@ -65,7 +65,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // GingerNode GN = new GingerNode(mDummyDriver);
 
             GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
-            gingerNodeStarter.StartNode("N1", mDummyDriver);
+            gingerNodeStarter.StartNode("N1", mDummyDriver, SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
 
             //Task.Factory.StartNew(() => {
             //    GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
