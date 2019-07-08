@@ -56,9 +56,6 @@
     <Compile Include="AutoPilot\ImportOptionalValuesTest.cs" />
     <Compile Include="AutoPilot\ParserTest.cs" />
     <Compile Include="CommLib\PayLoadTest.cs" />
-    <Compile Include="GingerRunnerTests\GingerRunnerFlowControlTest.cs" />
-    <Compile Include="GingerRunnerTests\GingerRunnerPluginDriverTest.cs" />
-    <Compile Include="GingerRunnerTests\GingerRunnerTest.cs" />
     <Compile Include="Misc\AnalyzerTests.cs" />
     <Compile Include="Misc\DataBaseTest.cs" />
     <Compile Include="Misc\ExpectedWithActual.cs" />

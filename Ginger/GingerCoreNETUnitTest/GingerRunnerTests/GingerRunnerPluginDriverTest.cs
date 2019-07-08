@@ -26,8 +26,8 @@ using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
@@ -83,7 +83,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Instance.SolutionRepository.CreateRepository(solutionfolder);
             WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
 
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins\PluginDriverExample4");
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
         }
 
