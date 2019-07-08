@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static GingerRunner mGingerRunner;
 
         const string cWebApp = "Web";
-        static string mPluginId = "DummyPluginId";
+        static string mPluginId = "DummyPlugin";
         static  string mServiceId = "DummyService";
         static Agent agent;
 
@@ -62,15 +62,20 @@ namespace GingerCoreNETUnitTest.RunTestslib
             GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
 
             // Wait for the Grid to be up and the node connected
-            // max 10 seconds
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            while (mGingerGrid.NodeList.Count == 0 && st.ElapsedMilliseconds < 10000)
+            // max 30 seconds
+            Stopwatch st = Stopwatch.StartNew();            
+            while (mGingerGrid.NodeList.Count == 0 && st.ElapsedMilliseconds < 30000)
             {
                 Thread.Sleep(100);
             }
 
-            WorkSpace.Instance.PlugInsManager.PluginServiceIsSeesionDictionary.Add(mPluginId + "." + mServiceId, false);
+            if (mGingerGrid.NodeList.Count == 0)
+            {
+                throw new Exception(">>>>>>>>>>>>>>>> Service not started <<<<<<<<<<<<<<<<<<<<< " + mPluginId + "." + mServiceId);
+            }
+
+            WorkSpace.Instance.PlugInsManager.PluginServiceIsSeesionDictionary.Add(mPluginId + "." + mServiceId, true);
+            
 
             //TODO: handle no GG node found
 
@@ -121,9 +126,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Console.WriteLine("a1.Error = " + a1.Error);  
 
             //Assert
-            Assert.AreEqual(a1.Error, null, "Action.Error=null");            
+            Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");            
             Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
-            Assert.AreEqual(BF.Activities[0].Status, eRunStatus.Passed, "Activity Status = Pass");
+            Assert.AreEqual(eRunStatus.Passed, BF.Activities[0].Status, "Activity Status = Pass");
             
         }
 
