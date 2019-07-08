@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB", "MongoDB\MongoDB.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDBTest", "MongoDBTest\MongoDBTest.csproj", "{416A1485-831C-4293-BB47-48B65F3209F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLDatabase", "MySQLDatabase\MySQLDatabase.csproj", "{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -248,6 +250,12 @@ Global
 		{416A1485-831C-4293-BB47-48B65F3209F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{416A1485-831C-4293-BB47-48B65F3209F2}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{416A1485-831C-4293-BB47-48B65F3209F2}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
