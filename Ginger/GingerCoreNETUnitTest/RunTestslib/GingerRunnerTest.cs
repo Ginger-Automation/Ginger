@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
@@ -26,13 +27,16 @@ using GingerCore.Platforms;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTests.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+    [Level2]
     [TestClass]
     public class GingerRunnerTest
     {
@@ -58,8 +62,15 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Start one DummyDriver - in process, so we can test whats going on everywhere
             mDummyDriver = new DummyDriver();            
-            GingerNode GN = new GingerNode(mDummyDriver);
-            GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
+            // GingerNode GN = new GingerNode(mDummyDriver);
+
+            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+            gingerNodeStarter.StartNode("N1", mDummyDriver);
+
+            //Task.Factory.StartNew(() => {
+            //    GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
+            //});
+            
 
             // Wait for the Grid to be up and the node connected
             // max 30 seconds
