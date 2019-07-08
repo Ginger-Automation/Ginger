@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
@@ -9,6 +10,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -123,12 +125,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 addNew.OperationHandler = AddNewHandler;
                 operationsList.Add(addNew);
 
-                ListItemOperation deleteAll = new ListItemOperation();
-                deleteAll.AutomationID = "deleteAll";
-                deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-                deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Variables);
-                deleteAll.OperationHandler = DeleteAllHandler;
-                operationsList.Add(deleteAll);
+                ListItemOperation deleteSelected = new ListItemOperation();
+                deleteSelected.AutomationID = "deleteSelected";
+                deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                deleteSelected.ToolTip = "Delete Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables);
+                deleteSelected.OperationHandler = DeleteSelectedHandler;
+                operationsList.Add(deleteSelected);
             }
 
             if (mPageViewMode == General.eRIPageViewMode.Standalone)
@@ -157,6 +159,54 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 resetAll.ToolTip = "Reset All " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                 resetAll.OperationHandler = ResetAllHandler;
                 extraOperationsList.Add(resetAll);
+
+                ListItemOperation copyAllList = new ListItemOperation();
+                copyAllList.AutomationID = "copyAllList";
+                copyAllList.Group = "Clipboard";
+                copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
+                copyAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
+                copyAllList.Header = "Copy All List Items";
+                copyAllList.OperationHandler = CopyAllListHandler;
+                extraOperationsList.Add(copyAllList);
+
+                ListItemOperation cutAllList = new ListItemOperation();
+                cutAllList.AutomationID = "cutAllList";
+                cutAllList.Group = "Clipboard";
+                cutAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
+                cutAllList.Header = "Cut All List Items";
+                cutAllList.OperationHandler = CutAllListHandler;
+                extraOperationsList.Add(cutAllList);
+
+                ListItemOperation copySelected = new ListItemOperation();
+                copySelected.AutomationID = "copySelected";
+                copySelected.Group = "Clipboard";
+                copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
+                copySelected.Header = "Copy Selected Items";
+                copySelected.OperationHandler = CopySelectedHandler;
+                extraOperationsList.Add(copySelected);
+
+                ListItemOperation cutSelected = new ListItemOperation();
+                cutSelected.AutomationID = "cutSelected";
+                cutSelected.Group = "Clipboard";
+                cutSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
+                cutSelected.Header = "Cut Selected Items";
+                cutSelected.OperationHandler = CutSelectedHandler;
+                extraOperationsList.Add(cutSelected);
+
+                ListItemOperation pasteInList = new ListItemOperation();
+                pasteInList.AutomationID = "pasteInList";
+                pasteInList.Group = "Clipboard";
+                pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
+                pasteInList.Header = "Paste";
+                pasteInList.OperationHandler = PasteInListHandler;
+                extraOperationsList.Add(pasteInList);
+
+                ListItemOperation deleteAll = new ListItemOperation();
+                deleteAll.AutomationID = "deleteAll";
+                deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+                deleteAll.Header = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Variables);
+                deleteAll.OperationHandler = DeleteAllHandler;
+                extraOperationsList.Add(deleteAll);
             }
 
             return extraOperationsList;
@@ -290,6 +340,31 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 output.ToolTip = "Set as Output";
                 output.OperationHandler = OutputHandler;
                 extraOperationsList.Add(output);
+
+                ListItemOperation copy = new ListItemOperation();
+                copy.AutomationID = "copy";
+                copy.Group = "Clipboard";
+                copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
+                copy.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
+                copy.Header = "Copy";
+                copy.OperationHandler = CopyHandler;
+                extraOperationsList.Add(copy);
+
+                ListItemOperation cut = new ListItemOperation();
+                cut.AutomationID = "cut";
+                cut.Group = "Clipboard";
+                cut.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
+                cut.Header = "Cut";
+                cut.OperationHandler = CutHandler;
+                extraOperationsList.Add(cut);
+
+                ListItemOperation pasterAfterCurrent = new ListItemOperation();
+                pasterAfterCurrent.AutomationID = "pasterAfterCurrent";
+                pasterAfterCurrent.Group = "Clipboard";
+                pasterAfterCurrent.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
+                pasterAfterCurrent.Header = "Paste";
+                pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
+                extraOperationsList.Add(pasterAfterCurrent);
             }
 
             if (mPageViewMode != General.eRIPageViewMode.Add)
@@ -329,6 +404,24 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                if (Variables != null)
                 {
                     Variables.Clear();
+                }
+            }
+        }
+
+        private void DeleteSelectedHandler(object sender, RoutedEventArgs e)
+        {
+            if (ListView.List.SelectedItems.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                return;
+            }
+
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll) == eUserMsgSelection.Yes)
+            {
+                List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+                foreach (VariableBase var in SelectedItemsList)
+                {
+                    Variables.Remove(var);
                 }
             }
         }
@@ -419,6 +512,74 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             list.Add(mVariable);
             (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+        }
+
+        private void CopyAllListHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (VariableBase var in Variables)
+            {
+                list.Add(var);
+            }
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutAllListHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (VariableBase var in Variables)
+            {
+                list.Add(var);
+            }
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
+        private void CopySelectedHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (VariableBase var in ListView.List.SelectedItems)
+            {
+                list.Add(var);
+            }
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutSelectedHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (VariableBase var in ListView.List.SelectedItems)
+            {
+                list.Add(var);
+            }
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
+
+        private void PasteInListHandler(object sender, RoutedEventArgs e)
+        {
+            ClipboardOperationsHandler.PasteItems(ListView);
+        }
+
+        private void CopyHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            list.Add(mVariable);
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            list.Add(mVariable);
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
+        private void PasteAfterCurrentHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            ClipboardOperationsHandler.PasteItems(ListView, currentIndex: Variables.IndexOf(mVariable));
         }
     }
 

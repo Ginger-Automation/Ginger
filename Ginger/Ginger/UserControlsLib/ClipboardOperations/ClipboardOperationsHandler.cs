@@ -107,6 +107,10 @@ namespace Ginger.UserControlsLib
                             {
                                 //clear from source
                                 CutSourceList.Remove(item);
+                                if (currentIndex > 0)
+                                {
+                                    currentIndex--;
+                                }
                                 //set needed properties if any
                                 SetProperties(item, propertiesToSet);
                                 if (!containerControl.GetSourceItemsAsIList().Contains(item))//Not cut & paste on same grid
