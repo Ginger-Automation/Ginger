@@ -127,8 +127,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
         readonly IWebPlatform mPlatformService;
 
-        // Remove !!!!!!!!!!!!!
-        Dictionary<string, object> InputParams;
+        public Dictionary<string, object> InputParams { get; set; }
 
 
         // Remove !!!!!!!!!!!
@@ -146,60 +145,6 @@ namespace Ginger.Plugin.Platform.Web.Execution
             // InputParams = platformActionData.InputParams;
         }
 
-        //private void PreparePOMforExecution(NewPayLoad pomPayload)
-        //{
-        //    if (pomPayload != null)
-        //    {
-        //        IsPOM = true;
-        
-        //        mElementType = pomPayload.GetValueString();
-        //        //handleAutoShiftFrame 
-
-        //        List<NewPayLoad> FrameXpathsPayload = pomPayload.GetListPayLoad();
-
-        //        foreach (NewPayLoad framePathPayload in FrameXpathsPayload)
-        //        {
-        //            FrameXpaths.Add(framePathPayload.GetValueString());
-        //        }
-
-        //        //addlocators 
-
-        //        List<NewPayLoad> locatorsPayload = pomPayload.GetListPayLoad();
-        //        foreach (NewPayLoad locatorpayload in locatorsPayload)
-        //        {
-        //            KeyValuePair<string, string> locator = new KeyValuePair<string, string>(locatorpayload.GetValueString(), locatorpayload.GetValueString());
-        //            Locators.Add(locator);
-        //        }
-        //    }
-
-        //}
-        //internal void PrepareforExecution(NewPayLoad pomPayload)
-        //{
-        //    // POM should be in Ginger core 
-        //    //PreparePOMforExecution(pomPayload);
-
-
-        //    //if (!IsPOM)
-        //    //{
-        //    //    mElementType = (string)InputParams["ElementType"];
-        //    //    ElementLocateBy = (string)InputParams["ElementLocateBy"];
-        //    //}
-
-        //    //ElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
-
-        //    //string mElementAction;
-        //    //InputParams.TryGetValue("ElementAction", out mElementAction);
-
-        //    //ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), mElementAction);
-
-
-
-        //    //InputParams.TryGetValue("Value", out Value);
-
-         
-
-        //}
-
 
 
         public struct Locator
@@ -215,22 +160,27 @@ namespace Ginger.Plugin.Platform.Web.Execution
             try
             {
                 mPlatformAction = platformAction;
+
+                InputParams = platformAction.InputParams;
+           
                 // convert the JArray to list of locators
-                List<Locator> locators = ((JArray)platformAction.InputParams["Locators"]).ToObject<List<Locator>>();                
-                eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)platformAction.InputParams["ElementType"]);
+                JObject Locators =(JObject) InputParams["Locators"];
+            
+                eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)InputParams["ElementType"]);
                 IGingerWebElement uiElement = null;
-                ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), (string)platformAction.InputParams["ElementAction"]);                
-                
-                // Search element
-                foreach (Locator locator in locators)
+                foreach (JProperty locator in Locators.Children())
                 {
-                    uiElement = LocateElement(ref ElementType, locator.By, locator.Value);
+                    uiElement = LocateElement(ref ElementType, locator.Name, locator.Value.ToString());
                     if (uiElement != null)
                     {
-                        platformAction.exInfo += "UI Element Located using: " + locator.By + "=" + locator.Value;                        
+                        platformAction.exInfo += "UI Element Located using: " + locator.Name + "=" + locator.Value;
                         break;
-                    }                    
+                    }
                 }
+
+            
+                ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), (string)platformAction.InputParams["ElementAction"]);
+
 
                 if (uiElement == null)
                 {

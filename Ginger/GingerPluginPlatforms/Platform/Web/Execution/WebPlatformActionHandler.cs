@@ -30,7 +30,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             switch (platformAction.ActionType)
             {
-                case "BrowserActions":
+                case "BrowserAction":
                     //TODO: cache
                     BrowserActionhandler Handler = new BrowserActionhandler(webPlatformService);
                     Handler.ExecuteAction(ref platformAction);

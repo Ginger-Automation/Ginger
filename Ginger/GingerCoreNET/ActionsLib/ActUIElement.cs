@@ -1032,31 +1032,36 @@ namespace GingerCore.Actions.Common
             public string By;
             public string Value;
         }
-        
+
 
         public PlatformAction GetAsPlatformAction()
         {
-            // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
+            PlatformAction platformAction = new PlatformAction(this);
 
-            PlatformAction platformAction = new PlatformAction(platform: "Any", actionHandler:"", action: "UIElementAction");            
-            //platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
-            //platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
-            //// Add elem type POM data etc.
-            //List<Locator> locators = new List<Locator>();
-            //locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
-            
-            platformAction.InputParams.Add("InputValues", this.InputValues);
 
-            //if (!string.IsNullOrEmpty(Value))
-            //{
-            //    platformAction.InputParams.Add(nameof(Value), Value);
-            //}
-            
-            //TODO: bsaed on elementtpye and action type add the extra fields
 
+            foreach (ActInputValue aiv in this.InputValues)
+            {
+
+                string ValueforDriver = aiv.ValueForDriver;
+                if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
+                {
+                    platformAction.InputParams.Add(aiv.Param, ValueforDriver);
+                }
+            }
+        
+
+            Dictionary<string, string> Locators = new Dictionary<string, string>();
+            Locators.Add(ElementLocateBy.ToString(), ElementLocateValueForDriver);
+
+
+            platformAction.InputParams.Add("Locators", Locators);
 
             return platformAction;
         }
+
+
+     
     }
 }

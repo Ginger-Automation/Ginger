@@ -1767,18 +1767,20 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        IActPluginExecution PluginAction = (IActPluginExecution)act;
 
-                                        // !!!!!!!!!!!!!!!!!!!!!!!!!
-                                        //if (act == null)
-                                        //{
-                                        //    act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
-                                        //    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                        //    break;
-                                        //}
+                                        if (act is IActPluginExecution PluginAction)
+                                        {
 
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
+                                            Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                            ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                        }
+
+                                        else
+                                        {
+                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                            
+                                        }
                                     }
 
                                 }

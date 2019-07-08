@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.CoreNET.RunLib;
 using Ginger.Plugin.Platform.Web.Elements;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -7,10 +8,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
 {/// <summary>
 /// Handles the Browser Action
 /// </summary>
-    class BrowserActionhandler:IActionHandler
+    class BrowserActionhandler : IActionHandler
     {
         public enum eControlAction   // name need to be eBrowserAction !!
-        {            
+        {
             InitializeBrowser,  // ??
             GetPageSource,
             GetPageURL,
@@ -19,14 +20,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
             SwitchToParentFrame,
             Maximize,
             Close,
-            SwitchWindow, 
+            SwitchWindow,
             SwitchToDefaultWindow,
             InjectJS,
             CheckPageLoaded,
             OpenURLNewTab,  // ??
             GotoURL,
             CloseTabExcept, // ??
-            CloseAll, 
+            CloseAll,
             Refresh,
             NavigateBack,
             DismissMessageBox,  // ?? need to be in alert
@@ -37,13 +38,15 @@ namespace Ginger.Plugin.Platform.Web.Execution
             SetAlertBoxText, // ?? need to be in alert
             RunJavaScript // ?? need to be in alert
         }
-        
-      
-        
+
+
+
         IBrowserActions BrowserService = null;
 
-        
+
         readonly IWebPlatform PlatformService;
+
+        public Dictionary<string, object> InputParams {get;set ;}
 
         public BrowserActionhandler(IWebPlatform mPlatformService)
         {
@@ -53,21 +56,25 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         public void ExecuteAction(ref NodePlatformAction platformAction)
         {
+        
+                InputParams = platformAction.InputParams;
+       
+        
 
-            string Value = (string)platformAction.InputParams["Value"];
+            string Value = (string)InputParams["Value"];
             List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
-           Dictionary<string,object> InputParams = platformAction.InputParams;
+         //  Dictionary<string,object> InputParams = InputParams;
             try
             {
                 // use enum or string/const ??? 
-                eControlAction ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), platformAction.ActionType);
+                eControlAction ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"].ToString());
                 switch (ElementAction)
                 {
                     case eControlAction.GotoURL:                    
                         string GotoURLType;
 
         
-                        GotoURLType = (string)platformAction.InputParams["GotoURLType"];
+                        GotoURLType = (string)InputParams["GotoURLType"];
 
                         if (string.IsNullOrEmpty(GotoURLType))
                         {
@@ -77,11 +84,11 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         BrowserService.Navigate(Value, GotoURLType);
 
-                        string url = (string)platformAction.InputParams["URL"];
+                  
 
-                        BrowserService.Navigate(url, GotoURLType);
-                        platformAction.exInfo +=  "Navigated to: " + url;
-                        platformAction.Output.Add("url", url);
+                  
+                        platformAction.exInfo +=  "Navigated to: " + Value;
+            
                         break;
 
                     case eControlAction.GetPageURL:
@@ -126,25 +133,25 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.SetAlertBoxText:
 
              
-                        string value = (string)platformAction.InputParams["Value"];
+                        string value = (string)InputParams["Value"];
                         BrowserService.SendAlertText(value);
                         break;
                     case eControlAction.SwitchFrame:
                         string ElementLocateBy;
                         string Locatevalue;
-                        string mElementType= (string)platformAction.InputParams["ElementType"];
-                        Locatevalue = (string)platformAction.InputParams["LocateValue"];
-                        ElementLocateBy = (string)platformAction.InputParams["ElementLocateBy"];
+                        string mElementType= (string)InputParams["ElementType"];
+                        Locatevalue = (string)InputParams["LocateValue"];
+                        ElementLocateBy = (string)InputParams["ElementLocateBy"];
    
                         if (string.IsNullOrEmpty(ElementLocateBy))
                         {
-                            ElementLocateBy = (string)platformAction.InputParams["LocateBy"];
+                            ElementLocateBy = (string)InputParams["LocateBy"];
         
                         }
 
                         if (string.IsNullOrEmpty(Locatevalue))
                         {
-                            Locatevalue = (string)platformAction.InputParams["Value"];
+                            Locatevalue = (string)InputParams["Value"];
                   
                         }
 
@@ -155,7 +162,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         BrowserService.SwitchToFrame(Element);
                         break;
                     case eControlAction.RunJavaScript:
-                        string javascript = (string)platformAction.InputParams["javascript"];
+                        string javascript = (string)InputParams["javascript"];
                         object Output = BrowserService.ExecuteScript(javascript);
                         if (Output != null)
                         {
@@ -173,7 +180,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
             }
             catch(Exception ex)
             {
-                platformAction.addError(ex.Message);                
+                platformAction.addError(ex.Message);
+              
             }
 
             finally
