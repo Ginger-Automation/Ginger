@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.Repository
                 if (mValue != value)
                 {
                     mValue = value;                    
-                    OnPropertyChanged(Value);
+                    OnPropertyChanged(nameof (Value));
                 }
             }
         }
