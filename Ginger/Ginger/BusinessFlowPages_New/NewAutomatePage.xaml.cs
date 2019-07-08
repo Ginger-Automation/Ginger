@@ -521,22 +521,34 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetActivityEditPage()
         {
-            if (mContext.Activity != null)
+            try
             {
-                if (mActivityPage == null)
+                xCurrentActivityLoadingIconPnl.Visibility = Visibility.Visible;
+                xCurrentActivityFrame.Visibility = Visibility.Collapsed;
+                Ginger.General.DoEvents();
+
+                if (mContext.Activity != null)
                 {
-                    mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                    if (mActivityPage == null)
+                    {
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                    }
+                    else
+                    {
+                        mActivityPage.UpdateActivity(mContext.Activity);
+                    }
                 }
                 else
                 {
-                    mActivityPage.UpdateActivity(mContext.Activity);
+                    mActivityPage = null;
                 }
             }
-            else
+            finally
             {
-                mActivityPage = null;
+                xCurrentActivityLoadingIconPnl.Visibility = Visibility.Collapsed;
+                xCurrentActivityFrame.Visibility = Visibility.Visible;
+                xCurrentActivityFrame.Content = mActivityPage;
             }
-            xCurrentActivityFrame.Content = mActivityPage;
         }
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)

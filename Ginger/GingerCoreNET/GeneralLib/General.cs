@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
@@ -342,6 +343,38 @@ namespace GingerCoreNET.GeneralLib
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
 
             return newEnv;
+        }
+
+        public static void SetUniqueNameToRepoItem(ObservableList<RepositoryItemBase> itemsList, RepositoryItemBase item, string suffix = "")
+        {
+            string originalName = item.ItemName;
+            if (itemsList.Where(x=>x.ItemName == item.ItemName).FirstOrDefault() == null)
+            {
+                return;//name is unique
+            }
+
+            if (!string.IsNullOrEmpty(suffix))
+            {
+                item.ItemName = item.ItemName + suffix;
+                if (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() == null)
+                {
+                    return;//name with Suffix is unique
+                }
+            }
+
+            int counter = 1;
+            while (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() != null)
+            {
+                counter++;
+                if (!string.IsNullOrEmpty(suffix))
+                {
+                    item.ItemName = originalName + suffix + counter.ToString();
+                }
+                else
+                {
+                    item.ItemName = originalName + counter.ToString();
+                }
+            }
         }
     }
 }

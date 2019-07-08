@@ -653,8 +653,54 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void PasteAfterCurrentHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ListView.List.SelectedItem = mActivity;
-            ClipboardOperationsHandler.PasteItems(ListView);
+
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mActivity.ActivitiesGroupID).FirstOrDefault();
+            int insertIndex = mContext.BusinessFlow.Activities.IndexOf(mActivity) + 1;
+            foreach (RepositoryItemBase item in ClipboardOperationsHandler.CopiedorCutItems)
+            {
+                if (item is Activity)
+                {
+                    if (ClipboardOperationsHandler.CutSourceList == null)//Copy
+                    {
+                        Activity copiedItem = (Activity)item.CreateCopy();
+                        //set unique name
+                        GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), copiedItem, "_Copy");
+                        mContext.BusinessFlow.AddActivity(copiedItem, activitiesGroup, insertIndex, false);
+                        //Trigger event for changing sub classes fields
+                        ListView.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
+                        insertIndex++;
+                    }
+                    else // cut
+                    {                                              
+                        if (mContext.BusinessFlow.Activities.Contains(item))
+                        {
+                            //delete from list and group
+                            mContext.BusinessFlow.DeleteActivity((Activity)item);                           
+                        }
+                        else
+                        {
+                            //clear from source  
+                            ClipboardOperationsHandler.CutSourceList.Remove(item);
+                            //set unique name
+                            GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), item);
+                        }
+                        //paste on target                      
+                        mContext.BusinessFlow.AddActivity((Activity)item, activitiesGroup, insertIndex, false);
+                        //Trigger event for changing sub classes fields
+                        ListView.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
+                    }
+                }            
+            }
+
+            if (ClipboardOperationsHandler.CutSourceList != null)
+            {
+                //clear so will be past only once
+                ClipboardOperationsHandler.CutSourceList = null;
+                ClipboardOperationsHandler.CopiedorCutItems.Clear();
+            }
+
+            mContext.BusinessFlow.AttachActivitiesGroupsAndActivities();
+            OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private ObservableList<RepositoryItemBase> GetSelectedGroupActivitiesList(object sender)
@@ -684,6 +730,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             //if ()
             //ClipboardOperationsHandler.PasteItems(ListView);
+        }
+
+        private ObservableList<RepositoryItemBase> GetActivitiesList()
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase activity in mContext.BusinessFlow.Activities)
+            {
+                list.Add(activity);
+            }
+            return list;
         }
     }
 

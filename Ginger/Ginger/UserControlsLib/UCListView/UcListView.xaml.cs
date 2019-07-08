@@ -309,6 +309,11 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        public void ResetExpandCollapseBtn()
+        {
+            xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+        }
+
         public Visibility ListOperationsBarPnlVisiblity
         {
             get
@@ -586,8 +591,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void UpdateGrouping()
         {
-            //DoGrouping();
-            mGroupView.Refresh();            
+            mGroupView.Refresh();
+            ResetExpandCollapseBtn();
         }
         
         private void DoGrouping()
@@ -709,9 +714,19 @@ namespace Ginger.UserControlsLib.UCListView
             return selectedItemsList;
         }
 
-        public IObservableList GetItemsSourceList()
+        public IObservableList GetSourceItemsAsIList()
         {
             return DataSourceList;
+        }
+
+        public ObservableList<RepositoryItemBase> GetSourceItemsAsList()
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase item in mObjList)
+            {
+                list.Add(item);
+            }
+            return list;
         }
 
         public void SetSelectedIndex(int index)
