@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -48,8 +47,9 @@ namespace Amdocs.Ginger.Repository
         }
 
         public bool BackgroudDownloadInprogress { get;  set; }
+        
 
-        public PluginsManager(SolutionRepository solutionRepository)
+        public void Init(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
             GetPackages();
@@ -85,6 +85,10 @@ namespace Amdocs.Ginger.Repository
             Console.WriteLine(s);
         }
 
+        public void AddIsSession(string pluginId, string serviceId, bool isSession)
+        {
+            PluginServiceIsSeesionDictionary.Add(pluginId + "." + serviceId, isSession);
+        }
 
         public string InstallPluginPackage(OnlinePluginPackage onlinePluginPackage, OnlinePluginPackageRelease release)
         {
@@ -196,7 +200,7 @@ namespace Amdocs.Ginger.Repository
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
-                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";
+                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // FIXME for Ubunto
                 Console.WriteLine("Command: " + cmd);
                 procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
                 procStartInfo.UseShellExecute = false;
@@ -267,12 +271,22 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        
+        //Cache is session info + enable to add isSession info directly
+        public Dictionary<string, bool> PluginServiceIsSeesionDictionary = new Dictionary<string, bool>();
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {            
+        {
+            string key = pluginId + "." + serviceId;
+            bool isSession;
+            bool bFound = PluginServiceIsSeesionDictionary.TryGetValue(key, out isSession);
+            if (bFound)
+            {
+                return isSession;
+            }
+            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
+            PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
             return pluginServiceInfo.IsSession;
         }
 
