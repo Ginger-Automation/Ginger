@@ -27,6 +27,7 @@ using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTests.RunTestslib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -117,12 +118,13 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             //Act            
             mGingerRunner.RunBusinessFlow(BF);
+            Console.WriteLine("a1.Error = " + a1.Error);  
 
             //Assert
-            Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "a1.Error");
+            Assert.AreEqual(a1.Error, null, "Action.Error=null");            
             Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
             Assert.AreEqual(BF.Activities[0].Status, eRunStatus.Passed, "Activity Status = Pass");
-            Assert.AreEqual(a1.Error, null, "Action.Error=null");
+            
         }
 
 
