@@ -62,22 +62,27 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Start one DummyDriver - in process, so we can test whats going on everywhere
             mDummyDriver = new DummyDriver();            
-            // GingerNode GN = new GingerNode(mDummyDriver);
+            GingerNode gingerNode = new GingerNode(mDummyDriver);
 
-            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
-            gingerNodeStarter.StartNode("N1", mDummyDriver, SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
+            // GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+            // gingerNodeStarter.StartNode("N1", mDummyDriver, SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
 
             //Task.Factory.StartNew(() => {
-            //    GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
+                gingerNode.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
             //});
             
-
+           
             // Wait for the Grid to be up and the node connected
             // max 30 seconds
             Stopwatch st = Stopwatch.StartNew();            
-            while (mGingerGrid.NodeList.Count == 0 && st.ElapsedMilliseconds < 30000)
+            while (!gingerNode.Connected  && st.ElapsedMilliseconds < 30000)
             {
                 Thread.Sleep(100);
+            }
+
+            if (!gingerNode.Connected)
+            {
+                throw new Exception(">>>>>>>>>>>>>>>> GingerNode didn't connect to grid <<<<<<<<<<<<<<<<<<<<< " + mPluginId + "." + mServiceId);
             }
 
             if (mGingerGrid.NodeList.Count == 0)
