@@ -25,6 +25,7 @@ using GingerCore;
 using GingerCoreNET.RunLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.IO;
 
 // FIXME to use local html test page
@@ -36,6 +37,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
     public class AgentTest
     {        
         static GingerGrid mGingerGrid;
+
+        // init fail on linux !!!!!!!!!!!!!!!!!!!!!
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -58,7 +61,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.SolutionRepository = SR;
 
             // add Example4 Plugin to solution
-            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "PluginDriverExample4"));            
+            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
+            WorkSpace.Instance.PlugInsManager.Init(SR);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
 
             // Start a Ginger Services grid
@@ -87,7 +91,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-        [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
@@ -134,6 +138,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(list.Count, 0);
         }
 
+        [Ignore]
         [Priority(9)]
         [TestMethod]
         [Timeout(60000)]
