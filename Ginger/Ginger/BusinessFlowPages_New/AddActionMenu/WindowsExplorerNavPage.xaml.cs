@@ -44,8 +44,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;            
             context.PropertyChanged += Context_PropertyChanged;
-            LoadWindowExplorerPage(mContext);
             SetFrameEnableDisable();
+            LoadWindowExplorerPage(mContext);            
         }
         
         /// <summary>
@@ -62,8 +62,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else if (e.PropertyName == nameof(Context.Agent))
             {
-                LoadWindowExplorerPage(mContext);
                 SetFrameEnableDisable();
+                LoadWindowExplorerPage(mContext);
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
         }
