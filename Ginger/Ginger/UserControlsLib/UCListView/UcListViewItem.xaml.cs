@@ -118,6 +118,13 @@ namespace Ginger.UserControlsLib.UCListView
                     ExpandItem();
                     break;
 
+                case UcListViewEventArgs.eEventType.ExpandItem:
+                    if (Item == EventArgs.EventObject)
+                    {
+                        ExpandItem();
+                    }
+                    break;
+
                 case UcListViewEventArgs.eEventType.CollapseAllItems:
                     CollapseItem();
                     break;
