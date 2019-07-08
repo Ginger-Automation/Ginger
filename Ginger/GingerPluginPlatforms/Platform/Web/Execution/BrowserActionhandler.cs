@@ -186,7 +186,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             finally
             {
-                platformAction.Output.OutputValues = AOVs;
+                platformAction.Output.OutputValues.AddRange( AOVs);
             }
         }
         private IGingerWebElement LocateElement(eElementType ElementType, string ElementLocateBy, string LocateByValue)
