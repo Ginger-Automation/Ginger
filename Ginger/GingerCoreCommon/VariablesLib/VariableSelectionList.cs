@@ -68,7 +68,7 @@ namespace GingerCore.Variables
 
         public override void PostSerialization()
         {
-           // No operation has been added for now for postserialize event
+           //Note: we need to reset all variables postserialization except variableSequence, thats why empty overriden method. 
         }
 
         public override string GetFormula()
