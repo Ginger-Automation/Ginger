@@ -119,6 +119,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner.RunBusinessFlow(BF);
 
             //Assert
+            Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "a1.Error");
             Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
             Assert.AreEqual(BF.Activities[0].Status, eRunStatus.Passed, "Activity Status = Pass");
             Assert.AreEqual(a1.Error, null, "Action.Error=null");
