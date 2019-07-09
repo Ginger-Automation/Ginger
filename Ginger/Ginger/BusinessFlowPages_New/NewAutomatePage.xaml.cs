@@ -965,6 +965,9 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
                 UpdateToNewSolution();
+
+                if(mAddActionMainPage != null)
+                    mAddActionMainPage.ResetAddActionPages();
             }
         }
 
