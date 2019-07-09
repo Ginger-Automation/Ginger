@@ -80,6 +80,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
+                if (mWinExplorerPageList != null)
+                {
+                    AgentMappingPage objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                            x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
+                    if (objHelper != null && objHelper.ObjectWindowPage != null)
+                    {
+                        objHelper.ObjectWindowPage = new WindowExplorerPage(AgentHelper.GetAppAgent(mContext.Activity, mContext.Runner, mContext), mContext);
+                        CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
+                        xSelectedItemFrame.Content = CurrentLoadedPage;
+                    } 
+                }
                 xSelectedItemFrame.IsEnabled = false;
             }
         }
