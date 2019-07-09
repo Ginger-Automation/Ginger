@@ -58,9 +58,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {               
                 sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser.ToString() + Environment.NewLine;
-                sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass.ToString() + Environment.NewLine;
+                sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
+                sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
+                sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass + Environment.NewLine;
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
                     if (solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")

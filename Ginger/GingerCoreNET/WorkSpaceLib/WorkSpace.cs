@@ -96,18 +96,8 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        PluginsManager mPluginsManager = null;
-        public PluginsManager PlugInsManager
-        {
-            get
-            {
-                if (mPluginsManager == null)
-                {
-                    mPluginsManager = new PluginsManager(SolutionRepository);
-                }
-                return mPluginsManager;
-            }
-        }
+        PluginsManager mPluginsManager = new PluginsManager();
+        public PluginsManager PlugInsManager { get { return mPluginsManager; }  }        
 
         static bool bDone = false;
 
@@ -299,7 +289,8 @@ namespace amdocs.ginger.GingerCoreNET
                 SolutionRepository.Open(solutionFolder);
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading needed Plugins");
-                PlugInsManager.SolutionChanged(SolutionRepository);
+                mPluginsManager = new PluginsManager();
+                mPluginsManager.SolutionChanged(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
@@ -324,6 +315,9 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
+
+                // PlugInsManager = new PluginsManager();
+                // mPluginsManager.Init(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
