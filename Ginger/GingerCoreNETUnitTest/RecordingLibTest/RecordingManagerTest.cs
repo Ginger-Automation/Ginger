@@ -41,14 +41,18 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [Timeout(60000)]
         public void DoRecordingWithoutPOMTest()
         {
+            //Arrange
             List<ApplicationPOMModel> currentPOM = null;          
             RecordingManager mngr = new RecordingManager(currentPOM, mBF, Context, mDriver, PlatformInfo);
             if(mngr != null)
             {
+                //Act
                 mngr.StartRecording();
                 Thread.Sleep(2000);
                 mngr.StopRecording();
             }
+
+            //Assert
             TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
             Assert.AreEqual(actUI.ElementLocateBy, eLocateBy.ByID);
             Assert.AreEqual(actUI.ElementAction, "Click");
@@ -59,16 +63,20 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [Timeout(60000)]
         public void DoRecordingWithPOMTest()
         {
+            //Arrange
             List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
             if (mngr != null)
             {
+                //Act
                 mngr.StartRecording();
                 Thread.Sleep(3000);
                 mngr.StopRecording();
             }
+
+            //Assert
             if (mBF.Activities[0].Acts.Count > 0)
             {
                 ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
@@ -89,16 +97,20 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [Timeout(60000)]
         public void DoRecordingWithMultiplePageHandledTest()
         {
+            //Arrange
             List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
             if (mngr != null)
             {
+                //Act
                 mngr.StartRecording();
                 Thread.Sleep(3000);
                 mngr.StopRecording();
             }
+
+            //Assert
             if (mngr.ListPOMObjectHelper != null && mngr.ListPOMObjectHelper.Count > 0)
             {
                 ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
