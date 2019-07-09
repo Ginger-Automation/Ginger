@@ -10,7 +10,6 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
 {
-    [Ignore]
     [TestClass]
     public class RecordingManagerTest
     {
@@ -51,9 +50,9 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
                 mngr.StopRecording();
             }
             TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
-            Assert.IsTrue(actUI.ElementLocateBy == eLocateBy.ByID);
-            Assert.IsTrue(actUI.ElementAction == "Click");
-            Assert.IsTrue(actUI.ElementType == "Button");
+            Assert.AreEqual(actUI.ElementLocateBy, eLocateBy.ByID);
+            Assert.AreEqual(actUI.ElementAction, "Click");
+            Assert.AreEqual(actUI.ElementType, "Button");
         }
 
         [TestMethod]
@@ -74,11 +73,11 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
                 TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
-                Assert.IsTrue(actUI.ElementLocateBy == eLocateBy.POMElement);
-                Assert.IsTrue(actUI.ElementAction == "Click");
-                Assert.IsTrue(actUI.ElementType == "Button");
-                Assert.IsTrue(cPOM.MappedUIElements[0].ElementTypeEnum.ToString() == eElementType.Button.ToString());
-                Assert.IsTrue(cPOM.MappedUIElements.Count == mBF.Activities[0].Acts.Count);
+                Assert.AreEqual(actUI.ElementLocateBy, eLocateBy.POMElement);
+                Assert.AreEqual(actUI.ElementAction, "Click");
+                Assert.AreEqual(actUI.ElementType, "Button");
+                Assert.AreEqual(cPOM.MappedUIElements[0].ElementTypeEnum.ToString(), eElementType.Button.ToString());
+                Assert.AreEqual(cPOM.MappedUIElements.Count, mBF.Activities[0].Acts.Count);
             }
             else
             {
@@ -103,8 +102,8 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             if (mngr.ListPOMObjectHelper != null && mngr.ListPOMObjectHelper.Count > 0)
             {
                 ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
-                Assert.IsTrue(cPOM.PageURL == "www.google.com");
-                Assert.IsTrue(mngr.ListPOMObjectHelper.Count == 2);
+                Assert.AreEqual(cPOM.PageURL, "www.google.com");
+                Assert.AreEqual(mngr.ListPOMObjectHelper.Count, 2);
             }
             else
             {
