@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -215,7 +216,8 @@ namespace Amdocs.Ginger.Repository
             proc.StartInfo = procStartInfo;
 
             Console.WriteLine("Starting Process..");            
-            proc.Start();            
+            proc.Start();
+            Thread.Sleep(3000); // Give the plugin time to connect
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);

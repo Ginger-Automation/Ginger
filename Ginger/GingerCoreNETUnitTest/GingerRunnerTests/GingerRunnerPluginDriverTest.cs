@@ -29,11 +29,11 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{    
-    [Ignore]
+{        
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -85,7 +85,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
-            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
+            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
+
+            Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
         [ClassCleanup]
