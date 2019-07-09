@@ -202,10 +202,10 @@ namespace Ginger.Actions
             string Query = "";
             string rowNum = "0";
             string DSTable = "";
-            if (mActDSTblElem.WhereConditions != null)
-            {
-                mActDSTblElem.WhereConditions.Clear();
-            }
+            //if (mActDSTblElem.WhereConditions != null)
+            //{
+            //    mActDSTblElem.WhereConditions.Clear();
+            //}
             try
             {
                 DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
@@ -1319,6 +1319,10 @@ namespace Ginger.Actions
         {                          
                 UpdateValueExpression();
             mActDSTblElem.LocateColTitle = cmbColumnValue.Text;
+            if (cmbColumnValue.SelectedValue != null)
+            {
+                mActDSTblElem.LocateColTitle = cmbColumnValue.SelectedValue.ToString();
+            }
         }
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)

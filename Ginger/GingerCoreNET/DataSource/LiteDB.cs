@@ -702,7 +702,7 @@ namespace GingerCoreNET.DataSource
                 string rowID = row["GINGER_ID"].ToString();
 
                 string [] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
-                query = Stringsplit[0] + " where GINGER_ID = \"" + rowID + "\"";
+                query = Stringsplit[0] + " where GINGER_ID = " + rowID ;
                 GetQueryOutput(query);
 
                 if (MarkUpdate)
