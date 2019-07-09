@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            AutoLogProxy.Init("Unit Tests");
+            // AutoLogProxy.Init("Unit Tests");
             
             // Create new solution
             mBusinessFlow = new BusinessFlow();
@@ -69,7 +69,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGingerRunner.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
-
+            
 
             // Add the plugin to solution
             WorkSpace.Init(new WorkSpaceEventHandler());
@@ -87,6 +87,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
+            
             Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
