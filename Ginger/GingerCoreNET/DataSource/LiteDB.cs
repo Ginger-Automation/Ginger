@@ -701,7 +701,8 @@ namespace GingerCoreNET.DataSource
                 row = datatble.Rows[LocateRowValue];
                 string rowID = row["GINGER_ID"].ToString();
 
-                query = query + " and GINGER_ID= \"" + rowID + "\"";
+                string [] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
+                query = Stringsplit[0] + " where GINGER_ID = \"" + rowID + "\"";
                 GetQueryOutput(query);
 
                 if (MarkUpdate)
