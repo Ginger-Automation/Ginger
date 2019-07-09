@@ -18,8 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests

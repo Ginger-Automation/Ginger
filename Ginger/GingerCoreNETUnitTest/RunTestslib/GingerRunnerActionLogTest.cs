@@ -23,8 +23,8 @@ using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -43,7 +43,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             EmptyTempActionLogFolder();
             WorkSpace.Init(new WorkSpaceEventHandler());
-            Ginger.App.InitClassTypesDictionary();
         }
 
         [ClassCleanup]
