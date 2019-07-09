@@ -81,7 +81,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
 
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple"));
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
         }

@@ -100,9 +100,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, newValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual(newValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -126,9 +126,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, initialValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus );
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status );
+            Assert.AreEqual(initialValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -154,8 +154,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(expectedValue, mBF.Activities[0].Variables[0].Value);
             Assert.AreEqual(expectedValue, v1.Value);
         }

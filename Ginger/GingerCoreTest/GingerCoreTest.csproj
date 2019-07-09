@@ -58,7 +58,6 @@
     <Compile Include="CommLib\PayLoadTest.cs" />
     <Compile Include="Misc\DataBaseTest.cs" />
     <Compile Include="Misc\ExpectedWithActual.cs" />
-    <Compile Include="Misc\FindAndReplaceTest.cs" />
     <Compile Include="Misc\GingersMultiRunTest.cs" />
     <Compile Include="Misc\JSPayloadTest.cs" />
     <Compile Include="Misc\NonDriverActionTest.cs" />
