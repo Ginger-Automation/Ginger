@@ -226,14 +226,7 @@ namespace GingerCore.Environments
 
         public string NameBeforeEdit;
 
-        public static void UpdateDatabaseNameChangeInItem(ActDBValidation act, string prevDBName, string newDBName)
-        {
-            if (act.DBName == prevDBName)
-            {
-                act.DBName = newDBName;
-            }
-        }
-
+       
         public string GetConnectionString()
         {
             string connStr = null;

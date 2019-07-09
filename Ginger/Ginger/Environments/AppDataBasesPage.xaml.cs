@@ -113,14 +113,23 @@ namespace Ginger.Environments
                  allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
                 );
                 
-                Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
+                Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
                 {
-                    Parallel.ForEach(BF.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                    Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
                     {
                         List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
-                        Parallel.ForEach(dbActs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+                        Parallel.ForEach(dbActs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
                         {
-                            Database.UpdateDatabaseNameChangeInItem((ActDBValidation)iaction, db.NameBeforeEdit, db.Name);
+                            ActDBValidation actDB = (ActDBValidation)act;
+                            if (actDB.DBName == db.NameBeforeEdit)
+                            {
+                                if (businessFlow.DirtyStatus != eDirtyStatus.Modified)
+                                {
+                                    businessFlow.DirtyStatus = eDirtyStatus.Modified;
+                                }
+                                actDB.DBName = db.Name;
+                            }
+
                         });
                     });
                 });
