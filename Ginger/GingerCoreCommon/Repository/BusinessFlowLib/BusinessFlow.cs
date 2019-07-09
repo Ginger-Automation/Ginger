@@ -529,44 +529,53 @@ namespace GingerCore
             }
         }
 
-        public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null)
+        public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
             if (activity == null)
+            {
                 return;
-
-            int insertIndex = 0;
-
-            if (activitiesGroup != null)
-            {
-                if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
-                {
-                    insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
-                }
-                else
-                {
-                    insertIndex = Activities.Count;//last
-                }
-                activitiesGroup.AddActivityToGroup(activity);                
             }
-            else if (CurrentActivity != null)                 
+
+            if (insertIndex == -1)
             {
-                if (string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+                insertIndex = 0;
+
+                if (activitiesGroup != null)
                 {
-                    activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
-                    insertIndex = Activities.IndexOf(CurrentActivity);
-                    while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
+                    if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
                     {
-                        insertIndex++;
-                        if (insertIndex >= Activities.Count)
+                        insertIndex = Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                    }
+                    else
+                    {
+                        insertIndex = Activities.Count;//last
+                    }                    
+                }
+                else if (CurrentActivity != null)
+                {
+                    if (string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+                    {
+                        activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                        insertIndex = Activities.IndexOf(CurrentActivity);
+                        while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
                         {
-                            break;
+                            insertIndex++;
+                            if (insertIndex >= Activities.Count)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
+                else
+                {
+                    CurrentActivity = activity;
+                }
             }
-            else
+
+            if (activitiesGroup != null)
             {
-                CurrentActivity = activity;
+                activitiesGroup.AddActivityToGroup(activity);
             }
 
             if (insertIndex > 0)
@@ -583,7 +592,10 @@ namespace GingerCore
                 Activities.Add(activity);
             }
 
-            CurrentActivity = activity;
+            if (setAsCurrent)
+            {
+                CurrentActivity = activity;
+            }
         }
 
         public void InsertActivity(Activity a, int index = -1)

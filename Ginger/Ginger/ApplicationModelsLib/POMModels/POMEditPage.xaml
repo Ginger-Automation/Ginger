@@ -64,7 +64,8 @@
                         </StackPanel>
                         <StackPanel Margin="0,0,0,0">
                             <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
-                                <TextBox x:Name="xPageURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" TextWrapping="NoWrap" Height="20" Width="310"/>
+                                
+                                <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left" Height="25" Width="310"/>
                                 <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page" Margin="0,0,0,0"/>
                             </StackPanel>
                             <Frame VerticalAlignment="Top" Margin="-2,5,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>

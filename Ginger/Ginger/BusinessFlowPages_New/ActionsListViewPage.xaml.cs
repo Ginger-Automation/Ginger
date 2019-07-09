@@ -101,6 +101,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
             mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
+            mActionsListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListView.DataSourceList = mActivity.Acts;
 
             mActionsListView.PreviewDragItem += listActions_PreviewDragItem;

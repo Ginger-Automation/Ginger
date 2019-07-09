@@ -1,6 +1,0 @@
-Collapse|ByName|Subformpanel_587:HierarchicalGrid_3/[name="_tree"]:[name="_tree"]:[path="Node:Amdocs my test for word wrap 1"]]
-SetFocus|ByName|Subformpanel_587:HierarchicalGrid_3/My Tree:0
-Expand|ByName|Subformpanel_587:HierarchicalGrid_3/[name="_tree"]:[name="_tree"]:[path="Node:Amdocs my test for word wrap 1"]]
-SetVisible|ByName|com.amdocs.crm.commonjsp.crmbillrelated.AccountTree|false
-SetWindowState|ByName|com.amdocs.crm.commonjsp.crmbillrelated.AccountTree|Restored
-GetControlProperty|ByName|com.amdocs.crm.cim.desktop.InteractionToolbox:lblTitle|Text

@@ -264,6 +264,11 @@
 
                         <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
 
+                        <StackPanel x:Name="xCurrentActivityLoadingIconPnl" Grid.Column="1" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
+                            <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                        </StackPanel>
+                       
                         <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
                         <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />

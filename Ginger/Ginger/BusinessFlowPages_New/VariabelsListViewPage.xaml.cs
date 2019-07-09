@@ -131,6 +131,7 @@ namespace Ginger.BusinessFlowPages
             mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
             mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
+            mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
             mVariabelsListView.DataSourceList = GetVariablesList();
 
             mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;

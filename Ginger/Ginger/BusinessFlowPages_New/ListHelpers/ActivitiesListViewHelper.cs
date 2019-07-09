@@ -152,7 +152,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
                 activeUnactiveAllActivities.AutomationID = "activeUnactiveAllActivities";
                 activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-                activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+                activeUnactiveAllActivities.Header = "Activate/Un-Activate All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
                 activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
                 activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
                 extraOperationsList.Add(activeUnactiveAllActivities);
@@ -164,6 +164,31 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 activitiesVarsDep.ToolTip = string.Format("Set {0}-{1} Dependencies", GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
                 activitiesVarsDep.OperationHandler = ActivitiesVarsHandler;
                 extraOperationsList.Add(activitiesVarsDep);
+
+                ListItemOperation copyAllList = new ListItemOperation();
+                copyAllList.AutomationID = "copyAllList";
+                copyAllList.Group = "Clipboard";
+                copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
+                copyAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
+                copyAllList.Header = "Copy All List Items";
+                copyAllList.OperationHandler = CopyAllListHandler;
+                extraOperationsList.Add(copyAllList);
+
+                ListItemOperation cutAllList = new ListItemOperation();
+                cutAllList.AutomationID = "cutAllList";
+                cutAllList.Group = "Clipboard";
+                cutAllList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
+                cutAllList.Header = "Cut All List Items";
+                cutAllList.OperationHandler = CutAllListHandler;
+                extraOperationsList.Add(cutAllList);
+
+                ListItemOperation pasteInList= new ListItemOperation();
+                pasteInList.AutomationID = "pasteInList";
+                pasteInList.Group = "Clipboard";
+                pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
+                pasteInList.Header = "Paste in Selected Group";
+                pasteInList.OperationHandler = PasteInListHandler;
+                extraOperationsList.Add(pasteInList);
             }
 
             return extraOperationsList;
@@ -549,12 +574,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             mContext.BusinessFlow.MoveActivityUp(mActivity);
+            //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void MoveDownHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
             mContext.BusinessFlow.MoveActivityDown(mActivity);
+           //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)
@@ -632,10 +659,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mContext.BusinessFlow, list);
         }
 
+        private void CopyAllListHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (Activity activity in mContext.BusinessFlow.Activities)
+            {
+                list.Add(activity);
+            }
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutAllListHandler(object sender, RoutedEventArgs e)
+        {            
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (Activity activity in mContext.BusinessFlow.Activities)
+            {
+                list.Add(activity);
+            }
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
         private void CopyHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ListView.List.SelectedItem = mActivity;
             ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
             list.Add(mActivity);
             ClipboardOperationsHandler.SetCopyItems(list);
@@ -644,7 +690,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void CutHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ListView.List.SelectedItem = mActivity;
             ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
             list.Add(mActivity);
             ClipboardOperationsHandler.SetCutItems(ListView, list);
@@ -653,8 +698,135 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void PasteAfterCurrentHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ListView.List.SelectedItem = mActivity;
-            ClipboardOperationsHandler.PasteItems(ListView);
+
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mActivity.ActivitiesGroupID).FirstOrDefault();
+            int insertIndex = mContext.BusinessFlow.Activities.IndexOf(mActivity) + 1;
+            DoActivitiesPaste(activitiesGroup, insertIndex);
+        }
+
+        private void CopyGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                list.Add(activityIdnt.IdentifiedActivity);
+            }
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                list.Add(activityIdnt.IdentifiedActivity);
+            }
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
+        private void PasteInGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            int insertIndex = mContext.BusinessFlow.Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+            DoActivitiesPaste(activitiesGroup, insertIndex);
+        }
+
+        private void PasteInListHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = (new ActivitiesGroupSelectionPage(mContext.BusinessFlow)).ShowAsWindow();
+            if (activitiesGroup != null)
+            {
+                int insertIndex = 0;
+                if (activitiesGroup.ActivitiesIdentifiers.Count > 0)
+                {
+                    insertIndex = mContext.BusinessFlow.Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
+                }
+                else
+                {
+                    insertIndex = mContext.BusinessFlow.Activities.Count;//last
+                }
+
+                DoActivitiesPaste(activitiesGroup, insertIndex);
+            }
+        }
+
+        private void DoActivitiesPaste(ActivitiesGroup activitiesGroup, int insertIndex)
+        {
+            try
+            {
+                if (ClipboardOperationsHandler.CopiedorCutItems.Count > 0)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, string.Format("Performing paste operation for {0} items...", ClipboardOperationsHandler.CopiedorCutItems.Count));
+                    foreach (RepositoryItemBase item in ClipboardOperationsHandler.CopiedorCutItems)
+                    {
+                        if (item is Activity)
+                        {
+                            if (ClipboardOperationsHandler.CutSourceList == null)//Copy
+                            {
+                                Activity copiedItem = (Activity)item.CreateCopy();
+                                //set unique name
+                                GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), copiedItem, "_Copy");
+                                //Set T.app
+                                if (mContext.BusinessFlow.TargetApplications.Where(x=>x.Name == copiedItem.TargetApplication).FirstOrDefault() == null 
+                                                && mContext.BusinessFlow.TargetApplications.Count > 0)
+                                {
+                                    copiedItem.TargetApplication = mContext.BusinessFlow.TargetApplications[0].Name;
+                                }
+                                mContext.BusinessFlow.AddActivity(copiedItem, activitiesGroup, insertIndex, false);
+                                //Trigger event for changing sub classes fields
+                                ListView.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
+                                insertIndex++;
+                            }
+                            else // cut
+                            {
+                                if (mContext.BusinessFlow.Activities.Contains(item))
+                                {
+                                    //delete from list and group
+                                    mContext.BusinessFlow.DeleteActivity((Activity)item);
+                                    insertIndex--;
+                                }
+                                else
+                                {
+                                    //clear from source  
+                                    ClipboardOperationsHandler.CutSourceList.Remove(item);
+                                    //set unique name
+                                    GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), item);
+                                }
+                                //Set T.app
+                                if (mContext.BusinessFlow.TargetApplications.Where(x => x.Name == ((Activity)item).TargetApplication).FirstOrDefault() == null
+                                                            && mContext.BusinessFlow.TargetApplications.Count > 0)
+                                {
+                                    ((Activity)item).TargetApplication = mContext.BusinessFlow.TargetApplications[0].Name;
+                                }
+                                //paste on target                      
+                                mContext.BusinessFlow.AddActivity((Activity)item, activitiesGroup, insertIndex, false);
+                                //Trigger event for changing sub classes fields
+                                ListView.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
+                            }
+                        }
+                    }
+
+                    if (ClipboardOperationsHandler.CutSourceList != null)
+                    {
+                        //clear so will be past only once
+                        ClipboardOperationsHandler.CutSourceList = null;
+                        ClipboardOperationsHandler.CopiedorCutItems.Clear();
+                    }
+
+                    mContext.BusinessFlow.AttachActivitiesGroupsAndActivities();
+                    OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
+                }
+                else
+                {
+                    Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, "No items found to paste");
+                }
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
         private ObservableList<RepositoryItemBase> GetSelectedGroupActivitiesList(object sender)
@@ -669,21 +841,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return list;
         }
 
-        private void CopyGroupHandler(object sender, RoutedEventArgs e)
+        private ObservableList<RepositoryItemBase> GetActivitiesList()
         {
-            ClipboardOperationsHandler.SetCopyItems(GetSelectedGroupActivitiesList(sender));
-        }
-
-        private void CutGroupHandler(object sender, RoutedEventArgs e)
-        {
-            ClipboardOperationsHandler.SetCutItems(ListView, GetSelectedGroupActivitiesList(sender));
-        }
-
-        private void PasteInGroupHandler(object sender, RoutedEventArgs e)
-        {
-            SetItem(sender);
-            //if ()
-            //ClipboardOperationsHandler.PasteItems(ListView);
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase activity in mContext.BusinessFlow.Activities)
+            {
+                list.Add(activity);
+            }
+            return list;
         }
     }
 

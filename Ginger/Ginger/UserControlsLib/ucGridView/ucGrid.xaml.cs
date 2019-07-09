@@ -2121,9 +2121,19 @@ public void RemoveCustomView(string viewName)
             return selectedItemsList;
         }
 
-        public IObservableList GetItemsSourceList()
+        public IObservableList GetSourceItemsAsIList()
         {
             return DataSourceList;
+        }
+
+        public ObservableList<RepositoryItemBase> GetSourceItemsAsList()
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase item in mObjList)
+            {
+                list.Add(item);
+            }
+            return list;
         }
 
         public void OnPasteItemEvent(PasteItemEventArgs.ePasteType pasteType, RepositoryItemBase item)
