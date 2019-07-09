@@ -54,10 +54,25 @@ jobs:
   #    command: test
   #    projects: '**/**/*Test.csproj'          # test all csproj, it will skip .Net Framework
   #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
-      
 
-  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-    displayName: 'Run tests on Ginger solution'
+  
+
+  - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerCoreCommonTest'
+
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerCoreNETUnitTest'
+
+  - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerPluginCoreTest'
+
+    
+
+  # - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
+  #  displayName: 'Run tests on Ginger solution'
+
+
+    
 
   - task: PublishTestResults@2
     displayName: Publish test result
