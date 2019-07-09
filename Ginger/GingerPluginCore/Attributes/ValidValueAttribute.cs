@@ -13,6 +13,11 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public List<object> ValidValue { get; set; } = new List<object>();
 
+        public ValidValueAttribute()
+        {
+
+        }
+
         public ValidValueAttribute(int validValue)
         {
             
@@ -31,7 +36,6 @@ namespace Amdocs.Ginger.Plugin.Core
         public ValidValueAttribute(bool[] validValues)
         {
             ValidValue.AddRange(validValues.Cast<object>());
-        }
-
+        }        
     }
 }

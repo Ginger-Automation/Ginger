@@ -25,17 +25,21 @@ using GingerCore;
 using GingerCoreNET.RunLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.IO;
 
 // FIXME to use local html test page
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+    [Ignore] 
     [Level3]
     [TestClass]
     public class AgentTest
     {        
         static GingerGrid mGingerGrid;
+
+        
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -47,18 +51,19 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
             // Create temp solution
-            SolutionRepository SR;
-            string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions\AgentTestSolution"));
+            SolutionRepository solutionRepository;
+            string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "AgentTestSolution"));
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
             }
-            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-            SR.CreateRepository(path);     
-            WorkSpace.Instance.SolutionRepository = SR;
+            solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            solutionRepository.CreateRepository(path);     
+            WorkSpace.Instance.SolutionRepository = solutionRepository;
 
             // add Example4 Plugin to solution
-            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages\PluginDriverExample4"));            
+            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
+            WorkSpace.Instance.PlugInsManager.Init(solutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
 
             // Start a Ginger Services grid
@@ -87,7 +92,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-    
+        // [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
@@ -108,7 +113,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-        [Ignore]
+        
         [TestMethod]
         [Timeout(60000)]
         public void StartX3LocalDriverFromPlugin()
@@ -134,6 +139,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(list.Count, 0);
         }
 
+        [Ignore]
         [Priority(9)]
         [TestMethod]
         [Timeout(60000)]
