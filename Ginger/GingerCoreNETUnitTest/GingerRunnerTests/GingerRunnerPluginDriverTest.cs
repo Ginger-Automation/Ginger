@@ -101,7 +101,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             ResetBusinessFlow();
-            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            // WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
             Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
             mBusinessFlow.Activities.Add(a1);
@@ -129,7 +129,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             ResetBusinessFlow();
-            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            //WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
