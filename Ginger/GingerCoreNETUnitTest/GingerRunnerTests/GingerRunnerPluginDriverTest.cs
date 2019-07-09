@@ -92,10 +92,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            // TODO: cleanup the 2 plugin process stay alive at end of test with connection closed forc
-            // mGingerRunner.StopAgents();
-            // WorkSpace.Instance.LocalGingerGrid.Stop();
+        {            
+            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
         }
 
 
