@@ -32,8 +32,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
-    [Ignore]
+{    
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -84,17 +83,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
 
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
+            WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
+            // TODO: clenaup the 2 plugin process stay alive at end of test with connection closed forc
             // mGingerRunner.StopAgents();
+            // WorkSpace.Instance.LocalGingerGrid.Stop();
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod] 
         public void PluginSay()
         {
             //Arrange
@@ -104,7 +106,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
             mBusinessFlow.Activities.Add(a1);
 
-            ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say",  Active = true };
+            ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say",  Active = true, AddNewReturnParams = true };
             act1.AddOrUpdateInputParamValue("text", "hello");
             a1.Acts.Add(act1);
 
@@ -132,7 +134,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             
             for (int i = 0; i < 1000; i++)
             {
-                ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say", Active = true };
+                ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
                 activitiy1.Acts.Add(act1);
             }
@@ -144,7 +146,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Assert
             Assert.AreEqual(mBusinessFlow.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
             Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
-            Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/10sec");
+            Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/20sec");
         }
 
 
