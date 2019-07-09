@@ -45,8 +45,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 dynamicExecution.SolutionDetails.SourceControlDetails = new SourceControlDetails();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Type = solution.SourceControl.GetSourceControlType.ToString();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
-                dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser.ToString();
-                dynamicExecution.SolutionDetails.SourceControlDetails.Password = solution.SourceControl.SourceControlPass.ToString();
+                dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
+                dynamicExecution.SolutionDetails.SourceControlDetails.Password = solution.SourceControl.SourceControlPass;
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
