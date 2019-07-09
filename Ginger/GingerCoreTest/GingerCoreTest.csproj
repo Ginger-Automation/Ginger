@@ -82,7 +82,6 @@
     <Compile Include="TestResources\IEBrowser\IEBrowserWindow.xaml.cs">
       <DependentUpon>IEBrowserWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UITests\ActionEditPageTests.cs" />
     <Compile Include="UITests\ActLaunchJavaWSApplicationTest.cs" />
     <Compile Include="UITests\ActUIElementTest.cs" />
     <Compile Include="UITests\ASCFDriverTest.cs" />
