@@ -32,6 +32,7 @@ using static Amdocs.Ginger.Common.Functionalities.FindAndReplaceUtils;
 
 namespace UnitTests.NonUITests
 {
+    [Ignore]
     [TestClass]
     [Level2]
     public class FindAndReplaceTest
