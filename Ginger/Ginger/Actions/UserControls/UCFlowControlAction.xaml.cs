@@ -79,7 +79,7 @@ namespace Ginger.Actions.UserControls
             mActParentActivity = activity;
         }
 
-        public static DependencyProperty RepositoryItemModeProperty =
+        private static DependencyProperty repositoryItemModeProperty =
             DependencyProperty.Register("mEditMode", typeof(General.RepositoryItemPageViewMode), typeof(UCFlowControlAction), new PropertyMetadata(OnRepositoryItemModePropertyChanged));
         private static void OnRepositoryItemModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -109,8 +109,11 @@ namespace Ginger.Actions.UserControls
             mBfParentRunner = mRunner;
         }
 
-        public static DependencyProperty ActionProperty =
+        private static DependencyProperty actionProperty =
             DependencyProperty.Register("mAction", typeof(Act), typeof(UCFlowControlAction), new PropertyMetadata(OnActionPropertyChanged));
+
+        public static DependencyProperty RepositoryItemModeProperty { get => repositoryItemModeProperty; set => repositoryItemModeProperty = value; }
+        public static DependencyProperty ActionProperty { get => actionProperty; set => actionProperty = value; }
 
         private static void OnActionPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -289,7 +292,7 @@ namespace Ginger.Actions.UserControls
                             {
                                 foreach (Activity a in mActParentBusinessFlow.Activities)
                                 {
-                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity == a)//TODO: do better condition 
+                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentActivity == a)//TODO: do better condition 
                                     {
                                         continue;
                                     }
