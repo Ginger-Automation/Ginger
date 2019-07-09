@@ -75,7 +75,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             }
 
             OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = pageArgs });
-            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = eleArgs });
+            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.ElementRecorded, EventArgs = eleArgs });
             i++;
         }
 
