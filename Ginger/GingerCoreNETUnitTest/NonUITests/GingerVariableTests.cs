@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -59,8 +58,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            Agent a = new Agent();            
+            a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
