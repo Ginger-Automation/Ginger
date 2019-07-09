@@ -112,12 +112,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Act            
             mGingerRunner.RunRunner();
-            string outVal = act1.GetReturnValue("I said").Actual;
+
 
             //Assert
-            Assert.AreEqual("hello", outVal, "outVal=hello");
-            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, act1.Status);
             Assert.AreEqual(eRunStatus.Passed, a1.Status);            
+            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus);
+            string outVal = act1.GetReturnValue("I said").Actual;
+            Assert.AreEqual("hello", outVal, "outVal=hello");            
         }
 
 
@@ -144,7 +146,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Assert
-            Assert.AreEqual(mBusinessFlow.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
+            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus , "mBF.RunStatus");
             Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
             Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/20sec");
         }
