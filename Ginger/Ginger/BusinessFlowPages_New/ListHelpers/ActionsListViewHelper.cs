@@ -122,7 +122,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 ListItemOperation deleteSelected = new ListItemOperation();
                 deleteSelected.AutomationID = "deleteSelected";
                 deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-                deleteSelected.ToolTip = "Delete Selected Actions"
+                deleteSelected.ToolTip = "Delete Selected Actions";
                 deleteSelected.OperationHandler = DeleteSelectedHandler;
                 operationsList.Add(deleteSelected);
             }
