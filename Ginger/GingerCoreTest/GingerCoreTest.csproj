@@ -66,9 +66,7 @@
     <Compile Include="Misc\RepositoryXMLConverterTest.cs" />
     <Compile Include="Misc\RespositorySerializer2Test.cs" />
     <Compile Include="Misc\RESTTest.cs" />
-    <Compile Include="Misc\SolutionTest.cs" />
     <Compile Include="Misc\SourceControlUnitTest.cs" />
-    <Compile Include="Misc\StatusResultTest.cs" />
     <Compile Include="Misc\UnixShellTest.cs" />
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
