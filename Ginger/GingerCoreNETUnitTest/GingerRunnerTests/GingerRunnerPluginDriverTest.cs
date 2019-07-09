@@ -16,11 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Repository;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Actions.PlugIns;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
-
+{    
     [Ignore]
     [TestClass]
     [Level1]
