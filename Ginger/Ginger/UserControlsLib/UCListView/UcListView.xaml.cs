@@ -30,7 +30,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
-        private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
+        public void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
             if (handler != null)
@@ -529,7 +529,40 @@ namespace Ginger.UserControlsLib.UCListView
 
                     menuitem.Tag = xListView.ItemsSource;
 
-                    ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                    if (string.IsNullOrEmpty(operation.Group))
+                    {
+                        ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                    }
+                    else
+                    {
+                        //need to add to Group
+                        bool addedToGroup = false;
+                        foreach (MenuItem item in ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items)
+                        {
+                            if (item.Header.ToString() == operation.Group)
+                            {
+                                //adding to existing group
+                                item.Items.Add(menuitem);
+                                addedToGroup = true;
+                                break;
+                            }
+                        }
+                        if (!addedToGroup)
+                        {
+                            //creating the group and adding
+                            MenuItem groupMenuitem = new MenuItem();
+                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                            ImageMakerControl groupIconImage = new ImageMakerControl();
+                            groupIconImage.ImageType = operation.GroupImageType;
+                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            groupMenuitem.Icon = groupIconImage;
+                            groupMenuitem.Header = operation.Group;
+                            groupMenuitem.ToolTip = operation.Group;
+                            ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(groupMenuitem);
+                            groupMenuitem.Items.Add(menuitem);
+                        }
+                    }                    
                 }
             }
             else
@@ -593,6 +626,10 @@ namespace Ginger.UserControlsLib.UCListView
         {
             mGroupView.Refresh();
             ResetExpandCollapseBtn();
+            //if (xExpandCollapseBtn.ButtonImageType == eImageType.CollapseAll)
+            //{
+            //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
+            //}
         }
         
         private void DoGrouping()
@@ -745,6 +782,7 @@ namespace Ginger.UserControlsLib.UCListView
             public enum eEventType
             {
                 ExpandAllItems,
+                ExpandItem,
                 CollapseAllItems,
                 UpdateIndex,
             }

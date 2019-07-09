@@ -597,6 +597,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml.cs">
+      <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
       <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
     </Compile>
@@ -3032,6 +3035,10 @@
     <Page Include="BusinessFlowPages_New\ActionsListViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
       <SubType>Designer</SubType>

@@ -95,60 +95,71 @@ namespace Ginger.UserControlsLib
             {
                 try
                 {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    if (CutSourceList != null)
+                    if (CopiedorCutItems.Count > 0)
                     {
-                        //CUT
-                        //first remove from cut source
-                        foreach (RepositoryItemBase item in CopiedorCutItems)
-                        {
-                            //clear from source
-                            CutSourceList.Remove(item);
-                            //set needed properties if any
-                            SetProperties(item, propertiesToSet);
-                            if (!containerControl.GetSourceItemsAsIList().Contains(item))//Not cut & paste on same grid
-                            {
-                                //set unique name
-                                GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), item);
-                            }
-                            //paste on target and select                           
-                            containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, item, currentIndex));
-                            //Trigger event for changing sub classes fields
-                            containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
-                        }
+                        Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, string.Format("Performing paste operation for {0} items...", CopiedorCutItems.Count));
 
-                        //clear so will be past only once
-                        CutSourceList = null;
-                        CopiedorCutItems.Clear();
+                        if (CutSourceList != null)
+                        {
+                            //CUT
+                            //first remove from cut source
+                            foreach (RepositoryItemBase item in CopiedorCutItems)
+                            {
+                                //clear from source
+                                CutSourceList.Remove(item);
+                                if (currentIndex > 0)
+                                {
+                                    currentIndex--;
+                                }
+                                //set needed properties if any
+                                SetProperties(item, propertiesToSet);
+                                if (!containerControl.GetSourceItemsAsIList().Contains(item))//Not cut & paste on same grid
+                                {
+                                    //set unique name
+                                    GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), item);
+                                }
+                                //paste on target and select                           
+                                containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, item, currentIndex));
+                                //Trigger event for changing sub classes fields
+                                containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCutedItem, item);
+                            }
+
+                            //clear so will be past only once
+                            CutSourceList = null;
+                            CopiedorCutItems.Clear();
+                        }
+                        else
+                        {
+                            //COPY
+                            //paste on target
+                            foreach (RepositoryItemBase item in CopiedorCutItems)
+                            {
+                                RepositoryItemBase copiedItem = item.CreateCopy();
+                                //set unique name
+                                GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), copiedItem, "_Copy");
+                                //set needed properties if any
+                                SetProperties(copiedItem, propertiesToSet);
+                                //add and select                      
+                                containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, copiedItem, currentIndex));
+                                //Trigger event for changing sub classes fields
+                                containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
+                            }
+                        }
                     }
                     else
                     {
-                        //COPY
-                        //paste on target
-                        foreach (RepositoryItemBase item in CopiedorCutItems)
-                        {
-                            RepositoryItemBase copiedItem = item.CreateCopy();
-                            //set unique name
-                            GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), copiedItem, "_Copy");
-                            //set needed properties if any
-                            SetProperties(copiedItem, propertiesToSet);
-                            //add and select                      
-                            containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, copiedItem, currentIndex));
-                            //Trigger event for changing sub classes fields
-                            containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
-                        }
+                        Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, "No items found to paste");
                     }
                 }
                 catch (Exception ex)
-                {
-                    Mouse.OverrideCursor = null;
+                {                   
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied/cut items type and destination type is matching." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
                     CutSourceList = null;
                     CopiedorCutItems.Clear();                    
                 }
                 finally
                 {
-                    Mouse.OverrideCursor = null;
+                    Reporter.HideStatusMessage();
                 }
             });
         }
