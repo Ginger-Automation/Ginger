@@ -1859,9 +1859,7 @@ namespace Ginger.Run
         
         private bool ExecuteActionWithTimeLimit(Act act, TimeSpan timeSpan, Action codeBlock)
         {
-            Stopwatch st = Stopwatch.StartNew();
-            st.Start();
-
+            Stopwatch st = Stopwatch.StartNew();            
             
             //TODO: Cancel the task after timeout
             try
