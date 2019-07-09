@@ -600,6 +600,7 @@
     <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
       <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsFactory.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>

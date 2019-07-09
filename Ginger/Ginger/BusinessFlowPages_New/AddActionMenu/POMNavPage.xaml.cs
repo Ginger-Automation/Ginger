@@ -7,6 +7,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.Help;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
@@ -182,25 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 foreach (ElementInfo elemInfo in xMainElementsGrid.Grid.SelectedItems)
                 {
-                    Act instance = GenerateRelatedAction(elemInfo);
-                    if (instance != null)
-                    {
-                        instance.Active = true;
-
-                    }
-                    mContext.BusinessFlow.AddAct(instance, true);
-                }
-
-                int selectedActIndex = -1;
-                ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-
+                    ActionsFactory.AddActionsHandler(elemInfo, mContext);
                 }
             }
             else

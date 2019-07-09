@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -302,108 +303,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
             {
                 Act selectedAction = ((ucGrid)ActionsTabs.SelectedContent).CurrentItem as Act;
-
-                //warn regarding Leagacy Actions
-                if (LegacyActionsTab.IsSelected)
-                {
-                    if (selectedAction is Amdocs.Ginger.CoreNET.IObsoleteAction)
-                    {
-                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((Amdocs.Ginger.CoreNET.IObsoleteAction)selectedAction).TargetActionTypeName());
-                        if (userSelection == eUserMsgSelection.Yes)
-                        {
-                            selectedAction = ((Amdocs.Ginger.CoreNET.IObsoleteAction)selectedAction).GetNewAction();
-                        }
-                        else if (userSelection == eUserMsgSelection.Cancel)
-                        {
-                            return;//do not add any action
-                        }
-                    }
-                    else
-                    {
-                        if (Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction) == eUserMsgSelection.No)
-                        {
-                            return;//do not add any action
-                        }
-                    }
-                }
-
-                if (selectedAction.AddActionWizardPage != null)
-                {
-                    //_pageGenericWin.Close();
-                    string classname = selectedAction.AddActionWizardPage;
-                    Type t = Assembly.GetExecutingAssembly().GetType(classname);
-                    if (t == null)
-                    {
-                        throw new Exception("Action edit page not found - " + classname);
-                    }
-
-                    WizardBase wizard = (WizardBase)Activator.CreateInstance(t, mContext);
-                    WizardWindow.ShowWizard(wizard);
-                }
-                else
-                {
-                    Act aNew = null;
-
-                    if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
-                    {
-                        aNew = selectedAction.CreateCopy() as Act;
-                        // copy param ex info
-                        for (int i = 0; i < selectedAction.InputValues.Count; i++)
-                        {
-                            aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                        return;
-                    }
-                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-
-                    //adding the new act after the selected action in the grid  
-                    //TODO: Add should be after the last, Insert should be in the middle...
-                    int selectedActIndex = -1;
-                    if (mActionsList.CurrentItem != null)
-                    {
-                        selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
-                    }
-                    mActionsList.Add(aNew);
-                    if (selectedActIndex >= 0)
-                    {
-                        mActionsList.Move(mActionsList.Count - 1, selectedActIndex + 1);
-                    }
-
-                    //_pageGenericWin.Close();
-
-                    //allowing to edit the action
-                    //ActionEditPage actedit = new ActionEditPage(aNew);
-                    //actedit.ShowAsWindow();
-
-                    if (aNew is ActPlugIn)
-                    {
-                        ActPlugIn p = (ActPlugIn)aNew;
-                        // TODO: add per group or... !!!!!!!!!
-
-                        //Check if target already exist else add it
-                        // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
-                        if (targetPlugin == null)
-                        {
-                            // check if interface add it
-                            // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
-
-                            mContext.BusinessFlow.TargetApplications.Add(new TargetPlugin() { PluginId = p.PluginId, ServiceId = p.ServiceId });
-
-                            //Search for default agent which match 
-                            mContext.Runner.UpdateApplicationAgents();
-                            // TODO: update automate page target/agent
-
-                            // if agent not found auto add or ask user 
-                        }
-
-                    }
-
-                }
+                ActionsFactory.AddActionsHandler(selectedAction, mContext);
             }
         }
 
