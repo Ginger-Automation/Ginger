@@ -400,7 +400,7 @@ namespace GingerCore
                 gingerNodeInfo = FindFreeNode(ServiceId);                
 
                 // Service not found start new one
-                // Add plugin config start if not exist and more depeneds on the config 
+                // Add plugin config start if not exist and more depends on the config 
                 if (gingerNodeInfo == null)
                 {
                     // Dup with GR consolidate with timeout
@@ -727,7 +727,7 @@ namespace GingerCore
 
                 if (MSTATask != null)
                 {
-                    // Using Cancelleation token soucrce to cancel 
+                    // Using cancellation token source to cancel 
                     CancelTask = new BackgroundWorker();
                     CancelTask.DoWork += new DoWorkEventHandler(CancelTMSTATask);
                     CancelTask.RunWorkerAsync();
@@ -754,7 +754,7 @@ namespace GingerCore
             if (MSTATask == null)
                 return;
             
-                // Using Cancelleation token soucrce to cancel  getting exceptions when trying to close agent and task is in running condition
+                // Using cancellation token source to cancel  getting exceptions when trying to close agent and task is in running condition
 
                 while(MSTATask!=null &&   !(MSTATask.Status==TaskStatus.RanToCompletion ||MSTATask.Status== TaskStatus.Faulted ||MSTATask.Status== TaskStatus.Canceled))
                 {
@@ -1059,6 +1059,22 @@ namespace GingerCore
             {
                 return nameof(this.Name);
             }
+        }
+
+        public override void PostSerialization()
+        {
+
+            if(DriverType == eDriverType.WindowsAutomation)
+            {
+                //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
+                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
+
+                if (actionTimeoutParameter!=null && actionTimeoutParameter.Value== "10" && actionTimeoutParameter.Description.Contains("10"))
+                {
+                    actionTimeoutParameter.Value = "30";
+                    actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
+                }
+            }          
         }
 
     }

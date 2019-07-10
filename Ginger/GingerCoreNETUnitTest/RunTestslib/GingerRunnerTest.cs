@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
@@ -26,12 +27,17 @@ using GingerCore.Platforms;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTests.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+    [Ignore] // FIXME fail on linux on Azure wtih Nodelist =0
+    [Level2]
     [TestClass]
     public class GingerRunnerTest
     {
@@ -40,7 +46,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static GingerRunner mGingerRunner;
 
         const string cWebApp = "Web";
-
+        static string mPluginId = "DummyPlugin";
+        static  string mServiceId = "DummyService";
         static Agent agent;
 
         [ClassInitialize]
@@ -56,27 +63,43 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Start one DummyDriver - in process, so we can test whats going on everywhere
             mDummyDriver = new DummyDriver();            
-            GingerNode GN = new GingerNode(mDummyDriver);
-            GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
-
+            GingerNode gingerNode = new GingerNode(mDummyDriver);            
+            gingerNode.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: mGingerGrid.Port);
+            
             // Wait for the Grid to be up and the node connected
-            // max 10 seconds
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            while (mGingerGrid.NodeList.Count == 0 && st.ElapsedMilliseconds < 10000)
+            // max 30 seconds
+            Stopwatch st = Stopwatch.StartNew();            
+            while (!gingerNode.Connected  && st.ElapsedMilliseconds < 30000)
             {
                 Thread.Sleep(100);
             }
+            if (!gingerNode.Connected)
+            {
+                throw new Exception(">>>>>>>>>>>>>>>> GingerNode didn't connect to grid <<<<<<<<<<<<<<<<<<<<< " + mPluginId + "." + mServiceId);
+            }
+
+            st.Restart();
+
+            while (mGingerGrid.NodeList.Count == 0 && st.ElapsedMilliseconds < 30000)
+            {
+                Thread.Sleep(100);
+            }
+
+            if (mGingerGrid.NodeList.Count == 0)
+            {
+                throw new Exception(">>>>>>>>>>>>>>>> NodeList count =0, no node connected <<<<<<<<<<<<<<<<<<<<< " + mPluginId + "." + mServiceId);
+            }
+
+            WorkSpace.Instance.PlugInsManager.PluginServiceIsSeesionDictionary.Add(mPluginId + "." + mServiceId, true);
+            
 
             //TODO: handle no GG node found
 
             agent = new Agent();
             agent.Name = "agent 1";
             agent.AgentType = Agent.eAgentType.Service;
-            agent.ServiceId = "P1.DummyService";
-
-            // agent.GingerNodeProxy = new GingerNodeProxy(mGingerGrid.NodeList[0]);            
-            // agent.StartDriver();
+            agent.PluginId = mPluginId;
+            agent.ServiceId = mServiceId;
 
             mGingerRunner = new GingerRunner();
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
@@ -102,8 +125,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         }
 
-
-        [Ignore]   //TODO: FIXME !!!!!!!!!!!!!!!
+        
         [TestMethod]
         [Timeout(60000)]
         public void RunFlow()
@@ -112,16 +134,18 @@ namespace GingerCoreNETUnitTest.RunTestslib
             BusinessFlow BF = new BusinessFlow("BF1");
             BF.TargetApplications.Add(new TargetApplication() { AppName = cWebApp });
             BF.Activities[0].TargetApplication = cWebApp;
-            ActPlugIn a1 = new ActPlugIn() { PluginId = "P1", ServiceId = "DummyService", ActionId = "A1" , Active = true};            
+            ActPlugIn a1 = new ActPlugIn() { PluginId = mPluginId, ServiceId = mServiceId, ActionId = "A1" , Active = true};            
             BF.Activities[0].Acts.Add(a1);
 
             //Act            
             mGingerRunner.RunBusinessFlow(BF);
+            Console.WriteLine("a1.Error = " + a1.Error);  
 
             //Assert
-            Assert.AreEqual(a1.Status, eRunStatus.Passed);
-            Assert.AreEqual(BF.Activities[0].Status, eRunStatus.Passed, "Activity Status = Pass");
-            Assert.AreEqual(a1.Error, null, "Action.Error=null");
+            Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");            
+            Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
+            Assert.AreEqual(eRunStatus.Passed, BF.Activities[0].Status, "Activity Status = Pass");
+            
         }
 
 
