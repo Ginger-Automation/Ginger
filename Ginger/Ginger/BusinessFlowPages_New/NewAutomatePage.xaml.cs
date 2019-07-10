@@ -146,9 +146,9 @@ namespace GingerWPF.BusinessFlowsLib
             InitAutomatePageRunner();
             UpdateAutomatePageRunner();
 
-            SetRunSetDBLite(businessFlow);
-
             LoadBusinessFlowToAutomate(businessFlow);
+
+            SetRunSetDBLite(businessFlow);
 
             SetUIControls();
         }
@@ -182,7 +182,7 @@ namespace GingerWPF.BusinessFlowsLib
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            if (filterData.Count > 0)
+            if (filterData != null && filterData.Count > 0)
             {
                 LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
                 dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
@@ -359,7 +359,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void InitAutomatePageRunner()
-        {
+        {           
             mRunner = new GingerRunner(eExecutedFrom.Automation);
             mRunner.PropertyChanged += MRunner_PropertyChanged;
 
@@ -368,6 +368,7 @@ namespace GingerWPF.BusinessFlowsLib
             automatePageRunnerListener.AutomatePageRunnerListenerGiveUserFeedback = GiveUserFeedback;
             mRunner.RunListeners.Add(automatePageRunnerListener);
 
+            mRunner.Context = mContext;
             mContext.Runner = mRunner;
         }
 
@@ -393,7 +394,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
-                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (AutoRunSetDocumentExistsInLiteDB() && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     DeleteRunSetBFRefData();
                     ClearAutomatedId(businessFlowToLoad);

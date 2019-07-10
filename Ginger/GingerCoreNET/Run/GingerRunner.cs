@@ -96,9 +96,22 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        public Context mContext = new Context();
 
-        
+        Context mContext = new Context();
+        public Context Context
+        {
+            get
+            {
+                return mContext;
+            }
+            set
+            {
+                mContext = value;
+                ExecutionLoggerManager.mContext = value;
+            }
+        }
+
+
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 
