@@ -72,7 +72,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 //Act
                 mngr.StartRecording();
-                Thread.Sleep(3000);
+                Thread.Sleep(4000);
                 mngr.StopRecording();
             }
 
@@ -106,7 +106,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 //Act
                 mngr.StartRecording();
-                Thread.Sleep(3000);
+                Thread.Sleep(4000);
                 mngr.StopRecording();
             }
 
