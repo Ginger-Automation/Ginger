@@ -17,7 +17,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
-        List<AgentMappingPage> mWinExplorerPageList = null;
+        List<AgentPageMappingHelper> mWinExplorerPageList = null;
         WindowExplorerPage CurrentLoadedPage = null;
 
         public WindowsExplorerNavPage(Context context)
@@ -63,7 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (mWinExplorerPageList != null)
                 {
-                    AgentMappingPage objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
                                                                                             x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
                     if (objHelper != null && objHelper.ObjectWindowPage != null)
                     {
@@ -94,7 +94,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             bool isLoaded = false;
             if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
             {
-                AgentMappingPage objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType && 
+                AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType && 
                                                                                 x.ObjectAgent.ItemName == context.Agent.ItemName).FirstOrDefault();
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
@@ -112,9 +112,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
                     if (mWinExplorerPageList == null)
                     {
-                        mWinExplorerPageList = new List<AgentMappingPage>();
+                        mWinExplorerPageList = new List<AgentPageMappingHelper>();
                     }
-                    mWinExplorerPageList.Add(new AgentMappingPage(context.Agent, CurrentLoadedPage)); 
+                    mWinExplorerPageList.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage)); 
                 }
             }
 
