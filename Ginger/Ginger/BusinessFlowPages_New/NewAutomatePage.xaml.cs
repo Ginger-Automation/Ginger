@@ -973,13 +973,14 @@ namespace GingerWPF.BusinessFlowsLib
                 if (WorkSpace.Instance.Solution == null)
                 {
                     DoCleanUp();
+
+                    if (mAddActionMainPage != null)
+                        mAddActionMainPage.ResetAddActionPages();
+
                     return;
                 }
 
                 UpdateToNewSolution();
-
-                if(mAddActionMainPage != null)
-                    mAddActionMainPage.ResetAddActionPages();
             }
         }
 
