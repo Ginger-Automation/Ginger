@@ -22,7 +22,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void TestInitialize()
         {
             Context = new Context();
-            TestPlatform webPlatformInfo = new TestPlatform();
             mDriver = new TestDriver();
             PlatformInfo = new TestPlatform();
             mBF = new BusinessFlow() { Name = "TestRecordingBF", Active = true };

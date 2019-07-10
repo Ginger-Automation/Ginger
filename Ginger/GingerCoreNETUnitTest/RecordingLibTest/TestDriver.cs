@@ -10,19 +10,16 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         private bool LearnAdditionalDetails { get; set; }
         public event RecordingEventHandler RecordingEvent;
 
-        int i = 0;
-
         public void StartRecording(bool learnAdditionalChanges = false)
         {
-            i = 0;
             LearnAdditionalDetails = learnAdditionalChanges;
             for (int i = 0; i < 2; i++)
             {
-                DoRecording(); 
+                DoRecording(i); 
             }
         }
         
-        private void DoRecording()
+        private void DoRecording(int i)
         {
             string name = "Name_" + Convert.ToString(i);
 
@@ -69,8 +66,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             }
 
             OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = pageArgs });
-            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.ElementRecorded, EventArgs = eleArgs });
-            i++;
+            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.ElementRecorded, EventArgs = eleArgs });            
         }
 
         public void StopRecording()
