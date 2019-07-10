@@ -17,11 +17,13 @@ limitations under the License.
 #endregion
 
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -49,6 +51,8 @@ namespace GingerWPF.BusinessFlowsLib
         VariabelsListViewPage mVariabelsPage;
         ActivityConfigurationsPage mConfigurationsPage;
 
+        GenericWindow mGenericWin = null;
+
         public UcListView ActionListView
         {
             get { return mActionsPage.ListView; }
@@ -68,7 +72,23 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void SetUIControlsContent()
-        {
+        {            
+            if(mPageViewMode != Ginger.General.eRIPageViewMode.Automation)
+            {
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
+            {
+                xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
+                xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;                
+            }
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                xSharedRepoInstanceUC.IsEnabled = false;
+            }
+
             xRunBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.Activity, "Run");
 
             mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
@@ -79,7 +99,7 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
 
-            mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext);
+            mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
             xConfigurationsFrame.Content = mConfigurationsPage;
         }
 
@@ -233,6 +253,111 @@ namespace GingerWPF.BusinessFlowsLib
             for (int indx = mContext.BusinessFlow.Activities.IndexOf(mActivity); indx < mContext.BusinessFlow.Activities.Count; indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
+            }
+        }
+
+        bool mSaveWasDone = false;
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        {
+            string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+
+            RoutedEventHandler CloseHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
+
+            Button okBtn = new Button();
+            okBtn.Content = "Ok";            
+            okBtn.Click += new RoutedEventHandler(OkBtn_Click);
+
+            Button undoBtn = new Button();
+            undoBtn.Content = "Undo & Close";
+            undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
+
+            Button saveBtn = new Button();
+            saveBtn.Content = "Save";
+
+            switch (mPageViewMode)
+            {
+                case Ginger.General.eRIPageViewMode.SharedReposiotry:
+                    mActivity.SaveBackup();
+                    title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoBtn);
+                    break;
+
+                case Ginger.General.eRIPageViewMode.ChildWithSave:
+                    mActivity.SaveBackup();
+                    title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    saveBtn.Click += new RoutedEventHandler(ParentItemSaveButton_Click);
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoBtn);
+                    break;
+
+                case Ginger.General.eRIPageViewMode.View:
+                    title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                    winButtons.Add(okBtn);
+                    CloseHandler = new RoutedEventHandler(OkBtn_Click);
+                    closeContent = okBtn.Content.ToString();                    
+                    break;
+            }
+
+            this.Height = 800;
+            this.Width = 1000;
+
+            GingerCore.General.LoadGenericWindow(ref mGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeBtnText: closeContent, closeEventHandler: CloseHandler, startupLocationWithOffset: startupLocationWithOffset);
+
+            return mSaveWasDone;
+        }
+
+        private void CloseWinClicked(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                UndoChangesAndClose();
+            }
+        }
+
+        private void UndoChangesAndClose()
+        {
+            Ginger.General.UndoChangesInRepositoryItem(mActivity, true);
+
+            mGenericWin.Close();
+        }
+
+        private void ParentItemSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (mContext.BusinessFlow != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mContext.BusinessFlow);
+                mSaveWasDone = true;
+            }
+            mGenericWin.Close();
+        }
+
+
+        private void UndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+        }
+
+        private void OkBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //OKButtonClicked = true;
+            mGenericWin.Close();
+        }
+
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
+            {
+                if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
+                {
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
+                    mSaveWasDone = true;
+                    mGenericWin.Close();
+                }
             }
         }
     }

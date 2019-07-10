@@ -11,6 +11,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         ActivitiesGroup mActivitiesGroup;
         Context mContext;
 
+        public General.eRIPageViewMode PageViewMode { get; set; }
+
         public UcListView ListView { get; set; }
 
         public ActivitiesGroupsListViewHelper(Context context)

@@ -17,15 +17,37 @@ namespace Ginger.BusinessFlowPages
     {
         Activity mActivity;
         Context mContext;
+        General.eRIPageViewMode mPageViewMode;
 
-        public ActivityConfigurationsPage(Activity activity, Context context)
+        public ActivityConfigurationsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mActivity = activity;
             mContext = context;
+            mPageViewMode = pageViewMode;
 
+            SetUI();
             BindControls();
+        }
+
+        private void SetUI()
+        {
+            if (mPageViewMode == General.eRIPageViewMode.View)
+            {
+                xActivityNameTxtBox.IsEnabled = false;
+                xActivityDescriptionTxt.IsEnabled = false;
+                xTagsViewer.IsEnabled = false;
+                xRunDescritpion.IsEnabled = false;
+                xScreenTxt.IsEnabled = false;
+                xExpectedTxt.IsEnabled = false;
+                xMandatoryActivityCB.IsEnabled = false;
+                xTargetApplicationComboBox.IsEnabled = false;
+                xRunOptionCombo.IsEnabled = false;
+                xAutomationStatusCombo.IsEnabled = false;
+                xHandlerTypeCombo.IsEnabled = false;
+                xSpecificErrorHandlerBtn.IsEnabled = false;
+            }
         }
 
         public void UpdateActivity(Activity activity)

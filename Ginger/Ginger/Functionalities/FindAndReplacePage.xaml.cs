@@ -923,13 +923,13 @@ namespace Ginger.Functionalities
         {
             Activity activity = (Activity)activityToViewFoundItem.OriginObject;
             RepositoryItemBase Parent = (RepositoryItemBase)activityToViewFoundItem.ParentItemToSave;
-            ActivityEditPage w;
+            GingerWPF.BusinessFlowsLib.ActivityPage w;
             if (mContext == eContext.SolutionPage)
-                w = new ActivityEditPage(activity, General.eRIPageViewMode.ChildWithSave, Parent as BusinessFlow);
+                w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context() {BusinessFlow = (BusinessFlow)Parent}, General.eRIPageViewMode.ChildWithSave);
             else if (mContext == eContext.AutomatePage)
-                w = new ActivityEditPage(activity, General.eRIPageViewMode.Automation);
+                w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context(), General.eRIPageViewMode.Automation);
             else
-                w = new ActivityEditPage(activity, General.eRIPageViewMode.View);
+                w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context(), General.eRIPageViewMode.View);
 
             if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
                 RefreshFoundItemField(activityToViewFoundItem);
@@ -939,13 +939,13 @@ namespace Ginger.Functionalities
         {
             BusinessFlow businessFlow = (BusinessFlow)businessFlowToViewFoundItem.OriginObject;
             RepositoryItemBase Parent = (RepositoryItemBase)businessFlowToViewFoundItem.ParentItemToSave;
-            BusinessFlowPage w = null;
+            GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = null;
             if (mContext == eContext.RunsetPage)
-                w = new BusinessFlowPage(businessFlow, false, General.eRIPageViewMode.View);
+                w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.View);
             else if (mContext == eContext.AutomatePage)
-                w = new BusinessFlowPage(businessFlow, false, General.eRIPageViewMode.Automation);
+                w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.Automation);
             else
-                w = new BusinessFlowPage(businessFlow, false, General.eRIPageViewMode.Standalone);
+                w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.Standalone);
 
             w.Width = 1000;
             w.Height = 800;

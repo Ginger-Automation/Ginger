@@ -774,7 +774,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
                 //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
+                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.mBusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //ActivityEdit.ap = null;

@@ -12,7 +12,7 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="220"/>
+            <RowDefinition Height="250"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
@@ -40,7 +40,7 @@
             </StackPanel>
         </StackPanel>
 
-        <Ginger:ucGrid x:Name="grdGroupedActivities" Grid.Row="1" ShowRefresh="Visible" ShowEdit="Collapsed" ShowAdd="Collapsed" Margin="0,10,0,0" Grid.ColumnSpan="2">
+        <Ginger:ucGrid x:Name="grdGroupedActivities" Grid.Row="1" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" Margin="0,10,0,0" Grid.ColumnSpan="2">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[Activities]"/>
             </Ginger:ucGrid.Title>

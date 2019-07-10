@@ -448,7 +448,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         xBfConfigurationsTabFrame.Content = mConfigurationsPage;
                     }
                     else

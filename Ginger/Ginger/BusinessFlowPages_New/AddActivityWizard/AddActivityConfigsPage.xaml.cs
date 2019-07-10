@@ -29,7 +29,7 @@ namespace Ginger.BusinessFlowPages
                     if (mLastActivity != mWizard.ActivityToAdd)
                     {
                         mLastActivity = mWizard.ActivityToAdd;
-                        xFrame.Content = new ActivityConfigurationsPage(mWizard.ActivityToAdd, mWizard.Context);
+                        xFrame.Content = new ActivityConfigurationsPage(mWizard.ActivityToAdd, mWizard.Context, General.eRIPageViewMode.Standalone);
                     }
                     break;
             }

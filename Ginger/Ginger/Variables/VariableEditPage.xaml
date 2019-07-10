@@ -49,7 +49,7 @@
                             <GingerCore:ucTextDicResource Text="Actual [Variable] which will be used/manipulate in run time"/>
                         </Image.ToolTip>
                     </Image>
-                    <ComboBox x:Name="linkedvariableCombo" Width="200" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0"/>
+                    <ComboBox x:Name="linkedvariableCombo" Width="200" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0"/>
                     <Button x:Name="publishValueToLinkedBtn" Content="Publish Value" Click="publishValueToLinkedBtn_Click" Style="{StaticResource @InputButtonStyle}" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0" Height="23">
                         <Button.ToolTip>
                             <GingerCore:ucTextDicResource Text="Set linked [Variable] value to be the same as current [Variable] value"/>
@@ -60,7 +60,7 @@
         </StackPanel>
         <ScrollViewer Grid.Row="1">
             <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" >
-                <Label  HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource @SectionHeaderLabelStyle}">
+                <Label  HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
                     <Label.Content>
                         <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
                     </Label.Content>
@@ -70,7 +70,7 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="3">
-            <Label HorizontalAlignment="Stretch" Style="{StaticResource @SectionHeaderLabelStyle}">
+            <Label HorizontalAlignment="Stretch" Style="{StaticResource $HeaderStyle}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="[Variable] Auto Configurations:"/>
                 </Label.Content>

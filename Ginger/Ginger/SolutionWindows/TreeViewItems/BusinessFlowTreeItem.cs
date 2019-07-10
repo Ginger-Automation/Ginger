@@ -93,7 +93,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mBusinessFlowViewPage == null)
                 {
-                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.View);
+                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.Standalone);
                 }
                 return mBusinessFlowViewPage;
             }            

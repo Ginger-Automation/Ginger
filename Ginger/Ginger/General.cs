@@ -32,6 +32,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace Ginger
 {
@@ -497,6 +498,28 @@ namespace Ginger
             }
 
             return tagsDesc;
+        }
+
+        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false)
+        {
+            try
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
+                item.RestoreFromBackup(isLocalBackup);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'"), ex);
+                return false;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
+            }
         }
     }         
 }

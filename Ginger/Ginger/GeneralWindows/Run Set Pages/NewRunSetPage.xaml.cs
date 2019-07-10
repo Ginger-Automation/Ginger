@@ -1970,7 +1970,7 @@ namespace Ginger.Run
 
         public void viewBusinessflow(BusinessFlow businessFlow)
         {
-            BusinessFlowPage w = new BusinessFlowPage(businessFlow, false, General.eRIPageViewMode.View);
+            GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.View);
             w.Width = 1000;
             w.Height = 800;
             w.ShowAsWindow();
@@ -1987,7 +1987,7 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(ac, General.eRIPageViewMode.View,mCurrentBusinessFlowRunnerItemObject);
+            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject }, General.eRIPageViewMode.View);
             w.ShowAsWindow();
         }
 
