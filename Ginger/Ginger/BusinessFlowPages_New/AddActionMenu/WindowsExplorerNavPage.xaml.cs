@@ -1,31 +1,12 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages_New;
-using Ginger.Drivers.Common;
 using Ginger.WindowExplorer;
-using Ginger.WindowExplorer.Common;
-using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Platforms;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.UserControlsLib.UCTreeView;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -44,8 +25,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;            
             context.PropertyChanged += Context_PropertyChanged;
-            LoadWindowExplorerPage(mContext);
             SetFrameEnableDisable();
+            LoadWindowExplorerPage(mContext);            
         }
         
         /// <summary>
@@ -62,8 +43,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else if (e.PropertyName == nameof(Context.Agent))
             {
-                LoadWindowExplorerPage(mContext);
                 SetFrameEnableDisable();
+                LoadWindowExplorerPage(mContext);
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
         }
@@ -80,6 +61,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
+                if (mWinExplorerPageList != null)
+                {
+                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                            x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
+                    if (objHelper != null && objHelper.ObjectWindowPage != null)
+                    {
+                        objHelper.ObjectWindowPage = new WindowExplorerPage(AgentHelper.GetAppAgent(mContext.Activity, mContext.Runner, mContext), mContext);
+                        CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
+                        xSelectedItemFrame.Content = CurrentLoadedPage;
+                    } 
+                }
                 xSelectedItemFrame.IsEnabled = false;
             }
         }

@@ -121,6 +121,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 mWindowExplorerDriver = windowExplorerDriver;
                 xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
             }
+            else if(windowExplorerDriver == null)
+            {
+                xWinGridUC.WindowsComboBox.ItemsSource = null;
+            }
+
+            if (windowExplorerDriver != null && xWinGridUC.WindowsComboBox.ItemsSource == null)
+            {
+                xWinGridUC.UpdateWindowsList();
+            }
         }
 
         /// <summary>
@@ -199,9 +208,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (isSpying)
             {
                 xSpyingButton.ToolTip = "Stop Spying";
-                xSpyingButton.Background = Brushes.White;
+                xSpyingButton.Background = Brushes.DeepSkyBlue;
                 xSpyingButton.BorderThickness = new Thickness(2);
-                xSpyingButton.BorderBrush = Brushes.DeepSkyBlue;
                 StatusTextBlock.Text = "Spying...";
             }
             else
@@ -209,7 +217,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
                 StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
-                xSpyingButton.Background = Brushes.DeepSkyBlue;
+                xSpyingButton.Background = Brushes.Transparent;
             }
         }
 
