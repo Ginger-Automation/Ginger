@@ -10,26 +10,18 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         private bool LearnAdditionalDetails { get; set; }
         public event RecordingEventHandler RecordingEvent;
 
-        public Timer mGetRecordingTimer;
         int i = 0;
 
         public void StartRecording(bool learnAdditionalChanges = false)
         {
             i = 0;
-            //LearnAdditionalDetails = learnAdditionalChanges;
-            //mGetRecordingTimer = new Timer(1000);
-            //mGetRecordingTimer.Elapsed += MGetRecordingTimer_Elapsed;
-            //mGetRecordingTimer.Start();
-            DoRecording();
-            DoRecording();
-            DoRecording();
+            LearnAdditionalDetails = learnAdditionalChanges;
+            for (int i = 0; i < 2; i++)
+            {
+                DoRecording(); 
+            }
         }
-
-        private void MGetRecordingTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            DoRecording();
-        }
-
+        
         private void DoRecording()
         {
             string name = "Name_" + Convert.ToString(i);
@@ -83,11 +75,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
 
         public void StopRecording()
         {
-            if (mGetRecordingTimer != null)
-            {
-                mGetRecordingTimer.Stop();
-                mGetRecordingTimer.Dispose();
-            }
         }
 
         protected void OnRecordingEvent(RecordingEventArgs e)
