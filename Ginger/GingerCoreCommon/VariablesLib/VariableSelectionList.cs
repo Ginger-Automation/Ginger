@@ -68,7 +68,7 @@ namespace GingerCore.Variables
 
         public override void PostSerialization()
         {
-           //Note: we need to reset all variables postserialization except variableSequence, thats why empty overriden method. 
+           //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
         }
 
         public override string GetFormula()
@@ -102,19 +102,11 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
-            // As the initial value is not configured for VariableSelectionList
             if (OptionalValuesList.Count > 0)
             {
-                if (SelectedValue != null)
-                {
-                    Value = SelectedValue;
-                }
-                else
-                {
-                    Value = OptionalValuesList[0].Value;
-                }
+                Value = OptionalValuesList[0].Value;
             }
-                
+
         }
 
         public override void GenerateAutoValue()
