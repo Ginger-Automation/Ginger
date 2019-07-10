@@ -75,7 +75,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDBTest", "MongoDBTest\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLDatabase", "MySQLDatabase\MySQLDatabase.csproj", "{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLTests", "MySQLTests\MySQLTests.csproj", "{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLTests", "MySQLTests\MySQLTests.csproj", "{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouchBase", "CouchBase\CouchBase.csproj", "{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgreSQL", "PostgreSQL\PostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -264,6 +268,18 @@ Global
 		{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
