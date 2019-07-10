@@ -63,14 +63,49 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Agent))
+            if (e != null && e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Agent) || e.PropertyName == nameof(mContext.Platform))
             {
                 SetRecordButtonAccessebility();
-                if (e.PropertyName == nameof(BusinessFlow))
+                ToggleApplicatoinModels();
+                if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
                 {
                     LoadActionFrame(null); 
                 }                
             }
+        }
+
+        void ToggleApplicatoinModels()
+        {
+            bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
+            bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
+
+            if (POMCompliantPlatform)
+            {
+                xApplicationPOMItemBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xApplicationPOMItemBtn.Visibility = Visibility.Collapsed;
+            }
+
+            if (APICompliantPlatform)
+            {
+                xAPIBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xAPIBtn.Visibility = Visibility.Collapsed;
+            }
+
+            if (APICompliantPlatform || POMCompliantPlatform)
+            {
+                xApplicationModelsBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xApplicationModelsBtn.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         public void ResetAddActionPages()

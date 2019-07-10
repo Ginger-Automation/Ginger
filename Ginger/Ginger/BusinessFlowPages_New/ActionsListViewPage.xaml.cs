@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.ApiModelsFolder;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -166,88 +167,8 @@ namespace GingerWPF.BusinessFlowsLib
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
             {
-                Act instance = null;
-                if (droppedItem is Act)
-                {
-                    Act a = droppedItem as Act;
-                    instance = (Act)a.CreateInstance(true);
-                }
-                else if (droppedItem is ElementInfo)
-                {
-                    ElementInfo elementInfo = droppedItem as ElementInfo;
-                    instance = GenerateRelatedAction(elementInfo);
-                }
-                else if (droppedItem is ApplicationPOMModel)
-                {
-                    ApplicationPOMModel currentPOM = droppedItem as ApplicationPOMModel;
-                    foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
-                    {
-                        HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
-                        instance = GenerateRelatedAction(htmlElementInfo);
-                        if (instance != null)
-                        {
-                            instance.Active = true;
-                            AddGeneratedAction(instance);
-                        }
-                    }
-                    instance = null;
-                }
-                else if (droppedItem is ApplicationAPIModel || droppedItem is RepositoryFolder<ApplicationAPIModel>)
-                {
-                    ObservableList<ApplicationAPIModel> apiModelsList = new ObservableList<ApplicationAPIModel>();
-                    if (droppedItem is RepositoryFolder<ApplicationAPIModel>)
-                    {
-                        apiModelsList = (droppedItem as RepositoryFolder<ApplicationAPIModel>).GetFolderItems();
-                        apiModelsList = new ObservableList<ApplicationAPIModel>(apiModelsList.Where(a => a.TargetApplicationKey != null && Convert.ToString(a.TargetApplicationKey.ItemName) == mContext.Target.ItemName));
-                    }
-                    else
-                    {
-                        apiModelsList.Add(droppedItem as ApplicationAPIModel);
-                    }
-
-                    AddApiModelActionWizardPage APIModelWizPage = new AddApiModelActionWizardPage(mContext, apiModelsList);
-                    WizardWindow.ShowWizard(APIModelWizPage);
-                }
-
-                if (instance != null)
-                {
-                    AddGeneratedAction(instance);
-                }
+                ActionsFactory.AddActionsHandler(droppedItem, mContext);
             }
-        }
-
-        private void AddGeneratedAction(Act instance)
-        {
-            mActivity.Acts.Add(instance);
-
-            int selectedActIndex = -1;
-            if (mActivity.Acts.CurrentItem != null)
-            {
-                selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
-            }
-        }
-
-        private Act GenerateRelatedAction(ElementInfo elementInfo)
-        {
-            Act instance;
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
-            ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-            {
-                LocateBy = eLocateBy.POMElement,
-                LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = "",
-                AddPOMToAction = true,
-                POMGuid = elementInfo.ParentGuid.ToString(),
-                ElementGuid = elementInfo.Guid.ToString(),
-                LearnedElementInfo = elementInfo,
-            };
-
-            instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
-            return instance;
         }
 
         private void xGoToActionsList_Click(object sender, RoutedEventArgs e)
