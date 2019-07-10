@@ -140,12 +140,14 @@ namespace GingerWPF.BusinessFlowsLib
         {
             InitializeComponent();
 
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
             InitAutomatePageRunner();
             UpdateAutomatePageRunner();
-
+           
             LoadBusinessFlowToAutomate(businessFlow);
 
             SetRunSetDBLite(businessFlow);
@@ -394,12 +396,6 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
-                if (AutoRunSetDocumentExistsInLiteDB() && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                {
-                    DeleteRunSetBFRefData();
-                    ClearAutomatedId(businessFlowToLoad);
-                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
-                }
 
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
@@ -407,6 +403,13 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.BusinessFlows.Add(mBusinessFlow);
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
+
+                if (AutoRunSetDocumentExistsInLiteDB() && ExecutionLoggerManager.RunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    DeleteRunSetBFRefData();
+                    ClearAutomatedId(businessFlowToLoad);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                }
 
                 if (mBusinessFlow != null)
                 {
