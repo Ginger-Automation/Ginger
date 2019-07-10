@@ -16,11 +16,13 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void StartRecording(bool learnAdditionalChanges = false)
         {
             i = 0;
-            LearnAdditionalDetails = learnAdditionalChanges;
-            mGetRecordingTimer = new Timer(1000);
-            mGetRecordingTimer.Elapsed += MGetRecordingTimer_Elapsed;
-            mGetRecordingTimer.Start();
-            //DoRecording();
+            //LearnAdditionalDetails = learnAdditionalChanges;
+            //mGetRecordingTimer = new Timer(1000);
+            //mGetRecordingTimer.Elapsed += MGetRecordingTimer_Elapsed;
+            //mGetRecordingTimer.Start();
+            DoRecording();
+            DoRecording();
+            DoRecording();
         }
 
         private void MGetRecordingTimer_Elapsed(object sender, ElapsedEventArgs e)
