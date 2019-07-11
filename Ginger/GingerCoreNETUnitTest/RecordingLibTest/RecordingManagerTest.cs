@@ -22,7 +22,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void TestInitialize()
         {
             Context = new Context();
-            TestPlatform webPlatformInfo = new TestPlatform();
             mDriver = new TestDriver();
             PlatformInfo = new TestPlatform();
             mBF = new BusinessFlow() { Name = "TestRecordingBF", Active = true };
@@ -48,7 +47,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 //Act
                 mngr.StartRecording();
-                Thread.Sleep(2000);
                 mngr.StopRecording();
             }
 
@@ -72,7 +70,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 //Act
                 mngr.StartRecording();
-                Thread.Sleep(3000);
                 mngr.StopRecording();
             }
 
@@ -106,7 +103,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             {
                 //Act
                 mngr.StartRecording();
-                Thread.Sleep(3000);
                 mngr.StopRecording();
             }
 

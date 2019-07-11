@@ -161,9 +161,9 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!
+            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!!
 
-            Console.WriteLine("Starting Service...");
+            Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
@@ -195,8 +195,8 @@ namespace Amdocs.Ginger.Repository
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
-                 procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                 procStartInfo.UseShellExecute = true;               
+                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+                procStartInfo.UseShellExecute = true;
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
@@ -214,7 +214,7 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Starting Process..");
+            Console.WriteLine("Starting Process..");            
             proc.Start();            
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
@@ -286,8 +286,15 @@ namespace Amdocs.Ginger.Repository
             
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
-            PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
-            return pluginServiceInfo.IsSession;
+            if (pluginServiceInfo != null)
+            {
+                PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
+                return pluginServiceInfo.IsSession;
+            }
+            else
+            {
+                throw new Exception("IsSessionService Error: pluginServiceInfo not found for: " + pluginId + "." + serviceId);
+            }
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)

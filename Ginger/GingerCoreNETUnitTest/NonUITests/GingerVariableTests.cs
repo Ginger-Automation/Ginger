@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -59,8 +58,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            Agent a = new Agent();            
+            a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
@@ -100,9 +99,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, newValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual(newValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -126,9 +125,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, initialValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus );
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status );
+            Assert.AreEqual(initialValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -154,8 +153,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(expectedValue, mBF.Activities[0].Variables[0].Value);
             Assert.AreEqual(expectedValue, v1.Value);
         }
