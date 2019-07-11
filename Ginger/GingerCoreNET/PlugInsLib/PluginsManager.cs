@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -215,7 +216,8 @@ namespace Amdocs.Ginger.Repository
             proc.StartInfo = procStartInfo;
 
             Console.WriteLine("Starting Process..");            
-            proc.Start();            
+            proc.Start();
+            Thread.Sleep(3000); // Give the plugin time to connect
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
@@ -230,6 +232,7 @@ namespace Amdocs.Ginger.Repository
             string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify
             string txt = NewName + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
             string fileName = Path.GetTempFileName();
+            Console.WriteLine("CreateNodeConfigFile content= " + txt);
             File.WriteAllText(fileName, txt);
             return fileName;
         }

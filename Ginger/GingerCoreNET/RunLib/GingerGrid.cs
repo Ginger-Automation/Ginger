@@ -45,9 +45,8 @@ namespace GingerCoreNET.RunLib
         /// </summary>
         public GingerGrid()
         {           
-            // !!!!!!!!!!!!!!!!!!!!!!
-            // mPort = SocketHelper.GetOpenPort(); // Fix me later to get random free port when we need several Gingers running on same machine
-            mPort = 15001;
+             mPort = SocketHelper.GetOpenPort(); 
+            //  mPort = 15001;
         }
 
         public void Start()
