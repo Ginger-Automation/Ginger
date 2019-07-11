@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -20,16 +21,13 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         private SolutionRepository sr;
 
 
-        //TODO: use test class init
-        public WebReportTest()
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext TestContext)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
             string jsonfilepath = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
-            OpenSolution(@jsonfilepath);
-            WorkSpace.Instance.Solution = (Solution)(ISolution)sr.RepositorySerializer.DeserializeFromFile(Path.Combine(sr.SolutionFolder, "Ginger.Solution.xml"));
+            WorkspaceHelper.CreateWorkspaceAndOpenSolution("WebReportTest" , jsonfilepath);
+            
+            // WorkSpace.Instance.Solution = (Solution)(ISolution)sr.RepositorySerializer.DeserializeFromFile(Path.Combine(sr.SolutionFolder, "Ginger.Solution.xml"));
         }
 
         [TestMethod]

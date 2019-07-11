@@ -1825,7 +1825,7 @@ namespace Ginger.Run
                             {
                                 GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
                                 if (GNI != null)
-                                {
+                                {                                    
                                     ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
                                 }
                             }
