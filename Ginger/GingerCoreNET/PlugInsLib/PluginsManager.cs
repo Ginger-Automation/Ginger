@@ -196,11 +196,22 @@ namespace Amdocs.Ginger.Repository
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
+                Console.WriteLine("*** OS is Windows ***");
+                
+
                 procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
                 procStartInfo.UseShellExecute = true;
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
+                Console.WriteLine("*** OS is Windows ***");
+                var output = ShellHelper.Bash("ps aux");
+                Console.WriteLine("=====================================================================");
+                Console.WriteLine("ps aux result=");                
+                Console.WriteLine(output);
+                Console.WriteLine("=====================================================================");
+
+
                 // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
                 cmd = "-c \"'dotnet " + dll + " " + nodeFileName + "'\"";  // test for Ubunto
                 Console.WriteLine("Command: " + cmd);
