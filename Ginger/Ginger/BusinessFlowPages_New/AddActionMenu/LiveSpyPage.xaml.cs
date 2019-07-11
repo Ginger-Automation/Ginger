@@ -65,6 +65,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xWinGridUC.mContext = mContext;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethod();
+            AgentBasedManipulations();
             InitWinGridUC();
             InitControlPropertiesGridView();
         }
@@ -88,15 +89,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xSpyingButton.IsEnabled = false;
             xStartAgentMessage.Visibility = Visibility.Visible;
             ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        void AgentBasedManipulations()
+        {
             if (mContext.Agent != null)
             {
-                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if (isAgentRunning)
                 {
                     xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;                                       
+                    xWinGridUC.IsEnabled = true;
 
-                    if(ControlPropertiesGrid.DataSourceList != null)
+                    if (ControlPropertiesGrid.DataSourceList != null)
                     {
                         ControlPropertiesGrid.Visibility = Visibility.Visible;
                     }
@@ -139,9 +144,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus))
+            if (e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
             {
                 InitMethod();
+                AgentBasedManipulations();
                 if (xWinGridUC.mWindowExplorerDriver == null)
                 {
                     xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;

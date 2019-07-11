@@ -39,16 +39,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
-            InitMethods();
+
+            SetControlsVisibility();
+            AgentBasedManipulations();
+            SetRecordingButtonText();
+
             SetMultiplePropertiesGridView();
         }
-              
-        private void InitMethods()
-        {
-            SetControlsVisibility();
-            SetRecordingButtonText();         
-        }
-        
+
         /// <summary>
         /// Context Property changed event
         /// </summary>
@@ -56,20 +54,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && (e.PropertyName == nameof(Context.BusinessFlow) ||
-                              e.PropertyName == nameof(Context.Activity) ||
-                              e.PropertyName == nameof(Context.AgentStatus) ||
-                              e.PropertyName == nameof(Context.Agent) ||
+            if (e != null && e.PropertyName == nameof(Context.Activity) ||
                               e.PropertyName == nameof(Context.Target) ||
-                              e.PropertyName == nameof(Context.Platform)))
+                              e.PropertyName == nameof(Context.Platform))
             {
                 if (IsRecording)
                 {
                     IsRecording = !IsRecording;
                     StopRecording();
                 }
-                InitMethods();
-            }            
+                SetControlsVisibility();
+                SetRecordingButtonText();
+            }
+
+            if(e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
+            {
+                AgentBasedManipulations();
+            }
         }
 
         private void SetMultiplePropertiesGridView()
@@ -101,23 +102,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
             AddSelectedPOM(selectedPOMs);
         }
-        
+
         private void SetControlsVisibility()
         {
             gridPOMListItems.Visibility = Visibility.Hidden;
             xWinGridUC.IsEnabled = false;
             xRecordingButton.IsEnabled = false;
             xStartAgentMessage.Visibility = Visibility.Visible;
-            xPOMPanel.Visibility = Visibility.Hidden;            
+            xPOMPanel.Visibility = Visibility.Hidden;
+        }
 
+        private void AgentBasedManipulations()
+        {
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
-            {          
-                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-                if(isAgentRunning)
-                {                    
+            {
+                bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;         //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                if (isAgentRunning)
+                {
                     xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;                    
+                    xWinGridUC.IsEnabled = true;
                 }
+
+                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
 
                 if ((xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null) || xWinGridUC.mWindowExplorerDriver != mWindowExplorerDriver)
                 {
@@ -129,14 +135,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
                             xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
-                        } 
+                        }
                     }
                     else
                     {
                         xWinGridUC.WindowsComboBox.ItemsSource = null;
                     }
                 }
-                else if(xWinGridUC.WindowsComboBox.ItemsSource == null)
+                else if (xWinGridUC.WindowsComboBox.ItemsSource == null)
                 {
                     xWinGridUC.UpdateWindowsList();
                 }
@@ -180,7 +186,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
-                InitMethods();
+                SetControlsVisibility();
+                SetRecordingButtonText();
             }
         }
         
@@ -287,7 +294,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            InitMethods();
+            SetControlsVisibility();
+            AgentBasedManipulations();
+            SetRecordingButtonText();
         }
     }    
 }
