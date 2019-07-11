@@ -115,7 +115,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(300000)]
         public void SpeedTest()
         {
             //Arrange
