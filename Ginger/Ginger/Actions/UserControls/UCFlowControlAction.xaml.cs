@@ -331,7 +331,7 @@ namespace Ginger.Actions.UserControls
                                 {
                                     activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == FC.GetGuidFromValue(true)).FirstOrDefault();
                                 }
-                                else
+                                else if(activityLinkedToFC==null)
                                 {
                                     if(FC.GetNameFromValue(true) != null)
                                     {
