@@ -1023,5 +1023,21 @@ namespace GingerCore
             }
         }
 
+        public override void PostSerialization()
+        {
+
+            if(DriverType == eDriverType.WindowsAutomation)
+            {
+                //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
+                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
+
+                if (actionTimeoutParameter!=null && actionTimeoutParameter.Value== "10" && actionTimeoutParameter.Description.Contains("10"))
+                {
+                    actionTimeoutParameter.Value = "30";
+                    actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
+                }
+            }          
+        }
+
     }
 }
