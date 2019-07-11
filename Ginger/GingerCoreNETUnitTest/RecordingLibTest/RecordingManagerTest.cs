@@ -10,6 +10,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
 {
+    [Ignore]
     [TestClass]
     public class RecordingManagerTest
     {
