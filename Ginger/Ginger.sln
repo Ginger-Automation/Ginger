@@ -77,9 +77,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLDatabase", "MySQLDatab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLTests", "MySQLTests\MySQLTests.csproj", "{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouchBase", "CouchBase\CouchBase.csproj", "{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CouchBase", "CouchBase\CouchBase.csproj", "{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostgreSQL", "PostgreSQL\PostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostgreSQL", "PostgreSQL\PostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oracle", "Oracle\Oracle.csproj", "{350B5A70-69A8-433B-8510-AFEAD47BD449}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -280,6 +282,12 @@ Global
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{350B5A70-69A8-433B-8510-AFEAD47BD449}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,29 +1,36 @@
 ﻿using Amdocs.Ginger.Common;
 using GingerCore;
-using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PostgreSQL
+namespace Oracle
 {
-    public class PostgreSQLConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class OracleConnection : Amdocs.Ginger.CoreNET.IDatabase
     {
         private DbConnection oConn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+        string ConnectionString = null;
+        string User = null;
+        string Password = null;
+        string TNS = null;
+
         public string GetConnectionString(Dictionary<string, string> parameters)
         {
+             ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
+             User = parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
+             Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
+             TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
+            
             string connStr = null;
             bool res;
             res = false;
-            string ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
-            string User = parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
-            string Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
-            string TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
-            string Name = parameters.FirstOrDefault(pair => pair.Key == "Name").Value;
 
             if (String.IsNullOrEmpty(ConnectionString) == false)
             {
@@ -38,32 +45,57 @@ namespace PostgreSQL
             else
             {
                 String strConnString = TNS;
-               
+                String strProvider;
                 connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
                 String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
-                string[] host = TNS.Split(':');
-                if (host.Length == 2)
-                {
-                    connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], User, deCryptValue, Name);
-                }
-                else
-                {
-                    connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNS, User, deCryptValue, Name);
-                }
-            }
 
+                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
+                else { connStr = connStr + "Password=" + Password + ";"; }
+            }
             return connStr;
+        }
+        public static string GetMissingDLLErrorDescription()
+        {
+            string message = "Connect to the DB failed." + Environment.NewLine + "The file Oracle.ManagedDataAccess.dll is missing," + Environment.NewLine + "Please download the file, place it under the below folder, restart Ginger and retry." + Environment.NewLine + AppDomain.CurrentDomain.BaseDirectory + Environment.NewLine + "Links to download the file:" + Environment.NewLine + "https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149" + Environment.NewLine + "http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html";
+            return message;
         }
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
-            KeyvalParamatersList = parameters;
-            string connectConnectionString = GetConnectionString(parameters);
-            oConn = new NpgsqlConnection(connectConnectionString);
-            oConn.Open();
+            DbProviderFactory factory;
+            try
+            {
+                var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
+                var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
+                object[] param = new object[1];
+                param[0] = ConnectionString;
+                dynamic c = Activator.CreateInstance(class1Type, param);
+                oConn = (DbConnection)c;
+                oConn.Open();
+            }
+            catch (Exception e)
+            {
+                String Temp = e.Message;
+                //if (Temp.Contains ("ORA-03111"))
+                if (Temp.Contains("ORA-03111") || Temp.Contains("ORA-01017"))
+                {
+                    factory = DbProviderFactories.GetFactory("System.Data.OleDb");
+                    oConn = factory.CreateConnection();
+                    oConn.ConnectionString = "Provider=msdaora;" + ConnectionString;
+                    oConn.Open();
+                }
+                else if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll"))
+                {
+
+                    throw new Exception(GetMissingDLLErrorDescription());
+                }
+                else
+                {
+                    throw e;
+                }
+            }
             return true;
         }
-
         public void CloseConnection()
         {
             try
@@ -100,7 +132,7 @@ namespace PostgreSQL
                 {
                     DbCommand command = oConn.CreateCommand();
                     command.CommandText = Query;
-                   
+
                     // Retrieve the data.
                     reader = command.ExecuteReader();
 
@@ -135,7 +167,7 @@ namespace PostgreSQL
                 if (reader != null)
                     reader.Close();
             }
-            return ReturnList; 
+            return ReturnList;
         }
 
         public int GetRecordCount(string Query)
@@ -150,7 +182,7 @@ namespace PostgreSQL
                 {
                     DbCommand command = oConn.CreateCommand();
                     command.CommandText = sql;
-                   
+
                     // Retrieve the data.
                     reader = command.ExecuteReader();
                     while (reader.Read())
@@ -185,7 +217,7 @@ namespace PostgreSQL
                 {
                     DbCommand command = oConn.CreateCommand();
                     command.CommandText = sql;
-                   
+
                     // Retrieve the data.
                     reader = command.ExecuteReader();
                     while (reader.Read())
@@ -239,7 +271,6 @@ namespace PostgreSQL
             finally
             {
                 reader.Close();
-
             }
             return rc;
         }
@@ -260,7 +291,7 @@ namespace PostgreSQL
         public string RunUpdateCommand(string updateCmd, bool commit = true)
         {
             string result = "";
-          
+
             using (DbCommand command = oConn.CreateCommand())
             {
                 try
