@@ -193,7 +193,7 @@ namespace Amdocs.Ginger.Repository
             Console.WriteLine("Creating Process..");
 
             // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
-            System.Diagnostics.ProcessStartInfo procStartInfo = null;
+            // System.Diagnostics.ProcessStartInfo procStartInfo = null;
 
             System.Diagnostics.Process proc = ShellHelper.Dotnet(cmd);
 

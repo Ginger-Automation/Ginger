@@ -13,13 +13,14 @@ public static class ShellHelper
         if (GingerUtils.OperatingSystem.IsWindows())
         {
             Console.WriteLine("*** OS is Windows ***");
-            procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + args);
+            procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c dotnet " + args);
             procStartInfo.UseShellExecute = true;
         }
         else if (GingerUtils.OperatingSystem.IsLinux())
         {
+
             Console.WriteLine("*** OS is Linux ***");
-            var output = ShellHelper.Bash(args);
+            var output = ShellHelper.Bash("dotnet --version");
             Console.WriteLine("=====================================================================");
             Console.WriteLine("<<<<<<<<<<<<<<<          Shell result                    >>>>>>>>>>>>");
             
@@ -28,8 +29,8 @@ public static class ShellHelper
 
 
             // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
-            string cmd = args = "-c \"'dotnet " + args;  
-            Console.WriteLine("Command: " + args);
+            string cmd = args = "-c \"" + "dotnet " + args +  "\"";  
+            Console.WriteLine("Command: " + cmd);
             procStartInfo = new System.Diagnostics.ProcessStartInfo();
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
