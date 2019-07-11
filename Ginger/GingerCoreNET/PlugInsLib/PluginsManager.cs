@@ -195,48 +195,48 @@ namespace Amdocs.Ginger.Repository
             // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
             System.Diagnostics.ProcessStartInfo procStartInfo = null;
 
-            ShellHelper.Dotnet(cmd);
+            System.Diagnostics.Process proc = ShellHelper.Dotnet(cmd);
 
-            if (GingerUtils.OperatingSystem.IsWindows())
-            {
-                Console.WriteLine("*** OS is Windows ***");
+            //if (GingerUtils.OperatingSystem.IsWindows())
+            //{
+            //    Console.WriteLine("*** OS is Windows ***");
                 
 
-                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                procStartInfo.UseShellExecute = true;
-            }
-            else if (GingerUtils.OperatingSystem.IsLinux())
-            {
-                Console.WriteLine("*** OS is Linux ***");
-                // var output = ShellHelper.Bash("ps aux");
-                var output = ShellHelper.Bash("dotnet " + cmd);
-                Console.WriteLine("=====================================================================");
-                Console.WriteLine("shell result=");                
-                Console.WriteLine(output);
-                Console.WriteLine("=====================================================================");
+            //    procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+            //    procStartInfo.UseShellExecute = true;
+            //}
+            //else if (GingerUtils.OperatingSystem.IsLinux())
+            //{
+            //    Console.WriteLine("*** OS is Linux ***");
+            //    // var output = ShellHelper.Bash("ps aux");
+            //    var output = ShellHelper.Bash("dotnet " + cmd);
+            //    Console.WriteLine("=====================================================================");
+            //    Console.WriteLine("shell result=");                
+            //    Console.WriteLine(output);
+            //    Console.WriteLine("=====================================================================");
 
 
-                // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
-                cmd = "-c \"'dotnet " + dll + " " + nodeFileName + "'\"";  // test for Ubunto
-                Console.WriteLine("Command: " + cmd);
-                procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = false;
-                procStartInfo.RedirectStandardOutput = true;
-            }
+            //    // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
+            //    cmd = "-c \"'dotnet " + dll + " " + nodeFileName + "'\"";  // test for Ubunto
+            //    Console.WriteLine("Command: " + cmd);
+            //    procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
+            //    procStartInfo.UseShellExecute = false;
+            //    procStartInfo.CreateNoWindow = false;
+            //    procStartInfo.RedirectStandardOutput = true;
+            //}
             
-            // TODO: Make it config not to show the console window
-            // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            //// TODO: Make it config not to show the console window
+            //// procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
+            //System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            //proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Starting Process..");            
-            proc.Start();
-            // Thread.Sleep(3000); // Give the plugin time to connect
+            //Console.WriteLine("Starting Process..");            
+            //proc.Start();
+            //// Thread.Sleep(3000); // Give the plugin time to connect
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
-            Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
+            Console.WriteLine("Plugin Running on the Process ID: " + proc.Id);
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }

@@ -7,7 +7,7 @@ public static class ShellHelper
     /// Shell and create new process which runs dotent and the args
     /// </summary>
     /// <param name="args"></param>
-    public static void Dotnet(string args)
+    public static Process Dotnet(string args)
     {
         System.Diagnostics.ProcessStartInfo procStartInfo = null;
         if (GingerUtils.OperatingSystem.IsWindows())
@@ -39,11 +39,12 @@ public static class ShellHelper
             procStartInfo.RedirectStandardOutput = true;
         }
 
-        System.Diagnostics.Process proc = new System.Diagnostics.Process();
-        proc.StartInfo = procStartInfo;
+        Process process = new System.Diagnostics.Process();
+        process.StartInfo = procStartInfo;
 
         Console.WriteLine("Starting Process..");
-        proc.Start();
+        process.Start();
+        return process;
     }
 
 
