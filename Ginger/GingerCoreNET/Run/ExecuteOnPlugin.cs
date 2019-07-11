@@ -249,6 +249,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 if (!string.IsNullOrEmpty(error))
                 {
                     actPlugin.Error += error;
+                    actPlugin.Status = Execution.eRunStatus.Failed;
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
