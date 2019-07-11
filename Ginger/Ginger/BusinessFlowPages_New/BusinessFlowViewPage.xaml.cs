@@ -22,17 +22,15 @@ using Amdocs.Ginger.Common.Repository;
 using Ginger;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
-using Ginger.BusinessFlowLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
-using Ginger.Functionalities;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -48,6 +46,8 @@ namespace GingerWPF.BusinessFlowsLib
         ActivitiesListViewPage mActivitiesPage;
         VariabelsListViewPage mVariabelsPage;
         BusinessFlowConfigurationsPage mConfigurationsPage;
+
+        GenericWindow mGenericWin = null;
 
         public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
@@ -68,6 +68,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControlsContent()
         {
+            //if (mPageViewMode != Ginger.General.eRIPageViewMode.Standalone)
+            //{
+            //    xAutomateBtn.Visibility = Visibility.Collapsed;
+            //    xAutomateSplitter.Visibility = Visibility.Collapsed;
+            //}
+
             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
             mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xActivitiesTabFrame.Content = mActivitiesPage;
@@ -76,7 +82,7 @@ namespace GingerWPF.BusinessFlowsLib
             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
             xVariabelsTabFrame.Content = mVariabelsPage;
 
-            mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext);
+            mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
             xConfigurationsTabFrame.Content = mConfigurationsPage;
         }
 
@@ -215,6 +221,90 @@ namespace GingerWPF.BusinessFlowsLib
         {
             Ginger.Export.GingerToCSV.BrowseForFilename();
             Ginger.Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
+        }
+
+        bool mSaveWasDone = false;
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        {
+            string title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            RoutedEventHandler CloseHandler = CloseWinClicked;
+            string closeContent = "Undo & Close";
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            switch (mPageViewMode)
+            {
+                //case Ginger.General.eRIPageViewMode.Automation:
+                //    Button okBtn = new Button();
+                //    okBtn.Content = "Ok";
+                //    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                //    Button undoBtn = new Button();
+                //    undoBtn.Content = "Undo & Close";
+                //    undoBtn.Click += new RoutedEventHandler(undoAndCloseBtn_Click);
+                //    winButtons.Add(undoBtn);
+                //    winButtons.Add(okBtn);
+                //    break;
+
+                case Ginger.General.eRIPageViewMode.Standalone:
+                    mBusinessFlow.SaveBackup();
+                    title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    Button saveBtn = new Button();
+                    saveBtn.Content = "Save";
+                    saveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+                    Button undoBtnSr = new Button();
+                    undoBtnSr.Content = "Undo & Close";
+                    undoBtnSr.Click += new RoutedEventHandler(UndoAndCloseBtn_Click);
+                    winButtons.Add(undoBtnSr);
+                    winButtons.Add(saveBtn);
+                    break;
+
+                case Ginger.General.eRIPageViewMode.View:
+                    title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                    Button okBtnView = new Button();
+                    okBtnView.Content = "Ok";
+                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
+                    winButtons.Add(okBtnView);
+                    CloseHandler = new RoutedEventHandler(okBtn_Click);
+                    closeContent = okBtnView.Content.ToString();
+                    break;
+            }
+
+            GingerCore.General.LoadGenericWindow(ref mGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, CloseHandler, startupLocationWithOffset: startupLocationWithOffset);
+            return mSaveWasDone;
+        }
+
+        private void CloseWinClicked(object sender, EventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                UndoChanges();
+                mGenericWin.Close();
+            }
+        }
+
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (SharedRepositoryOperations.CheckIfSureDoingChange(mBusinessFlow, "change") == true)
+            {
+                mSaveWasDone = true;
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                mGenericWin.Close();
+            }
+        }
+
+        private void UndoAndCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChanges();
+            mGenericWin.Close();
+        }
+
+        private void UndoChanges()
+        {
+            Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true);
+        }
+
+        private void okBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //OKButtonClicked = true;
+            mGenericWin.Close();
         }
     }
 }

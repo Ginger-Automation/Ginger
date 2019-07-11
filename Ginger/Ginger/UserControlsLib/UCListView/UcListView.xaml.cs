@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -450,7 +451,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 xListOperationsPnl.Visibility = Visibility.Visible;
 
-                foreach (ListItemOperation operation in listOperations)
+                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
@@ -488,7 +489,8 @@ namespace Ginger.UserControlsLib.UCListView
                     xListOperationsPnl.Children.Add(operationBtn);
                 }
             }
-            else
+
+            if (xListOperationsPnl.Children.Count == 0)
             {
                 xListOperationsPnl.Visibility = Visibility.Collapsed;
             }
@@ -500,7 +502,7 @@ namespace Ginger.UserControlsLib.UCListView
             if (extraOperations != null && extraOperations.Count > 0)
             {
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in extraOperations)
+                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -573,7 +575,8 @@ namespace Ginger.UserControlsLib.UCListView
                     }
                 }
             }
-            else
+
+            if (((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Count == 0)
             {
                 xListExtraOperationsMenu.Visibility = Visibility.Collapsed;
             }
@@ -653,7 +656,7 @@ namespace Ginger.UserControlsLib.UCListView
             List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
             if (groupOperations != null && groupOperations.Count > 0)
             {
-                foreach (ListItemGroupOperation operation in groupOperations)
+                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");

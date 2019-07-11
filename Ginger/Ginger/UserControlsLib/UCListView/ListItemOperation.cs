@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common.Enums;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -24,6 +25,6 @@ namespace Ginger.UserControlsLib.UCListView
 
         public RoutedEventHandler OperationHandler;
 
-
+        public List<General.eRIPageViewMode> SupportedViews = new List<General.eRIPageViewMode>();
     }
 }

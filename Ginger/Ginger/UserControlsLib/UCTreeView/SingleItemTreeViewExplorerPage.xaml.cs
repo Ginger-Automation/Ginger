@@ -55,6 +55,7 @@ namespace GingerWPF.UserControlsLib
 
             if(treeItemDoubleClickHandler != null)
             {
+                xTreeView.Tree.ItemDoubleClick -= treeItemDoubleClickHandler;
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             }                
         }       

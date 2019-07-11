@@ -74,17 +74,20 @@ namespace Ginger.Agents
 
         private void RefreshApplicationAgentsList()
         {
-            ApplicationAgents = new ObservableList<ApplicationAgent>();
-
-            foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
+            this.Dispatcher.Invoke(() =>
             {
-                if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
-                {
-                    ApplicationAgents.Add(Apag);
-                }
-            }
+                ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-            xAppAgentsListBox.ItemsSource = ApplicationAgents;
+                foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
+                {
+                    if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                    {
+                        ApplicationAgents.Add(Apag);
+                    }
+                }
+
+                xAppAgentsListBox.ItemsSource = ApplicationAgents;
+            });
         }
 
         private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)

@@ -38,13 +38,15 @@ namespace GingerWPF.BusinessFlowsLib
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
-        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context)
+        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
             mContext = context;
+            mPageViewMode = pageViewMode;
 
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
             TrackBusinessFlowAutomationPrecentage();
@@ -98,6 +100,19 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControls()
         {
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                xNameTxtBox.IsEnabled = false;
+                xDescriptionTxt.IsEnabled = false;
+                xTagsViewer.IsEnabled = false;
+                xRunDescritpion.IsEnabled = false;
+                xStatusComboBox.IsEnabled = false;
+                xCreatedByTextBox.IsEnabled = false;
+                xAutoPrecentageTextBox.IsEnabled = false;
+                xTargetsListBox.IsEnabled = false;
+                xAddTargetBtn.IsEnabled = false;
+            }
+
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);

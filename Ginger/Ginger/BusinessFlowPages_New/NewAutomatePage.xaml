@@ -126,14 +126,14 @@
                                     <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
                                 </MenuItem.Header>
                             </MenuItem>
-                            <MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
+                            <!--<MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Produce Last Executed Item Report" />
                                 </MenuItem.Header>
-                            </MenuItem>
+                            </MenuItem>-->
                             <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />

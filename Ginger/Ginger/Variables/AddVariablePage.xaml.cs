@@ -65,7 +65,7 @@ namespace Ginger.Variables
             xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
 
             mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.SharedReposiotry);
             xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
             xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
             xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
@@ -79,7 +79,15 @@ namespace Ginger.Variables
 
         private void XSharedRepoTabListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            AddSharedRepoVariables();
+            if (xSharedRepoTabListView.CurrentItem != null)
+            {
+                VariableEditPage w = new VariableEditPage((VariableBase)xSharedRepoTabListView.CurrentItem, mContext, false, VariableEditPage.eEditMode.SharedRepository);
+                w.ShowAsWindow(eWindowShowStyle.Dialog);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
+            }
         }
 
         private ObservableList<VariableBase> LoadLibraryVarsList()

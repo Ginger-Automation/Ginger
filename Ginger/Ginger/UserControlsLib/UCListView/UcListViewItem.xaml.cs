@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -230,7 +231,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (operations != null && operations.Count > 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in operations)
+                    foreach (ListItemOperation operation in operations.Where(x=>x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
                         operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
@@ -268,7 +269,8 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                else
+                
+                if (xItemOperationsPnl.Children.Count == 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
                 }
@@ -283,7 +285,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (extraOperations != null && extraOperations.Count > 0)
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in extraOperations)
+                    foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         MenuItem menuitem = new MenuItem();
                         menuitem.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
@@ -357,7 +359,8 @@ namespace Ginger.UserControlsLib.UCListView
                         }
                     }
                 }
-                else
+
+                if (((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Count == 0)
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
                 }
@@ -373,7 +376,7 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xOperationsSplitter.Visibility = Visibility.Visible;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in executionOperations)
+                    foreach (ListItemOperation operation in executionOperations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
                         operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
@@ -413,7 +416,8 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemExecutionOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                else
+
+                if (xItemExecutionOperationsPnl.Children.Count == 0)
                 {
                     xOperationsSplitter.Visibility = Visibility.Collapsed;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;

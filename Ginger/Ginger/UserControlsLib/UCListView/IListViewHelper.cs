@@ -6,6 +6,8 @@ namespace Ginger.UserControlsLib.UCListView
     {        
         UcListView ListView { get; set; }
 
+        General.eRIPageViewMode PageViewMode { get; set; }
+
         void SetItem(object item);
 
         string GetItemNameField();

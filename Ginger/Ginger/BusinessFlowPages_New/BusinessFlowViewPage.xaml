@@ -49,14 +49,14 @@
                             <MenuItem.Header>
                                 <GingerCore:ucTextDicResource Text="Export [BusinessFlow]" />
                             </MenuItem.Header>
-                            <MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
+                            <!--<MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
                                 </MenuItem.Header>
-                            </MenuItem>
+                            </MenuItem>-->
                             <MenuItem x:Name="xExportToCSVMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToCSVMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="CSV" SetAsFontImageWithSize="16" />
@@ -69,7 +69,7 @@
                     </MenuItem>
                 </Menu>
             </StackPanel>
-            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
+            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
             <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                 <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate"  ButtonImageType="Automate"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xAutomate_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}">
                     <UserControls:ucButton.ToolTip>

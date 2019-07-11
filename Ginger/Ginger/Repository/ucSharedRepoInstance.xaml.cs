@@ -114,7 +114,7 @@ namespace Ginger
         {
             //TODO find a way to make in generic
             if (mLinkedRepoItem is Activity)
-                (new BusinessFlowWindows.ActivityEditPage((Activity)mLinkedRepoItem, General.eRIPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
+                (new GingerWPF.BusinessFlowsLib.ActivityPage((Activity)mLinkedRepoItem, new Context(), General.eRIPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
             else if (mLinkedRepoItem is VariableBase)
                 (new VariableEditPage((VariableBase)mLinkedRepoItem, null, false, VariableEditPage.eEditMode.SharedRepository)).ShowAsWindow(eWindowShowStyle.Dialog, startupLocationWithOffset: true);
             else if (mLinkedRepoItem is Act)
