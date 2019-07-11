@@ -204,8 +204,9 @@ namespace Amdocs.Ginger.Repository
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
-                Console.WriteLine("*** OS is Windows ***");
-                var output = ShellHelper.Bash("ps aux");
+                Console.WriteLine("*** OS is Linux ***");
+                // var output = ShellHelper.Bash("ps aux");
+                var output = ShellHelper.Bash("dotnet --version");
                 Console.WriteLine("=====================================================================");
                 Console.WriteLine("ps aux result=");                
                 Console.WriteLine(output);
