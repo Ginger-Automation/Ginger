@@ -112,6 +112,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         }
 
+        public void ResetAddActionPages()
+        {
+            mRecordPage = null;
+            mSharedRepositoryNavPage = null;
+            mPOMNavPage = null;
+            mActionsLibraryNavPage = null;
+            mLiveSpyNavPage = null;
+            mWindowsExplorerNavPage = null;
+            mAPINavPage = null;
+        }
+
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
         {
             if ((sender as Frame).Content == null)
