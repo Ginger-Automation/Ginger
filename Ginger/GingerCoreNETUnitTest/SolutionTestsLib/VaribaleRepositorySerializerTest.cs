@@ -49,7 +49,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             return varList;
         }
 
-        public static void SetVarList(ObservableList<VariableBase> value)
+        public void SetVarList(ObservableList<VariableBase> value)
         {
             varList = value;
         }
