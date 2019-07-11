@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -41,14 +40,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            EmptyTempActionLogFolder();
-            WorkSpace.Init(new WorkSpaceEventHandler());
+            EmptyTempActionLogFolder();            
+            WorkspaceHelper.CreateWorkspace2("GingerRunnerActionLogTest");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            //
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
         [TestInitialize]

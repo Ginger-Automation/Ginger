@@ -23,11 +23,12 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
@@ -40,9 +41,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {
-            DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws);
+        {            
+            WorkspaceHelper.CreateDummyWorkSpace("SolutionRepositoryPluginTest");            
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
@@ -75,9 +75,13 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 ///  TODO: fixme
                 // proxy.Shutdown();
             }
-            
+
+            WorkspaceHelper.ReleaseWorkspace();
+
         }
 
+
+        
 
         [TestInitialize]
         public void TestInitialize()

@@ -232,6 +232,7 @@ namespace Amdocs.Ginger.Repository
             string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify
             string txt = NewName + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
             string fileName = Path.GetTempFileName();
+            Console.WriteLine("CreateNodeConfigFile content= " + txt);
             File.WriteAllText(fileName, txt);
             return fileName;
         }
