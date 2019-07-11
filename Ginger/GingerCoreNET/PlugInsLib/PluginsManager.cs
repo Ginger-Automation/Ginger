@@ -161,9 +161,7 @@ namespace Amdocs.Ginger.Repository
 
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
-        {
-            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!!
-
+        {            
             Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
@@ -172,6 +170,7 @@ namespace Amdocs.Ginger.Repository
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
 
             Console.WriteLine("Loading Plugin Services from JSON...");
+
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
 
@@ -185,14 +184,18 @@ namespace Amdocs.Ginger.Repository
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
+            Console.WriteLine("Plugin dll path: " + dll);
+            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);
+            Console.WriteLine("nodeFileName: " + nodeFileName);
 
-            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);  
-            string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
+            string cmd = "\"" + dll + "\" \"" + nodeFileName + "\"";
 
             Console.WriteLine("Creating Process..");
 
             // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
             System.Diagnostics.ProcessStartInfo procStartInfo = null;
+
+            ShellHelper.Dotnet(cmd);
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
@@ -206,9 +209,9 @@ namespace Amdocs.Ginger.Repository
             {
                 Console.WriteLine("*** OS is Linux ***");
                 // var output = ShellHelper.Bash("ps aux");
-                var output = ShellHelper.Bash("dotnet --version");
+                var output = ShellHelper.Bash("dotnet " + cmd);
                 Console.WriteLine("=====================================================================");
-                Console.WriteLine("ps aux result=");                
+                Console.WriteLine("shell result=");                
                 Console.WriteLine(output);
                 Console.WriteLine("=====================================================================");
 
