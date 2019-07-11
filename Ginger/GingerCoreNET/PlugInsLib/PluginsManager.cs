@@ -201,7 +201,8 @@ namespace Amdocs.Ginger.Repository
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
-                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // FIXME for Ubunto
+                // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
+                cmd = "-c \"'dotnet " + dll + " " + nodeFileName + "'\"";  // test for Ubunto
                 Console.WriteLine("Command: " + cmd);
                 procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
                 procStartInfo.UseShellExecute = false;
@@ -217,7 +218,7 @@ namespace Amdocs.Ginger.Repository
 
             Console.WriteLine("Starting Process..");            
             proc.Start();
-            Thread.Sleep(3000); // Give the plugin time to connect
+            // Thread.Sleep(3000); // Give the plugin time to connect
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
