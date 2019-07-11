@@ -296,22 +296,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mContext.Agent = appAgent.Agent;
                 }
 
-                TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
-                if (tBase != null)
-                {
-                    if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
-                    {
-                        mContext.Target = tBase;
-                        mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                             where x.AppName == mContext.Activity.TargetApplication
-                                             select x.Platform).FirstOrDefault();
-                    }
-                }
-                else
-                {
-                    mContext.Target = null;
-                    mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
-                }
+                UpdateTargetAndPlatform();
 
                 if (mContext.Agent != null)
                 {
@@ -322,6 +307,26 @@ namespace GingerWPF.BusinessFlowsLib
             else
             {
                 mContext.Agent = null;
+            }
+        }
+
+        private void UpdateTargetAndPlatform()
+        {
+            TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (tBase != null)
+            {
+                if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
+                {
+                    mContext.Target = tBase;
+                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                         where x.AppName == mContext.Activity.TargetApplication
+                                         select x.Platform).FirstOrDefault();
+                }
+            }
+            else
+            {
+                mContext.Target = null;
+                mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
             }
         }
 
@@ -972,6 +977,10 @@ namespace GingerWPF.BusinessFlowsLib
                 if (WorkSpace.Instance.Solution == null)
                 {
                     DoCleanUp();
+
+                    if (mAddActionMainPage != null)
+                        mAddActionMainPage.ResetAddActionPages();
+
                     return;
                 }
 
