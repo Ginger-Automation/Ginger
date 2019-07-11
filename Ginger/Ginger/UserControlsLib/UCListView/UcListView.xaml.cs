@@ -8,6 +8,7 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ namespace Ginger.UserControlsLib.UCListView
     public partial class UcListView : UserControl, IDragDrop, IClipboardOperations
     {
         IObservableList mObjList;
-        CollectionView filteredView;
+        ICollectionView filteredView;
 
         private string mSearchString;
         public ObservableList<Guid> Tags = null;
@@ -136,27 +137,35 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     mObjList = value;
+
+                    xSearchTextBox.Text = "";
+                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
+
+                    if (filteredView != null)
+                    {
+                        CollectFilterData();
+                        //if(filteredView.Filter == null)
+                        filteredView.Filter = LVItemFilter;
+                    }
+
                     this.Dispatcher.Invoke(() =>
                     {
                         xListView.ItemsSource = mObjList;
-                        filteredView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
-                        CollectFilterData();
-                        filteredView.Filter = LVItemFilter;
 
-                        // Make the first row selected
-                        if (value != null && value.Count > 0)
+                            // Make the first row selected
+                            if (value != null && value.Count > 0)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
                             {
                                 mObjList.CurrentItem = value[0];
                             }
                         }
 
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
-                    });                    
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -171,7 +180,6 @@ namespace Ginger.UserControlsLib.UCListView
                     UpdateTitleListCount();
                 }
             }
-
             get
             {
                 return mObjList;
@@ -192,13 +200,13 @@ namespace Ginger.UserControlsLib.UCListView
 
         bool LVItemFilter(object item)
         {
-            if (string.IsNullOrWhiteSpace(xSearchTextBox.Text) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            if (string.IsNullOrWhiteSpace(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
                 return true;
 
             //Filter by search text            
             if (!string.IsNullOrEmpty(mFilterSearchText))
             {
-                return ((item as RepositoryItemBase).ItemName.IndexOf(xSearchTextBox.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+                return ((item as RepositoryItemBase).ItemName.IndexOf(mFilterSearchText, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
             //Filter by Tags            
@@ -326,7 +334,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-       
+
         public Visibility ListTitleVisibility
         {
             get
@@ -386,7 +394,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetSourceCurrentItemAsListSelectedItem();
             }
-            
+
             //e.Handled = true;
         }
 
@@ -562,7 +570,7 @@ namespace Ginger.UserControlsLib.UCListView
                             ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(groupMenuitem);
                             groupMenuitem.Items.Add(menuitem);
                         }
-                    }                    
+                    }
                 }
             }
             else
@@ -631,13 +639,13 @@ namespace Ginger.UserControlsLib.UCListView
             //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
             //}
         }
-        
+
         private void DoGrouping()
         {
             mGroupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription(mGroupByProperty);
             mGroupView.GroupDescriptions.Clear();
-            mGroupView.GroupDescriptions.Add(groupDescription);            
+            mGroupView.GroupDescriptions.Add(groupDescription);
         }
 
         private void SetGroupOperations(Menu menu)
@@ -659,7 +667,7 @@ namespace Ginger.UserControlsLib.UCListView
                     menuitem.Click += operation.OperationHandler;
 
                     menuitem.Tag = menu.Tag;
-                    
+
                     if (string.IsNullOrEmpty(operation.Group))
                     {
                         ((MenuItem)menu.Items[0]).Items.Add(menuitem);
@@ -708,15 +716,26 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
-       {
-            // this inner method checks if user is still typing
-            async Task<bool> UserKeepsTyping()
+        {
+            if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
-                string txt = xSearchTextBox.Text;
-                await Task.Delay(1000);
-                return txt != xSearchTextBox.Text;
+                xSearchClearBtn.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
             }
-            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+            else
+            {
+                xSearchClearBtn.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Collapsed;
+
+                // this inner method checks if user is still typing
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = xSearchTextBox.Text;
+                    await Task.Delay(1000);
+                    return txt != xSearchTextBox.Text;
+                }
+                if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+            }
 
             mSearchString = xSearchTextBox.Text;
             CollectFilterData();
@@ -725,8 +744,6 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
-            xSearchClearBtn.Visibility = Visibility.Collapsed;
-            xSearchBtn.Visibility = Visibility.Visible;
             xSearchTextBox.Text = "";
             mSearchString = null;
         }
@@ -778,22 +795,22 @@ namespace Ginger.UserControlsLib.UCListView
     }
 
     public class UcListViewEventArgs
+    {
+        public enum eEventType
         {
-            public enum eEventType
-            {
-                ExpandAllItems,
-                ExpandItem,
-                CollapseAllItems,
-                UpdateIndex,
-            }
+            ExpandAllItems,
+            ExpandItem,
+            CollapseAllItems,
+            UpdateIndex,
+        }
 
-            public eEventType EventType;
-            public Object EventObject;
+        public eEventType EventType;
+        public Object EventObject;
 
-            public UcListViewEventArgs(eEventType eventType, object eventObject = null)
-            {
-                this.EventType = eventType;
-                this.EventObject = eventObject;
-            }
-        }    
+        public UcListViewEventArgs(eEventType eventType, object eventObject = null)
+        {
+            this.EventType = eventType;
+            this.EventObject = eventObject;
+        }
+    }
 }
