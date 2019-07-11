@@ -117,9 +117,6 @@
     <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
