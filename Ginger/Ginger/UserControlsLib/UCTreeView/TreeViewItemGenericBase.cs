@@ -301,7 +301,6 @@ namespace GingerWPF.TreeViewItemsLib
         public abstract void DeleteTreeFolder();
         private void DeleteTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            PreDeleteTreeItemHandler();
             DeleteTreeFolder();
             PostDeleteTreeItemHandler();
         }

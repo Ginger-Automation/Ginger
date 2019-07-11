@@ -61,7 +61,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             //string txt = WorkSpace.Instance.PlugInsManager.CreatePluginPackageInfo("GingerOfficePlugin", "1.0.0");
             //System.IO.File.WriteAllText(pluginFolder + @"\Ginger.PluginPackage.json", txt);
 
-
+            WorkSpace.Instance.PlugInsManager.Init(SR);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
 
@@ -177,7 +177,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePlugins()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
 
             // Act            
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
@@ -190,7 +191,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePluginReleases()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage PACT = (from x in list where x.Id == "PACT" select x).SingleOrDefault();
 
@@ -205,7 +207,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage plugin = (from x in list where x.Id == "SeleniumDriver" select x).SingleOrDefault();
             OnlinePluginPackageRelease release1_1 = (from x in plugin.Releases where x.Version == "1.0" select x).SingleOrDefault();

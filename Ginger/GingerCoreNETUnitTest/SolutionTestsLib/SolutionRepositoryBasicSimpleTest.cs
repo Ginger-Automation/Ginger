@@ -50,7 +50,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
             // BasicSimple is solution which is created automatically when creating new solution, no other items added.
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple"));
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar +"BasicSimple"));
             SR =  GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
         }

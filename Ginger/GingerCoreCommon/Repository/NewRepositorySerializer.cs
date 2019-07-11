@@ -660,14 +660,11 @@ namespace Amdocs.Ginger.Repository
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
-            //TODO: check order of creation and removed unused
+            //TODO: check order of creation and remove unused
             string className = xdr.Name;            
-
             try
-            {
-                
+            {                
                 int level = xdr.Depth;
-
                 object obj;
 
                 if (targetObj == null)
@@ -746,6 +743,10 @@ namespace Amdocs.Ginger.Repository
 
                 }
 
+                if (obj is RepositoryItemBase)
+                {
+                    ((RepositoryItemBase)obj).PostSerialization();
+                }
 
                 return obj;
             }
@@ -770,6 +771,12 @@ namespace Amdocs.Ginger.Repository
             if (b)
             {
                 obj = t.Assembly.CreateInstance(t.FullName);                
+
+                if (obj is RepositoryItemBase)
+                {
+                    ((RepositoryItemBase)obj).PreSerialization();
+                }
+
                 return obj;
             }
             
@@ -845,8 +852,12 @@ namespace Amdocs.Ginger.Repository
             mClassDictionary = mClassDictionary.Concat(list).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
+        public static void AddClass(string name, Type type)
+        {
+            mClassDictionary.Add(name, type);
+        }
 
-        
+
 
         /// <summary>
         /// Convert short name to long full name - GingerCoreNET
@@ -1004,8 +1015,23 @@ namespace Amdocs.Ginger.Repository
                         if (propertyInfo == null)
                         {
                             if (xdr.Name != "Created" && xdr.Name != "CreatedBy" && xdr.Name != "LastUpdate" && xdr.Name != "LastUpdateBy" && xdr.Name != "Version" && xdr.Name != "ExternalID")
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + xdr.Name);
+                            {                                
+                                if (obj is RepositoryItemBase)
+                                {
+                                    bool handled = ((RepositoryItemBase)obj).SerializationError( SerializationErrorType.PropertyNotFound, xdr.Name, xdr.Value);
+                                    if (handled)
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Property converted successfully :" + obj.GetType().Name + "." + xdr.Name);
+                                    }
+                                    else
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Property not Found: " + obj.GetType().Name + "." + xdr.Name);
+                                    }
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Property not Found on non RepositoryItemBase : " + obj.GetType().Name + "." + xdr.Name);
+                                }
                             }
                             xdr.MoveToNextAttribute();
                             continue;

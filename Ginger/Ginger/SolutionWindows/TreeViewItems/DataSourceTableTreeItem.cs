@@ -215,7 +215,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 return;
             }
             DataSourceTable copy = (DataSourceTable)DSTableDetails.CreateCopy();
-            copy.Name = DSDetails.DSC.CopyTable(DSTableDetails.Name);
+            copy.Name = DSDetails.CopyTable(DSTableDetails.Name);
             copy.DataTable = DSTableDetails.DataTable;
             copy.DSC = DSTableDetails.DSC;
             copy.DSTableType = DSTableDetails.DSTableType;

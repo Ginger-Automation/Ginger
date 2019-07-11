@@ -80,8 +80,7 @@ namespace Ginger.Actions.XML
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.DefaultExt = "*.xml";
-            dlg.Filter = "XML Template File (*.xml)|*.xml";
+            dlg.Filter = "All files (*.*)|*.*";
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
