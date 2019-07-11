@@ -89,7 +89,7 @@ namespace GingerWPF.BusinessFlowsLib
         GridLength mLastAddActionsColumnWidth = new GridLength(400);
 
         ObjectId mRunnerLiteDbId;
-        ObjectId mRunSetLiteDbId;                
+        ObjectId mRunSetLiteDbId;
 
         bool mAutoRunAnalyzer = true;
         public bool AutoRunAnalyzer
@@ -147,7 +147,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             InitAutomatePageRunner();
             UpdateAutomatePageRunner();
-           
+
             LoadBusinessFlowToAutomate(businessFlow);
 
             SetRunSetDBLite(businessFlow);
@@ -291,26 +291,11 @@ namespace GingerWPF.BusinessFlowsLib
                 appAgent.PropertyChanged -= AppAgent_PropertyChanged;
                 appAgent.PropertyChanged += AppAgent_PropertyChanged;
 
+                UpdateTargetAndPlatform();
+
                 if (mContext.Agent != appAgent.Agent)
                 {
                     mContext.Agent = appAgent.Agent;
-                }
-
-                TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
-                if (tBase != null)
-                {
-                    if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
-                    {
-                        mContext.Target = tBase;
-                        mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
-                                             where x.AppName == mContext.Activity.TargetApplication
-                                             select x.Platform).FirstOrDefault();
-                    }
-                }
-                else
-                {
-                    mContext.Target = null;
-                    mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
                 }
 
                 if (mContext.Agent != null)
@@ -322,6 +307,26 @@ namespace GingerWPF.BusinessFlowsLib
             else
             {
                 mContext.Agent = null;
+            }
+        }
+
+        private void UpdateTargetAndPlatform()
+        {
+            TargetBase tBase = (from x in mContext.BusinessFlow.TargetApplications where x.ItemName == mContext.Activity.TargetApplication select x).FirstOrDefault();
+            if (tBase != null)
+            {
+                if (mContext.Target == null || mContext.Target.ItemName != tBase.ItemName)
+                {
+                    mContext.Target = tBase;
+                    mContext.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms
+                                         where x.AppName == mContext.Activity.TargetApplication
+                                         select x.Platform).FirstOrDefault();
+                }
+            }
+            else
+            {
+                mContext.Target = null;
+                mContext.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA;
             }
         }
 
@@ -361,7 +366,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void InitAutomatePageRunner()
-        {           
+        {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
             mRunner.PropertyChanged += MRunner_PropertyChanged;
 
@@ -391,7 +396,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 StopAutomateRun();
             }
-            
+
             if (mBusinessFlow != businessFlowToLoad)
             {
                 RemoveCurrentBusinessFlow();
@@ -413,7 +418,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mBusinessFlow != null)
                 {
-                    mBusinessFlow.SaveBackup();                    
+                    mBusinessFlow.SaveBackup();
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
@@ -427,7 +432,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.AttachActivitiesGroupsAndActivities();
                     if (mActivitiesPage == null)
                     {
-                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);                        
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                         mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
@@ -474,7 +479,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                     if (mAddActionMainPage == null)
                     {
-                        mAddActionMainPage = new MainAddActionsNavigationPage(mContext); 
+                        mAddActionMainPage = new MainAddActionsNavigationPage(mContext);
                     }
                     xAddActionMenuFrame.Content = mAddActionMainPage;
                 }
@@ -494,22 +499,22 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
-          
+
             if (mBusinessFlow.Activities.SyncCurrentItemWithViewSelectedItem)
             {
                 mBusinessFlow.CurrentActivity = mActivity;
             }
-            
-            if (mActivity != null)
-            {
-                mActivity.PropertyChanged -= Activity_PropertyChanged;
-                mActivity.PropertyChanged += Activity_PropertyChanged;
-            }
 
             mContext.Activity = mActivity;
+            if (mActivity != null)
+            {
+                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+            }
+
             UpdateContextWithActivityDependencies();
 
-            SetActivityEditPage();            
+            SetActivityEditPage();
         }
 
         public void UpdateRunnerAgentsUsedBusinessFlow()
@@ -589,7 +594,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void RemoveCurrentBusinessFlow()
-        {            
+        {
             if (mBusinessFlow != null)
             {
                 mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
@@ -701,7 +706,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     xContinueRunBtn.Visibility = Visibility.Visible;
                 });
-                
+
             }
             finally
             {
@@ -756,7 +761,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void UpdateAutomatePageRunner()
         {
             mRunner.CurrentSolution = WorkSpace.Instance.Solution;
-            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;            
+            mRunner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
@@ -771,7 +776,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (CheckIfExecutionIsInProgress()) return;
 
             try
-            {                
+            {
                 mExecutionIsInProgress = true;
                 SetUIElementsBehaverDuringExecution();
 
@@ -838,7 +843,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (CheckIfExecutionIsInProgress()) return;
 
             try
-            {                
+            {
                 mExecutionIsInProgress = true;
                 SetUIElementsBehaverDuringExecution();
 
@@ -878,14 +883,14 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
-            }            
+            }
 
             // If no action selected move to the first.
             if (actionToExecute == null)
             {
-                actionToExecute = (Act)parentActivity.Acts[0];                
+                actionToExecute = (Act)parentActivity.Acts[0];
             }
-            
+
             try
             {
                 mExecutionIsInProgress = true;
@@ -937,7 +942,7 @@ namespace GingerWPF.BusinessFlowsLib
                 SetUIElementsBehaverDuringExecution();
 
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
-                
+
                 switch (continueFrom)
                 {
                     case eContinueFrom.LastStoppedAction:
@@ -972,6 +977,10 @@ namespace GingerWPF.BusinessFlowsLib
                 if (WorkSpace.Instance.Solution == null)
                 {
                     DoCleanUp();
+
+                    if (mAddActionMainPage != null)
+                        mAddActionMainPage.ResetAddActionPages();
+
                     return;
                 }
 
@@ -1018,7 +1027,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 //default selection
                 xEnvironmentComboBox.SelectedIndex = 0;
-            }            
+            }
         }
 
         private void xEnvironmentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1153,7 +1162,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             else if (xBusinessFlowItemComboBox.SelectedItem == "Configurations")
             {
-                xItemsTabs.SelectedItem = xBfConfigurationsTab; 
+                xItemsTabs.SelectedItem = xBfConfigurationsTab;
             }
             else
             {
@@ -1211,7 +1220,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void GenerateReport()
-        {            
+        {
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();
@@ -1283,7 +1292,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void ShowExecutionSummaryPage()
-        {            
+        {
             ExecutionSummaryPage w = new ExecutionSummaryPage(mContext);
             w.ShowAsWindow();
         }
@@ -1358,7 +1367,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void GenerateLastExecutedItemReport()
-        {            
+        {
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 CreateLiteDBReport();
@@ -1418,10 +1427,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             if (mBusinessFlow != null)
-            {                
+            {
                 mBusinessFlow.Activities.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
                 foreach (Activity activity in mBusinessFlow.Activities)
-                {                    
+                {
                     activity.Acts.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
                 }
             }
