@@ -20,6 +20,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -37,11 +38,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("RepositorySerializerPrePostTest");
-            
-
-            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));
-          
+            WorkspaceHelper.CreateWorkspace2("RepositorySerializerPrePostTest");            
+            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 
         [ClassCleanup]
