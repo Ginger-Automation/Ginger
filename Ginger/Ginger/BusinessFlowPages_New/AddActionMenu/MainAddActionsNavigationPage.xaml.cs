@@ -54,16 +54,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
                 xRecordItemBtn.Visibility = Visibility.Visible;
+                xLiveSpyItemBtn.Visibility = Visibility.Visible;
+                xWindowExplorerItemBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 xRecordItemBtn.Visibility = Visibility.Collapsed;
+                xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
+                xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
             }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Agent) || e.PropertyName == nameof(mContext.Platform))
+            if (e != null && (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Agent) || e.PropertyName == nameof(mContext.Platform)))
             {
                 SetRecordButtonAccessebility();
                 ToggleApplicatoinModels();
