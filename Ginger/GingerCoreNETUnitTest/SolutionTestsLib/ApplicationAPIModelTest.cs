@@ -26,6 +26,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 
 namespace GingerCoreNETUnitTest.SolutionTestsLib
@@ -39,8 +40,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {            
-
-            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions\APIModelsTest");
+            string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "APIModelsTest");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);

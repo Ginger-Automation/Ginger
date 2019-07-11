@@ -5,6 +5,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using GingerCore;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -20,15 +21,14 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-
-            //WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
             string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
-            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-            SR.Open(path);
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution("AnalyzerTest", path);            
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
         [TestMethod]

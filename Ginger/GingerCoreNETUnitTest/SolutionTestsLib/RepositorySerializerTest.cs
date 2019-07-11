@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -38,17 +37,20 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
+            WorkspaceHelper.InitWS("RepositorySerializerTest");            
+        }
 
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            
         }
 
         [Ignore] // FIXME why we have more data what chaged?
