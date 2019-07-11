@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -196,8 +197,6 @@ namespace GingerCore.Actions
 
         public NewPayLoad GetActionPayload()
         {
-
-
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue("BrowserAction");
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
@@ -269,7 +268,7 @@ namespace GingerCore.Actions
         {
             return "BrowserAction";
         }
-
+        
         public override String ActionType
         {
             get
@@ -289,6 +288,25 @@ namespace GingerCore.Actions
                 GetOrCreateInputParam(Fields.PomGUID).Value = value;
                 OnPropertyChanged(nameof(PomGUID));
             }
+        }
+
+
+
+        public PlatformAction GetAsPlatformAction()
+        {
+            PlatformAction platformAction = new PlatformAction(this);
+
+
+     
+
+            foreach(ActInputValue aiv in this.InputValues)
+            {
+                if(!platformAction.InputParams.ContainsKey(aiv.Param))
+                    platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
+            }
+     
+
+            return platformAction;            
         }
 
 

@@ -27,13 +27,13 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Run
@@ -178,16 +178,16 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {
-            // Get the action payload
-            // NewPayLoad p = actPlugin.GetActionPayload();
-            NewPayLoad p = GeneratePlatformActionPayload(actPlugin, agent);
+        {                        
+            NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
+
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
-
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
-
-            // Pasrse the result
+            NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+            
             ParseActionResult(RC, (Act)actPlugin);
         }
 
@@ -398,66 +398,61 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
         {
+            PlatformAction platformAction = ACT.GetAsPlatformAction();
 
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue(ACT.GetName());
-            if (ACT is Act actPlugin)
+            if (ACT is ActUIElement actUi)
             {
-                List<NewPayLoad> PLParams = new List<NewPayLoad>();
-
-                if (ACT is ActUIElement ActUi)
+                if (actUi.LocateBy == eLocateBy.POMElement)
                 {
-                    if (ActUi.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
-                    {
-                        NewPayLoad PomPayload = GetPOMPayload(ref ActUi, agent.ProjEnvironment, agent.BusinessFlow);
-                        PLParams.Add(PomPayload);
-                    }
+                    AddPOMLocators(ref platformAction, ref actUi, agent.ProjEnvironment, agent.BusinessFlow);
+                }
+            }
+            
+            // TODO: calculate VE ??!!            
+
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");
+            payload.AddJSONValue<PlatformAction>(platformAction);
+            payload.ClosePackage();
+
+            // TODO: Process Valuefordriver!!!!
+
+            return payload;
+
+
+            void AddPOMLocators(ref PlatformAction PlatformAction, ref ActUIElement UIElementAction, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
+            {
+                Dictionary<string, string> Locators = null;
+                if (PlatformAction.InputParams.ContainsKey("Locators"))
+                {
+                    Locators = (Dictionary<string, string>)PlatformAction.InputParams["Locators"];
+                }
+                else
+                {
+                    Locators = new Dictionary<string, string>();
                 }
 
-           
 
-                foreach (ActInputValue AIV in actPlugin.InputValues)
+                List<string> Frames = new List<string>();
+
+                string[] pOMandElementGUIDs = UIElementAction.ElementLocateValue.ToString().Split('_');
+                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                ApplicationPOMModel currentPOM = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                if (currentPOM == null)
                 {
-                    if (!string.IsNullOrEmpty(AIV.ValueForDriver))
-                    {
-                        NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                        PLParams.Add(AIVPL);
-                    }
+                    UIElementAction.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                    return;
                 }
 
 
 
-
-                PL.AddListPayLoad(PLParams);
-            }
-            PL.ClosePackage();
-
-            return PL;
-        }
-
-        private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
-        {
-            NewPayLoad PL = new NewPayLoad("POMPayload");
-           
-
-            string[] pOMandElementGUIDs = actUi.ElementLocateValue.ToString().Split('_');
-            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-            if (currentPOM == null)
-            {
-                actUi.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                return null;
-            }
-
-            {
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
                 ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
 
-                PL.AddValue(selectedPOMElement.ElementTypeEnum.ToString());
+
                 if (selectedPOMElement == null)
                 {
-                    actUi.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                    return null;
+                    UIElementAction.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                    return;
                 }
                 else
                 {
@@ -469,19 +464,18 @@ namespace Amdocs.Ginger.CoreNET.Run
                         string[] iframesPathes = selectedPOMElement.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
                         foreach (string iframePath in iframesPathes)
                         {
-                            NewPayLoad FieldPL = new NewPayLoad("Frame-Xpath", iframePath);
-                            switchframpayload.Add(FieldPL);
+                            Frames.Add(iframePath);
 
                         }
                     }
-                    PL.AddListPayLoad(switchframpayload);
+
 
 
                     //adding all locators from POM
-                    List<NewPayLoad> LocatorsPayload = new List<NewPayLoad>();
+
                     foreach (ElementLocator locator in selectedPOMElement.Locators.Where(x => x.Active == true).ToList())
                     {
-                        NewPayLoad LocatorPayload;
+
                         string locateValue;
                         if (locator.IsAutoLearned)
                         {
@@ -492,17 +486,23 @@ namespace Amdocs.Ginger.CoreNET.Run
                         {
                             ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
                             GingerCore.ValueExpression VE = new GingerCore.ValueExpression(projEnvironment, businessFlow);
-                            locateValue =  VE.Calculate(evaluatedLocator.LocateValue);
-                  
+                            locateValue = VE.Calculate(evaluatedLocator.LocateValue);
+
                         }
-                        LocatorPayload = new NewPayLoad("Locator", locator.LocateBy.ToString(), locateValue);
-                        LocatorsPayload.Add(LocatorPayload);
+                        Locators.Add(locator.LocateBy.ToString(), locateValue);
+
                     }
-                    PL.AddListPayLoad(LocatorsPayload);
+
                 }
-                PL.ClosePackage();
-                return PL;
             }
+
+
+        
+
+ 
+
+
+
         }
     }
 }

@@ -126,12 +126,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // Each time new data arrive we get callback
         private void ReceiveCallback(IAsyncResult ar)
         {
-            Console.WriteLine("Receive Callback");
+            // Console.WriteLine("Receive Callback");
             // TODO: add timeout to prevent partial package to get stuck
 
             lock (mSendLockObject)
             {
-                Console.WriteLine("Send lock obtained");
+                // Console.WriteLine("Send lock obtained");
             };
             
             
