@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -48,8 +47,9 @@ namespace Amdocs.Ginger.Repository
         }
 
         public bool BackgroudDownloadInprogress { get;  set; }
+        
 
-        public PluginsManager(SolutionRepository solutionRepository)
+        public void Init(SolutionRepository solutionRepository)
         {
             mSolutionRepository = solutionRepository;
             GetPackages();
@@ -85,6 +85,10 @@ namespace Amdocs.Ginger.Repository
             Console.WriteLine(s);
         }
 
+        public void AddIsSession(string pluginId, string serviceId, bool isSession)
+        {
+            PluginServiceIsSeesionDictionary.Add(pluginId + "." + serviceId, isSession);
+        }
 
         public string InstallPluginPackage(OnlinePluginPackage onlinePluginPackage, OnlinePluginPackageRelease release)
         {
@@ -157,9 +161,9 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!
+            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!!
 
-            Console.WriteLine("Starting Service...");
+            Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
@@ -191,12 +195,12 @@ namespace Amdocs.Ginger.Repository
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
-                 procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                 procStartInfo.UseShellExecute = true;               
+                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+                procStartInfo.UseShellExecute = true;
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
-                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";
+                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // FIXME for Ubunto
                 Console.WriteLine("Command: " + cmd);
                 procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
                 procStartInfo.UseShellExecute = false;
@@ -210,7 +214,7 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Starting Process..");
+            Console.WriteLine("Starting Process..");            
             proc.Start();            
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
@@ -267,13 +271,30 @@ namespace Amdocs.Ginger.Repository
             return list;
         }
 
-        
+        //Cache is session info + enable to add isSession info directly
+        public Dictionary<string, bool> PluginServiceIsSeesionDictionary = new Dictionary<string, bool>();
 
         public bool IsSessionService(string pluginId, string serviceId)
-        {            
+        {
+            string key = pluginId + "." + serviceId;
+            bool isSession;
+            bool bFound = PluginServiceIsSeesionDictionary.TryGetValue(key, out isSession);
+            if (bFound)
+            {
+                return isSession;
+            }
+            
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
-            return pluginServiceInfo.IsSession;
+            if (pluginServiceInfo != null)
+            {
+                PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
+                return pluginServiceInfo.IsSession;
+            }
+            else
+            {
+                throw new Exception("IsSessionService Error: pluginServiceInfo not found for: " + pluginId + "." + serviceId);
+            }
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)

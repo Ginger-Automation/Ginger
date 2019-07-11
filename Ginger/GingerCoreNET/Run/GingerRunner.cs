@@ -1166,15 +1166,9 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                //if (DataSource.FilePath.StartsWith("~"))
-                //{
-                //    DataSource.FileFullPath = DataSource.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    DataSource.FileFullPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, DataSource.FileFullPath);
-                //}
                 DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
 
-                DataSource.Init(DataSource.FileFullPath);
-                ObservableList<DataSourceTable> dstTables = DataSource.DSC.GetTablesList();
+                ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
                 foreach(DataSourceTable dst in dstTables)
                 {
                     if(dst.Name ==  act.OutDataSourceTableName)
@@ -1219,7 +1213,7 @@ namespace Ginger.Run
                 foreach (ActOutDataSourceConfig ADSC in mADCS)
                 {
                     if (mColList.Contains(ADSC.TableColumn) == false)
-                        DataSource.DSC.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
+                        DataSource.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
                 }
                 if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToCol.ToString())
                 {
@@ -1252,7 +1246,7 @@ namespace Ginger.Run
                         if (sColList == "")
                             break;
                         sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
-                        DataSource.DSC.RunQuery(sQuery);
+                        DataSource.RunQuery(sQuery);
                         //Next Path
                         iPathCount++;
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
@@ -1287,7 +1281,7 @@ namespace Ginger.Run
                                     sKeyValue = sKeyValue == null ? "" : sKeyValue.ToString();
                                     sKeyValue = sKeyValue.Replace("'", "''");
                                 }
-                                DataTable dtOut = DataSource.DSC.GetQueryOutput("Select Count(*) from " + DataSourceTable.Name + " Where GINGER_KEY_NAME='" + sKeyName + "'");
+                                DataTable dtOut = DataSource.GetQueryOutput("Select Count(*) from " + DataSourceTable.Name + " Where GINGER_KEY_NAME='" + sKeyName + "'");
                                 if (dtOut.Rows[0].ItemArray[0].ToString() == "1")
                                 {
                                     sQuery = "UPDATE " + DataSourceTable.Name + " SET GINGER_KEY_VALUE='" + sKeyValue + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' Where GINGER_KEY_NAME='" + sKeyName + "'";
@@ -1315,10 +1309,10 @@ namespace Ginger.Run
                                     }
 
                                 }
-                                sQuery = DataSource.DSC.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
+                                sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
                             }
-                            DataSource.DSC.RunQuery(sQuery);
+                            DataSource.RunQuery(sQuery);
                         }
                     }
                 }
@@ -1877,65 +1871,45 @@ namespace Ginger.Run
         }
 
 
-        private bool ExecuteActionWithTimeLimit(Act act, TimeSpan timeSpan, Action codeBlock)
+       private bool ExecuteActionWithTimeLimit(Act act, TimeSpan timeSpan, Action codeBlock)
         {
-            Stopwatch st = new Stopwatch();
-            int count = 0;
-            st.Start();
-
+            Stopwatch st = Stopwatch.StartNew();            
+            
             //TODO: Cancel the task after timeout
             try
-            {            
-                Task task = Task.Factory.StartNew(() => codeBlock());
-                // Adaptive sleep, first one second sleep 10ms, then 50ms, more than one sec do 1000ms
-                int Sleep = 10;
-                while (!task.IsCompleted)
+            {                
+                Task task = Task.Factory.StartNew(() => 
+                        {            
+                            codeBlock();                         
+                        }
+                    );
+
+                while (!task.IsCompleted && st.ElapsedMilliseconds < timeSpan.TotalMilliseconds && !mStopRun)
                 {
-                    if (st.ElapsedMilliseconds > 500)
-                    {
-                        Sleep = 100;
-                    }
-                    
-                    Thread.Sleep(Sleep);
-                    count += Sleep;
-
-                    if (count > 1000)
-                    {
-                        GiveUserFeedback();
-                        count = 0;
-                    }
-
-                    // give user feedback every 200ms
-                    if (count > 200)
-                    {
-                        act.Elapsed = st.ElapsedMilliseconds;
-                        GiveUserFeedback();
-                        count = 0;
-                    }
-
-                    if (st.Elapsed > timeSpan)
-                    {                          
-                        if (String.IsNullOrEmpty(act.Error))
-                            act.Error = "Time out !";                        
-                        break;
-                    }
-
-                    if (mStopRun)
-                    {
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                        act.ExInfo += "Stopped";
-                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action until timeout even after stopping it.
-                        SetDriverPreviousRunStoppedFlag(true);                   
-                        break;
-                    }
-                    else
-                    {
-                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        SetDriverPreviousRunStoppedFlag(false);
-                    }
+                    task.Wait(500);  // Give user feedback every 500ms
+                    act.Elapsed = st.ElapsedMilliseconds;
+                    GiveUserFeedback();
                 }
-                return true;
+                bool bCompleted = task.IsCompleted;
+
+                if (mStopRun)
+                {
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                    act.ExInfo += "Stopped";
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    //TODO: J.G: Enhance the mechanism to notify the Driver that action is stopped. Today driver still running the action until timeout even after stopping it.
+                    SetDriverPreviousRunStoppedFlag(true);                    
+                }
+                else
+                {
+                    if (!bCompleted)
+                    {
+                        act.Error += "Time out !";
+                    }
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    SetDriverPreviousRunStoppedFlag(false);
+                }                
+                return bCompleted;
             }
             catch (AggregateException ae)
             {

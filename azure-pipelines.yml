@@ -3,12 +3,12 @@
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
-# Request Windows VM Windows 2016 with Visual Studio 2017 - set Ginger solution
+# Request Windows VM Windows 2019 with Visual Studio 2019 - set Ginger solution
 # ------------------------------------------------------------------------------------------------------
 
 - job: Windows
   pool:
-   vmImage: 'vs2017-win2016'
+   vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
 
 # ------------------------------------------------------------------------------------------------------
 # Job Variables
@@ -16,14 +16,14 @@ jobs:
   variables:
     solution: '**/*.sln'     # = D:\a\1\s\Ginger\Ginger.sln
     buildPlatform: 'Any CPU' 
-    buildConfiguration: 'Release'
+    buildConfiguration: 'Release'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
       **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerCoreCommonTest.dll
       **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerCoreNETUnitTest.dll
       **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerConsoleTest.dll
       **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll           
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a' 
   
@@ -78,156 +78,43 @@ jobs:
       # TreatWarningsAsErrors / NoWarn   -- do not allow warnings - do it later when we have zero warnings
     displayName: Build Ginger solution
 
+  
 # ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1,2,3 for .NET Core testDLLs
-# ------------------------------------------------------------------------------------------------------
-    
-    # TODO: run unit test by level 1,2,3 continue on sucess only
+# Run Unit Test for .NET Core test DLLs
+# ------------------------------------------------------------------------------------------------------        
 
   - task: VSTest@2
-    displayName: 'Run Unit tests Level for .Net Core test DLLs'
+    displayName: 'Run tests for Ginger .Net Core *Test DLLs'
     inputs:      
       testAssemblyVer2: $(testDLLs)
       runInParallel: True
       codeCoverageEnabled: True
       
-      
 
-      # testAssemblyVer2: '**\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll'
-      # testSelection: 'testAssembly'     
-      # sourcefilters: '**\Ginger*Test.dll' # Required when testSelection == TestAssembly
-      # vstestLocationMethod: 'location'
-      # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
-      # codeCoverageEnabled: True
-      # otherConsoleOptions: '/platform:x64 /Framework:.NETCoreApp,Version=v2.1 /logger:console;verbosity="normal" '
-      # platform: '$(buildPlatform)'
-      # configuration: '$(buildConfiguration)'
-      # testFiltercriteria:
 
 
 # ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1 for .NET Framework
+# Run .Net Framework tests using powershell and publish the results
 # ------------------------------------------------------------------------------------------------------
 
-# We run .Net Framework tests 
+  - task: PowerShell@2
+    displayName: Run tests for Ginger .NetFramework *Test Dlls
+    inputs:
+      filePath: TestDotNetFramework.ps1
 
-  # FIXME make unti test work - 40 TCs fails  !!!!!!!!!!!!!!!!!!!!!!!!!!
-  #- script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" 
-  #  displayName: UnitTest tests
-  #- script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\Release\GingerTest.dll" 
-  #  displayName: GingerTest tests
+
+  - task: PublishTestResults@2
+    displayName: Publish .Net Framework test result
+    condition: succeededOrFailed()
+    inputs:      
+      testResultsFormat: VSTest
+      testResultsFiles: '**/DotNetFramework/*.trx'
   
 
-    
-  # - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\Unit Tests\bin\Release\UnitTests.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
-  # - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerTest\bin\Release\GingerTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
-
-  # add /Parallel
-
-  # - task: VSTest@2
-   # displayName: 'Run Unit tests Level for test Framework DLLs <<<<<<<<<<'
-   # inputs:      
-   #   testAssemblyVer2: '**\Unit Tests\bin\$(buildConfiguration)\UnitTests.dll'
-      # Framework: Framework45
-      # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
-      
-      # logger: trx
-      # platform: '$(BuildPlatform)'
-      # configuration: '$(BuildConfiguration)'
-      #runInParallel: False # Optional
-
-      # configuration: '$(buildConfiguration)'
-      # testAssemblyVer2: '**\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll'
-
-      # testSelection: 'testAssembly'     
-      # sourcefilters: '**\Ginger*Test.dll' # Required when testSelection == TestAssembly
-      # vstestLocationMethod: 'location'
-      # vstestLocation: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\TestPlatform\'
-      # codeCoverageEnabled: True
-      # otherConsoleOptions: '/platform:x64 /Framework:.NETCoreApp,Version=v2.1 /logger:console;verbosity="normal" '
-      # platform: '$(buildPlatform)'
-      # configuration: '$(buildConfiguration)'
-      # testFiltercriteria:
-      #runInParallel: False # Optional
-    #runTestsInIsolation: False # Optional
-    #codeCoverageEnabled: False # Optional
-    #otherConsoleOptions: # Optional
-    #distributionBatchType: 'basedOnTestCases' # Optional. Options: basedOnTestCases, basedOnExecutionTime, basedOnAssembly
-    #batchingBasedOnAgentsOption: 'autoBatchSize' # Optional. Options: autoBatchSize, customBatchSize
-    #customBatchSizeValue: '10' # Required when distributionBatchType == BasedOnTestCases && BatchingBasedOnAgentsOption == CustomBatchSize
-    #batchingBasedOnExecutionTimeOption: 'autoBatchSize' # Optional. Options: autoBatchSize, customTimeBatchSize
-    #customRunTimePerBatchValue: '60' # Required when distributionBatchType == BasedOnExecutionTime && BatchingBasedOnExecutionTimeOption == CustomTimeBatchSize
-    #dontDistribute: False # Optional
-    #testRunTitle: # Optional
-    #platform: # Optional
-
 # ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level2 for: GingerUtilsTest, GingerCoreCommonTest, GingerCoreNETTest
+# PublishBuildArtifacts
 # ------------------------------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level3 for: GingerUtilsTest, GingerCoreCommonTest, GingerCoreNETTest
-# ------------------------------------------------------------------------------------------------------
-
-
-  # - task: VSTest@2
-  #  inputs:
-  #    testSelector: 'testAssemblies' 
-  #    testAssemblyVer2: '**\*Test*.dll!**\*TestAdapter.dll!**\obj\**'
-  #  displayName: vstets all test*
-
-  # - task: DotNetCoreCLI@2
-  #  inputs:
-  #    command: test
-  #    projects: '**/*Test/*.csproj'
-  #    arguments: '--configuration $(buildConfiguration)'
-  #  displayName: dotnet test tests123
-
-  # - task: VSBuild@1
-  #  inputs:
-  #    solution: 'D:\a\1\s\Ginger\GingerCoreCommonTest\GingerCoreCommonTest.csproj'          
-  #    platform: 'x86'
-  #    clean: true
-  #  #  restoreNugetPackages: true
-  #    msbuildArchitecture: 'x86' # Optional. Options: x86, x64
-  #    configuration: '$(buildConfiguration)'
-  #  displayName: Build GingerPluginCoreTest Project
-
-
-  # - script: @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe" '$(solution)'
-  # - script: MSBuild.exe "D:\a\1\s\Ginger\Ginger.sln"
-  #  workingDirectory: C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\
-  #  displayName: Yaron Build 
-  # - task: VSBuild@1
-   # inputs:
-   #   solution: 'D:\a\1\s\Ginger\Ginger.sln'          
-      # solution: '$(solution)'
-      # solution: 'D:\a\1\s\Ginger\Ginger\Ginger.csproj'                
-      # platform: 'Any CPU'
-   # displayName: Build Ginger Solution
-  
- # - script: C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /TestCaseFilter:TestCategory=Level1 /Logger:trx
- #   displayName: GingerCoreCommonTest Unit Tests
-
-   # platform: '$(buildPlatform)'
-   #   configuration: '$(buildConfiguration)'
-   
-  # - script: dotnet test "D:\a\1\s\Ginger\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.1\GingerCoreCommonTest.dll" /Logger:trx
-  #  displayName: Test GingerCoreCommonTest Level 1
-  # 
-
-
-
-  
-  #- task: PublishTestResults@2
-  #  condition: succeededOrFailed()
-  #  inputs:
-  #    testRunner: VSTest
-  #    testResultsFiles: '**/*.trx'
-
 
   - task: PublishBuildArtifacts@1
 
-
- # failTaskOnFailedTests: true
 

@@ -50,13 +50,14 @@ namespace GingerCoreNETUnitTest.LiteDb
             mapper.DbRef(x => x.ActivitiesGroupColl, "acGrColl");
         }
 
-        [TestMethod]
-        public void ReadGingerRunSet()
-        {
-            LiteDbManager dbManager = new LiteDbManager(@"C:\Ginger_sourc\Liran Test\ExecutionResults");
-            var result=dbManager.GetRunSetLiteData();
-            var filterData = dbManager.FilterCollection(result,Query.All());
-        }
+        
+        //[TestMethod]
+        //public void ReadGingerRunSet()
+        //{
+        //    LiteDbManager dbManager = new LiteDbManager(@"C:\Ginger_sourc\Liran Test\ExecutionResults");
+        //    var result=dbManager.GetRunSetLiteData();
+        //    var filterData = dbManager.FilterCollection(result,Query.All());
+        //}
 
         private List<GingerActvityGroup> GetGingerActvityGroup()
         {

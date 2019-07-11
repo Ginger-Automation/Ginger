@@ -53,20 +53,21 @@ namespace Ginger.Reports.Tests
             }
         }
 
-
+        [Ignore]
         [TestMethod]
         //[Timeout(60000)]
         public void GenrateLastExecutionHTMLReportTest()
         {
-            string BusinessFlowReportFolder = GingerTestHelper.TestResources.GetTestResourcesFolder(@"Reports\AutomationTab_LastExecution\");
+            string BusinessFlowReportFolder = GingerTestHelper.TestResources.GetTestResourcesFolder(@"Reports" + Path.DirectorySeparatorChar + "AutomationTab_LastExecution" + Path.DirectorySeparatorChar);
             ReportInfo RI = new ReportInfo(BusinessFlowReportFolder);
             //Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(RI);
 
-            string templatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
+            string templatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports" + Path.DirectorySeparatorChar + "GingerExecutionReport" + + Path.DirectorySeparatorChar).Replace("Ginger.exe", "");
             HTMLReportConfiguration selectedHTMLReportConfiguration = new HTMLReportConfiguration("DefaultTemplate", true);
 
             HTMLReportsConfiguration hTMLReportsConfiguration = new HTMLReportsConfiguration();
 
+            // !!!!!!!!!!!!!!!!!
             string hTMLOutputFolder = @"C:\HTMLReports\";
 
 

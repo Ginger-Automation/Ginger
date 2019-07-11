@@ -1024,7 +1024,6 @@ namespace Ginger
         void HideSplash()
         {            
             // Hide the splash after one second
-            Task.Factory.StartNew(() => {
                 this.Dispatcher.Invoke(() => {
                     if (xSplashGrid.Visibility == Visibility.Collapsed)
                     {
@@ -1033,7 +1032,6 @@ namespace Ginger
                     Thread.Sleep(1000);
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
-            });
         }
     }
 }

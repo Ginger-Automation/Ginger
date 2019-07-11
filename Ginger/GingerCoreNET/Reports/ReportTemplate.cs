@@ -104,62 +104,62 @@ namespace Ginger.Reports
             }
         }
 
-        public static string GenerateReport(string ReportTemplateName, ReportInfo RI)
-        {
-            GC.Collect();
+        //public static string GenerateReport(string ReportTemplateName, ReportInfo RI)
+        //{
+        //    GC.Collect();
 
-            ObservableList<ReportTemplate> reportTempaltes = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>();
-            ReportTemplate RT = reportTempaltes.Where(x => x.Name == ReportTemplateName).FirstOrDefault();
+        //    ObservableList<ReportTemplate> reportTempaltes = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>();
+        //    ReportTemplate RT = reportTempaltes.Where(x => x.Name == ReportTemplateName).FirstOrDefault();
 
-            if (RT == null)
-            {
-                // Try built in reports  
-                    RT = GetInternalTemplates().Where(x => x.Name == ReportTemplateName).FirstOrDefault();                    
-            }
+        //    if (RT == null)
+        //    {
+        //        // Try built in reports  
+        //            RT = GetInternalTemplates().Where(x => x.Name == ReportTemplateName).FirstOrDefault();                    
+        //    }
 
-            if (RT != null)
-            {
-                string PDFFileName;
+        //    if (RT != null)
+        //    {
+        //        string PDFFileName;
 
-                PDFFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateReportForREportTemplate(ReportTemplateName, RI, RT);
+        //        PDFFileName = RepositoryItemHelper.RepositoryItemFactory.GenerateReportForREportTemplate(ReportTemplateName, RI, RT);
 
-                return PDFFileName;
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ReportTemplateNotFound, ReportTemplateName);
-                return null;
-            }
-        }
+        //        return PDFFileName;
+        //    }
+        //    else
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.ReportTemplateNotFound, ReportTemplateName);
+        //        return null;
+        //    }
+        //}
 
-        public static void GenerateIndividualReport(GingerRunner GR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow= false)
-        {
-            var mGR = GR;
-            foreach (var BF in mGR.BusinessFlows)
-            {
-                if (!GetReportOnlyForExecutedFlow ||
-                         (GetReportOnlyForExecutedFlow && !(BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)))
-                {
-                    ShowReport(GR,(BusinessFlow) BF, Template, Env);
-                }
-            }
-        }
+        //public static void GenerateIndividualReport(GingerRunner GR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow= false)
+        //{
+        //    var mGR = GR;
+        //    foreach (var BF in mGR.BusinessFlows)
+        //    {
+        //        if (!GetReportOnlyForExecutedFlow ||
+        //                 (GetReportOnlyForExecutedFlow && !(BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)))
+        //        {
+        //            ShowReport(GR,(BusinessFlow) BF, Template, Env);
+        //        }
+        //    }
+        //}
 
-        internal static void GenerateIndividualReport(RunsetExecutor GMR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow = false)
-        {
-            foreach (var mGR in GMR.Runners)
-            {
-                GenerateIndividualReport(mGR, Template, Env, GetReportOnlyForExecutedFlow);
-            }
-        }
+        //internal static void GenerateIndividualReport(RunsetExecutor GMR, String Template, ProjEnvironment Env, bool GetReportOnlyForExecutedFlow = false)
+        //{
+        //    foreach (var mGR in GMR.Runners)
+        //    {
+        //        GenerateIndividualReport(mGR, Template, Env, GetReportOnlyForExecutedFlow);
+        //    }
+        //}
       
 
-        private static void ShowReport(GingerRunner GR, BusinessFlow BF, string Template, ProjEnvironment Env)
-        {
-            var RI = new ReportInfo(Env, BF, GR);
-            var repFileName = GenerateReport(Template, RI);
-            Process.Start(repFileName);
-        }
+        //private static void ShowReport(GingerRunner GR, BusinessFlow BF, string Template, ProjEnvironment Env)
+        //{
+        //    var RI = new ReportInfo(Env, BF, GR);
+        //    var repFileName = GenerateReport(Template, RI);
+        //    Process.Start(repFileName);
+        //}
 
         public static List<ReportTemplate> GetInternalTemplates()
         {

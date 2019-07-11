@@ -37,7 +37,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             public int age;
         }
 
-        [Ignore]
+        
         [TestMethod]
         public void StructTestSpeed()
         {
@@ -125,6 +125,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             pl.AddValue<nums>(p1);
             pl.ClosePackage();
 
+            string s134 = pl.BufferInfo;
+
             // Act
             byte[] b = pl.GetPackage();
             NewPayLoad pl2 = new NewPayLoad(b);
@@ -155,6 +157,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             NewPayLoad pl = new NewPayLoad("ll");
             pl.AddJSONValue(s1);
             pl.ClosePackage();
+
+            string s123 = pl.BufferInfo;
 
             byte[] b = pl.GetPackage();
             NewPayLoad pl2 = new NewPayLoad(b);
