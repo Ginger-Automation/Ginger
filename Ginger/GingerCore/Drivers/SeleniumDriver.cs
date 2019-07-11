@@ -5720,6 +5720,18 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
+                            if (act.LocateBy == eLocateBy.ByIndex)
+                            {
+                                int getWindowIndex = Int16.Parse(act.LocateValue);
+                                string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
+                                if (winIndexTitle != null)
+                                {
+                                    // window found put some info in ExInfo
+                                    act.ExInfo = winIndexTitle;
+                                    BFound = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                     catch
