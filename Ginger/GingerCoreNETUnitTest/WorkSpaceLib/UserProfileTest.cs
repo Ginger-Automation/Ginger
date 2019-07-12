@@ -22,6 +22,7 @@ using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace GingerCoreNETUnitTest.WorkSpaceLib
@@ -49,9 +50,9 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             
         }
 
-
+        [Ignore]
         [TestMethod]
-        [Ignore] // Failing !!! needs fix!!! in UserProfile have one list of recent
+         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects 
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -81,14 +82,14 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         [Timeout(60000)]
         public void CreateUserProfileFileName()
         {
-            //// Arrange            
+            // Arrange            
 
-            ////Act
-            //string s = UserProfile.crea.CreateUserProfileFileName();
+            //Act
+            string s = UserProfile.UserProfileFilePath;
 
-            ////Assert
-            //string username = Environment.UserName.ToLower();
-            //Assert.AreEqual(@"C:\Users\" + username + @"\AppData\Roaming\Ginger\" + username + ".Ginger.UserProfile.xml", s);
+            //Assert
+            string expected = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml"; //  Linux!!!!!!!!!!!
+            Assert.AreEqual(expected, s);   
         }
 
     }
