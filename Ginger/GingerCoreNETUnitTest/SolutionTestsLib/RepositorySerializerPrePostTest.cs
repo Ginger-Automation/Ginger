@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.Drivers;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -35,18 +38,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
-            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));
+            WorkspaceHelper.CreateWorkspace2("RepositorySerializerPrePostTest");            
+            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+         
         }
 
 
@@ -156,7 +162,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual(7, dummyAction.Age, "Age = 7");
         }
 
+        [TestMethod]
+        public void WindoowsDriverDefaultActionTimeoutUpgradeTest()
+        {
+            //Arrange
+            string fileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "Windows.Ginger.Agent.xml");
 
+            //Act
+            Agent windowsAgent = (Agent)RS.DeserializeFromFile(fileName);
+
+            DriverConfigParam actionTimeoutParameter = windowsAgent.DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
+
+            //Assert
+            Assert.AreEqual("30", actionTimeoutParameter.Value, "ActionTimeout = 30");
+            Assert.AreEqual("Action Timeout - default is 30 seconds", actionTimeoutParameter.Description, "ActionTimeout Description Validation");
+        }
 
 
 

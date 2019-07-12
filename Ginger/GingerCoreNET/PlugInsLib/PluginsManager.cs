@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -161,9 +162,9 @@ namespace Amdocs.Ginger.Repository
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
         {
-            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!
+            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!!
 
-            Console.WriteLine("Starting Service...");
+            Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
                 throw new ArgumentNullException(nameof(pluginId));
@@ -195,8 +196,8 @@ namespace Amdocs.Ginger.Repository
 
             if (GingerUtils.OperatingSystem.IsWindows())
             {
-                 procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                 procStartInfo.UseShellExecute = true;               
+                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
+                procStartInfo.UseShellExecute = true;
             }
             else if (GingerUtils.OperatingSystem.IsLinux())
             {
@@ -214,8 +215,9 @@ namespace Amdocs.Ginger.Repository
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo = procStartInfo;
 
-            Console.WriteLine("Starting Process..");
-            proc.Start();            
+            Console.WriteLine("Starting Process..");            
+            proc.Start();
+            Thread.Sleep(3000); // Give the plugin time to connect
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
@@ -230,6 +232,7 @@ namespace Amdocs.Ginger.Repository
             string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify
             string txt = NewName + " | " + serviceId + " | " + SocketHelper.GetLocalHostIP() + " | " + WorkSpace.Instance.LocalGingerGrid.Port + Environment.NewLine;
             string fileName = Path.GetTempFileName();
+            Console.WriteLine("CreateNodeConfigFile content= " + txt);
             File.WriteAllText(fileName, txt);
             return fileName;
         }
@@ -286,8 +289,15 @@ namespace Amdocs.Ginger.Repository
             
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
-            PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
-            return pluginServiceInfo.IsSession;
+            if (pluginServiceInfo != null)
+            {
+                PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);
+                return pluginServiceInfo.IsSession;
+            }
+            else
+            {
+                throw new Exception("IsSessionService Error: pluginServiceInfo not found for: " + pluginId + "." + serviceId);
+            }
         }
 
         public void SolutionChanged(SolutionRepository solutionRepository)

@@ -52,13 +52,13 @@ namespace GingerCore.Variables
         {
             return ValueList.Replace("\r\n", ",");
         }
-        
+
         public VariableList(string varb, List<string> lst)
         {
             Name = varb;
             ValueList = string.Join("\r\n", lst);
         }
-        
+
         public override void ResetValue()
         {
             string[] listValues = Formula.Split(',');
