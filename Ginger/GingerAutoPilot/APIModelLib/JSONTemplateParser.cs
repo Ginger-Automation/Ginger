@@ -107,12 +107,19 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     {
                         consts.Add(param);
                     }
-                    
-                    ((JValue)jt2).Value = param;
-                
+                    //handling empty aaray like 'NewCar':[ ]
+                    if (jt2.Type == JTokenType.Array && jt2.Children().Count() == 0)
+                    {
+                        string jsonarraystring = "[ ]";
+                        jt2 = JArray.Parse(jsonarraystring);
+                    }
+                    else
+                    {
+                        ((JValue)jt2).Value = param;
+                    }
                 }
 
-                catch(Exception)
+                catch(Exception ex)
                 {
                     if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array)
                     {

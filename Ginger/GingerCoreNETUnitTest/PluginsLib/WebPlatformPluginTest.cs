@@ -4,7 +4,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.RunLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
@@ -25,8 +25,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassInitialize(TestContext TestContext)
         {
             // Init workspace
-            DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws);
+            WorkspaceHelper.CreateDummyWorkSpace("WebPlatformPluginTest");            
 
             // Strat GG
             // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
@@ -50,7 +49,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
 
