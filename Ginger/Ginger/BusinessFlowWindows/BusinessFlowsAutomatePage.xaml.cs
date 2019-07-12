@@ -20,11 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
-using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowWindows
@@ -36,7 +34,7 @@ namespace Ginger.BusinessFlowWindows
     {
         SingleItemTreeViewExplorerPage mBusFlowsPage;
         AutomatePage mAutomatePage;
-        NewAutomatePage mNewAutomatePage;
+        
 
         public BusinessFlowsAutomatePage()
         {
@@ -51,23 +49,12 @@ namespace Ginger.BusinessFlowWindows
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
-            {
-                if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
+            {                
+                if (mAutomatePage == null)
                 {
-                    if (mNewAutomatePage == null)
-                    {
-                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
-                    }
-                    xContentFrame.Content = mNewAutomatePage;
+                    mAutomatePage = new AutomatePage((BusinessFlow)args.Object);                       
                 }
-                else
-                {
-                    if (mAutomatePage == null)
-                    {
-                        mAutomatePage = new AutomatePage((BusinessFlow)args.Object);                       
-                    }
-                    xContentFrame.Content = mAutomatePage;
-                }                
+                xContentFrame.Content = mAutomatePage;                                
             }
             else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
             {

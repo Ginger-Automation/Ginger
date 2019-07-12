@@ -32,11 +32,10 @@ using System.IO;
 // FIXME to use local html test page
 
 namespace GingerCoreNETUnitTest.RunTestslib
-{
-    [Ignore] 
+{    
     [Level3]
     [TestClass]
-    public class AgentTest
+    public class PluginAgentTest
     {        
         static GingerGrid mGingerGrid;
 
@@ -62,14 +61,14 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.SolutionRepository = solutionRepository;
 
             // add Example4 Plugin to solution
-            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"PluginPackages" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
+            string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
             WorkSpace.Instance.PlugInsManager.Init(solutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
 
             // Start a Ginger Services grid
-            int HubPort = SocketHelper.GetOpenPort();
-            mGingerGrid = new GingerGrid(HubPort);
-            mGingerGrid.Start();
+            // int HubPort = SocketHelper.GetOpenPort();
+            mGingerGrid = WorkSpace.Instance.LocalGingerGrid; //new GingerGrid(HubPort);  
+            // mGingerGrid.Start();
         }
 
         [ClassCleanup]
@@ -140,57 +139,59 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(list.Count, 0);
         }
 
-        [Ignore]
-        [Priority(9)]
-        [TestMethod]
-        [Timeout(60000)]
-        public void StartFiveLocalDriverFromPluginParallerRun()
-        {
-            ////Arrange  
-            //string PluginPackageFolder = GetSeleniumPluginFolder();
-            //PluginsManager PM = new PluginsManager();
-            //PM.AddPluginPackage(PluginPackageFolder);
 
-            //List<Agent> agents = new List<Agent>();
-            //agents.Add(new Agent() { Name = "a1p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
-            //agents.Add(new Agent() { Name = "a2p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
-            //agents.Add(new Agent() { Name = "a3p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
-            //agents.Add(new Agent() { Name = "a4p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
-            //agents.Add(new Agent() { Name = "a5p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
+        // FIXME and use when we have the selenium plugin working 
+        //[Ignore]
+        //[Priority(9)]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void StartFiveLocalDriverFromPluginParallerRun()
+        //{
+        //    ////Arrange  
+        //    //string PluginPackageFolder = GetSeleniumPluginFolder();
+        //    //PluginsManager PM = new PluginsManager();
+        //    //PM.AddPluginPackage(PluginPackageFolder);
 
-            ////TODO: check why if we do start driver inside the parallel it fails, meanwhile keep it outside
-            //foreach (Agent a in agents)
-            //{
-            //    a.StartDriver();
-            //}
+        //    //List<Agent> agents = new List<Agent>();
+        //    //agents.Add(new Agent() { Name = "a1p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
+        //    //agents.Add(new Agent() { Name = "a2p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
+        //    //agents.Add(new Agent() { Name = "a3p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
+        //    //agents.Add(new Agent() { Name = "a4p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
+        //    //agents.Add(new Agent() { Name = "a5p", PluginDriverName = "Selenium Chrome Driver", PluginPackageName = PluginPackageFolder, LocalGingerGrid = mGingerGrid, PlugInsManager = PM });
 
-
-            ////Act            
-            //Parallel.ForEach(agents, agent =>
-            //{
-            //    // agent.StartDriver();  // TODO: fix me to work
-            //    for (int i = 0; i < 2; i++)
-            //    {
-            //        DriverAction driverAction = new DriverAction();
-            //        driverAction.ID = "GotoURL"; // nameof( IWebBrowser.Navigate);
-            //        driverAction.InputValues.Add(new ActInputValue() { Param = "URL", ValueForDriver = "http://www.google.com" });
-            //        agent.RunAction(driverAction);
-
-            //        DriverAction driverAction2 = new DriverAction();
-            //        driverAction2.ID = "GotoURL"; // nameof( IWebBrowser.Navigate);
-            //        driverAction2.InputValues.Add(new ActInputValue() { Param = "URL", ValueForDriver = "http://www.facebook.com" });
-            //        agent.RunAction(driverAction2);
-            //    }
-
-            //    agent.CloseDriver();
-            //});
+        //    ////TODO: check why if we do start driver inside the parallel it fails, meanwhile keep it outside
+        //    //foreach (Agent a in agents)
+        //    //{
+        //    //    a.StartDriver();
+        //    //}
 
 
-            //ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
+        //    ////Act            
+        //    //Parallel.ForEach(agents, agent =>
+        //    //{
+        //    //    // agent.StartDriver();  // TODO: fix me to work
+        //    //    for (int i = 0; i < 2; i++)
+        //    //    {
+        //    //        DriverAction driverAction = new DriverAction();
+        //    //        driverAction.ID = "GotoURL"; // nameof( IWebBrowser.Navigate);
+        //    //        driverAction.InputValues.Add(new ActInputValue() { Param = "URL", ValueForDriver = "http://www.google.com" });
+        //    //        agent.RunAction(driverAction);
 
-            ////Assert
-            //Assert.AreEqual(list.Count, 0);
-        }
+        //    //        DriverAction driverAction2 = new DriverAction();
+        //    //        driverAction2.ID = "GotoURL"; // nameof( IWebBrowser.Navigate);
+        //    //        driverAction2.InputValues.Add(new ActInputValue() { Param = "URL", ValueForDriver = "http://www.facebook.com" });
+        //    //        agent.RunAction(driverAction2);
+        //    //    }
+
+        //    //    agent.CloseDriver();
+        //    //});
+
+
+        //    //ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
+
+        //    ////Assert
+        //    //Assert.AreEqual(list.Count, 0);
+        //}
 
         
 
