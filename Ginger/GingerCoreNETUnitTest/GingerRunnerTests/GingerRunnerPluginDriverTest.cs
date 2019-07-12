@@ -68,8 +68,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             WorkspaceHelper.CreateWorkspaceWithTempSolution("GingerRunnerPluginDriverTest", "sol1");
 
-           
-
             // Add the plugin to solution
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
@@ -86,13 +84,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkspaceHelper.ReleaseWorkspace();
         }
 
+        private void ResetBusinessFlow()
+        {
+            mBusinessFlow.Activities.Clear();
+            mBusinessFlow.RunStatus = eRunStatus.Pending;
+        }
+
 
         [TestMethod] 
         public void PluginSay()
         {
             //Arrange
-            ResetBusinessFlow();
-            // WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            ResetBusinessFlow();            
 
             Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
             mBusinessFlow.Activities.Add(a1);
@@ -103,7 +106,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Act            
             mGingerRunner.RunRunner();
-
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, act1.Status);
@@ -116,11 +118,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         [TestMethod]  [Timeout(300000)]
-        public void SpeedTest()
+        public void MemoPluginSpeedTest()
         {
             //Arrange
-            ResetBusinessFlow();
-            //WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            ResetBusinessFlow();            
 
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
@@ -143,11 +144,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        private void ResetBusinessFlow()
-        {
-            mBusinessFlow.Activities.Clear();
-            mBusinessFlow.RunStatus = eRunStatus.Pending;
-        }
+        
 
 
     }

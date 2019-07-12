@@ -37,7 +37,7 @@ public static class ShellHelper
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = false;
 
-            //procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.RedirectStandardOutput = true;
         }
         else if (GingerUtils.OperatingSystem.IsMacOS())
         {
