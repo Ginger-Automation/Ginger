@@ -94,6 +94,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod] 
         public void PluginSay()
         {
+            Console.WriteLine(">>>>> test PluginSay <<<<<<<<<");
             //Arrange
             ResetBusinessFlow();            
 
@@ -120,6 +121,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]  [Timeout(300000)]
         public void MemoPluginSpeedTest()
         {
+            Console.WriteLine(">>>>> test MemoPluginSpeedTest <<<<<<<<<");
             //Arrange
             ResetBusinessFlow();            
 
