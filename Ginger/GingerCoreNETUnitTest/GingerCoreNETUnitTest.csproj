@@ -363,6 +363,9 @@
     <None Update="TestResources\UserProfiles\GingerUserProfile.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\VariableTest\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\XML\XmlDoc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
