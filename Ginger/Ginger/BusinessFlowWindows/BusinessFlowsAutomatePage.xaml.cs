@@ -20,11 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
-using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowWindows

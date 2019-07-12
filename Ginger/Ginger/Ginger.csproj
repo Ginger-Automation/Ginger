@@ -828,20 +828,8 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityActionsPage.xaml.cs">
-      <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowInfoPage.xaml.cs">
-      <DependentUpon>BusinessFlowInfoPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowViewPage.xaml.cs">
-      <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowsLibNew\GingerActionEditPage.xaml.cs">
-      <DependentUpon>GingerActionEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
@@ -2945,23 +2933,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityActionsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowInfoPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
