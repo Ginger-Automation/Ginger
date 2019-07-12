@@ -34,7 +34,9 @@ public static class ShellHelper
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
 
-            procStartInfo.UseShellExecute = false;
+            // procStartInfo.UseShellExecute = false;  //work for single
+            procStartInfo.UseShellExecute = true;
+
             procStartInfo.CreateNoWindow = false;
 
             procStartInfo.RedirectStandardOutput = true;
