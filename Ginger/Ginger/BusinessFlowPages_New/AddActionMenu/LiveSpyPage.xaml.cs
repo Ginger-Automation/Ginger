@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
 using Ginger.Drivers.PowerBuilder;
