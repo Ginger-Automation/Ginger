@@ -90,7 +90,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
             mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
-                                        new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
+                                        new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
@@ -117,7 +117,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdatePOMTree()
         {
-            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
             mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
