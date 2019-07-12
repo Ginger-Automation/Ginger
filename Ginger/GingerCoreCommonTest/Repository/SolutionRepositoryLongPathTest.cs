@@ -29,9 +29,9 @@ using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
 {
+
     [Ignore]
-    [TestClass]
-    [Level1]
+    [TestClass]    
     public class SolutionRepositoryLongPathTest
     {
         static SolutionRepository mSolutionRepository;
@@ -43,7 +43,7 @@ namespace GingerCoreCommonTest.Repository
         public static void ClassInitialize(TestContext TC)
         {
 
-            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTempLongPath");
+            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions" +Path.DirectorySeparatorChar + "SRTestTempLongPath");
 
             int i = 1;
             while (TempRepositoryFolder.Length < 300)

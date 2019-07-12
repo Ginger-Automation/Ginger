@@ -580,6 +580,43 @@ namespace UnitTests.UITests
             Assert.AreEqual("Google", actBrowser2.ReturnValues[0].Actual);
         }
 
+        [TestMethod]
+        public void SwitchWindowByIndex()
+        {
+            //Arrange
+            ActBrowserElement actBrowser = new ActBrowserElement();
+            actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser.GetOrCreateInputParam("Value", "www.google.com");
+            actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
+
+            ActBrowserElement actBrowser1 = new ActBrowserElement();
+            actBrowser1.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
+            actBrowser1.GetOrCreateInputParam("Value", "www.gmail.com");
+            actBrowser1.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
+
+            ActBrowserElement actBrowser2 = new ActBrowserElement();
+            actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
+            actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByIndex;
+            actBrowser2.LocateValue = "1";
+            
+            //validation
+            ActBrowserElement actBrowser3 = new ActBrowserElement();
+            actBrowser3.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
+            actBrowser3.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(actBrowser, false);
+            mGR.RunAction(actBrowser1, false);
+            mGR.RunAction(actBrowser2, false);
+            mGR.RunAction(actBrowser3, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
+            Assert.AreEqual("Gmail", actBrowser3.ReturnValues[0].Actual);
+        }
+
 
         [TestMethod]
         public void SwitchWindowAction()

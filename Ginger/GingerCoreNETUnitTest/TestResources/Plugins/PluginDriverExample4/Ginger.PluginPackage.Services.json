@@ -1,0 +1,102 @@
+[
+  {
+    "ServiceId": "SpeechService",
+    "Description": null,
+    "IsSession": false,
+    "Interfaces": [],
+    "Actions": [
+      {
+        "ActionId": "Say",
+        "Description": "Say text",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "text",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "SayHello",
+        "Description": "Say Hello {Name}",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "name",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "greeting",
+            "ParamAttrs": null,
+            "ParamTypeName": "bool"
+          }
+        ]
+      }
+    ],
+    "Configs": []
+  },
+  {
+    "ServiceId": "DictionaryService",
+    "Description": null,
+    "IsSession": true,
+    "Interfaces": [],
+    "Actions": [
+      {
+        "ActionId": "Memorize",
+        "Description": "Memorize text",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "key",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          },
+          {
+            "Param": "value",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "GetMemo",
+        "Description": "Get item from memory",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "key",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "ClearMemo",
+        "Description": "Clear memory",
+        "Interface": null,
+        "InputValues": []
+      },
+      {
+        "ActionId": "LoadDataFromFile",
+        "Description": "Load Data From File",
+        "Interface": null,
+        "InputValues": [
+          {
+            "Param": "fileName",
+            "ParamAttrs": null,
+            "ParamTypeName": "string"
+          }
+        ]
+      },
+      {
+        "ActionId": "List",
+        "Description": "List all items in dictionary",
+        "Interface": null,
+        "InputValues": []
+      }
+    ],
+    "Configs": []
+  }
+]
