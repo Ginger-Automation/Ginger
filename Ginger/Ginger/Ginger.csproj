@@ -831,15 +831,6 @@
     <Compile Include="BusinessFlowsLibNew\ActivityActionsPage.xaml.cs">
       <DependentUpon>ActivityActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityPage.xaml.cs">
-      <DependentUpon>ActivityPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml.cs">
-      <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowsLibNew\NewAutomatePage.xaml.cs">
-      <DependentUpon>NewAutomatePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
     </Compile>
@@ -2955,18 +2946,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowsLibNew\ActivityActionsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\ActivityVariablesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowsLibNew\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
