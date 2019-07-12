@@ -129,7 +129,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBusinessFlow.Activities.Add(activitiy1);
             
             for (int i = 0; i < 1000; i++)
-            {
+            {                
                 ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
                 activitiy1.Acts.Add(act1);
@@ -140,7 +140,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Assert
-            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus , "mBF.RunStatus");
+            for (int i = 0; i < 1000; i++)
+            {
+                Assert.AreEqual(eRunStatus.Passed, activitiy1.Acts[i].Status, "Status of Act #" + i);
+            }
             Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
             Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/20sec");
         }
