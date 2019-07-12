@@ -5720,9 +5720,9 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                            if (act.LocateBy == eLocateBy.ByIndex)
+                             if (act.LocateBy == eLocateBy.ByIndex)
                             {
-                                int getWindowIndex = Int16.Parse(act.LocateValue);
+                                int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
                                 string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
                                 if (winIndexTitle != null)
                                 {
