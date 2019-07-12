@@ -33,12 +33,8 @@ public static class ShellHelper
             Console.WriteLine("Command: " + cmd);            
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
-
-            // procStartInfo.UseShellExecute = false;  //work for single
-            procStartInfo.UseShellExecute = true;
-
+            procStartInfo.UseShellExecute = false;              
             procStartInfo.CreateNoWindow = false;
-
             procStartInfo.RedirectStandardOutput = true;
         }
         else if (GingerUtils.OperatingSystem.IsMacOS())
