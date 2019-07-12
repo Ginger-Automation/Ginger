@@ -17,23 +17,21 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
-    [Ignore]
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -44,9 +42,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
-            
+        {            
             // Create new solution
             mBusinessFlow = new BusinessFlow();
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -70,52 +66,51 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
+            WorkspaceHelper.CreateWorkspaceWithTempSolution("GingerRunnerPluginDriverTest", "sol1");
+
+           
 
             // Add the plugin to solution
-            WorkSpace.Init(new WorkSpaceEventHandler());
-            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
+            WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
+            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
-            string solutionfolder = TestResources.GetTestTempFolder("sol1");
-            if (Directory.Exists(solutionfolder))
-            {
-                Directory.Delete(solutionfolder,true);
-            }            
-            WorkSpace.Instance.SolutionRepository.CreateRepository(solutionfolder);
-            WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
-
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins\PluginDriverExample4");
-            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
+            
+            Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            // mGingerRunner.StopAgents();
+        {            
+            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod] 
         public void PluginSay()
         {
             //Arrange
             ResetBusinessFlow();
-            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            // WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
             Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
             mBusinessFlow.Activities.Add(a1);
 
-            ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say",  Active = true };
+            ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say",  Active = true, AddNewReturnParams = true };
             act1.AddOrUpdateInputParamValue("text", "hello");
             a1.Acts.Add(act1);
 
             //Act            
             mGingerRunner.RunRunner();
-            string outVal = act1.GetReturnValue("I said").Actual;
+
 
             //Assert
-            Assert.AreEqual("hello", outVal, "outVal=hello");
-            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, act1.Status);
             Assert.AreEqual(eRunStatus.Passed, a1.Status);            
+            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus);
+            string outVal = act1.GetReturnValue("I said").Actual;
+            Assert.AreEqual("hello", outVal, "outVal=hello");            
         }
 
 
@@ -125,14 +120,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             ResetBusinessFlow();
-            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            //WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
 
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
             
             for (int i = 0; i < 1000; i++)
             {
-                ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "MemoService", ActionId = "Say", Active = true };
+                ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
                 activitiy1.Acts.Add(act1);
             }
@@ -142,9 +137,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Assert
-            Assert.AreEqual(mBusinessFlow.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
+            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus , "mBF.RunStatus");
             Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
-            Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/10sec");
+            Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/20sec");
         }
 
 
