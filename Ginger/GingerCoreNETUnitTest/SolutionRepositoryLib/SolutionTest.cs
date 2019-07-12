@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
@@ -31,14 +30,31 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkSpace.Init(new WorkSpaceEventHandler());            
+            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
+
+        
+
 
         [TestInitialize]
         public void TestInitialize()
         {
 
         }
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+
+        }
+
         //test trigger unit test
         /// <summary>
         /// Test the new solution been created successfully
