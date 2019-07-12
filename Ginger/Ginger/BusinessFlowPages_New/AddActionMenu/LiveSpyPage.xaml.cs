@@ -86,10 +86,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void InitMethod()
         {
-            xWinGridUC.IsEnabled = false;
-            xSpyingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Visible;
-            ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+            this.Dispatcher.Invoke(() => {
+                xWinGridUC.IsEnabled = false;
+                xSpyingButton.IsEnabled = false;
+                xStartAgentMessage.Visibility = Visibility.Visible;
+                ControlPropertiesGrid.Visibility = Visibility.Collapsed;
+            });
         }
 
         void AgentBasedManipulations()
@@ -97,6 +99,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mContext.Agent != null)
             {
                 bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+
+                if (mContext.Agent != null)
+                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
                 if (isAgentRunning)
                 {
                     xStartAgentMessage.Visibility = Visibility.Collapsed;

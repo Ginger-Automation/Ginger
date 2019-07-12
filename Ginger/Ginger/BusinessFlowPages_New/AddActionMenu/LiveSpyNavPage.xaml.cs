@@ -84,7 +84,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void SetFrameEnableDisable()
         {
-            bool isAgentRunning = mContext.AgentStatus.Equals(Agent.eStatus.Running.ToString(), StringComparison.OrdinalIgnoreCase);                  //  AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+            bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;                  //  AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+            if(mContext.Agent != null)
+                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
             if (isAgentRunning)
             {
                 xSelectedItemFrame.IsEnabled = true;

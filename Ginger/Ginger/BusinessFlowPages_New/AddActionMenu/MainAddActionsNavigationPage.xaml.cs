@@ -46,6 +46,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
             SetRecordButtonAccessebility();
+            ToggleApplicatoinModels();
+            ToggleLiveSpyAndWindowsExplorer();
             xApplicationModelsPnl.Visibility = Visibility.Collapsed;
         }
 
@@ -54,14 +56,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
                 xRecordItemBtn.Visibility = Visibility.Visible;
-                xLiveSpyItemBtn.Visibility = Visibility.Visible;
-                xWindowExplorerItemBtn.Visibility = Visibility.Visible;
             }
             else
             {
                 xRecordItemBtn.Visibility = Visibility.Collapsed;
-                xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
-                xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -71,10 +69,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 SetRecordButtonAccessebility();
                 ToggleApplicatoinModels();
+                ToggleLiveSpyAndWindowsExplorer();
                 if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
                 {
                     LoadActionFrame(null); 
                 }                
+            }
+        }
+
+        void ToggleLiveSpyAndWindowsExplorer()
+        {
+            if (mContext.Agent != null && mContext.Agent.Driver != null)
+            {
+                if (mContext.Agent.Driver.IsWindowExplorerSupportReady())
+                {
+                    xWindowExplorerItemBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
+                }
             }
         }
 

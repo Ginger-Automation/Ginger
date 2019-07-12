@@ -105,11 +105,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SetControlsVisibility()
         {
-            gridPOMListItems.Visibility = Visibility.Hidden;
-            xWinGridUC.IsEnabled = false;
-            xRecordingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Visible;
-            xPOMPanel.Visibility = Visibility.Hidden;
+            this.Dispatcher.Invoke(() =>
+            {
+                gridPOMListItems.Visibility = Visibility.Hidden;
+                xWinGridUC.IsEnabled = false;
+                xRecordingButton.IsEnabled = false;
+                xStartAgentMessage.Visibility = Visibility.Visible;
+                xPOMPanel.Visibility = Visibility.Hidden;
+            });
         }
 
         private void AgentBasedManipulations()
@@ -163,7 +166,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)
         {
-            bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+            bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;           // AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+
+            if (mContext.Agent != null)
+                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
             if (isAgentRunning)
             {
                 IsRecording = !IsRecording;
@@ -222,20 +229,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
 
         private void SetRecordingButtonText()
-        {      
-            if (IsRecording)
+        {
+            this.Dispatcher.Invoke(() =>
             {
-                xRecordingButton.ButtonText = "Stop Recording";
-                xRecordingButton.ToolTip = "Stop Recording";
-                xRecordingButton.ButtonImageType = eImageType.Stop;
-            }
-            else
-            {
-                xRecordingButton.ButtonText = "Start Recording";
-                xRecordingButton.ToolTip = "Start Recording";
-                xRecordingButton.ButtonImageType = eImageType.Run;
-            }
-            xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle");
+                if (IsRecording)
+                {
+                    xRecordingButton.ButtonText = "Stop Recording";
+                    xRecordingButton.ToolTip = "Stop Recording";
+                    xRecordingButton.ButtonImageType = eImageType.Stop;
+                }
+                else
+                {
+                    xRecordingButton.ButtonText = "Start Recording";
+                    xRecordingButton.ToolTip = "Start Recording";
+                    xRecordingButton.ButtonImageType = eImageType.Run;
+                }
+                xRecordingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle");
+            });
         }
 
         ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();
