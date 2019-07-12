@@ -102,27 +102,6 @@
     <None Update="TestResources\CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\Ginger.PluginPackage.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\GingerPluginCore.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\Newtonsoft.Json.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.deps.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\PluginPackages\PluginDriverExample4\System.Reflection.DispatchProxy.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
