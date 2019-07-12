@@ -18,10 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 {
@@ -34,17 +34,22 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {            
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            WorkspaceHelper.CreateWorkspace2("RepositoryItemTest");            
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
+
+        
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            
         }
 
 
