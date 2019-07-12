@@ -121,14 +121,17 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]  [Timeout(300000)]
         public void MemoPluginSpeedTest()
         {
+            // Reporter.ToConsole(eLogLevel.INFO, ">>>>> test MemoPluginSpeedTest <<<<<<<<<");
             Console.WriteLine(">>>>> test MemoPluginSpeedTest <<<<<<<<<");
             //Arrange
             ResetBusinessFlow();            
 
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
-            
-            for (int i = 0; i < 1000; i++)
+
+            int count = 10;
+
+            for (int i = 0; i < count; i++)
             {                
                 ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
@@ -140,7 +143,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Assert
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < count; i++)
             {
                 Assert.AreEqual(eRunStatus.Passed, activitiy1.Acts[i].Status, "Status of Act #" + i);
             }
