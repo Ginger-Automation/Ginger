@@ -9,11 +9,12 @@ public static class ShellHelper
     /// <param name="args"></param>
     public static Process Dotnet(string args)
     {
-        System.Diagnostics.ProcessStartInfo procStartInfo = null;
+        ProcessStartInfo procStartInfo = new ProcessStartInfo();
         if (GingerUtils.OperatingSystem.IsWindows())
         {
-            Console.WriteLine("*** OS is Windows ***");
-            procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c dotnet " + args);
+            Console.WriteLine("*** OS is Windows ***");            
+            procStartInfo.FileName = "cmd";
+            procStartInfo.Arguments = "/c dotnet " + args;
             procStartInfo.UseShellExecute = true;
         }
         else if (GingerUtils.OperatingSystem.IsLinux())
@@ -23,28 +24,57 @@ public static class ShellHelper
             var output = ShellHelper.Bash("dotnet --version");
             Console.WriteLine("=====================================================================");
             Console.WriteLine("<<<<<<<<<<<<<<<          Shell result                    >>>>>>>>>>>>");
-            
             Console.WriteLine(output);
             Console.WriteLine("=====================================================================");
 
 
             // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
-            string cmd = args = "-c \"" + "dotnet " + args +  "\"";  
-            Console.WriteLine("Command: " + cmd);
-            procStartInfo = new System.Diagnostics.ProcessStartInfo();
+            string cmd = args = "-c \"" + "dotnet " + args + "\"";
+            Console.WriteLine("Command: " + cmd);            
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
 
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = false;
+
+            //procStartInfo.RedirectStandardOutput = true;
+        }
+        else if (GingerUtils.OperatingSystem.IsMacOS())
+        {
+            Console.WriteLine("*** OS is Mac ***");
+            var output = ShellHelper.Bash("dotnet --version");
+            Console.WriteLine("=====================================================================");
+            Console.WriteLine("<<<<<<<<<<<<<<<          Shell result                    >>>>>>>>>>>>");
+            Console.WriteLine(output);
+            Console.WriteLine("=====================================================================");
+
+
+            // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
+            string cmd = args = "-c \"" + "dotnet " + args + "\"";
+            Console.WriteLine("Command: " + cmd);
+            procStartInfo.FileName = "/bin/bash";
+            procStartInfo.Arguments = args;
+
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = false;
+
             procStartInfo.RedirectStandardOutput = true;
         }
 
-        Process process = new System.Diagnostics.Process();
+        Process process = new Process();
         process.StartInfo = procStartInfo;
 
         Console.WriteLine("Starting Process..");
-        process.Start();
+        bool started = process.Start();
+        if (started)
+        {
+            Console.WriteLine("Error: Not able to start Process..");
+        }
+        else
+        {
+            Console.WriteLine("Starting Process..");
+        }
+        
         return process;
     }
 
