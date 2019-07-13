@@ -30,7 +30,7 @@ using System.Threading;
 namespace GingerCoreCommonTest.Repository
 {
 
-    [Ignore]
+
     [TestClass]    
     public class SolutionRepositoryLongPathTest
     {
