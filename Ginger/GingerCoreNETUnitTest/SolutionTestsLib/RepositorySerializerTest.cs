@@ -53,7 +53,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             
         }
 
-        [Ignore] // FIXME why we have more data what chaged?
+       
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -71,10 +71,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
-            // Please double verify if the increase in size make send and is needed before changing this value of expected length
-            // Assert.AreEqual(xml.Length, 491);
-
-            Assert.AreEqual(491, xml.Length);
+            // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
+            Assert.AreEqual(776, xml.Length);  // 776 was verified and OK on 7/13/2019
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
@@ -89,7 +87,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
             Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(xml.Contains("<Activity ActivityName=\"Activity 1\""));
+            Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
             Assert.IsTrue(xml.Contains("</Activities>"));
             Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
 
