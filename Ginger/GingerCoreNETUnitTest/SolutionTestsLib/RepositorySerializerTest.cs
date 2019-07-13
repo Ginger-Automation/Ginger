@@ -354,22 +354,22 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("meme", RAFE2.Email.MailTo);
         }
 
-        // FIXME - change the xml to new RunSet the current is very old
-        [Ignore]
-        [TestMethod]
-        [Timeout(60000)]
-        public void LoadRunSetWith5Operations()
-        {
-            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-            //Arrange
-            string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
+        //// FIXME - change the xml to new RunSet the current is very old
+        //[Ignore]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void LoadRunSetWith5Operations()
+        //{
+        //    NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+        //    //Arrange
+        //    string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
 
-            //Act
-            RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
+        //    //Act
+        //    RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
 
-            //Assert
-            Assert.AreEqual(5, RSC.RunSetActions.Count);
-        }
+        //    //Assert
+        //    Assert.AreEqual(5, RSC.RunSetActions.Count);
+        //}
 
 
     }
