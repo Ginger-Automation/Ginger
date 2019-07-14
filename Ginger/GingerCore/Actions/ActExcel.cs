@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
 // using DocumentFormat.OpenXml.Spreadsheet;
@@ -820,11 +821,11 @@ namespace GingerCore.Actions
 
             ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.ToUpper();
 
-            //if (ExcelFileNameAbsolutue.Contains(@"~\"))
-            //{
-            //    ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
-            //}
-            ExcelFileNameAbsolutue = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+            if (ExcelFileNameAbsolutue.Contains(SolutionRepository.cSolutionRootFolderSign))
+            {
+                ExcelFileNameAbsolutue = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+            }
+            
 
             return ExcelFileNameAbsolutue;
         }
