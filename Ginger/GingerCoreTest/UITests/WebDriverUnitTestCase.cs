@@ -37,7 +37,11 @@ using System.Linq;
 
 namespace UnitTests.UITests
 {
-    [Ignore]
+    
+
+    // Ad use Mutext to run test one by one !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
     [TestClass]
     [Level3]
     public class WebDriverUnitTest
@@ -86,6 +90,7 @@ namespace UnitTests.UITests
             mGR.CurrentBusinessFlow = mBF;
             mGR.SetCurrentActivityAgent();
 
+            // helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);

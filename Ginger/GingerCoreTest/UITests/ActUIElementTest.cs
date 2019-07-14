@@ -18,9 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,11 +30,10 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
-    [Ignore]
+
     [Level3]
     [TestClass]
     public class ActUIElementTest
