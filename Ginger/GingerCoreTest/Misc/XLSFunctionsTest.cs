@@ -96,7 +96,7 @@ namespace UnitTests.NonUITests
         //}
 
 
-            // Requires Excel to be installed - change to use the new plugin with OpenXML
+        [Ignore]    // Requires Excel to be installed - change to use the new plugin with OpenXML
         [Level2]
         [TestMethod]  [Timeout(60000)]
         public void ReadDataFromXLSGetRowCount()
