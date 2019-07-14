@@ -737,26 +737,26 @@ namespace UnitTests.UITests.PBDriverTest
             mGR.RunAction(actGen, false);
         }
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void GetURL_Testing()
-        {
-            ActBrowserElement act = new ActBrowserElement();
-            act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActBrowserElement.eControlAction.GetPageURL;            
-            act.AddNewReturnParams = true;
-            act.Active = true;
-            mBF.CurrentActivity.Acts.Add(act);
-            mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void GetURL_Testing()
+        //{
+        //    ActBrowserElement act = new ActBrowserElement();
+        //    act.LocateBy = eLocateBy.ByName;
+        //    act.ControlAction = ActBrowserElement.eControlAction.GetPageURL;            
+        //    act.AddNewReturnParams = true;
+        //    act.Active = true;
+        //    mBF.CurrentActivity.Acts.Add(act);
+        //    mBF.CurrentActivity.Acts.CurrentItem = act;
+        //    mGR.RunAction(act, false);
 
-            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
-            string actual = act.GetReturnParam("Actual");
-            string expected = @"file://" + TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html"; 
+        //    Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
+        //    string actual = act.GetReturnParam("Actual");
+        //    string expected = @"file://" + TestResources.GetTestResourcesFolder("PBTestApp") + @"\Browser.html"; 
 
-            Assert.AreEqual(actual, expected, "True");
-            Assert.AreEqual(act.Error, null, "Act.Error");
-        }
+        //    Assert.AreEqual(actual, expected, "True");
+        //    Assert.AreEqual(act.Error, null, "Act.Error");
+        //}
 
 
         [Ignore]
