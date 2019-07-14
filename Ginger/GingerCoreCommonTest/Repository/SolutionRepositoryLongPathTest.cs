@@ -37,6 +37,7 @@ namespace GingerCoreCommonTest.Repository
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    [Ignore]
     [TestClass]    
     public class SolutionRepositoryLongPathTest
     {
