@@ -68,8 +68,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             WorkspaceHelper.CreateWorkspaceWithTempSolution("GingerRunnerPluginDriverTest", "sol1");
 
-           
-
             // Add the plugin to solution
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
@@ -86,13 +84,19 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkspaceHelper.ReleaseWorkspace();
         }
 
+        private void ResetBusinessFlow()
+        {
+            mBusinessFlow.Activities.Clear();
+            mBusinessFlow.RunStatus = eRunStatus.Pending;
+        }
+
 
         [TestMethod] 
         public void PluginSay()
         {
+            Console.WriteLine(">>>>> test PluginSay <<<<<<<<<");
             //Arrange
-            ResetBusinessFlow();
-            // WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            ResetBusinessFlow();            
 
             Activity a1 = new Activity() { Active = true, TargetApplication = mAppName };                        
             mBusinessFlow.Activities.Add(a1);
@@ -104,7 +108,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Act            
             mGingerRunner.RunRunner();
 
-
             //Assert
             Assert.AreEqual(eRunStatus.Passed, act1.Status);
             Assert.AreEqual(eRunStatus.Passed, a1.Status);            
@@ -115,18 +118,21 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
 
-        [TestMethod]  [Timeout(60000)]
-        public void SpeedTest()
+        [TestMethod]  [Timeout(300000)]
+        public void MemoPluginSpeedTest()
         {
+            // Reporter.ToConsole(eLogLevel.INFO, ">>>>> test MemoPluginSpeedTest <<<<<<<<<");
+            Console.WriteLine(">>>>> test MemoPluginSpeedTest <<<<<<<<<");
             //Arrange
-            ResetBusinessFlow();
-            //WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();
+            ResetBusinessFlow();            
 
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
-            
-            for (int i = 0; i < 1000; i++)
-            {
+
+            int count = 10;
+
+            for (int i = 0; i < count; i++)
+            {                
                 ActPlugIn act1 = new ActPlugIn() { PluginId = "Memo", ServiceId = "SpeechService", ActionId = "Say", Active = true };
                 act1.AddOrUpdateInputParamValue("text", "hello " + i);
                 activitiy1.Acts.Add(act1);
@@ -137,17 +143,16 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
             //Assert
-            Assert.AreEqual(eRunStatus.Passed, mBusinessFlow.RunStatus , "mBF.RunStatus");
+            for (int i = 0; i < count; i++)
+            {
+                Assert.AreEqual(eRunStatus.Passed, activitiy1.Acts[i].Status, "Status of Act #" + i);
+            }
             Assert.AreEqual(eRunStatus.Passed, activitiy1.Status);            
             Assert.IsTrue(activitiy1.Elapsed < 20000, "a0.Elapsed Time less than 20000ms/20sec");
         }
 
 
-        private void ResetBusinessFlow()
-        {
-            mBusinessFlow.Activities.Clear();
-            mBusinessFlow.RunStatus = eRunStatus.Pending;
-        }
+        
 
 
     }

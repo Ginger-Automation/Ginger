@@ -161,9 +161,7 @@ namespace Amdocs.Ginger.Repository
 
        
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
-        {
-            // Add lot of debug info for run on linux !!!!!!!!!!!!!!!!!!!!!
-
+        {            
             Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
@@ -172,6 +170,7 @@ namespace Amdocs.Ginger.Repository
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
 
             Console.WriteLine("Loading Plugin Services from JSON...");
+
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
 
@@ -185,42 +184,20 @@ namespace Amdocs.Ginger.Repository
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
+            Console.WriteLine("Plugin dll path: " + dll);
+            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);
+            Console.WriteLine("nodeFileName: " + nodeFileName);
 
-            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);  
-            string cmd = "dotnet \"" + dll + "\" \"" + nodeFileName + "\"";
+            string cmd = "\"" + dll + "\" \"" + nodeFileName + "\"";
 
             Console.WriteLine("Creating Process..");
 
-            // TODO: move to GingerUtils to start a process !!!!!!!!!!!!!!!!
-            System.Diagnostics.ProcessStartInfo procStartInfo = null;
+            System.Diagnostics.Process proc = ShellHelper.Dotnet(cmd);
 
-            if (GingerUtils.OperatingSystem.IsWindows())
-            {
-                procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + cmd);
-                procStartInfo.UseShellExecute = true;
-            }
-            else if (GingerUtils.OperatingSystem.IsLinux())
-            {
-                cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // FIXME for Ubunto
-                Console.WriteLine("Command: " + cmd);
-                procStartInfo = new System.Diagnostics.ProcessStartInfo("/bin/bash", " " + cmd + " ");
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = false;
-                procStartInfo.RedirectStandardOutput = true;
-            }
-            
-            // TODO: Make it config not to show the console window
-            // procStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = procStartInfo;
-
-            Console.WriteLine("Starting Process..");            
-            proc.Start();
-            Thread.Sleep(3000); // Give the plugin time to connect
+          
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
-            Console.WriteLine("Plugin Running on the Process ID:" + proc.Id);
+            Console.WriteLine("Plugin Running on the Process ID: " + proc.Id);
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
