@@ -9,8 +9,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
-{
-    [Ignore]
+{    
     [TestClass]
     public class RecordingManagerTest
     {

@@ -24,7 +24,6 @@ using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 

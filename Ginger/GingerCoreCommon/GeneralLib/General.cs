@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 //TODO: check where it goes - not roaming,.,
                 string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                appDataFolder = Path.Combine(appDataFolder, @"Amdocs\Ginger");
+                appDataFolder = Path.Combine(appDataFolder, @"Amdocs\Ginger");    // Linux !!!!!!!!!!!!!!!!!!!!!!!!
 
                 if (!Directory.Exists(appDataFolder))
                 {

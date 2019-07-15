@@ -89,24 +89,24 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         //}
 
-        [Ignore]
-        [TestMethod]
-        [Timeout(60000)]
-        public void FoldersTerminologyTest()
-        {
+        //[Ignore]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void FoldersTerminologyTest()
+        //{
 
-            //TODO: test with different terminology, make sure when we work as QC or BDD the folder name on disk remains the same 'Business Flows', but the user see - 'Test Sets' etc..
+        //    //TODO: test with different terminology, make sure when we work as QC or BDD the folder name on disk remains the same 'Business Flows', but the user see - 'Test Sets' etc..
 
-            //Arrange            
+        //    //Arrange            
 
-            //Act
-
-
-            //Assert
+        //    //Act
 
 
+        //    //Assert
 
-        }
+
+
+        //}
 
 
 
