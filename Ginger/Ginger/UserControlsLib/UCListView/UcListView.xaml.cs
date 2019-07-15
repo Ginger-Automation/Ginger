@@ -139,7 +139,6 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    xSearchTextBox.Text = "";
                     filteredView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (filteredView != null)
@@ -151,6 +150,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     this.Dispatcher.Invoke(() =>
                     {
+                        xSearchTextBox.Text = "";
                         xListView.ItemsSource = mObjList;
 
                             // Make the first row selected
@@ -187,7 +187,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        string mFilterSearchText = null;
+        public string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
         {

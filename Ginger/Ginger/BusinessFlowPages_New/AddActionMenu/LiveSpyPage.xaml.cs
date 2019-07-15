@@ -66,6 +66,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xWinGridUC.mContext = mContext;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethod();
+            AgentBasedManipulations();
             InitWinGridUC();
             InitControlPropertiesGridView();
         }
@@ -85,19 +86,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void InitMethod()
         {
-            xWinGridUC.IsEnabled = false;
-            xSpyingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Visible;
-            ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
-            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
+            this.Dispatcher.Invoke(() => {
+                xWinGridUC.IsEnabled = false;
+                xSpyingButton.IsEnabled = false;
+                xStartAgentMessage.Visibility = Visibility.Visible;
+                ControlPropertiesGrid.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        void AgentBasedManipulations()
+        {
+            if (mContext.Agent != null)
             {
-                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+
+                if (mContext.Agent != null)
+                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
                 if (isAgentRunning)
                 {
                     xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;                                       
+                    xWinGridUC.IsEnabled = true;
 
-                    if(ControlPropertiesGrid.DataSourceList != null)
+                    if (ControlPropertiesGrid.DataSourceList != null)
                     {
                         ControlPropertiesGrid.Visibility = Visibility.Visible;
                     }
@@ -140,9 +151,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus))
+            if (e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
             {
                 InitMethod();
+                AgentBasedManipulations();
                 if (xWinGridUC.mWindowExplorerDriver == null)
                 {
                     xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;

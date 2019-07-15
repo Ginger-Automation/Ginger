@@ -84,7 +84,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void SetFrameEnableDisable()
         {
-            bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+            bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;                  //  AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+            if(mContext.Agent != null)
+                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
             if (isAgentRunning)
             {
                 xSelectedItemFrame.IsEnabled = true;
@@ -104,8 +107,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             bool isLoaded = false;
             if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
             {
-                AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
-                                                                                x.ObjectAgent.ItemName == context.Agent.ItemName).FirstOrDefault();
+                AgentPageMappingHelper objHelper = mWinExplorerPageList.Find(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
+                                                                                x.ObjectAgent.ItemName == context.Agent.ItemName);
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
                     CurrentLoadedPage = (LiveSpyPage)objHelper.ObjectWindowPage;
