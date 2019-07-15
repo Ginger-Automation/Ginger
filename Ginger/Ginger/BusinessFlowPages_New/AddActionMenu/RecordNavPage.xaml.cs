@@ -141,7 +141,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xWinGridUC.UpdateWindowsList();
                 }
 
-                if (mContext.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA 
+                if (PlatformInfoBase.GetPlatformImpl(mContext.Platform) != null 
                     && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
                 {
                     xPOMPanel.Visibility = Visibility.Visible;
