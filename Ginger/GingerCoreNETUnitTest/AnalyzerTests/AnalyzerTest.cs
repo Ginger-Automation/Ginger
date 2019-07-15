@@ -64,7 +64,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             //Put the BF in Test Resource
              NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
 
-             string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "BF_MissingVariableTest.Ginger.BusinessFlow.xml");
+             string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "MissingVariableUsedOnlyInSetVariable.Ginger.BusinessFlow.xml");
 
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
