@@ -217,20 +217,20 @@
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="ALM Operations" />
                                 </MenuItem.Header>
-                                <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
                                 <MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
                                     <MenuItem.Icon>
                                         <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
                                         <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
                                     </MenuItem.Header>
                                 </MenuItem>
                                 <MenuItem x:Name="xExportResultsToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportResultsToAlmMenuItem_Click">

@@ -11,7 +11,7 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="245" />
+            <RowDefinition Height="250" />
             <RowDefinition x:Name="VarTypeConfigsRow" Height="130*" MinHeight="130"/>
             <RowDefinition Height="130"/>
         </Grid.RowDefinitions>

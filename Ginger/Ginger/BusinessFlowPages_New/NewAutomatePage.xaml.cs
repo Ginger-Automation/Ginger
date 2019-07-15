@@ -1181,6 +1181,12 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (CheckIfExecutionIsInProgress()) return;
 
+            if (string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("{0} is not mapped to any ALM.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
+            }
+
             if (mBusinessFlow != null && mBusinessFlow.ActivitiesGroups != null && mBusinessFlow.ActivitiesGroups.Count > 0)
             {
                 ALMIntegration.Instance.RefreshAllGroupsFromALM(mBusinessFlow);
@@ -1205,6 +1211,12 @@ namespace GingerWPF.BusinessFlowsLib
         private void xExportResultsToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
+
+            if (string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("{0} is not mapped to any ALM.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+                return;
+            }
 
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);

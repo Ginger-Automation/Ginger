@@ -658,9 +658,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void DeleteGroupHandler(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup) == eUserMsgSelection.Yes)
-            {
-                ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup, activitiesGroup.Name) == eUserMsgSelection.Yes)
+            {                
                 mContext.BusinessFlow.DeleteActivitiesGroup(activitiesGroup);
             }
         }
