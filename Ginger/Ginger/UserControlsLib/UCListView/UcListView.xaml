@@ -27,7 +27,7 @@
             <DockPanel x:Name="xAllListOperationsBarPnl"  HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="10 0 0 0">
                 <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" ToolTip="Extra Operations">
-                    <MenuItem>
+                    <MenuItem Cursor="Hand">
                         <MenuItem.Header>
                             <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Header>
@@ -75,7 +75,7 @@
                                                         </StackPanel>
                                                     </DockPanel>
                                                     <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" >
-                                                        <MenuItem>
+                                                        <MenuItem Cursor="Hand">
                                                             <MenuItem.Icon>
                                                                 <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                                                             </MenuItem.Icon>

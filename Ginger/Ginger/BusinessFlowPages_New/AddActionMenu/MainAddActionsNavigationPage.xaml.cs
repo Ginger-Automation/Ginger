@@ -218,7 +218,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 mWindowsExplorerNavPage = new WindowsExplorerNavPage(mContext);
             }
-            LoadActionFrame(mWindowsExplorerNavPage, "Windows Explorer", eImageType.Search);
+            LoadActionFrame(mWindowsExplorerNavPage, "Explorer", eImageType.Window);
         }
 
         private void XAPIBtn_Click(object sender, RoutedEventArgs e)

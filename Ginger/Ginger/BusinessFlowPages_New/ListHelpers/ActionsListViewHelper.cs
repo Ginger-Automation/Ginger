@@ -82,7 +82,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemExecutionStatusField()
         {
-            return nameof(Act.Status);
+            if (PageViewMode == General.eRIPageViewMode.Automation)
+            {
+                return nameof(Act.Status);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public string GetItemActiveField()
