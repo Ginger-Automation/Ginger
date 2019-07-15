@@ -223,6 +223,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteAll.OperationHandler = DeleteAllHandler;
             extraOperationsList.Add(deleteAll);
 
+            ListItemOperation addSelectedToSR = new ListItemOperation();
+            addSelectedToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            addSelectedToSR.AutomationID = "addSelectedToSR";
+            addSelectedToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+            addSelectedToSR.Header = "Add Selected to Shared Repository";
+            addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
+            extraOperationsList.Add(addSelectedToSR);
+
             return extraOperationsList;
         }
 
@@ -619,6 +627,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             list.Add(mAction);
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+        }
+
+
+        private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)
+        {            
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+            foreach (Act act in SelectedItemsList)
+            {
+                list.Add(act);
+            }
             (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
         }
 

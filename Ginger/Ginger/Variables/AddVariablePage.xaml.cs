@@ -65,7 +65,7 @@ namespace Ginger.Variables
             xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
 
             mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.AddFromShardRepository);
             xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
             xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
             xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;

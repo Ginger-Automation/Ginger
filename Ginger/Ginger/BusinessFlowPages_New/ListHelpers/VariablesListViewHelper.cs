@@ -212,6 +212,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteAll.OperationHandler = DeleteAllHandler;
             extraOperationsList.Add(deleteAll);
 
+            ListItemOperation addSelectedToSR = new ListItemOperation();
+            addSelectedToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            addSelectedToSR.AutomationID = "addSelectedToSR";
+            addSelectedToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+            addSelectedToSR.Header = "Add Selected to Shared Repository";
+            addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
+            extraOperationsList.Add(addSelectedToSR);
+
             return extraOperationsList;
         }
 
@@ -301,9 +309,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             operationsList.Add(delete);
 
             ListItemOperation itemUsage = new ListItemOperation();
-            itemUsage.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.SharedReposiotry };
+            itemUsage.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.AddFromShardRepository };
             itemUsage.AutomationID = "itemUsage";
-            itemUsage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Link;
+            itemUsage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
             itemUsage.ToolTip = string.Format("View Repository {0} Usage", GingerDicser.GetTermResValue(eTermResKey.Variable));
             itemUsage.OperationHandler = ViewRepositoryItemUsageHandler;
             operationsList.Add(itemUsage);            
@@ -528,6 +536,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             list.Add(mVariable);
+            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+        }
+
+        private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)
+        {
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+            foreach (VariableBase var in SelectedItemsList)
+            {
+                list.Add(var);
+            }
             (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
         }
 
