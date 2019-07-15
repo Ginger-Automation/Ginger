@@ -214,7 +214,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
-                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
                 StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
                 xSpyingButton.Background = Brushes.Transparent;

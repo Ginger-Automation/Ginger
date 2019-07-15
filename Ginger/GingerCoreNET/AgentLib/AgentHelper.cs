@@ -37,7 +37,7 @@ namespace GingerCoreNET
             bool isRunning = false;
             windowExplorerDriver = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
-            if (appAgent != null && appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
+            if (appAgent != null && appAgent.Agent != null && appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
             {
                 windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
                 isRunning = true;

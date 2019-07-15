@@ -141,10 +141,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xWinGridUC.UpdateWindowsList();
                 }
 
+                if (mContext.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA 
+                    && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
+                {
+                    xPOMPanel.Visibility = Visibility.Visible;
+                }
+
                 if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
                     && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
                 {
-                    xPOMPanel.Visibility = Visibility.Visible;
                     xRecordingButton.IsEnabled = true;
 
                     if (((bool)xIntegratePOM.IsChecked))
