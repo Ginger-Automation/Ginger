@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.RunLib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
@@ -45,10 +46,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassInitialize(TestContext TestContext)
         {
             // Create temp solution
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+
+            WorkspaceHelper.InitWS("AgentTest");
+            
 
             // Create temp solution
             SolutionRepository solutionRepository;
@@ -76,6 +76,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassCleanup()
         {
             mGingerGrid.Stop();
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
         [TestInitialize]

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -42,8 +41,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
+        {            
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";

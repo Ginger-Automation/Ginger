@@ -84,7 +84,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             LoadGridData();
             LoadPluginsActions();
-            mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
+            if (mContext.Activity != null)
+            {
+                mActionsList = mContext.Activity.Acts;
+            }
+            else
+            {
+                mActionsList = null;
+            }
         }
 
         private void LoadPluginsActions()

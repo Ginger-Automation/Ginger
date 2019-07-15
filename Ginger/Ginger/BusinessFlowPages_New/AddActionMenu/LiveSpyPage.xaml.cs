@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
 using Ginger.Drivers.PowerBuilder;
@@ -88,7 +89,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xSpyingButton.IsEnabled = false;
             xStartAgentMessage.Visibility = Visibility.Visible;
             ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
-            if (mContext.Agent != null)
+            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
             {
                 bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if (isAgentRunning)

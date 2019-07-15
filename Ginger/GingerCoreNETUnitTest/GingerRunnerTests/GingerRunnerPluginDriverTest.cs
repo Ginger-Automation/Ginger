@@ -17,23 +17,21 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{    
-    [Ignore]
+{
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -44,9 +42,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
-            
+        {            
             // Create new solution
             mBusinessFlow = new BusinessFlow();
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -70,30 +66,24 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
+            WorkspaceHelper.CreateWorkspaceWithTempSolution("GingerRunnerPluginDriverTest", "sol1");
+
+           
 
             // Add the plugin to solution
-            WorkSpace.Init(new WorkSpaceEventHandler());
-            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-
-            string solutionfolder = TestResources.GetTestTempFolder("sol1");
-            if (Directory.Exists(solutionfolder))
-            {
-                Directory.Delete(solutionfolder,true);
-            }            
-            WorkSpace.Instance.SolutionRepository.CreateRepository(solutionfolder);
-            WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
-
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
-            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder); 
+            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
+
+            
+            Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            // TODO: cleanup the 2 plugin process stay alive at end of test with connection closed forc
-            // mGingerRunner.StopAgents();
-            // WorkSpace.Instance.LocalGingerGrid.Stop();
+        {            
+            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
 
