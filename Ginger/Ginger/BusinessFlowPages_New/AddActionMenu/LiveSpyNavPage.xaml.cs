@@ -55,7 +55,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
-            LoadWindowExplorerPage(mContext);
+            LoadWindowExplorerPage();
             SetFrameEnableDisable();
         }
 
@@ -71,9 +71,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SetFrameEnableDisable();
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
-            else if (e.PropertyName == nameof(Context.Agent))
+            else if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
             {
-                LoadWindowExplorerPage(mContext);
+                LoadWindowExplorerPage();
                 SetFrameEnableDisable();
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
@@ -102,13 +102,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// This method is used to get the new WindowExplorerPage based on Context and Agent
         /// </summary>
         /// <returns></returns>
-        private void LoadWindowExplorerPage(Context context)
+        private void LoadWindowExplorerPage()
         {
             bool isLoaded = false;
             if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
             {
-                AgentPageMappingHelper objHelper = mWinExplorerPageList.Find(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
-                                                                                x.ObjectAgent.ItemName == context.Agent.ItemName);
+                AgentPageMappingHelper objHelper = mWinExplorerPageList.Find(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                x.ObjectAgent.ItemName == mContext.Agent.ItemName);
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
                     CurrentLoadedPage = (LiveSpyPage)objHelper.ObjectWindowPage;
@@ -118,16 +118,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (!isLoaded)
             {
-                ApplicationAgent appAgent = AgentHelper.GetAppAgent(context.BusinessFlow.CurrentActivity, context.Runner, context);
+                ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
                 if (appAgent != null)
                 {
-                    CurrentLoadedPage = new LiveSpyPage(context);
+                    CurrentLoadedPage = new LiveSpyPage(mContext);
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
                     if (mWinExplorerPageList == null)
                     {
                         mWinExplorerPageList = new List<AgentPageMappingHelper>();
                     }
-                    mWinExplorerPageList.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage));
+                    mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, CurrentLoadedPage));
                 }
             }
 

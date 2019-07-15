@@ -23,6 +23,8 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
 {
     class ActionsFactory
     {
+        public static bool IsLegacyTabSelected = false;
+
         public static void AddActionsHandler(object mItem, Context mContext)
         {
             Act instance = null;
@@ -95,7 +97,7 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
             else
             {
                 Act instance = (Act)selectedAction.CreateCopy();
-                if (selectedAction is IObsoleteAction)
+                if (selectedAction is IObsoleteAction && IsLegacyTabSelected)
                 {
                     eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                     if (userSelection == eUserMsgSelection.Yes)
@@ -149,7 +151,7 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
             {
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = "",
+                ElementValue = string.Empty,
                 AddPOMToAction = true,
                 POMGuid = elementInfo.ParentGuid.ToString(),
                 ElementGuid = elementInfo.Guid.ToString(),
