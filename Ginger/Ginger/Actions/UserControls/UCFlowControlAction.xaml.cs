@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using System;
@@ -39,7 +41,9 @@ namespace Ginger.Actions.UserControls
         FlowControl FC;
         BusinessFlow mActParentBusinessFlow=null;
         Activity mActParentActivity=null;
+        Act mAction = null;
         GingerRunner mBfParentRunner = null;
+        General.RepositoryItemPageViewMode mEditMode;
 
         public UCFlowControlAction()
         {
@@ -75,6 +79,21 @@ namespace Ginger.Actions.UserControls
             mActParentActivity = activity;
         }
 
+        private static DependencyProperty repositoryItemModeProperty =
+            DependencyProperty.Register("mEditMode", typeof(General.RepositoryItemPageViewMode), typeof(UCFlowControlAction), new PropertyMetadata(OnRepositoryItemModePropertyChanged));
+        private static void OnRepositoryItemModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var control = sender as UCFlowControlAction;
+            if (control != null)
+                control.OnRepositoryItemModeChanged((General.RepositoryItemPageViewMode)args.NewValue);
+        }
+
+        private void OnRepositoryItemModeChanged(General.RepositoryItemPageViewMode editMode)
+        {
+            mEditMode= editMode;
+        }
+
+
         public static DependencyProperty BfParentRunnerProperty =
             DependencyProperty.Register("gingerRunner", typeof(GingerRunner), typeof(UCFlowControlAction), new PropertyMetadata(OnBfParentRunnerPropertyChanged));
 
@@ -90,10 +109,28 @@ namespace Ginger.Actions.UserControls
             mBfParentRunner = mRunner;
         }
 
+        private static DependencyProperty actionProperty =
+            DependencyProperty.Register("mAction", typeof(Act), typeof(UCFlowControlAction), new PropertyMetadata(OnActionPropertyChanged));
+
+        public static DependencyProperty RepositoryItemModeProperty { get => repositoryItemModeProperty; set => repositoryItemModeProperty = value; }
+        public static DependencyProperty ActionProperty { get => actionProperty; set => actionProperty = value; }
+
+        private static void OnActionPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var control = sender as UCFlowControlAction;
+            if (control != null)
+                control.OnActionChanged((Act)args.NewValue);
+        }
+
+        private void OnActionChanged(Act action)
+        {
+            mAction = action;
+        }
+
+
         private void UCFlowControlAction_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             FC = (FlowControl)e.NewValue;
-                        
 
             if (mBfParentRunner != null)
             {
@@ -215,7 +252,7 @@ namespace Ginger.Actions.UserControls
                                 foreach (Act a in mActParentActivity.Acts)
                                 {
                                     //avoid current Action
-                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity.Acts.CurrentItem == a)//TODO: do better condition 
+                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mAction == a)//TODO: do better condition 
                                     {
                                         continue;
                                     }
@@ -251,38 +288,67 @@ namespace Ginger.Actions.UserControls
 
                     case eFlowControlAction.GoToActivity:
                         {
-                            foreach (Activity a in mActParentBusinessFlow.Activities)
+                            if (mEditMode != General.RepositoryItemPageViewMode.SharedReposiotry)
                             {
-                                if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentBusinessFlow.CurrentActivity == a)//TODO: do better condition 
+                                foreach (Activity a in mActParentBusinessFlow.Activities)
                                 {
-                                    continue;
+                                    if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.BusinessFlows && mActParentActivity == a)//TODO: do better condition 
+                                    {
+                                        continue;
+                                    }
+
+                                    ComboEnumItem CEI = new ComboEnumItem();
+                                    CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName;//adding also name as second option search to be used when pulling the activity from Shared Repository
+                                    CEI.text = a.ActivityName;
+                                    ActionValueComboBox.Items.Add(CEI);
+
+                                    if (ActionValueComboBox.SelectedItem == null ||
+                                       (ActionValueComboBox.SelectedItem != null && a.Active))
+                                    {
+                                        if (FC.GetGuidFromValue(true) == a.Guid)
+                                        {
+                                            ActionValueComboBox.SelectedItem = CEI;
+                                        }
+                                        else if (FC.GetGuidFromValue(true) == Guid.Empty && FC.GetNameFromValue(true) == a.Description)
+                                        {
+                                            ActionValueComboBox.SelectedItem = CEI;
+                                        }
+
+                                    }
                                 }
+                                ActionValueComboBox.Visibility = System.Windows.Visibility.Visible;
+                                ActionValueTextBox.Visibility = System.Windows.Visibility.Hidden;
 
-                                ComboEnumItem CEI = new ComboEnumItem();
-                                CEI.Value = a.Guid + FC.GUID_NAME_SEPERATOR + a.ActivityName;//adding also name as second option search to be used when pulling the activity from Shared Repository
-                                CEI.text = a.ActivityName;
-                                ActionValueComboBox.Items.Add(CEI);
-
-                                if (ActionValueComboBox.SelectedItem == null ||
-                                   (ActionValueComboBox.SelectedItem != null && a.Active))
+                                if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
                                 {
-                                    if (FC.GetGuidFromValue(true) == a.Guid)
-                                    {
-                                        ActionValueComboBox.SelectedItem = CEI;
-                                    }
-                                    else if (FC.GetGuidFromValue(true) == Guid.Empty && FC.GetNameFromValue(true) == a.Description)
-                                    {
-                                        ActionValueComboBox.SelectedItem = CEI;
-                                    }
-
+                                    Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
                                 }
                             }
-                            ActionValueComboBox.Visibility = System.Windows.Visibility.Visible;
-                            ActionValueTextBox.Visibility = System.Windows.Visibility.Hidden;
-
-                            if (FC.Value != null && ActionValueComboBox.SelectedItem == null)
+                            else
                             {
-                                Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
+                                Activity activityLinkedToFC = null;
+                                if (FC.GetGuidFromValue(true) != null && FC.GetGuidFromValue(true) != Guid.Empty)
+                                {
+                                    activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == FC.GetGuidFromValue(true)).FirstOrDefault();
+                                    if (activityLinkedToFC == null)
+                                    {
+                                        if (FC.GetNameFromValue(true) != null)
+                                        {
+                                            activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.ActivityName == FC.GetNameFromValue(true)).FirstOrDefault();
+                                        }
+                                    }
+                                }
+                                if (activityLinkedToFC != null)
+                                {
+                                    ActionValueComboBox.Items.Add(activityLinkedToFC);
+                                    ActionValueComboBox.SelectedValue = activityLinkedToFC;
+                                    ActionValueComboBox.Visibility = System.Windows.Visibility.Visible;
+                                    ActionValueComboBox.IsEditable = false;
+                                }
+                                else
+                                {
+                                    Reporter.ToUser(eUserMsgKey.ActivityIDNotFound, FC.Value);
+                                }
                             }
                             break;
                         }

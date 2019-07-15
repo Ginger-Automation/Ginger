@@ -275,6 +275,10 @@ namespace Ginger.Actions
             {
                 AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.View);
             }
+            else if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            {
+                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.SharedReposiotry);
+            }
             else
             {
                 AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity);
