@@ -18,10 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 {
@@ -34,21 +34,26 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {            
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            WorkspaceHelper.CreateWorkspace2("RepositoryItemTest");            
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
+
+        
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            
         }
 
 
-        [Ignore]  // FIXME !!!??
+        [Ignore]  // FIXME !!!?? Check RepositoryItemBase.CreateCopy - the parent GUID is not copied 
         [TestMethod]
         [Timeout(60000)]
         public void CopyRepositoryItem()
@@ -64,7 +69,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
             Assert.AreNotEqual(a, aCopy);  // we should get 2 different objects but with same info
             Assert.AreEqual(a.ActivityName, aCopy.ActivityName);
             Assert.AreNotEqual(a.Guid.ToString(), aCopy.Guid.ToString());
-            Assert.AreEqual(a.Guid.ToString(), aCopy.ParentGuid.ToString(), "aCopy.ParentGuid should be a.Guid");
+            Assert.AreEqual(a.Guid.ToString(), aCopy.ParentGuid.ToString(), "aCopy.ParentGuid should be a.Guid");   // Fail because parent GUID is not copied
             //TODO: verify actions and more - to make sure copy drill down
             // Verify header !!!
         }

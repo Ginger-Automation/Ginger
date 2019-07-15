@@ -559,7 +559,7 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
-            // Create a copy by serailized and load from the text, it will not copy all atrs only the one which are saved to XML
+            // Create a copy by serailized and load from the text, it will not copy all attrs only the one which are saved to XML
             string s = RepositorySerializer.SerializeToString(this);
             // TODO: fixme not good practice and not safe, add param to handle in function or another solution...
             RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:this.FilePath);
@@ -567,10 +567,9 @@ namespace Amdocs.Ginger.Repository
             //change the GUID of duplicated item
             if (setNewGUID && duplicatedItem != null)
             {
-                duplicatedItem.ParentGuid = Guid.Empty;
+                duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                 duplicatedItem.ExternalID = string.Empty;
                 duplicatedItem.Guid = Guid.NewGuid();
-
 
                 List<GuidMapper> guidMappingList = new List<GuidMapper>();
 
