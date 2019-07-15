@@ -5720,6 +5720,18 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
+                             if (act.LocateBy == eLocateBy.ByIndex)
+                            {
+                                int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
+                                string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
+                                if (winIndexTitle != null)
+                                {
+                                    // window found put some info in ExInfo
+                                    act.ExInfo = winIndexTitle;
+                                    BFound = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                     catch
@@ -5887,7 +5899,7 @@ namespace GingerCore.Drivers
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
                             if (SelectedPOM != null)
                             {
-                                POMUrl = SelectedPOM.PageURL;
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);             // SelectedPOM.PageURL;
                             }
                         }
                         GotoURL(act, POMUrl);
@@ -5919,7 +5931,7 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = SelectedPOM?.PageURL;
+                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
                         }
                         GotoURL(act, POMUrl);
                     }

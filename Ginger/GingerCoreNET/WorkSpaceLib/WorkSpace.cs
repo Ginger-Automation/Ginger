@@ -42,6 +42,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -51,17 +52,36 @@ namespace amdocs.ginger.GingerCoreNET
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
     {
+        static readonly object _locker = new object();
+
         private static WorkSpace mWorkSpace;
-        public static WorkSpace Instance { get { return mWorkSpace; } }
+        public static WorkSpace Instance
+        {
+            get
+            {                
+                return mWorkSpace;
+            }
+        }
 
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
+            // TOOD: uncomment after unit tests fixed to lock workspace
+            //if (mWorkSpace != null)
+            //{
+            //    throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
+            //}
+
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
 
             mWorkSpace.InitLocalGrid();
             
+        }
+
+        public void Close()
+        {
+            mWorkSpace = null;
         }
 
         private void InitLocalGrid()
@@ -96,18 +116,8 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        PluginsManager mPluginsManager = null;
-        public PluginsManager PlugInsManager
-        {
-            get
-            {
-                if (mPluginsManager == null)
-                {
-                    mPluginsManager = new PluginsManager(SolutionRepository);
-                }
-                return mPluginsManager;
-            }
-        }
+        PluginsManager mPluginsManager = new PluginsManager();
+        public PluginsManager PlugInsManager { get { return mPluginsManager; }  }        
 
         static bool bDone = false;
 
@@ -299,7 +309,8 @@ namespace amdocs.ginger.GingerCoreNET
                 SolutionRepository.Open(solutionFolder);
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading needed Plugins");
-                PlugInsManager.SolutionChanged(SolutionRepository);
+                mPluginsManager = new PluginsManager();
+                mPluginsManager.SolutionChanged(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
@@ -324,6 +335,9 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
+
+                // PlugInsManager = new PluginsManager();
+                // mPluginsManager.Init(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;

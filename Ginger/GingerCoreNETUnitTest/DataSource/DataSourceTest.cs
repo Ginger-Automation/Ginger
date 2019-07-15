@@ -42,7 +42,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
+            string Connectionstring = "filename=" + TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db") + "; mode=Exclusive";
             liteDB.FileFullPath = Connectionstring;
         }
 
@@ -192,7 +192,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual( "1", a, "RowCount");
         }
 
-        [Ignore]
+       
         [TestMethod]
         public void ExecuteGetValueNextAvailable()
         {
@@ -215,7 +215,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual( "1", value.Actual);
         }
 
-        [Ignore]
+        
         [TestMethod]
         public void ExecuteGetValueByRowNum()
         {
@@ -239,7 +239,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("1", value.Actual);
         }
 
-        [Ignore]
+        
         [TestMethod]
         public void ExecuteGetValueByQuery()
         {

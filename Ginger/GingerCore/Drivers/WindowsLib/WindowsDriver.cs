@@ -39,8 +39,8 @@ namespace GingerCore.Drivers.WindowsLib
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("10")]  // Local host 
-        [UserConfiguredDescription("Action Timeout - default is 10 seconds")]
+        [UserConfiguredDefault("30")] 
+        [UserConfiguredDescription("Action Timeout - default is 30 seconds")]
         public override int ActionTimeout
         {
             get
