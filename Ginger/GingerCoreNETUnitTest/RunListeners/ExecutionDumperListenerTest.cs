@@ -4,6 +4,7 @@ using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -22,12 +23,21 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
+            WorkspaceHelper.InitWS("ExecutionDumperListenerTest");
+
             mGingerRunner = new GingerRunner();
             mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             mGingerRunner.RunListeners.Add(mExecutionDumperListener);
             RunListenerBase.Start();
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
 
         private void RunFlow(BusinessFlow businessFlow)
         {
@@ -41,11 +51,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             }
         }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-
-        }
+        
 
         [TestInitialize]
         public void TestInitialize()
@@ -58,8 +64,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             
         }
-
-
+        
         [TestMethod]
         public void DumperListener()
         {                        
