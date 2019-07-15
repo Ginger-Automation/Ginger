@@ -567,6 +567,7 @@ namespace GingerCoreNET.DataSource
 
                 }
             }
+            dataTable.AcceptChanges();
             return dataTable;
         }
 
@@ -825,14 +826,14 @@ namespace GingerCoreNET.DataSource
                         table.Upsert(batch);
                     }
                 }
-
+                dtChange.AcceptChanges();
                 var result = db.GetCollection(table.Name).Find(Query.All()).ToList();
-                
+               
                 if (dataTable.Rows.Count > result.Count)
                 {
                     table.Upsert(batch);
                 }
-
+                
                 var rea = db.GetCollection(table.Name).Find(Query.All(), 0).ToList();
             }
         }
