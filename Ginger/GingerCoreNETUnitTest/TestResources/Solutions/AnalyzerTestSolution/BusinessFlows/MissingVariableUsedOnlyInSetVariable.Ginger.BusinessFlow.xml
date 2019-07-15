@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="5fded7fb-92ff-4aae-8054-33cda8535950" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="201907040501" GingerVersion="3.2.0.0" Version="9" LastUpdateBy="JGHODKE" LastUpdate="201907040503" />
+<GingerRepositoryItem><Header ItemGuid="5fded7fb-92ff-4aae-8054-33cda8535950" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="201907040501" GingerVersion="3.2.0.0" Version="24" LastUpdateBy="JGHODKE" LastUpdate="201907150916" />
 <BusinessFlow Guid="5fded7fb-92ff-4aae-8054-33cda8535950" Name="BF_MissingVariableTest" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Initialize Variables" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="6b7c0f83-bfee-4b3c-acfc-30d6739d54a6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Web-App">
@@ -14,10 +14,6 @@
 </Activities>
 
 <TargetApplications>
-<TargetApplication AppName="Web-App" Guid="4719b69a-f1c7-4c73-adf6-414fa35dc781" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<TargetApplication AppName="Web-App" Guid="f26255b4-0edd-4e54-9d62-45ae882648a0" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </TargetApplications>
-
-<Variables>
-<VariableString Guid="2d76e580-8269-4b36-ade9-8335c4b09ee7" InitialStringValue="aaa" MappedOutputType="None" Name="username" ParentGuid="00000000-0000-0000-0000-000000000000" Value="aaa" />
-</Variables>
 </BusinessFlow></GingerRepositoryItem>
