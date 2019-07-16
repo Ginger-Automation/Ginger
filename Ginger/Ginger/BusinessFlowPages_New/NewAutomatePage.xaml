@@ -255,7 +255,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="400"/>
                             <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
+                            <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,0,0">

@@ -358,7 +358,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             //Collapse
             mLastAddActionsColumnWidth = xAddActionsColumn.Width;
-            xAddActionsColumn.Width = new GridLength(10);
+            xAddActionsColumn.Width = new GridLength(5);
             xAddActionsBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
             xAddActionsBtn.ToolTip = "Add Actions";
             xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
@@ -403,6 +403,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                mBusinessFlow.SaveBackup();
                 mContext.BusinessFlow = mBusinessFlow;
 
                 mRunner.BusinessFlows.Add(mBusinessFlow);
@@ -1096,12 +1097,9 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            if (mBusinessFlow != null && Reporter.ToUser(eUserMsgKey.AskIfSureWantToUndoChange) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            if (Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true))
             {
-                Reporter.ToStatus(eStatusMsgKey.UndoChanges, null, mBusinessFlow.Name);
-                mBusinessFlow.RestoreFromBackup();
                 mBusinessFlow.SaveBackup();
-                Reporter.HideStatusMessage();
             }
         }
 
