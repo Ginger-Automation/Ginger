@@ -317,6 +317,17 @@ namespace GingerTest
                     return 1;
                 }
             }
+            else if (memberType == typeof(Int64))
+            {
+                if ((Int64)CurrentValue == 1)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
             else if (memberType == typeof(Guid))
             {
                 return Guid.NewGuid();
