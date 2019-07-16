@@ -105,7 +105,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void LoadWindowExplorerPage(Context context)
         {
             bool isLoaded = false;
-            if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
+            if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0 && context.Agent != null)
             {
                 AgentPageMappingHelper objHelper = mWinExplorerPageList.Find(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
                                                                                 x.ObjectAgent.ItemName == context.Agent.ItemName);
