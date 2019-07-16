@@ -249,7 +249,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (mSpyElement != null)
                 {
                     xWinGridUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                    StatusTextBlock.Text = mSpyElement.ElementName;
+                    StatusTextBlock.Text = mSpyElement.XPath;
                     mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
                     ShowCurrentControlInfo();
                 }
