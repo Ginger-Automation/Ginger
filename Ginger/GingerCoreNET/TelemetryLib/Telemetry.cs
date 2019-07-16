@@ -6,13 +6,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     public class Telemetry
     {
-        public Guid mGuid { get; set; } // keep public
+        public Guid Guid { get; set; } // keep public
         public bool DoNotCollect { get; set; }  // keep public
 
         TelemetrySession TelemetrySession;
@@ -27,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (!File.Exists(fileName))
             {
                 telemetry = new Telemetry();
-                telemetry.mGuid = Guid.NewGuid();
+                telemetry.Guid = Guid.NewGuid();
                 string txt = JsonConvert.SerializeObject(telemetry);
                 File.WriteAllText(fileName, txt);                                
             }
@@ -138,7 +139,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
 
-            TelemetrySession = new TelemetrySession(mGuid);            
+            TelemetrySession = new TelemetrySession(Guid);            
         }
 
 
@@ -147,7 +148,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
 
             TelemetrySession.EndTime = Time;
-            SaveTelemetry(TelemetrySession);            
+            SaveTelemetry(TelemetrySession);                        
         }
 
 
@@ -171,16 +172,26 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public void SaveTelemetry(object obj)
         {
             string txt = JsonConvert.SerializeObject(obj);
-            string fileName = Path.Combine(TelemetryDataFolder, mGuid.ToString().Replace("-","") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
-            File.WriteAllText(fileName, txt);           
-            Compress();  
+            string fileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-","") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
+            File.WriteAllText(fileName, txt);
+            Task.Factory.StartNew(() => {
+                Compress();
+                while (!done)   // add timeout
+                {
+                    Thread.Sleep(10);
+                }
+            }).Wait(); // TODO: add timeout
+            
+            
         }
 
+
+        bool done;
         private async void Compress()
         {
             try
             {
-                string zipFileName = mGuid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss") + ".Data.zip";
+                string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss") + ".Data.zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
 
@@ -190,53 +201,58 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 }
                 catch(Exception ex)
                 {
-                    // TODO: ??
+                    // TODO: ?? // !!!!!!!!!!!!!!!!!!!!
                 }
 
-                if (!File.Exists(LocalZipfileName))
+                if (File.Exists(LocalZipfileName))
                 {
-                    return;
+                    foreach (string fn in Directory.GetFiles(TelemetryDataFolder))
+                    {
+                        File.Delete(fn);
+                    }                    
                 }
 
-                foreach (string fn in Directory.GetFiles(TelemetryDataFolder))
-                {
-                    File.Delete(fn);
-                }                
+                
 
                 foreach (string zipfile in Directory.GetFiles(zipFolder))
                 {
                     FileStream fileStream = new FileStream(Path.Combine(TelemetryFolder, zipfile), FileMode.Open);
                     StreamContent content = new StreamContent(fileStream);
-                    HttpResponseMessage response = await client.PostAsync("api/Telemetry/" + zipFileName.Replace(".","_"), content);
-                    string rc = await response.Content.ReadAsStringAsync();
-                    fileStream.Close();
-
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
-                        if (rc.StartsWith("File uploaded"))
+                        HttpResponseMessage response = await client.PostAsync("api/Telemetry/" + zipFileName.Replace(".", "_"), content);
+                        string rc = await response.Content.ReadAsStringAsync();
+                        fileStream.Close();
+
+                        if (response.IsSuccessStatusCode)
                         {
-                            System.IO.File.Delete(zipfile);
+                            if (rc.StartsWith("File uploaded"))
+                            {
+                                System.IO.File.Delete(zipfile);
+                            }
+                        }
+                        else
+                        {
+                            // 
                         }
                     }
-                    else
+                    catch
                     {
-                        // 
+                        // Failed to upload
                     }
+                    
                 }
-
                 
             }
             catch(Exception ex)
             {
-
+                
             }
-            finally
-            {
 
-            }
+            done = true;
         }
 
-
+        
 
 
     }
