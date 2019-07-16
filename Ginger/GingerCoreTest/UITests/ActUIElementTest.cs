@@ -33,7 +33,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.UITests
 {
-
+    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest
@@ -44,8 +44,7 @@ namespace UnitTests.UITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
+        {            
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
             mBF = new BusinessFlow();
@@ -78,6 +77,7 @@ namespace UnitTests.UITests
         [TestMethod]  [Timeout(60000)]
         public void DragAndDropSelenium()
         {
+            // Arrange
             ResetBusinessFlow();
 
             Activity a1 = new Activity();
@@ -101,7 +101,10 @@ namespace UnitTests.UITests
             act3.Active = true;
             a1.Acts.Add(act3);
 
+            // Act
             mGR.RunRunner();
+
+            //Assert
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);
