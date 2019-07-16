@@ -396,10 +396,14 @@ namespace Ginger.Run.RunSetActions
                     }
                     if (IsExecutionStatistic)
                     {
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg"), "gingerRunner" + reportTimeStamp));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action" + reportTimeStamp + ".jpeg"), "Action" + reportTimeStamp));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg"), "Activity" + reportTimeStamp));
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg"), "Businessflow" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, "GingerRunner" + reportTimeStamp+".jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg"), "gingerRunner" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, "Action" + reportTimeStamp+".jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action" + reportTimeStamp + ".jpeg"), "Action" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, "Activity" + reportTimeStamp+".jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg"), "Activity" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, "Businessflow" + reportTimeStamp+".jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg"), "Businessflow" + reportTimeStamp));
                     }
                     Email.alternateView = alternativeView;
                 }

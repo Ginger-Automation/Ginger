@@ -8,20 +8,25 @@ using GingerCore.Environments;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace GingerCoreNETUnitTest.RunTestslib
+namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
-    public class UnitTestRepositoryItemFactory : IRepositoryItemFactory
+    public class RepoCoreItem : IRepositoryItemFactory
     {
-        public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder)
+        private OperationHandler operationHandlerObj;
+
+        public RepoCoreItem()
         {
-          
+            operationHandlerObj = new OperationHandler();
+        }
+        public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string title, string tempfolder)
+        {
+            //operationHandlerObj.CreateChart(y, chartName, title, tempfolder);
         }
 
         public void CreateCustomerLogo(object a, string t)
         {
-            
+            operationHandlerObj.CreateCustomerLogo(a, t);
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
@@ -59,6 +64,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
+        public void DownloadSolution(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {
             throw new NotImplementedException();
@@ -74,16 +84,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GenerateTemplate(string templatename, object o)
-        {
-            throw new NotImplementedException();
-        }
-
         public Type GetDriverType(IAgent agent)
         {
             throw new NotImplementedException();
@@ -94,37 +94,27 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public bool ProcessCommandLineArgs(string[] file)
+        public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
         {
             throw new NotImplementedException();
         }
 
         public void ShowAutoRunWindow()
         {
-            Console.WriteLine("UnitTestRepositoryItemFactory: Show auto run window");
+            throw new NotImplementedException();
         }
 
-        public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
+        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
-            return true;
+            throw new NotImplementedException();
         }
 
-        public void StartAgentDriver(IAgent agent)
+        public void StartAgentDriver(IAgent IAgent)
         {
             throw new NotImplementedException();
         }
 
         public Dictionary<string, string> TakeDesktopScreenShot(bool v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DownloadSolution(string v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
             throw new NotImplementedException();
         }
