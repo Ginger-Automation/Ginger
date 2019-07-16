@@ -16,22 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Repository;
-using Ginger.SolutionGeneral;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
+
+
 
 namespace UnitTests.NonUITests
 {
-    [Ignore]
+    [Ignore]     // Missing SharpSVN - do not want to add SharpSVN or GIT Nuget to GingerCoreNET core - need to be sepearte proj TODO: seperate as part of Linux proj
     [TestClass]
     public class SourceControlUnitTest
     {
@@ -93,21 +90,24 @@ namespace UnitTests.NonUITests
         }
         private static void DeleteDirectory(string directory)
         {
-            foreach (string subdirectory in Directory.EnumerateDirectories(directory))
+            if (Directory.Exists(directory))
             {
-                DeleteDirectory(subdirectory);
-            }
-
-            foreach (string fileName in Directory.EnumerateFiles(directory))
-            {
-                var fileInfo = new FileInfo(fileName)
+                foreach (string subdirectory in Directory.EnumerateDirectories(directory))
                 {
-                    Attributes = FileAttributes.Normal
-                };
-                fileInfo.Delete();
-            }
+                    DeleteDirectory(subdirectory);
+                }
 
-            Directory.Delete(directory);
+                foreach (string fileName in Directory.EnumerateFiles(directory))
+                {
+                    var fileInfo = new FileInfo(fileName)
+                    {
+                        Attributes = FileAttributes.Normal
+                    };
+                    fileInfo.Delete();
+                }
+
+                Directory.Delete(directory);
+            }
         }
 
         [TestMethod]
