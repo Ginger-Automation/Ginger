@@ -207,6 +207,8 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
+            [EnumValueDescription("GetState")]  //Adding to support conversion of (action type: GetSate) javaelement action in actuielemnt
+            GetState,
         }
 
         public enum eElementAction
@@ -495,6 +497,10 @@ namespace GingerCore.Actions.Common
             Submit,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript,
+            
+            //Adding For java driver checkbox element
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types

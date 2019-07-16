@@ -90,6 +90,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeyPressRelease);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     break;
                 case eElementType.ComboBox:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
@@ -119,6 +120,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsChecked);
                     break;
                 case eElementType.RadioButton:
                    
@@ -144,7 +146,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
@@ -152,7 +153,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Label:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
@@ -191,6 +191,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             elementPropertyList.Add(ActUIElement.eElementProperty.DateTimeValue);
             elementPropertyList.Add(ActUIElement.eElementProperty.HTML);
             elementPropertyList.Add(ActUIElement.eElementProperty.List);//????
+            elementPropertyList.Add(ActUIElement.eElementProperty.GetState);
             return elementPropertyList;
         }
 

@@ -25,9 +25,12 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
+
 namespace GingerCore.Actions.Java
 {
-    public class ActJavaElement : Act
+    public class ActJavaElement : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Java Element Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
@@ -200,6 +203,225 @@ namespace GingerCore.Actions.Java
             pl.AddEnumValue(ControlAction);
             pl.ClosePackage();
             return pl;            
+        }
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if (Platform == ePlatformType.Java || Platfrom == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement convertedActUIElement = mapperConfiguration.CreateMapper().Map<Act, ActUIElement>(this);
+
+            return  MapActJavaToActUIFields(convertedActUIElement);
+        }
+
+        private ActUIElement MapActJavaToActUIFields(ActUIElement convertedActUIElement)
+        {
+            convertedActUIElement.ElementLocateBy = this.LocateBy;
+            convertedActUIElement.ElementLocateValue = this.LocateValue;
+
+            ActUIElement.eElementAction elmentActionType = GetElementActionType(this.ControlAction);
+            convertedActUIElement.ElementAction = elmentActionType;
+            
+            convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, this.WaitforIdle.ToString());
+
+            if (elmentActionType.Equals(ActUIElement.eElementAction.GetControlProperty))
+            {
+                string propertyName = GetPropertyName(this.ControlAction);
+                convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, propertyName);
+            }
+
+            if (this.ReturnValues.Count > 0)
+            {
+                if (this.ReturnValues[0].Param == "Actual")
+                {
+                    convertedActUIElement.ReturnValues[0].Param = "Actual0";
+                }
+            }
+            return convertedActUIElement;
+        }
+
+        private string GetPropertyName(eControlAction controlAction)
+        {
+            string propertyName = string.Empty;
+
+            switch (controlAction)
+            {
+                case eControlAction.GetState:
+                    propertyName = ActUIElement.eElementProperty.GetState.ToString();
+                    break;
+
+                default:
+                    break;
+            }
+            return propertyName;
+        }
+
+        private ActUIElement.eElementAction GetElementActionType(eControlAction controlAction)
+        {
+            ActUIElement.eElementAction type = ActUIElement.eElementAction.Unknown;
+            switch (controlAction)
+            {
+                case  eControlAction.SetValue:
+                    type = ActUIElement.eElementAction.SetValue;
+                    break;
+
+                case eControlAction.GetValue:
+                    type = ActUIElement.eElementAction.GetValue;
+                    break;
+
+                case eControlAction.Toggle:
+                    type = ActUIElement.eElementAction.Toggle;
+                    break;
+
+                case eControlAction.Select:
+                    type = ActUIElement.eElementAction.Select;
+                    break;
+
+                case eControlAction.AsyncSelect:
+                    type = ActUIElement.eElementAction.AsyncSelect;
+                    break;
+
+                case eControlAction.Click:
+                    type = ActUIElement.eElementAction.Click;
+                    break;
+
+                case eControlAction.AsyncClick:
+                    type = ActUIElement.eElementAction.AsyncClick;
+                    break;
+
+                case eControlAction.WinClick:
+                    type = ActUIElement.eElementAction.WinClick;
+                    break;
+
+                case eControlAction.winDoubleClick:
+                    type = ActUIElement.eElementAction.winDoubleClick;
+                    break;
+
+                case eControlAction.MouseClick:
+                    type = ActUIElement.eElementAction.MouseClick;
+                    break;
+
+                case eControlAction.MousePressRelease:
+                    type = ActUIElement.eElementAction.MousePressRelease;
+                    break;
+
+                case eControlAction.IsVisible:
+                    type = ActUIElement.eElementAction.IsVisible;
+                    break;
+
+                case eControlAction.IsMandatory:
+                    type = ActUIElement.eElementAction.IsMandatory;
+                    break;
+
+                case eControlAction.IsEnabled:
+                    type = ActUIElement.eElementAction.IsEnabled;
+                    break;
+
+                case eControlAction.GetName:
+                    type = ActUIElement.eElementAction.GetName;
+                    break;
+
+                case eControlAction.AcceptDialog:
+                    type = ActUIElement.eElementAction.AcceptDialog;
+                    break;
+
+                case eControlAction.DismissDialog:
+                    type = ActUIElement.eElementAction.DismissDialog;
+                    break;
+
+                case eControlAction.ScrollUp:
+                    type = ActUIElement.eElementAction.ScrollUp;
+                    break;
+
+                case eControlAction.ScrollDown:
+                    type = ActUIElement.eElementAction.ScrollDown;
+                    break;
+
+                case eControlAction.ScrollLeft:
+                    type = ActUIElement.eElementAction.ScrollLeft;
+                    break;
+
+                case eControlAction.ScrollRight:
+                    type = ActUIElement.eElementAction.ScrollRight;
+                    break;
+
+                case eControlAction.SelectByIndex:
+                    type = ActUIElement.eElementAction.SelectByIndex;
+                    break;
+
+                case eControlAction.GetValueByIndex:
+                    type = ActUIElement.eElementAction.GetValueByIndex;
+                    break;
+
+                case eControlAction.GetItemCount:
+                    type = ActUIElement.eElementAction.GetItemCount;
+                    break;
+
+                case eControlAction.SendKeys:
+                    type = ActUIElement.eElementAction.SetText;
+                    break;
+
+                case eControlAction.SendKeyPressRelease:
+                    type = ActUIElement.eElementAction.SendKeyPressRelease;
+                    break;
+
+                case eControlAction.DoubleClick:
+                    type = ActUIElement.eElementAction.DoubleClick;
+                    break;
+
+                case eControlAction.SetFocus:
+                    type = ActUIElement.eElementAction.SetFocus;
+                    break;
+
+                case eControlAction.GetState:
+                    type = ActUIElement.eElementAction.GetControlProperty;
+                    break;
+
+                case eControlAction.GetDialogText:
+                    type = ActUIElement.eElementAction.GetDialogText;
+                    break;
+
+                case eControlAction.Type:
+                    type = ActUIElement.eElementAction.SendKeys;
+                    break;
+
+                case eControlAction.SelectDate:
+                    type = ActUIElement.eElementAction.SetDate;
+                    break;
+
+                case eControlAction.IsChecked:
+                    type = ActUIElement.eElementAction.IsChecked;
+                    break;
+                    
+            }
+            return type;
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return typeof(ActUIElement);
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            ActUIElement newUIElementAction = new ActUIElement();
+            return newUIElementAction.ActionDescription;
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Java;
         }
     }
 }
