@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -90,6 +91,7 @@ namespace UnitTests.UITests
             mGR.CurrentBusinessFlow = mBF;
             mGR.SetCurrentActivityAgent();
 
+            WorkspaceLocker.StartSession("WebDriverUnitTest");
             // helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
@@ -97,6 +99,12 @@ namespace UnitTests.UITests
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceLocker.EndSession();
+        }
+        
 
         [TestCleanup]
         public void TestCleanup()
