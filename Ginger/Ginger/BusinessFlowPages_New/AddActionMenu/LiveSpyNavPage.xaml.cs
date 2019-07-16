@@ -47,7 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         Context mContext;
         IWindowExplorer mWindowExplorerDriver;
-        List<AgentPageMappingHelper> mWinExplorerPageList = null;
+        List<AgentPageMappingHelper> mLiveSpyPageDictonary = null;
         LiveSpyPage CurrentLoadedPage = null;
 
         public LiveSpyNavPage(Context context)
@@ -105,9 +105,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void LoadWindowExplorerPage(Context context)
         {
             bool isLoaded = false;
-            if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0 && context.Agent != null)
+            if (mLiveSpyPageDictonary != null && mLiveSpyPageDictonary.Count > 0 && context.Agent != null)
             {
-                AgentPageMappingHelper objHelper = mWinExplorerPageList.Find(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
+                AgentPageMappingHelper objHelper = mLiveSpyPageDictonary.Find(x => x.ObjectAgent.DriverType == context.Agent.DriverType &&
                                                                                 x.ObjectAgent.ItemName == context.Agent.ItemName);
                 if (objHelper != null && objHelper.ObjectWindowPage != null)
                 {
@@ -123,11 +123,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     CurrentLoadedPage = new LiveSpyPage(context);
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
-                    if (mWinExplorerPageList == null)
+                    if (mLiveSpyPageDictonary == null)
                     {
-                        mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                        mLiveSpyPageDictonary = new List<AgentPageMappingHelper>();
                     }
-                    mWinExplorerPageList.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage));
+                    mLiveSpyPageDictonary.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage));
                 }
             }
 
