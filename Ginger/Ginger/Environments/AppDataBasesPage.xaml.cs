@@ -93,7 +93,7 @@ namespace Ginger.Environments
                 Database selectedDB = (Database)grdAppDbs.CurrentItem;
                 if (selectedDB.Name != selectedDB.NameBeforeEdit)
                 {
-                    UpdateDatabaseNameChange(selectedDB);
+                    await UpdateDatabaseNameChange(selectedDB);
                 }
             }
         }
@@ -123,10 +123,7 @@ namespace Ginger.Environments
                             ActDBValidation actDB = (ActDBValidation)act;
                             if (actDB.DBName == db.NameBeforeEdit)
                             {
-                                if (businessFlow.DirtyStatus != eDirtyStatus.Modified)
-                                {
-                                    businessFlow.DirtyStatus = eDirtyStatus.Modified;
-                                }
+                                businessFlow.DirtyStatus = eDirtyStatus.Modified;
                                 actDB.DBName = db.Name;
                             }
 
