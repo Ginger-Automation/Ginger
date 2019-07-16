@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -42,7 +43,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -66,21 +67,58 @@ namespace amdocs.ginger.GingerCoreNET
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
             // TOOD: uncomment after unit tests fixed to lock workspace
-            //if (mWorkSpace != null)
-            //{
-            //    throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
-            //}
+            if (mWorkSpace != null)
+            {
+                throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
+            }
 
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
 
             mWorkSpace.InitLocalGrid();
+
+            Telemetry.Init();
+            CheckVersionAndNews();
             
+        }
+
+        // check if there is new version and any news to display
+        static void CheckVersionAndNews()
+        {
+
+            // run it on task so startup is not impacted
+            Task.Factory.StartNew(() => {
+                string s = Telemetry.CheckVersion();
+                if (s != null)
+                {
+                    //TODO: in status bar version show red start with tool tip new version and the new number + link to download
+                    Reporter.ToStatus(eStatusMsgKey.NewVersionAvailable, null, s);
+                }
+
+                //TODO: Check news
+            });
+            WorkSpace.Instance.Telemetry.SessionStarted();
         }
 
         public void Close()
         {
+            if (SolutionRepository != null)
+            {
+                CloseAllRunningAgents();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+            }
+            
+            if (!RunningInExecutionMode)
+            {
+                UserProfile.GingerStatus = eGingerStatus.Closed;
+                UserProfile.SaveUserProfile();
+                AppSolutionAutoSave.CleanAutoSaveFolders();
+            }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+            WorkSpace.Instance.Telemetry.SessionEnd();
             mWorkSpace = null;
         }
 
@@ -656,6 +694,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public Telemetry Telemetry { get; internal set; }
     }
 }

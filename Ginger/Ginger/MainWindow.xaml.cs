@@ -343,35 +343,12 @@ namespace Ginger
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
-            
-            if (WorkSpace.Instance.SolutionRepository != null)
-            {
-                WorkSpace.Instance.CloseAllRunningAgents();
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-                WorkSpace.Instance.SolutionRepository.StopAllRepositoryFolderWatchers();
-            }
+
+
+            WorkSpace.Instance.Close();
+
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
 
-            if (! WorkSpace.Instance.RunningInExecutionMode)
-            {
-                WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Closed;
-                WorkSpace.Instance.UserProfile.SaveUserProfile();
-                WorkSpace.Instance.AppSolutionAutoSave.CleanAutoSaveFolders();
-
-                
-                WorkSpace.Instance.AppSolutionAutoSave.SolutionAutoSaveEnd();
-                try
-                {
-                    //TODO: no need to to log if running from comamnd line
-                    AutoLogProxy.LogAppClosed();
-                }
-                catch
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
-                }
-            }
-
-            WorkSpace.Instance.LocalGingerGrid.Stop();
 
             CW.Close();
         }
