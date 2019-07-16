@@ -159,7 +159,7 @@ namespace GingerCoreNET.RunLib
             NewPayLoad PL = new NewPayLoad("CloseDriver");  //!!!! Rename to StopService + use const
             PL.ClosePackage();
             NewPayLoad RC = SendRequestPayLoad(PL);
-                }
+        }
 
         public void Shutdown()
         {

@@ -19,24 +19,22 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Plugin.Core;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Platforms;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerCoreNETUnitTests.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace GingerCoreNETUnitTest.RunTestslib
+namespace WorkspaceHold
 {
-    [Ignore] // FIXME fail on linux on Azure wtih Nodelist =0
     [Level2]
     [TestClass]
     public class GingerRunnerTest
@@ -47,17 +45,13 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         const string cWebApp = "Web";
         static string mPluginId = "DummyPlugin";
-        static  string mServiceId = "DummyService";
+        static string mServiceId = "DummyService";
         static Agent agent;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            WorkspaceHelper.InitWS("GingerRunnerTest");
         
             mGingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
@@ -106,12 +100,21 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         }
 
+        [ClassCleanup]
         public static void ClassCleanup()
         {
-            agent.Close();
-            mGingerGrid.Stop();
+            try
+            {
+                agent.Close();
+                mGingerGrid.Stop();
+            }
+            finally
+            {
+                WorkspaceHelper.ReleaseWorkspace();
+            }
         }
 
+        
 
         [TestInitialize]
         public void TestInitialize()
