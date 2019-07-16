@@ -619,7 +619,7 @@ namespace UnitTests.UITests
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
-            Assert.AreEqual("Gmail", actBrowser3.ReturnValues[0].Actual);
+            Assert.IsTrue(actBrowser3.ReturnValues[0].Actual.Contains("Gmail"), "Gmail");
         }
 
 
