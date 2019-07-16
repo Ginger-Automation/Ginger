@@ -33,12 +33,6 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         #endregion
 
         #region Events
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            WorkSpace.Instance.CloseSolution();
-        }
-
         [TestInitialize]
         public void TestInitialize()
         {
