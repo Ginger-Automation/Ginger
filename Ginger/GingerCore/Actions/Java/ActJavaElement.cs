@@ -253,18 +253,14 @@ namespace GingerCore.Actions.Java
 
         private string GetPropertyName(eControlAction controlAction)
         {
-            string propertyName = string.Empty;
-
-            switch (controlAction)
+            if(controlAction == eControlAction.GetState)
             {
-                case eControlAction.GetState:
-                    propertyName = ActUIElement.eElementProperty.GetState.ToString();
-                    break;
-
-                default:
-                    break;
+                return ActUIElement.eElementProperty.GetState.ToString();
             }
-            return propertyName;
+            else
+            {
+                return string.Empty;
+            }
         }
 
         private ActUIElement.eElementAction GetElementActionType(eControlAction controlAction)
@@ -403,7 +399,10 @@ namespace GingerCore.Actions.Java
                 case eControlAction.IsChecked:
                     type = ActUIElement.eElementAction.IsChecked;
                     break;
-                    
+
+                default:
+                    type = ActUIElement.eElementAction.Unknown;
+                    break;
             }
             return type;
         }
