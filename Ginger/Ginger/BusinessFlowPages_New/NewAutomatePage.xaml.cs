@@ -659,7 +659,7 @@ namespace GingerWPF.BusinessFlowsLib
                 else
                 {
                     xRunFlowBtn.ButtonImageType = eImageType.Run;
-                    xRunFlowBtn.ButtonText = "Run";
+                    xRunFlowBtn.ButtonText = "Run Flow";
                     xRunFlowBtn.ToolTip = "Reset & Run Flow";
                     xRunFlowBtn.IsEnabled = true;
                     xStopRunBtn.Visibility = Visibility.Collapsed;

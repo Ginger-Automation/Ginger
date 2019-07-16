@@ -369,14 +369,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation runAction = new ListItemOperation();
-            runAction.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation };
-            runAction.AutomationID = "runAction";
-            runAction.ImageType = Amdocs.Ginger.Common.Enums.eImageType.RunSingle;
-            runAction.ToolTip = "Run Current Action";
-            runAction.OperationHandler = RunActionHandler;
-            executionOperationsList.Add(runAction);
-
             ListItemOperation run = new ListItemOperation();
             run.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation };
             run.AutomationID = "run";
@@ -392,6 +384,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             continueRun.ToolTip = "Continue Run from " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             continueRun.OperationHandler = ContinueRunHandler;
             executionOperationsList.Add(continueRun);
+
+            ListItemOperation runAction = new ListItemOperation();
+            runAction.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
+            runAction.AutomationID = "runAction";
+            runAction.ImageType = Amdocs.Ginger.Common.Enums.eImageType.RunSingle;
+            runAction.ToolTip = "Run Current Action";
+            runAction.OperationHandler = RunActionHandler;
+            executionOperationsList.Add(runAction);
 
             return executionOperationsList;
         }

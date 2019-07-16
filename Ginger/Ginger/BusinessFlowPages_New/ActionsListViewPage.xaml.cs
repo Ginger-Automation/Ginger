@@ -19,27 +19,24 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
+using Ginger;
 using Ginger.Actions;
-using Ginger.ApiModelsFolder;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerWPF.DragDropLib;
-using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -51,10 +48,12 @@ namespace GingerWPF.BusinessFlowsLib
         Activity mActivity;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        Act mActionBeenEdit;
 
         ActionsListViewHelper mActionsListHelper;
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
+
 
         public UcListView ListView
         {
@@ -78,15 +77,21 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (actionToEdit != null)
             {
-                xBackToListPnl.Visibility = Visibility.Visible;
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, actionToEdit, nameof(Act.Description));
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, actionToEdit, nameof(Act.Description));
-                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.eRIPageViewMode.Automation);//need to pass Context?
+                xBackToListGrid.Visibility = Visibility.Visible;
+                mActionBeenEdit = actionToEdit;                                
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                mActionBeenEdit.Context = mContext;
+                mActionBeenEdit.SaveBackup();
+                mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
                 xMainFrame.Content = mActionEditPage;
             }
             else
             {
-                xBackToListPnl.Visibility = Visibility.Collapsed;
+                xBackToListGrid.Visibility = Visibility.Collapsed;
+                mActionBeenEdit = null;                
                 mActionEditPage = null;
                 xMainFrame.Content = mActionsListView;
             }
@@ -114,8 +119,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (mActionsListView.CurrentItem != null)
-            {
-                (mActionsListView.CurrentItem as Act).Context = mContext;
+            {                
                 ShowHideEditPage((Act)mActionsListView.CurrentItem);
             }
         }
@@ -180,6 +184,77 @@ namespace GingerWPF.BusinessFlowsLib
         {
             ObservableList<Act> sharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mActivity.Acts, (IEnumerable<object>)sharedActions);
+        }
+
+        private void XUndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
+            {
+                mActionBeenEdit.SaveBackup();
+            }
+
+        }
+
+        private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mActionsListView.List.Items.CurrentPosition >= 1)
+            {
+                mActionsListView.List.Items.MoveCurrentToPrevious();
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);                
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+            }
+        }
+
+        private void xNextActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mActionsListView.List.Items.CurrentPosition < mActionsListView.List.Items.Count - 1)
+            {
+                mActionsListView.List.Items.MoveCurrentToNext();
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+            }
+        }
+
+        private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, mActionBeenEdit));
+        }
+
+        private void xDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDelete, mActionBeenEdit.Description) == eUserMsgSelection.Yes)
+            {
+                mActivity.Acts.Remove(mActionBeenEdit);
+                if (mActionsListView.List.Items.CurrentItem != null)
+                {
+                    ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                }
+                else
+                {
+                    ShowHideEditPage(null);
+                }
+            }
+        }
+
+        private void xActiveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.Active = !mActionBeenEdit.Active;
+        }
+
+        private void xBreakPointMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.BreakPoint = !mActionBeenEdit.BreakPoint;
+        }
+
+        private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.Reset();
         }
     }
 }

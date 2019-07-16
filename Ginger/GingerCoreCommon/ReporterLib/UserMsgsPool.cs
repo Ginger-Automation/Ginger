@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
-        AskIfToUndoChanges, FileAlreadyExistWarn,
+        AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress,
     }
@@ -552,6 +552,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.NotifyFileSelectedFromTheSolution, new UserMsg(eUserMsgType.ERROR, "File Already Exists", "File - '{0}'." + Environment.NewLine + "Selected From The Solution folder hence its already exist and cannot be copy to the same place" + Environment.NewLine + "Please select another File to continue.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "File imported successfully", "The File was imported successfully", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes (in case changes were done) and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoItemChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes for '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidIndexValue, new UserMsg(eUserMsgType.ERROR, "Invalid index value", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileOperationError, new UserMsg(eUserMsgType.ERROR, "Error occured during file operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderOperationError, new UserMsg(eUserMsgType.ERROR, "Error occured during folder operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
