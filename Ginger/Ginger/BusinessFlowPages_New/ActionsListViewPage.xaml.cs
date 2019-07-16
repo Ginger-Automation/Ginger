@@ -192,7 +192,6 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionBeenEdit.SaveBackup();
             }
-
         }
 
         private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)

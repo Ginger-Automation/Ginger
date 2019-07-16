@@ -324,23 +324,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
-            ListItemOperation reset = new ListItemOperation();
-            reset.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            reset.AutomationID = "reset";
-            reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
-            reset.Header = "Reset";
-            reset.ToolTip = "Reset";
-            reset.OperationHandler = ResetHandler;
-            extraOperationsList.Add(reset);
+            if (mVariable.SupportResetValue)
+            {
+                ListItemOperation reset = new ListItemOperation();
+                reset.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                reset.AutomationID = "reset";
+                reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
+                reset.Header = "Reset";
+                reset.ToolTip = "Reset";
+                reset.OperationHandler = ResetHandler;
+                extraOperationsList.Add(reset);
+            }
 
-            ListItemOperation autoValue = new ListItemOperation();
-            autoValue.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            autoValue.AutomationID = "autoValue";
-            autoValue.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
-            autoValue.Header = "Generate Auto Value";
-            autoValue.ToolTip = "Generate Auto Value";
-            autoValue.OperationHandler = AutoValueHandler;
-            extraOperationsList.Add(autoValue);
+            if (mVariable.SupportAutoValue)
+            {
+                ListItemOperation autoValue = new ListItemOperation();
+                autoValue.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                autoValue.AutomationID = "autoValue";
+                autoValue.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+                autoValue.Header = "Generate Auto Value";
+                autoValue.ToolTip = "Generate Auto Value";
+                autoValue.OperationHandler = AutoValueHandler;
+                extraOperationsList.Add(autoValue);
+            }
 
             ListItemOperation input = new ListItemOperation();
             input.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };

@@ -185,6 +185,8 @@ namespace GingerCore.Variables
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
+        public abstract bool SupportResetValue { get; }
+        public abstract bool SupportAutoValue { get; }
 
         //all below used to describe the variable owner in a specific Business Flow
         [IsSerializedForLocalRepository]
