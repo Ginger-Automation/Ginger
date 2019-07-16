@@ -265,7 +265,7 @@ namespace GingerCore.Actions.Java
 
         private ActUIElement.eElementAction GetElementActionType(eControlAction controlAction)
         {
-            ActUIElement.eElementAction type = ActUIElement.eElementAction.Unknown;
+            ActUIElement.eElementAction type;
             switch (controlAction)
             {
                 case  eControlAction.SetValue:
