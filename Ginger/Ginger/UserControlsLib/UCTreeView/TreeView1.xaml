@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="xGrid">
+    <Grid x:Name="xGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="40"/>

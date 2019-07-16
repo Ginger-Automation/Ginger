@@ -42,13 +42,45 @@ namespace Ginger
 
         public enum eRIPageViewMode
         {
-            Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow
-            Standalone = 1, //Allow edit with Save
-            SharedReposiotry = 2,  //Item opened from Shared Repository in which the item iteself supposed to be saved to XML
-            Child = 3, //Item opened for edit without save
-            ChildWithSave = 4, //Item opened as standalone but in save allows to save it original parent
-            View = 5, //item should be open for read only
-            Add = 6 //List of Library/SR items to add
+            /// <summary>
+            /// Item opened from Automate page and saved item should be the BusiessFlow which currently loaded in Automate page
+            /// </summary>
+            Automation = 0, 
+
+            /// <summary>
+            /// Allow edit with Save
+            /// </summary>
+            Standalone = 1, 
+
+            /// <summary>
+            /// Item opened from Shared Repository in which the item iteself supposed to be saved to XML
+            /// </summary>
+            SharedReposiotry = 2, 
+            
+            /// <summary>
+            /// Item opened for edit without save
+            /// </summary>
+            Child = 3, 
+
+            /// <summary>
+            /// Item opened as standalone but in save allows to save it original parent
+            /// </summary>
+            ChildWithSave = 4, 
+
+            /// <summary>
+            /// Item should be open for read only
+            /// </summary>
+            View = 5, 
+
+            /// <summary>
+            /// List of Library items to add
+            /// </summary>
+            Add = 6, 
+
+            /// <summary>
+            /// List of items in Shared Repository to add
+            /// </summary>
+            AddFromShardRepository = 7
         }
 
         public static bool isDesignMode()

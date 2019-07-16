@@ -705,10 +705,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
                     break;
                 case eImageType.Output:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
                     break;
                 case eImageType.Input:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignIn);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
                     break;
                 case eImageType.Spy:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);

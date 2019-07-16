@@ -80,20 +80,16 @@ namespace Ginger.BusinessFlowPages
             {                
                 if (droppedItem is Activity)
                 {
-                    Activity droppedActivityIns = (Activity)((Activity)droppedItem).CreateInstance(true);
-                    ActivitiesGroup parentGroup = null;
-                    droppedActivityIns.Active = true;
-                    if (mBusinessFlow.CurrentActivity != null)
-                    {                        
-                        parentGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == mBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup parentGroup = null;                    
+                    parentGroup = (new ActivitiesGroupSelectionPage(mContext.BusinessFlow)).ShowAsWindow();
+                    if (parentGroup != null)
+                    {
+                        Activity droppedActivityIns = (Activity)((Activity)droppedItem).CreateInstance(true);
+                        droppedActivityIns.Active = true;
+                        mBusinessFlow.SetActivityTargetApplication(droppedActivityIns);
+                        mBusinessFlow.AddActivity(droppedActivityIns, parentGroup);
+                        mBusinessFlow.CurrentActivity = droppedActivityIns;
                     }
-                    else
-                    {                        
-                        parentGroup = mBusinessFlow.AddActivitiesGroup();
-                    }
-                    mBusinessFlow.SetActivityTargetApplication(droppedActivityIns);
-                    mBusinessFlow.AddActivity(droppedActivityIns, parentGroup);
-                    mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
                 else if (droppedItem is ActivitiesGroup)
                 {

@@ -456,7 +456,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoActivitiesGroupWasSelected, new UserMsg(eUserMsgType.WARN, "Missing " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " Selection", "No " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " was selected.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActivitiesGroupActivitiesNotFound, new UserMsg(eUserMsgType.WARN, "Import " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Activities) + " to import were not found in the repository.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PartOfActivitiesGroupActsNotFound, new UserMsg(eUserMsgType.WARN, "Import " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities), "The following " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to import were not found in the repository:" + System.Environment.NewLine + "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteGroup, new UserMsg(eUserMsgType.QUESTION, "Delete Group", "Are you sure you want to delete all group?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteGroup, new UserMsg(eUserMsgType.QUESTION, "Delete Group", "Are you sure you want to delete the '{0}' group?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion ActivitiesGroup
 
             #region Mobile
