@@ -86,17 +86,9 @@ namespace amdocs.ginger.GingerCoreNET
         // check if there is new version and any news to display
         static void CheckVersionAndNews()
         {
-
             // run it on task so startup is not impacted
             Task.Factory.StartNew(() => {
-                string s = Telemetry.CheckVersion();
-                if (s != null)
-                {
-                    //TODO: in status bar version show red start with tool tip new version and the new number + link to download
-                    Reporter.ToStatus(eStatusMsgKey.NewVersionAvailable, null, s);
-                }
-
-                //TODO: Check news
+                string s = Telemetry.CheckVersionAndNews();                
             });
             WorkSpace.Instance.Telemetry.SessionStarted();
         }

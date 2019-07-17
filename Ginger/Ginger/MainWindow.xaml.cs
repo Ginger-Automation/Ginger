@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
@@ -28,6 +29,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
+using Ginger.GeneralWindows;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
@@ -43,7 +45,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -61,7 +62,22 @@ namespace Ginger
         {
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
+            if (Telemetry.VersionAndNewsInfo == null)
+            {
+                xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xVersionAndNewsIcon.ToolTip = Telemetry.VersionAndNewsInfo + ", click for details";
+                xVersionAndNewsIcon.Visibility = Visibility.Visible;
+            }
             GingerCore.General.DoEvents();
+        }
+
+        private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            VersionAndNewsPage versionAndNewsPage = new VersionAndNewsPage();
+            versionAndNewsPage.ShowAsWindow();
         }
 
         public void Init()
@@ -1010,5 +1026,7 @@ namespace Ginger
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
         }
+
+        
     }
 }

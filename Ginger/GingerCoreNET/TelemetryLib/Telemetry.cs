@@ -88,20 +88,21 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         public static DateTime Time { get { return DateTime.UtcNow; }  }
 
-      
-        // return null if user gave latest version, else return the latest version with message if needed
-        public static string CheckVersion()
+
+        public static string VersionAndNewsInfo { get; set; }
+        
+        public static string CheckVersionAndNews()
         {
             if (!NetworkAvailable) return null;
 
             string currver = ApplicationInfo.ApplicationVersion;            
 
-            string latestVersion = GetLatestVersion(currver).Result;
-
-            //TODO: check and comapre versiond correctly use > !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (currver != latestVersion)
+            string versionAndNewsMessage = CheckLatestVersionAndNews(currver).Result;
+            
+            if (currver != versionAndNewsMessage)
             {
-                return latestVersion;
+                VersionAndNewsInfo = versionAndNewsMessage;
+                return versionAndNewsMessage;
             }
             else
             {
@@ -111,15 +112,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         
 
-        static async Task<string> GetLatestVersion(string currver)
+        static async Task<string> CheckLatestVersionAndNews(string currver)
         {            
             try
             {                
                 HttpResponseMessage response = await client.GetAsync("api/version/" + currver);        
                 if (response.IsSuccessStatusCode)
                 {
-                    string gingerVersion = await response.Content.ReadAsStringAsync();
-                    return gingerVersion;
+                    string gingerVersionAndNews = await response.Content.ReadAsStringAsync();
+                    return gingerVersionAndNews;
                 }
                 else
                 {
@@ -169,6 +170,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
         }
 
+        
+
         public void SaveTelemetry(object obj)
         {
             string txt = JsonConvert.SerializeObject(obj);
@@ -204,7 +207,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                         File.Delete(fn);
                     }                    
                 }
-                
+
+                if (!NetworkAvailable) return;
 
                 foreach (string zipfile in Directory.GetFiles(zipFolder))
                 {
