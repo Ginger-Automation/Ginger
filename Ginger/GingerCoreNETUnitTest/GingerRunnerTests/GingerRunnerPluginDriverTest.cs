@@ -32,7 +32,7 @@ using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
-    [Ignore]
+    [Ignore]  // temp
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
