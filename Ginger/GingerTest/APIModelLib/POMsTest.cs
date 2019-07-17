@@ -31,7 +31,7 @@ using System.Windows.Media.Imaging;
 
 namespace GingerTest.APIModelLib
 {
-    // [Ignore] // Temp because fail on Azure
+    [Ignore] // Temp because fail on Azure
     [TestClass]
     [Level3]
     public class POMsTest
