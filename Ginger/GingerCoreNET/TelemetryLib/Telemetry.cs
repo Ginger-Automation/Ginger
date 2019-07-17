@@ -194,15 +194,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss") + ".Data.zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
-
-                try
-                {
-                    ZipFile.CreateFromDirectory(TelemetryFolder, LocalZipfileName);
-                }
-                catch(Exception ex)
-                {
-                    // TODO: ?? // !!!!!!!!!!!!!!!!!!!!
-                }
+                
+                ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);                
 
                 if (File.Exists(LocalZipfileName))
                 {
@@ -211,7 +204,6 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                         File.Delete(fn);
                     }                    
                 }
-
                 
 
                 foreach (string zipfile in Directory.GetFiles(zipFolder))
@@ -226,7 +218,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
                         if (response.IsSuccessStatusCode)
                         {
-                            if (rc.StartsWith("File uploaded"))
+                            if (rc == "OK")
                             {
                                 System.IO.File.Delete(zipfile);
                             }
