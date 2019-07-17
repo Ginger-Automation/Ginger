@@ -39,6 +39,9 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     UIELementActionHandler Handler2 = new UIELementActionHandler(webPlatformService);
                     Handler2.ExecuteAction(ref platformAction);
+
+
+
                     break;
                 default:
                     platformAction.error += "HandleRunAction: handler not found: " ;

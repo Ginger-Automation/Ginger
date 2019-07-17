@@ -374,7 +374,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             string ValidationElementLocateBy = (string)InputParams["ValidationElementLocateBy"];
             string ValidationElementLocatorValue = (string)InputParams["ValidationElementLocatorValue"]; 
             string mValidationElement = (string)InputParams["ValidationElement"];
-            eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mElementType);
+            eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mValidationElement);
             IGingerWebElement ValidationElement = LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue);
             return ValidationElement;
         }
@@ -626,12 +626,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     element.Submit();
                     break;
                 case eElementAction.GetValue:
-                    // !!! AOVs ...
+                
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = element.GetValue() });
                     break;
 
-
-           }
+                case eElementAction.ClickAndValidate: // !!!!!!!!!!! remove from here need special handling ??!!
+                    ClickActions(element, eElementAction.ClickAndValidate);
+                    break;
+            }
             
         }
 
@@ -655,7 +657,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     Element.DoubleClick();
                     break;
                 case eElementAction.ClickAndValidate:
-                    Element.Click();
+                 
                     string ValidationType = (string)InputParams["ValidationType"];
                     string mClickType = (string)InputParams["ClickType"];
                     eElementAction ClickType = (eElementAction)Enum.Parse(typeof(eElementAction), mClickType);

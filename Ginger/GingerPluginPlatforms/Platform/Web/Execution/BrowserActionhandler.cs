@@ -139,9 +139,13 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.SwitchFrame:
                         string ElementLocateBy;
                         string Locatevalue;
-                        string mElementType= (string)InputParams["ElementType"];
+                        string mElementType = "";
                         Locatevalue = (string)InputParams["LocateValue"];
-                        ElementLocateBy = (string)InputParams["ElementLocateBy"];
+
+                        object elb;
+                        InputParams.TryGetValue("ElementLocateBy",out elb);
+
+                        ElementLocateBy= elb!=null? elb.ToString():"";
    
                         if (string.IsNullOrEmpty(ElementLocateBy))
                         {
@@ -174,6 +178,12 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         string PageSource = BrowserService.GetPageSource();
                         AOVs.Add(new NodeActionOutputValue() { Param = "PageSource", Value = PageSource });
+
+                        break;
+
+                    case eControlAction.InjectJS:
+
+                       
 
                         break;
                 }
