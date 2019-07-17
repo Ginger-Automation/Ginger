@@ -34,7 +34,7 @@
                 <Image Source="{StaticResource @Spy_24x24}"/>
             </ToggleButton>
 
-            <TextBlock Name="StatusTextBlock" Grid.Row="0" Grid.Column="1" Margin="0,0,15,0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="Auto" FontWeight="Bold" Foreground="Red" />
+            <TextBlock Name="StatusTextBlock" Grid.Row="1" Grid.Column="0" Margin="0,3,15,0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="Auto" FontWeight="Bold" Foreground="Red" />
 
             <Label x:Name="xStartAgentMessage"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
         </Grid>
