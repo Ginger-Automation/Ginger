@@ -71,7 +71,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SetFrameEnableDisable();
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
-            else if (e.PropertyName == nameof(Context.Agent))
+            else if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
             {
                 LoadLiveSpyPage(mContext);
                 SetFrameEnableDisable();
@@ -118,10 +118,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (!isLoaded)
             {
-                ApplicationAgent appAgent = AgentHelper.GetAppAgent(context.BusinessFlow.CurrentActivity, context.Runner, context);
+                ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
                 if (appAgent != null)
                 {
-                    CurrentLoadedPage = new LiveSpyPage(context);
+                    CurrentLoadedPage = new LiveSpyPage(mContext);
                     CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
                     if (mLiveSpyPageDictonary == null)
                     {

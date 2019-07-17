@@ -326,7 +326,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             else
             {
                 SelectedControlDetailsExpander.Visibility = Visibility.Visible;
-                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementName + "' Element Details & Actions";
+                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementType + " : " + selectedElementInfo.ElementName + "' Element Details & Actions";
                 SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
