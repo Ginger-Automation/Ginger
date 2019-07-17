@@ -6487,7 +6487,7 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.SetText:
                         try
                         {
-                            e.Clear();
+                            ClearText(e);
                         }
                         finally
                         {
@@ -6538,7 +6538,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
                         break;
                     case ActUIElement.eElementAction.ClearValue:
-                        e.Clear();
+                        ClearText(e);
                         break;
                     case ActUIElement.eElementAction.GetHeight:
                         act.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
@@ -6568,6 +6568,22 @@ namespace GingerCore.Drivers
                 if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
                 {
                     Driver.SwitchTo().DefaultContent();
+                }
+            }
+        }
+
+
+        private void ClearText(IWebElement webElement)
+        {
+            webElement.Clear();
+
+            if (!string.IsNullOrEmpty(webElement.Text))
+            {
+                int length = webElement.Text.Length;
+
+                for (int i = 0; i < length; i++)
+                {
+                    webElement.SendKeys(Keys.Backspace);
                 }
             }
         }
