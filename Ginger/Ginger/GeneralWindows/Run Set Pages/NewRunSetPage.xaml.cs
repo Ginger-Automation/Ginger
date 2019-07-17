@@ -22,12 +22,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowFolder;
 using Ginger.Functionalities;
-using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.RunSetLib.CreateCLIWizardLib;
@@ -862,10 +862,7 @@ namespace Ginger.Run
 
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
-
-                //FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick -= dispatcherTimerElapsedTick;
-                //mCurrentSelectedRunner.Runner.RunnerExecutionWatch.dispatcherTimerElapsed.Tick += dispatcherTimerElapsedTick;               
+                
 
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);                
             }
@@ -1380,13 +1377,6 @@ namespace Ginger.Run
 
                 ResetALMDefectsSuggestions();
 
-                //check runner is not empty
-                if (mCurrentSelectedRunner.Runner.BusinessFlows.Count <= 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mCurrentSelectedRunner.Name + "' to start run.");
-                    return;
-                }
-
                 //run analyzer
                 if (mRunSetConfig.RunWithAnalyzer)
                 {
@@ -1590,16 +1580,16 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 webReporterRunner.RunNewHtmlReport();
             }
-            else if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
             {
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 {
-                    ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+                    ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
                     HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
 
                     string reportsResultFolder = string.Empty;
@@ -1655,9 +1645,9 @@ namespace Ginger.Run
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
                 System.Diagnostics.Process.Start("chrome", taskCommand);
             }
-            catch(Exception ec)
+            catch(Exception ex)
             {
-
+                Console.WriteLine("RunClientApp Error - " + ex.Message);
             }
         }
 
@@ -2458,8 +2448,7 @@ namespace Ginger.Run
         }
 
         private void XAutoRunButton_Click(object sender, RoutedEventArgs e)
-        {
-            // pass mRunSetConfig + env !!!!!!!!!!!
+        {            
             WizardWindow.ShowWizard(new AutoRunWizard(mRunSetConfig, mContext));
             
         }

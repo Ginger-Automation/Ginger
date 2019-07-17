@@ -370,6 +370,9 @@ namespace Ginger
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
                 }
             }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+
             CW.Close();
         }
 
@@ -647,10 +650,18 @@ namespace Ginger
             ShowGingerLog();
         }
 
+        LogDetailsPage mLogDetailsPage = null;
         private void btnViewLogDetails_Click(object sender, RoutedEventArgs e)
         {
-            LogDetailsPage log = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
-            log.ShowAsWindow();
+            if (mLogDetailsPage == null)
+            {
+                mLogDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
+            }
+            else
+            {
+                mLogDetailsPage.Refresh();
+            }
+            mLogDetailsPage.ShowAsWindow();
         }
 
         private void ShowGingerLog()
@@ -688,10 +699,21 @@ namespace Ginger
             }
         }
 
+        DebugConsoleWindow mDebugConsoleWin = null;
         private void btnLaunchConsole_Click(object sender, RoutedEventArgs e)
         {
-            DebugConsoleWindow debugConsole = new DebugConsoleWindow();
-            debugConsole.ShowAsWindow();
+            Reporter.ReportAllAlsoToConsole = true;
+
+            if (mDebugConsoleWin == null)
+            {
+                mDebugConsoleWin = new DebugConsoleWindow();
+            }
+            else
+            {
+                mDebugConsoleWin.ClearConsole();
+            }
+
+            mDebugConsoleWin.ShowAsWindow();
         }
 
         private void xBetaFeaturesIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -842,7 +864,7 @@ namespace Ginger
         {
             if (xLogOptionsMenuItem.Tag == null)
             {
-                xLogOptionsMenuItem.Tag = true;//expanded
+                xLogOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
@@ -857,7 +879,7 @@ namespace Ginger
             //delete all shown Log options sub menu items
             for (int i = 0; i < xUserOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
+                if ((string)((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
                 {
                     xUserOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
@@ -870,9 +892,9 @@ namespace Ginger
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Debug Console", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Screen);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);                
             }
         }
 
@@ -902,7 +924,7 @@ namespace Ginger
         {
             if (xSupportOptionsMenuItem.Tag == null)
             {
-                xSupportOptionsMenuItem.Tag = true;//expanded
+                xSupportOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
@@ -917,7 +939,7 @@ namespace Ginger
             //delete all Support options Sub menu items
             for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Support")
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Support")
                 {
                     xExtraOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
@@ -940,7 +962,7 @@ namespace Ginger
         {
             if (xContactOptionsMenuItem.Tag == null)
             {
-                xContactOptionsMenuItem.Tag = true;//expanded
+                xContactOptionsMenuItem.Tag = "Expanded";//expanded
             }
             else
             {
@@ -955,7 +977,7 @@ namespace Ginger
             //delete all Support options Sub menu items
             for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
             {
-                if (((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Contact")
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Contact")
                 {
                     xExtraOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
@@ -1002,7 +1024,6 @@ namespace Ginger
         void HideSplash()
         {            
             // Hide the splash after one second
-            Task.Factory.StartNew(() => {
                 this.Dispatcher.Invoke(() => {
                     if (xSplashGrid.Visibility == Visibility.Collapsed)
                     {
@@ -1011,7 +1032,6 @@ namespace Ginger
                     Thread.Sleep(1000);
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
-            });
         }
     }
 }

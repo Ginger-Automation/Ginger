@@ -88,7 +88,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                       
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh", RefreshItems,null, eImageType.Refresh);
             TV.AddToolbarTool(eImageType.Refresh, "Refresh", new RoutedEventHandler(RefreshItems));
 
@@ -98,14 +98,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Rename", Rename, null, "@Edit_16x16.png");
             TV.AddToolbarTool("@Edit_16x16.png", "Rename", new RoutedEventHandler(Rename));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate,null, "@Duplicate_16x16.png");
+            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, "@Duplicate_16x16.png");
             TV.AddToolbarTool("@Duplicate_16x16.png", "Duplicate", new RoutedEventHandler(Duplicate));
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", DeleteTable,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(DeleteTable));
-            
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
             TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
@@ -193,7 +194,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
-                DSTableDetails.DataTable.RejectChanges();
                 if (mDataSourceTablePage != null)
                 {
                     mDataSourceTablePage.RefreshGrid();
@@ -215,14 +215,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 return;
             }
             DataSourceTable copy = (DataSourceTable)DSTableDetails.CreateCopy();
-            copy.Name = DSDetails.DSC.CopyTable(DSTableDetails.Name);
+            copy.Name = DSDetails.CopyTable(DSTableDetails.Name);
             copy.DataTable = DSTableDetails.DataTable;
             copy.DSC = DSTableDetails.DSC;
             copy.DSTableType = DSTableDetails.DSTableType;
-            
-            DSDetails.DSTableList.Add(copy);           
 
+            DSDetails.DSTableList.Add(copy);
+           
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
-         }
+        }
     }
 }

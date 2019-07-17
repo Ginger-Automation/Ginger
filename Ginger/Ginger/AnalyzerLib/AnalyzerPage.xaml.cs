@@ -61,7 +61,7 @@ namespace Ginger.AnalyzerLib
         private Solution mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
-        ObservableList<DataSourceBase> DSList;
+        // ObservableList<DataSourceBase> DSList;
 
         public bool BusyInProcess = false;
 
@@ -252,7 +252,7 @@ namespace Ginger.AnalyzerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while sorting the Analyzer issues", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while sorting the Analyzer issues", ex);
             }
         }
 
@@ -688,8 +688,7 @@ namespace Ginger.AnalyzerLib
 
         private void SaveAllFixedItems()
         {
-            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();
-            Solution solution = null;
+            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();            
             foreach (AnalyzerItemBase AI in mIssues)
             {
                 if (AI.Status == AnalyzerItemBase.eStatus.Fixed)

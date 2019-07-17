@@ -39,8 +39,8 @@ namespace GingerCore.Drivers.WindowsLib
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("10")]  // Local host 
-        [UserConfiguredDescription("Action Timeout - default is 10 seconds")]
+        [UserConfiguredDefault("30")] 
+        [UserConfiguredDescription("Action Timeout - default is 30 seconds")]
         public override int ActionTimeout
         {
             get
@@ -152,7 +152,7 @@ namespace GingerCore.Drivers.WindowsLib
                     case "ActScreenShot":
                         try
                         {
-                            //TODO: When capturing all windows, we do showwindow. for few applications show window is causing applicaiton to minimize
+                            //TODO: When capturing all windows, we do showwindow. for few applications show window is causing application to minimize
                             //Disabling the capturing all windows for Windows driver until we fix show window issue
                             
                             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
@@ -534,6 +534,9 @@ namespace GingerCore.Drivers.WindowsLib
                             actWC.ExInfo += "Element Clicked";
                         else
                             actWC.Error="Unable to Click Element";
+                        break;
+                    case ActWindowsControl.eControlAction.Expand:
+                        mUIAutomationHelper.ExpandComboboxByUIA(AE);
                         break;
                     default:
                         actWC.Error = "Unknown Action  - " + actWC.ControlAction;

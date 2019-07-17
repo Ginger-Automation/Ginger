@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("DeleteCollectionItems Error - " + ex.Message);
             }
             return result;
         }
@@ -131,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("SetCollection Error - " + ex.Message);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("SaveImage - " + ex.Message);
             }
         }
 
@@ -164,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("GetImage - " + ex.Message);
             }
         }
     }

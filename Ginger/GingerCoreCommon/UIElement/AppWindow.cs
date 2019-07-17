@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.Common.UIElement
             InternalBrowserWebPageDocument,
             JFrmae,
             Appium,
-            AndroidDevice,
+            // AndroidDevice,
             Mainframe
         }
 

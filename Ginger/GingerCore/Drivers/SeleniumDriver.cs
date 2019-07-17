@@ -16,42 +16,41 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.IE;
-using OpenQA.Selenium.Support.UI;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using GingerCore.Actions;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Diagnostics;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Edge;
-using System.Drawing;
-using WindowsInput;
-using GingerCore.Drivers.Common;
-using GingerCore.Drivers.CommunicationProtocol;
-using System.Data;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
-using System.Threading.Tasks;
-using GingerCore.Actions.Common;
-using GingerCore.Actions.VisualTesting;
-using System.Windows.Media.Imaging;
-using System.Reflection;
-using Protractor;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
-using HtmlAgilityPack;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
+using GingerCore.Drivers.CommunicationProtocol;
+using GingerCore.Drivers.Selenium.SeleniumBMP;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using HtmlAgilityPack;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
+using Protractor;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using WindowsInput;
 
 namespace GingerCore.Drivers
 {
@@ -123,6 +122,26 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
+        public string EmulationDeviceName { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome & Firefox : A browser's user agent string (UA) helps identify which browser is being used, what version, and on which operating system")]
+        public string BrowserUserAgent { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The height in pixels of the browser's viewable area")]
+        public string BrowserHeight { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The width in pixels of the browser's viewable area")]
+        public string BrowserWidth { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
@@ -168,7 +187,7 @@ namespace GingerCore.Drivers
         public bool TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments seperated with ; sign")]
+        [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
 
 
@@ -359,10 +378,17 @@ namespace GingerCore.Drivers
                             SetProxy(FirefoxOption);
                         }
 
+                        if (!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            var profile = new FirefoxProfile();
+                            profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
+                            FirefoxOption.Profile = profile;
+                        }
+
+
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
 
                     #endregion
@@ -376,7 +402,7 @@ namespace GingerCore.Drivers
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
-                        
+
                         //setting proxy
                         SetProxy(options);
 
@@ -402,13 +428,23 @@ namespace GingerCore.Drivers
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
 
-                            ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
-                            if (HideConsoleWindow)
-                            {
-                                ChService.HideCommandPromptWindow = HideConsoleWindow;
-                            }
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        if (!string.IsNullOrEmpty(EmulationDeviceName))
+                        {
+                            options.EnableMobileEmulation(EmulationDeviceName);
+                        }
+                        else if(!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
+                            { UserAgent = BrowserUserAgent.Trim() };
+                            options.EnableMobileEmulation(chromeMobileEmulationDevice);
+                        }
 
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                        if (HideConsoleWindow)
+                        {
+                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                        }
+                        Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
 
                     #endregion
@@ -463,7 +499,7 @@ namespace GingerCore.Drivers
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities());
                             // TODO: make Sauce lab driver/config
 
-                            //TODO: For sauce lab - externalzie - try without amdocs proxy hot spot works then it is proxy issue
+                            //TODO: For sauce lab - externalize - try without amdocs proxy hot spot works then it is proxy issue
                             break;
                         }
                         else
@@ -491,6 +527,11 @@ namespace GingerCore.Drivers
 
                 if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
                     Driver.Manage().Window.Minimize();
+
+                if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
+                {
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight),Width=Convert.ToInt32(BrowserWidth) };
+                }
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
@@ -797,7 +838,7 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
-            // if alert exist then any action on driver throwing excepion and dismissing the pop up
+            // if alert exist then any action on driver throwing exception and dismissing the pop up
             // so keeping handle browswer as first step.
             if (act.GetType() == typeof(ActHandleBrowserAlert))
             {
@@ -1179,7 +1220,7 @@ namespace GingerCore.Drivers
                             e.SendKeys(actTextBox.GetInputParamCalculatedValue("Value"));
                         else
                             //TODO: How do we check for errors? do negative UT check for below
-                            // + Why FF is different? what happend?
+                            // + Why FF is different? what happened?
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, actTextBox.GetInputParamCalculatedValue("Value"));
                     }
                     break;
@@ -3487,9 +3528,9 @@ namespace GingerCore.Drivers
         public override ePlatformType Platform
         {
             get { return ePlatformType.Web; }
-        }        
+        }
         private int exceptioncount = 0;
-               
+
 
 
         public override bool IsRunning()
@@ -3752,7 +3793,7 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Falied to learn the Web Element '{0}'", htmlElemNode.Name), ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to learn the Web Element '{0}'", htmlElemNode.Name), ex);
                     }
                 }
             }
@@ -3795,7 +3836,7 @@ namespace GingerCore.Drivers
             }
 
             if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
-                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL" 
+                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL"
                                                         || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
             {
                 elementType = eElementType.TextBox;
@@ -3888,7 +3929,7 @@ namespace GingerCore.Drivers
 
             return returnTuple;
         }
-        
+
         ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
         {
             if (string.IsNullOrEmpty(EI.ElementType) || EI.ElementTypeEnum == eElementType.Unknown)
@@ -3911,7 +3952,7 @@ namespace GingerCore.Drivers
 
             return EI;
         }
-        
+
         //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
         //{
         //    HTMLElementInfo EI = new HTMLElementInfo();
@@ -4674,7 +4715,7 @@ namespace GingerCore.Drivers
             {
                 dt.Columns.Add(cell.Text);
             }
-            //Cretae the data rows
+            //Create the data rows
             ReadOnlyCollection<IWebElement> allRows = table.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr"));
             foreach (IWebElement row in allRows)
             {
@@ -5363,7 +5404,7 @@ namespace GingerCore.Drivers
                                     OnRecordingEvent(args);
                                 }
                                 else
-                                {  
+                                {
                                     //Temp existing implementation
                                     ActUIElement actUI = new ActUIElement();
                                     actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
@@ -5380,19 +5421,19 @@ namespace GingerCore.Drivers
                                     {
                                         mActionRecorded.Invoke(this, new POMEventArgs(Driver.Title, actUI));
                                     }
-                                }                                
+                                }
                             }
                         }
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
                     }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
             }
         }
 
@@ -5404,7 +5445,7 @@ namespace GingerCore.Drivers
         {
             RecordingEvent?.Invoke(this, e);
         }
-        
+
         ElementInfo LearnRecorededElementFullDetails(string xCordinate, string yCordinate)
         {
             ElementInfo eInfo = null;
@@ -5420,7 +5461,7 @@ namespace GingerCore.Drivers
                         PageChangedEventArgs pageArgs = new PageChangedEventArgs()
                         {
                             PageURL = url,
-                            PageTitle = title,          
+                            PageTitle = title,
                             ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
                         };
 
@@ -5441,20 +5482,20 @@ namespace GingerCore.Drivers
                         string elementName = GenerateElementTitle(el);
                         HTMLElementInfo foundElemntInfo = new HTMLElementInfo
                         {
-                            ElementObject = el                            
+                            ElementObject = el
                         };
                         eInfo = ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
                         eInfo.ElementName = elementName;
-                    }                    
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured while recording - while reading element", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording - while reading element", ex);
                 }
             }
 
             return eInfo;
-        }        
+        }
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)
         {
@@ -5634,7 +5675,7 @@ namespace GingerCore.Drivers
             bool BFound = false;
             Stopwatch St = new Stopwatch();
             string searchedWinTitle = GetSearchedWinTitle(act);
-            // retry mechanims for 20 seconds waiting for the window to open, 500ms intervals                  
+            // retry mechanism for 20 seconds waiting for the window to open, 500ms intervals                  
 
             St.Reset();
 
@@ -5675,6 +5716,18 @@ namespace GingerCore.Drivers
                                 {
                                     // window found put some info in ExInfo
                                     act.ExInfo = winurl;
+                                    BFound = true;
+                                    break;
+                                }
+                            }
+                             if (act.LocateBy == eLocateBy.ByIndex)
+                            {
+                                int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
+                                string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
+                                if (winIndexTitle != null)
+                                {
+                                    // window found put some info in ExInfo
+                                    act.ExInfo = winIndexTitle;
                                     BFound = true;
                                     break;
                                 }
@@ -5756,7 +5809,7 @@ namespace GingerCore.Drivers
                 return GetPayLoadfromList(list);
 
             }
-            else//for chrome and IE execute is retunring a list of object
+            else//for chrome and IE execute is returning a list of object
             {
                 //TODO: find faster way to do it
                 ReadOnlyCollection<object> la = (ReadOnlyCollection<object>)rc2;
@@ -5846,7 +5899,7 @@ namespace GingerCore.Drivers
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
                             if (SelectedPOM != null)
                             {
-                                POMUrl = SelectedPOM.PageURL;
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);             // SelectedPOM.PageURL;
                             }
                         }
                         GotoURL(act, POMUrl);
@@ -5878,7 +5931,7 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = SelectedPOM?.PageURL;
+                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
                         }
                         GotoURL(act, POMUrl);
                     }
@@ -5970,6 +6023,40 @@ namespace GingerCore.Drivers
                     break;
                 case ActBrowserElement.eControlAction.CloseAll:
                     Driver.Quit();
+                    break;
+                case ActBrowserElement.eControlAction.GetBrowserLog:
+
+                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                    
+                    foreach (var item in networkLogs)
+                    {
+                        Dictionary<string, object> dict = item as Dictionary<string, object>;
+                        if (dict != null)
+                        {
+                            if(dict.ContainsKey("name"))
+                            {
+                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+
+                                var urlString = string.Empty;
+                                if (urlArray.Length>0)
+                                {
+                                    urlString = urlArray[urlArray.Length - 1];
+                                    if(string.IsNullOrEmpty(urlString) && urlArray.Length>1)
+                                    {
+                                        urlString = urlArray[urlArray.Length - 2];
+                                    }
+                                    foreach (var val in dict)
+                                    {
+                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                    }
+
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
                     Driver.Navigate().Back();
@@ -6278,7 +6365,7 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embbeded in the script so make sure you use the 'arguments[0]' place holder for it.";
+                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embedded in the script so make sure you use the 'arguments[0]' place holder for it.";
                         }
                         break;
 
@@ -6539,7 +6626,7 @@ namespace GingerCore.Drivers
                                 break;
 
                         }
-                        //TODO: Add validation to verify if Drag and drop is perfromed or not and fail the action if needed
+                        //TODO: Add validation to verify if Drag and drop is performed or not and fail the action if needed
                     }
                 }
                 else
@@ -6605,7 +6692,7 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction clickType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
             {
-                act.Error = "Unkown Click Type";
+                act.Error = "Unknown Click Type";
                 return false;
             }
 
@@ -6613,7 +6700,7 @@ namespace GingerCore.Drivers
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
             {
-                act.Error = "Unkown Validation Element Locate By";
+                act.Error = "Unknown Validation Element Locate By";
                 return false;
             }
 
@@ -6624,7 +6711,7 @@ namespace GingerCore.Drivers
             ActUIElement.eElementAction validationType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
             {
-                act.Error = "Unkown Validation Type";
+                act.Error = "Unknown Validation Type";
                 return false;
             }
 
@@ -6685,7 +6772,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenuim WebDriver Browser Page Screenshot", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenium WebDriver Browser Page Screenshot", ex);
                 return null;
             }
         }
@@ -7150,7 +7237,7 @@ namespace GingerCore.Drivers
         }
 
 
-        POMEventHandler mActionRecorded;        
+        POMEventHandler mActionRecorded;
 
 
         public void ActionRecordedCallback(POMEventHandler ActionRecorded)
@@ -7249,6 +7336,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
                     }
                 }
             }
@@ -7269,7 +7357,15 @@ namespace GingerCore.Drivers
             if (OriginalElementInfo == null)
             {
                 //try by type and Xpath comparison
-                OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum) && (x.XPath == element.XPath) && (x.Path == element.Path || string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path))).FirstOrDefault();
+                OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+                                                                    && (x.XPath == element.XPath)
+                                                                    && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
+                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null 
+                                                                        || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
+                                                                            && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
+                                                                            )
+                                                                        )
+                                                                  ).FirstOrDefault();
             }
 
             return OriginalElementInfo;

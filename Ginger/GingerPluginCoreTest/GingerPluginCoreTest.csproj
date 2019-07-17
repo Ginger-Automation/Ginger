@@ -8,13 +8,22 @@
 
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="1.0.5" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
+    <ProjectReference Include="..\GingerPluginPlatforms\GingerPluginPlatforms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

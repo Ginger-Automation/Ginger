@@ -102,8 +102,7 @@ namespace GingerCore.SourceControl
                     }
                     catch { }
 
-                    conflictsPaths = GetConflictsPaths();
-                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "The files are not connected to source control");
+                    conflictsPaths = GetConflictsPaths();                    
                     result = false;
                 }
             }
@@ -661,7 +660,7 @@ namespace GingerCore.SourceControl
 
         private void ErrorOnppush(PushStatusError pushStatusErrors)
         {
-            throw new Exception("Error Occured in push" + pushStatusErrors.Message);
+            throw new Exception("Error Occurred in push" + pushStatusErrors.Message);
         }
 
         private List<string> GetConflictsPaths()

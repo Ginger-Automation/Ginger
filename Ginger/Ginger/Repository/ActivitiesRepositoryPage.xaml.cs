@@ -41,8 +41,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesRepositoryPage : Page
     {
-        readonly RepositoryFolder<Activity> mActivitiesFolder;
-        bool TreeInitDone = false;
+        readonly RepositoryFolder<Activity> mActivitiesFolder;        
         bool mInTreeModeView = false;
         BusinessFlow mBusinessFlow;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
@@ -90,6 +89,7 @@ namespace Ginger.Repository
         {
             mBusinessFlow = bf;
             mContext.BusinessFlow = mBusinessFlow;
+            xActivitiesRepositoryGrid.ClearFilters();
         }
 
         private void SetActivitiesRepositoryGridView()

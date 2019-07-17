@@ -25,80 +25,60 @@ using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 using System.Reflection;
+using Amdocs.Ginger.Repository;
+using System.Runtime.CompilerServices;
 
 namespace GingerCore.DataSource
 {
     public class AccessDataSource : DataSourceBase
     {
-        OleDbConnection myAccessConn;
-        string mFilePath = "";
+        private static readonly Object thisObj = new object();
 
-        public override void Init(string sFilePath,string sMode="Read")
+        private string GetConnectionString(string sFilePath, string sMode = "Write")
         {
+            FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
+
             string strAccessConn = "";
-            mFilePath = sFilePath;
 
             if (sMode == "Read")
-                strAccessConn = "Provider=Microsoft.Jet.OLEDB.4.0;Mode=" + sMode + ";Data Source=" + mFilePath;
+                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
             else
-                strAccessConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mFilePath;
+                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileFullPath;
 
-            try
-            {
-                  myAccessConn = new OleDbConnection(strAccessConn);
-                  DSC = this;
-                  myAccessConn.Open();                
-            }
-            catch(Exception ex)
-            {
-                  Console.WriteLine("Error: Failed to create a database connection. \n{0}", ex.Message);
-                  return;
-            }
-
-           
-
-        }
-        public override void Close()
-        {
-            try
-            {
-                if (myAccessConn.State == System.Data.ConnectionState.Open)
-                     myAccessConn.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: Failed to close the database connection. \n{0}", ex.Message);
-                return;
-            }
+            return strAccessConn;
         }
 
         public override ObservableList<DataSourceTable> GetTablesList()
-        {         
-            
+        {
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {
-                DataTable dt = myAccessConn.GetSchema("Tables");
-                foreach (DataRow row in dt.Rows)
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
                 {
-                    string tablename = (string)row[2];
-                    if (row["TABLE_TYPE"].ToString() == "TABLE")
+                    if (connObj.State != System.Data.ConnectionState.Open)
                     {
-                        string strAccessSelect = "SELECT  * FROM " + tablename ;
-                        OleDbCommand myAccessCommand = new OleDbCommand(strAccessSelect, myAccessConn);
-                        OleDbDataAdapter myDataAdapter = new OleDbDataAdapter();
-                        myDataAdapter.SelectCommand = myAccessCommand;
-                        DataTable dtTable = new DataTable();
-                        myDataAdapter.Fill(dtTable);
-                        dtTable.TableName = tablename;
-                        mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
-                    }                    
-                }               
+                        connObj.Open();
+                    }
+                    DataTable dataTable = connObj.GetSchema("Tables");
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        string tablename = (string)row[2];
+                        if (row["TABLE_TYPE"].ToString() == "TABLE")
+                        {
+                            string strAccessSelect = "SELECT  * FROM " + tablename;
+                            OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
+                            DataTable dtTable = new DataTable();
+                            myDataAdapter.Fill(dtTable);
+                            dtTable.TableName = tablename;
+                            mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
+                        }
+                    }
+                }
                 return mDataSourceTableDetails;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: Failed to retrieve the required data from the DataBase.\n{0}", ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve the required tables data from the DataBase", ex);
                 return null;
             }
         }
@@ -130,13 +110,8 @@ namespace GingerCore.DataSource
             OleDbCommand myCommand = new OleDbCommand();
             if (iIdCount == 0)
             {
-                myAccessConn.Close();
-                Init(mFilePath,"Write");
-                myCommand.CommandText = "ALTER TABLE " + tablename + " ADD COLUMN [GINGER_ID] AUTOINCREMENT";
-                myCommand.Connection = myAccessConn;
-                myCommand.ExecuteNonQuery();
-                myAccessConn.Close();
-                Init(mFilePath);
+                var query = "ALTER TABLE " + tablename + " ADD COLUMN [GINGER_ID] AUTOINCREMENT";
+                RunQuery(query);
             }
             sTableDetail.DSC = this;
             return sTableDetail;            
@@ -144,26 +119,14 @@ namespace GingerCore.DataSource
 
         public override void AddColumn(string tableName, string columnName, string columnType)
         {
-            myAccessConn.Close();
-            Init(mFilePath, "Write");
-            OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = myAccessConn;
-            myCommand.CommandText = "ALTER TABLE " + tableName + " ADD COLUMN ["+ columnName + "] " + columnType;
-            myCommand.ExecuteNonQuery();
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
+            var query = "ALTER TABLE " + tableName + " ADD COLUMN [" + columnName + "] " + columnType;
+            RunQuery(query);
         }
 
         public override void RemoveColumn(string tableName, string columnName)
         {
-            myAccessConn.Close();
-            Init(mFilePath, "Write");
-            OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = myAccessConn;
-            myCommand.CommandText = "ALTER TABLE " + tableName + " DROP COLUMN [" + columnName + "]";
-            myCommand.ExecuteNonQuery();
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
+            var query = "ALTER TABLE " + tableName + " DROP COLUMN [" + columnName + "]";
+            RunQuery(query);
         }
 
         public override void UpdateTableList(ObservableList<DataSourceTable> dsTableList)
@@ -183,75 +146,109 @@ namespace GingerCore.DataSource
         public override List<string> GetColumnList(string tableName)
         {
             List<string> mColumnNames = new List<string>();
-            string strAccessSelect = "SELECT * FROM " + tableName;
-            OleDbCommand myAccessCommand = new OleDbCommand(strAccessSelect, myAccessConn);
-            OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(myAccessCommand);
-            DataSet myDataSet = new DataSet();
-            myDataAdapter.Fill(myDataSet, tableName);
-            
-            foreach (DataColumn column in myDataSet.Tables[0].Columns)
+            try
             {
-                mColumnNames.Add(column.ToString());                
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
+                {
+                    if (connObj.State != System.Data.ConnectionState.Open)
+                    {
+                        connObj.Open();
+                    }
+                    string strAccessSelect = "SELECT * FROM " + tableName;
+                    OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
+                    DataSet myDataSet = new DataSet();
+                    myDataAdapter.Fill(myDataSet, tableName);
+
+                    foreach (DataColumn column in myDataSet.Tables[0].Columns)
+                    {
+                        mColumnNames.Add(column.ToString());
+                    }
+                }
+                return mColumnNames;
             }
-            return mColumnNames;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve the required columns data from the DataBase", ex);
+                return null;
+            }
         }
 
         public override DataTable GetQueryOutput(string query)
-        {            
-            OleDbCommand myAccessCommand = new OleDbCommand(query, myAccessConn);
-            OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(myAccessCommand);
+        {
+            try
+            {
+                DataTable dataTable = new DataTable();
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
+                {
+                    if (connObj.State != System.Data.ConnectionState.Open)
+                    {
+                        connObj.Open();
+                    }
+                    OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(query, connObj);
+                    myDataAdapterTest.AcceptChangesDuringUpdate = true;
+                    myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                    myDataAdapterTest.Fill(dataTable);
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve the required data from the DataBase", ex);
+                return null;
+            }
 
-            myDataAdapterTest.AcceptChangesDuringUpdate = true;
-
-            DataTable dataTable = new DataTable();
-            myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-            myDataAdapterTest.FillSchema(dataTable,SchemaType.Mapped);
-            myDataAdapterTest.Fill(dataTable);
-            return dataTable;
         }
 
         public override void RunQuery(string query)
         {
-            myAccessConn.Close();
-            Init(mFilePath, "Write");
-            OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = myAccessConn;
-            myCommand.CommandText = query;
-            myCommand.ExecuteNonQuery();
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
+            try
+            {
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
+                {
+                    if (connObj.State != System.Data.ConnectionState.Open)
+                    {
+                        connObj.Open();
+                    }
+                    OleDbCommand myCommand = new OleDbCommand();
+                    myCommand.Connection = connObj;
+                    myCommand.CommandText = query;
+                    myCommand.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Execute Query", ex);
+            }
         }
 
         public override void AddTable(string TableName,string columnlist="")
         {
-            myAccessConn.Close();
-            Init(mFilePath, "Write");
-            OleDbCommand myCommand = new OleDbCommand();
-            myCommand.Connection = myAccessConn;
-            myCommand.CommandText = "CREATE TABLE " + TableName + "(" + columnlist + ")";
-            myCommand.ExecuteNonQuery();
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
+            var query = "CREATE TABLE " + TableName + "(" + columnlist + ")";
+            RunQuery(query);
         }
 
         public override bool ExporttoExcel(string TableName,string sExcelPath, String sSheetName)
         {
-            myAccessConn.Close();
-            Init(mFilePath, "Read");
             DataTable dsTable = GetQueryOutput("select * from " + TableName);
-            ExportDSToExcel(dsTable, sExcelPath, sSheetName);
+            lock(thisObj)
+            {
+                ExportDSToExcel(dsTable, sExcelPath, sSheetName);
+            }
             return false;
         }
 
         public override bool IsTableExist(string TableName)
         {
-            DataTable dt = myAccessConn.GetSchema("Tables");
-            foreach (DataRow row in dt.Rows)
+            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
             {
-                if (TableName == (string)row[2])
-                    return true;
+                DataTable dt = connObj.GetSchema("Tables");
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (TableName == (string)row[2])
+                        return true;
+                }
             }
-                return false;
+            return false;
         }
         public override string CopyTable(string tableName)
         {
@@ -262,15 +259,8 @@ namespace GingerCore.DataSource
 
             if (CopyTableName != tableName)
             {
-                //DataSet TableDataSet = GetQueryOutput("Select * rom ");
-                myAccessConn.Close();
-                Init(mFilePath, "Write");
-                OleDbCommand myCommand = new OleDbCommand();
-                myCommand.Connection = myAccessConn;
-                myCommand.CommandText = "SELECT * INTO " + CopyTableName + " FROM " + tableName;
-                myCommand.ExecuteNonQuery();
-                myAccessConn.Close();
-                Init(mFilePath, "Read");
+                var query = "SELECT * INTO " + CopyTableName + " FROM " + tableName;
+                RunQuery(query);
             }
             return CopyTableName;
         }
@@ -278,35 +268,15 @@ namespace GingerCore.DataSource
         {
             if(TableName != NewTableName)
             {
-                myAccessConn.Close();
-                Init(mFilePath, "Write");
-                OleDbCommand myCommand = new OleDbCommand();
-                myCommand.Connection = myAccessConn;
-                myCommand.CommandText = "SELECT * INTO " + NewTableName + " FROM " + TableName;
-                myCommand.ExecuteNonQuery();
-                myAccessConn.Close();
-                Init(mFilePath, "Read");
-                DeleteTable(TableName);
+                var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
+                RunQuery(query);
             }            
         }
         
         public override void DeleteTable(string TableName)
         {
-            try
-            {
-                myAccessConn.Close();
-                Init(mFilePath, "Write");
-                OleDbCommand myCommand = new OleDbCommand();
-                myCommand.Connection = myAccessConn;
-                myCommand.CommandText = "DROP TABLE " + TableName ;
-                myCommand.ExecuteNonQuery();
-                myAccessConn.Close();
-                Init(mFilePath, "Read");
-            }
-            catch (Exception e)
-            {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
-            }
+            var query = "DROP TABLE " + TableName;
+            RunQuery(query);
         }
              
         public override void SaveTable(DataTable dataTable)
@@ -316,8 +286,6 @@ namespace GingerCore.DataSource
                 DataTable dtChange = dataTable.GetChanges();
                 if (dtChange == null)
                     return;
-                myAccessConn.Close();
-                Init(mFilePath, "Write");
 
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -378,8 +346,6 @@ namespace GingerCore.DataSource
                     }
                 }
                 dataTable.AcceptChanges();
-                myAccessConn.Close();
-                Init(mFilePath);
             }
             catch (Exception e)
             {
@@ -405,55 +371,151 @@ namespace GingerCore.DataSource
             }
 
             uint sheetId = 1;
-                    var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
-                    var sheetData = new DocumentFormat.OpenXml.Spreadsheet.SheetData();
-                    sheetPart.Worksheet = new DocumentFormat.OpenXml.Spreadsheet.Worksheet(sheetData);
+            var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
+            var sheetData = new DocumentFormat.OpenXml.Spreadsheet.SheetData();
+            sheetPart.Worksheet = new DocumentFormat.OpenXml.Spreadsheet.Worksheet(sheetData);
 
-                    DocumentFormat.OpenXml.Spreadsheet.Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<DocumentFormat.OpenXml.Spreadsheet.Sheets>();
-                    string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
+            DocumentFormat.OpenXml.Spreadsheet.Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<DocumentFormat.OpenXml.Spreadsheet.Sheets>();
+            string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
 
-                    DocumentFormat.OpenXml.Spreadsheet.Sheet oSheet = sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
-                    if (oSheet != null)
-                        oSheet.Remove();
+            DocumentFormat.OpenXml.Spreadsheet.Sheet oSheet = sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
+            if (oSheet != null)
+                oSheet.Remove();
 
-                    if (sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Count() > 0)
-                    {
-                        sheetId =
-                            sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Select(s => s.SheetId.Value).Max() + 1;
-                    }
+            if (sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Count() > 0)
+            {
+                sheetId =
+                    sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+            }
 
-                    DocumentFormat.OpenXml.Spreadsheet.Sheet sheet = new DocumentFormat.OpenXml.Spreadsheet.Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };
-                    sheets.Append(sheet);
-                    
-                    DocumentFormat.OpenXml.Spreadsheet.Row headerRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
+            DocumentFormat.OpenXml.Spreadsheet.Sheet sheet = new DocumentFormat.OpenXml.Spreadsheet.Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };
+            sheets.Append(sheet);
 
-                    List<string> columns = new List<string>();
-                    foreach (DataColumn column in table.Columns)
-                    {
-                        columns.Add(column.ColumnName);
+            DocumentFormat.OpenXml.Spreadsheet.Row headerRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
 
-                        DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
-                        cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
-                        cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(column.ColumnName);
-                        headerRow.AppendChild(cell);
-                    }
+            List<string> columns = new List<string>();
+            foreach (DataColumn column in table.Columns)
+            {
+                columns.Add(column.ColumnName);
 
-                    sheetData.AppendChild(headerRow);
+                DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
+                cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
+                cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(column.ColumnName);
+                headerRow.AppendChild(cell);
+            }
 
-                    foreach (DataRow dsrow in table.Rows)
-                    {
-                        DocumentFormat.OpenXml.Spreadsheet.Row newRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
-                        foreach (String col in columns)
-                        {
-                            DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
-                            cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
-                            cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(dsrow[col].ToString()); //
-                            newRow.AppendChild(cell);
-                        }
+            sheetData.AppendChild(headerRow);
 
-                        sheetData.AppendChild(newRow);
-                    }
+            foreach (DataRow dsrow in table.Rows)
+            {
+                DocumentFormat.OpenXml.Spreadsheet.Row newRow = new DocumentFormat.OpenXml.Spreadsheet.Row();
+                foreach (String col in columns)
+                {
+                    DocumentFormat.OpenXml.Spreadsheet.Cell cell = new DocumentFormat.OpenXml.Spreadsheet.Cell();
+                    cell.DataType = DocumentFormat.OpenXml.Spreadsheet.CellValues.String;
+                    cell.CellValue = new DocumentFormat.OpenXml.Spreadsheet.CellValue(dsrow[col].ToString()); //
+                    newRow.AppendChild(cell);
+                }
+
+                sheetData.AppendChild(newRow);
+            }
             workbook.Close();
+        }
+
+        public override DataTable GetTable(string TableName)
+        {
+            return GetQueryOutput("Select * from " + TableName);
+        }
+
+        public override void AddRow( List<string> mColumnNames, DataSourceTable mDSTableDetails)
+        {
+            DataRow dr = mDSTableDetails.DataTable.NewRow();
+            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            foreach (string sColName in mColumnNames)
+            {
+                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                {
+                        dr[sColName] = "";
+                }
+                else if (sColName == "GINGER_ID")
+                {
+                        dr[sColName] = System.DBNull.Value;
+                }
+            }
+            mDSTableDetails.DataTable.Rows.Add(dr);
+        }
+
+        public override void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList, DataSourceTable mDSTableDetails)
+        {
+            mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
+            foreach (object o in SelectedItemsList)
+            {
+                DataRow row = (((DataRowView)o).Row);
+                DataRow dr = mDSTableDetails.DataTable.NewRow();
+                foreach (string sColName in mColumnNames)
+                {
+                    if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                    {
+                        dr[sColName] = row[sColName];
+                    }
+                    else
+                    {
+                        dr[sColName] = System.DBNull.Value;
+                    }
+                }
+                mDSTableDetails.DataTable.Rows.Add(dr);
+            }
+        }
+
+        public override void InitConnection()
+        {
+            DataSourceBase ADC;
+            ADC = new AccessDataSource();
+            ADC.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+
+        }
+
+        public override string AddNewCustomizedTableQuery()
+        {
+            return "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text";
+        }
+
+        public override int GetRowCount(string TableName)
+        {
+            return GetQueryOutput("Select * from " + TableName).Rows.Count;
+        }
+
+        public override string AddNewKeyValueTableQuery()
+        {
+            return "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text";
+        }
+
+        public override string GetExtension()
+        {
+            return ".mdb";
+        }
+
+        public override DataTable GetKeyName(string mDSTableName)
+        {
+            return GetQueryOutput("Select GINGER_KEY_NAME from " + mDSTableName + " WHERE GINGER_KEY_NAME is not null and Trim(GINGER_KEY_NAME) <> ''");
+        }
+        
+        public override void DeleteAll(List<object> AllItemsList, string TName = null)
+        {
+            foreach (object o in AllItemsList)
+            {
+                ((DataRowView)o).Delete();
+            }
+        }
+
+        public override string AddColumnName(string colName)
+        {
+            return string.Format("[{0}] Text,", colName);
+        }
+
+        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
+        {
+            return "INSERT INTO " + Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
         }
     }
 }

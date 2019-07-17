@@ -32,9 +32,12 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
 {
     public class ExecutionSummary
     {
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public TimeSpan Elapsed { get; set; }
+       public string SummaryCreationTime { get; set; }
+
+        //public DateTime StartTime { get; set; } //we missing that data currently- will be added later
+        //public DateTime EndTime { get; set; }
+        public string ExecutionElapsed { get; set; }
+
         public Runners Runners { get;  } = new Runners();
         public BusinessFlowsSummary BusinessFlowsSummary { get; } = new BusinessFlowsSummary();
         public ActivitiesSummary ActivitiesSummary { get; } = new ActivitiesSummary();
@@ -43,8 +46,10 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
         RunsetExecutor mRunsetExecutor;
         public string Create(RunsetExecutor runsetExecutor)
         {
-            Elapsed = runsetExecutor.Elapsed;            
+            SummaryCreationTime = DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss");
+            ExecutionElapsed = runsetExecutor.Elapsed.ToString(@"hh\:mm\:ss");            
             mRunsetExecutor = runsetExecutor;
+
             AddRunners();
 
             string json = JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -56,6 +61,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
             foreach (GingerRunner runner in mRunsetExecutor.Runners)
             {
                 Runners.Total++;
+                Runners.Parallel = mRunsetExecutor.RunSetConfig.RunModeParallel;
                 AddBusinessFlows(runner.BusinessFlows);                
             }
         }

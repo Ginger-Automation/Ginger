@@ -77,7 +77,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
             catch(Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occured while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
             }
         }
 
@@ -88,21 +88,22 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             shortcut.Description = AutoRunShortcut.ShortcutFileName;
             shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
             if (AutoRunShortcut.ExecutorType == RunSetAutoRunShortcut.eExecutorType.GingerConsole)
-            {
-                //@"C:\Program Files\dotnet\dotnet.exe"
-                //shortcut.TargetPath =  string.Format("{0} {1}", "dotnet", AutoRunShortcut.ExecuterFullPath);
-                shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+            {                
+                shortcut.TargetPath = "dotnet";//@"C:\Program Files\dotnet\dotnet.exe"
+                shortcut.Arguments = string.Format("\"{0}\" {1}", AutoRunShortcut.ExecuterFullPath, AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\""); 
             }
             else
             {
                 shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+                shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
             }
-            shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+            
             string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
             if (System.IO.File.Exists(iconPath))
             {
                 shortcut.IconLocation = iconPath;
             }
+
             shortcut.Save();
         }
 

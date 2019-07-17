@@ -36,14 +36,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-            if (isCleanFile)
+            if (System.IO.Directory.Exists(folderName) && isCleanFile)
+            {
                 foreach (System.IO.FileInfo file in di.GetFiles())
                 {
                     file.Delete();
                 }
-            foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
+                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
         public void CreateTempDirectory()
@@ -81,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
                         logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
                         System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                     }
                 }
             }
@@ -108,6 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception ex)
             {
+                Console.WriteLine("CheckOrCreateDirectory - " + ex.Message);
                 return false;
             }
         }

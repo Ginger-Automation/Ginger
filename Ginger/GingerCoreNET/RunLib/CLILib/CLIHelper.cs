@@ -26,6 +26,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -229,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (SourceControlURL.IndexOf(".git") != -1)
                 {
                     // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL.Substring(0, SourceControlURL.IndexOf(".git") + 4));
+                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
                 }
                 else
                 {
@@ -355,6 +356,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution");
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                // TODO: throw
                 return false;
             }
         }

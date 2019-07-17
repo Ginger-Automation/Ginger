@@ -305,7 +305,7 @@ namespace GingerCore.Actions.REST
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
                 default:
-                    throw new NotSupportedException("The Configured secutrity type is not supported");
+                    throw new NotSupportedException("The Configured security type is not supported");
 
             }
 

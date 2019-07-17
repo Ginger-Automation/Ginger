@@ -97,28 +97,38 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         foreach (Act act in currentActivity.Acts.ToList())
                         {
-                            if (act.Active && act is IObsoleteAction &&
-                                actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() && 
-                                                          a.Selected && 
-                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                            try
                             {
-                                // get the index of the action that is being converted 
-                                int selectedActIndex = currentActivity.Acts.IndexOf(act);
-
-                                // convert the old action
-                                Act newAct = ((IObsoleteAction)act).GetNewAction();
-                                if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                                if (act.Active && act is IObsoleteAction &&
+                                                        actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
+                                                                                  a.Selected &&
+                                                                                  a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                                 {
-                                    newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
-                                }
-                                currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+                                    // get the index of the action that is being converted 
+                                    int selectedActIndex = currentActivity.Acts.IndexOf(act);
 
-                                // set obsolete action in the activity as inactive
-                                act.Active = false;
-                                if (addNewActivity)
-                                {
-                                    currentActivity.Acts.Remove(act);
+                                    // convert the old action
+                                    Act newAct = ((IObsoleteAction)act).GetNewAction();
+                                    if (newAct != null)
+                                    {
+                                        if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                                        {
+                                            newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
+                                        }
+                                        currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+
+                                        // set obsolete action in the activity as inactive
+                                        act.Active = false;
+                                        if (addNewActivity)
+                                        {
+                                            currentActivity.Acts.Remove(act);
+                                        } 
+                                    }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
                             }
                         }
 
@@ -218,29 +228,42 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
                 {
-                    int count = 1;
                     foreach (Act act in convertibleActivity.Acts)
                     {
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                            (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
+                                                (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                         {
-                            ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                            newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                            newConvertibleActionType.SourceActionType = act.GetType();
-                            newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                            newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                            newConvertibleActionType.ActionCount = count;
-                            newConvertibleActionType.Actions.Add(act);
-                            newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                            lst.Add(newConvertibleActionType);
-                            count++;
-                        }
+                            ConvertableActionDetails existingConvertibleActionType = lst.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            if (existingConvertibleActionType == null)
+                            {
+                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                                newConvertibleActionType.SourceActionType = act.GetType();
+                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                if (newConvertibleActionType.TargetActionType == null)
+                                    continue;
+                                newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                                newConvertibleActionType.ActionCount = 1;
+                                newConvertibleActionType.Actions.Add(act);
+                                newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                lst.Add(newConvertibleActionType);
+                            }
+                            else
+                            {
+                                if (!existingConvertibleActionType.Actions.Contains(act))
+                                {
+                                    existingConvertibleActionType.ActionCount++;
+                                    existingConvertibleActionType.Actions.Add(act);
+                                    existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                }
+                            }
+                        }                        
                     }
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertible actions from activities", ex);
             }
             return lst;
         }
@@ -278,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertable actions from activities", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertible actions from activities", ex);
             }
             return lst;
         }

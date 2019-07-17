@@ -62,7 +62,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LiteDB;
-using Ginger.Logger;
+using Amdocs.Ginger.CoreNET.Logger;
 
 namespace Ginger
 {
@@ -172,6 +172,7 @@ namespace Ginger
                         isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                         return;
                     }
+                    DeleteRunSetBFRefData();
                 }
             }
         }
@@ -182,8 +183,11 @@ namespace Ginger
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
-            dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+            if (filterData.Count > 0)
+            {
+                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+                dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+            }
         }
 
         private bool AutoRunSetDocumentExistsInLiteDB()
@@ -290,7 +294,7 @@ namespace Ginger
             CurrentBusFrame.Content = mCurrentBusPage;
             CurrentBusExpander.IsExpanded = false;
 
-            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
+            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext,General.RepositoryItemPageViewMode.Automation);
             mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             BFVariablesFrame.Content = mVariablesPage;
             mActivitiesGroupsPage = new ActivitiesGroupsPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
@@ -301,7 +305,7 @@ namespace Ginger
             mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesFrame.Content = mActivitiesPage;
 
-            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, General.RepositoryItemPageViewMode.Automation);
+            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, mContext, General.RepositoryItemPageViewMode.Automation);
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
@@ -550,7 +554,7 @@ namespace Ginger
         private void SetAutomateRunner()
         {
             mRunner = new GingerRunner(eExecutedFrom.Automation);
-            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
             // Add Listener so we can do GiveUserFeedback            
             AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
@@ -568,7 +572,7 @@ namespace Ginger
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
         }
 
         private void DoCleanUp()
@@ -991,6 +995,13 @@ namespace Ginger
         {
             if (mBusinessFlow != businessFlowToLoad)
             {
+                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    DeleteRunSetBFRefData();
+                    ClearAutomatedId(businessFlowToLoad);
+                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
+                    
+                }
                 RemoveCurrentBusinessFlow();
                 mBusinessFlow = businessFlowToLoad;
                 mContext.BusinessFlow = mBusinessFlow;
@@ -1016,12 +1027,24 @@ namespace Ginger
 
                     UpdateRunnerAgentsUsedBusinessFlow();
                 }
-                if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                {
-                    mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
-                    mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
-                }
             }
+        }
+
+        private void ClearAutomatedId(BusinessFlow businessFlowToLoad)
+        {
+            foreach (var activity in businessFlowToLoad.Activities)
+            {
+                foreach (var action in activity.Acts)
+                {
+                    (action as Act).LiteDbId = null;
+                }
+                activity.LiteDbId = null;
+            }
+            foreach (var ag in businessFlowToLoad.ActivitiesGroups)
+            {
+                ag.LiteDbId = null;
+            }
+            businessFlowToLoad.LiteDbId = null;
         }
 
         public void UpdateRunnerAgentsUsedBusinessFlow()
@@ -1337,7 +1360,7 @@ namespace Ginger
                 }
                 //execute
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
-                if(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     //mRunner.ExecutionLoggerManager.RunSetStart("", WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize,DateTime.UtcNow, true);
                     //mRunner.ExecutionLoggerManager.RunnerRunUpdate(runnerLiteDbId);
@@ -1602,7 +1625,7 @@ namespace Ginger
                 CreateLiteDBReport();
                 return;
             }
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
@@ -1647,7 +1670,7 @@ namespace Ginger
                 CreateLiteDBReport();
                 return;
             }
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);

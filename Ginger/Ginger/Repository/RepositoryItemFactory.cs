@@ -96,15 +96,15 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-  
+
         public void StartAgentDriver(IAgent IAgent)
         {
             Agent agent = (Agent)IAgent;
             BusinessFlow BusinessFlow = agent.BusinessFlow;
             ProjEnvironment ProjEnvironment = agent.ProjEnvironment;
             bool Remote = agent.Remote;
-            
-            DriverBase Driver = null; 
+
+            DriverBase Driver = null;
             agent.mIsStarting = true;
             agent.OnPropertyChanged(Fields.Status);
             try
@@ -113,7 +113,7 @@ namespace Ginger.Repository
                 {
                     if (Remote)
                     {
-                        throw new Exception("Remote is Obsolete, use GingerGrid");                        
+                        throw new Exception("Remote is Obsolete, use GingerGrid");
                     }
                     else
                     {
@@ -199,18 +199,18 @@ namespace Ginger.Repository
                             case eDriverType.MainFrame3270:
                                 Driver = new MainFrameDriver(BusinessFlow);
                                 break;
-                            case eDriverType.AndroidADB:
-                                string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
-                                if (!string.IsNullOrEmpty(DeviceConfigFolder))
-                                {
-                                    Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
-                                }
-                                else
-                                {
-                                    //TODO: Load create sample folder/device, or start the wizard
-                                    throw new Exception("Please set device config folder");
-                                }
-                                break;
+                            //case eDriverType.AndroidADB:
+                            //    string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
+                            //    if (!string.IsNullOrEmpty(DeviceConfigFolder))
+                            //    {
+                            //        Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
+                            //    }
+                            //    else
+                            //    {
+                            //        //TODO: Load create sample folder/device, or start the wizard
+                            //        throw new Exception("Please set device config folder");
+                            //    }
+                            //    break;
                             default:
                                 {
                                     throw new Exception("Matching Driver was not found.");
@@ -223,7 +223,7 @@ namespace Ginger.Repository
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
                     return;
                 }
-                
+
                 if (agent.AgentType == eAgentType.Service)
                 {
                     throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
@@ -312,8 +312,8 @@ namespace Ginger.Repository
                     return (typeof(JavaDriver));                    
                 case Agent.eDriverType.MainFrame3270:
                     return (typeof(MainFrameDriver));                    
-                case Agent.eDriverType.AndroidADB:
-                    return (typeof(AndroidADBDriver));                    
+                //case Agent.eDriverType.AndroidADB:
+                //    return (typeof(AndroidADBDriver));                    
                 case Agent.eDriverType.PerfectoMobileAndroid:
                 case Agent.eDriverType.PerfectoMobileAndroidWeb:
                 case Agent.eDriverType.PerfectoMobileIOS:
@@ -321,7 +321,7 @@ namespace Ginger.Repository
                     return (typeof(PerfectoDriver));
                     
                 default:
-                    throw new Exception("GetDriverType: Unknow Driver type " + zAgent.DriverType);
+                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
                     
             }
         }
@@ -579,11 +579,11 @@ namespace Ginger.Repository
             return new TextBoxFormatter(Textblock);
         }
 
-        public string GenerateTemplate(string templatename, object o)
-        {
-            ReportInfo reportInfo = (ReportInfo)o;
-            return ReportTemplate.GenerateReport(templatename, reportInfo);
-        }
+        //public string GenerateTemplate(string templatename, object o)
+        //{
+        //    ReportInfo reportInfo = (ReportInfo)o;
+        //    return ReportTemplate.GenerateReport(templatename, reportInfo);
+        //}
 
        
 
@@ -654,25 +654,25 @@ namespace Ginger.Repository
             return null;
         }
 
-        public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
-        {
-            ReportInfo RI = (ReportInfo)RIf;
-            ReportTemplate RT = (ReportTemplate)RTs;
-            ReportPage RP = new ReportPage(RI, RT.Xaml);
-            string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
+        //public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
+        //{
+        //    ReportInfo RI = (ReportInfo)RIf;
+        //    ReportTemplate RT = (ReportTemplate)RTs;
+        //    ReportPage RP = new ReportPage(RI, RT.Xaml);
+        //    string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
 
-            if (System.IO.File.Exists(FileName))
-                FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
+        //    if (System.IO.File.Exists(FileName))
+        //        FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
 
-            GC.Collect();
-            RP.SaveReport(FileName);
+        //    GC.Collect();
+        //    RP.SaveReport(FileName);
 
-            string PDFFileName = FileName.Replace(".rtf", ".pdf");
+        //    string PDFFileName = FileName.Replace(".rtf", ".pdf");
 
-            RTFtoPDF.Convert(FileName, PDFFileName);
+        //    RTFtoPDF.Convert(FileName, PDFFileName);
 
-            return PDFFileName;
-        }
+        //    return PDFFileName;
+        //}
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {

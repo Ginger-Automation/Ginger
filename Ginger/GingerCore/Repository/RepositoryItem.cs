@@ -32,12 +32,6 @@ namespace GingerCore
     public abstract class RepositoryItem : RepositoryItemBase
     {        
 
-        //[IsSerializedForLocalRepository]
-        //public new Guid ParentGuid { get; set; }
-
-
-        // TODO: remove or squeeze to one field
-
         [IsSerializedForLocalRepository]
         public int Version { get; set; }
 
@@ -51,10 +45,7 @@ namespace GingerCore
         public string LastUpdateBy { get; set; }
 
         [IsSerializedForLocalRepository]
-        public DateTime LastUpdate { get; set; }
-
-        //[IsSerializedForLocalRepository]
-        //public new string ExternalID { get; set; }
+        public DateTime LastUpdate { get; set; }        
 
         public bool Deleted { get; set; }
 
@@ -66,21 +57,13 @@ namespace GingerCore
         }
 
         
-
-        //public void SaveParentGUID()
-        //{
-        //    ParentGuid = Guid;
-        //    Guid = Guid.NewGuid();
-        //}
-
         public virtual void Save()
         {
             SaveToFile(FileName);
         }
 
         public void SaveToFile(string fileName, bool FlagToUpdateFileName = true)
-        {
-            //DoPreSavePreperations;
+        {            
             this.Version++;
             this.LastUpdate = DateTime.UtcNow;
             this.LastUpdateBy = Environment.UserName;
@@ -115,39 +98,7 @@ namespace GingerCore
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
         }
 
-        //public RepositoryItem CreateInstance(bool originFromShredRepo = false)
-        //{
-        //    RepositoryItem copiedItem = (RepositoryItem)this.CreateCopy();
-        //    copiedItem.ParentGuid = this.Guid;
-        //    if (originFromShredRepo)
-        //    {
-        //        copiedItem.IsSharedRepositoryInstance = true;
-        //        copiedItem.ExternalID = this.ExternalID;
-        //    }
-        //    return copiedItem;
-        //}
-
-        //// Temp solution for backup restore until we have the obj ref tree copy
-        //public void SaveBackup()
-        //{
-        //    //TODO: move soon to new back after testing
-        //    // SaveBackup2();
-        //    this.Backup = (RepositoryItem)CreateCopy();
-        //}
-
-        //public void RestoreFromBackup(bool invokFieldsPropertiesChanged = false)
-        //{
-        //    //TODO: move soon to new back after testing
-        //    // RestoreFromBackup2();
-
-        //    if (this.Backup != null)
-        //        ObjectsDeepCopy(this.Backup, this);
-
-        //    if (invokFieldsPropertiesChanged)
-        //        InvokPropertyChanngedForAllFields();
-        //}
-
-        //TODO: fixme to use all annotated fields?! or remove
+      
 
         public void InvokPropertyChanngedForAllFields()
         {
@@ -218,7 +169,7 @@ namespace GingerCore
         }
 
         /// <summary>
-        /// Been used for updating the Shared Reporsitiry item instance
+        /// Been used for updating the Shared Repository item instance
         /// </summary>
         public virtual void UpdateInstance(RepositoryItem instanceItem, string itemPartToUpdate, RepositoryItem hostItem = null)
         {
@@ -229,24 +180,6 @@ namespace GingerCore
         public virtual RepositoryItem GetUpdatedRepoItem(RepositoryItem selectedItem, RepositoryItem existingItem, string itemPartToUpdate)
         {
             throw new Exception("GetUpdatedRepoItem() was not implemented for this Item type");
-        }
-
-        public virtual Type GetTypeOfItemParts()
-        {
-            if (this is Activity)
-                return typeof(eItemParts);
-
-            else if (this is Act)
-                return typeof(Act.eItemParts);
-
-            else if (this is ActivitiesGroup)
-                return typeof(ActivitiesGroup.eItemParts);
-
-            else if (this is VariableBase)
-                return typeof(VariableBase.eItemParts);
-
-            else
-                return null;
         }
 
 

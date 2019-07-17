@@ -23,11 +23,12 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
@@ -40,9 +41,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {
-            DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws);
+        {            
+            WorkspaceHelper.CreateDummyWorkSpace("SolutionRepositoryPluginTest");            
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
@@ -61,7 +61,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             //string txt = WorkSpace.Instance.PlugInsManager.CreatePluginPackageInfo("GingerOfficePlugin", "1.0.0");
             //System.IO.File.WriteAllText(pluginFolder + @"\Ginger.PluginPackage.json", txt);
 
-
+            WorkSpace.Instance.PlugInsManager.Init(SR);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
 
@@ -71,13 +71,17 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassCleanup()
         {
             foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
-            {
-                GingerNodeProxy proxy = new GingerNodeProxy(GNI);                    
+            {            
+                ///  TODO: fixme
                 // proxy.Shutdown();
             }
-            
+
+            WorkspaceHelper.ReleaseWorkspace();
+
         }
 
+
+        
 
         [TestInitialize]
         public void TestInitialize()
@@ -177,7 +181,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePlugins()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
 
             // Act            
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
@@ -190,7 +195,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GetOnlinePluginReleases()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage PACT = (from x in list where x.Id == "PACT" select x).SingleOrDefault();
 
@@ -205,7 +211,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       
-            PluginsManager pluginsManager = new PluginsManager(WorkSpace.Instance.SolutionRepository);
+            PluginsManager pluginsManager = new PluginsManager();
+            pluginsManager.Init(WorkSpace.Instance.SolutionRepository);
             ObservableList<OnlinePluginPackage> list = pluginsManager.GetOnlinePluginsIndex();
             OnlinePluginPackage plugin = (from x in list where x.Id == "SeleniumDriver" select x).SingleOrDefault();
             OnlinePluginPackageRelease release1_1 = (from x in plugin.Releases where x.Version == "1.0" select x).SingleOrDefault();

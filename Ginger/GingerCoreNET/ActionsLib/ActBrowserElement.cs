@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using GingerCore.Helpers;
-
 using Amdocs.Ginger.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace GingerCore.Actions
@@ -152,6 +151,8 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
+            [EnumValueDescription("Get Browser Logs")]
+            GetBrowserLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
@@ -183,8 +184,6 @@ namespace GingerCore.Actions
 
         public NewPayLoad GetActionPayload()
         {
-
-
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue("BrowserAction");
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
@@ -211,23 +210,52 @@ namespace GingerCore.Actions
                 }
             }
 
+            foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
+            {
+                string Name = FI.Name;
+                string Value = GetOrCreateInputParam(Name).ValueForDriver;
+
+                if (string.IsNullOrEmpty(Value))
+                {
+                    object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
+
+                    if (Output != null)
+                    {
+                        Value = Output.ToString();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Value))
+                {
+                    NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
+                    PLParams.Add(FieldPL);
+                }
+            }
+
 
             foreach (ActInputValue AIV in this.InputValues)
             {
-                if (!string.IsNullOrEmpty(AIV.Value))
+                if (!string.IsNullOrEmpty(AIV.ValueForDriver))
                 {
                     NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
                     PLParams.Add(AIVPL);
                 }
             }
+
+
+
+
             PL.AddListPayLoad(PLParams);
             PL.ClosePackage();
 
             return PL;
         }
 
+        public string GetName()
+        {
+            return "BrowserAction";
+        }
         
-
         public override String ActionType
         {
             get
@@ -248,6 +276,17 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(PomGUID));
             }
         }
+
+
+
+        public PlatformAction GetAsPlatformAction()
+        {
+            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
+            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
+            platformAction.InputParams.Add("URL", Value);
+            return platformAction;            
+        }
+
 
     }
 }

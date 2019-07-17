@@ -10,14 +10,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
-    <AssemblyVersion>3.2.4.1</AssemblyVersion>
-    <FileVersion>3.2.4.1</FileVersion>
+    <AssemblyVersion>3.3.6.1</AssemblyVersion>
+    <FileVersion>3.3.6.1</FileVersion>
     <PackageId>Ginger by Amdocs</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
     <Copyright>Copyright © 2014-2019 European Support Limited</Copyright>
-    <Version>3.2.4.1</Version>
+    <Version>3.3.6.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -30,15 +30,15 @@
 
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="4.1.4" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.10.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.3">
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="2.10.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NJsonSchema" Version="9.13.10" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>

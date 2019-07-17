@@ -39,14 +39,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public LiteDbManager liteDbManager; 
 
         public List<LiteDbRunSet> liteDbRunSetList = new List<LiteDbRunSet>();
-        
+
+
         public List<LiteDbBusinessFlow> liteDbBFList = new List<LiteDbBusinessFlow>();
         public List<LiteDbActivityGroup> liteDbAGList = new List<LiteDbActivityGroup>();
         public List<LiteDbActivity> liteDbActivityList = new List<LiteDbActivity>();
         public List<LiteDbAction> liteDbActionList = new List<LiteDbAction>();
         public LiteDBRepository()
         {
-            liteDbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder));
+            liteDbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder));
         }
 
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
@@ -55,52 +56,52 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
-            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder);
+            bool isActExsits = false;
+            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
             LiteDbAction liteDbAction = new LiteDbAction();
             liteDbAction.SetReportData(GetActionReportData(action, context, executedFrom));
-            //if (System.IO.Directory.Exists(executionLogFolder))
-            //{
-                liteDbAction.Wait = action.Wait;
-                liteDbAction.TimeOut = action.Timeout;
-                if (action.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+            liteDbAction.Wait = action.Wait;
+            liteDbAction.TimeOut = action.Timeout;
+            if (action.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+            {
+                liteDbAction._id = action.LiteDbId;
+            }
+            // Save screenShots
+            int screenShotCountPerAction = 0;
+            for (var s = 0; s < action.ScreenShots.Count; s++)
+            {
+                try
                 {
-                    liteDbAction._id = action.LiteDbId;
-                }
-                // Save screenShots
-                int screenShotCountPerAction = 0;
-                for (var s = 0; s < action.ScreenShots.Count; s++)
-                {
-                    try
+                    screenShotCountPerAction++;
+                    string imagesFolderName = executionLogFolder + "LiteDBImages";
+                    if (!System.IO.Directory.Exists(imagesFolderName))
                     {
-                        screenShotCountPerAction++;
-                        string imagesFolderName = executionLogFolder + "LiteDBImages";
-                        if (!System.IO.Directory.Exists(imagesFolderName))
-                        {
-                            System.IO.Directory.CreateDirectory(imagesFolderName);
-                        }
-                        if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                        {
-                            System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png", true);
-                        }
-                        else
-                        {
-                            System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png");
-                            action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png";
-                        }
+                        System.IO.Directory.CreateDirectory(imagesFolderName);
                     }
-                    catch (Exception ex)
+                    if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
-                        screenShotCountPerAction--;
+                        System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png", true);
+                    }
+                    else
+                    {
+                        System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png");
+                        action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png";
                     }
                 }
-                liteDbAction.ScreenShots = action.ScreenShots;
-                liteDbActionList.Add(liteDbAction);
-            //}
-            //else
-            //{
-            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + executionLogFolder + action.ExecutionLogFolder);
-            //}
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
+                    screenShotCountPerAction--;
+                }
+            }
+            liteDbAction.ScreenShots = action.ScreenShots;
+
+            isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
+            if (isActExsits)
+            {
+                liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
+            }
+            liteDbActionList.Add(liteDbAction);
             SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             if (executedFrom == eExecutedFrom.Automation)
             {
@@ -109,20 +110,33 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return liteDbAction;
         }
 
-        public override object SetReportActivity(Activity activity,Context context, bool offlineMode = false)
+        public override object SetReportActivity(Activity activity,Context context, bool offlineMode = false, bool isConfEnable = false)
         {
             LiteDbActivity AR = new LiteDbActivity();
+            context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity,context, offlineMode));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             if(activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
+                var ARToUpdate = liteDbManager.GetActivitiesLiteData().IncludeAll().Find(x => x._id == AR._id).ToList();
+                if (ARToUpdate.Count > 0)
+                {
+                    foreach (var action in (ARToUpdate[0] as LiteDbActivity).ActionsColl)
+                    {
+                        if (liteDbActionList.Any(ac => ac._id == action._id))
+                        {
+                            liteDbActionList.RemoveAll(x => x._id == action._id);
+                        }
+                    }
+                    liteDbActionList.AddRange((ARToUpdate[0] as LiteDbActivity).ActionsColl);
+                }
             }
             AR.ActionsColl.AddRange(liteDbActionList);
             liteDbActivityList.Add(AR);
             SaveObjToReporsitory(AR, liteDbManager.NameInDb<LiteDbActivity>());
             liteDbActionList.Clear();
-            if (ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 activity.LiteDbId = AR._id;
             }
@@ -139,33 +153,46 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
-            if (ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 activityGroup.LiteDbId = AGR._id;
             }
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
-            BFR.SetReportData(GetBFReportData(businessFlow, environment));
-            if(businessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+            context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
+            BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
+            if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
-                BFR._id = businessFlow.LiteDbId;
+                BFR._id = context.BusinessFlow.LiteDbId;
+                var BFRToUpdate = liteDbManager.GetBfLiteData().IncludeAll().Find(x => x._id == BFR._id).ToList();
+                if (BFRToUpdate.Count > 0)
+                {
+                    foreach (var activity in (BFRToUpdate[0] as LiteDbBusinessFlow).ActivitiesColl)
+                    {
+                        if (liteDbActivityList.Any(ac => ac._id == activity._id))
+                        {
+                            liteDbActivityList.RemoveAll(x => x._id == activity._id);
+                        }
+                    }
+                    liteDbActivityList.AddRange((BFRToUpdate[0] as LiteDbBusinessFlow).ActivitiesColl);
+                }
             }
-            if (WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (offlineMode)
                 {
                     // To check whether the execution is from Runset/Automate tab
                     if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     BFR.ActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
@@ -181,7 +208,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
-                    businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
@@ -191,7 +218,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             if (executedFrom == eExecutedFrom.Automation)
             {
-                businessFlow.LiteDbId = BFR._id;
+                context.BusinessFlow.LiteDbId = BFR._id;
             }
             return BFR;
         }
@@ -203,10 +230,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
             runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            if (ExecutionLoggerManager.RunSetReport != null)
+            if (ExecutionLoggerManager.RunSetReport == null)
             {
-                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
+                ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
             }
+            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
             liteDbBFList.Clear();
         }
 
@@ -248,6 +277,49 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(ExecutionLoggerManager.RunSetReport);
             runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
+        }
+
+        internal override void CreateNewDirectory(string logFolder)
+        {
+            return;
+        }
+
+        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        {
+            return;
+        }
+
+        internal override void StartRunSet()
+        {
+            if (ExecutionLoggerManager.RunSetReport == null)
+            {
+                ExecutionLoggerManager.RunSetReport = new RunSetReport();
+                ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+
+                ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+                ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+                ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+                ExecutionLoggerManager.RunSetReport.Watch.Start();
+            }
+        }
+
+        internal override void EndRunSet()
+        {
+            if (ExecutionLoggerManager.RunSetReport != null)
+            {
+                SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                
+                if (WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus = ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder.Equals("-1"))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = ExecutionLoggerManager.RunSetReport.LogFolder;
+                }
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, ExecutionLoggerManager.RunSetReport);
+                ExecutionLoggerManager.RunSetReport = null;
+            }
         }
     }
 }

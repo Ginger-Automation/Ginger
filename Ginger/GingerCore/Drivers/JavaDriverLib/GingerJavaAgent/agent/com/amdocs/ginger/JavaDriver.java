@@ -599,7 +599,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			//it has JExplorer inside for later JS injection.
 			mRecorder.StartWindowTracker();
 			
-			//TODO: Add New window opneded listener, detect new window and do AddActionLsitenr on it
+			//TODO: Add New window opened listener, detect new window and do AddActionLsitenr on it
 			PayLoad resp=new PayLoad("Recording Started");		
 			resp.ClosePackage();			
 			return resp;
@@ -786,7 +786,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 					return PayLoad.Error("Window title is empty");
 			}
 			else
-				return PayLoad.Error("Current Windnow is null");
+				return PayLoad.Error("Current Window is null");
 		}
 		else if (WindowExplorerOperationType.GetProperties.toString().equals(operationType))
 		{
@@ -1192,7 +1192,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 					} 
 					else if(errMsg.contains("Failed"))
 					{
-						GingerAgent.WriteLog("screenshot failure failure:"+errMsg);
+						GingerAgent.WriteLog("screenshot failure :"+errMsg);
 					}					
 					else
 					{
@@ -1246,7 +1246,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				SunToolkit.executeOnEDTAndWait(sWindow, r);
 
 			} catch (InvocationTargetException e) {
-						GingerAgent.WriteLog("Inovation target exception while starting thread for click-"+e.getMessage());
+						GingerAgent.WriteLog("Invocation target exception while starting thread for click-"+e.getMessage());
 						e.printStackTrace();
 					} catch (InterruptedException e) {
 						GingerAgent.WriteLog("InterruptedException while starting thread for click-"+e.getMessage());
@@ -1883,7 +1883,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 					SunToolkit.executeOnEDTAndWait(c, r);
 					
 				} catch (InvocationTargetException e) {
-					GingerAgent.WriteLog("Inovation target exception while starting thread for click-"+e.getMessage());
+					GingerAgent.WriteLog("Invocation target exception while starting thread for click-"+e.getMessage());
 					e.printStackTrace();
 				} catch (InterruptedException e) {
 					GingerAgent.WriteLog("InterruptedException while starting thread for click-"+e.getMessage());
@@ -2014,7 +2014,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 					GingerAgent.WriteLog("After executeOnEDTAndWait");
 					
 				} catch (InvocationTargetException e) {
-					GingerAgent.WriteLog("Inovation target exception while starting thread for click-"+e.getMessage());
+					GingerAgent.WriteLog("Invocation target exception while starting thread for click-"+e.getMessage());
 					e.printStackTrace();
 				} catch (InterruptedException e) {
 					GingerAgent.WriteLog("InterruptedException while starting thread for click-"+e.getMessage());
@@ -2363,7 +2363,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				}
 				else
 				{
-					return PayLoad.Error("Scroll operation is unknowen: " + controlAction);
+					return PayLoad.Error("Scroll operation is unknown: " + controlAction);
 				}
 				
 				GingerAgent.WriteLog("scroll value  before Scroll : " +JSB.getValue());				
@@ -2728,7 +2728,7 @@ private PayLoad GetComponentState(Component c)
 		 
 		 if (c instanceof JTree)
 		 {
-			GingerAgent.WriteLog("c instanceof JTree");
+			GingerAgent.WriteLog("c instance of JTree");
 			
 			StringBuilder searchResultMessage=new  StringBuilder();
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
@@ -2878,11 +2878,11 @@ private PayLoad GetComponentState(Component c)
 										try
 										{
 											jmi= jm1.getItem(i);											
-											String seperatorTest= jmi.getText();//to make sure it is not a seperator (will jump to exception if it is)
+											String seperatorTest= jmi.getText();//to make sure it is not a separator (will jump to exception if it is)
 										}
 										catch(Exception e)
 										{
-											continue;//proabably seperator
+											continue;//probably separator
 										}											
 										if(jmi.getText().equals(menuitem[j]) || jmi.getName().equals(menuitem[j]))
 										{
@@ -2984,7 +2984,7 @@ private PayLoad GetComponentState(Component c)
 					
 					
 				} catch (InvocationTargetException e) {
-					GingerAgent.WriteLog("Inovation target exception while starting thread for click-"+e.getMessage());
+					GingerAgent.WriteLog("Invocation target exception while starting thread for click-"+e.getMessage());
 					e.printStackTrace();
 				} catch (InterruptedException e) {
 					GingerAgent.WriteLog("InterruptedException while starting thread for click-"+e.getMessage());
@@ -3146,11 +3146,11 @@ private PayLoad GetComponentState(Component c)
 			if(cb.isSelected() == b)
 				return PayLoad.Error("Failed to set Toggle the Value ");
 			
-			return PayLoad.OK("Checbox Toggled" + msg);
+			return PayLoad.OK("Checkbox Toggled" + msg);
 		}
 		else
 		{
-			return PayLoad.Error("Unknowon Element for Toggle action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for Toggle action - Class=" + c.getClass().getName());
 		}
 	}
 	
@@ -3218,7 +3218,7 @@ private PayLoad GetComponentState(Component c)
 						SunToolkit.executeOnEDTAndWait(jcb, r);
 					} catch (InvocationTargetException e) {
 						GingerAgent
-								.WriteLog("Inovation target exception while starting thread for click-"
+								.WriteLog("Invocation target exception while starting thread for click-"
 										+ e.getMessage());
 						e.printStackTrace();
 					} catch (InterruptedException e) {
@@ -3291,7 +3291,7 @@ private PayLoad GetComponentState(Component c)
 		
 		else
 		{
-			return PayLoad.Error("Unknowon Element for Select action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for Select action - Class=" + c.getClass().getName());
 		}		
 	}	
 	
@@ -3392,7 +3392,7 @@ private PayLoad GetComponentState(Component c)
 		}
 		else
 		{
-			return PayLoad.Error("Unknowon Element for GetValueByIndex action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for GetValueByIndex action - Class=" + c.getClass().getName());
 		}	
 	}
 	
@@ -3409,7 +3409,7 @@ private PayLoad GetComponentState(Component c)
 		}
 		else
 		{
-			return PayLoad.Error("Unknowon Element for GetItemCount action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for GetItemCount action - Class=" + c.getClass().getName());
 		}			
 	}
 	
@@ -3441,7 +3441,7 @@ private PayLoad GetComponentState(Component c)
 				
 				if(result == false)
 				{
-					return PayLoad.Error("Failed to set date. Exception occured during set date");
+					return PayLoad.Error("Failed to set date. Exception occurred during set date");
 				}
 				
 				// Special for UIF we need to mark it modified, otherwise the field value will not go to the server
@@ -3456,7 +3456,7 @@ private PayLoad GetComponentState(Component c)
 				
 				if(result == false)
 				{
-					return PayLoad.Error("Failed to set date. Exception occured during set date");
+					return PayLoad.Error("Failed to set date. Exception occurred during set date");
 				}
 				o= mSwingHelper.GetComponentDate(c);		
 			}
@@ -3804,7 +3804,7 @@ private PayLoad SetComponentFocus(Component c)
 		}
 		else
 		{
-			CompValue = "get state is not supported for componenent type"+comp.getClass().getName();	
+			CompValue = "get state is not supported for component type"+comp.getClass().getName();	
 		}
 		return CompValue;
 	}
@@ -4271,13 +4271,13 @@ private PayLoad SetComponentFocus(Component c)
 			GingerAgent.WriteLog("<<Where>>");
 			try
 			{
-				//TOOD: Enhance the code for get row num . Very senstitive code , sometime results in null pointer exception.
+				//TOOD: Enhance the code for get row num . Very sensitive code , sometime results in null pointer exception.
 				// Need to handle
 				//Sometimes we are getting rownum -1 when table is still loading. And if we rerun the action it is working fine.
 //				int i=0;
 //				while(i<3 && rowNum==-1)
 //				{
-					GingerAgent.WriteLog("Getting Row numer iteration::");
+					GingerAgent.WriteLog("Getting Row number iteration::");
 					rowNum = getRowNum(CurrentTable, whereColSel, whereColTitle,whereProp, whereOper, whereColVal);	
 //					i++;
 //				}				
@@ -4393,7 +4393,7 @@ private PayLoad SetComponentFocus(Component c)
 			}
 			else
 			{
-				return PayLoad.Error("Cell componenent not found");
+				return PayLoad.Error("Cell component not found");
 			}
 		}
 		else if (controlAction.equals("IsCellEnabled")) {
@@ -4430,7 +4430,7 @@ private PayLoad SetComponentFocus(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("Cell componenent not found");
+					return PayLoad.Error("Cell component not found");
 				}
 
 		}else if (controlAction.equals("SendKeys")){
@@ -4444,7 +4444,7 @@ private PayLoad SetComponentFocus(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("Cell componenent not found");
+					return PayLoad.Error("Cell component not found");
 				}
 		
 		} else if (controlAction.equals("SetFocus")) {
@@ -4571,7 +4571,7 @@ private PayLoad SetComponentFocus(Component c)
 				
 				Component CellComponent = CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(rowNum, colNum), rowNum,
 						colNum);
-				GingerAgent.WriteLog("CellComponent instanceof " + CellComponent.toString());
+				GingerAgent.WriteLog("CellComponent instance of " + CellComponent.toString());
 				CurrentTable.grabFocus();
 				setFocus(CurrentTable,rowNum,colNum);
 						
@@ -4602,13 +4602,13 @@ private PayLoad SetComponentFocus(Component c)
 				jt.setSelectionPath(p);					
 			}
 			
-			GingerAgent.WriteLog("Type of a  cellcomnponent is: "+CellComponent.getClass().getName());
+			GingerAgent.WriteLog("Type of a  cell component is: "+CellComponent.getClass().getName());
 			if(CellComponent instanceof JCheckBox)
 			{					
 				
 				try
 				{
-					//TODO: Add Null object chekcs
+					//TODO: Add Null object checks
 				
 					Component cellEditorComponent = getTableCellComponent(CurrentTable,rowNum, colNum);
 					
@@ -4643,14 +4643,14 @@ private PayLoad SetComponentFocus(Component c)
 			}
 			else if(CellComponent instanceof JButton)
 			{					
-				GingerAgent.WriteLog("Jtable cell of type Button");
+				GingerAgent.WriteLog("JTable cell of type Button");
 							
 				 ClickComponent(CellComponent, Value, mCommandTimeout);
 				
 			}						
 			else if(CellComponent instanceof JLabel)
 			{					
-				GingerAgent.WriteLog("CellComponent instanceof JLabel");
+				GingerAgent.WriteLog("CellComponent instance of JLabel");
 				CurrentTable.grabFocus();
 				CurrentTable.scrollRectToVisible(CurrentTable.getBounds());
 				Point pos = CurrentTable.getLocationOnScreen();
@@ -4747,7 +4747,7 @@ private PayLoad SetComponentFocus(Component c)
 					colNum);
 			Component Cell =CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(0, 0), 0,0);
 
-			GingerAgent.WriteLog("MousePressAndRelease - CellComponent instanceof JRadioButton");
+			GingerAgent.WriteLog("MousePressAndRelease - CellComponent instance of JRadioButton");
 			CurrentTable.grabFocus();
 			CurrentTable.scrollRectToVisible(CurrentTable.getBounds());
 			Rectangle rect = CurrentTable.getCellRect(rowNum, colNum, true);
@@ -4902,7 +4902,7 @@ private PayLoad SetComponentFocus(Component c)
 					SunToolkit.executeOnEDTAndWait(table,r);
 					
 				} catch (InvocationTargetException e) {
-					GingerAgent.WriteLog("Inovation target exception while starting thread for click-"+e.getMessage());
+					GingerAgent.WriteLog("Invocation target exception while starting thread for click-"+e.getMessage());
 					e.printStackTrace();
 				} catch (InterruptedException e) {
 					GingerAgent.WriteLog("InterruptedException while starting thread for click-"+e.getMessage());

@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
         
-        ScreenShotViewPage pd;
+        // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
         public POMEditPage(ApplicationPOMModel POM, RepositoryItemPageViewMode editMode = RepositoryItemPageViewMode.View)
@@ -103,8 +103,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPageURLTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.PageURL));
-            
+            xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
+
             FillTargetAppsComboBox();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
@@ -267,13 +267,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = mPOM.PageURL, ValueForDriver = mPOM.PageURL, Active = true };
+            string calculatedValue = ValueExpression.Calculate(null, null, mPOM.PageURL, null);
+
+            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
             mAgent.Driver.RunAction(act);
         }
 
         private void AgentStartedHandler()
         {
-            GoToPageURL();
+            if (string.IsNullOrEmpty(mPOM.PageURL) == false && mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
+            {
+                GoToPageURL();
+            }
         }
 
         private void xPomTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)

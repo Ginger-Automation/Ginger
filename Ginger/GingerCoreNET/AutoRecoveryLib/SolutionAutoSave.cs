@@ -77,29 +77,26 @@ namespace Ginger.Functionalties
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            DoAutoSave();
+            if (mAutoSaveFolderPath != null)//meaning solution is loaded
+            {
+                DoAutoSave();
+            }
         }
 
         public void DoAutoSave()
         {
             Task.Run(() =>
             {
-                try
+                if (Directory.Exists(AutoSaveFolderPath))
                 {
-                    //Clear previously saved items (so if user already saved them we won't have them)
-                    DirectoryInfo di = new DirectoryInfo(mAutoSaveFolderPath);
-                    foreach (FileInfo file in di.GetFiles())
+                    try
                     {
-                        file.Delete();
+                        Directory.Delete(AutoSaveFolderPath, true);
                     }
-                    foreach (DirectoryInfo dir in di.GetDirectories())
+                    catch (Exception ex)
                     {
-                        dir.Delete(true);
+                        Reporter.ToLog(eLogLevel.WARN, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
                 }
 
                 if (WorkSpace.Instance.SolutionRepository == null)

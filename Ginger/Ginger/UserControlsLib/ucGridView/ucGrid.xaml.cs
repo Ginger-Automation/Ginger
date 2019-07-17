@@ -155,6 +155,16 @@ namespace Ginger
             }
         }
 
+        public void ClearFilters()
+        {            
+            this.Dispatcher.Invoke(() =>
+            {
+                txtSearch.Text = string.Empty;
+                Tags.Clear();
+            });
+        }
+
+
         string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
@@ -332,14 +342,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {
-            grdMain.CommitEdit();
-            grdMain.CancelEdit();
+        {            
             this.Dispatcher.Invoke(() =>
             {
+                grdMain.CommitEdit();
+                grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();
-            });
+                mCollectionView.Refresh();               
+            });            
         }
 
 
@@ -671,7 +681,6 @@ namespace Ginger
             foreach (DataRowView row in dtView) rowslist.Add(row);
             mObjList = rowslist;
             mObjList.PropertyChanged += ObjListPropertyChanged;
-            
             grdMain.ItemsSource = dtView; 
         }
         #endregion #####Grid Handlers
@@ -741,16 +750,8 @@ namespace Ginger
 
         private void RemoveFromLiteDB(object o)
         {
-            //if (o is RepositoryItemBase && (o as RepositoryItemBase).LiteDbId != null)
-            //{
-            //    string o.
-            //    LiteDbManager dbManager = new LiteDbManager();
-            //    var result = dbManager.GetRunSetLiteData();
-            //    List<LiteDbRunSet> filterData = null;
-            //    filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            //    //LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
-            //    //dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
-            //}
+            LiteDbReportBase reportBase = new LiteDbReportBase();
+            reportBase.RemoveObjFromLiteDB(o);
         }
 
         private void btnClearSearchText_Click(object sender, RoutedEventArgs e)

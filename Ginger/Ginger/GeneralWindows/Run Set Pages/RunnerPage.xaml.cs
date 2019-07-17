@@ -20,9 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.UserControls;
-using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.UserControlsLib.PieChart;
@@ -31,6 +32,7 @@ using GingerCore.Environments;
 using GingerCore.Helpers;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -307,18 +309,14 @@ namespace Ginger.Run
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                //mRunner.SetBFOfflineDataLiteDB();
-                ////var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
-                //WebReportGenerator webReporterRunner = new WebReportGenerator();
-                //webReporterRunner.GenerateBFReport(bf);
+                GenerateBFReport(bf);
                 return;
             }
 
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder!=null)
             {
@@ -354,9 +352,57 @@ namespace Ginger.Run
             }
             else
             {
-                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(mRunner.ProjEnvironment, currentConf.HTMLReportsFolder + bf.Name, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
+                Context context = new Context();
+                context.BusinessFlow = bf;
+                context.Runner = mRunner;
+                context.Environment = mRunner.ProjEnvironment;
+                mRunner.ExecutionLoggerManager.GenerateBusinessFlowOfflineReport(context, currentConf.HTMLReportsFolder + bf.Name, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
             }
         }
+
+        private void GenerateBFReport(BusinessFlow bf)
+        {
+            try
+            {
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                var result = dbManager.GetRunSetLiteData();
+                List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
+
+                LiteDbRunSet runSetLast = filterData.Last();
+                //runSetLast._id = new ObjectId();
+
+                LiteDbRunner runnerFilter = runSetLast.RunnersColl.Find(r => r.GUID.ToString() == mRunner.Guid.ToString());
+                //runnerFilter._id = new ObjectId();
+                //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
+
+                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
+                if (bfFilter == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
+                    return;
+                }
+                //runnerFilter.RunStatus = bfFilter.RunStatus;
+                //runSetLast.RunStatus = runnerFilter.RunStatus;
+                //runnerFilter.BusinessFlowsColl = new List<LiteDbBusinessFlow>() { bfFilter };
+
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunner>(), new List<LiteDbReportBase>() { runnerFilter });
+                //dbManager.WriteToLiteDb(dbManager.NameInDb<LiteDbRunSet>(), new List<LiteDbReportBase>() { runSetLast });
+
+
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
+
+                //var newRSData = dbManager.GetRunSetLiteData();
+                //newRSData.Delete(runSetLast._id);
+                //var newRunnerData = dbManager.GetRunnerLiteData();
+                //newRunnerData.Delete(runnerFilter._id);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
@@ -597,13 +643,14 @@ namespace Ginger.Run
             UpdateBusinessFlowGrid();
         }
 
-        private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e)
+        private void xRunRunnerBtn_Click(object sender, RoutedEventArgs e) 
         {
             if (mRunner.BusinessFlows.Count <= 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please add at least one " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to '" + mRunner.Name + "' to start run.");
                 return;
             }
+            mRunner.RunLevel = eRunLevel.Runner;
             RunRunner();
         }
         public async void RunRunner()
@@ -617,7 +664,7 @@ namespace Ginger.Run
             mRunner.ResetRunnerExecutionDetails();
             WorkSpace.Instance.RunsetExecutor.ConfigureRunnerForExecution(mRunner);
             await mRunner.RunRunnerAsync();
-            GingerCore.General.DoEvents();   //needed?                 
+            GingerCore.General.DoEvents();   //needed?  
         }
         public void UpdateRunnerInfo()
         {
@@ -690,7 +737,7 @@ namespace Ginger.Run
         }
         private void ViewReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
             string reportsResultFolder = "";
 
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -717,17 +764,17 @@ namespace Ginger.Run
             }
         }
 
-        private void GenerateIndividualReport(object sender, RoutedEventArgs e)
-        {
-            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.Instance.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, true);
-        }
+        //private void GenerateIndividualReport(object sender, RoutedEventArgs e)
+        //{
+        //    ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.Instance.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, true);
+        //}
 
-        private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
-        {
-            var RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
-            var repFileName = ReportTemplate.GenerateReport( WorkSpace.Instance.UserProfile.GetDefaultReport(), RI);
-            Process.Start(repFileName);
-        }
+        //private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
+        //{
+        //    var RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
+        //    var repFileName = ReportTemplate.GenerateReport( WorkSpace.Instance.UserProfile.GetDefaultReport(), RI);
+        //    Process.Start(repFileName);
+        //}
 
         private void xRunnerActive_Click(object sender, RoutedEventArgs e)
         {

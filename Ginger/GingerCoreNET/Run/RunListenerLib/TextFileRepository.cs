@@ -30,6 +30,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Amdocs.Ginger.Common.GeneralLib;
 using System.Linq;
 using System.Text;
 
@@ -46,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
@@ -101,10 +102,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivity(Activity activity, Context context, bool offlineMode)
+        public override object SetReportActivity(Activity activity, Context context, bool offlineMode, bool isConfEnable)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
-            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            if (isConfEnable)
             {
                 if (offlineMode)
                     // use Path.combine !!!!
@@ -125,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 SaveObjToReporsitory(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
             }
-            else
+            else if (ExecutionLogfolder != null && businessFlow.ExecutionLogFolder != null)
             {
                 SaveObjToReporsitory(AGR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
                 File.AppendAllText(ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
@@ -133,30 +134,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AGR;
         }
 
-        public override object SetReportBusinessFlow(BusinessFlow businessFlow, ProjEnvironment environment, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
-            BusinessFlowReport BFR = GetBFReportData(businessFlow, environment);
-            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled)
+            BusinessFlowReport BFR = GetBFReportData(context.BusinessFlow, context.Environment);
+            if (isConfEnable)
             {
                 if (offlineMode)
                 {
                     // To check whether the execution is from Runset/Automate tab
                     if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
                     else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
                     {
-                        businessFlow.ExecutionFullLogFolder = businessFlow.ExecutionLogFolder;
+                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
-                    SaveObjToReporsitory(BFR, businessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
+                    SaveObjToReporsitory(BFR, context.BusinessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
 
                 }
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToReporsitory(BFR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
-                    businessFlow.ExecutionFullLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+                    SaveObjToReporsitory(BFR, ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
+                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
@@ -184,6 +185,32 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 SaveObjToReporsitory(runSetReport, logFolder + @"\RunSet.txt");
             }
+        }
+
+        internal override void CreateNewDirectory(string logFolder)
+        {
+            System.IO.Directory.CreateDirectory(logFolder);
+        }
+
+        internal override void EndRunSet()
+        {
+            return;
+        }
+
+        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        {
+            if (!offline)
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder + "\\" + executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+            else
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
+            DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(ExecutionLoggerManager.RunSetReport.LogFolder, maxFolderSize);
+
+            executionLoggerHelper.CreateTempDirectory();
+        }
+
+        internal override void StartRunSet()
+        {
+            return;
         }
     }
 }

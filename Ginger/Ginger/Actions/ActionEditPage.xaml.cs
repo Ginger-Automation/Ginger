@@ -217,7 +217,7 @@ namespace Ginger.Actions
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
-            if (EditMode == General.RepositoryItemPageViewMode.Automation || EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            if (EditMode == General.RepositoryItemPageViewMode.Automation)
             {
                 SharedRepoInstanceUC.Init(mAction, null);
             }
@@ -274,6 +274,10 @@ namespace Ginger.Actions
             if(EditMode == General.RepositoryItemPageViewMode.View)
             {
                 AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.View);
+            }
+            else if (EditMode == General.RepositoryItemPageViewMode.SharedReposiotry)
+            {
+                AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.RepositoryItemPageViewMode.SharedReposiotry);
             }
             else
             {
@@ -1547,7 +1551,6 @@ namespace Ginger.Actions
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                    ds.Init(ds.FileFullPath);
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();
                     mDSTableList = ds.GetTablesList();

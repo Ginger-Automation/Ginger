@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -44,8 +45,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 dynamicExecution.SolutionDetails.SourceControlDetails = new SourceControlDetails();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Type = solution.SourceControl.GetSourceControlType.ToString();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
-                dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser.ToString();
-                dynamicExecution.SolutionDetails.SourceControlDetails.Password = solution.SourceControl.SourceControlPass.ToString();
+                dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
+                dynamicExecution.SolutionDetails.SourceControlDetails.Password = solution.SourceControl.SourceControlPass;
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
@@ -148,6 +149,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
 
                     addRunset.AddRunsetOperations.Add(dynamicMailReport);
+                }
+                else if (runSetOperation is RunSetActionJSONSummary)
+                {
+                    JsonReport dynamicJsonReport = new JsonReport();
+                    addRunset.AddRunsetOperations.Add(dynamicJsonReport);
                 }
             }
             dynamicExecution.AddRunsets.Add(addRunset);
@@ -289,6 +295,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
 
                     runSetConfig.RunSetActions.Add(mailOperation);
+                }
+                else if (addOperation is JsonReport)
+                {
+                    JsonReport dynamicJsonReport = (JsonReport)addOperation;
+                    RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
+
+                    jsonReportOperation.Name = "Dynamic Json Report";
+                    jsonReportOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), dynamicJsonReport.Condition, true);
+                    jsonReportOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), dynamicJsonReport.RunAt, true);
+                    jsonReportOperation.Active = true;
+
+                    runSetConfig.RunSetActions.Add(jsonReportOperation);
                 }
             }
 

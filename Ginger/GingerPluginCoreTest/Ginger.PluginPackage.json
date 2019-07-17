@@ -1,0 +1,8 @@
+{
+  "Id": "GingerPluginCoreTest",
+  "Version": "1.0.0",
+  "ProjectUrl": "git\\Pluginex1...",
+  "Description": "Example1",
+  "Summary": "Test for Ginger ...",
+  "StartupDll": "GingerPluginCoreTest.dll"
+}

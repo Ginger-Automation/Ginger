@@ -108,7 +108,6 @@ namespace Ginger
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
 
-
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
@@ -247,7 +246,7 @@ namespace Ginger
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
-                Reporter.ReportAllAlsoToConsole = true;  //needed so all reportering will be added to Console      
+                Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
 
             //write Ginger start to log + console

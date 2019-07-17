@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return dbConnector.FilterCollection(baseColl, query);
         }
 
-        private LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
+        public LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
         {
             return dbConnector.GetCollection<LiteDbReportBase>(reportLevelName);
         }
@@ -76,11 +76,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
-        private LiteCollection<LiteDbRunner> GetRunnerLiteData()
+        public LiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
         }
-        private LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
+        public LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
         {
             return dbConnector.GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
         }
@@ -89,11 +89,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return dbConnector.GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
         }
-        private LiteCollection<LiteDbActivity> GetActivitiesLiteData()
+        public LiteCollection<LiteDbActivity> GetActivitiesLiteData()
         {
             return dbConnector.GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
         }
-        private LiteCollection<LiteDbAction> GetActionsLiteData()
+        public LiteCollection<LiteDbAction> GetActionsLiteData()
         {
             return dbConnector.GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
         }

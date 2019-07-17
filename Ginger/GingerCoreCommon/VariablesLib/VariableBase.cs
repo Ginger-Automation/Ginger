@@ -37,7 +37,6 @@ namespace GingerCore.Variables
 
     public abstract class VariableBase : RepositoryItemBase
     {
-
         public enum eSetValueOptions
         {
             [EnumValueDescription("Set Value")]
@@ -130,7 +129,7 @@ namespace GingerCore.Variables
 
         private string mValue;       
         //TODO: fixme value is temp and should not be serialized
-        [IsSerializedForLocalRepository]
+       // [IsSerializedForLocalRepository]
         public virtual string Value
         {
             get
@@ -144,6 +143,11 @@ namespace GingerCore.Variables
             }
         }
 
+        public override void PostSerialization()
+        {
+            ResetValue();
+        }
+
         private string mFormula;
         public string Formula
         {
@@ -153,11 +157,6 @@ namespace GingerCore.Variables
                 if (formula != mFormula)
                 {
                     mFormula = formula;
-                    if ((this is VariableSelectionList) == false) 
-                    {
-                            if(mFormula != null)
-                            this.ResetValue();
-                    }        
                     
                     OnPropertyChanged(nameof(Formula));
                 }
@@ -318,7 +317,6 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during GetListOfUsedVariables", ex);
                     value = null;
                 } 
                 
@@ -390,7 +388,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.ERROR, "Failed to get list of used variables", ex); 
+                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used variables", ex); 
                         } 
                     }
                 }

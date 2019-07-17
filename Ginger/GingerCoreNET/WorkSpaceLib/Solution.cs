@@ -102,9 +102,9 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
-                    if (ExecutionLoggerConfigurationSetList != null)
+                    if (LoggerConfigurations != null)
                     {
-                        if (ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || ExecutionLoggerConfigurationSetList.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+                        if (LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                         {
                             bldExtraChangedItems.Append("Execution Logger configuration, ");
                         }
@@ -284,13 +284,13 @@ namespace Ginger.SolutionGeneral
         public void SetReportsConfigurations()
         {
             try {
-                if (this.ExecutionLoggerConfigurationSetList == null || ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder == null)
+                if (this.LoggerConfigurations == null || LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
-                    this.ExecutionLoggerConfigurationSetList = new ExecutionLoggerConfiguration();
-                    ExecutionLoggerConfigurationSetList.IsSelected = true;
-                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationIsEnabled = true;
-                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    ExecutionLoggerConfigurationSetList.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    this.LoggerConfigurations = new ExecutionLoggerConfiguration();
+                    LoggerConfigurations.IsSelected = true;
+                    LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
+                    LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
@@ -306,7 +306,7 @@ namespace Ginger.SolutionGeneral
 
 
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-                ExecutionLoggerConfiguration executionLoggerConfiguration = this.ExecutionLoggerConfigurationSetList;
+                ExecutionLoggerConfiguration executionLoggerConfiguration = this.LoggerConfigurations;
 
 
                 // !!!!!!!!!!!!! FIXME
@@ -314,11 +314,11 @@ namespace Ginger.SolutionGeneral
                 // executionLogger.Configuration = executionLoggerConfiguration;
               
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
-            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -352,7 +352,7 @@ namespace Ginger.SolutionGeneral
             return solTargetApplications;
         }
 
-        MRUManager mRecentUsedBusinessFlows;
+        // MRUManager mRecentUsedBusinessFlows;
 
         //public MRUManager RecentlyUsedBusinessFlows
         //{
@@ -469,7 +469,23 @@ namespace Ginger.SolutionGeneral
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
         [IsSerializedForLocalRepository]
-        public ExecutionLoggerConfiguration ExecutionLoggerConfigurationSetList { get; set; } = new ExecutionLoggerConfiguration();
+        public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
+        public ExecutionLoggerConfiguration LoggerConfigurations
+        {
+            get
+            {
+                if (ExecutionLoggerConfigurationSetList.Count == 0)
+                {
+                    ExecutionLoggerConfigurationSetList.Add(new ExecutionLoggerConfiguration());
+                }
+                return ExecutionLoggerConfigurationSetList[0];
+            }
+            set
+            {
+                ExecutionLoggerConfigurationSetList[0] = value;
+            }
+        }
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();

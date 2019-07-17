@@ -27,6 +27,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
 using GingerCore.DataSource;
+using Ginger.Reports.GingerExecutionReport;
+using Amdocs.Ginger.CoreNET.Logger;
+using System.IO;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -89,6 +93,12 @@ namespace Ginger.Run.RunSetActions
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                ProduceLiteDBReportFolder(currentConf);
+                return;
+            }
+
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
             {
                 string runSetFolder = string.Empty;
@@ -107,7 +117,7 @@ namespace Ginger.Run.RunSetActions
                 if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
                 {
                     ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                    if ((isHTMLReportFolderNameUsed) && (HTMLReportFolderName != null) && (HTMLReportFolderName != string.Empty))
+                    if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
                     {
                         string currentHTMLFolderName = string.Empty;
                         if (!isHTMLReportPermanentFolderNameUsed)
@@ -148,6 +158,45 @@ namespace Ginger.Run.RunSetActions
                 Reporter.HideStatusMessage();
                 Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                 return;
+            }
+        }
+
+        private void ProduceLiteDBReportFolder(HTMLReportsConfiguration currentConf)
+        {
+            string reportsResultFolder;
+            WebReportGenerator webReporterRunner = new WebReportGenerator();
+            string reportName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+            if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
+            {
+                reportsResultFolder = Path.Combine(HTMLReportFolderName, "Reports", "Ginger-Web-Client");
+            }
+            else
+            {
+                reportsResultFolder = Path.Combine(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
+            }
+            if (!String.IsNullOrEmpty(reportsResultFolder))
+            {
+                webReporterRunner.RunNewHtmlReport(null, null, true);
+            }
+            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
+            if (isHTMLReportPermanentFolderNameUsed)
+            {
+                if (!Directory.Exists(reportsResultFolder))
+                {
+                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
+                }
+                else
+                {
+                    webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "Execution_Data"));
+                    webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "screenshots"));
+                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"), Path.Combine(reportsResultFolder, "assets", "Execution_Data"), true);
+                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "screenshots"), Path.Combine(reportsResultFolder, "assets", "screenshots"), true);
+
+                }
+            }
+            else
+            {
+                IoHandler.Instance.CopyFolderRec(clientAppFolderPath, $"{reportsResultFolder}_{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}", true);
             }
         }
 

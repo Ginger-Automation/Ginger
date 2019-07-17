@@ -72,6 +72,15 @@ namespace GingerCore.Drivers.WindowsLib
             mXPathHelper = new XPathHelper(this, ImportentProperties);
         }
 
+        /// <summary>
+        /// This method is used to expand the combobox
+        /// </summary>
+        /// <param name="element"></param>
+        public override bool ExpandComboboxByUIA(object element)
+        {
+            return false;
+        }
+
         public override string SetControlValue(object obj, string value)
         {
             AutomationElement element = (AutomationElement) obj;
@@ -864,6 +873,6 @@ namespace GingerCore.Drivers.WindowsLib
         public string GetElementXpath(ElementInfo EI)
         {
             return null;
-        }
+        }        
     }
 }
