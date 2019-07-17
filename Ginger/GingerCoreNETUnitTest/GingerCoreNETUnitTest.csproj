@@ -275,6 +275,12 @@
     <None Update="TestResources\Solutions\AnalyzerTestSolution\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\MissingVariableUsedInMultipleActions.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\MissingVariableUsedOnlyInSetVariable.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
