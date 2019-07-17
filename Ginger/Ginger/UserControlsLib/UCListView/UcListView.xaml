@@ -74,6 +74,7 @@
                                                             <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" Margin="0,0,0,0">)</TextBlock>
                                                         </StackPanel>
                                                     </DockPanel>
+                                                    <DockPanel x:Name="xGroupNotificationsPnl" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
                                                     <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" ToolTip="Group Operations" >
                                                         <MenuItem Cursor="Hand">
                                                             <MenuItem.Icon>

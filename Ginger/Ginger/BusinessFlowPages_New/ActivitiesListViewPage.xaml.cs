@@ -81,24 +81,15 @@ namespace Ginger.BusinessFlowPages
             {                
                 if (droppedItem is Activity)
                 {
-                    ActivitiesGroup parentGroup = null;                    
-                    parentGroup = (new ActivitiesGroupSelectionPage(mContext.BusinessFlow)).ShowAsWindow();
-                    if (parentGroup != null)
-                    {
-                        Activity droppedActivityIns = (Activity)((Activity)droppedItem).CreateInstance(true);
-                        droppedActivityIns.Active = true;
-                        mBusinessFlow.SetActivityTargetApplication(droppedActivityIns);
-                        mBusinessFlow.AddActivity(droppedActivityIns, parentGroup);
-                        mBusinessFlow.CurrentActivity = droppedActivityIns;
-                    }
+                    List<Activity> list = new List<Activity>();
+                    list.Add((Activity)droppedItem);
+                    ActionsFactory.AddActivitiesFromSRHandler(list,mContext.BusinessFlow);
                 }
                 else if (droppedItem is ActivitiesGroup)
                 {
-                    ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
-                    mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
-                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                    List<ActivitiesGroup> list = new List<ActivitiesGroup>();
+                    list.Add((ActivitiesGroup)droppedItem);
+                    ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
                 }               
             }
         }       
