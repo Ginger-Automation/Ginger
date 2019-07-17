@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
-    public class Telemetry
+    public class Telemetry 
     {
         public Guid Guid { get; set; } // keep public
         public bool DoNotCollect { get; set; }  // keep public
@@ -19,6 +19,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         TelemetrySession TelemetrySession;
 
         static HttpClient client;
+
+        public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs e);
+    
+        public class TelemetryEventArgs  : EventArgs
+        {
+            public string name { get; set; }
+        }
+
+        public static TelemetryEventHandler eventHandler ;
 
         public static void Init()
         {
@@ -39,6 +48,13 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
             WorkSpace.Instance.Telemetry = telemetry;
             InitClient();
+            
+            // run it on task so startup is not impacted
+            Task.Factory.StartNew(() => {
+                Thread.Sleep(10000);  // Wait 10 seconds so mainwindow and others can load
+                Telemetry.CheckVersionAndNews();
+            });
+            
         }
 
         
@@ -79,35 +95,26 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         static bool NetworkAvailable
         {
-            get {
+            get
+            {
                 bool connection = NetworkInterface.GetIsNetworkAvailable();
-                return connection;
-                
+                return connection;                
             }
         }
 
         public static DateTime Time { get { return DateTime.UtcNow; }  }
 
 
-        public static string VersionAndNewsInfo { get; set; }
+        public static string VersionAndNewsInfo { get; set; }        
         
-        public static string CheckVersionAndNews()
+        public static void CheckVersionAndNews()
         {
-            if (!NetworkAvailable) return null;
-
-            string currver = ApplicationInfo.ApplicationVersion;            
-
-            string versionAndNewsMessage = CheckLatestVersionAndNews(currver).Result;
-            
-            if (currver != versionAndNewsMessage)
+            if (!NetworkAvailable) return;
+            VersionAndNewsInfo = CheckLatestVersionAndNews(ApplicationInfo.ApplicationVersion).Result;
+            if (eventHandler != null)
             {
-                VersionAndNewsInfo = versionAndNewsMessage;
-                return versionAndNewsMessage;
+                eventHandler(null, new TelemetryEventArgs() { name = "CheckVersionAndNews" });
             }
-            else
-            {
-                return null;
-            }            
         }
 
         

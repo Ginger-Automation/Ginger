@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
@@ -13,11 +14,14 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public int ActivitiesCounter { get; set; }
         public int ActionsCounter { get; set; }
 
+        public string TimeZone { get; set; }
 
         public TelemetrySession(Guid guid)
         {
             Guid = guid;
             StartTime = Telemetry.Time;
+            TimeZone = TimeZoneInfo.Local.DisplayName;
         }
+            
     }
 }

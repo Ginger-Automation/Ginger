@@ -62,16 +62,21 @@ namespace Ginger
         {
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
-            if (Telemetry.VersionAndNewsInfo == null)
-            {
-                xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
-            }
-            else
+            xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
+
+            Telemetry.eventHandler += TelemetryEventHandler;
+            GingerCore.General.DoEvents();
+        }
+
+        private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
+        {
+            this.Dispatcher.Invoke(() => 
             {
                 xVersionAndNewsIcon.ToolTip = Telemetry.VersionAndNewsInfo + ", click for details";
                 xVersionAndNewsIcon.Visibility = Visibility.Visible;
-            }
-            GingerCore.General.DoEvents();
+            });
+            
+            
         }
 
         private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)

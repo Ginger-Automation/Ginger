@@ -78,20 +78,10 @@ namespace amdocs.ginger.GingerCoreNET
 
             mWorkSpace.InitLocalGrid();
 
-            Telemetry.Init();
-            CheckVersionAndNews();
-            
-        }
-
-        // check if there is new version and any news to display
-        static void CheckVersionAndNews()
-        {
-            // run it on task so startup is not impacted
-            Task.Factory.StartNew(() => {
-                string s = Telemetry.CheckVersionAndNews();                
-            });
+            Telemetry.Init();            
             WorkSpace.Instance.Telemetry.SessionStarted();
         }
+        
 
         public void Close()
         {
