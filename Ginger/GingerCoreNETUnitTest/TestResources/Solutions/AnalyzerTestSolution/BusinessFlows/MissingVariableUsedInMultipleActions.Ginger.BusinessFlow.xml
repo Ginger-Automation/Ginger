@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="09077a3d-6999-4baa-9944-64479c9a7642" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="201907040501" GingerVersion="3.3.0.0" Version="29" LastUpdateBy="JGHODKE" LastUpdate="201907151054" />
+<BusinessFlow Guid="09077a3d-6999-4baa-9944-64479c9a7642" Name="BF_MissingVariableTest_Copy" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Initialize Variables" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="6b7c0f83-bfee-4b3c-acfc-30d6739d54a6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Web-App">
+<Acts>
+<ActSetVariableValue Active="True" Description="Set Variable Action" Guid="70f637a2-de28-4e8a-8515-ef62c0b705ca" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="username" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="ac3b5796-7a17-4c79-bf5e-3c0cdcd6af39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="Jinendra" Value="Jinendra" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="PlaceHolder Activity" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="05cd9728-b49c-4313-a6e1-2f702d38ebf7" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="Web-App" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Java Activity" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="c10b2980-3fb6-411a-bf87-8c605c0d07fb" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="c7639169-1350-46bd-96d2-f4ab61a8cb0c" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="80bb8b15-6e55-4a2b-9f4a-0c931a6018c1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="{Var Name=username}" Value="{Var Name=username}" />
+</InputValues>
+</ActDummy>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="Web-App" Guid="29e5cd45-4a9f-4594-9e65-79bca3d8dab2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
