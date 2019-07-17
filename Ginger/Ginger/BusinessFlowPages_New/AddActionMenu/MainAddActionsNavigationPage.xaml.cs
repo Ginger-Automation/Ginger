@@ -45,50 +45,43 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             context.PropertyChanged += Context_PropertyChanged;
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
-            SetRecordButtonAccessebility();
             ToggleApplicatoinModels();
-            ToggleLiveSpyAndWindowsExplorer();
+            ToggleRecordLiveSpyAndWindowsExplorer();
             xApplicationModelsPnl.Visibility = Visibility.Collapsed;
-        }
-
-        private void SetRecordButtonAccessebility()
-        {
-            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
-            {
-                xRecordItemBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xRecordItemBtn.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Agent) || e.PropertyName == nameof(mContext.Platform)))
+            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
             {
-                SetRecordButtonAccessebility();
+                ToggleRecordLiveSpyAndWindowsExplorer();
+            }
+            if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
+            {
                 ToggleApplicatoinModels();
-                ToggleLiveSpyAndWindowsExplorer();
-                if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
-                {
-                    LoadActionFrame(null); 
-                }                
+                LoadActionFrame(null);
             }
         }
 
-        void ToggleLiveSpyAndWindowsExplorer()
+        void ToggleRecordLiveSpyAndWindowsExplorer()
         {
             if (mContext.Agent != null && mContext.Agent.Driver != null)
             {
-                if (mContext.Agent.Driver.IsWindowExplorerSupportReady())
+                if (mContext.Agent.Driver is IWindowExplorer)
                 {
                     xWindowExplorerItemBtn.Visibility = Visibility.Visible;
+                    xLiveSpyItemBtn.Visibility = Visibility.Visible;
                 }
-                else
+                if(mContext.Agent.Driver is IRecord)
                 {
-                    xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
+                    xRecordItemBtn.Visibility = Visibility.Visible;
                 }
+            }
+            else
+            {
+                xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
+                xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
+                xRecordItemBtn.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -207,7 +200,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mLiveSpyNavPage == null)
             {
-                mLiveSpyNavPage = new LiveSpyNavPage(mContext); 
+                mLiveSpyNavPage = new LiveSpyNavPage(mContext);
             }
             LoadActionFrame(mLiveSpyNavPage, "Live Spy", eImageType.Spy);
         }

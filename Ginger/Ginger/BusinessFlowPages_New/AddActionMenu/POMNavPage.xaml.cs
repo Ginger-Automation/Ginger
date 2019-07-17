@@ -190,25 +190,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
-        private Act GenerateRelatedAction(ElementInfo elementInfo)
-        {
-            Act instance;
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);              // PlatformInfoBase.GetPlatformImpl(ePlatformType.Web);
-            ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-            {
-                LocateBy = eLocateBy.POMElement,
-                LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = "",
-                AddPOMToAction = true,
-                POMGuid = elementInfo.ParentGuid.ToString(),
-                ElementGuid = elementInfo.Guid.ToString(),
-                LearnedElementInfo = elementInfo,
-            };
-
-            instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
-            return instance;
-        }
-
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
             if (!ValidateDriverAvalability())

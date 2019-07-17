@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
@@ -300,9 +301,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             actionsGrid.SetAllColumnsDefaultView(view);
             actionsGrid.InitViewItems();
-            actionsGrid.grdMain.SelectionMode = DataGridSelectionMode.Single;
+            actionsGrid.grdMain.SelectionMode = DataGridSelectionMode.Extended;
+
+            actionsGrid.AddToolbarTool(eImageType.GoBack, "Add to Actions", new RoutedEventHandler(AddMultipleActions));
 
             actionsGrid.RowDoubleClick += ActionsGrid_MouseDoubleClick;
+        }
+
+        private void AddMultipleActions(object sender, RoutedEventArgs e)
+        {
+            if (ActionsTabs.SelectedContent != null)
+            {
+                ucGrid actionsGrid = ((ucGrid) ActionsTabs.SelectedContent);
+                if (actionsGrid.Grid.SelectedItems != null && actionsGrid.Grid.SelectedItems.Count > 0)
+                {
+                    foreach (Act selectedAct in actionsGrid.Grid.SelectedItems)
+                    {
+                        ActionsFactory.AddActionsHandler(selectedAct, mContext);
+                    }
+                }
+                else
+                    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void AddAction()
