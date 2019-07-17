@@ -222,8 +222,4 @@
     </None>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /e /y  &quot;$(ProjectDir)WebReportApp&quot; &quot;Reports\&quot;" />
-  </Target>
-
 </Project>

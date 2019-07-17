@@ -376,4 +376,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /e /y  &quot;$(ProjectDir)WebReportApp&quot; &quot;$(OutDir)Reports\&quot;" />
+  </Target>
+
 </Project>
