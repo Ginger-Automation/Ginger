@@ -25,10 +25,11 @@ using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace UnitTests.NonUITests
         public static void ClassInitialize(TestContext TC)
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
-            Ginger.App.InitClassTypesDictionary();
+            // Ginger.App.InitClassTypesDictionary();
         }
 
         [TestInitialize]
@@ -77,13 +78,13 @@ namespace UnitTests.NonUITests
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActTextBox t = new ActTextBox();
+                    ActUIElement t = new ActUIElement();
                     t.Description = "Set text box " + j;
                     t.LocateBy = eLocateBy.ByID;
                     t.LocateValue = "ID" + j;
                     a.Acts.Add(t);
 
-                    ActGotoURL g = new ActGotoURL();
+                    ActUIElement g = new ActUIElement();
                     g.Description = "goto URL " + j;
                     g.LocateValue = "ID" + j;
                     a.Acts.Add(g);
@@ -137,13 +138,13 @@ namespace UnitTests.NonUITests
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActTextBox t = new ActTextBox();
+                    ActUIElement t = new ActUIElement();
                     t.Description = "Set text box " + j;
                     t.LocateBy = eLocateBy.ByID;
                     t.LocateValue = "ID" + j;
                     a.Acts.Add(t);
 
-                    ActGotoURL g = new ActGotoURL();
+                    ActUIElement g = new ActUIElement();
                     g.Description = "goto URL " + j;
                     g.LocateValue = "ID" + j;
                     a.Acts.Add(g);
@@ -209,13 +210,13 @@ namespace UnitTests.NonUITests
             Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
             BF.Activities.Add(a);
 
-            ActTextBox t = new ActTextBox() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };                        
+            ActUIElement t = new ActUIElement() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };                        
             a.Acts.Add(t);
 
             //Act
             BF.RepositorySerializer.SaveToFile(BF, FileName);   
             a.SaveBackup();
-            ActGotoURL g = new ActGotoURL() { Description = "goto URL ", LocateValue = "ID" };            
+            ActUIElement g = new ActUIElement() { Description = "goto URL ", LocateValue = "ID" };            
             a.Acts.Add(g);
             BF.RepositorySerializer.SaveToFile(BF, FileName);
             a.SaveBackup();            
@@ -244,7 +245,7 @@ namespace UnitTests.NonUITests
             BF.Activities.Add(a);
             a.Status = eRunStatus.Passed;
 
-            ActGotoURL g = new ActGotoURL();
+            ActUIElement g = new ActUIElement();
             g.Description = "goto URL ";
             g.LocateValue = "ID";
             a.Acts.Add(g);
@@ -292,13 +293,13 @@ namespace UnitTests.NonUITests
                 a.Status = eRunStatus.Passed;
                 for (int j = 1; j <= 2; j++)
                 {
-                    ActTextBox t = new ActTextBox();
+                    ActUIElement t = new ActUIElement();
                     t.Description = "Set text box " + j;
                     t.LocateBy = eLocateBy.ByID;
                     t.LocateValue = "ID" + j;
                     a.Acts.Add(t);
 
-                    ActGotoURL g = new ActGotoURL();
+                    ActUIElement g = new ActUIElement();
                     g.Description = "goto URL " + j;
                     g.LocateValue = "ID" + j;
                     a.Acts.Add(g);
@@ -524,7 +525,7 @@ namespace UnitTests.NonUITests
             BF.Activities.Add(a6);
 
             // Add one action to make sure backup drill down, and restore the ref item not a copy
-            ActGotoURL act1 = new ActGotoURL();
+            ActUIElement act1 = new ActUIElement();
             act1.Description = "Goto URL 1";
             a6.Acts.Add(act1);
 
@@ -867,11 +868,11 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
-            ActGotoURL actGotoURL = new ActGotoURL();
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "www.google.com";
 
             //Act
-            ActGotoURL a2 = (ActGotoURL)actGotoURL.CreateCopy();
+            ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
 
             //Assert
             Assert.AreEqual(actGotoURL.Description, a2.Description);
@@ -884,11 +885,11 @@ namespace UnitTests.NonUITests
         {
 
             //Arrange
-            ActGotoURL actGotoURL = new ActGotoURL();
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "www.google.com";
 
             //Act
-            ActGotoURL a2 = (ActGotoURL)actGotoURL.CreateCopy();
+            ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
 
             //Assert
             Assert.AreEqual(actGotoURL.Description, a2.Description);
@@ -907,7 +908,7 @@ namespace UnitTests.NonUITests
             Activity activity = new Activity();
             activity.ActivityName = "Login";
 
-            ActGotoURL actGotoURL = new ActGotoURL();
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "Launch";
 
             activity.Acts.Add(actGotoURL);
@@ -965,7 +966,7 @@ namespace UnitTests.NonUITests
             //Arrange
             Activity activity = new Activity();
 
-            ActGotoURL actGotoURL = new ActGotoURL();
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "Launch";
 
             ActDummy act2 = new ActDummy();
@@ -1008,8 +1009,8 @@ namespace UnitTests.NonUITests
             selectionList.OptionalValuesList.Add(new OptionalValue("b"));
 
             VariableDependency vd = new VariableDependency(selectionList.Guid, selectionList.ItemName, selectionList.Value);
-           
-            ActGotoURL actGotoURL = new ActGotoURL();
+
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "www.google.com";
             actGotoURL.VariablesDependencies.Add(vd);
 
@@ -1063,7 +1064,7 @@ namespace UnitTests.NonUITests
 
             VariableDependency vd = new VariableDependency(selectionList2.Guid, selectionList2.ItemName, selectionList2.Value);
 
-            ActGotoURL actGotoURL = new ActGotoURL();
+            ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "www.google.com";
             actGotoURL.VariablesDependencies.Add(vd);
             ActDummy actDummy = new ActDummy();
