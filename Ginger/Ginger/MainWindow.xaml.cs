@@ -76,6 +76,7 @@ namespace Ginger
 
         private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
             VersionAndNewsPage versionAndNewsPage = new VersionAndNewsPage();
             versionAndNewsPage.ShowAsWindow();
         }
