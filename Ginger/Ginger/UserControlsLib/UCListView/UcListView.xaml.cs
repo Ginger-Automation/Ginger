@@ -582,9 +582,29 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public void StartDrag(DragInfo Info)
+        void IDragDrop.StartDrag(DragInfo Info)
         {
+            // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
+            //var row = (DataGridRow)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
+            var row = (ListViewItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
 
+            if (row != null)
+            {
+                //no drag if we are in the middle of Edit
+                //if (row.is) return;
+
+                // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
+                //if (Info.OriginalSource.GetType() != typeof(TextBlock))
+                //{
+                //    return;
+                //}
+
+                Info.DragSource = this;
+                Info.Data = row.Content;
+                //TODO: Do not use REpo since it will move to UserControls2
+                // Each object dragged should override ToString to return nice text for header                
+                Info.Header = row.Content.ToString();
+            }
         }
 
         void IDragDrop.DragOver(DragInfo Info)
@@ -594,12 +614,12 @@ namespace Ginger.UserControlsLib.UCListView
 
         void IDragDrop.Drop(DragInfo Info)
         {
-            // first check if we did drag and drop in the same grid then it is a move - reorder
-            //if (Info.DragSource == this)
-            //{
-            //    if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
-            //    return;
-            //}
+            // first check if we did drag and drop on the same ListView then it is a move - reorder
+            if (Info.DragSource == this)
+            {
+                //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+                return;
+            }
 
             // OK this is a dropped from external
             EventHandler handler = ItemDropped;

@@ -369,7 +369,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void Tab_GotFocus(object sender, RoutedEventArgs e)
         {
             ShowSelectedActionDetails();
-            ActionsFactory.IsLegacyTabSelected = LegacyActionsTab.IsSelected;
         }
 
         private void ShowSelectedActionDetails()

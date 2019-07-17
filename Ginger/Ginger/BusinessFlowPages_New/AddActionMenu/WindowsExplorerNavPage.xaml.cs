@@ -57,7 +57,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;               //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
 
             if (mContext.Agent != null)
-                mWindowExplorerDriver = (IWindowExplorer)mContext.Agent.Driver;
+                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
 
             if (isAgentRunning)
             {
