@@ -60,23 +60,6 @@
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
     <None Remove="RosLynLib\ValueExpressionRefrences.json" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\layout\images\bars.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.css" />
-    <None Remove="WebReportApp\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\index.html" />
-    <None Remove="WebReportApp\Ginger-Web-Client\main.eabf48cebb6d4fb19175.js" />
-    <None Remove="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
-    <None Remove="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
-    <None Remove="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
-    <None Remove="WebReportApp\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js" />
-    <None Remove="WebReportApp\Ginger-Web-Client\styles.c77db239a1dbff874057.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -139,23 +122,6 @@
     <Content Include="RosLynLib\ValueExpressionRefrences.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-italic.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\images\bars.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\assets\theme\theme-alive.css" />
-    <Content Include="WebReportApp\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.eabf48cebb6d4fb19175.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
-    <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js" />
-    <Content Include="WebReportApp\Ginger-Web-Client\styles.c77db239a1dbff874057.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -255,5 +221,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /e /y  &quot;$(ProjectDir)WebReportApp&quot; &quot;Reports\&quot;" />
+  </Target>
 
 </Project>
