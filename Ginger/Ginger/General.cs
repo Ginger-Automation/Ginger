@@ -534,23 +534,30 @@ namespace Ginger
 
         public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false)
         {
-            try
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
-                item.RestoreFromBackup(isLocalBackup);
-                return true;
+                try
+                {
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
+                    item.RestoreFromBackup(isLocalBackup);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
+                    return false;
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                    Mouse.OverrideCursor = null;
+                }
             }
-            catch(Exception ex)
+            else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'"), ex);
                 return false;
-            }
-            finally
-            {
-                Reporter.HideStatusMessage();
-                Mouse.OverrideCursor = null;
             }
         }
     }         

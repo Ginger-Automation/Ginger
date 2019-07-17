@@ -52,7 +52,7 @@
 
                 <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
                     <!--<UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>-->
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                     <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
                     <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
                 </StackPanel>
@@ -255,7 +255,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="400"/>
                             <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
+                            <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,0,0">

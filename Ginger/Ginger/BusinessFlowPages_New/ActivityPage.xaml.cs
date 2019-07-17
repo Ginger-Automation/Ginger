@@ -66,6 +66,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
+            mActivity.SaveBackup();
 
             SetUIControlsContent();
             BindControls();
@@ -111,6 +112,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mActivity = activity;
                 if (mActivity != null)
                 {
+                    mActivity.SaveBackup();
                     BindControls();
                 }
             }
@@ -243,7 +245,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xResetBtn_Click(object sender, RoutedEventArgs e)
         {
             mActivity.Reset();
         }
@@ -358,6 +360,14 @@ namespace GingerWPF.BusinessFlowsLib
                     mSaveWasDone = true;
                     mGenericWin.Close();
                 }
+            }
+        }
+
+        private void xUndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Ginger.General.UndoChangesInRepositoryItem(mActivity, true))
+            {
+                mActivity.SaveBackup();
             }
         }
     }

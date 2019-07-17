@@ -70,5 +70,8 @@ namespace GingerCore.Variables
             throw new System.NotImplementedException();
         }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

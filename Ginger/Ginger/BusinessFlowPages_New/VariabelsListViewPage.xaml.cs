@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
@@ -13,6 +14,7 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -93,10 +95,13 @@ namespace Ginger.BusinessFlowPages
         {
             if (variabelToEdit != null)
             {
-                xBackToListPnl.Visibility = Visibility.Visible;
+                xBackToListGrid.Visibility = Visibility.Visible;
                 mVarBeenEdit = variabelToEdit;
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, mVarBeenEdit, nameof(VariableBase.Name));
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mVarBeenEdit, nameof(VariableBase.Name));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
+                BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+
                 mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
                 if (mVariabelsParent is Solution)
                 {
@@ -109,13 +114,12 @@ namespace Ginger.BusinessFlowPages
                 else if (mVariabelsParent is Activity)
                 {
                     mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.Activity);
-                }
-                
+                }                
                 xMainFrame.Content = mVariabelEditPage;
             }
             else
             {
-                xBackToListPnl.Visibility = Visibility.Collapsed;
+                xBackToListGrid.Visibility = Visibility.Collapsed;
                 mVariabelEditPage = null;
                 xMainFrame.Content = mVariabelsListView;
             }
@@ -262,6 +266,66 @@ namespace Ginger.BusinessFlowPages
                 }
             }
             variable.NameBeforeEdit = variable.Name;
+        }
+
+        private void xPreviousBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mVariabelsListView.List.Items.CurrentPosition >= 1)
+            {
+                mVariabelsListView.List.Items.MoveCurrentToPrevious();
+                ShowHideEditPage((VariableBase)mVariabelsListView.List.Items.CurrentItem);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format( "No {0} to move to.", GingerDicser.GetTermResValue(eTermResKey.Variable)));
+            }
+        }
+
+        private void xNextBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mVariabelsListView.List.Items.CurrentPosition < mVariabelsListView.List.Items.Count - 1)
+            {
+                mVariabelsListView.List.Items.MoveCurrentToNext();
+                ShowHideEditPage((VariableBase)mVariabelsListView.List.Items.CurrentItem);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("No {0} to move to.", GingerDicser.GetTermResValue(eTermResKey.Variable)));
+            }
+        }
+
+        private void XUndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Ginger.General.UndoChangesInRepositoryItem(mVarBeenEdit, true))
+            {
+                mVarBeenEdit.SaveBackup();
+            }
+        }
+
+        private void xDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDelete, mVarBeenEdit.Name) == eUserMsgSelection.Yes)
+            {
+                GetVariablesList().Remove(mVarBeenEdit);
+                if (mVariabelsListView.List.Items.CurrentItem != null)
+                {
+                    ShowHideEditPage((VariableBase)mVariabelsListView.List.Items.CurrentItem);
+                }
+                else
+                {
+                    ShowHideEditPage(null);
+                }
+            }
+        }
+
+        private void xResetValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mVarBeenEdit.ResetValue();
+        }
+
+        private void xAutoValueBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mVarBeenEdit.GenerateAutoValue();
         }
     }
 }

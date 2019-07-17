@@ -108,5 +108,9 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
+
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return true; } }
     }
 }
