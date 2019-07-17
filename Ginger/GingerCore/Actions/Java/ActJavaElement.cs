@@ -205,6 +205,8 @@ namespace GingerCore.Actions.Java
             return pl;            
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
+
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
         {
             if (Platform == ePlatformType.Java || Platfrom == ePlatformType.NA)
