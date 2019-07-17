@@ -55,7 +55,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
             mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
-            LoadWindowExplorerPage(mContext);
+            LoadLiveSpyPage(mContext);
             SetFrameEnableDisable();
         }
 
@@ -73,7 +73,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else if (e.PropertyName == nameof(Context.Agent))
             {
-                LoadWindowExplorerPage(mContext);
+                LoadLiveSpyPage(mContext);
                 SetFrameEnableDisable();
                 CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
             }
@@ -97,12 +97,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xSelectedItemFrame.IsEnabled = false;
             }
         }
-        
+
         /// <summary>
-        /// This method is used to get the new WindowExplorerPage based on Context and Agent
+        /// This method is used to get the new LiveSpyPage based on Context and Agent
         /// </summary>
         /// <returns></returns>
-        private void LoadWindowExplorerPage(Context context)
+        private void LoadLiveSpyPage(Context context)
         {
             bool isLoaded = false;
             if (mLiveSpyPageDictonary != null && mLiveSpyPageDictonary.Count > 0 && context.Agent != null)
