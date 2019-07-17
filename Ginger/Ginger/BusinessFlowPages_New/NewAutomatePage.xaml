@@ -30,7 +30,11 @@
                 </UserControls:ucButton>
 
                 <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="32" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                    <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="32" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}">
+                        <UserControls:ImageMakerControl.ToolTip>
+                            <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+                        </UserControls:ImageMakerControl.ToolTip>
+                    </UserControls:ImageMakerControl>
                     <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
                     <StackPanel Orientation="Horizontal" Margin="0,0,30,0">
                         <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}">></Label>

@@ -877,7 +877,7 @@ namespace GingerCore
         {
             get
             {
-                return "List of Actions";
+                return GingerDicser.GetTermResValue(eTermResKey.Activity);// "List of Actions";
             }
         }
     }
