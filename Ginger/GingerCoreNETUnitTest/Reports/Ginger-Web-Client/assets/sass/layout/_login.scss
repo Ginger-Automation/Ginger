@@ -1,0 +1,88 @@
+.login-body {
+    .login-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 99999;
+        @include border-box();
+        height: 60px;
+        @include background-gradient-diagonal($topbarLeftBgColor, $topbarRightBgColor);
+        .logo {
+            @include border-box();
+            width: 230px;
+            padding: 10px 100px;
+            display: inline-block;
+            text-align: center;
+            img {
+                height: 40px;
+            }
+        }
+    }
+    .login-image {
+        @include border-box();
+        width: 100%;
+        position: absolute;
+        top: 60px;
+    }
+    .login-panel {
+        @include border-box();
+        padding: 15% 0 0 100px;
+        width: 500px;
+        .login-icon {
+            max-width: 75px;
+            max-height: 75px;
+            margin-bottom: 25px;
+        }
+        .ui-g {
+            .logo-container {
+                padding: 0;
+                .login-summary {
+                    line-height: 48px;
+                    font-size: 36px;
+                    font-weight: bold;
+                    text-align: left;
+                }
+                .login-detail {
+                    line-height: 20px;
+                    font-size: 16px;
+                    text-align: left;
+                }
+            }
+            .ui-g-12 {
+                padding: 15px 0px;
+                .ui-inputfield {
+                    display: block;
+                    margin-top: 5px;
+                }
+                &.chkbox-container {
+                    a {
+                        float: right;
+                    }
+                }
+                .ui-chkbox {
+                    margin-right: 5px;
+                }
+                .ui-outputlabel {
+                    vertical-align: middle;
+                }
+            }
+            .ui-button {
+                width: 130px;
+                border-radius: 3px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .login-body {
+        .login-panel {
+            padding: 150px 25px 0 25px;
+            width: 100%;
+            .login-icon-container {
+                text-align: center;
+            }
+        }
+    }
+}
