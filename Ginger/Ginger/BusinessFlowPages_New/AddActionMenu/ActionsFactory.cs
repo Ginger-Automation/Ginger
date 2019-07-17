@@ -21,8 +21,18 @@ using System.Threading.Tasks;
 
 namespace Ginger.BusinessFlowPages_New.AddActionMenu
 {
+    /// <summary>
+    /// Holds static functions for generating any Action
+    /// Just call AddActionsHandler with object and Context as it's parameters 
+    /// to generate the relevant action and add it to the current selected Activity
+    /// </summary>
     class ActionsFactory
     {
+        /// <summary>
+        /// Generates relevant Action and adds to the current/selected Activity
+        /// </summary>
+        /// <param name="mItem"> of type object and would successfully add an action with Act/ElementInfo/ApplicationModels type object is provided</param>
+        /// <param name="mContext"> required to identify the currently selected Activity, Action is to be added to </param>
         public static void AddActionsHandler(object mItem, Context mContext)
         {
             Act instance = null;
@@ -76,6 +86,12 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
             }
         }
 
+        /// <summary>
+        /// In case object of type Act was passed, adds relevant action being Legacy/PlugIn/One that Adds via Wizard
+        /// </summary>
+        /// <param name="selectedAction"></param>
+        /// <param name="mContext"></param>
+        /// <returns></returns>
         static Act GenerateSelectedAction(Act selectedAction, Context mContext)
         {
             if (selectedAction.AddActionWizardPage != null)
@@ -95,7 +111,7 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
             else
             {
                 Act instance = (Act)selectedAction.CreateCopy();
-                if (selectedAction is IObsoleteAction)
+                if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
                     eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                     if (userSelection == eUserMsgSelection.Yes)
@@ -141,6 +157,13 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
                 return instance;
             }
         }
+
+        /// <summary>
+        /// Just provide the ElementInfo Object and would generate supported Action for the same according to the current selected Platform
+        /// </summary>
+        /// <param name="elementInfo"></param>
+        /// <param name="mContext"></param>
+        /// <returns></returns>
         static Act GeneratePOMElementRelatedAction(ElementInfo elementInfo, Context mContext)
         {
             Act instance;
@@ -149,7 +172,7 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
             {
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = "",
+                ElementValue = string.Empty,
                 AddPOMToAction = true,
                 POMGuid = elementInfo.ParentGuid.ToString(),
                 ElementGuid = elementInfo.Guid.ToString(),
