@@ -55,9 +55,10 @@ namespace Amdocs.Ginger.Repository
             GetPackages();
         }
 
-        private void GetPackages()
+        public ObservableList<PluginPackage> GetPackages()
         {
             mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            return mPluginPackages;
         }
 
         public class DriverInfo
@@ -263,7 +264,8 @@ namespace Amdocs.Ginger.Repository
             {                
                 PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
                 if (pluginPackage != null)
-                {                
+                {
+                    onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;
                     onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
                 }
             }

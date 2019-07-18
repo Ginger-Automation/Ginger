@@ -22,11 +22,14 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace Ginger.PlugInsWindows
 {
@@ -34,12 +37,12 @@ namespace Ginger.PlugInsWindows
     /// Interaction logic for PluginsIndexPage.xaml
     /// </summary>
     public partial class PluginsIndexPage : Page
-    {
+    {        
         public PluginsIndexPage()
         {
             InitializeComponent();
             SetGridView();
-            GetPluginsList();
+            GetPluginsList();            
             xVersionComboBox.SelectionChanged += XVersionComboBox_SelectionChanged;
         }
 
@@ -49,9 +52,9 @@ namespace Ginger.PlugInsWindows
             xReleaseNameTextBlock.Text = null;
             xSizeTextBlock.Text = null;
             xDownloads.Text = null;
-            xInstallButonn.Visibility = Visibility.Collapsed;
+            xInstallButton.Visibility = Visibility.Collapsed;
 
-            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;            
             if (release != null)
             {
                 xPublishedTextBlock.Text = release.published_at;
@@ -60,9 +63,25 @@ namespace Ginger.PlugInsWindows
                 {
                     xSizeTextBlock.Text = release.assets[0].size / 1000 + " KB";
                     xDownloads.Text = release.assets[0].download_count;
-                    xInstallButonn.Visibility = Visibility.Visible;
-                }            
-            }            
+                    xInstallButton.Visibility = Visibility.Visible;
+                }
+               
+            }
+            SetInstallButton();
+        }
+
+        private void SetInstallButton()
+        {
+            OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
+            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+            if (release!=null && pluginPackageInfo.CurrentPackage == release.Version)
+            {
+                xInstallButton.IsEnabled = false;
+            }
+            else
+            {
+                xInstallButton.IsEnabled = true;
+            }
         }
 
         private void SetGridView()
@@ -93,7 +112,7 @@ namespace Ginger.PlugInsWindows
 
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            GetPluginsList();
+            GetPluginsList();           
         }
 
         private void GetPluginsList()
@@ -107,43 +126,68 @@ namespace Ginger.PlugInsWindows
         private void ShowPluginInfo()
         {            
             xProcessingImage.Visibility = Visibility.Visible;                        
-            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;            
+            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+            if(!string.IsNullOrEmpty(pluginPackageInfo.CurrentPackage))
+            {
+                xInstalledSection.Visibility = Visibility.Visible;
+                xInstalledVersion.Text = pluginPackageInfo.CurrentPackage;
+            }
+            else
+            {
+                xInstalledSection.Visibility = Visibility.Collapsed;
+            }
             xNameTextBlock.Text = pluginPackageInfo.Id;
+            xHyperLinkBtn.Content = pluginPackageInfo.URL;           
             ObservableList<OnlinePluginPackageRelease> list = null;
             Task.Factory.StartNew(() =>
             {
-                list = pluginPackageInfo.Releases;
+                list = pluginPackageInfo.Releases;      
                 
             }).ContinueWith((a) => {
                     Dispatcher.Invoke(() =>
-                    {
+                    {                        
                         xVersionComboBox.ItemsSource = list;
                         xVersionComboBox.DisplayMemberPath = nameof(OnlinePluginPackageRelease.Version);
                         // select the first item/latest release
-                        xVersionComboBox.SelectedIndex = 0;
+                        xVersionComboBox.SelectedIndex = 0;                         
                         xProcessingImage.Visibility = Visibility.Collapsed;
                     });
-            });
+            });                 
+        }
+      
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(((Button)sender).Content.ToString());
         }
 
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
         {
-            xInstallButonn.ButtonText = "Downloading & Installing...";
+            xInstallButton.ButtonText = "Downloading & Installing...";
             xProcessingImage.Visibility = Visibility.Visible;
             OnlinePluginPackageRelease release = (OnlinePluginPackageRelease)xVersionComboBox.SelectedItem;
+            OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+            if (!string.IsNullOrEmpty(onlinePluginPackage.CurrentPackage) && onlinePluginPackage.CurrentPackage != release.Version)
+            {
+                UninstallPlugin();
+            }           
             Task.Factory.StartNew(() =>
             {
-                OnlinePluginPackage onlinePluginPackage = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
                 WorkSpace.Instance.PlugInsManager.InstallPluginPackage(onlinePluginPackage, release);
-                onlinePluginPackage.Status = "Installed";
+                onlinePluginPackage.Status = "Installed";                
             }).ContinueWith((a) =>
             {
                 Dispatcher.Invoke(() =>
                 {
                     xProcessingImage.Visibility = Visibility.Collapsed;
-                    xInstallButonn.ButtonText = "Install";
+                    xInstallButton.ButtonText = "Install";
+                    xInstalledVersion.Text = onlinePluginPackage.CurrentPackage;                    
                 });
             });
+            xInstalledSection.Visibility = Visibility.Visible;                                                  
+                        
+            ((OnlinePluginPackage)xPluginsGrid.CurrentItem).CurrentPackage = release.Version;
+
+            SetInstallButton();
         }
 
         private void OpenDownloadedPluginsFolder(object sender, RoutedEventArgs e)
@@ -156,6 +200,22 @@ namespace Ginger.PlugInsWindows
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find the folder '{0}'", PluginPackage.LocalPluginsFolder));
             }
+        }
+
+        private void xUnInstallButonn_Click(object sender, RoutedEventArgs e)
+        {
+            UninstallPlugin();
+            xInstalledSection.Visibility = Visibility.Collapsed;
+            SetInstallButton();
+        }        
+
+        private void UninstallPlugin()
+        {
+            OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
+            PluginPackage pluginPackage = (from x in WorkSpace.Instance.PlugInsManager.GetPackages() where x.PluginId == pluginPackageInfo.Id select x).FirstOrDefault();
+            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(pluginPackage);
+            pluginPackageInfo.Status = string.Empty;
+            pluginPackageInfo.CurrentPackage = string.Empty;            
         }
     }
 }

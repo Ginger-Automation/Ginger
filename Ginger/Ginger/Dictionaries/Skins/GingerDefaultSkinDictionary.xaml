@@ -136,6 +136,34 @@
         <Setter Property="IsEnabled" Value="True" />
     </Style>
 
+    <Style
+    x:Key="LinkButton"
+    TargetType="Button">
+        <Setter
+        Property="Template">
+            <Setter.Value>
+                <ControlTemplate
+                TargetType="Button">
+                    <TextBlock
+                    TextDecorations="Underline">
+                <ContentPresenter /></TextBlock>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter
+        Property="Foreground"
+        Value="Blue" />
+        <Style.Triggers>
+            <Trigger
+            Property="IsMouseOver"
+            Value="true">
+                <Setter
+                Property="Foreground"
+                Value="Red" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="Button" x:Key="$ImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
@@ -753,7 +781,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-        
+
     <Style TargetType="Label" x:Key="$ucGridTitleLightStyle">
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -762,7 +790,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
-        
+
     <Style TargetType="RibbonTabHeader" x:Key="$RibbonTabHeaderStyle">
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -1230,7 +1258,7 @@
         </Setter>
     </Style>
 
-    
+
     <Style x:Key="MyFocusVisualStyte" >
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -1254,7 +1282,7 @@
     </Style>
 
     <Style TargetType="GridSplitter" x:Key="StyleSplitter" >
-        
+
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background">
             <Setter.Value>
@@ -1389,7 +1417,7 @@
     <ImageSource x:Key="@ImportFromALM_32x32">pack://application:,,,/Ginger;component/Images/@ImportFromALM_32x32.png</ImageSource>
     <ImageSource x:Key="@RefreshALM_16x16">pack://application:,,,/Ginger;component/Images/@RefreshALM_16x16.png</ImageSource>
     <ImageSource x:Key="@RefreshALM_32x32">pack://application:,,,/Ginger;component/Images/@RefreshALM_32x32.png</ImageSource>
-    
+
     <ImageSource x:Key="News32x32">pack://application:,,,/Ginger;component/Images/News32x32.png</ImageSource>
     <ImageSource x:Key="Actions32x32">pack://application:,,,/Ginger;component/Images/Actions32x32.png</ImageSource>
     <ImageSource x:Key="Variables32x32">pack://application:,,,/Ginger;component/Images/Variables32x32.png</ImageSource>
@@ -1619,7 +1647,7 @@
     <ImageSource x:Key="@GingerLogo">pack://application:,,,/Ginger;component/Images/@GingerLogo.png</ImageSource>
     <ImageSource x:Key="@GingerHelper_Close">pack://application:,,,/Ginger;component/Images/@GingerHelper_Close.png</ImageSource>
     <ImageSource x:Key="@GingerHelper_Cog">pack://application:,,,/Ginger;component/Images/@GingerHelper_Cog.png</ImageSource>
-    
+
     <ImageSource x:Key="@GingerHelper_Ginger">pack://application:,,,/Ginger;component/Images/@GingerHelper_Ginger.png</ImageSource>
     <ImageSource x:Key="@GingerHelper_MsgBoard">pack://application:,,,/Ginger;component/Images/@GingerHelper_MsgBoard.png</ImageSource>
     <ImageSource x:Key="@NotAvailable_600x600">pack://application:,,,/Ginger;component/Images/@NotAvailable_600x600.png</ImageSource>
@@ -1730,22 +1758,22 @@
     <ImageSource x:Key="@LightRun_16x16">pack://application:,,,/Ginger;component/Images/@LightRun_16x16.png</ImageSource>
     <ImageSource x:Key="@LightRunFlow_16x16">pack://application:,,,/Ginger;component/Images/@LightRunFlow_16x16.png</ImageSource>
     <ImageSource x:Key="@RunAndReport_16x16">pack://application:,,,/Ginger;component/Images/@RunAndReport_16x16.png</ImageSource>
-    
+
     <ImageSource x:Key="@StarGray_16x16">pack://application:,,,/Ginger;component/Images/@StarGray_16x16.png</ImageSource>
     <ImageSource x:Key="@StarGray_24x24">pack://application:,,,/Ginger;component/Images/@StarGray_24x24.png</ImageSource>
     <ImageSource x:Key="@Star_16x16">pack://application:,,,/Ginger;component/Images/@Star_16x16.png</ImageSource>
     <ImageSource x:Key="@Star_24x24">pack://application:,,,/Ginger;component/Images/@Star_24x24.png</ImageSource>
 
     <ImageSource x:Key="@DeLink_16x16">pack://application:,,,/Ginger;component/Images/@DeLink_16x16.png</ImageSource>
-    
-    
+
+
     <ImageSource x:Key="@Outputs_32x32.png">pack://application:,,,/Ginger;component/Images/@Outputs_32x32.png</ImageSource>
 
     <ImageSource x:Key="@Wheel_50x50">pack://application:,,,/Ginger;component/Images/@Wheel_50x50.png</ImageSource>
     <ImageSource x:Key="@Wheel2_50x50">pack://application:,,,/Ginger;component/Images/@Wheel2_50x50.png</ImageSource>
 
     <ImageSource x:Key="@AddFile_16x16.png">pack://application:,,,/Ginger;component/Images/@AddFile_16x16.png</ImageSource>
-    
+
     <ImageSource x:Key="@AddFolder_64x64.png">pack://application:,,,/Ginger;component/Images/@AddFolder_64x64.png</ImageSource>
     <ImageSource x:Key="@AddFolder_16x16.png">pack://application:,,,/Ginger;component/Images/@AddFolder_16x16.png</ImageSource>
     <ImageSource x:Key="@AddFolder_24x24.png">pack://application:,,,/Ginger;component/Images/@AddFolder_24x24.png</ImageSource>
@@ -1791,7 +1819,8 @@
     <ImageSource x:Key="POM_32x32.png">pack://application:,,,/Ginger;component/Images/POM_32x32.png</ImageSource>
 
 
-    <!-- NEW Design Skin 1 Colors --><!--
+    <!-- NEW Design Skin 1 Colors -->
+    <!--
     <SolidColorBrush x:Key="$Color_DarkBlue" Color="#20334f" />
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#fa8808" />
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#FFD075" />
@@ -1879,7 +1908,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-  
+
 
     <Style TargetType="Label" x:Key="@ucTitleStyle_1">
         <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"/>
@@ -1921,7 +1950,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
     </Style>
-    
+
     <Style TargetType="Label" x:Key="@ucGridTitleTransparentBackground">
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -2019,7 +2048,7 @@
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}" />
                         </Trigger>
-                       
+
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="Gray" />
                         </Trigger>
@@ -2037,7 +2066,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Margin" Value="2,0,0,2" />
         <Setter Property="Padding" Value="5,0,5,0"/>
-       
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2055,7 +2084,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2070,7 +2099,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Padding" Value="5,0,5,0"/>
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2088,7 +2117,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2102,7 +2131,7 @@
         <Setter Property="Height" Value="25" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Margin" Value="2,0,0,2" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2120,7 +2149,7 @@
                             <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
                             <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                         </Trigger>
-                       
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2133,7 +2162,7 @@
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="25" />
         <Setter Property="FontSize" Value="12" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2151,7 +2180,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2164,7 +2193,7 @@
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="25" />
         <Setter Property="FontSize" Value="12" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2182,7 +2211,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2250,7 +2279,7 @@
 
 
     <Style TargetType="Button" x:Key="@InputImageGridCellButtonStyle">
-        
+
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
@@ -2274,7 +2303,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                         </Trigger>
-                       
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2288,7 +2317,7 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="Width" Value="20" />
         <Setter Property="FontSize" Value="12" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -2306,7 +2335,7 @@
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Background" Value="{DynamicResource $SelectionColor_Pink}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -2319,7 +2348,7 @@
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="25" />
         <Setter Property="FontSize" Value="12" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -2428,7 +2457,7 @@
         </Setter>
     </Style>
 
-    
+
     <Style TargetType="DataGridColumnHeader" x:Key="@DataGridColumnHeader" >
         <Setter Property="Height" Value="20" />
         <Setter Property="Background" Value="#CFD6E5"/>
@@ -2452,15 +2481,15 @@
                 <Setter Property="Background" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
                 <Setter Property="BorderBrush" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-               
+
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style  TargetType="DataGridCell"  x:Key="@GridCellStyle">
-       
+
         <Setter Property="Margin"  Value="0,5,0,0"/>
-        
+
     </Style>
 
     <Style  TargetType="DataGridColumnHeader"  x:Key="@GridColumnHeaderStyle">
@@ -2484,7 +2513,7 @@
 
     <Style  TargetType="FrameworkElement" x:Key="@ReadOnlyGridCellElemntStyle">
         <Setter Property="IsHitTestVisible" Value="False"/>
-       
+
     </Style>
     <Style  TargetType="FrameworkElement" x:Key="@GraphStyleBF">
         <Setter Property="FrameworkElement.Margin" Value="60,0,0,0"/>
@@ -2500,12 +2529,12 @@
     </Style>
     <Style  TargetType="TextBlock"  x:Key="@TextBlockGridCellElemntStyle_CenterAlign">
         <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
-       
+
     </Style>
 
     <Style  TargetType="TextBlock"  x:Key="@TextBlockGridCellElemntStyle_RightAlign">
         <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right"/>
-       
+
     </Style>
 
     <Style TargetType="TextBlock" x:Key="@DataGridColumn_Bold">
@@ -2547,7 +2576,7 @@
     <Style TargetType="Expander" x:Key="@ExpanderDarkStyle" >
         <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>
         <Setter Property="BorderBrush" Value="White"/>
-        
+
     </Style>
 
     <Style TargetType="Expander" x:Key="@MenuExpanderDarkStyle" >
@@ -2673,7 +2702,7 @@
                   Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
                 />
         </Grid>
-      
+
     </ControlTemplate>
 
     <ControlTemplate x:Key="@TagComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
@@ -2705,7 +2734,7 @@
                   Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
                 />
         </Grid>
-       
+
     </ControlTemplate>
 
 
@@ -2806,7 +2835,7 @@
         </Style.Triggers>
     </Style>
 
-        <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
+    <Style x:Key="@InputComboBoxStyle" TargetType="{x:Type ComboBox}">
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
