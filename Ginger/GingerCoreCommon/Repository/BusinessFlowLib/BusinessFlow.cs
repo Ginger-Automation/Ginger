@@ -736,7 +736,7 @@ namespace GingerCore
                             SetActivityTargetApplication(actInstance);
                         }
 
-                        this.AddActivity(actInstance);
+                        this.AddActivity(actInstance, insertIndex:this.Activities.Count);
                         actIdent.IdentifiedActivity = actInstance;
                     }
                     else

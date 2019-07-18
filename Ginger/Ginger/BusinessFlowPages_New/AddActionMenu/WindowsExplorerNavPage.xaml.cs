@@ -1,6 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Ginger.BusinessFlowPages_New;
+using Ginger.BusinessFlowPages;
 using Ginger.WindowExplorer;
 using GingerCore.Platforms;
 using GingerCoreNET;

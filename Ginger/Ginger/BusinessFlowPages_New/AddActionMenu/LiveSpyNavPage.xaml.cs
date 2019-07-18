@@ -16,7 +16,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages_New;
+using Ginger.BusinessFlowPages;
 using Ginger.Drivers.Common;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.UserControls;

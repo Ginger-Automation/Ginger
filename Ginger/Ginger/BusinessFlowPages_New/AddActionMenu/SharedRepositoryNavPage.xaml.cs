@@ -20,9 +20,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public ActivitiesGroupsRepositoryPage ActivitiesGroupsRepoPage;
         public ActivitiesRepositoryPage ActivitiesRepoPage;
         public ActionsRepositoryPage ActionsRepoPage;
-        public VariablesRepositoryPage VariablesRepoPage;
-
-        BusinessFlow mBusinessFlow;
 
         Context mContext;
         public Visibility ShowActionsRepository
@@ -30,33 +27,27 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             get { return xTabActions.Visibility; }
             set { xTabActions.Visibility = value; }
         }
-        public Visibility ShowVariablesRepository
-        {
-            get { return xTabVariables.Visibility; }
-            set { xTabVariables.Visibility = value; }
-        }
 
-        public SharedRepositoryNavPage(Context context)     //(BusinessFlow businessFlow = null)
+
+        public SharedRepositoryNavPage(Context context)     
         {
             InitializeComponent();
             mContext = context;
-            mBusinessFlow = mContext.BusinessFlow;
-
-            xVariablesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Variables);
         }
 
-        public void UpdateBusinessFlow(BusinessFlow bf)
-        {
-            mBusinessFlow = bf;
-            if (ActionsRepoPage != null)
-            {
-                ActionsRepoPage.UpdateBusinessFlow(mBusinessFlow);
-            }
-            if (VariablesRepoPage != null)
-            {
-                VariablesRepoPage.UpdateBusinessFlow(mBusinessFlow);
-            }
-        }
+
+        //public void UpdateBusinessFlow(BusinessFlow bf)
+        //{
+        //    mBusinessFlow = bf;
+        //    if (ActionsRepoPage != null)
+        //    {
+        //        ActionsRepoPage.UpdateBusinessFlow(mBusinessFlow);
+        //    }
+        //    if (VariablesRepoPage != null)
+        //    {
+        //        VariablesRepoPage.UpdateBusinessFlow(mBusinessFlow);
+        //    }
+        //}
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -90,7 +81,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActivitiesGroups.Tag) != "Done")
                 {
-                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext);
                     xFrameActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActivitiesGroups.Tag = "Done";
@@ -101,7 +92,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActivities.Tag) != "Done")
                 {
-                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mBusinessFlow);
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mContext);
                     xFrameActivities.Content = ActivitiesRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActivities.Tag = "Done";
@@ -112,21 +103,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActions.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mBusinessFlow);
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext);
                     xFrameActions.Content = ActionsRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActions.Tag = "Done";
-                }
-            }
-
-            if (xTabRepository.SelectedItem == xTabVariables)
-            {
-                if (((string)xTabVariables.Tag) != "Done")
-                {
-                    VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
-                    xFrameVariables.Content = VariablesRepoPage;
-                    // Mark that this tab is loaded with info
-                    xTabVariables.Tag = "Done";
                 }
             }
         }
@@ -134,7 +114,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public void RefreshCurrentRepo()
         {
             xTabActions.Tag = string.Empty;
-            xTabVariables.Tag = string.Empty;
 
             //to re-load current
             if (xTabRepository.SelectedItem != null)

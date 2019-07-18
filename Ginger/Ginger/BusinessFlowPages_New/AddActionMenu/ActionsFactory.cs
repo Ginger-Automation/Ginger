@@ -1,6 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
@@ -10,16 +9,15 @@ using Ginger.ApiModelsFolder;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Activities;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ginger.BusinessFlowPages_New.AddActionMenu
+namespace Ginger.BusinessFlowPages
 {
     /// <summary>
     /// Holds static functions for generating any Action
@@ -191,6 +189,45 @@ namespace Ginger.BusinessFlowPages_New.AddActionMenu
 
             instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
             return instance;
+        }
+
+        /// <summary>
+        /// Adding Activities from Shared Repository to the Business Flow in Context
+        /// </summary>
+        /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
+        /// <param name="businessFlow">Business Flow to add to</param>
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow)
+        {
+            ActivitiesGroup parentGroup = null;
+            parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+            if (parentGroup != null)
+            {
+                foreach (Activity sharedActivity in sharedActivitiesToAdd)
+                {
+                    Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
+                    activityIns.Active = true;
+                    businessFlow.SetActivityTargetApplication(activityIns);
+                    businessFlow.AddActivity(activityIns, parentGroup);
+                    //mBusinessFlow.CurrentActivity = droppedActivityIns;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adding Activities Groups from Shared Repository to the Business Flow in Context
+        /// </summary>
+        /// <param name="sharedActivitiesGroupsToAdd">Shared Repository Activities Groups to Add Instances from</param>
+        /// <param name="businessFlow">Business Flow to add to</param>
+        public static void AddActivitiesGroupsFromSRHandler(List<ActivitiesGroup> sharedActivitiesGroupsToAdd, BusinessFlow businessFlow)
+        {
+            foreach (ActivitiesGroup sharedGroup in sharedActivitiesGroupsToAdd)
+            {
+                ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
+                businessFlow.AddActivitiesGroup(droppedGroupIns);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+            }
+            businessFlow.AttachActivitiesGroupsAndActivities();
         }
 
     }

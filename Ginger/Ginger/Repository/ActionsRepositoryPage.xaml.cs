@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.BusinessFlowPages;
 
 namespace Ginger.Repository
 {
@@ -41,24 +42,21 @@ namespace Ginger.Repository
     public partial class ActionsRepositoryPage : Page
     {
         readonly RepositoryFolder<Act> mActionsFolder;
-        BusinessFlow mBusinessFlow;
-        Context mContext = new Context();
+        Context mContext;
 
-        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, BusinessFlow businessFlow)
+        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, Context context)
         {
             InitializeComponent();
 
             mActionsFolder = actionsFolder;
-            mBusinessFlow = businessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
+            mContext = context;
+
             SetActionsGridView();
             SetGridAndTreeData();
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            mBusinessFlow = bf;
-            mContext.BusinessFlow = mBusinessFlow;
             xActionsGrid.ClearFilters();
         }
 
@@ -127,15 +125,20 @@ namespace Ginger.Repository
         
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {            
+            if (mContext.BusinessFlow == null)
+            {
+                return;
+            }
+
             if (xActionsGrid.Grid.SelectedItems != null && xActionsGrid.Grid.SelectedItems.Count > 0)
             {
                 foreach (Act selectedItem in xActionsGrid.Grid.SelectedItems)
                 {
-                    mBusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
+                    mContext.BusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
                 }
                 
                 int selectedActIndex = -1;
-                ObservableList<IAct> actsList = mBusinessFlow.CurrentActivity.Acts;
+                ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
                 if (actsList.CurrentItem != null)
                 {
                     selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
@@ -143,7 +146,6 @@ namespace Ginger.Repository
                 if (selectedActIndex >= 0)
                 {
                     actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-
                 }
             }
             else

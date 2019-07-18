@@ -5876,7 +5876,11 @@ namespace GingerCore.Drivers
         {
             if (IsDictionary(rc2))// For firefox execute script is returning a list dictionary
             {
-                var list = ((IEnumerable<KeyValuePair<string, object>>)rc2).OrderBy(kp => Convert.ToInt32(kp.Key)).Select(kp => kp.Value).ToList();
+                //This code is added to eleminate the additional keyvalue pair with key "toJSON", this key is getting added to dictionary
+                List<KeyValuePair<string, object>> rc3 = GetCorrectedKeyValuePair(rc2);
+                //------------------------------------------
+
+                var list = ((IEnumerable<KeyValuePair<string, object>>)rc3).OrderBy(kp => Convert.ToInt32(kp.Key)).Select(kp => kp.Value).ToList();
                 return GetPayLoadfromList(list);
 
             }
@@ -5886,6 +5890,25 @@ namespace GingerCore.Drivers
                 ReadOnlyCollection<object> la = (ReadOnlyCollection<object>)rc2;
                 return GetPayLoadfromList(la);
             }
+        }
+
+        /// <summary>
+        /// This code is added to eleminate the additional keyvalue pair with key "toJSON", this key is getting added to dictionary
+        /// </summary>
+        /// <param name="rc2"></param>
+        /// <returns></returns>
+        private List<KeyValuePair<string, object>> GetCorrectedKeyValuePair(dynamic rc2)
+        {
+            List<KeyValuePair<string, object>> rc3 = new List<KeyValuePair<string, object>>();
+            foreach (var item in ((IEnumerable<KeyValuePair<string, object>>)rc2))
+            {
+                int val;
+                if (int.TryParse(item.Key, out val))
+                {
+                    rc3.Add(item);
+                }
+            }
+            return rc3;
         }
 
         PayLoad GetPayLoadfromList(dynamic list)

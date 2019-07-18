@@ -1,6 +1,6 @@
 ﻿using GingerCore;
 
-namespace Ginger.BusinessFlowPages_New
+namespace Ginger.BusinessFlowPages
 {
     public class AgentPageMappingHelper
     {
