@@ -21,6 +21,21 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         static HttpClient client;
 
         public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs e);
+
+
+        string mSessionFileName;
+        string sessionFileName
+        {
+            get
+            {
+                if 
+                    (mSessionFileName == null)
+                {
+                    mSessionFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss");
+                }                
+                return mSessionFileName;
+            }
+        }
     
         public class TelemetryEventArgs  : EventArgs
         {
@@ -156,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
 
             TelemetrySession.EndTime = Time;
-            SaveTelemetry("session", Guid.ToString(), TelemetrySession);
+            SaveTelemetry("session", TelemetrySession);
 
             Task.Factory.StartNew(() => {
                 Compress();
@@ -187,19 +202,19 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         
 
-        public void SaveTelemetry(string type, string id, object data)
+        public void SaveTelemetry(string entityType, object data)
         {
             //TODO: run on task
             // save to same file
-            // lock for multi thread
+            // lock for multi thread when writing to same file
 
-            TelemetryRecord telemetryRecord = new TelemetryRecord("telemetry", type, id) ;
+            TelemetryRecord telemetryRecord = new TelemetryRecord(entityType) ;
             
             string txt = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
             txt += JsonConvert.SerializeObject(data) + Environment.NewLine; 
 
-            string fileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-","") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
-            File.WriteAllText(fileName, txt);
+            string fileName = Path.Combine(TelemetryDataFolder, sessionFileName);
+            File.AppendAllText(fileName, txt);
         }
 
 
@@ -224,6 +239,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
                 if (!NetworkAvailable) return;
 
+
+                // TODO; run in parallel
                 foreach (string zipfile in Directory.GetFiles(zipFolder))
                 {
                     FileStream fileStream = new FileStream(Path.Combine(TelemetryFolder, zipfile), FileMode.Open);

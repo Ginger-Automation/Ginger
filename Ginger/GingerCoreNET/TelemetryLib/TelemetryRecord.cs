@@ -8,9 +8,10 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
     {
         public TelemetryIndex index { get; set; }
 
-        public TelemetryRecord(string index, string type, string id)
+        public TelemetryRecord(string index)
         {
-            this.index = new TelemetryIndex() {  _index = index, _type = type, _id = id};
+            // ToLower() is required for elastic index
+            this.index = new TelemetryIndex() {  _index = index.ToLower() , _id = Guid.NewGuid().ToString()};
         }
     }
 }
