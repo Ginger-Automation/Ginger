@@ -96,7 +96,8 @@ namespace GingerPluginCore
             string LocalHostIP = string.Empty;
             IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
             List<IPAddress> IPList = ipEntry.AddressList.ToList();
-            Console.WriteLine("Number of IP Addresses Found: " + IPList.Count);
+
+            // Console.WriteLine("Number of IP Addresses Found: " + IPList.Count);
 
             if (IPList.Count() == 1)
             {
@@ -109,7 +110,7 @@ namespace GingerPluginCore
                 foreach (IPAddress ip in IPList)
                 {
                     i++;
-                    Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
+                    // Console.WriteLine("IP Address [" + i + "] : " + ip.ToString());
 
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {

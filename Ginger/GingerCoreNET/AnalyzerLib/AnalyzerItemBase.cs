@@ -58,12 +58,30 @@ namespace Ginger.AnalyzerLib
             Info = 3
         }
 
+
+        public enum eIssueCategory
+        {
+            MissingVariable = 1,
+            VaribleUnused = 2            
+        }
+
         public enum eCheckType
         {
             Yes = 1,
             No = 2,
             Maybe = 3
         }
+        /// <summary>
+        /// Category of issue e.g. missing variable or missing flow control
+        /// </summary>
+        public eIssueCategory IssueCategory { get; set; }
+
+        /// <summary>
+        /// Object reference which is the root of the issue 
+        /// e.g. variable name in case of missing variable issue
+        /// or Flow control which is missing configuration etc.
+        /// </summary>
+        public object IssueReferenceObject { get; set; }
 
         private bool mSelected;
         public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
