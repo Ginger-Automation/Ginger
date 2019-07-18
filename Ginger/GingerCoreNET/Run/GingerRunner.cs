@@ -1811,7 +1811,7 @@ namespace Ginger.Run
                             {
                                 GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
                                 if (GNI != null)
-                                {
+                                {                                    
                                     ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
                                 }
                             }
@@ -1969,6 +1969,7 @@ namespace Ginger.Run
             }
 
             ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
+            ((Agent)AA.Agent).ProjEnvironment = ProjEnvironment;
             // Verify the Agent for the action is running 
             Agent.eStatus agentStatus = ((Agent)AA.Agent).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)

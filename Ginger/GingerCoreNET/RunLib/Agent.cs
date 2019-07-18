@@ -651,20 +651,24 @@ namespace GingerCore
                         // this is plugin driver
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-                        GingerNodeProxy.CloseDriver();
+                        GingerNodeProxy.CloseDriver();                        
+
 
                         gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
                       
                    
-                        if (mProcess != null)
-                        {
-                            // mProcess.Kill();
-                            //mProcess.Close();
-                            //GingerCore.General.DoEvents();
+                        if (mProcess != null) // it means a new plugin process was started for this agent - so we close it
+                        {                            
+                            // Remove the node from the grid
+                            WorkSpace.Instance.LocalGingerGrid.NodeList.Remove(gingerNodeInfo);
+
+                            // Close the plugin process
                             mProcess.CloseMainWindow();
                         }
+
+                        GingerNodeProxy = null;
                         gingerNodeInfo = null;
-                        // GNP.Shutdown();
+                        
                         return;
                     }
                 }
