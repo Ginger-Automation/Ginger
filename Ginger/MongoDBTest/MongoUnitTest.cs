@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using MongoDB;
 using System;
+using System.Data;
 
 namespace MongoDBTest
 {
@@ -99,13 +100,13 @@ namespace MongoDBTest
         public void DBQuery()
         {
             //Arrange
-            List<object> result = null;
+            DataTable result = null;
 
             //Act
             result = db.DBQuery("db.mycollection.count");
 
             //Assert
-            Assert.AreEqual(result.Count, 16);
+            Assert.AreEqual(result.Rows.Count, 16);
         }
 
         [TestMethod]

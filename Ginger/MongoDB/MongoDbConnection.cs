@@ -66,10 +66,11 @@ namespace MongoDB
             }
             return queryParameterValue;
         }
-        public List<object> DBQuery(string Query)
+        public DataTable DBQuery(string Query)
         {
             collectionName = GetCollectionName(Query);
             var DB = mMongoClient.GetDatabase(DbName);
+            DataTable dt = new DataTable();
             var collection = DB.GetCollection<BsonDocument>(collectionName);
             List<object> list = new List<object>();
             if (Query.Contains("insertMany"))
@@ -96,13 +97,14 @@ namespace MongoDB
                 Sort(BsonDocument.Parse(GetQueryParamater(Query, "sort"))).
                 Limit(Convert.ToInt32(GetQueryParamater(Query, "limit"))).
                 ToList();
-                list = result.Cast<object>().ToList();
-                var obj = result.ToJson();
                 
+                var json=result.ToJson();
+                dt = (DataTable)JsonConvert.DeserializeObject(json, (typeof(DataTable)));
+
                 //Act.ParseJSONToOutputValues(obj.ToString(), 1);
             }
-
-            return list;
+            
+            return dt;
         }
 
         [Obsolete]

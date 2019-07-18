@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="TestHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\TestHelper.0.0.2\lib\TestHelper.dll</HintPath>
     </Reference>
@@ -60,7 +61,6 @@
   <ItemGroup>
     <Compile Include="DataBaseUnitTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
-    <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

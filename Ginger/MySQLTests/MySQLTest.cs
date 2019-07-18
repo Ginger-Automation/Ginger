@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MySQLDatabase;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace MySQLTests
 {
@@ -98,13 +99,13 @@ namespace MySQLTests
         public void DBQuery()
         {
             //Arrange
-            List<object> result = null;
+            DataTable result = null;
 
             //Act
             result = db.DBQuery("SELECT * FROM authors");
 
             //Assert
-            Assert.AreEqual(result.Count, 2);
+            Assert.AreEqual(result.Rows.Count, 3);
         }
 
         [TestMethod]

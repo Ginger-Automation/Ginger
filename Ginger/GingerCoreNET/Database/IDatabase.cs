@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET
@@ -12,7 +13,7 @@ namespace Amdocs.Ginger.CoreNET
         List<string> GetTablesColumns(string table);
         string RunUpdateCommand(string updateCmd, bool commit = true);
         string GetSingleValue(string Table, string Column, string Where);
-        List<object> DBQuery(string Query); //  int? timeout = null : TODO // Return Datatable 
+        DataTable DBQuery(string Query); //  int? timeout = null : TODO // Return Datatable 
         int GetRecordCount(string Query);
 
         //string GetConnectionString();

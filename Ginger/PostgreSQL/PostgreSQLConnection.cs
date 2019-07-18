@@ -84,13 +84,14 @@ namespace PostgreSQL
             }
         }
 
-        public List<object> DBQuery(string Query)
+        public DataTable DBQuery(string Query)
         {
+            
             List<string> Headers = new List<string>();
             List<List<string>> Records = new List<List<string>>();
             bool IsConnected = false;
             List<object> ReturnList = new List<object>();
-
+            DataTable dataTable = new DataTable();
             DbDataReader reader = null;
             try
             {
@@ -100,7 +101,8 @@ namespace PostgreSQL
                 {
                     DbCommand command = oConn.CreateCommand();
                     command.CommandText = Query;
-                   
+                    command.CommandType = CommandType.Text;
+
                     // Retrieve the data.
                     reader = command.ExecuteReader();
 
@@ -108,6 +110,7 @@ namespace PostgreSQL
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
                         Headers.Add(reader.GetName(i));
+                        dataTable.Columns.Add(reader.GetName(i));
                     }
 
                     while (reader.Read())
@@ -119,6 +122,7 @@ namespace PostgreSQL
                             record.Add(reader[i].ToString());
                         }
                         Records.Add(record);
+                        dataTable.Rows.Add(record);
                     }
 
                     ReturnList.Add(Headers);
@@ -135,7 +139,8 @@ namespace PostgreSQL
                 if (reader != null)
                     reader.Close();
             }
-            return ReturnList; 
+
+            return dataTable;
         }
 
         public int GetRecordCount(string Query)

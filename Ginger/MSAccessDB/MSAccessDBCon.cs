@@ -41,14 +41,14 @@ namespace MSAccessDB
             }
         }
 
-        public List<object> DBQuery(string Query)
+        public DataTable DBQuery(string Query)
         {
             MakeSureConnectionIsOpen();
             List<string> Headers = new List<string>();
             List<List<string>> Records = new List<List<string>>();
             bool IsConnected = false;
             List<object> ReturnList = new List<object>();
-
+            DataTable dataTable = new DataTable();
             DbDataReader reader = null;
             try
             {
@@ -67,6 +67,7 @@ namespace MSAccessDB
                     for (int i = 0; i < reader.FieldCount; i++)
                     {
                         Headers.Add(reader.GetName(i));
+                        dataTable.Columns.Add(reader.GetName(i));
                     }
 
                     while (reader.Read())
@@ -78,6 +79,7 @@ namespace MSAccessDB
                             record.Add(reader[i].ToString());
                         }
                         Records.Add(record);
+                        dataTable.Rows.Add(record);
                     }
 
                     ReturnList.Add(Headers);
@@ -94,7 +96,8 @@ namespace MSAccessDB
                 if (reader != null)
                     reader.Close();
             }
-            return ReturnList;
+            
+            return dataTable;
         }
        
         public string GetConnectionString(Dictionary<string,string> parameters)

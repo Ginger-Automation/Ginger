@@ -22,6 +22,7 @@ using MSAccessDB;
 using System.Collections.Generic;
 using System;
 using GingerTestHelper;
+using System.Data;
 
 namespace GingerCoreNETUnitTest.Database
 {
@@ -130,13 +131,13 @@ namespace GingerCoreNETUnitTest.Database
         public void DBQuery()
         {
             //Arrange
-            List<object> result = null;
+            DataTable result = null;
             
             //Act
             result = db.DBQuery("Select * from Person");
             
             //Assert
-            Assert.AreEqual(2,result.Count);
+            Assert.AreEqual(2,result.Rows.Count);
         }
 
         [TestMethod]
