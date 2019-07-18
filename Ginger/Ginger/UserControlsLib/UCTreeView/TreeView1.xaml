@@ -18,7 +18,7 @@
         <!--Title Section-->
         <DockPanel Grid.Row="0" VerticalAlignment="Center" x:Name="xTitleSection">
             <StackPanel x:Name="xTreeItemHeaderPnl" Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,5,5,0">
-                <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Margin="0,10,0,0" MaxHeight="32"/>
+                <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,10,0,0" MaxHeight="32"/>
                 <Label x:Name="xTreeTitle" Content="Item Name" FontSize="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" />
             </StackPanel>
             <DockPanel x:Name="xTreeActionsIconsPnl" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="50">

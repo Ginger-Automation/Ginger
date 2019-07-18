@@ -21,7 +21,11 @@
             <ColumnDefinition Width="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="BusinessFlow" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+        <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="BusinessFlow" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,-5,0,0">
+            <UserControls:ImageMakerControl.ToolTip>
+                <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+            </UserControls:ImageMakerControl.ToolTip>
+        </UserControls:ImageMakerControl>
         <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Business Flow Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
         <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
 

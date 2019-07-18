@@ -1,23 +1,10 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.Agents;
-using Ginger.BusinessFlowPages_New;
-using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
-using GingerCore.DataSource;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -170,7 +157,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if(mSharedRepositoryNavPage == null)
             {
                 mSharedRepositoryNavPage = new SharedRepositoryNavPage(mContext);
-                mSharedRepositoryNavPage.ShowVariablesRepository = Visibility.Collapsed;
             }
             LoadActionFrame(mSharedRepositoryNavPage, "Shared Repository", eImageType.SharedRepositoryItem); // WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>()));
         }

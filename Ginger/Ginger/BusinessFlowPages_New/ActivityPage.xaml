@@ -22,7 +22,11 @@
             <ColumnDefinition Width="550"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+        <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}">
+            <usercontrols:ImageMakerControl.ToolTip>
+                <GingerCore:ucTextDicResource Text="[Activity]"/>
+            </usercontrols:ImageMakerControl.ToolTip>
+        </usercontrols:ImageMakerControl>
         <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
         <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
         <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC"  Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"/>
@@ -84,7 +88,7 @@
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
-                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" ImageToolTip="" />
                             <TextBlock x:Name="xActionsTabHeaderText" Text="Actions (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>

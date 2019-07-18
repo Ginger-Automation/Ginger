@@ -30,6 +30,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         List<ListItemOperation> GetListExtraOperations();
 
+        List<ListItemNotification> GetItemGroupNotificationsList();
+
         List<ListItemGroupOperation> GetItemGroupOperationsList();
 
         ListItemUniqueIdentifier GetItemUniqueIdentifier(object item);

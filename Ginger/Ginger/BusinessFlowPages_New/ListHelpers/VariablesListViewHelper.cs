@@ -417,6 +417,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return null;
         }
 
+        public List<ListItemNotification> GetItemGroupNotificationsList()
+        {
+            return null;
+        }
+
         public List<ListItemGroupOperation> GetItemGroupOperationsList()
         {
             return null;

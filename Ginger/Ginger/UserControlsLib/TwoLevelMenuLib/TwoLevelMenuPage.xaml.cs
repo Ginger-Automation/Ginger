@@ -198,7 +198,7 @@ namespace Ginger.GeneralWindows
                         }
                         else
                         {
-                            ((ImageMakerControl)stack.Children[0]).Foreground = defualtForeground;
+                            ((ImageMakerControl)stack.Children[0]).Foreground = (Brush)Application.Current.Resources["$BackgroundColor_DarkGray"]; 
                             ((Label)stack.Children[1]).Foreground = defualtForeground;
                         }                       
                     }                    

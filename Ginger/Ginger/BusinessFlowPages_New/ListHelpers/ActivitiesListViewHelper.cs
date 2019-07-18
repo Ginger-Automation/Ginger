@@ -396,6 +396,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return executionOperationsList;
         }
 
+        public List<ListItemNotification> GetItemGroupNotificationsList()
+        {
+            return null;
+        }
+
         public List<ListItemGroupOperation> GetItemGroupOperationsList()
         {
             List<ListItemGroupOperation> groupOperationsList = new List<ListItemGroupOperation>();
@@ -668,8 +673,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void AddGroupToSRHandler(object sender, RoutedEventArgs e)
         {
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             list.Add(activitiesGroup);
+            foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                list.Add(activityIdnt.IdentifiedActivity);
+            }
+
             (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
         }
 
@@ -872,6 +883,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
             return list;
         }
+
     }
 
     public class ActivityListItemEventArgs

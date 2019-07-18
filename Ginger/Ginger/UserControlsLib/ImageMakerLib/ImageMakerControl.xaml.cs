@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.UserControls
         // Icon Property
         // We list all available icons for Ginger, this icons can be resized and will automatically match
         public static readonly DependencyProperty ImageTypeProperty = DependencyProperty.Register("ImageType", typeof(eImageType), typeof(ImageMakerControl),
-                        new FrameworkPropertyMetadata(eImageType.Unknown, OnIconPropertyChanged));
+                        new FrameworkPropertyMetadata(eImageType.Null, OnIconPropertyChanged));
 
         private static void OnIconPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

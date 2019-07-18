@@ -40,7 +40,7 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
         BusinessFlow mBusinessFlow;
-        Context mContext = new Context();
+        Context mContext ;
 
         public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow)
         {

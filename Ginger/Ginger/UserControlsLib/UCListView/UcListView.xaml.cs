@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -583,27 +584,18 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         void IDragDrop.StartDrag(DragInfo Info)
-        {
+        {            
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
-            //var row = (DataGridRow)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
-            var row = (ListViewItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
-
-            if (row != null)
+            Info.DragSource = this;
+            if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is ListViewItem)
             {
-                //no drag if we are in the middle of Edit
-                //if (row.is) return;
-
-                // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
-                //if (Info.OriginalSource.GetType() != typeof(TextBlock))
-                //{
-                //    return;
-                //}
-
-                Info.DragSource = this;
-                Info.Data = row.Content;
-                //TODO: Do not use REpo since it will move to UserControls2
-                // Each object dragged should override ToString to return nice text for header                
-                Info.Header = row.Content.ToString();
+                Info.Data = ((ListViewItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource)).Content;
+                Info.Header = Info.Data.ToString();
+            }
+            else if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is GroupItem)
+            {
+                Info.Data = ((GroupItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource)).Content;
+                Info.Header = Info.Data.GetType().GetProperty("Name").GetValue(Info.Data).ToString();
             }
         }
 
@@ -671,6 +663,53 @@ namespace Ginger.UserControlsLib.UCListView
             mGroupView.GroupDescriptions.Add(groupDescription);
         }
 
+        private void SetGroupNotifications(DockPanel panel)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList();
+                if (notifications != null && notifications.Count > 0)
+                {
+                    panel.Visibility = Visibility.Visible;
+                    foreach (ListItemNotification notification in notifications)
+                    {
+                        ImageMakerControl itemInd = new ImageMakerControl();
+                        itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
+                        itemInd.ImageType = notification.ImageType;
+                        itemInd.ToolTip = notification.ToolTip;
+                        itemInd.Margin = new Thickness(3, 0, 3, 0);
+                        itemInd.Height = 16;
+                        itemInd.Width = 16;
+                        itemInd.SetAsFontImageWithSize = notification.ImageSize;
+
+                        if (notification.ImageForeground == null)
+                        {
+                            itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
+                        }
+                        else
+                        {
+                            itemInd.ImageForeground = notification.ImageForeground;
+                        }
+
+                        if (notification.BindingConverter == null)
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
+                        }
+                        else
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                        }
+
+                        panel.Children.Add(itemInd);
+                    }
+                }
+                else
+                {
+                    panel.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
         private void SetGroupOperations(Menu menu)
         {
             List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
@@ -736,6 +775,11 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetGroupOperations((Menu)sender);
             }
+        }
+
+        private void XGroupNotificationsPnl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetGroupNotifications((DockPanel)sender);
         }
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
@@ -815,6 +859,8 @@ namespace Ginger.UserControlsLib.UCListView
         {
             PasteItemEvent?.Invoke(new PasteItemEventArgs(pasteType, item));
         }
+
+
     }
 
     public class UcListViewEventArgs

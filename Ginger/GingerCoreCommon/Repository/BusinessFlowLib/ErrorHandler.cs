@@ -57,9 +57,9 @@ namespace GingerCore
                 switch (HandlerType)
                 {
                     case eHandlerType.Popup_Handler:
-                        return "Pop Up Handler";
+                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler");
                     default:
-                        return "Error Handler";
+                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Error Handler");
                 }
             }
         }

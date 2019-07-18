@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Activities;
+using Ginger.BusinessFlowPages;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
@@ -30,6 +31,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Repository
 {
@@ -38,19 +40,17 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesGroupsRepositoryPage : Page
     {
-        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
-        BusinessFlow mBusinessFlow;        
+        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;      
         bool mInTreeModeView = false;
 
-        Context mContext = new Context();
+        Context mContext = null;
 
-        public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder,  BusinessFlow businessFlow = null)
+        public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder, Context context)
         {
             InitializeComponent();
 
-            mActivitiesGroupFolder = activitiesGroupFolder;           
-            mBusinessFlow = businessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
+            mActivitiesGroupFolder = activitiesGroupFolder;
+            mContext = context;
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -70,8 +70,6 @@ namespace Ginger.Repository
 
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            mBusinessFlow = bf;
-            mContext.BusinessFlow = mBusinessFlow;
             xActivitiesGroupsRepositoryGrid.ClearFilters();
         }
 
@@ -103,31 +101,16 @@ namespace Ginger.Repository
             {
                 if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItems != null && xActivitiesGroupsRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    if (mBusinessFlow == null)
+                    if (mContext.BusinessFlow == null)
                     {
                         return;
                     }
-
+                    List<ActivitiesGroup> list = new List<ActivitiesGroup>();
                     foreach (ActivitiesGroup selectedItem in xActivitiesGroupsRepositoryGrid.Grid.SelectedItems)
-                    {                       
-                        ActivitiesGroup droppedGroupIns = (ActivitiesGroup)selectedItem.CreateInstance(true);
-                        mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
-                        ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
-                        
-                        int selectedActIndex = -1;
-                        ObservableList<ActivitiesGroup> actsList = mBusinessFlow.ActivitiesGroups;
-                        if (actsList.CurrentItem != null)
-                        {
-                            selectedActIndex = actsList.IndexOf((ActivitiesGroup)actsList.CurrentItem);
-                        }
-                        if (selectedActIndex >= 0)
-                        {
-                            actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-
-                        }
+                    {                        
+                        list.Add(selectedItem);                        
                     }
-                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                    ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
                 }
                 else
                 {
@@ -162,29 +145,49 @@ namespace Ginger.Repository
 
         private void grdActivitiesGroupsRepository_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup))
+                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(CollectionViewGroup)))
             {
                 // OK to drop                         
                 DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
-            }
+            }            
         }
 
         private void grdActivitiesGroupsRepository_ItemDropped(object sender, EventArgs e)
         {
-            ActivitiesGroup dragedItem = (ActivitiesGroup)((DragInfo)sender).Data;
-            if (dragedItem != null)
+            try
             {
-                //add the Group to repository
-                // App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, mBusinessFlow);
-                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
-                //refresh and select the item
-                try
+                ActivitiesGroup dragedItem = null;
+
+                if (((DragInfo)sender).Data is ActivitiesGroup)
                 {
+                    dragedItem = (ActivitiesGroup)((DragInfo)sender).Data;
+                }
+                else if (((DragInfo)sender).Data is CollectionViewGroup)
+                {
+                    dragedItem = mContext.BusinessFlow.ActivitiesGroups.Where(x=>x.Name == ((DragInfo)sender).Header).FirstOrDefault();
+                }
+
+                if (dragedItem != null)
+                {
+                    //add the Group and it Activities to repository                    
+                    List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+                    list.Add(dragedItem);
+                    foreach (ActivityIdentifiers activityIdnt in dragedItem.ActivitiesIdentifiers)
+                    {
+                        list.Add(activityIdnt.IdentifiedActivity);
+                    }
+                    (new SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+
+                    //refresh and select the item
                     ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
                         xActivitiesGroupsRepositoryGrid.Grid.SelectedItem = dragedItemInGrid;
                 }
-                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to drop Activities Group into Sahred Repository", ex);
             }
         }
 

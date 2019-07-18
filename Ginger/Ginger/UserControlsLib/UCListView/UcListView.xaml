@@ -16,11 +16,11 @@
         </Grid.RowDefinitions>
         
         <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
-            <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click" />
+            <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click"  />
 
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
-                <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Unknown"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip=""/>
-                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="10,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+                <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Null"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left" ImageToolTip="" ImageForeground="{StaticResource $BackgroundColor_DarkGray}"/>
+                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
                 <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
 
@@ -74,6 +74,7 @@
                                                             <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" Margin="0,0,0,0">)</TextBlock>
                                                         </StackPanel>
                                                     </DockPanel>
+                                                    <DockPanel x:Name="xGroupNotificationsPnl" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
                                                     <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" ToolTip="Group Operations" >
                                                         <MenuItem Cursor="Hand">
                                                             <MenuItem.Icon>
