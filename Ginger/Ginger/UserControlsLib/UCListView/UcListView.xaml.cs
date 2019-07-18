@@ -782,7 +782,10 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XGroupNotificationsPnl_Loaded(object sender, RoutedEventArgs e)
         {
-            SetGroupNotifications((DockPanel)sender);
+            if (((DockPanel)sender).Children.Count == 0)
+            {
+                SetGroupNotifications((DockPanel)sender);
+            }
         }
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)

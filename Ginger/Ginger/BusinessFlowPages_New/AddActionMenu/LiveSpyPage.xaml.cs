@@ -1,42 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
-using Ginger.Drivers.PowerBuilder;
 using Ginger.UserControls;
 using Ginger.WindowExplorer;
-using Ginger.WindowExplorer.Appium;
-using Ginger.WindowExplorer.HTMLCommon;
-using Ginger.WindowExplorer.Java;
-using Ginger.WindowExplorer.Windows;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Common;
-using GingerCore.Drivers.JavaDriverLib;
-using GingerCore.Drivers.PBDriver;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -96,52 +73,58 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         void AgentBasedManipulations()
         {
-            if (mContext.Agent != null)
+            this.Dispatcher.Invoke(() =>
             {
-                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-
                 if (mContext.Agent != null)
-                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-                if (isAgentRunning)
                 {
-                    xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;
+                    bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
 
-                    if (ControlPropertiesGrid.DataSourceList != null)
-                    {
-                        ControlPropertiesGrid.Visibility = Visibility.Visible;
-                    }
+                    if (mContext.Agent != null)
+                        mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
 
-                    if ((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
-                        && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
+                    if (isAgentRunning)
                     {
-                        xSpyingButton.IsEnabled = true;
+                        xStartAgentMessage.Visibility = Visibility.Collapsed;
+                        xWinGridUC.IsEnabled = true;
+
+                        if (ControlPropertiesGrid.DataSourceList != null)
+                        {
+                            ControlPropertiesGrid.Visibility = Visibility.Visible;
+                        }
+
+                        if ((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
+                            && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
+                        {
+                            xSpyingButton.IsEnabled = true;
+                        }
                     }
                 }
-            }
+            });
         }
 
         /// <summary>
         /// This method will set the explorer page to be fit in new right panel
         /// </summary>
         /// <param name="windowExplorerDriver"></param>
-        public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
+        public void SetLiveSpyForNewPanel(IWindowExplorer windowExplorerDriver)
         {
-            if (mWindowExplorerDriver != windowExplorerDriver)
+            this.Dispatcher.Invoke(() =>
             {
-                mWindowExplorerDriver = windowExplorerDriver;
-                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
-            }
-            else if(windowExplorerDriver == null)
-            {
-                xWinGridUC.WindowsComboBox.ItemsSource = null;
-            }
+                if (mWindowExplorerDriver != windowExplorerDriver)
+                {
+                    mWindowExplorerDriver = windowExplorerDriver;
+                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                }
+                else if (windowExplorerDriver == null)
+                {
+                    xWinGridUC.WindowsComboBox.ItemsSource = null;
+                }
 
-            if (windowExplorerDriver != null && xWinGridUC.WindowsComboBox.ItemsSource == null)
-            {
-                xWinGridUC.UpdateWindowsList();
-            }
+                if (windowExplorerDriver != null && xWinGridUC.WindowsComboBox.ItemsSource == null)
+                {
+                    xWinGridUC.UpdateWindowsList();
+                }
+            });
         }
 
         /// <summary>
@@ -155,10 +138,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 InitMethod();
                 AgentBasedManipulations();
-                if (xWinGridUC.mWindowExplorerDriver == null)
+                this.Dispatcher.Invoke(() =>
                 {
-                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                }
+                    if (xWinGridUC.mWindowExplorerDriver == null)
+                    {
+                        xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                    }
+                });
             }
         }
 

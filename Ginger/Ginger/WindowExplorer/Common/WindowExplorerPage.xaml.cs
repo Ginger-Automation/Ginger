@@ -155,9 +155,12 @@ namespace Ginger.WindowExplorer
         /// <param name="windowExplorerDriver"></param>
         public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
         {
-            RecordingButton.Visibility = Visibility.Collapsed;
-            mWindowExplorerDriver = windowExplorerDriver;
-            UpdateWindowsList();
+            this.Dispatcher.Invoke(() =>
+            {
+                RecordingButton.Visibility = Visibility.Collapsed;
+                mWindowExplorerDriver = windowExplorerDriver;
+                UpdateWindowsList();
+            });
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
