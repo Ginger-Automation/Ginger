@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 if 
                     (mSessionFileName == null)
                 {
-                    mSessionFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss");
+                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
                 }                
                 return mSessionFileName;
             }
@@ -200,21 +200,24 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
         }
 
-        
+        object locker = new object();
 
         public void SaveTelemetry(string entityType, object data)
         {
-            //TODO: run on task
-            // save to same file
-            // lock for multi thread when writing to same file
-
+            //TODO: run on task so go back fast                
+            // add to mem - write later
             TelemetryRecord telemetryRecord = new TelemetryRecord(entityType) ;
             
-            string txt = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
-            txt += JsonConvert.SerializeObject(data) + Environment.NewLine; 
-
-            string fileName = Path.Combine(TelemetryDataFolder, sessionFileName);
-            File.AppendAllText(fileName, txt);
+            string indexHeader = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
+            string objJSON = JsonConvert.SerializeObject(data);
+            // Add timestamp and uguid + session guid
+            string controlfields = "\"timestamp\":\"" + Time + "\",\"session\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
+            string fullobj = indexHeader + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+                        
+            lock(locker)  // in case we have multi thread
+            {
+                File.AppendAllText(sessionFileName, fullobj);
+            }
         }
 
 
