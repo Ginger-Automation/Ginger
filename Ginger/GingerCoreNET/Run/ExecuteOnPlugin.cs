@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Run
     {
 
         // keep list of GNI for Plugin which are session
-        static Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
+        static Dictionary<string, GingerNodeInfo> SessionsNodes = new Dictionary<string, GingerNodeInfo>();
 
         internal static GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
@@ -62,16 +62,16 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
-            bool DoStartSession = false;
+            bool DoStartSession = false;            
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(PluginId, ServiceID);
             GingerNodeInfo gingerNodeInfo;
-            string key = PluginId + "." + ServiceID;
+            string key = PluginId + "." + ServiceID;   
 
             Console.WriteLine("Plugin Key:" + key);
 
             if (IsSessionService)
             {
-                bool found = dic.TryGetValue(key, out gingerNodeInfo);
+                bool found = SessionsNodes.TryGetValue(key, out gingerNodeInfo);
                 if (found)
                 {
                     if (gingerNodeInfo.IsAlive())
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     }
                     else
                     {
-                        dic.Remove(key);
+                        SessionsNodes.Remove(key);
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 GNP.StartDriver(DriverConfiguration);
-                dic.Add(key, gingerNodeInfo);
+                SessionsNodes.Add(key, gingerNodeInfo);
             }
 
             return gingerNodeInfo;
@@ -180,6 +180,10 @@ namespace Amdocs.Ginger.CoreNET.Run
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
         {                        
             NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
+
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);

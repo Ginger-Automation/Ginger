@@ -200,5 +200,9 @@ namespace GingerCore.Variables
           
             return supportedOperations;
         }
+
+        public override bool SupportResetValue { get { return false; } }
+
+        public override bool SupportAutoValue { get { return true; } }
     }
 }

@@ -40,7 +40,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             AppApiModelsFolderTreeItem mAPIsRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
             mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
-                                        new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
+                                        new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
@@ -60,9 +60,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdateAPITree()
         {
-            mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) 
-                                                                + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
-            mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            if (mContext.Activity != null)
+            {
+                mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey)
+                                                                    + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
+                mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+            }
             mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
     }

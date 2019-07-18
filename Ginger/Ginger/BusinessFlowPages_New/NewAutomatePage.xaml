@@ -7,7 +7,7 @@
         xmlns:local1="clr-namespace:GingerWPF.GeneralLib"       
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
-        d:DesignHeight="800" d:DesignWidth="1200"
+        d:DesignHeight="800" d:DesignWidth="1500"
         Title="AutomatePage">
     
     <Page.Resources>
@@ -51,21 +51,27 @@
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <!--<UserControls:ucButton x:Name="xResetFlowBtn" ToolTip="Reset Execution Details" ButtonType="RoundTextAndImageButton" ButtonText="Reset" ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xResetFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>-->
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
+                <!--<GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>-->
 
-                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
                     <StackPanel VerticalAlignment="Center" >
                         <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
                         <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" />
+                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
+                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                    <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
                 </StackPanel>
 
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
@@ -120,6 +126,14 @@
                                     <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
                                 </MenuItem.Header>
                             </MenuItem>
+                            <!--<MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Produce Last Executed Item Report" />
+                                </MenuItem.Header>
+                            </MenuItem>-->
                             <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
@@ -128,12 +142,56 @@
                                     <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Report" />
                                 </MenuItem.Header>
                             </MenuItem>
+                            <MenuItem x:Name="xTimelineReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xTimelineReportMenuItem_Click" Visibility="Collapsed">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Timer" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Timeline Report" />
+                                </MenuItem.Header>
+                            </MenuItem>
                             <MenuItem x:Name="xAutoReportConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoReportConfigMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+
+
+                    <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options">
+                        <MenuItem Cursor="Hand">
+                            <MenuItem.Icon>
+                                <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Header>
+                            <MenuItem x:Name="xBDDGenerateScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDGenerateScenarioMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Action" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Generate Feature File Scenarios" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xBDDCleanScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDCleanScenariosMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Delete Feature File Scenarios" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xBDDOpenFeatureFileMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDOpenFeatureFileMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl  ImageType="Open" SetAsFontImageWithSize="13" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Open Linked Feature File" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>
@@ -159,20 +217,20 @@
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="ALM Operations" />
                                 </MenuItem.Header>
-                                <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
                                 <MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
                                     <MenuItem.Icon>
                                         <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
                                         <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
                                     </MenuItem.Header>
                                 </MenuItem>
                                 <MenuItem x:Name="xExportResultsToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportResultsToAlmMenuItem_Click">
@@ -189,78 +247,42 @@
                 </StackPanel>
             </DockPanel>
         </ScrollViewer>
-       
-
-        <!--<Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="0">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
-                    <GradientStop Color="DarkGray" Offset="0"/>
-                    <GradientStop Color="LightGray" Offset="0.6"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>-->
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
-                    <!--<TabItem.Header>
-                        <Border Style="{StaticResource $CoolTabBorderStyle}" Margin="-15,0,0,0">
-                            <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Activity" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock x:Name="xBfActiVitiesTabHeaderText" Text="Activities (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
-                            </DockPanel>
-                        </Border>
-                    </TabItem.Header>-->
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="400"/>
                             <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition x:Name="xAddActionsColumn" Width="10" MinWidth="10"/>
+                            <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
 
                         <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,0,0">
                             <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                         </Border>
 
-                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0">
-                            <!--<GridSplitter.Background>
-                                --><!--<LinearGradientBrush EndPoint="0,5" StartPoint="0,1">
-                                    <GradientStop Color="DarkGray" Offset="0.2"/>
-                                    <GradientStop Color="LightGray" Offset="0.2"/>
-                                </LinearGradientBrush>--><!--
-                            </GridSplitter.Background>-->
-                        </GridSplitter>
+                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
 
+                        <StackPanel x:Name="xCurrentActivityLoadingIconPnl" Grid.Column="1" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
+                            <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                        </StackPanel>
+                       
                         <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
-                        <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="10" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
+                        <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
 
-                        <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="10,0,0,0"/>
+                        <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="5,0,0,0"/>
                         <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
                     </Grid>
                 </TabItem>
 
                 <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0"  Visibility="Collapsed">
-                    <!--<TabItem.Header>
-                        <Border Style="{StaticResource $CoolTabBorderStyle}">
-                            <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Variable" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock x:Name="xBfVariablesTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
-                            </DockPanel>
-                        </Border>
-                    </TabItem.Header>-->
                     <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
                 <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0"  Visibility="Collapsed">
-                    <!--<TabItem.Header>
-                        <Border Style="{StaticResource $CoolTabBorderStyle}">
-                            <DockPanel >
-                                <UserControls:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Config" Width="20" Height="18" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" FontSize="18" />
-                            </DockPanel>
-                        </Border>
-                    </TabItem.Header>-->
                     <Frame x:Name="xBfConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
             </TabControl>

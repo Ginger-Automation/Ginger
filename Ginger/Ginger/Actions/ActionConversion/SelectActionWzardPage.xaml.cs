@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using static Ginger.ExtensionMethods;
 
@@ -56,9 +57,32 @@ namespace Ginger.Actions.ActionConversion
                 case EventType.Active:
                     Init();
                     break;
+                case EventType.LeavingForNextPage:
+                    SetSelectedActionsForConversion();
+                    break;
             }
         }
-        
+
+        /// <summary>
+        /// This method will update the selected actions for conversion
+        /// </summary>
+        private void SetSelectedActionsForConversion()
+        {
+            foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
+            {
+                if(act.Selected)
+                {
+                    foreach (var convertableAction in mWizard.ActionToBeConverted)
+                    {
+                        if(act.SourceActionTypeName == convertableAction.SourceActionTypeName && act.TargetActionTypeName == convertableAction.TargetActionTypeName)
+                        {
+                            convertableAction.Selected = act.Selected;
+                        }
+                    }
+                }
+            }
+        }
+
         private void Init()
         {
             // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
@@ -81,7 +105,7 @@ namespace Ginger.Actions.ActionConversion
                 mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
-                    xGridConvertibleActions.DataSourceList = mWizard.ActionToBeConverted;
+                    xGridConvertibleActions.DataSourceList = GetDistinctList(mWizard.ActionToBeConverted);
                     SetGridView();
                     return;
                 }
@@ -95,6 +119,25 @@ namespace Ginger.Actions.ActionConversion
             {
                 Reporter.ToUser(eUserMsgKey.NoActivitySelectedForConversion);
             }
+        }
+
+        /// <summary>
+        /// This method is used to get the distinct list
+        /// </summary>
+        /// <param name="actionToBeConverted"></param>
+        /// <returns></returns>
+        private IObservableList GetDistinctList(ObservableList<ConvertableActionDetails> actionToBeConverted)
+        {
+            ObservableList<ConvertableActionDetails> list = new ObservableList<ConvertableActionDetails>();
+            foreach (var act in actionToBeConverted)
+            {
+                ConvertableActionDetails det = list.Where(x => x.SourceActionTypeName == act.SourceActionTypeName && x.TargetActionTypeName == act.TargetActionTypeName).FirstOrDefault();
+                if (det == null)
+                {
+                    list.Add(act);
+                } 
+            }
+            return list;
         }
 
         private void SetGridView()

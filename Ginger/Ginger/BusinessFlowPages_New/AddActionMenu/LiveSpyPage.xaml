@@ -18,25 +18,25 @@
 
         <userControl:UCWindowsGrid x:Name="xWinGridUC" Grid.Row="0" AddSwitchActionRequired="True" />
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="45" />
+                <ColumnDefinition Width="360" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <ToggleButton x:Name="xSpyingButton" Grid.Row="0" HorizontalAlignment="Left" Click="SpyingButton_Click" ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" 
                       Width="36" Height="36" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" Margin="5,0,0,0">
                 <Image Source="{StaticResource @Spy_24x24}"/>
             </ToggleButton>
 
-            <TextBlock Name="StatusTextBlock" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="10" VerticalAlignment="Center" Width="Auto" Foreground="Red" />
+            <TextBlock Name="StatusTextBlock" Grid.Row="1" Grid.Column="0" Margin="0,3,15,0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Width="Auto" FontWeight="Bold" Foreground="Red" />
 
-            <Label x:Name="xStartAgentMessage"  Grid.Row="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+            <Label x:Name="xStartAgentMessage"  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
         </Grid>
         <!--Selected Control Details Area-->
         <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="2" Margin="0,5,0,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">

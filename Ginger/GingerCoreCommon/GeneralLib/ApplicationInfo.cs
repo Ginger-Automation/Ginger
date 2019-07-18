@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -39,17 +39,17 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mApplicationVersion == string.Empty)
                 {
-                    if (mFileVersionInfo.ProductPrivatePart != 0)//Alpha
+                    if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
-                        mApplicationVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, mFileVersionInfo.ProductBuildPart, mFileVersionInfo.ProductPrivatePart);
+                        mApplicationVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                     }
-                    else if (mFileVersionInfo.ProductBuildPart != 0)//Beta
+                    else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
-                        mApplicationVersion = string.Format("{0}.{1}.{2}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, mFileVersionInfo.ProductBuildPart);
+                        mApplicationVersion = string.Format("{0}.{1}.{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
                     }
                     else//Official Release
                     {
-                        mApplicationVersion = string.Format("{0}.{1}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart);
+                        mApplicationVersion = string.Format("{0}.{1}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart);
                     }
                 }
                 return mApplicationVersion;
@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mApplicationMajorVersion == string.Empty)
                 {
-                    mApplicationMajorVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, 0, 0);
+                    mApplicationMajorVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, 0, 0);
                 }
                 return mApplicationMajorVersion;
             }
@@ -76,14 +76,14 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mApplicationVersionWithInfo == string.Empty)
                 {
-                    if (mFileVersionInfo.ProductPrivatePart != 0)//Alpha
+                    if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, mFileVersionInfo.ProductBuildPart, mFileVersionInfo.ProductPrivatePart);
+                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                         mApplicationVersionWithInfo += "(Alpha, Build Time: " + ApplicationBuildTime.ToString("dd-MMM-yyyy hh:mm tt") + ")";                       
                     }
-                    else if (mFileVersionInfo.ProductBuildPart != 0)//Beta
+                    else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}", mFileVersionInfo.ProductMajorPart, mFileVersionInfo.ProductMinorPart, mFileVersionInfo.ProductBuildPart);
+                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
                         mApplicationVersionWithInfo += "(Beta, Build Date: " + ApplicationBuildTime.ToString("dd-MMM-yyyy") + ")";                       
                     }
                     else//Official Release

@@ -600,9 +600,13 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml.cs">
+      <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
       <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsFactory.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
@@ -618,7 +622,7 @@
     <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentMappingPage.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentPageMappingHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMBindingObjectHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
@@ -640,13 +644,13 @@
       <DependentUpon>AddActivityDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityWizard.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListViewHelper.cs" />
     <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListViewHelper.cs" />
     <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
     </Compile>
@@ -720,6 +724,9 @@
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ClipboardOperations\ClipboardOperationsHandler.cs" />
+    <Compile Include="UserControlsLib\ClipboardOperations\IClipboardOperations.cs" />
+    <Compile Include="UserControlsLib\ClipboardOperations\PasteItemEventArgs.cs" />
     <Compile Include="UserControlsLib\UcColorPickerList.xaml.cs">
       <DependentUpon>UcColorPickerList.xaml</DependentUpon>
     </Compile>
@@ -2122,6 +2129,7 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
@@ -3034,6 +3042,10 @@
     <Page Include="BusinessFlowPages_New\ActionsListViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
       <SubType>Designer</SubType>

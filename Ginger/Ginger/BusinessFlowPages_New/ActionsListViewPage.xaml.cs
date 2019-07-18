@@ -19,28 +19,24 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
+using Ginger;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
-using Ginger.ApiModelsFolder;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
-using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
+using System.Windows.Data;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -52,10 +48,12 @@ namespace GingerWPF.BusinessFlowsLib
         Activity mActivity;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        Act mActionBeenEdit;
 
-        ActionsListHelper mActionsListHelper;
+        ActionsListViewHelper mActionsListHelper;
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
+
 
         public UcListView ListView
         {
@@ -79,15 +77,21 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (actionToEdit != null)
             {
-                xBackToListPnl.Visibility = Visibility.Visible;
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ContentProperty, actionToEdit, nameof(Act.Description));
-                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, Label.ToolTipProperty, actionToEdit, nameof(Act.Description));
-                mActionEditPage = new ActionEditPage(actionToEdit, Ginger.General.eRIPageViewMode.Automation);//need to pass Context?
+                xBackToListGrid.Visibility = Visibility.Visible;
+                mActionBeenEdit = actionToEdit;                                
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
+                BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                mActionBeenEdit.Context = mContext;
+                mActionBeenEdit.SaveBackup();
+                mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
                 xMainFrame.Content = mActionEditPage;
             }
             else
             {
-                xBackToListPnl.Visibility = Visibility.Collapsed;
+                xBackToListGrid.Visibility = Visibility.Collapsed;
+                mActionBeenEdit = null;                
                 mActionEditPage = null;
                 xMainFrame.Content = mActionsListView;
             }
@@ -99,10 +103,11 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.Title = "Actions";
             mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListHelper(mContext, mPageViewMode);
+            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
             mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
             mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
+            mActionsListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListView.DataSourceList = mActivity.Acts;
 
             mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
@@ -114,8 +119,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (mActionsListView.CurrentItem != null)
-            {
-                (mActionsListView.CurrentItem as Act).Context = mContext;
+            {                
                 ShowHideEditPage((Act)mActionsListView.CurrentItem);
             }
         }
@@ -167,88 +171,8 @@ namespace GingerWPF.BusinessFlowsLib
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
             {
-                Act instance = null;
-                if (droppedItem is Act)
-                {
-                    Act a = droppedItem as Act;
-                    instance = (Act)a.CreateInstance(true);
-                }
-                else if (droppedItem is ElementInfo)
-                {
-                    ElementInfo elementInfo = droppedItem as ElementInfo;
-                    instance = GenerateRelatedAction(elementInfo);
-                }
-                else if (droppedItem is ApplicationPOMModel)
-                {
-                    ApplicationPOMModel currentPOM = droppedItem as ApplicationPOMModel;
-                    foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
-                    {
-                        HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
-                        instance = GenerateRelatedAction(htmlElementInfo);
-                        if (instance != null)
-                        {
-                            instance.Active = true;
-                            AddGeneratedAction(instance);
-                        }
-                    }
-                    instance = null;
-                }
-                else if (droppedItem is ApplicationAPIModel || droppedItem is RepositoryFolder<ApplicationAPIModel>)
-                {
-                    ObservableList<ApplicationAPIModel> apiModelsList = new ObservableList<ApplicationAPIModel>();
-                    if (droppedItem is RepositoryFolder<ApplicationAPIModel>)
-                    {
-                        apiModelsList = (droppedItem as RepositoryFolder<ApplicationAPIModel>).GetFolderItems();
-                        apiModelsList = new ObservableList<ApplicationAPIModel>(apiModelsList.Where(a => a.TargetApplicationKey != null && Convert.ToString(a.TargetApplicationKey.ItemName) == mContext.Target.ItemName));
-                    }
-                    else
-                    {
-                        apiModelsList.Add(droppedItem as ApplicationAPIModel);
-                    }
-
-                    AddApiModelActionWizardPage APIModelWizPage = new AddApiModelActionWizardPage(mContext, apiModelsList);
-                    WizardWindow.ShowWizard(APIModelWizPage);
-                }
-
-                if (instance != null)
-                {
-                    AddGeneratedAction(instance);
-                }
+                ActionsFactory.AddActionsHandler(droppedItem, mContext);
             }
-        }
-
-        private void AddGeneratedAction(Act instance)
-        {
-            mActivity.Acts.Add(instance);
-
-            int selectedActIndex = -1;
-            if (mActivity.Acts.CurrentItem != null)
-            {
-                selectedActIndex = mActivity.Acts.IndexOf((Act)mActivity.Acts.CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                mActivity.Acts.Move(mActivity.Acts.Count - 1, selectedActIndex + 1);
-            }
-        }
-
-        private Act GenerateRelatedAction(ElementInfo elementInfo)
-        {
-            Act instance;
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
-            ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-            {
-                LocateBy = eLocateBy.POMElement,
-                LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = "",
-                AddPOMToAction = true,
-                POMGuid = elementInfo.ParentGuid.ToString(),
-                ElementGuid = elementInfo.Guid.ToString(),
-                LearnedElementInfo = elementInfo,
-            };
-
-            instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);
-            return instance;
         }
 
         private void xGoToActionsList_Click(object sender, RoutedEventArgs e)
@@ -260,6 +184,76 @@ namespace GingerWPF.BusinessFlowsLib
         {
             ObservableList<Act> sharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
             SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mActivity.Acts, (IEnumerable<object>)sharedActions);
+        }
+
+        private void XUndoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
+            {
+                mActionBeenEdit.SaveBackup();
+            }
+        }
+
+        private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mActionsListView.List.Items.CurrentPosition >= 1)
+            {
+                mActionsListView.List.Items.MoveCurrentToPrevious();
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);                
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+            }
+        }
+
+        private void xNextActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mActionsListView.List.Items.CurrentPosition < mActionsListView.List.Items.Count - 1)
+            {
+                mActionsListView.List.Items.MoveCurrentToNext();
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+            }
+        }
+
+        private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, mActionBeenEdit));
+        }
+
+        private void xDeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDelete, mActionBeenEdit.Description) == eUserMsgSelection.Yes)
+            {
+                mActivity.Acts.Remove(mActionBeenEdit);
+                if (mActionsListView.List.Items.CurrentItem != null)
+                {
+                    ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                }
+                else
+                {
+                    ShowHideEditPage(null);
+                }
+            }
+        }
+
+        private void xActiveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.Active = !mActionBeenEdit.Active;
+        }
+
+        private void xBreakPointMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.BreakPoint = !mActionBeenEdit.BreakPoint;
+        }
+
+        private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            mActionBeenEdit.Reset();
         }
     }
 }

@@ -7,6 +7,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.Help;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
@@ -89,7 +90,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
             mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
-                                        new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication),
+                                        new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
@@ -116,13 +117,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdatePOMTree()
         {
-            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.BusinessFlow.CurrentActivity.TargetApplication);
+            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
             mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
 
         private void MainTreeView_ItemSelected(object sender, SelectionTreeEventArgs e)
         {
+            GridLength POMItemsSelected = new GridLength(1, GridUnitType.Auto);
+            GridLength POMDetailsPanelLoaded = new GridLength(100, GridUnitType.Star);
+
             if (e.SelectedItems != null && e.SelectedItems.Count == 1)
             {
                 mPOM = e.SelectedItems[0] as ApplicationPOMModel;
@@ -135,12 +139,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                     xMainElementsGrid.Visibility = Visibility.Visible;
                     xPOMSplitter.Visibility = Visibility.Visible;
+
+                    if (xPOMDetails.Height != POMDetailsPanelLoaded)
+                    {
+                        xPOMItems.Height = POMItemsSelected;
+                        xPOMDetails.Height = POMDetailsPanelLoaded;
+                    }
                 }
             }
             else
             {
                 xMainElementsGrid.Visibility = Visibility.Collapsed;
                 xPOMSplitter.Visibility = Visibility.Collapsed;
+                xPOMItems.Height = new GridLength(100, GridUnitType.Star);
+                xPOMDetails.Height = new GridLength(0);
             }
         }
 
@@ -171,25 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 foreach (ElementInfo elemInfo in xMainElementsGrid.Grid.SelectedItems)
                 {
-                    Act instance = GenerateRelatedAction(elemInfo);
-                    if (instance != null)
-                    {
-                        instance.Active = true;
-
-                    }
-                    mContext.BusinessFlow.AddAct(instance, true);
-                }
-
-                int selectedActIndex = -1;
-                ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-
+                    ActionsFactory.AddActionsHandler(elemInfo, mContext);
                 }
             }
             else

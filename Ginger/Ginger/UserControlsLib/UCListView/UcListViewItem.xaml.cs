@@ -6,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Linq;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -19,27 +20,6 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcListViewItem : UserControl, INotifyPropertyChanged
     {
-        //public static readonly DependencyProperty ParentListProperty = DependencyProperty.Register(nameof(ParentList), typeof(UcListView), typeof(UcListViewItem), new PropertyMetadata(null, new PropertyChangedCallback(OnParentListPropertyChanged)));
-        //public UcListView ParentList
-        //{
-        //    get
-        //    {
-        //        return (UcListView)GetValue(ParentListProperty);
-        //    }
-        //    set
-        //    {
-        //        SetValue(ParentListProperty, value);                                    
-        //    }
-        //}
-        //private static void OnParentListPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var control = d as UcListViewItem;
-        //    if (control != null && e.NewValue != null)
-        //    {
-        //        control.ParentList = ((UcListView)e.NewValue);
-        //    }
-        //}
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
@@ -109,10 +89,6 @@ namespace Ginger.UserControlsLib.UCListView
                 c.ListHelper = ((IListViewHelper)e.NewValue);
             }
         }
-
-        //object mItem;
-        //public object Item { get { return mItem; } }
-
         public string ItemNameField { get; set; }
         public string ItemDescriptionField { get; set; }
         public string ItemNameExtentionField { get; set; }
@@ -143,6 +119,13 @@ namespace Ginger.UserControlsLib.UCListView
                     ExpandItem();
                     break;
 
+                case UcListViewEventArgs.eEventType.ExpandItem:
+                    if (Item == EventArgs.EventObject)
+                    {
+                        ExpandItem();
+                    }
+                    break;
+
                 case UcListViewEventArgs.eEventType.CollapseAllItems:
                     CollapseItem();
                     break;
@@ -152,15 +135,6 @@ namespace Ginger.UserControlsLib.UCListView
                     break;
             }
         }
-
-        //public void ConfigItem(object item, string itemNameField, string itemDescriptionField, string itemIconField, string itemExecutionStatusField="", List<ListItemNotification> notifications = null)
-        //{
-        //    mItem = item;
-
-        //    ItemNameField = itemNameField;
-        //    ItemDescriptionField = itemDescriptionField;
-        //    ItemIconField = itemIconField;
-        //    ItemExecutionStatusField = itemExecutionStatusField;
         public void ConfigItem()
         {
             ItemNameField = ListHelper.GetItemNameField();
@@ -216,6 +190,7 @@ namespace Ginger.UserControlsLib.UCListView
                     foreach (ListItemNotification notification in notifications)
                     {
                         ImageMakerControl itemInd = new ImageMakerControl();
+                        itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
                         itemInd.ImageType = notification.ImageType;
                         itemInd.ToolTip = notification.ToolTip;
                         itemInd.Margin = new Thickness(3, 0, 3, 0);
@@ -256,14 +231,16 @@ namespace Ginger.UserControlsLib.UCListView
                 if (operations != null && operations.Count > 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in operations)
+                    foreach (ListItemOperation operation in operations.Where(x=>x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
+                        operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
                         operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
                         operationBtn.ButtonImageType = operation.ImageType;
                         operationBtn.ToolTip = operation.ToolTip;
                         operationBtn.Margin = new Thickness(-5, 0, -5, 0);
                         operationBtn.ButtonFontImageSize = operation.ImageSize;
+                        operationBtn.IsEnabled = operation.IsEnabeled;
 
                         if (operation.ImageForeground == null)
                         {
@@ -292,7 +269,8 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                else
+                
+                if (xItemOperationsPnl.Children.Count == 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
                 }
@@ -307,9 +285,10 @@ namespace Ginger.UserControlsLib.UCListView
                 if (extraOperations != null && extraOperations.Count > 0)
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in extraOperations)
+                    foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         MenuItem menuitem = new MenuItem();
+                        menuitem.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
                         menuitem.Style = (Style)FindResource("$MenuItemStyle");
                         ImageMakerControl iconImage = new ImageMakerControl();
                         iconImage.ImageType = operation.ImageType;
@@ -380,7 +359,8 @@ namespace Ginger.UserControlsLib.UCListView
                         }
                     }
                 }
-                else
+
+                if (((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Count == 0)
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
                 }
@@ -396,9 +376,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xOperationsSplitter.Visibility = Visibility.Visible;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in executionOperations)
+                    foreach (ListItemOperation operation in executionOperations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
+                        operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
                         operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.ImageButton;
                         operationBtn.ButtonImageType = operation.ImageType;
                         operationBtn.ToolTip = operation.ToolTip;
@@ -435,7 +416,8 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemExecutionOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                else
+
+                if (xItemExecutionOperationsPnl.Children.Count == 0)
                 {
                     xOperationsSplitter.Visibility = Visibility.Collapsed;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
@@ -603,7 +585,7 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
-                                FontSize = 12,
+                                FontSize = 11,
                                 Text = string.Format("[{0}]", group.ToString())
                             });
 

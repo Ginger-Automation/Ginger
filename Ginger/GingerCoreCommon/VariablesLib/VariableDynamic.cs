@@ -114,6 +114,10 @@ namespace GingerCore.Variables
 
         public override bool SupportSetValue { get { return true; } }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
+
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new NotImplementedException();

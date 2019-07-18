@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common.Enums;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -17,11 +18,13 @@ namespace Ginger.UserControlsLib.UCListView
         public object ImageBindingObject;
         public string ImageBindingFieldName;
         public IValueConverter ImageBindingConverter;
+        public bool IsEnabeled = true;
 
         public string ToolTip;
+        public string AutomationID;
 
         public RoutedEventHandler OperationHandler;
 
-
+        public List<General.eRIPageViewMode> SupportedViews = new List<General.eRIPageViewMode>();
     }
 }

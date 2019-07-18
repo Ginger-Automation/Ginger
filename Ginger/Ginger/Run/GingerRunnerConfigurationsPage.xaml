@@ -6,7 +6,7 @@
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Run.GingerRunnerConfigurationsPage" 
       mc:Ignorable="d" 
         xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Run"
-      Height="500" Width="500"
+      Height="350" Width="500"
 	Title="Runner Configurations">
 
     <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">

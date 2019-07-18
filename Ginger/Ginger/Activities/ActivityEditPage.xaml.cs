@@ -118,6 +118,13 @@ namespace Ginger.BusinessFlowWindows
                 actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.eRIPageViewMode.View, mContext);
                 SetViewMode();
             }
+
+            else if (editMode == General.eRIPageViewMode.SharedReposiotry)
+            {
+                varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity, mContext, General.eRIPageViewMode.SharedReposiotry);
+                actionsPage = new ActionsPage(mActivity, mActivityParentBusinessFlow, General.eRIPageViewMode.SharedReposiotry, mContext);
+            }
+
             else
             {
                 varbsPage = new VariablesPage(eVariablesLevel.Activity, mActivity,mContext,General.eRIPageViewMode.Child);

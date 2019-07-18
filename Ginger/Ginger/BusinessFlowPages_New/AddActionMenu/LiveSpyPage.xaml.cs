@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
 using Ginger.Drivers.PowerBuilder;
@@ -65,6 +66,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xWinGridUC.mContext = mContext;
             context.PropertyChanged += Context_PropertyChanged;
             InitMethod();
+            AgentBasedManipulations();
             InitWinGridUC();
             InitControlPropertiesGridView();
         }
@@ -84,19 +86,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void InitMethod()
         {
-            xWinGridUC.IsEnabled = false;
-            xSpyingButton.IsEnabled = false;
-            xStartAgentMessage.Visibility = Visibility.Visible;
-            ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+            this.Dispatcher.Invoke(() => {
+                xWinGridUC.IsEnabled = false;
+                xSpyingButton.IsEnabled = false;
+                xStartAgentMessage.Visibility = Visibility.Visible;
+                ControlPropertiesGrid.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        void AgentBasedManipulations()
+        {
             if (mContext.Agent != null)
             {
-                bool isAgentRunning = AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+
+                if (mContext.Agent != null)
+                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
                 if (isAgentRunning)
                 {
                     xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;                                       
+                    xWinGridUC.IsEnabled = true;
 
-                    if(ControlPropertiesGrid.DataSourceList != null)
+                    if (ControlPropertiesGrid.DataSourceList != null)
                     {
                         ControlPropertiesGrid.Visibility = Visibility.Visible;
                     }
@@ -121,6 +133,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 mWindowExplorerDriver = windowExplorerDriver;
                 xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
             }
+            else if(windowExplorerDriver == null)
+            {
+                xWinGridUC.WindowsComboBox.ItemsSource = null;
+            }
+
+            if (windowExplorerDriver != null && xWinGridUC.WindowsComboBox.ItemsSource == null)
+            {
+                xWinGridUC.UpdateWindowsList();
+            }
         }
 
         /// <summary>
@@ -130,9 +151,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus))
+            if (e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
             {
                 InitMethod();
+                AgentBasedManipulations();
                 if (xWinGridUC.mWindowExplorerDriver == null)
                 {
                     xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
@@ -199,17 +221,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (isSpying)
             {
                 xSpyingButton.ToolTip = "Stop Spying";
-                xSpyingButton.Background = Brushes.White;
+                xSpyingButton.Background = Brushes.DeepSkyBlue;
                 xSpyingButton.BorderThickness = new Thickness(2);
-                xSpyingButton.BorderBrush = Brushes.DeepSkyBlue;
                 StatusTextBlock.Text = "Spying...";
             }
             else
             {
-                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
                 StatusTextBlock.Text = "";
                 xSpyingButton.ToolTip = "Start Spying";
-                xSpyingButton.Background = Brushes.DeepSkyBlue;
+                xSpyingButton.Background = Brushes.Transparent;
             }
         }
 
@@ -306,7 +326,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             else
             {
                 SelectedControlDetailsExpander.Visibility = Visibility.Visible;
-                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementName + "' Element Details & Actions";
+                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementType + " : " + selectedElementInfo.ElementName + "' Element Details & Actions";
                 SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
                 SelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)

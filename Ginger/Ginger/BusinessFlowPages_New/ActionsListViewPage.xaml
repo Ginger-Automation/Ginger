@@ -10,18 +10,53 @@
       Title="ActionsListViewPage">
 
     <DockPanel>
-        <StackPanel x:Name="xBackToListPnl" Orientation="Horizontal" DockPanel.Dock="Top">
-            <UserControls:ucButton x:Name="xGoToActionsList" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToActionsList_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
-                <UserControls:ucButton.ToolTip>
-                    <GingerCore:ucTextDicResource Text="Back to Actions List"></GingerCore:ucTextDicResource>
-                </UserControls:ucButton.ToolTip>
-            </UserControls:ucButton>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
-                <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                <Label x:Name="xSelectedItemTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"  />
-            </StackPanel>
-        </StackPanel>
-        
+        <Grid x:Name="xBackToListGrid"  DockPanel.Dock="Top">
+            <DockPanel HorizontalAlignment="Stretch">
+                <UserControls:ucButton x:Name="xGoToActionsList" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToActionsList_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+                    <UserControls:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Back to Actions List"></GingerCore:ucTextDicResource>
+                    </UserControls:ucButton.ToolTip>
+                </UserControls:ucButton>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="10,0,0,0">
+                    <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                    <TextBlock x:Name="xSelectedItemTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Action Description" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" />
+                </StackPanel>
+                <StackPanel x:Name="xEditOperationsPnl" Orientation="Horizontal"  VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 0 0">
+                    <UserControls:ucButton x:Name="xPreviousActionBtn" ButtonType="ImageButton" Click="xPreviousActionBtn_Click" ToolTip="Previous Action"  ButtonFontImageSize="16"  ButtonImageType="MoveUp" />
+                    <UserControls:ucButton x:Name="xNextActionBtn" ButtonType="ImageButton" Click="xNextActionBtn_Click" ToolTip="Next Action"  ButtonFontImageSize="16"  ButtonImageType="MoveDown" />
+                    <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="16" ButtonImageType="Undo" />
+                    <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ToolTip="Delete Action"  ButtonFontImageSize="16" ButtonImageType="Delete" />
+                    <UserControls:ucButton x:Name="xActiveBtn" ButtonType="ImageButton" Click="xActiveBtn_Click" ToolTip="Active"  ButtonFontImageSize="16" ButtonImageType="Active" />
+                    <Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
+                        <MenuItem Cursor="Hand">
+                            <MenuItem.Header>
+                                <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                            </MenuItem.Header>
+                            <MenuItem x:Name="xBreakPointMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBreakPointMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl x:Name="xBreakPointMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Break Point"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xResetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Reset Execution Details"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                    <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+                </StackPanel>
+            </DockPanel>
+        </Grid>
+
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
     </DockPanel>
 </Page>

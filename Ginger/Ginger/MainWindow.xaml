@@ -19,7 +19,7 @@
         <!--Main Menu -->
         <Grid Grid.Row="0" Background="{StaticResource $BackgroundColor_DarkBlue}" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="150*"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="30"/>
@@ -27,7 +27,7 @@
 
             <!--Main Menu- Ginger Icon-->
             <DockPanel Grid.Column="0" VerticalAlignment="Center">
-                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerIconWhite" SetAsFontImageWithSize="18" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerLogoWhiteSmall" Width="90" DockPanel.Dock="Left" HorizontalAlignment="Center" Margin="5,5,0,0"/>
                 <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
             </DockPanel>
 

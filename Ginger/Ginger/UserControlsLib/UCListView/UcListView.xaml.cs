@@ -1,39 +1,38 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Threading;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace Ginger.UserControlsLib.UCListView
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
-    public partial class UcListView : UserControl, IDragDrop
+    public partial class UcListView : UserControl, IDragDrop, IClipboardOperations
     {
         IObservableList mObjList;
+        ICollectionView filteredView;
 
-        public event EventHandler SearchStarted;
-        public event EventHandler SearchCancelled;
-        public event EventHandler SearchCompleted;
-        private Task mSearchTask = null;
-        private CancellationTokenSource mCancellationTokenSource = null;
         private string mSearchString;
         public ObservableList<Guid> Tags = null;
 
+        CollectionView mGroupView;
+
         public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
-        private void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
+        public void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
             if (handler != null)
@@ -47,6 +46,8 @@ namespace Ginger.UserControlsLib.UCListView
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
 
         public event EventHandler PreviewDragItem;
+        public event PasteItemEventHandler PasteItemEvent;
+
         public delegate void PreviewDragItemEventHandler(DragInfo DragInfo);
 
         private bool mIsDragDropCompatible;
@@ -96,8 +97,8 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                //CollectFilterData(); //TO implement
-                //mCollectionView.Refresh();
+                CollectFilterData();
+                filteredView.Refresh();
             });
         }
 
@@ -137,35 +138,34 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     mObjList = value;
-                    //mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
-                    //if (mCollectionView != null)
-                    //{
-                    //    try
-                    //    {
-                    //        CollectFilterData();
-                    //        mCollectionView.Filter = FilterGridRows;
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        grdMain.CommitEdit();
-                    //        grdMain.CancelEdit();
-                    //        mCollectionView.Filter = FilterGridRows;
-                    //        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    //    }
-                    //}
+                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
+
+                    if (filteredView != null)
+                    {
+                        CollectFilterData();
+                        //if(filteredView.Filter == null)
+                        filteredView.Filter = LVItemFilter;
+                    }
+
                     this.Dispatcher.Invoke(() =>
                     {
+                        xSearchTextBox.Text = "";
                         xListView.ItemsSource = mObjList;
 
-                        // Make the first row selected
-                        if (value != null && value.Count > 0)
+                            // Make the first row selected
+                            if (value != null && value.Count > 0)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            {
+                                mObjList.CurrentItem = value[0];
+                            }
                         }
+
+                        xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     });
                 }
                 catch (Exception ex)
@@ -181,11 +181,51 @@ namespace Ginger.UserControlsLib.UCListView
                     UpdateTitleListCount();
                 }
             }
-
             get
             {
                 return mObjList;
             }
+        }
+
+        public string mFilterSearchText = null;
+        List<Guid> mFilterSelectedTags = null;
+        private void CollectFilterData()
+        {
+            //collect search values           
+            this.Dispatcher.Invoke(() =>
+            {
+                mFilterSearchText = xSearchTextBox.Text;
+                mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
+            });
+        }
+
+        bool LVItemFilter(object item)
+        {
+            if (string.IsNullOrWhiteSpace(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+                return true;
+
+            //Filter by search text            
+            if (!string.IsNullOrEmpty(mFilterSearchText))
+            {
+                return ((item as RepositoryItemBase).ItemName.IndexOf(mFilterSearchText, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            //Filter by Tags            
+            if (mFilterSelectedTags != null && mFilterSelectedTags.Count > 0)
+            {
+                return TagsFilter(item, mFilterSelectedTags);
+            }
+
+            return false;
+        }
+
+        private bool TagsFilter(object obj, List<Guid> selectedTagsGUID)
+        {
+            if (obj is ISearchFilter)
+            {
+                return ((ISearchFilter)obj).FilterBy(eFilterBy.Tags, selectedTagsGUID);
+            }
+            return false;
         }
 
         private void ObjListPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -193,16 +233,25 @@ namespace Ginger.UserControlsLib.UCListView
             GingerCore.General.DoEvents();
             if (e.PropertyName == nameof(IObservableList.CurrentItem))
             {
-                this.Dispatcher.Invoke(() =>
+                if (mObjList.SyncViewSelectedItemWithCurrentItem)
                 {
-                    if (mObjList.CurrentItem != xListView.SelectedItem)
-                    {
-                        xListView.SelectedItem = mObjList.CurrentItem;
-                        int index = xListView.Items.IndexOf(mObjList.CurrentItem);
-                        xListView.SelectedIndex = index;
-                    }
-                });
+                    SetListSelectedItemAsSourceCurrentItem();
+                }
             }
+        }
+
+        private void SetListSelectedItemAsSourceCurrentItem()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (mObjList.CurrentItem != xListView.SelectedItem)
+                {
+                    xListView.SelectedItem = mObjList.CurrentItem;
+                    int index = xListView.Items.IndexOf(mObjList.CurrentItem);
+                    xListView.SelectedIndex = index;
+                    ScrollToViewCurrentItem();
+                }
+            });
         }
 
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
@@ -269,6 +318,11 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        public void ResetExpandCollapseBtn()
+        {
+            xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+        }
+
         public Visibility ListOperationsBarPnlVisiblity
         {
             get
@@ -281,7 +335,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-       
+
         public Visibility ListTitleVisibility
         {
             get
@@ -324,57 +378,29 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        //private void xDeleteAllBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (mObjList.Count == 0)
-        //    {
-        //        Reporter.ToUser(eUserMsgKey.NoItemToDelete);
-        //        return;
-        //    }
-
-        //    if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-        //    {
-        //        mObjList.SaveUndoData();
-        //        mObjList.ClearAll();
-        //    }
-        //}
-
-        //private void xMoveUpBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int currentIndx = CurrentItemIndex;
-        //    if (currentIndx >= 1)
-        //    {
-        //        mObjList.Move(currentIndx, currentIndx - 1);
-        //        ScrollToViewCurrentItem();
-        //    }
-        //}
-
-        //private void xMoveDownBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int currentIndx = CurrentItemIndex;
-        //    if (currentIndx >= 0)
-        //    {
-        //        mObjList.Move(currentIndx, currentIndx + 1);
-        //        ScrollToViewCurrentItem();
-        //    }
-        //}
-
         public void ScrollToViewCurrentItem()
         {
             if (mObjList.CurrentItem != null)
             {
-                xListView.ScrollIntoView(mObjList.CurrentItem);
+                this.Dispatcher.Invoke(() =>
+                {
+                    xListView.ScrollIntoView(mObjList.CurrentItem);
+                });
             }
         }
 
         private void xListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (SkipItemSelection)//avoid user item selection in run time 
-            //{
-            //    SkipItemSelection = false;
-            //    return;
-            //}
+            if (mObjList.SyncCurrentItemWithViewSelectedItem)
+            {
+                SetSourceCurrentItemAsListSelectedItem();
+            }
 
+            //e.Handled = true;
+        }
+
+        private void SetSourceCurrentItemAsListSelectedItem()
+        {
             if (mObjList == null) return;
 
             if (mObjList.CurrentItem == xListView.SelectedItem) return;
@@ -384,8 +410,6 @@ namespace Ginger.UserControlsLib.UCListView
                 mObjList.CurrentItem = xListView.SelectedItem;
                 ScrollToViewCurrentItem();
             }
-
-            //e.Handled = true;
         }
 
         private void XExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -405,6 +429,7 @@ namespace Ginger.UserControlsLib.UCListView
         public void SetDefaultListDataTemplate(IListViewHelper listViewHelper)
         {
             mListViewHelper = listViewHelper;
+            mListViewHelper.ListView = this;
             this.Dispatcher.Invoke(() =>
             {
                 DataTemplate dataTemp = new DataTemplate();
@@ -426,7 +451,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 xListOperationsPnl.Visibility = Visibility.Visible;
 
-                foreach (ListItemOperation operation in listOperations)
+                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
@@ -464,7 +489,8 @@ namespace Ginger.UserControlsLib.UCListView
                     xListOperationsPnl.Children.Add(operationBtn);
                 }
             }
-            else
+
+            if (xListOperationsPnl.Children.Count == 0)
             {
                 xListOperationsPnl.Visibility = Visibility.Collapsed;
             }
@@ -476,7 +502,7 @@ namespace Ginger.UserControlsLib.UCListView
             if (extraOperations != null && extraOperations.Count > 0)
             {
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in extraOperations)
+                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -513,18 +539,72 @@ namespace Ginger.UserControlsLib.UCListView
 
                     menuitem.Tag = xListView.ItemsSource;
 
-                    ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                    if (string.IsNullOrEmpty(operation.Group))
+                    {
+                        ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(menuitem);
+                    }
+                    else
+                    {
+                        //need to add to Group
+                        bool addedToGroup = false;
+                        foreach (MenuItem item in ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items)
+                        {
+                            if (item.Header.ToString() == operation.Group)
+                            {
+                                //adding to existing group
+                                item.Items.Add(menuitem);
+                                addedToGroup = true;
+                                break;
+                            }
+                        }
+                        if (!addedToGroup)
+                        {
+                            //creating the group and adding
+                            MenuItem groupMenuitem = new MenuItem();
+                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                            ImageMakerControl groupIconImage = new ImageMakerControl();
+                            groupIconImage.ImageType = operation.GroupImageType;
+                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            groupMenuitem.Icon = groupIconImage;
+                            groupMenuitem.Header = operation.Group;
+                            groupMenuitem.ToolTip = operation.Group;
+                            ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Add(groupMenuitem);
+                            groupMenuitem.Items.Add(menuitem);
+                        }
+                    }
                 }
             }
-            else
+
+            if (((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Count == 0)
             {
                 xListExtraOperationsMenu.Visibility = Visibility.Collapsed;
             }
         }
 
-        public void StartDrag(DragInfo Info)
+        void IDragDrop.StartDrag(DragInfo Info)
         {
+            // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
+            //var row = (DataGridRow)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
+            var row = (ListViewItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
 
+            if (row != null)
+            {
+                //no drag if we are in the middle of Edit
+                //if (row.is) return;
+
+                // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
+                //if (Info.OriginalSource.GetType() != typeof(TextBlock))
+                //{
+                //    return;
+                //}
+
+                Info.DragSource = this;
+                Info.Data = row.Content;
+                //TODO: Do not use REpo since it will move to UserControls2
+                // Each object dragged should override ToString to return nice text for header                
+                Info.Header = row.Content.ToString();
+            }
         }
 
         void IDragDrop.DragOver(DragInfo Info)
@@ -534,12 +614,12 @@ namespace Ginger.UserControlsLib.UCListView
 
         void IDragDrop.Drop(DragInfo Info)
         {
-            // first check if we did drag and drop in the same grid then it is a move - reorder
-            //if (Info.DragSource == this)
-            //{
-            //    if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
-            //    return;
-            //}
+            // first check if we did drag and drop on the same ListView then it is a move - reorder
+            if (Info.DragSource == this)
+            {
+                //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+                return;
+            }
 
             // OK this is a dropped from external
             EventHandler handler = ItemDropped;
@@ -571,24 +651,24 @@ namespace Ginger.UserControlsLib.UCListView
         {
             mGroupByProperty = groupByProperty;
             DoGrouping();
-            //List<ListItemGroupOperation> groupOperations = mListItemInfo.GetGroupOperationsList();
-            //if (groupOperations == null || groupOperations.Count == 0)
-            //{
-
-            //}
         }
 
         public void UpdateGrouping()
         {
-            DoGrouping();
+            mGroupView.Refresh();
+            ResetExpandCollapseBtn();
+            //if (xExpandCollapseBtn.ButtonImageType == eImageType.CollapseAll)
+            //{
+            //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
+            //}
         }
 
         private void DoGrouping()
         {
-            CollectionView groupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
+            mGroupView = (CollectionView)CollectionViewSource.GetDefaultView(xListView.ItemsSource);
             PropertyGroupDescription groupDescription = new PropertyGroupDescription(mGroupByProperty);
-            groupView.GroupDescriptions.Clear();
-            groupView.GroupDescriptions.Add(groupDescription);
+            mGroupView.GroupDescriptions.Clear();
+            mGroupView.GroupDescriptions.Add(groupDescription);
         }
 
         private void SetGroupOperations(Menu menu)
@@ -596,7 +676,7 @@ namespace Ginger.UserControlsLib.UCListView
             List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
             if (groupOperations != null && groupOperations.Count > 0)
             {
-                foreach (ListItemGroupOperation operation in groupOperations)
+                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -611,7 +691,40 @@ namespace Ginger.UserControlsLib.UCListView
 
                     menuitem.Tag = menu.Tag;
 
-                    ((MenuItem)menu.Items[0]).Items.Add(menuitem);
+                    if (string.IsNullOrEmpty(operation.Group))
+                    {
+                        ((MenuItem)menu.Items[0]).Items.Add(menuitem);
+                    }
+                    else
+                    {
+                        //need to add to Group
+                        bool addedToGroup = false;
+                        foreach (MenuItem item in (((MenuItem)menu.Items[0]).Items))
+                        {
+                            if (item.Header.ToString() == operation.Group)
+                            {
+                                //adding to existing group
+                                item.Items.Add(menuitem);
+                                addedToGroup = true;
+                                break;
+                            }
+                        }
+                        if (!addedToGroup)
+                        {
+                            //creating the group and adding
+                            MenuItem groupMenuitem = new MenuItem();
+                            groupMenuitem.Style = (Style)FindResource("$MenuItemStyle");
+                            ImageMakerControl groupIconImage = new ImageMakerControl();
+                            groupIconImage.ImageType = operation.GroupImageType;
+                            groupIconImage.SetAsFontImageWithSize = operation.ImageSize;
+                            groupIconImage.HorizontalAlignment = HorizontalAlignment.Left;
+                            groupMenuitem.Icon = groupIconImage;
+                            groupMenuitem.Header = operation.Group;
+                            groupMenuitem.ToolTip = operation.Group;
+                            ((MenuItem)menu.Items[0]).Items.Add(groupMenuitem);
+                            groupMenuitem.Items.Add(menuitem);
+                        }
+                    }
                 }
             }
 
@@ -627,170 +740,100 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(xSearchTextBox.Text))
+            if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
-                return;
-            }
-            // this inner method checks if user is still typing
-            async Task<bool> UserKeepsTyping()
-            {
-                string txt = xSearchTextBox.Text;
-                await Task.Delay(1000);
-                return txt != xSearchTextBox.Text;
-            }
-            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
-
-            mSearchString = xSearchTextBox.Text;
-            await SearchAsync();
-        }
-
-        private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
-        {
-            xSearchClearBtn.Visibility = Visibility.Collapsed;
-            xSearchBtn.Visibility = Visibility.Visible;
-            xSearchTextBox.Text = "";
-            mSearchString = null;
-
-            if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
-            {
-                await CancelSearchAsync();
-            }
-            //else
-            //{
-            //    //if search is already complete and user trying to clear text we collapse the unselected nodes
-            //    List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-            //    if (xTreeViewTree.LastSelectedTVI != null)
-            //    {
-            //        pathNodes = UCTreeView.getSelecetdItemPathNodes(xTreeViewTree.LastSelectedTVI);
-            //    }
-            //    UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
-            //}
-        }
-
-        public void SearchList(string txt)
-        {
-            xSearchTextBox.Text = txt;
-        }
-
-        private async void xSearchBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(xSearchTextBox.Text))
-            {
-                await SearchAsync();
-            }
-        }
-
-        private async Task SearchAsync()
-        {
-
-            if (string.IsNullOrEmpty(mSearchString))
-            {
-                return;
-            }
-
-            if (mSearchTask?.IsCanceled == false && mSearchTask?.IsCompleted == false)
-            {
-                //Cancel if previous search is running 
-                await CancelSearchAsync();
-            }
-
-            xSearchBtn.Visibility = Visibility.Collapsed;
-            xSearchClearBtn.Visibility = Visibility.Visible;
-            mCancellationTokenSource = new CancellationTokenSource();
-            mSearchTask = new Task(() =>
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    try
-                    {
-                        mCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                        if (SearchStarted == null)
-                        {
-                            //If event is not hooked we say searching status on main window
-                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
-                        }
-                        else
-                        {
-                            //If event is hookded then no point in showing status on main window. 
-                            //child window need to handle it in the window. E.g. Windows Explorer
-                            SearchStarted.Invoke(xListView, new EventArgs());
-                        }
-                        Mouse.OverrideCursor = Cursors.Wait;
-                        //xListView.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token); //To implement
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to search : ", ex);
-                    }
-                    finally
-                    {
-
-                        if (SearchStarted == null)
-                        {
-                            Reporter.HideStatusMessage();
-                        }
-                        else
-                        {
-                            SearchCompleted.Invoke(xListView, new EventArgs());
-                        }
-
-                        Mouse.OverrideCursor = null;
-                        mCancellationTokenSource.Dispose();
-                    }
-                });
-            }, mCancellationTokenSource.Token, TaskCreationOptions.LongRunning);
-
-            mSearchTask.Start();
-
-        }
-
-        public async Task CancelSearchAsync()
-        {
-
-            mCancellationTokenSource?.Cancel();
-            Stopwatch st = new Stopwatch();
-            st.Start();
-            while (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false && mSearchTask.IsFaulted == false)
-            {
-                await Task.Delay(1000);
-                if (st.ElapsedMilliseconds > 5000)
-                {
-                    break;
-                }
-            }
-
-            mCancellationTokenSource?.Dispose();
-            mSearchTask = null;
-            if (SearchCancelled == null)
-            {
-                SearchCancelled.Invoke(xListView, new EventArgs());
+                xSearchClearBtn.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
             }
             else
             {
-                Reporter.HideStatusMessage();
+                xSearchClearBtn.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Collapsed;
+
+                // this inner method checks if user is still typing
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = xSearchTextBox.Text;
+                    await Task.Delay(1000);
+                    return txt != xSearchTextBox.Text;
+                }
+                if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
             }
-            Mouse.OverrideCursor = null;
+
+            mSearchString = xSearchTextBox.Text;
+            CollectFilterData();
+            filteredView.Refresh();
         }
 
+        private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xSearchTextBox.Text = "";
+            mSearchString = null;
+        }
+
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(xSearchTextBox.Text))
+            {
+                mSearchString = xSearchTextBox.Text;
+                CollectFilterData();
+                filteredView.Refresh();
+            }
+        }
+
+        public ObservableList<RepositoryItemBase> GetSelectedItems()
+        {
+            ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
+            foreach (object selectedItem in xListView.SelectedItems)
+            {
+                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+            }
+            return selectedItemsList;
+        }
+
+        public IObservableList GetSourceItemsAsIList()
+        {
+            return DataSourceList;
+        }
+
+        public ObservableList<RepositoryItemBase> GetSourceItemsAsList()
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase item in mObjList)
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
+        public void SetSelectedIndex(int index)
+        {
+            xListView.SelectedIndex = index;
+        }
+
+        public void OnPasteItemEvent(PasteItemEventArgs.ePasteType pasteType, RepositoryItemBase item)
+        {
+            PasteItemEvent?.Invoke(new PasteItemEventArgs(pasteType, item));
+        }
     }
 
     public class UcListViewEventArgs
+    {
+        public enum eEventType
         {
-            public enum eEventType
-            {
-                ExpandAllItems,
-                CollapseAllItems,
-                UpdateIndex,
-            }
+            ExpandAllItems,
+            ExpandItem,
+            CollapseAllItems,
+            UpdateIndex,
+        }
 
-            public eEventType EventType;
-            public Object EventObject;
+        public eEventType EventType;
+        public Object EventObject;
 
-            public UcListViewEventArgs(eEventType eventType, object eventObject = null)
-            {
-                this.EventType = eventType;
-                this.EventObject = eventObject;
-            }
-        }    
+        public UcListViewEventArgs(eEventType eventType, object eventObject = null)
+        {
+            this.EventType = eventType;
+            this.EventObject = eventObject;
+        }
+    }
 }

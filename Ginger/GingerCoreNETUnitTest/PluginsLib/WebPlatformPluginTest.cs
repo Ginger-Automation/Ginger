@@ -1,14 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Run;
 using GingerCore;
-using GingerCoreNET.Drivers.CommunicationProtocol;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCoreNET.RunLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
@@ -27,8 +25,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassInitialize(TestContext TestContext)
         {
             // Init workspace
-            DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws);
+            WorkspaceHelper.CreateDummyWorkSpace("WebPlatformPluginTest");            
 
             // Strat GG
             // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
@@ -52,7 +49,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            WorkspaceHelper.ReleaseWorkspace();
         }
 
 
@@ -72,7 +69,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public void GotoURL()
         {
             // Arrange
-            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };            
+            ActBrowserElement actBrowserElementFake = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL,  Value = "http://www.facebook.com" };            
 
             // Act
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
@@ -87,11 +84,11 @@ namespace GingerCoreNETUnitTest.PluginsLib
         {
             // Arrange
             // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
-            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };            
-            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText" , Value = "hello"};            
+            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
+            ActUIElement actUIElementFake = new ActUIElement() { LocateBy =  Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType =  Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction =  ActUIElement.eElementAction.SetText , Value = "hello"};            
 
             // Act
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
             for (int i = 0; i < 10; i++)
             {
@@ -100,7 +97,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             }
 
             // Assert
-            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error));
             
         }
 
@@ -109,23 +106,24 @@ namespace GingerCoreNETUnitTest.PluginsLib
         {
             // Arrange
             // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
-            ActBrowserElementFake actBrowserElementFake = new ActBrowserElementFake() { BrowserAction = "Navigate", value = "http://www.facebook.com" };
-            ActUIElementFake actUIElementFake = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "SetText", Value = "hello", AddNewReturnParams = true };
-            ActUIElementFake actUIElementFake2 = new ActUIElementFake() { LocateBy = "ByID", LocateValue = "u_0_c", ElementType = "TextBox", ElementAction = "GetText", AddNewReturnParams = true };
+            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
+            ActUIElement actUIElement = new ActUIElement() { LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText, Value = "hello" };
+            ActUIElement actUIElement2 = new ActUIElement() { LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction = ActUIElement.eElementAction.GetText };
+            
 
             // Act
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
             
-            actUIElementFake.Value = "12345";
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake2);
+            actUIElement.Value = "12345";
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement2);
 
 
             // Assert
-            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElementFake.Error));
-            Assert.AreEqual("Value", actUIElementFake2.ReturnValues[0].Param);
-            Assert.AreEqual("hello", actUIElementFake2.ReturnValues[0].Actual);
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error));
+            Assert.AreEqual("Value", actUIElement2.ReturnValues[0].Param);
+            Assert.AreEqual("hello", actUIElement2.ReturnValues[0].Actual);
 
         }
 

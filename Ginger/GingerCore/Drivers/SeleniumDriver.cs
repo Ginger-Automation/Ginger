@@ -122,6 +122,26 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
+        public string EmulationDeviceName { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Only For Chrome & Firefox : A browser's user agent string (UA) helps identify which browser is being used, what version, and on which operating system")]
+        public string BrowserUserAgent { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The height in pixels of the browser's viewable area")]
+        public string BrowserHeight { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("The width in pixels of the browser's viewable area")]
+        public string BrowserWidth { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
@@ -358,10 +378,17 @@ namespace GingerCore.Drivers
                             SetProxy(FirefoxOption);
                         }
 
+                        if (!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            var profile = new FirefoxProfile();
+                            profile.SetPreference("general.useragent.override", BrowserUserAgent.Trim());
+                            FirefoxOption.Profile = profile;
+                        }
+
+
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
 
                     #endregion
@@ -401,13 +428,23 @@ namespace GingerCore.Drivers
                             foreach (string arg in SeleniumUserArgs)
                                 options.AddArgument(arg);
 
+                        if (!string.IsNullOrEmpty(EmulationDeviceName))
+                        {
+                            options.EnableMobileEmulation(EmulationDeviceName);
+                        }
+                        else if(!string.IsNullOrEmpty(BrowserUserAgent))
+                        {
+                            ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
+                            { UserAgent = BrowserUserAgent.Trim() };
+                            options.EnableMobileEmulation(chromeMobileEmulationDevice);
+                        }
+
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
                         }
                         Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
 
                     #endregion
@@ -490,6 +527,11 @@ namespace GingerCore.Drivers
 
                 if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
                     Driver.Manage().Window.Minimize();
+
+                if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
+                {
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight),Width=Convert.ToInt32(BrowserWidth) };
+                }
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
@@ -5749,6 +5791,18 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
+                             if (act.LocateBy == eLocateBy.ByIndex)
+                            {
+                                int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
+                                string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
+                                if (winIndexTitle != null)
+                                {
+                                    // window found put some info in ExInfo
+                                    act.ExInfo = winIndexTitle;
+                                    BFound = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                     catch
@@ -5916,7 +5970,7 @@ namespace GingerCore.Drivers
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
                             if (SelectedPOM != null)
                             {
-                                POMUrl = SelectedPOM.PageURL;
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);             // SelectedPOM.PageURL;
                             }
                         }
                         GotoURL(act, POMUrl);
@@ -5948,7 +6002,7 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = SelectedPOM?.PageURL;
+                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
                         }
                         GotoURL(act, POMUrl);
                     }
@@ -6040,6 +6094,40 @@ namespace GingerCore.Drivers
                     break;
                 case ActBrowserElement.eControlAction.CloseAll:
                     Driver.Quit();
+                    break;
+                case ActBrowserElement.eControlAction.GetBrowserLog:
+
+                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                    
+                    foreach (var item in networkLogs)
+                    {
+                        Dictionary<string, object> dict = item as Dictionary<string, object>;
+                        if (dict != null)
+                        {
+                            if(dict.ContainsKey("name"))
+                            {
+                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+
+                                var urlString = string.Empty;
+                                if (urlArray.Length>0)
+                                {
+                                    urlString = urlArray[urlArray.Length - 1];
+                                    if(string.IsNullOrEmpty(urlString) && urlArray.Length>1)
+                                    {
+                                        urlString = urlArray[urlArray.Length - 2];
+                                    }
+                                    foreach (var val in dict)
+                                    {
+                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                    }
+
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
                     Driver.Navigate().Back();

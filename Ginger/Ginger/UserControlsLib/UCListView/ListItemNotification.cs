@@ -11,6 +11,7 @@ namespace Ginger.UserControlsLib.UCListView
         public double ImageSize = 16;
 
         public string ToolTip;
+        public string AutomationID;
 
         public object BindingObject;
         public string BindingFieldName;

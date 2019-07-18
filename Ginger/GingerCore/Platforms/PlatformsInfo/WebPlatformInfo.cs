@@ -88,7 +88,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.DismissMessageBox);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
-
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetBrowserLog);
             return browserActElementList;
         }
 
@@ -186,7 +186,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                             Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "Browser Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                             ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), actConfig.Operation),
                             LocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
-                            Value = actConfig.ElementValue
+                            Value = actConfig.ElementValue,
+                            LocateValue = actConfig.LocateValue
                         };
                     }
                     else if (elementTypeOperations.ActionType == typeof(ActUIElement))

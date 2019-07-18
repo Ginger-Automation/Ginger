@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -13,22 +14,26 @@ using System.Text;
 
 namespace GingerCoreNETUnitTest.ClientAppReport
 {
+    
     [TestClass]
     public class WebReportTest
     {
-        private SolutionRepository sr;
-
-        public WebReportTest()
+        
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext TestContext)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-            string jsonfilepath = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
-            OpenSolution(@jsonfilepath);
-            WorkSpace.Instance.Solution = (Solution)(ISolution)sr.RepositorySerializer.DeserializeFromFile(Path.Combine(sr.SolutionFolder, "Ginger.Solution.xml"));
+            string reportWebAppSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
+            WorkspaceHelper.CreateWorkspaceAndOpenSolution("WebReportTest" , reportWebAppSolutionFolder);                     
         }
 
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceHelper.ReleaseWorkspace();
+        }
+
+
+        [Ignore]  // TODO: create a test which only generate the report package HTMLs - no need to open browser, then verify folder content
         [TestMethod]
         [Timeout(60000)]
         public void TestNewWebReport()
@@ -36,25 +41,20 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             //a selected guid can be send 
             string guidStr = "";
             // a selected browser from unix can be run ,with his path
-            string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+            string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";  // Will not work on Linux
             WebReportGenerator webReporterRunner = new WebReportGenerator(browserPath);
-            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(null, null, false));
+            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(null, null, false).RunnersColl.Count>0);
         }
 
-        private void OpenSolution(string sFolder)
+        [Ignore]  // TODO: create a test which run a runset with runset operation which includes CreateReport - see other runset execution examples
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunSetwithWebReport()
         {
-            if (Directory.Exists(sFolder))
-            {
-                Console.WriteLine("Opening Solution at folder: " + sFolder);
-                sr = GingerSolutionRepository.CreateGingerSolutionRepository();
-                WorkSpace.Instance.SolutionRepository = sr;
-                sr.Open(sFolder);
-            }
-            else
-            {
-                Console.WriteLine("Directory not found: " + sFolder);
-            }
+            
         }
+
+
 
     }
 }

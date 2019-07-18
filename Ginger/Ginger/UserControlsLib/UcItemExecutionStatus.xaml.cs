@@ -39,6 +39,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             Brush statusBrush = null;
             eImageType statusImage;
+            int imageSize = 13;
 
             switch (Status)
             {
@@ -61,6 +62,7 @@ namespace Ginger.UserControlsLib.UCListView
                 case eRunStatus.Stopped:
                     statusBrush = FindResource("$StoppedStatusColor") as Brush;
                     statusImage = eImageType.Stop;
+                    imageSize = 10;
                     break;
                 case eRunStatus.Blocked:
                     statusBrush = FindResource("$BlockedStatusColor") as Brush;
@@ -81,6 +83,13 @@ namespace Ginger.UserControlsLib.UCListView
 
             xStatusIcon.ImageType = statusImage;
             xStatusIcon.ImageForeground = Brushes.White;
+
+            xStatusIcon.SetAsFontImageWithSize = imageSize;
+            xStatusIcon.Width = imageSize;
+            xStatusIcon.Height = imageSize;
+
+            xPolygon.ToolTip = Status.ToString();
+            xStatusIcon.ToolTip = Status.ToString();
         }
     }
 }

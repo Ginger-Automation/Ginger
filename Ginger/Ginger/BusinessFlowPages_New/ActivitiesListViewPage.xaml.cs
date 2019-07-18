@@ -5,7 +5,12 @@ using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerWPF.DragDropLib;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -45,7 +50,7 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
             //List Items
-            ActivitiesListHelper activityListItemInfo = new ActivitiesListHelper(mContext, mPageViewMode);
+            ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
@@ -54,24 +59,60 @@ namespace Ginger.BusinessFlowPages
 
             //List Grouping
             xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+
+            xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
+            xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
         }
+
+        private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
+        {
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
+                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            {
+                // OK to drop                         
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+            }
+        }
+
+        private void ActivitiesListView_ItemDropped(object sender, EventArgs e)
+        {
+            object droppedItem = ((DragInfo)sender).Data as object;
+            if (droppedItem != null)
+            {                
+                if (droppedItem is Activity)
+                {
+                    ActivitiesGroup parentGroup = null;                    
+                    parentGroup = (new ActivitiesGroupSelectionPage(mContext.BusinessFlow)).ShowAsWindow();
+                    if (parentGroup != null)
+                    {
+                        Activity droppedActivityIns = (Activity)((Activity)droppedItem).CreateInstance(true);
+                        droppedActivityIns.Active = true;
+                        mBusinessFlow.SetActivityTargetApplication(droppedActivityIns);
+                        mBusinessFlow.AddActivity(droppedActivityIns, parentGroup);
+                        mBusinessFlow.CurrentActivity = droppedActivityIns;
+                    }
+                }
+                else if (droppedItem is ActivitiesGroup)
+                {
+                    ActivitiesGroup droppedGroupIns = (ActivitiesGroup)((ActivitiesGroup)droppedItem).CreateInstance(true);
+                    mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
+                    ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                }               
+            }
+        }       
 
         private void ActivityListItemInfo_ActivityListItemEvent(ActivityListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
                 case ActivityListItemEventArgs.eEventType.UpdateGrouping:
-                    xActivitiesListView.UpdateGrouping();
+                    xActivitiesListView.UpdateGrouping();                    
                     break;
             }
         }
 
-        private void OpenGroupsManagerHandler(object sender, RoutedEventArgs e)
-        {
-            ActivitiesGroupsManagerPage activitiesGroupsManagerPage = new ActivitiesGroupsManagerPage(mBusinessFlow);
-            activitiesGroupsManagerPage.ShowAsWindow();
-            xActivitiesListView.UpdateGrouping();
-        }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
@@ -80,7 +121,7 @@ namespace Ginger.BusinessFlowPages
             if (mBusinessFlow != null)
             {
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-                xActivitiesListView.UpdateGrouping();
+                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
                 SetSharedRepositoryMark();
             }
             else

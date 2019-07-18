@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.Reports;
 using Ginger.UserControls;
 using GingerCore;
@@ -166,13 +167,9 @@ namespace Ginger.WindowExplorer
                 return;
             }
 
-            Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
-            SetActionDetails(act);
-            act.Context = mContext;
-            mContext.BusinessFlow.AddAct(act, true);
-           
-            ActionEditPage AEP = new ActionEditPage(act);
-            AEP.ShowAsWindow();
+            Act selectedAct = mActions.CurrentItem as Act;
+            SetActionDetails(selectedAct);
+            ActionsFactory.AddActionsHandler(selectedAct, mContext);
         }
 
         private Act SetActionDetails(Act act)

@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -83,6 +84,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             LoadGridData();
             LoadPluginsActions();
+            if (mContext.Activity != null)
+            {
+                mActionsList = mContext.Activity.Acts;
+            }
+            else
+            {
+                mActionsList = null;
+            }
         }
 
         private void LoadPluginsActions()
@@ -164,18 +173,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             AppDomain.CurrentDomain.Load("GingerCoreCommon");
             AppDomain.CurrentDomain.Load("GingerCoreNET");
 
-
             var ActTypes = new List<Type>();
             foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
-
             {
-
                 var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
                 ActTypes.AddRange(types);
             }
-
-
-
 
             foreach (Type t in ActTypes)
             {
@@ -184,6 +187,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (a.IsSelectableAction == false)
                     continue;
 
+                if (mContext.BusinessFlow.CurrentActivity == null)
+                {
+                    return null;
+                }
                 TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
                 if (TA == null)
                 {
@@ -239,7 +246,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //dataTemp.VisualTree = listItemFac;
             //xActionsListView.List.ItemTemplate = dataTemp;
 
-            xActionsListView.SetDefaultListDataTemplate(new ActionsListHelper(mContext, General.eRIPageViewMode.Automation));
+            xActionsListView.SetDefaultListDataTemplate(new ActionsListViewHelper(mContext, General.eRIPageViewMode.Automation));
 
             xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
             //xActionsListView.List.ItemsSource = mActivity.Acts;
@@ -303,84 +310,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
             {
                 Act selectedAction = ((ucGrid)ActionsTabs.SelectedContent).CurrentItem as Act;
-
-                if (selectedAction.AddActionWizardPage != null)
-                {
-                    //_pageGenericWin.Close();
-                    string classname = selectedAction.AddActionWizardPage;
-                    Type t = Assembly.GetExecutingAssembly().GetType(classname);
-                    if (t == null)
-                    {
-                        throw new Exception("Action edit page not found - " + classname);
-                    }
-
-                    WizardBase wizard = (WizardBase)Activator.CreateInstance(t, mContext);
-                    WizardWindow.ShowWizard(wizard);
-                }
-                else
-                {
-                    Act aNew = null;
-
-                    if (ActionsTabs.SelectedContent != null && ((ucGrid)ActionsTabs.SelectedContent).CurrentItem != null)
-                    {
-                        aNew = selectedAction.CreateCopy() as Act;
-                        // copy param ex info
-                        for (int i = 0; i < selectedAction.InputValues.Count; i++)
-                        {
-                            aNew.InputValues[i].ParamTypeEX = selectedAction.InputValues[i].ParamTypeEX;
-                        }
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-                        return;
-                    }
-                    aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-
-                    //adding the new act after the selected action in the grid  
-                    //TODO: Add should be after the last, Insert should be in the middle...
-                    int selectedActIndex = -1;
-                    if (mActionsList.CurrentItem != null)
-                    {
-                        selectedActIndex = mActionsList.IndexOf((IAct)mActionsList.CurrentItem);
-                    }
-                    mActionsList.Add(aNew);
-                    if (selectedActIndex >= 0)
-                    {
-                        mActionsList.Move(mActionsList.Count - 1, selectedActIndex + 1);
-                    }
-
-                    //_pageGenericWin.Close();
-
-                    //allowing to edit the action
-                    ActionEditPage actedit = new ActionEditPage(aNew);
-                    actedit.ShowAsWindow();
-
-                    if (aNew is ActPlugIn)
-                    {
-                        ActPlugIn p = (ActPlugIn)aNew;
-                        // TODO: add per group or... !!!!!!!!!
-
-                        //Check if target already exist else add it
-                        // TODO: search only in targetplugin type
-                        TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
-                        if (targetPlugin == null)
-                        {
-                            // check if interface add it
-                            // App.BusinessFlow.TargetApplications.Add(new TargetPlugin() { AppName = p.ServiceId });
-
-                            mContext.BusinessFlow.TargetApplications.Add(new TargetPlugin() { PluginId = p.PluginId, ServiceId = p.ServiceId });
-
-                            //Search for default agent which match 
-                            mContext.Runner.UpdateApplicationAgents();
-                            // TODO: update automate page target/agent
-
-                            // if agent not found auto add or ask user 
-                        }
-
-                    }
-
-                }
+                ActionsFactory.AddActionsHandler(selectedAction, mContext);
             }
         }
 
