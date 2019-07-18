@@ -105,10 +105,11 @@ namespace Ginger.Repository
             bool Remote = agent.Remote;
 
             DriverBase Driver = null;
-            agent.mIsStarting = true;
-            agent.OnPropertyChanged(Fields.Status);
             try
             {
+                agent.mIsStarting = true;
+                agent.OnPropertyChanged(Fields.Status);
+
                 try
                 {
                     if (Remote)
