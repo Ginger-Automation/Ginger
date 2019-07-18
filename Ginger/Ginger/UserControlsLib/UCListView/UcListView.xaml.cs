@@ -187,27 +187,26 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public string mFilterSearchText = null;
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
         {
             //collect search values           
             this.Dispatcher.Invoke(() =>
             {
-                mFilterSearchText = xSearchTextBox.Text;
+                mObjList.FilterStringData = xSearchTextBox.Text;
                 mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
             });
         }
 
         bool LVItemFilter(object item)
         {
-            if (string.IsNullOrWhiteSpace(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
                 return true;
 
             //Filter by search text            
-            if (!string.IsNullOrEmpty(mFilterSearchText))
+            if (!string.IsNullOrEmpty(mObjList.FilterStringData))
             {
-                return ((item as RepositoryItemBase).ItemName.IndexOf(mFilterSearchText, StringComparison.OrdinalIgnoreCase) >= 0);
+                return ((item as RepositoryItemBase).ItemName.IndexOf(mObjList.FilterStringData, StringComparison.OrdinalIgnoreCase) >= 0);
             }
 
             //Filter by Tags            
@@ -237,6 +236,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     SetListSelectedItemAsSourceCurrentItem();
                 }
+            }
+            if(e.PropertyName == nameof(IObservableList.FilterStringData))
+            {
+                this.Dispatcher.Invoke(() => xSearchTextBox.Text = mObjList.FilterStringData);
             }
         }
 
