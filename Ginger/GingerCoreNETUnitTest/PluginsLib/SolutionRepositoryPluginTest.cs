@@ -32,6 +32,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
+    [Ignore]
     [TestClass]
     [Level1]
     public class SolutionRepositoryPluginTest
