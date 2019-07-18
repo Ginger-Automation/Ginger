@@ -196,8 +196,7 @@ namespace amdocs.ginger.GingerCoreNET
             
             Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
-            
-            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");            
+                        
             CheckWebReportFolder();
         }
 
