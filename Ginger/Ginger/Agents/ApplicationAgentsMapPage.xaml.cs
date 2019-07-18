@@ -140,8 +140,7 @@ namespace Ginger.Agents
         }
 
         private void StartAppAgent(ApplicationAgent AG)
-        {
-            WorkSpace.Instance.Telemetry.SaveTelemetry("StartAppAgent", AG.Guid.ToString(), new { AgentType = AG.Agent.AgentType, DriverType = AG.Agent.DriverType.ToString() });
+        {            
             Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
             if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 

@@ -156,7 +156,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
 
             TelemetrySession.EndTime = Time;
-            SaveTelemetry("session", Guid.ToString(), TelemetrySession);                        
+            SaveTelemetry("session", Guid.ToString(), TelemetrySession);
+
+            Task.Factory.StartNew(() => {
+                Compress();
+                while (!done)  
+                {
+                    Thread.Sleep(100);
+                }
+            }).Wait(30000);  // Max 30 seconds to wait
         }
 
 
@@ -179,25 +187,19 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         
 
-        public void SaveTelemetry(string type, string id, object obj)
+        public void SaveTelemetry(string type, string id, object data)
         {
+            //TODO: run on task
+            // save to same file
+            // lock for multi thread
+
             TelemetryRecord telemetryRecord = new TelemetryRecord("telemetry", type, id) ;
             
             string txt = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
-            txt += JsonConvert.SerializeObject(obj) + Environment.NewLine; 
+            txt += JsonConvert.SerializeObject(data) + Environment.NewLine; 
 
             string fileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-","") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
             File.WriteAllText(fileName, txt);
-
-            Task.Factory.StartNew(() => {
-                Compress();
-                while (!done)   // add timeout
-                {
-                    Thread.Sleep(10);
-                }
-            }).Wait(); // TODO: add timeout
-            
-            
         }
 
 
