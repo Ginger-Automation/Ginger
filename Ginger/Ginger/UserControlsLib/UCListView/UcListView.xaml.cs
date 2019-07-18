@@ -667,7 +667,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList();
+                List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
                 if (notifications != null && notifications.Count > 0)
                 {
                     panel.Visibility = Visibility.Visible;
