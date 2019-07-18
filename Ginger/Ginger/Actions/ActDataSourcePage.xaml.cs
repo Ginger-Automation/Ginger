@@ -202,7 +202,10 @@ namespace Ginger.Actions
             string Query = "";
             string rowNum = "0";
             string DSTable = "";
-            //mActDSTblElem.WhereConditions.Clear();
+            //if (mActDSTblElem.WhereConditions != null)
+            //{
+            //    mActDSTblElem.WhereConditions.Clear();
+            //}
             try
             {
                 DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
@@ -1316,6 +1319,10 @@ namespace Ginger.Actions
         {                          
                 UpdateValueExpression();
             mActDSTblElem.LocateColTitle = cmbColumnValue.Text;
+            if (cmbColumnValue.SelectedValue != null)
+            {
+                mActDSTblElem.LocateColTitle = cmbColumnValue.SelectedValue.ToString();
+            }
         }
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1646,8 +1653,6 @@ namespace Ginger.Actions
                     //}
                     ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                    ds.Init(ds.FileFullPath);
-                    //ds.Init(ds.FilePath);
                     List<string> dsTableNames = new List<string>();
                     mDSTableList = ds.GetTablesList();
                     if (mDSTableList != null)

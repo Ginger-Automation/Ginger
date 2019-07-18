@@ -614,7 +614,7 @@ namespace Amdocs.Ginger.Repository
             string FullPath = Path.Combine(FolderFullPath, folderName);
 
             //add to folders cache
-            string relativeFolder = FolderRelativePath + Path.DirectorySeparatorChar + folderName;
+            string relativeFolder =  Path.Combine(FolderRelativePath, folderName);
             RepositoryFolder<T> subfolder = new RepositoryFolder<T>(SolutionRepository, mSolutionRepositoryItemInfo, ItemFilePattern, relativeFolder, ContainsRepositoryItems, null);
 
             PauseFileWatcher();

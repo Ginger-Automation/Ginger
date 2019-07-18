@@ -38,9 +38,10 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActionFlowControlPage : Page
     {
-        private Act mAct;
+        Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
         Activity mActParentActivity = null;
+        General.RepositoryItemPageViewMode mEditMode;
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
 
         public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
@@ -49,8 +50,9 @@ namespace Ginger.Actions
 
             mAct = act;
             mActParentBusinessFlow = actParentBusinessFlow;
-            mActParentActivity = actParentActivity;  
-            
+            mActParentActivity = actParentActivity;
+            mEditMode = editMode;
+
             SetGridView();
             FlowControlGrid.DataSourceList = mAct.FlowControls;
 
@@ -101,6 +103,8 @@ namespace Ginger.Actions
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
             factory.SetValue(UCFlowControlAction.ActParentBusinessFlowProperty, mActParentBusinessFlow);
             factory.SetValue(UCFlowControlAction.ActParentActivityProperty, mActParentActivity);
+            factory.SetValue(UCFlowControlAction.ActionProperty, mAct);
+            factory.SetValue(UCFlowControlAction.RepositoryItemModeProperty, mEditMode);
             template.VisualTree = factory;
             return template;
         }

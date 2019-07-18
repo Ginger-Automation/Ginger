@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="36fbd148-4966-4d28-9b5e-17fd1824d2df" ItemType="BusinessFlow" CreatedBy="arvindgh" Created="201905171216" GingerVersion="3.3.0.0" Version="30" LastUpdateBy="arvindgh" LastUpdate="201906200647" />
+<BusinessFlow Guid="36fbd148-4966-4d28-9b5e-17fd1824d2df" Name="Bug 7635" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="3f8b32e0-2a0e-489c-9d26-7ba9e3d29749" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="d5128b36-b97f-4c9e-8a23-b7325edd2ec9" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cff6af8d-c299-437a-a03e-ff6d10c0f8c7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" Value="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="f7606745-c86b-42c4-b0de-cef75cec3eb3" Operator="Equals" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="DataSource" StoreToValue="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</ReturnValues>
+</ActDummy>
+<ActDummy Active="True" Description="Dummy Action_Copy" Guid="bed25b04-901e-4abb-99e8-851eb7c4b95f" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cff6af8d-c299-437a-a03e-ff6d10c0f8c7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" Value="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="f7606745-c86b-42c4-b0de-cef75cec3eb3" Operator="Equals" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="DataSource" StoreToValue="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</ReturnValues>
+</ActDummy>
+<ActDummy Active="True" Description="Dummy Action_Copy2" Guid="5b12fc8e-25f5-4a87-ac9d-54c250cdf4ea" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cff6af8d-c299-437a-a03e-ff6d10c0f8c7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" Value="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="f7606745-c86b-42c4-b0de-cef75cec3eb3" Operator="Equals" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="DataSource" StoreToValue="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</ReturnValues>
+</ActDummy>
+<ActDummy Active="True" Description="Dummy Action_Copy3" Guid="a810153b-e794-4cd6-9a35-2264c04cb091" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cff6af8d-c299-437a-a03e-ff6d10c0f8c7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" Value="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="f7606745-c86b-42c4-b0de-cef75cec3eb3" Operator="Equals" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="DataSource" StoreToValue="{DS Name=GingerDataSource DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=GINGER_USED IROW=RowNum ROWNUM=0}" />
+</ReturnValues>
+</ActDummy>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="85847154-053d-4c4f-8b4a-5935dee4b032" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Guid="b625efad-87cf-4014-aa6b-6b71ca323eda" InitialStringValue="asdf" MappedOutputType="None" Name="NewVar" ParentGuid="00000000-0000-0000-0000-000000000000" Value="asdf" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

@@ -27,13 +27,13 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Run
@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Run
     {
 
         // keep list of GNI for Plugin which are session
-        static Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
+        static Dictionary<string, GingerNodeInfo> SessionsNodes = new Dictionary<string, GingerNodeInfo>();
 
         internal static GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
@@ -62,16 +62,16 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
-            bool DoStartSession = false;
+            bool DoStartSession = false;            
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(PluginId, ServiceID);
             GingerNodeInfo gingerNodeInfo;
-            string key = PluginId + "." + ServiceID;
+            string key = PluginId + "." + ServiceID;   
 
             Console.WriteLine("Plugin Key:" + key);
 
             if (IsSessionService)
             {
-                bool found = dic.TryGetValue(key, out gingerNodeInfo);
+                bool found = SessionsNodes.TryGetValue(key, out gingerNodeInfo);
                 if (found)
                 {
                     if (gingerNodeInfo.IsAlive())
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     }
                     else
                     {
-                        dic.Remove(key);
+                        SessionsNodes.Remove(key);
                     }
                 }
             }
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
                 GNP.StartDriver(DriverConfiguration);
-                dic.Add(key, gingerNodeInfo);
+                SessionsNodes.Add(key, gingerNodeInfo);
             }
 
             return gingerNodeInfo;
@@ -178,15 +178,16 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {
-            // Get the action payload
-            // NewPayLoad p = actPlugin.GetActionPayload();
-            NewPayLoad p = GeneratePlatformActionPayload(actPlugin, agent);
+        {                        
+            NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
+
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
-
-            // Pasrse the result
+            NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+            
             ParseActionResult(RC, (Act)actPlugin);
         }
 
@@ -396,87 +397,17 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
         {
+            PlatformAction platformAction = ACT.GetAsPlatformAction();
 
-            NewPayLoad PL = new NewPayLoad("RunPlatformAction");
-            PL.AddValue(ACT.GetName());
-            if (ACT is Act actPlugin)
-            {
-                List<NewPayLoad> PLParams = new List<NewPayLoad>();
+            // TODO: calculate VE ??!!            
 
-                if (ACT is ActUIElement ActUi)
-                {
-                    if (ActUi.ElementLocateBy == Common.UIElement.eLocateBy.POMElement)
-                    {
-                        NewPayLoad PomPayload = GetPOMPayload(ref ActUi, agent.ProjEnvironment, agent.BusinessFlow);
-                        PLParams.Add(PomPayload);
-                    }
-                }
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");
+            payload.AddJSONValue<PlatformAction>(platformAction);
+            payload.ClosePackage();
 
-                string acttype = actPlugin.GetType().FullName + "+Fields";
+            // TODO: Process Valuefordriver!!!!
 
-               
-                foreach (FieldInfo FI in Type.GetType(acttype).GetFields())
-                {
-                    string Name = FI.Name;
-                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-                    if (string.IsNullOrEmpty(Value))
-                    {
-                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-                        if (Output != null)
-                        {
-                            Value = Output.ToString();
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(Value))
-                    {
-                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                        PLParams.Add(FieldPL);
-                    }
-                }
-
-                foreach (FieldInfo FI in typeof(Act.Fields).GetFields())
-                {
-                    string Name = FI.Name;
-                    string Value = actPlugin.GetOrCreateInputParam(Name).ValueForDriver;
-
-                    if (string.IsNullOrEmpty(Value))
-                    {
-                        object Output = ACT.GetType().GetProperty(Name) != null ? ACT.GetType().GetProperty(Name).GetValue(ACT, null) : string.Empty;
-
-                        if (Output != null)
-                        {
-                            Value = Output.ToString();
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(Value))
-                    {
-                        NewPayLoad FieldPL = new NewPayLoad("Field", Name, Value);
-                        PLParams.Add(FieldPL);
-                    }
-                }
-
-
-                foreach (ActInputValue AIV in actPlugin.InputValues)
-                {
-                    if (!string.IsNullOrEmpty(AIV.ValueForDriver))
-                    {
-                        NewPayLoad AIVPL = new NewPayLoad("AIV", AIV.Param, AIV.ValueForDriver);
-                        PLParams.Add(AIVPL);
-                    }
-                }
-
-
-
-
-                PL.AddListPayLoad(PLParams);
-            }
-            PL.ClosePackage();
-
-            return PL;
+            return payload;
         }
 
         private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
