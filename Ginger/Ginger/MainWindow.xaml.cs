@@ -525,13 +525,9 @@ namespace Ginger
         }
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("btnAbout_Click");
-
+        {            
             AboutPage AP = new AboutPage();
             AP.ShowAsWindow();
-
-            AutoLogProxy.UserOperationEnd();
         }
 
         private void ViewSolutionFiles_Click(object sender, RoutedEventArgs e)
@@ -555,20 +551,13 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
-
-            AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
-
-            App.CheckIn( WorkSpace.Instance.Solution.Folder);
-
-            AutoLogProxy.UserOperationEnd();
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;            
+            App.CheckIn( WorkSpace.Instance.Solution.Folder);            
         }
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
-
-            AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.Folder))
@@ -578,28 +567,21 @@ namespace Ginger
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
-
-            AutoLogProxy.UserOperationEnd();
+            
         }
 
         private void AnalyzerButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("MainWindow.AnalyzerButton_Click");
+        {            
             AnalyzerPage AP = new AnalyzerPage();
             AP.Init( WorkSpace.Instance.Solution);
-            AP.ShowAsWindow();
-            AutoLogProxy.UserOperationEnd();
+            AP.ShowAsWindow();            
         }
 
         private void ResolveSourceControlConflicts(eResolveConflictsSide side)
-        {
-            AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
-
+        {            
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
             SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl,  WorkSpace.Instance.Solution.Folder, side);
             Reporter.HideStatusMessage();
-
-            AutoLogProxy.UserOperationEnd();
         }
 
         private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)

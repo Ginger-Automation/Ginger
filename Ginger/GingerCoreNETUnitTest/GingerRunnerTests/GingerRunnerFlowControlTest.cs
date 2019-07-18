@@ -52,8 +52,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
 
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
-            AutoLogProxy.Init("UT Build");            
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });            
         }
 
         [TestInitialize]

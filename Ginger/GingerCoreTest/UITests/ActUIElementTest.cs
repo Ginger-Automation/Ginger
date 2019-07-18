@@ -45,8 +45,7 @@ namespace UnitTests.UITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
+        {            
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
             mBF = new BusinessFlow();

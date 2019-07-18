@@ -16,24 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Run;
+using Ginger.WindowExplorer;
+using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.Drivers.WebServicesDriverLib;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Ginger.Run;
-using Ginger.WindowExplorer;
-using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
-using GingerCore.Drivers.ASCF;
-using GingerCore.Drivers.WebServicesDriverLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Agents
 {
@@ -145,7 +141,7 @@ namespace Ginger.Agents
 
         private void StartAppAgent(ApplicationAgent AG)
         {
-            AutoLogProxy.UserOperationStart("StartAgentButton_Click");
+            WorkSpace.Instance.Telemetry.SaveTelemetry("StartAppAgent", AG.Guid.ToString(), new { AgentType = AG.Agent.AgentType, DriverType = AG.Agent.DriverType.ToString() });
             Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
             if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
 
@@ -162,7 +158,7 @@ namespace Ginger.Agents
             }
 
             Reporter.HideStatusMessage();
-            AutoLogProxy.UserOperationEnd();
+            
         }
 
         private void AppAgentsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
