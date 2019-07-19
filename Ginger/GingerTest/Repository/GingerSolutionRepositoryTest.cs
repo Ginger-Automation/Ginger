@@ -34,7 +34,7 @@ using System.Reflection;
 
 namespace GingerTest
 {
-
+    [Ignore] // temp
     [TestClass]
     [Level2]
     public class GingerSolutionRepositoryTest
