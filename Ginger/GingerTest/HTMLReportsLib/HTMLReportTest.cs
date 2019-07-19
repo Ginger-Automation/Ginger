@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerTestHelper;
@@ -28,6 +29,7 @@ using System.Linq;
 
 namespace GingerTest
 {
+    [Ignore]
     [TestClass]
     [Level3]
     public class HTMLReportTest
@@ -40,6 +42,7 @@ namespace GingerTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
+            WorkspaceLocker.StartSession("HTMLReportTest");
             CreateTestSolution();
 
             mGingerAutomator = GingerAutomator.StartSession();
@@ -49,8 +52,9 @@ namespace GingerTest
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
+        {            
             GingerAutomator.EndSession();
+            WorkspaceLocker.EndSession();
         }
 
         private static void CreateTestSolution()

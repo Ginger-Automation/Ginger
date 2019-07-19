@@ -38,6 +38,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
+    [Ignore] // temp
     [TestClass]
     [Level3]
     public class NonDriverActionTest
@@ -47,8 +48,7 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("NonDriverActionTests");
+        {            
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
             mBF = new BusinessFlow();

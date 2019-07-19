@@ -31,6 +31,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
+
+    [Ignore] //temp
     [TestClass]
     [Level3]
     public class OutputSimulation
@@ -42,8 +44,7 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("NonUITests");
+        {            
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "Output Simulation";

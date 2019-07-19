@@ -32,6 +32,7 @@ using System.IO;
 
 namespace GingerTest
 {
+    [Ignore] // temp
     [TestClass]
     [Level1]
     public class ActionConversionTest
@@ -45,6 +46,8 @@ namespace GingerTest
         {
             solutionName = "ActionConversionSol";
             CreateTestSolution();
+
+            // Use helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // Creating workspace
             WorkSpace.Init(new WorkSpaceEventHandler());

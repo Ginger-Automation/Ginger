@@ -68,22 +68,22 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
             Assert.AreEqual(308, lXD.Count);
         }
 
-        [Ignore]
-        [Level2]
-        [TestMethod]  [Timeout(60000)]
-        public void XMLDocExtendedValidateXpathGenerated()
+        //[Ignore]
+        //[Level2]
+        //[TestMethod]  [Timeout(60000)]
+        //public void XMLDocExtendedValidateXpathGenerated()
 
-        {
-            int max = XDE.GetAllNodes().Count;
-            Random r = new Random();
-            int rInt = r.Next(1, max);
+        //{
+        //    int max = XDE.GetAllNodes().Count;
+        //    Random r = new Random();
+        //    int rInt = r.Next(1, max);
 
-          XMLDocExtended XDM=  XDE.GetAllNodes().ToArray()[rInt];
+        //  XMLDocExtended XDM=  XDE.GetAllNodes().ToArray()[rInt];
 
-            XmlNamespaceManager XNS = XMLDocExtended.GetAllNamespaces(XDoc);
+        //    XmlNamespaceManager XNS = XMLDocExtended.GetAllNamespaces(XDoc);
 
-            Assert.AreSame(XDoc.SelectSingleNode(XDM.XPath,XNS), XDM.GetXmlNode());
-        }
+        //    Assert.AreSame(XDoc.SelectSingleNode(XDM.XPath,XNS), XDM.GetXmlNode());
+        //}
 
     }
 }

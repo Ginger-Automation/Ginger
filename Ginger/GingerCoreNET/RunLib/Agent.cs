@@ -330,6 +330,8 @@ namespace GingerCore
 
         public void StartDriver()
         {
+            WorkSpace.Instance.Telemetry.SaveTelemetry("startagent", new { AgentType = AgentType.ToString(), DriverType = DriverType.ToString() });
+
             // if plugin 
             if (AgentType == eAgentType.Service)
             {
