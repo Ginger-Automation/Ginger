@@ -47,8 +47,7 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("NonDriverActionTests");
+        {            
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
 
             mBF = new BusinessFlow();

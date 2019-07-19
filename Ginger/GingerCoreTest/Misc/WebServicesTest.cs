@@ -56,8 +56,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-         
-            AutoLogProxy.Init("NonUITests");
+                     
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF WebServices Web API";
