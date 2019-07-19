@@ -6,11 +6,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="120"/>
             <RowDefinition Height="2"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         
         <Label VerticalAlignment="Center" FontSize="20" Height="100" FontWeight="Bold" Grid.Row="0" Foreground="White">Preparing to Close...</Label>
-        <GridSplitter Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" ></GridSplitter>       
-        <Label FontSize="12" Grid.Row="2" Foreground="White">Saving User Profile and Logs</Label>
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" ></GridSplitter>
+        <StackPanel Grid.Row="2">
+            <Label FontSize="10"  Foreground="White">Saving user profile, logs and doing some cleanup</Label>
+            <Label FontSize="8"  Foreground="White">This might take a few seconds</Label>
+        </StackPanel>
     </Grid>
 </Window>
