@@ -35,6 +35,8 @@ namespace UnitTests.NonUITests.AutoPilot
     /// <summary>
     /// Summary description for APILearningTests
     /// </summary>
+    /// 
+    [Ignore] // temp
     [TestClass]
     public class APILearningTests
     {
