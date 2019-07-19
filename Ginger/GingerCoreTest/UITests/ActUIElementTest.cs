@@ -18,9 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,7 +30,6 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ginger.Repository;
 
 namespace UnitTests.UITests
 {
@@ -78,6 +77,7 @@ namespace UnitTests.UITests
         [TestMethod]  [Timeout(60000)]
         public void DragAndDropSelenium()
         {
+            // Arrange
             ResetBusinessFlow();
 
             Activity a1 = new Activity();
@@ -101,7 +101,10 @@ namespace UnitTests.UITests
             act3.Active = true;
             a1.Acts.Add(act3);
 
+            // Act
             mGR.RunRunner();
+
+            //Assert
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);

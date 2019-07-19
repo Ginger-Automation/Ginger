@@ -32,6 +32,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
+    [Ignore]
     [TestClass]
     [Level1]
     public class SolutionRepositoryPluginTest
@@ -112,20 +113,20 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //[TestMethod]  [Timeout(60000)]
         //public void GetPluginServices()        
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void GetPluginTextEditor()
-        {
-            //Arrange            
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\ExamplePlugin");
-            PluginPackage plugin =  new PluginPackage(pluginFolder);
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void GetPluginTextEditor()
+        //{
+        //    //Arrange            
+        //    string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\ExamplePlugin");
+        //    PluginPackage plugin =  new PluginPackage(pluginFolder);
 
-            // Act            
-            ObservableList<ITextEditor> list = plugin.GetTextFileEditors();
+        //    // Act            
+        //    ObservableList<ITextEditor> list = plugin.GetTextFileEditors();
 
-            //Assert                        
-            Assert.AreEqual(1, list.Count, "There are one text editor");
-        }
+        //    //Assert                        
+        //    Assert.AreEqual(1, list.Count, "There are one text editor");
+        //}
 
         [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestAction()

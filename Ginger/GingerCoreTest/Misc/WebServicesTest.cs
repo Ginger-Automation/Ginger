@@ -43,6 +43,7 @@ using System.Xml;
 
 namespace UnitTests.NonUITests
 {
+    [Ignore] // temp
     [TestClass]
     [Level3]
     public class WebServicesTest 

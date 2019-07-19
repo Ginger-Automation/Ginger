@@ -554,6 +554,7 @@ namespace GingerCore.Drivers
 
         private void SetProxy(dynamic options)
         {
+            if (mProxy == null) return;
             options.Proxy = new Proxy();
             switch (mProxy.Kind)
             {
