@@ -134,19 +134,9 @@ namespace Ginger.Repository
             {
                 foreach (Act selectedItem in xActionsGrid.Grid.SelectedItems)
                 {
-                    mContext.BusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
-                }
-                
-                int selectedActIndex = -1;
-                ObservableList<IAct> actsList = mContext.BusinessFlow.CurrentActivity.Acts;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-                }
+                    ActionsFactory.AddActionsHandler(selectedItem, mContext);
+                    //mContext.BusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
+                }                
             }
             else
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);                      
