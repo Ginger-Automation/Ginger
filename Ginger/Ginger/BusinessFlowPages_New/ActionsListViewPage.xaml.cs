@@ -54,6 +54,8 @@ namespace GingerWPF.BusinessFlowsLib
         UcListView mActionsListView;
         ActionEditPage mActionEditPage;
 
+        public event RoutedEventHandler ShiftToActionEditEvent;
+        public event RoutedEventHandler ShiftToActionsListEvent;
 
         public UcListView ListView
         {
@@ -87,6 +89,10 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionBeenEdit.SaveBackup();
                 mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
                 xMainFrame.Content = mActionEditPage;
+                if (ShiftToActionEditEvent != null)
+                {
+                    ShiftToActionEditEvent.Invoke(this,null);
+                }
             }
             else
             {
@@ -94,6 +100,10 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionBeenEdit = null;                
                 mActionEditPage = null;
                 xMainFrame.Content = mActionsListView;
+                if (ShiftToActionsListEvent != null)
+                {
+                    ShiftToActionsListEvent.Invoke(this, null);
+                }
             }
         }
 

@@ -54,30 +54,33 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         private void SetFrameEnableDisable()
         {
-            bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;               //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-
-            if (mContext.Agent != null)
-                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-            if (isAgentRunning)
+            this.Dispatcher.Invoke(() =>
             {
-                xSelectedItemFrame.IsEnabled = true;
-            }
-            else
-            {
-                if (mWinExplorerPageList != null)
+                bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;               //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+
+                if (mContext.Agent != null)
+                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
+                if (isAgentRunning)
                 {
-                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
-                                                                                            x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
-                    if (objHelper != null && objHelper.ObjectWindowPage != null)
-                    {
-                        objHelper.ObjectWindowPage = new WindowExplorerPage(AgentHelper.GetAppAgent(mContext.Activity, mContext.Runner, mContext), mContext);
-                        CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
-                        xSelectedItemFrame.Content = CurrentLoadedPage;
-                    } 
+                    xSelectedItemFrame.IsEnabled = true;
                 }
-                xSelectedItemFrame.IsEnabled = false;
-            }
+                else
+                {
+                    if (mWinExplorerPageList != null)
+                    {
+                        AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                                x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
+                        if (objHelper != null && objHelper.ObjectWindowPage != null)
+                        {
+                            objHelper.ObjectWindowPage = new WindowExplorerPage(AgentHelper.GetAppAgent(mContext.Activity, mContext.Runner, mContext), mContext);
+                            CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
+                            xSelectedItemFrame.Content = CurrentLoadedPage;
+                        }
+                    }
+                    xSelectedItemFrame.IsEnabled = false;
+                }
+            });
         }
 
         /// <summary>
@@ -95,34 +98,37 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <returns></returns>
         private void LoadWindowExplorerPage()
         {
-            bool isLoaded = false;
-            if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType && 
-                                                                                x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
-                if (objHelper != null && objHelper.ObjectWindowPage != null)
+                bool isLoaded = false;
+                if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
                 {
-                    CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
-                    isLoaded = true;
-                }
-            }
-
-            if (!isLoaded)
-            {
-                ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-                if (appAgent != null)
-                {
-                    CurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
-                    CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
-                    if (mWinExplorerPageList == null)
+                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                    x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
+                    if (objHelper != null && objHelper.ObjectWindowPage != null)
                     {
-                        mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                        CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
+                        isLoaded = true;
                     }
-                    mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, CurrentLoadedPage)); 
                 }
-            }
 
-            xSelectedItemFrame.Content = CurrentLoadedPage;
+                if (!isLoaded)
+                {
+                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+                    if (appAgent != null)
+                    {
+                        CurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
+                        CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
+                        if (mWinExplorerPageList == null)
+                        {
+                            mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                        }
+                        mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, CurrentLoadedPage));
+                    }
+                }
+
+                xSelectedItemFrame.Content = CurrentLoadedPage;
+            });
         }
     }
 }

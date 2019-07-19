@@ -26,7 +26,6 @@ using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
-using Ginger.BusinessFlowFolder;
 using Ginger.Functionalities;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
@@ -368,19 +367,32 @@ namespace Ginger.Run
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
                     xRunRunsetBtn.IsEnabled = false;
-                    xContinueRunsetBtn.IsEnabled = false;
-                    xResetRunsetBtn.IsEnabled = false;
+                    xStopRunsetBtn.Visibility = Visibility.Visible;
+                    xContinueRunsetBtn.Visibility = Visibility.Collapsed;
+                    xResetRunsetBtn.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Run;
                     xRunRunsetBtn.IsEnabled = true;
-                    xContinueRunsetBtn.IsEnabled = true;
-                    xResetRunsetBtn.IsEnabled = true;
+                    xStopRunsetBtn.Visibility = Visibility.Collapsed;
+                    xContinueRunsetBtn.Visibility = Visibility.Visible;
+                    xResetRunsetBtn.Visibility = Visibility.Visible;
                 }
 
                 xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
             });
+        }
+
+        private bool CheckIfExecutionIsInProgress()
+        {
+            if (mRunSetConfig.IsRunning || RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running || x.IsRunning == true).FirstOrDefault() != null)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done during execution.");
+                return true;
+            }
+
+            return false;
         }
 
         private void ExecutionsHistoryList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -672,7 +684,8 @@ namespace Ginger.Run
 
         private void MoveRunnerLeft_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             Run.GingerRunner CGR = mCurrentSelectedRunner.Runner;
             int Indx = mRunSetConfig.GingerRunners.IndexOf(CGR);
 
@@ -684,7 +697,8 @@ namespace Ginger.Run
 
         private void MoveRunnerRight_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             Run.GingerRunner CGR = mCurrentSelectedRunner.Runner;
             int Indx = mRunSetConfig.GingerRunners.IndexOf(CGR);
             if (Indx < (mRunSetConfig.GingerRunners.Count - 1))
@@ -1346,13 +1360,10 @@ namespace Ginger.Run
             }
         }
         
-        
-
-        
-
         private void analyzerRunset_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             AutoLogProxy.UserOperationStart("RunTabAnalyzerButton_Click");
 
             AnalyzerPage AP = new AnalyzerPage();
@@ -1507,7 +1518,8 @@ namespace Ginger.Run
 
         private void xRunSetChange_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mRunSetsSelectionPage == null)
             {                
                 RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
@@ -1528,13 +1540,15 @@ namespace Ginger.Run
         
         private void addRunner_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             AddRunner();
         }
         
         private void clearAllRunner_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mRunSetConfig.GingerRunners.Count > 0)
             {
                 if (Reporter.ToUser(eUserMsgKey.DeleteRunners) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
@@ -1580,6 +1594,8 @@ namespace Ginger.Run
 
         private void xRunsetReportBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
@@ -1728,9 +1744,7 @@ namespace Ginger.Run
             ALMDefectsBorder.BorderBrush = null;
         }
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (CheckCurrentRunnerIsNotRuning()) return;
-            
+        {                        
             SaveRunSetConfig();           
         }
         
@@ -1749,7 +1763,8 @@ namespace Ginger.Run
         }
         private void executionMode_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             RunSetConfig.RunModeParallel = (!RunSetConfig.RunModeParallel);
             SetExecutionModeIcon();
         }
@@ -1885,22 +1900,23 @@ namespace Ginger.Run
             SetHeighlightActionRunnerItem();
         }
 
-        private bool CheckCurrentRunnerIsNotRuning()
-        {
-            if (mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner != null)
-            {
-                if (mCurrentSelectedRunner.Runner.Status == eRunStatus.Running)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please wait for Runner to complete run.");
-                    return true;
-                }
-            }
+        //private bool CheckCurrentRunnerIsNotRuning()
+        //{
+        //    if (mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner != null)
+        //    {
+        //        if (mCurrentSelectedRunner.Runner.Status == eRunStatus.Running)
+        //        {
+        //            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please wait for Runner to complete run.");
+        //            return true;
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
+
         private void xaddBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             BusinessFlowsFolderTreeItem bfsFolder;
             
@@ -1935,7 +1951,7 @@ namespace Ginger.Run
 
         private void clearAllBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             if (mCurrentSelectedRunner.Runner.BusinessFlows.Count > 0)
             {
@@ -2000,7 +2016,7 @@ namespace Ginger.Run
 
         private void xremoveBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
@@ -2018,7 +2034,8 @@ namespace Ginger.Run
 
         private void removeRunner(GingerRunner runner)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (mRunSetConfig.GingerRunners.Count == 1)
             {
                 Reporter.ToUser(eUserMsgKey.CantDeleteRunner);
@@ -2053,7 +2070,7 @@ namespace Ginger.Run
 
         private void xmoveupBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
@@ -2073,7 +2090,7 @@ namespace Ginger.Run
 
         private void xmovedownBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
@@ -2107,7 +2124,7 @@ namespace Ginger.Run
 
         private void xDuplicateBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
@@ -2126,7 +2143,8 @@ namespace Ginger.Run
 
         private void xAddRunSet_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             AddNewRunSetConfig();
             mRunSetsSelectionPage = null;//for new run set to be shown 
         }
@@ -2160,7 +2178,8 @@ namespace Ginger.Run
 
         private void xRunSetReload_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (Reporter.ToUser(eUserMsgKey.RunSetReloadhWarn) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 RefreshCurrentRunSet();
         }
@@ -2184,7 +2203,8 @@ namespace Ginger.Run
 
         private void duplicateRunner(GingerRunner runner)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             if (runner != null)
             {
                 GingerRunner GR = (GingerRunner)runner;
@@ -2273,7 +2293,8 @@ namespace Ginger.Run
 
         private void xBusinessflowsActive_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckIfExecutionIsInProgress()) return;
+
             bool SetBusinessflowActive=false;
             if (xBusinessflowsRunnerItemsListView.Items.Count>0)
             {
@@ -2371,7 +2392,8 @@ namespace Ginger.Run
         }
         private void xRunnersActive_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if(CheckIfExecutionIsInProgress()) return;
+
             bool SetRunnerActive = false;
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();           
             if (fe.Count > 0)
@@ -2451,6 +2473,16 @@ namespace Ginger.Run
         {            
             WizardWindow.ShowWizard(new AutoRunWizard(mRunSetConfig, mContext));
             
+        }
+
+        private void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
+            {
+                mRunSetConfig.SaveBackup();
+            }
         }
     }
 }

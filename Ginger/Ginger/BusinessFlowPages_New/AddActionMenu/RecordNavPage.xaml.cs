@@ -116,56 +116,59 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void AgentBasedManipulations()
         {
-            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
+            this.Dispatcher.Invoke(() =>
             {
-                bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;         //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-                if (isAgentRunning)
+                if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
                 {
-                    xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;
-                }
-
-                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-                if ((xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null) || xWinGridUC.mWindowExplorerDriver != mWindowExplorerDriver)
-                {
-                    if (mWindowExplorerDriver != null)
+                    bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;         //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
+                    if (isAgentRunning)
                     {
-                        xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+                        xStartAgentMessage.Visibility = Visibility.Collapsed;
+                        xWinGridUC.IsEnabled = true;
+                    }
 
-                        if (xWinGridUC.WindowsComboBox != null)
+                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+
+                    if ((xWinGridUC.mWindowExplorerDriver == null && mWindowExplorerDriver != null) || xWinGridUC.mWindowExplorerDriver != mWindowExplorerDriver)
+                    {
+                        if (mWindowExplorerDriver != null)
                         {
-                            xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
-                            xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+                            xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
+
+                            if (xWinGridUC.WindowsComboBox != null)
+                            {
+                                xWinGridUC.WindowsComboBox.SelectionChanged -= WindowsComboBox_SelectionChanged;
+                                xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
+                            }
+                        }
+                        else
+                        {
+                            xWinGridUC.WindowsComboBox.ItemsSource = null;
                         }
                     }
-                    else
+                    else if (xWinGridUC.WindowsComboBox.ItemsSource == null)
                     {
-                        xWinGridUC.WindowsComboBox.ItemsSource = null;
+                        xWinGridUC.UpdateWindowsList();
+                    }
+
+                    if (PlatformInfoBase.GetPlatformImpl(mContext.Platform) != null
+                        && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
+                    {
+                        xPOMPanel.Visibility = Visibility.Visible;
+                    }
+
+                    if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
+                        && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
+                    {
+                        xRecordingButton.IsEnabled = true;
+
+                        if (((bool)xIntegratePOM.IsChecked))
+                        {
+                            gridPOMListItems.Visibility = Visibility.Visible;
+                        }
                     }
                 }
-                else if (xWinGridUC.WindowsComboBox.ItemsSource == null)
-                {
-                    xWinGridUC.UpdateWindowsList();
-                }
-
-                if (PlatformInfoBase.GetPlatformImpl(mContext.Platform) != null 
-                    && PlatformInfoBase.GetPlatformImpl(mContext.Platform).IsPlatformSupportPOM())
-                {
-                    xPOMPanel.Visibility = Visibility.Visible;
-                }
-
-                if (isAgentRunning && (AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
-                    && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
-                {
-                    xRecordingButton.IsEnabled = true;
-
-                    if (((bool)xIntegratePOM.IsChecked))
-                    {
-                        gridPOMListItems.Visibility = Visibility.Visible;
-                    }
-                }
-            }
+            });
         }
 
         private void RecordingButton_Click(object sender, RoutedEventArgs e)

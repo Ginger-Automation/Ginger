@@ -19,10 +19,10 @@
         <StackPanel Grid.Row="0">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Locate By:" Style="{StaticResource $LabelStyle}"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="How to Locate the Element on the screen"  Margin="10,0,0,0"/>
+                <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="How to Locate the Element on the screen"  Margin="45,0,0,0"/>
             </StackPanel>
 
-            <Grid  Grid.Row="1" Grid.ColumnSpan="3">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
@@ -44,7 +44,7 @@
             
             <StackPanel Orientation="Horizontal">
                 <Label Content="Element Action:"  Name="ElementActionLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}" />
-                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0"/>
             </StackPanel>
         </StackPanel>
 

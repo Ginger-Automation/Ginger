@@ -19,7 +19,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"></ColumnDefinition>
             <ColumnDefinition Width="200*"></ColumnDefinition>
-            <ColumnDefinition Width="550"></ColumnDefinition>
+            <ColumnDefinition Width="600"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}">
@@ -33,12 +33,12 @@
         
         <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
             <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                <usercontrols:ucButton x:Name="xResetBtn" ButtonType="CircleImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Reset" >
+                <usercontrols:ucButton x:Name="xResetBtn" ButtonType="ImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageType="Reset" >
                     <usercontrols:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Reset [Activity]"/>
+                        <GingerCore:ucTextDicResource Text="Reset [Activity] Execution Details"/>
                     </usercontrols:ucButton.ToolTip>
                 </usercontrols:ucButton>
-                <usercontrols:ucButton x:Name="xUndoBtn" ButtonType="CircleImageButton" Click="xUndoBtn_Click"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Undo" >
+                <usercontrols:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="xUndoBtn_Click"  ButtonFontImageSize="16"  ButtonImageType="Undo" >
                     <usercontrols:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Undo [Activity] Changes"/>
                     </usercontrols:ucButton.ToolTip>

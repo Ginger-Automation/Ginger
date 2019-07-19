@@ -136,8 +136,7 @@ namespace Ginger.Run
         private bool mStopBusinessFlow = false;
 
         private bool mCurrentActivityChanged = false;
-        private bool mErrorHandlerExecuted = false;
-        private bool mIsRunning=false;
+        private bool mErrorHandlerExecuted = false;        
 
         BusinessFlow mExecutedBusinessFlowWhenStopped=null;
         Activity mExecutedActivityWhenStopped=null;
@@ -173,10 +172,18 @@ namespace Ginger.Run
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
-
+        private bool mIsRunning = false;
         public bool IsRunning
         {
-            get { return mIsRunning; }
+            get
+            {
+                return mIsRunning;
+            }
+            set
+            {
+                mIsRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
+            }
         }
 
         public double? Elapsed
@@ -488,7 +495,7 @@ namespace Ginger.Run
 
                 //Init 
                 Status = eRunStatus.Started;
-                mIsRunning = true;
+                IsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
                 {
@@ -594,7 +601,7 @@ namespace Ginger.Run
                         Status = eRunStatus.Completed;
                     }
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
-                    mIsRunning = false;
+                    IsRunning = false;
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
@@ -896,14 +903,16 @@ namespace Ginger.Run
             
             try
             {
-                //init
-                act.SolutionFolder = SolutionFolder;
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {
-                    mIsRunning = true;
+                    IsRunning = true;
                     mStopRun = false;
                 }
+
+                //init
+                act.SolutionFolder = SolutionFolder;
+
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
@@ -938,7 +947,7 @@ namespace Ginger.Run
             {
                 if (standaloneExecution)
                 {
-                    mIsRunning = false;
+                    IsRunning = false;
                 }
                 act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));                             
             }
@@ -2855,20 +2864,26 @@ namespace Ginger.Run
             }
         }
 
-        public async Task<int> RunActivityAsync(Activity activity, bool Continue=false )
+        public async Task<int> RunActivityAsync(Activity activity, bool Continue=false, bool standaloneExecution = false)
         {
             NotifyExecutionContext(AutomationTabContext.ActivityRun);
             var result = await Task.Run(() => {
-                RunActivity(activity, false);
+                RunActivity(activity, false, standaloneExecution);
                 return 1;  
             });
             return result;
         }
 
         
-        public void RunActivity(Activity activity, bool doContinueRun = false)
+        public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false)
         {
-            
+            //set Runner details if running in stand alone mode (Automate tab)
+            if (standaloneExecution)
+            {
+                IsRunning = true;
+                mStopRun = false;
+            }
+
             bool statusCalculationIsDone = false;
 
             //check if Activity is allowed to run
@@ -3115,6 +3130,10 @@ namespace Ginger.Run
                 }
 
                 //NotifyActivityEnd(activity);
+                if (standaloneExecution)
+                {
+                    IsRunning = false;
+                }
             }
         }
 
@@ -3321,7 +3340,7 @@ namespace Ginger.Run
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {
-                    mIsRunning = true;
+                    IsRunning = true;
                     mStopRun = false;
                 }
 
@@ -3494,7 +3513,7 @@ namespace Ginger.Run
 
                 if (standaloneExecution)
                 {
-                    mIsRunning = false;
+                    IsRunning = false;
                     Status = RunsetStatus;            
                 }
 
@@ -3830,7 +3849,7 @@ namespace Ginger.Run
         {
             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             mStopRun = false;
-            mIsRunning = false;
+            IsRunning = false;
             PublishToALMConfig = null;
             if (doNotResetBusFlows == false)
             {
