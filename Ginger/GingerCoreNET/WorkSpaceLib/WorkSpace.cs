@@ -64,12 +64,14 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
+        public static void Init(IWorkSpaceEventHandler WSEH, string holder = null)
         {
             // TOOD: uncomment after unit tests fixed to lock workspace
             if (mWorkSpace != null)
             {
-                throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
+                Console.WriteLine("Workspace is locked by: " + WorkspaceLocker.HoldBy);
+                WorkspaceLocker.StartSession(holder); // block and wait until workspace is released
+                // throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
             }
 
             mWorkSpace = new WorkSpace();

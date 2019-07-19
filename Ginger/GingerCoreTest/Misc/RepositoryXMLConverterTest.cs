@@ -40,6 +40,12 @@ namespace UnitTests.NonUITests
             WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 
+        [ClassCleanup]
+        public static void TestCleanUp()
+        {
+             WorkspaceLocker.EndSession();
+        }
+
         [TestInitialize]
         public void TestInitialize()
         {

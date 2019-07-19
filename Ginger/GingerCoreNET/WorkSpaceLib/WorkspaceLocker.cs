@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
+namespace amdocs.ginger.GingerCoreNET
 {
     public class WorkspaceLocker
     {
@@ -29,6 +29,14 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
             }
             mWorkspaceHolder = name;
             return WorkspaceLockerInstance;
+        }
+
+        public static string HoldBy
+        {
+            get
+            {
+                return mWorkspaceHolder;
+            }
         }
 
         public static void EndSession()

@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -37,7 +34,7 @@ using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
-{    
+{
     [TestClass]
     [Level3]
     public class NonDriverActionTest
@@ -64,10 +61,18 @@ namespace UnitTests.NonUITests
             mGR.CurrentBusinessFlow = mBF;
             mGR.BusinessFlows.Add(mBF);
 
+            WorkspaceLocker.StartSession("NonDriverActionTest");
+            
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanUp()
+        {            
+            WorkspaceLocker.EndSession();
         }
 
         public static void AddApplicationAgent()
@@ -86,6 +91,8 @@ namespace UnitTests.NonUITests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
         }
+
+
         [TestMethod]
         [Timeout(60000)]
         public void ActXMLProcessingTest()
@@ -283,6 +290,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
         }
 
+        [Ignore]  // keep a browser open FIXME
         [TestMethod]
         public void RestartAgentNotRunningTest()
         {
