@@ -207,8 +207,8 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
-            [EnumValueDescription("GetState")]  //Adding to support conversion of (action type: GetSate) javaelement action in actuielemnt
-            GetState,
+            [EnumValueDescription("ToggleState")]
+            ToggleState,
         }
 
         public enum eElementAction

@@ -257,7 +257,7 @@ namespace GingerCore.Actions.Java
         {
             if(controlAction == eControlAction.GetState)
             {
-                return ActUIElement.eElementProperty.GetState.ToString();
+                return ActUIElement.eElementProperty.ToggleState.ToString();
             }
             else
             {

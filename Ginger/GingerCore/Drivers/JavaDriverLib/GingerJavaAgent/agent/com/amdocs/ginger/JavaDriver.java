@@ -2632,7 +2632,7 @@ private PayLoad GetComponentState(Component c)
 			GingerAgent.WriteLog("INSIDE ISMANDATORY");
 			propValue = Boolean.toString(mASCFHelper.checkIsMandatory(c));	
 		}
-		else if(propertyName.equalsIgnoreCase("GETSTATE"))
+		else if(propertyName.equalsIgnoreCase("TOGGLESTATE"))
 		{
 			return GetComponentState(c);
 		}

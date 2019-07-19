@@ -191,7 +191,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             elementPropertyList.Add(ActUIElement.eElementProperty.DateTimeValue);
             elementPropertyList.Add(ActUIElement.eElementProperty.HTML);
             elementPropertyList.Add(ActUIElement.eElementProperty.List);//????
-            elementPropertyList.Add(ActUIElement.eElementProperty.GetState);
+            elementPropertyList.Add(ActUIElement.eElementProperty.ToggleState);
             return elementPropertyList;
         }
 
