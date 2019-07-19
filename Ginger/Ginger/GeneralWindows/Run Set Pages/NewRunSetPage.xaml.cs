@@ -430,8 +430,7 @@ namespace Ginger.Run
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Runner is already running, please stop it first.");
                         return;
                     }
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
-                    AutoLogProxy.UserOperationStart("Continue Clicked");
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;                    
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
@@ -1353,8 +1352,7 @@ namespace Ginger.Run
         private void analyzerRunset_Click(object sender, RoutedEventArgs e)
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
-            AutoLogProxy.UserOperationStart("RunTabAnalyzerButton_Click");
-
+            
             AnalyzerPage AP = new AnalyzerPage();
             Run.RunSetConfig RSC = mRunSetConfig;
             if (RSC.ContainingFolder == "")
@@ -1365,15 +1363,13 @@ namespace Ginger.Run
             AP.Init( WorkSpace.Instance.Solution, RSC);
             AP.ShowAsWindow();
 
-            AutoLogProxy.UserOperationEnd();
         }
 
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {           
             try
             {
-                UpdateRunButtonIcon(true);
-                AutoLogProxy.UserOperationStart("xRunRunsetBtn_Click");
+                UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
 
@@ -1399,8 +1395,7 @@ namespace Ginger.Run
                 }
             }
             finally
-            {
-                AutoLogProxy.UserOperationEnd();
+            {                
                 UpdateRunButtonIcon();
             }            
         }
@@ -1410,8 +1405,7 @@ namespace Ginger.Run
             try
             {
                 UpdateRunButtonIcon(true);
-                AutoLogProxy.UserOperationStart("RunsetContinueButton_Click");
-
+                
                 if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Stopped).FirstOrDefault() == null)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Stopped Runners to Continue.");
@@ -1431,7 +1425,6 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
-                AutoLogProxy.UserOperationEnd();
             }
         }
 
@@ -1464,8 +1457,7 @@ namespace Ginger.Run
         }
 
         private void xResetRunsetBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("RunsetResetButton_Click");
+        {            
             ResetALMDefectsSuggestions();
        
             foreach (GingerRunner runner in mRunSetConfig.GingerRunners) //reset only none running Runners to avoid execution issues
@@ -1484,23 +1476,18 @@ namespace Ginger.Run
                 ((RunnerPage)f.GetCustomeShape().Content).xruntime.Content = "00:00:00";
                 ((RunnerPage)f.GetCustomeShape().Content).Runner.RunnerExecutionWatch.runWatch.Reset();
             }
-            xRuntimeLbl.Content = "00:00:00";
-            AutoLogProxy.UserOperationEnd();
+            xRuntimeLbl.Content = "00:00:00";         
         }
         
         private void xStopRunsetBtn_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("RunsetStopButton_Click");
-
+        {            
             if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() == null)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Running Runners to Stop.");
                 return;
             }
 
-            WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners
-
-            AutoLogProxy.UserOperationEnd();
+            WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners            
         }
 
 

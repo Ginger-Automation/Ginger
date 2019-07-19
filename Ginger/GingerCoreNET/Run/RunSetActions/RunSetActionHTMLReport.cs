@@ -104,15 +104,12 @@ namespace Ginger.Run.RunSetActions
                 string runSetFolder = string.Empty;
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 { 
-                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
-                    AutoLogProxy.UserOperationStart("Online Report");
+                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;                    
                 }
                 else
                 {
-
                     GingerRunner gr = new GingerRunner();
-                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
-                    AutoLogProxy.UserOperationStart("Offline Report");
+                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();                    
                 }
                 if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
                 {
