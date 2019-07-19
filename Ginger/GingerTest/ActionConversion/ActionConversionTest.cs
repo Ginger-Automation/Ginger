@@ -32,6 +32,7 @@ using System.IO;
 
 namespace GingerTest
 {
+    [Ignore] // temp
     [TestClass]
     [Level1]
     public class ActionConversionTest
