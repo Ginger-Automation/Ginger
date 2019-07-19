@@ -60,49 +60,49 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             Assert.AreEqual(BF, BF2); // make sure they are same object/ref
         }
 
-        [Ignore] // FIXME
-        [TestMethod]
-        [Timeout(60000)]
-        public void CachecWithObjRelease()
-        {
-            //Arrange            
-            string key = "CachecWithObjRelease";
+        //[Ignore]// FIXME
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void CachecWithObjRelease()
+        //{
+        //    //Arrange            
+        //    string key = "CachecWithObjRelease";
 
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "My BF 1";
+        //    BusinessFlow BF = new BusinessFlow();
+        //    BF.Name = "My BF 1";
 
-            //Act
-            RC[key] = BF;
-            BF = null; // release
+        //    //Act
+        //    RC[key] = BF;
+        //    BF = null; // release
 
-            BusinessFlow BF2 = (BusinessFlow)RC[key];
+        //    BusinessFlow BF2 = (BusinessFlow)RC[key];
 
-            //Assert            
-            Assert.IsTrue(BF2 == null, "BF2 == null"); // make sure obj not found in cache and is released
-        }
+        //    //Assert            
+        //    Assert.IsTrue(BF2 == null, "BF2 == null"); // make sure obj not found in cache and is released
+        //}
 
-        [Ignore] // FIXME
-        [TestMethod]
-        [Timeout(60000)]
-        public void CachecWithObjReleaseAndGCCollect()
-        {
-            //Arrange            
-            string key = "CachecWithObjReleaseAndGCCollect";
+        //[Ignore] // FIXME
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void CachecWithObjReleaseAndGCCollect()
+        //{
+        //    //Arrange            
+        //    string key = "CachecWithObjReleaseAndGCCollect";
 
-            BusinessFlow BF = new BusinessFlow();
-            BF.Name = "My BF 1";
+        //    BusinessFlow BF = new BusinessFlow();
+        //    BF.Name = "My BF 1";
 
-            //Act
-            RC[key] = BF;
-            BF = null; // release
+        //    //Act
+        //    RC[key] = BF;
+        //    BF = null; // release
 
-            GC.Collect(); // ((GC.MaxGeneration, GCCollectionMode.Forced);
+        //    GC.Collect(); // ((GC.MaxGeneration, GCCollectionMode.Forced);
 
-            BusinessFlow BF2 = (BusinessFlow)RC[key];
+        //    BusinessFlow BF2 = (BusinessFlow)RC[key];
 
-            //Assert            
-            Assert.IsTrue(BF2 == null, "BF2 == null"); // make sure obj not found in cache is released
-        }
+        //    //Assert            
+        //    Assert.IsTrue(BF2 == null, "BF2 == null"); // make sure obj not found in cache is released
+        //}
 
     }
 }

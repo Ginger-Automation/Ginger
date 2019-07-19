@@ -12,6 +12,7 @@ using System.IO;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+    [Ignore] //temp
     [Level2]
     [TestClass]
     public class ExecutionDumperListenerTest

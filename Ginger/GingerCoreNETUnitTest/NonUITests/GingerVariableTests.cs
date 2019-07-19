@@ -32,6 +32,7 @@ using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
+    [Ignore]
     [TestClass]
     [Level1]
     public class GingerVariableTests

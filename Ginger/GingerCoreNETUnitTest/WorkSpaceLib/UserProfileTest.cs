@@ -78,6 +78,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
 
+        [Ignore] // will not work on Linux
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
@@ -85,7 +86,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             // Arrange            
 
             //Act
-            string s = UserProfile.UserProfileFilePath;
+            string s = UserProfile.UserProfileFilePath.ToLower();
 
             //Assert
             string expected = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml"; //  Linux!!!!!!!!!!!
