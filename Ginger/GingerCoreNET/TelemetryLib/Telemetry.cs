@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common.GeneralLib;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -69,10 +70,25 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 Thread.Sleep(10000);  // Wait 10 seconds so mainwindow and others can load
                 Telemetry.CheckVersionAndNews();
             });
-            
+
+            if (telemetry.DoNotCollect)
+            {
+                // TODO: write to log
+            }
+            else            
+            {
+                StartProcessing();
+            }
+
         }
 
-        
+        private static void StartProcessing()
+        {           
+            // start a long running task to process telemetry queue
+            var task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),
+                    TaskCreationOptions.LongRunning);
+            task.Start();
+        }
 
         private static void InitClient()
         {
@@ -172,8 +188,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             TelemetrySession.EndTime = Time;
             SaveTelemetry("session", TelemetrySession);
+            TelemetryRecords.CompleteAdding();            
 
             Task.Factory.StartNew(() => {
+                // TODO: add timeout to wait
+                while(TelemetryRecords.Count > 0) // Wait for all records to process
+                {
+                    Thread.Sleep(100);
+                }
+
                 Compress();
                 while (!done)  
                 {
@@ -200,26 +223,37 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
         }
 
-        object locker = new object();
 
+        // Multithread safe
+        BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
         public void SaveTelemetry(string entityType, object data)
-        {
-            //TODO: run on task so go back fast                
-            // add to mem - write later
-            TelemetryRecord telemetryRecord = new TelemetryRecord(entityType) ;
-            
-            string indexHeader = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
-            string objJSON = JsonConvert.SerializeObject(data);
-            // Add timestamp and uguid + session guid
-            string controlfields = "\"timestamp\":\"" + Time + "\",\"session\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
-            string fullobj = indexHeader + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
-                        
-            lock(locker)  // in case we have multi thread
-            {
-                File.AppendAllText(sessionFileName, fullobj);
-            }
+        {                      
+            TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data) ;
+            TelemetryRecords.Add(telemetryRecord);                                    
         }
 
+
+        public void ProcessQueue()
+        {
+            //TODO: run until end session true            
+            foreach (TelemetryRecord telemetryRecord in TelemetryRecords.GetConsumingEnumerable())
+            {     
+                // TODO: use string buffer
+                string indexHeader = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
+                string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
+
+                // Add timestamp, uid and sid
+                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
+                string fullobj = indexHeader + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+                             
+                //TODO: add try catch
+
+                File.AppendAllText(sessionFileName, fullobj);                             
+            }
+
+
+
+        }
 
         bool done;
         private async void Compress()

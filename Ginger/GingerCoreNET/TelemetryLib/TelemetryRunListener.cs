@@ -25,11 +25,24 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 {
                     Guid = activity.Guid,
                     Elapsed = activity.Elapsed,
-                    Platform = activity.CurrentAgent.Platform,
+                    Platform = getAgentPlatform(activity),
                     ActionCount = activity.Acts.Count,
                     ActionsPass = (from x in activity.Acts where x.Status == Execution.eRunStatus.Passed select x).Count(),
                     ActionsFail = (from x in activity.Acts where x.Status == Execution.eRunStatus.Failed select x).Count(),
                 });
+        }
+
+        private object getAgentPlatform(Activity activity)
+        {
+            if (activity.CurrentAgent != null)
+            {
+                return activity.CurrentAgent.Platform;
+            }
+            else
+            {
+                return null;
+            }
+                
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
