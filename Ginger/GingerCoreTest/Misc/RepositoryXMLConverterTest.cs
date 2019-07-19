@@ -27,12 +27,15 @@ using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Reflection;
+
 namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level1]
-    public class RepositoryXMLConverterTest 
-    {
+    public class RepositoryXMLConverterTest
+    {        
+        WorkspaceLocker WorkspaceLocker = new WorkspaceLocker("RepositoryXMLConverterTest");
 
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
@@ -41,9 +44,9 @@ namespace UnitTests.NonUITests
         }
 
         [ClassCleanup]
-        public static void TestCleanUp()
-        {
-             WorkspaceLocker.EndSession();
+        public static void ClassCleanUp()
+        {            
+            WorkspaceLocker.EndSession();
         }
 
         [TestInitialize]

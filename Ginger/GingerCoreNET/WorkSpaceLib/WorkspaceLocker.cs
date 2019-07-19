@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace amdocs.ginger.GingerCoreNET
 {
-    public class WorkspaceLocker
+    public class WorkspaceLocker 
     {
         static readonly object _locker = new object();
         static string mWorkspaceHolder;
@@ -19,13 +19,26 @@ namespace amdocs.ginger.GingerCoreNET
 
         static WorkspaceLocker WorkspaceLockerInstance;  // currently we have only one Ginger running for all tests so use one workspace at time
 
+        public WorkspaceLocker(string name)
+        {
+            SessionCount++;
+            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+            //if (WorkspaceLockerInstance == null)
+            //{
+            //    WorkspaceLockerInstance = new WorkspaceLocker(name);
+            //}
+            //mWorkspaceHolder = name;
+        }
+
+
+        // TOD: remove !!!!!!!!!!!!!!!!!!!
         public static WorkspaceLocker StartSession(string name)
         {
             SessionCount++;
             TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
             if (WorkspaceLockerInstance == null)
             {
-                WorkspaceLockerInstance = new WorkspaceLocker();
+                WorkspaceLockerInstance = new WorkspaceLocker(name);
             }
             mWorkspaceHolder = name;
             return WorkspaceLockerInstance;
@@ -42,6 +55,7 @@ namespace amdocs.ginger.GingerCoreNET
         public static void EndSession()
         {
             SessionCount--;
+            mWorkspaceHolder = null;
             TestMutex.ReleaseMutex();
 
             if (SessionCount == 0)
@@ -80,6 +94,11 @@ namespace amdocs.ginger.GingerCoreNET
             }
             //}
             EndSession();
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }
