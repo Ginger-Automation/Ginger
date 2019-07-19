@@ -261,11 +261,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.SetFocus);
                     list.Add(ActUIElement.eTableAction.Click);
                     list.Add(ActUIElement.eTableAction.AsyncClick);
-             //       list.Add(ActUIElement.eTableAction.WinClick);
+                    list.Add(ActUIElement.eTableAction.WinClick);
                     list.Add(ActUIElement.eTableAction.Toggle);
+                    list.Add(ActUIElement.eTableAction.DoubleClick);
+                    list.Add(ActUIElement.eTableAction.Type);
+                    list.Add(ActUIElement.eTableAction.MousePressAndRelease);
+                    list.Add(ActUIElement.eTableAction.IsChecked);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);
+                    list.Add(ActUIElement.eTableAction.ActivateRow);
                     break;
                 case ActUIElement.eElementAction.TableAction:
                     list.Add(ActUIElement.eTableAction.GetRowCount);
@@ -278,7 +283,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.SetFocus);
                     list.Add(ActUIElement.eTableAction.Click);
                     list.Add(ActUIElement.eTableAction.AsyncClick);
-               //     list.Add(ActUIElement.eTableAction.WinClick);
+                    list.Add(ActUIElement.eTableAction.WinClick);
                     list.Add(ActUIElement.eTableAction.Toggle);
                     list.Add(ActUIElement.eTableAction.GetRowCount);
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);
