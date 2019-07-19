@@ -116,11 +116,20 @@ public class BasicSwingApp extends javax.swing.JFrame {
         jList1.setName("countryLst");
         
         
-        JPopupMenu popupMenu = new JPopupMenu();
+        JPopupMenu popupMenu = new JPopupMenu("My Pop up");
         JMenuItem menuItemAdd = new JMenuItem("Add New Row");
+        menuItemAdd.setName("AddNewRow");
         JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
         JMenuItem menuItemRemoveAll = new JMenuItem("Remove All Rows");
          
+        
+        menuItemAdd.addActionListener(new ActionListener() {
+        	 
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(rootPane, "New row clicked!");
+            }
+        });
+        
         popupMenu.add(menuItemAdd);
         popupMenu.add(menuItemRemove);
         popupMenu.add(menuItemRemoveAll);

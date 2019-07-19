@@ -3818,7 +3818,7 @@ private PayLoad SetComponentFocus(Component c)
 			SwingUtilities.convertPointFromScreen(location, CurrentWindow);
 			Component c = SwingUtilities.getDeepestComponentAt(CurrentWindow,
 					location.x, location.y);
-
+			
 			if (c.getName()!=null && c.getName().contains("canvas") || 
 					c.getClass().toString().contains("com.jniwrapper.win32.ie.aw")||
 					(c.getName()!=null && c.getName().contains("LightWeightWidget"))|| //  added to support live spy in JxBrowserBrowserComponent
@@ -4239,12 +4239,14 @@ private PayLoad SetComponentFocus(Component c)
 				try
 				{
 					selectmodel.clearSelection();
-					selectmodel.setSelectionInterval(0, 10);
+					selectmodel.setSelectionInterval(0, CurrentTable.getRowCount()-1);
+					
 					return PayLoad.OK("All Table rows are selected");	
 				}
 				catch(Exception ex)
 				{
-					
+					GingerAgent.WriteLog("Exception during Select all rows"+ ex.getMessage());
+					return PayLoad.Error("Exception during Select all rows"+ ex.getMessage());
 				}
 				
 			}
