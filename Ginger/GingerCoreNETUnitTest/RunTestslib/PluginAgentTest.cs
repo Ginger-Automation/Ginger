@@ -33,6 +33,7 @@ using System.IO;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {    
+    [Ignore]
     [Level3]
     [TestClass]
     public class PluginAgentTest

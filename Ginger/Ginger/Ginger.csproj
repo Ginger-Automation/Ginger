@@ -633,6 +633,9 @@
     <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
     <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
+    <Compile Include="GeneralWindows\VersionAndNewsPage.xaml.cs">
+      <DependentUpon>VersionAndNewsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
@@ -2984,6 +2987,10 @@
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GeneralWindows\VersionAndNewsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PluginsLibNew\LocalPluginsPage.xaml">
       <SubType>Designer</SubType>

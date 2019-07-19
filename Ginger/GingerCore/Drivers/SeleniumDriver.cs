@@ -554,6 +554,7 @@ namespace GingerCore.Drivers
 
         private void SetProxy(dynamic options)
         {
+            if (mProxy == null) return;
             options.Proxy = new Proxy();
             switch (mProxy.Kind)
             {
@@ -6207,7 +6208,7 @@ namespace GingerCore.Drivers
             if (act.ElementLocateBy != eLocateBy.NA)
             {
                 e = LocateElement(act);
-                if (e == null)
+                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
                 {
                     act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
                 }
@@ -6233,7 +6234,15 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
-                        act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                        if(e!=null)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                        }
+                        else
+                        {
+                            act.ExInfo += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                            act.AddOrUpdateReturnParamActual("Actual","False");
+                        }
                         break;
 
                     case ActUIElement.eElementAction.SetValue:

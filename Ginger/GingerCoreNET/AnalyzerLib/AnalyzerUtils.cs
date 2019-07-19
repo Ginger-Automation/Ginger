@@ -116,18 +116,25 @@ namespace Ginger.AnalyzerLib
 
             Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
             { 
-                 foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
-                 {
-                    AddIssue(issuesList, issue);
+                if(activity.Active)
+                {
+                    foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
+                    {
+                        AddIssue(issuesList, issue);
+                    }
                 }
 
-                 Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                  {
 
                      Act action = (Act)iaction;
-                     foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
+                     if(action.Active)
                      {
-                         AddIssue(issuesList, issue);
+                         foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
+                         {
+                             AddIssue(issuesList, issue);
+                         }
+
                      }
 
                      List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
@@ -140,6 +147,26 @@ namespace Ginger.AnalyzerLib
                  usedVariablesInBF.AddRange(usedVariablesInActivity);
                  usedVariablesInActivity.Clear();
             });
+
+            //Get all the missing variable issues Grouped by Variable name
+            var missingVariableIssuesGroupList= issuesList.Where(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable).GroupBy(x=>x.IssueReferenceObject);        
+
+            foreach(var variableIssueGroup in missingVariableIssuesGroupList)
+            {           
+                //If for specific variable, all the issues are for set variable action then we support Auto Fix
+                var canAutoFix= variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
+                
+                if(canAutoFix)
+                {
+                    foreach(AnalyzeAction issue in variableIssueGroup)
+                    {
+                        issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
+                        issue.FixItHandler += MarkSetVariableActionAsInactive;
+                    }
+                }
+
+            }
+
             ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
 
             return usedVariablesInBF;
@@ -275,6 +302,13 @@ namespace Ginger.AnalyzerLib
                     }
                 }
             }
+        }
+
+        private static void MarkSetVariableActionAsInactive(object sender, EventArgs e)
+        {
+            Act action = ((AnalyzeAction)sender).mAction;
+            action.Active = false;
+            ((AnalyzeAction)sender).Status = AnalyzerItemBase.eStatus.Fixed;
         }
 
         private void AddIssue(ObservableList<AnalyzerItemBase> issuesList, AnalyzerItemBase issue)

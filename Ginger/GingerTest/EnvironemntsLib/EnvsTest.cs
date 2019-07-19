@@ -26,6 +26,7 @@ using System.Threading;
 
 namespace GingerTest
 {
+    [Ignore]  // temp
     [TestClass]
     [Level3]
     

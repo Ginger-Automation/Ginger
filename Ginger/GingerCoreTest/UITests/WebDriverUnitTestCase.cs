@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -37,7 +38,11 @@ using System.Linq;
 
 namespace UnitTests.UITests
 {
-    [Ignore]
+    
+
+    // Ad use Mutext to run test one by one !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    [Ignore]  // temp since failing on Appveyor
     [TestClass]
     [Level3]
     public class WebDriverUnitTest
@@ -86,12 +91,20 @@ namespace UnitTests.UITests
             mGR.CurrentBusinessFlow = mBF;
             mGR.SetCurrentActivityAgent();
 
+            WorkspaceLocker.StartSession("WebDriverUnitTest");
+            // helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkspaceLocker.EndSession();
+        }
+        
 
         [TestCleanup]
         public void TestCleanup()
@@ -614,7 +627,7 @@ namespace UnitTests.UITests
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
-            Assert.AreEqual("Gmail", actBrowser3.ReturnValues[0].Actual);
+            Assert.IsTrue(actBrowser3.ReturnValues[0].Actual.Contains("Gmail"), "Gmail");
         }
 
 
