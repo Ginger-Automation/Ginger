@@ -152,7 +152,7 @@ namespace amdocs.ginger.GingerCoreNET
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
             
-            if (BetaFeatures.ShowDebugConsole)
+            if (BetaFeatures.ShowDebugConsole && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 EventHandler.ShowDebugConsole(true);                
                 BetaFeatures.DisplayStatus();

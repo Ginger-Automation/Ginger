@@ -49,7 +49,7 @@ namespace GingerTest
         public static bool Highlight { get { return false; }  }
 
         public static GingerAutomator StartSession()
-        {
+        {            
             SessionCount++;
             TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
             if (app == null)
@@ -65,7 +65,7 @@ namespace GingerTest
         }
 
         public static void EndSession()
-        {
+        {         
             SessionCount--;
             TestMutex.ReleaseMutex();
 
@@ -93,9 +93,11 @@ namespace GingerTest
                 
                 app = new Ginger.App();
                 WorkSpace.Init(new WorkSpaceEventHandler());
+                WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
-                WorkSpace.Instance.RunningFromUnitTest = true;                
                 
+
+                app.HideConsoleWindow();
                 app.StartGingerUI();
                 
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();

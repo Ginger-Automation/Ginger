@@ -32,7 +32,9 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Amdocs.Ginger.Common.InterfacesLib;
 
-namespace UnitTest {
+namespace UnitTest
+{
+    [Ignore]   // temp !!!!!!!!!!!!
     [Level3]
     [TestClass]
     public class PBDriverTest 

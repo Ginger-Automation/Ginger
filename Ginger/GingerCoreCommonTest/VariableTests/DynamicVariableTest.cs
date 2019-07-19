@@ -94,42 +94,42 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Random, eImageType, "Image Type");
         }
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void DynamicVar_TestFormula()
-        {
-            //Arrange
-            string valExpr = "{VBS Eval=2+2}";
-            string expectedResult = "4";
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void DynamicVar_TestFormula()
+        //{
+        //    //Arrange
+        //    string valExpr = "{VBS Eval=2+2}";
+        //    string expectedResult = "4";
 
-            VariableDynamic variableDynamic = new VariableDynamic();
-            variableDynamic.Name = "d1";
-            variableDynamic.Value = valExpr;
+        //    VariableDynamic variableDynamic = new VariableDynamic();
+        //    variableDynamic.Name = "d1";
+        //    variableDynamic.Value = valExpr;
 
-            //Act
-            string formulaVal = variableDynamic.GetFormula();
+        //    //Act
+        //    string formulaVal = variableDynamic.GetFormula();
 
-            //Assert            
-            Assert.AreEqual(expectedResult, formulaVal, "Dynamic Variable Formula");
-        }
+        //    //Assert            
+        //    Assert.AreEqual(expectedResult, formulaVal, "Dynamic Variable Formula");
+        //}
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void DynamicVar_TestAutoValue()
-        {
-            //Arrange
-            string valExpr = "{VBS Eval=1+1}";
-            VariableDynamic variableDynamic = new VariableDynamic();
-            variableDynamic.Name = "d1";
-            variableDynamic.Value = valExpr;
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void DynamicVar_TestAutoValue()
+        //{
+        //    //Arrange
+        //    string valExpr = "{VBS Eval=1+1}";
+        //    VariableDynamic variableDynamic = new VariableDynamic();
+        //    variableDynamic.Name = "d1";
+        //    variableDynamic.Value = valExpr;
 
-            //Act
-            variableDynamic.GenerateAutoValue();
-            int num1 = Convert.ToInt32(variableDynamic.Value);
+        //    //Act
+        //    variableDynamic.GenerateAutoValue();
+        //    int num1 = Convert.ToInt32(variableDynamic.Value);
 
-            //Assert            
-            Assert.IsTrue(num1 >= 0 && num1 <= int.MaxValue, "num1 >= 0 && num1 <= int.max");
-        }
+        //    //Assert            
+        //    Assert.IsTrue(num1 >= 0 && num1 <= int.MaxValue, "num1 >= 0 && num1 <= int.max");
+        //}
 
     }
 }
