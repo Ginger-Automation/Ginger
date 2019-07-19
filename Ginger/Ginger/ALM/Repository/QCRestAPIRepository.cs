@@ -273,7 +273,6 @@ namespace Ginger.ALM.Repository
 
             return false;
         }
-
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             throw new NotImplementedException();
@@ -312,7 +311,6 @@ namespace Ginger.ALM.Repository
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                //
                 matchingTC = null;
                 //check if the ActivitiesGroup already mapped to QC Test Case
                 if (String.IsNullOrEmpty(ag.ExternalID) == false)
@@ -326,8 +324,41 @@ namespace Ginger.ALM.Repository
                             return false;
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
                             matchingTC = null;
+                        else
+                        {
+                            //1. get parent id of TC
+                            //QCTestPlan testPlan = QCRestAPIConnect.QcRestClient.GetTestPlansByName(matchingTC.Name);
+
+                            QCTestCaseColl testCases = QCRestAPIConnect.QcRestClient.GetTestCasesByName(matchingTC.Name);
+
+                            //2. need to create a function to get parent id of Testplan folder by folderName or TC's parent id 
+
+                            //GetTestPlanFolderId
+                            //QCTestFolder testPlanFol = QCRestAPIConnect.QcRestClient.GetTestPlansByNameAndParentId("ALMTestDemoFlow", "1518");
+
+
+                            //3.Get the physiacl path
+
+                            //hierarchical-path
+                            //ExportActivitiesGroupToALM(ag, "AAAAAPAAFAAC");
+
+                            //testPlanUploadPath = "AAAAAPAAFAAC";
+
+                            //
+                            //ExportActivitiesGroupToALM(ag, Convert.ToInt32(testCases[0].ElementsField["parent-id"].ToString()));
+                            //int parentId = Convert.ToInt32(testCases[0].ElementsField["parent-id"].ToString());
+
+                            //try to itrate path with like tree explorer
+                        }
                     }
                 }
+                //if the business Flow is already exported previosly and now exporting with new changes
+                if (!String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    ExportActivitiesGroupToALM(ag, testPlanUploadPath);
+                    continue;
+                }
+                //if user selected No and want to create new testplans to selected folder path
                 if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
                 {
                     //get the QC Test Plan path to upload the activities group to

@@ -333,9 +333,20 @@ namespace Ginger.ALM.Repository
                         { return false; }
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
                         { matchingTC = null; }
+                        else
+                        {
+                            testPlanUploadPath = matchingTC["TS_SUBJECT"].Path;
+                        }
                     }
                 }
+                //if the business Flow is already exported previosly and now exporting with new changes
+                if (!String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    ExportActivitiesGroupToALM(ag, testPlanUploadPath);
+                    continue;
+                }
 
+                //if user selected No and want to create new testplans to selected folder path
                 if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
                 {
                     //get the QC Test Plan path to upload the activities group to
