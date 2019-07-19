@@ -32,6 +32,7 @@ using System.Threading;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
+    [Ignore] //temp
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
