@@ -29,7 +29,7 @@ using System.Linq;
 
 namespace GingerTest
 {
-    [Ignore]
+    
     [TestClass]
     [Level3]
     public class HTMLReportTest
