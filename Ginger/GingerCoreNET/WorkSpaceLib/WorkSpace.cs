@@ -51,9 +51,7 @@ namespace amdocs.ginger.GingerCoreNET
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
-    {
-        // static readonly object _locker = new object();
-
+    {        
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -67,14 +65,19 @@ namespace amdocs.ginger.GingerCoreNET
         static readonly Mutex mMutex = new Mutex();
 
         public static void Init(IWorkSpaceEventHandler WSEH, WorkspaceLocker workspaceLocker)
-        {            
-            // TOOD: uncomment after unit tests fixed to lock workspace
+        {                        
             if (mWorkSpace != null)
             {                
                 Console.WriteLine("Workspace is locked by: " + WorkspaceLocker.HoldBy);
                 // throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, if running from unit test make sure to release workspacae in Class cleanup");               
             }
-            mMutex.WaitOne();   // Wait for the workspace to be released
+            mMutex.WaitOne(60000);   // Wait for the workspace to be released max 60 seconds
+
+            if (mWorkSpace != null)
+            {
+                Console.WriteLine("Workspace remained locked and timed out after 60 seconds, hold by: " + WorkspaceLocker.HoldBy);
+                throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, timeout 60 seconds, if running from unit test make sure to release workspacae in Class cleanup, and no test take mor than 60 seconds");               
+            }
 
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
