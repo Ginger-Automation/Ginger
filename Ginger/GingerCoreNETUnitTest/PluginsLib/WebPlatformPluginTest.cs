@@ -12,20 +12,21 @@ using System.Threading;
 namespace GingerCoreNETUnitTest.PluginsLib
 {
     // Generic platform plugin tester
-
-    [Ignore]
+    [Ignore]  // getting stuck
     [TestClass]
     [Level3]
     public class WebPlatformPluginTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("WebPlatformPluginTest");
+
         static GingerGrid GG;
         static Agent agent;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {
+        {            
             // Init workspace
-            WorkspaceHelper.CreateDummyWorkSpace("WebPlatformPluginTest");            
+            WorkspaceHelper.CreateDummyWorkSpace(mWorkspaceLocker);            
 
             // Strat GG
             // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
@@ -49,7 +50,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

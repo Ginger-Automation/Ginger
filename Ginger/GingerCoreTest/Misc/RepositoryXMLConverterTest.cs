@@ -27,7 +27,6 @@ using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using System.Reflection;
 
 namespace UnitTests.NonUITests
 {
@@ -35,24 +34,25 @@ namespace UnitTests.NonUITests
     [Level1]
     public class RepositoryXMLConverterTest
     {        
-        WorkspaceLocker WorkspaceLocker = new WorkspaceLocker("RepositoryXMLConverterTest");
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryXMLConverterTest");
 
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
-        {            
-            WorkSpace.Init(new WorkSpaceEventHandler());                   
+        {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);                   
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
-        {            
-            WorkspaceLocker.EndSession();
+        {
+            mWorkspaceLocker.ReleaseWorkspace(); 
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            
         }
 
         [Ignore] // need to add handle for old serializer event to handle old action 

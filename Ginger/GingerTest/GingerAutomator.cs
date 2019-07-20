@@ -76,7 +76,7 @@ namespace GingerTest
             }            
         }
 
-      
+        WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerAutomator");
 
         private void StartGinger()
         {                        
@@ -92,7 +92,7 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                WorkSpace.Init(new WorkSpaceEventHandler());
+                WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
                 WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
                 
@@ -136,48 +136,7 @@ namespace GingerTest
             // app.Shutdown(0);
             MainWindowPOM.Close();
             Thread.Sleep(5000);
-
-            //while (!Dispatcher.CurrentDispatcher.HasShutdownFinished)
-            //{
-            //    Thread.Sleep(100);
-            //}
-
-            //MainWindowPOM.Dispatcher.Invoke(() => {
-            //    try
-            //    {
-            //        //Console.WriteLine("Closing Ginger");
-            //        //app.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            //        // Thread.Sleep(30000);
-
-            //        //Console.WriteLine("MainWindow closed");
-
-            //        //app.Shutdown();
-            //        //app = null;                    
-            //        //int i = 0;
-            //        //while (mGingerThread.IsAlive  && i<100)
-            //        //{
-            //        //    Thread.Sleep(100);
-            //        //    i++;
-            //        //}
-
-            //        //int i = 0;
-            //        //while (app.Windows.Count > 0 && i < 100) //max 10 seconds for closing all windows
-            //        //{
-            //        //    i++;
-            //        //    Thread.Sleep(100);
-            //        //}
-            //        //app.Shutdown();                
-            //    }
-            //    catch(Exception ex)
-            //    {
-
-            //    }
-
-            //Thread.Sleep(5000);
-            //});
-
-            // Thread.Sleep(30000);
-            // mGingerThread.Abort();
+            mWorkspaceLocker.ReleaseWorkspace();            
         }
 
 

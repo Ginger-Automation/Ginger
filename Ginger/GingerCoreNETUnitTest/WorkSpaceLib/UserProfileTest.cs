@@ -31,16 +31,18 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
     public class UserProfileTest
     {
 
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("UserProfileTest");
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.CreateDummyWorkSpace("UserProfileTest");            
+            WorkspaceHelper.CreateDummyWorkSpace(mWorkspaceLocker);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

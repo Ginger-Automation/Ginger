@@ -31,12 +31,13 @@ using System.IO;
 using System.Linq;
 
 namespace GingerTest
-{
-    [Ignore] // temp
+{    
     [TestClass]
     [Level1]
     public class GingerSolutionRepositorySyncTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerSolutionRepositorySyncTest");
+
         static SolutionRepository mSolutionRepository;
         static BusinessFlow mBF;        
         static string solutionName; 
@@ -48,7 +49,7 @@ namespace GingerTest
             CreateTestSolution();
 
             // Creating workspace
-            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
@@ -57,6 +58,14 @@ namespace GingerTest
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
             mSolutionRepository.Open(TempRepositoryFolder);
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {            
+            mWorkspaceLocker.ReleaseWorkspace();
+
+        }
+
 
         [TestCleanup]
         public void TestCleanUp()

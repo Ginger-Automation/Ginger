@@ -24,24 +24,25 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
-{
-    [Ignore] // temp
+{    
     [Level1]
     [TestClass]
     public class RepositoryItemTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryItemTest");
+
         static WorkSpace mWorkSpace;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {            
-            WorkspaceHelper.CreateWorkspace2("RepositoryItemTest");            
+            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

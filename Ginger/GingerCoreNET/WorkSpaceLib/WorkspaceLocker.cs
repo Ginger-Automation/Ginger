@@ -22,7 +22,9 @@ namespace amdocs.ginger.GingerCoreNET
         public WorkspaceLocker(string name)
         {
             SessionCount++;
-            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+            //TestMutex.WaitOne();
+            mWorkspaceHolder = name;
+            // Make sure we run one session at a time, wait for session to be free
             //if (WorkspaceLockerInstance == null)
             //{
             //    WorkspaceLockerInstance = new WorkspaceLocker(name);
@@ -30,19 +32,21 @@ namespace amdocs.ginger.GingerCoreNET
             //mWorkspaceHolder = name;
         }
 
+        
+
 
         // TOD: remove !!!!!!!!!!!!!!!!!!!
-        public static WorkspaceLocker StartSession(string name)
-        {
-            SessionCount++;
-            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
-            if (WorkspaceLockerInstance == null)
-            {
-                WorkspaceLockerInstance = new WorkspaceLocker(name);
-            }
-            mWorkspaceHolder = name;
-            return WorkspaceLockerInstance;
-        }
+        //public static WorkspaceLocker StartSession(string name)
+        //{
+        //    SessionCount++;
+        //    TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+        //    if (WorkspaceLockerInstance == null)
+        //    {
+        //        WorkspaceLockerInstance = new WorkspaceLocker(name);
+        //    }
+        //    mWorkspaceHolder = name;
+        //    return WorkspaceLockerInstance;
+        //}
 
         public static string HoldBy
         {
@@ -52,11 +56,11 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static void EndSession()
+        private static void EndSession()
         {
             SessionCount--;
             mWorkspaceHolder = null;
-            TestMutex.ReleaseMutex();
+            //TestMutex.ReleaseMutex();
 
             if (SessionCount == 0)
             {
@@ -68,7 +72,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         
 
-        public static void ReleaseWorkspace()
+        public void ReleaseWorkspace()
         {
 
             //lock (_locker)
