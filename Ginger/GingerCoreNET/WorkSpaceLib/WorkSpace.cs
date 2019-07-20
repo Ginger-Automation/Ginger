@@ -71,12 +71,12 @@ namespace amdocs.ginger.GingerCoreNET
                 Console.WriteLine("Workspace is locked by: " + WorkspaceLocker.HoldBy);
                 // throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, if running from unit test make sure to release workspacae in Class cleanup");               
             }
-            mMutex.WaitOne(60000);   // Wait for the workspace to be released max 60 seconds
+            mMutex.WaitOne(180000);   // Wait for the workspace to be released max 3 minutes
 
             if (mWorkSpace != null)
             {
-                Console.WriteLine("Workspace remained locked and timed out after 60 seconds, hold by: " + WorkspaceLocker.HoldBy);
-                throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, timeout 60 seconds, if running from unit test make sure to release workspacae in Class cleanup, and no test take mor than 60 seconds");               
+                Console.WriteLine("Workspace remained locked and timed out after 3 minutes, hold by: " + WorkspaceLocker.HoldBy);
+                throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, timeout 3 minutes, if running from unit test make sure to release workspacae in Class cleanup, and no test hold workspace more than 3 minutes");               
             }
 
             mWorkSpace = new WorkSpace();
