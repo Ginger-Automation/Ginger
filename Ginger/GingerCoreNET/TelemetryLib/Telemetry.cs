@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             // start a long running task to process telemetry queue
             var task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),
                     TaskCreationOptions.LongRunning);
-            task.Start();
+            task.Start();            
         }
 
         private static void InitClient()
@@ -178,7 +178,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
 
-            TelemetrySession = new TelemetrySession(Guid);            
+            TelemetrySession = new TelemetrySession(Guid);
+
+            Add("sessionstart", TelemetrySession);
         }
 
 
@@ -187,12 +189,16 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
 
             TelemetrySession.EndTime = Time;
-            SaveTelemetry("session", TelemetrySession);
-            TelemetryRecords.CompleteAdding();            
+            Add("sessionend", TelemetrySession);
 
+            Add("dummy", new { a = 1}); // add another dummy to make sure session is written
+
+            TelemetryRecords.CompleteAdding();
+            
+            
             Task.Factory.StartNew(() => {
                 // TODO: add timeout to wait
-                while(TelemetryRecords.Count > 0) // Wait for all records to process
+                while(!TelemetryRecords.IsCompleted) // Wait for all records to process
                 {
                     Thread.Sleep(100);
                 }
@@ -226,7 +232,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         // Multithread safe
         BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
-        public void SaveTelemetry(string entityType, object data)
+        public void Add(string entityType, object data)
         {                      
             TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data) ;
             TelemetryRecords.Add(telemetryRecord);                                    
