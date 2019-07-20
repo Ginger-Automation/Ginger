@@ -8,6 +8,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public Guid Guid {get; set;}
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public string Elapsed { get; set; }
         public int BusinessFlowsCounter { get; set; }
         public int ActivitiesCounter { get; set; }
         public int ActionsCounter { get; set; }

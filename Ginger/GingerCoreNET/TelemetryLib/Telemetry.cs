@@ -189,6 +189,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
 
             TelemetrySession.EndTime = Time;
+            TimeSpan ts = TelemetrySession.EndTime - TelemetrySession.StartTime;
+            TelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
             Add("sessionend", TelemetrySession);
 
             Add("dummy", new { a = 1}); // add another dummy to make sure session is written
@@ -266,7 +268,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             try
             {
-                string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss") + ".Data.zip";
+                string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
                 
