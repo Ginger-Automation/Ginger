@@ -72,7 +72,7 @@ namespace amdocs.ginger.GingerCoreNET
             if (mWorkSpace != null)
             {                
                 Console.WriteLine("Workspace is locked by: " + WorkspaceLocker.HoldBy);
-                // throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, if running from unit test make sure to release workspacae in Class cleanup");               
+                throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, if running from unit test make sure to release workspacae in Class cleanup");               
             }
             mMutex.WaitOne();
 
