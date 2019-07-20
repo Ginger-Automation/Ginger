@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
+namespace amdocs.ginger.GingerCoreNET
 {
-    public class WorkspaceLocker
+    public class WorkspaceLocker 
     {
         static readonly object _locker = new object();
         static string mWorkspaceHolder;
@@ -19,22 +19,48 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
 
         static WorkspaceLocker WorkspaceLockerInstance;  // currently we have only one Ginger running for all tests so use one workspace at time
 
-        public static WorkspaceLocker StartSession(string name)
+        public WorkspaceLocker(string name)
         {
             SessionCount++;
-            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
-            if (WorkspaceLockerInstance == null)
-            {
-                WorkspaceLockerInstance = new WorkspaceLocker();
-            }
+            //TestMutex.WaitOne();
             mWorkspaceHolder = name;
-            return WorkspaceLockerInstance;
+            // Make sure we run one session at a time, wait for session to be free
+            //if (WorkspaceLockerInstance == null)
+            //{
+            //    WorkspaceLockerInstance = new WorkspaceLocker(name);
+            //}
+            //mWorkspaceHolder = name;
         }
 
-        public static void EndSession()
+        
+
+
+        // TOD: remove !!!!!!!!!!!!!!!!!!!
+        //public static WorkspaceLocker StartSession(string name)
+        //{
+        //    SessionCount++;
+        //    TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+        //    if (WorkspaceLockerInstance == null)
+        //    {
+        //        WorkspaceLockerInstance = new WorkspaceLocker(name);
+        //    }
+        //    mWorkspaceHolder = name;
+        //    return WorkspaceLockerInstance;
+        //}
+
+        public static string HoldBy
+        {
+            get
+            {
+                return mWorkspaceHolder;
+            }
+        }
+
+        private static void EndSession()
         {
             SessionCount--;
-            TestMutex.ReleaseMutex();
+            mWorkspaceHolder = null;
+            //TestMutex.ReleaseMutex();
 
             if (SessionCount == 0)
             {
@@ -46,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
 
         
 
-        public static void ReleaseWorkspace()
+        public void ReleaseWorkspace()
         {
 
             //lock (_locker)
@@ -72,6 +98,11 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
             }
             //}
             EndSession();
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }
