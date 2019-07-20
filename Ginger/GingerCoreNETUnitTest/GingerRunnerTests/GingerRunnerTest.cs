@@ -34,12 +34,12 @@ using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
-    [Ignore] //temp
+{    
     [TestClass]
     [Level1]
     public class GingerRunnerTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerRunnerTest");
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
@@ -75,7 +75,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
 
-            WorkspaceHelper.InitWS("GingerRunnerTest");            
+            WorkspaceHelper.InitWS(mWorkspaceLocker);            
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -85,7 +85,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

@@ -32,14 +32,14 @@ using System.IO;
 // FIXME to use local html test page
 
 namespace GingerCoreNETUnitTest.RunTestslib
-{    
-    [Ignore]
+{        
     [Level3]
     [TestClass]
     public class PluginAgentTest
-    {        
-        static GingerGrid mGingerGrid;
+    {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("PluginAgentTest");
 
+        static GingerGrid mGingerGrid;
         
 
         [ClassInitialize]
@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             // Create temp solution
 
-            WorkspaceHelper.InitWS("AgentTest");
+            WorkspaceHelper.InitWS(mWorkspaceLocker);
             
 
             // Create temp solution
@@ -76,7 +76,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassCleanup()
         {
             mGingerGrid.Stop();
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
         [TestInitialize]

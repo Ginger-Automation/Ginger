@@ -15,12 +15,13 @@ using System.Linq;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace WorkspaceHold
-{
-    [Ignore] //temp
+{    
     [Level3]
     [TestClass]
     public class CLITest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("CLITest");
+
         // TODO: run one by one as it used same run exc
         static string mTempFolder;
         static string mSolutionFolder;
@@ -35,19 +36,19 @@ namespace WorkspaceHold
         [ClassCleanup]
         public static void ClassCleanup()
         {
-             
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            WorkspaceHelper.InitWS("CLITest");  // we get seperate workspace for each test
+            WorkspaceHelper.InitWS(mWorkspaceLocker);  // we get seperate workspace for each test
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
 

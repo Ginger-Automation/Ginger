@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Plugin.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using PluginExample;
 
 namespace GingerPluginCoreTest
 {
-    [Ignore] // temp
     [TestClass]
     public class MyServiceTest
     {
