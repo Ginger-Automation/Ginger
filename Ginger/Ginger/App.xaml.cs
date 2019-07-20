@@ -167,8 +167,9 @@ namespace Ginger
         //}
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
+        {            
             Exception ex = e.Exception;
+            WorkSpace.Instance.Telemetry.AddException(ex);
             //Exceptions to avoid because it source is in some .NET issue
             if (ex.Message == "Value cannot be null.\r\nParameter name: element" && ex.Source == "PresentationCore")//Seems like WPF Bug 
             {

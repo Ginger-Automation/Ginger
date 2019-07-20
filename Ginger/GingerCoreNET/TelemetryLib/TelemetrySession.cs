@@ -47,7 +47,6 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 dox = false;
             }
-            
 
 
         }

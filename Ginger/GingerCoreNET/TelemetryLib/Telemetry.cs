@@ -263,6 +263,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         }
 
+        public void AddException(Exception ex)
+        {            
+            Add("Exception", new { message = ex.Message, StackTrace = ex.StackTrace });
+        }
+
         bool done;
         private async void Compress()
         {
