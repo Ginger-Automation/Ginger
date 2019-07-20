@@ -32,6 +32,8 @@ using System;
 
 namespace UnitTests.UITests.PBDriverTest
 {    
+
+    [Ignore]
     [TestClass]
     public class PBDriverWidgetTest
     {
