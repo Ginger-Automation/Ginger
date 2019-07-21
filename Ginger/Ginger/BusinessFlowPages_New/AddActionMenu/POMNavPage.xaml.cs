@@ -93,7 +93,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
-                UpdatePOMTree();
+                if (mContext.Activity != null)
+                {
+                    UpdatePOMTree();
+                }
             }
             if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
             {

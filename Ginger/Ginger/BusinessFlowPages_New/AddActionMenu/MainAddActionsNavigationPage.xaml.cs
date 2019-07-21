@@ -43,10 +43,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
+            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
             {
+                if(xSelectedItemFrame.Content == mRecordPage || xSelectedItemFrame.Content == mLiveSpyNavPage || xSelectedItemFrame.Content == mWindowsExplorerNavPage)
+                {
+                    LoadActionFrame(null);
+                }
                 ToggleRecordLiveSpyAndExplorer();
             }
+
             if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
             {
                 ToggleApplicatoinModels();
