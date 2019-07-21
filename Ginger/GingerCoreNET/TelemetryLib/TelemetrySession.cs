@@ -56,7 +56,17 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 Terminology = WorkSpace.Instance.UserProfile.TerminologyDictionaryType.ToString();
             }
 
-            exe = Assembly.GetEntryAssembly().GetName().Name;
+            Assembly assembly = Assembly.GetEntryAssembly();
+            if (assembly ==null)
+            {
+                //running from unit tests
+                exe = "Unit Test";
+            }
+            else
+            {
+                exe = assembly.GetName().Name;
+            }
+            
         }
 
     }
