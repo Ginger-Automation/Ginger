@@ -33,20 +33,19 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level1]
     public class RepositoryXMLConverterTest
-    {        
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryXMLConverterTest");
+    {                
 
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);                   
+            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(RepositoryXMLConverterTest));                   
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            mWorkspaceLocker.ReleaseWorkspace(); 
+            WorkSpace.Instance.ReleaseWorkspace(); 
         }
 
         [TestInitialize]

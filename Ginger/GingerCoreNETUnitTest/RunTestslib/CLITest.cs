@@ -5,6 +5,7 @@ using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore.Environments;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,21 +16,21 @@ using System.Linq;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace WorkspaceHold
-{    
-    [Ignore] // temp
+{        
     [Level3]
     [TestClass]
     public class CLITest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("CLITest");
-
+    {        
         // TODO: run one by one as it used same run exc
         static string mTempFolder;
         static string mSolutionFolder;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {            
+        {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, "CLITest");
+
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
             mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "CLI");
         }
@@ -37,19 +38,19 @@ namespace WorkspaceHold
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            WorkspaceHelper.InitWS(mWorkspaceLocker);  // we get seperate workspace for each test
+            WorkspaceHelper.InitWS("CLITest");  // we get seperate workspace for each test
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+            WorkSpace.Instance.ReleaseWorkspace(); // We release the workspace after each test
         }
 
 

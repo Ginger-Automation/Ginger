@@ -64,19 +64,22 @@ namespace amdocs.ginger.GingerCoreNET
 
         static readonly Mutex mMutex = new Mutex();
 
-        public static void Init(IWorkSpaceEventHandler WSEH, WorkspaceLocker workspaceLocker)
+        private static string mHoldBy;
+
+        public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
         {                        
             if (mWorkSpace != null)
             {                
-                Console.WriteLine("Workspace is locked by: " + WorkspaceLocker.HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
+                Console.WriteLine("Workspace is locked by: " + HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
             }
             bool b = mMutex.WaitOne(new TimeSpan(0,10,0));   // Wait for the workspace to be released max 10 minutes
 
             if (!b)
             {
-                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + WorkspaceLocker.HoldBy);
-                throw new Exception("Workspace is locked by: '" + WorkspaceLocker.HoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
+                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
+                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
             }
+            mHoldBy = HoldBy;
 
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
@@ -84,10 +87,34 @@ namespace amdocs.ginger.GingerCoreNET
 
             mWorkSpace.InitLocalGrid();
 
-            Telemetry.Init();            
-            WorkSpace.Instance.Telemetry.SessionStarted();
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
-        
+
+
+
+        public void ReleaseWorkspace()
+        {
+            try
+            {
+
+                CloseSolution();
+                LocalGingerGrid.Stop();
+                Close();
+                mHoldBy = null;                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+                mMutex.ReleaseMutex();
+            }            
+         
+        }
+
 
         public void Close()
         {
@@ -108,9 +135,7 @@ namespace amdocs.ginger.GingerCoreNET
 
             WorkSpace.Instance.LocalGingerGrid.Stop();
             WorkSpace.Instance.Telemetry.SessionEnd();
-            mWorkSpace = null;
-
-            mMutex.ReleaseMutex();
+            mWorkSpace = null;            
         }
 
         private void InitLocalGrid()

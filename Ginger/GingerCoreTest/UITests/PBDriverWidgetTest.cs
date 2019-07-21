@@ -35,9 +35,7 @@ namespace UnitTests.UITests.PBDriverTest
 {
     [TestClass]
     public class PBDriverWidgetTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("PBDriverWidgetTest");
-
+    {        
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
@@ -48,7 +46,7 @@ namespace UnitTests.UITests.PBDriverTest
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, mWorkspaceLocker);            
+            WorkSpace.Init(WSEH, "PBDriverWidgetTest");            
 
 
             // launch PB Test App
@@ -221,7 +219,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             }
 
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestMethod]  [Timeout(60000)]

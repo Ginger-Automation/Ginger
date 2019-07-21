@@ -127,13 +127,12 @@ namespace Amdocs.Ginger.GingerConsole
             Console.Out.Flush();            
             Thread.Sleep(5000);
         }
-
-        static WorkspaceLocker workspaceLocker = new WorkspaceLocker("Program");
+        
 
         private static void InitWorkSpace()
         {
             GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();  
-            WorkSpace.Init(ws, workspaceLocker);
+            WorkSpace.Init(ws, "Program");
         }
 
         private static void ProcessArgs(string[] args)

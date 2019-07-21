@@ -17,8 +17,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
     [Level3]
     public class WebPlatformPluginTest
     {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("WebPlatformPluginTest");
-
+        
         static GingerGrid GG;
         static Agent agent;
 
@@ -26,7 +25,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassInitialize(TestContext TestContext)
         {            
             // Init workspace
-            WorkspaceHelper.CreateDummyWorkSpace(mWorkspaceLocker);            
+            WorkspaceHelper.CreateDummyWorkSpace(nameof(WebPlatformPluginTest));            
 
             // Strat GG
             // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
@@ -50,7 +49,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

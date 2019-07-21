@@ -36,8 +36,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [Level3]
     [TestClass]
     public class PluginAgentTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("PluginAgentTest");
+    {        
 
         static GingerGrid mGingerGrid;
         
@@ -47,7 +46,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             // Create temp solution
 
-            WorkspaceHelper.InitWS(mWorkspaceLocker);
+            WorkspaceHelper.InitWS(nameof(PluginAgentTest));
             
 
             // Create temp solution
@@ -76,7 +75,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassCleanup()
         {
             mGingerGrid.Stop();
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

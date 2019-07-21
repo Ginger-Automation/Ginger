@@ -27,19 +27,18 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
     [TestClass]
     public class ValueExpressionRefrenceTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("ValueExpressionRefrenceTest");
+    {        
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            WorkspaceHelper.InitConsoleWorkspace(mWorkspaceLocker);
+            WorkspaceHelper.InitConsoleWorkspace(nameof(ValueExpressionRefrenceTest));
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

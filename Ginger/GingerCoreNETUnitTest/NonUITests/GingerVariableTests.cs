@@ -40,7 +40,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     public class GingerVariableTests
     {
 
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerVariableTests");
+        // static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerVariableTests");
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
@@ -49,7 +49,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, mWorkspaceLocker);
+            WorkSpace.Init(WSEH, "GingerVariableTests");
 
 
             mBF = new BusinessFlow();
@@ -80,8 +80,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassCleanup()]
         public static void ClassCleanup()
-        {            
-            mWorkspaceLocker.ReleaseWorkspace();
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

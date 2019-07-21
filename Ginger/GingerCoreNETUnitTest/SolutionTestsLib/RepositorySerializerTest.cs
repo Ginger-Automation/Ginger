@@ -32,23 +32,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositorySerializerTest");
-
+    {        
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS(mWorkspaceLocker);            
+            WorkspaceHelper.InitWS(nameof(RepositorySerializerTest));            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestCleanup]
