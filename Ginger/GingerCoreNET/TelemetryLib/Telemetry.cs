@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -243,24 +244,19 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         public void ProcessQueue()
         {
-            //TODO: run until end session true            
             foreach (TelemetryRecord telemetryRecord in TelemetryRecords.GetConsumingEnumerable())
-            {     
-                // TODO: use string buffer
-                string indexHeader = JsonConvert.SerializeObject(telemetryRecord) + Environment.NewLine;
+            {                                
+                string indexHeader = JsonConvert.SerializeObject(telemetryRecord);
                 string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
-
-                // Add timestamp, uid and sid
+                
+                // Adding timestamp, uid and sid
                 string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
-                string fullobj = indexHeader + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+                string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
                              
                 //TODO: add try catch
 
                 File.AppendAllText(sessionFileName, fullobj);                             
             }
-
-
-
         }
 
         public void AddException(Exception ex)

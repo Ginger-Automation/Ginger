@@ -1,11 +1,13 @@
-﻿using Amdocs.Ginger.Common.GeneralLib;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
 using System;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     class TelemetrySession
     {
-        public Guid Guid {get; set;}
+        public Guid Guid { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Elapsed { get; set; }
@@ -19,8 +21,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public bool Debugger { get; set; }
         public bool Is64BitProcess { get; set; }
         public string OSVersion { get; set; }
-
         public bool dox { get; set; }
+        public string Terminology { get; set; }
+        public string exe { get; set; }
 
         public TelemetrySession(Guid guid)
         {
@@ -48,7 +51,22 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 dox = false;
             }
 
+            if (WorkSpace.Instance.UserProfile != null)
+            {
+                Terminology = WorkSpace.Instance.UserProfile.TerminologyDictionaryType.ToString();
+            }
 
+            Assembly assembly = Assembly.GetEntryAssembly();
+            if (assembly ==null)
+            {
+                //running from unit tests
+                exe = "Unit Test";
+            }
+            else
+            {
+                exe = assembly.GetName().Name;
+            }
+            
         }
 
     }
