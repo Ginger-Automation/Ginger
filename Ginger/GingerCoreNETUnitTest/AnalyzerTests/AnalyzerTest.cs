@@ -1,10 +1,8 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using GingerCore;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,24 +11,25 @@ using System.Linq;
 
 namespace GingerCoreNETUnitTest.AnalyzerTests
 {
-    [Ignore] //temp
     [TestClass]
     [Level1]
     public class AnalyzerTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("AnalyzerTest");
+
         static SolutionRepository SR;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
             string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution("AnalyzerTest", path);            
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(mWorkspaceLocker, path);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
         [TestMethod]

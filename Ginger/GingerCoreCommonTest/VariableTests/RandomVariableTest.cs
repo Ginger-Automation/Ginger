@@ -382,7 +382,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8, "variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8");
         }
 
-        [Ignore] //not stable
+        [Ignore] //not stable  - run until all hits with max 2 seconds then mark fail - change the algo
         [TestMethod]  [Timeout(60000)]
         public void RandomStringVar_Digit_6_10_HitAllRange()
         {

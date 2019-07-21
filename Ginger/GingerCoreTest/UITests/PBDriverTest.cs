@@ -16,29 +16,31 @@ limitations under the License.
 */
 #endregion
 
-using System;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace UnitTest
 {
-    [Ignore]   // temp !!!!!!!!!!!!
+    [Ignore]
     [Level3]
     [TestClass]
     public class PBDriverTest 
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("PBDriverTest");
+
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
@@ -112,7 +114,14 @@ namespace UnitTest
             {
 
             }
-        }
+            finally
+            {
+                mWorkspaceLocker.ReleaseWorkspace();
+            }
+            
+
+        
+    }
 
         #region Text box field
         [TestMethod]  [Timeout(60000)]        

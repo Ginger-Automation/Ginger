@@ -31,12 +31,14 @@ using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
-    [Ignore]  // temp
+{    
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerRunnerPluginDriverTest");
+
+
         static BusinessFlow mBusinessFlow;
         static GingerRunner mGingerRunner;
         static string mAppName = "Memo app";
@@ -67,7 +69,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
-            WorkspaceHelper.CreateWorkspaceWithTempSolution("GingerRunnerPluginDriverTest", "sol1");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution(mWorkspaceLocker, "sol1");
 
             // Add the plugin to solution
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
@@ -82,7 +84,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassCleanup()
         {            
             WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
         private void ResetBusinessFlow()

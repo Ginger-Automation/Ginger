@@ -27,8 +27,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace GingerCoreCommonTest.VariablesTest
-{
-    [Ignore] // temp
+{    
     [TestClass]
     public class UsedVariablesTest
     {

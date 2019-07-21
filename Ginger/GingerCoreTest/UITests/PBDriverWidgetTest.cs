@@ -31,8 +31,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace UnitTests.UITests.PBDriverTest
-{
-    [Ignore] // temp
+{    
+
+    [Ignore]
     [TestClass]
     public class PBDriverWidgetTest
     {

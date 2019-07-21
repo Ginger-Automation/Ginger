@@ -16,28 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
-{
-    [Ignore] //temp
+{    
     [TestClass]
     [Level1]
     public class SolutionTest 
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("SolutionTest");
+
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
+            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

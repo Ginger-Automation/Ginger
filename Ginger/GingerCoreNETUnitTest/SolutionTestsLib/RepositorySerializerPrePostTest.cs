@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,25 +28,26 @@ using System.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
-    [Ignore] // temp
     [Level1]
     [TestClass]
     public class RepositorySerializerPrePostTest
     {
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositorySerializerPrePostTest");
+
         NewRepositorySerializer RS = new NewRepositorySerializer();
         
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("RepositorySerializerPrePostTest");            
+            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);            
             NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 
