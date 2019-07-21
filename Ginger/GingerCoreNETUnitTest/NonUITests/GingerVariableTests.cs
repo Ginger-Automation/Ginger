@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -25,6 +26,7 @@ using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -32,16 +34,24 @@ using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 { 
+    [Ignore] // temp
     [TestClass]
     [Level1]
     public class GingerVariableTests
     {
+
+        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerVariableTests");
+
         static BusinessFlow mBF;
         static GingerRunner mGR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, mWorkspaceLocker);
+
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
@@ -66,6 +76,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+        }
+
+        [ClassCleanup()]
+        public static void ClassCleanup()
+        {            
+            mWorkspaceLocker.ReleaseWorkspace();
         }
 
 

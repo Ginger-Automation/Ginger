@@ -339,8 +339,8 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-
-            RunListeners.Add(new TelemetryRunListener());
+            
+            RunListeners.Add(new TelemetryRunListener());            
             
         }
 
