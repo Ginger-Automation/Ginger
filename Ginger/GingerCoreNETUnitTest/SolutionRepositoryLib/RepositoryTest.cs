@@ -39,20 +39,19 @@ namespace UnitTests.NonUITests
     [TestClass]    
     [Level1]
     public class RepositoryTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryTest");
+    {        
 
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS(mWorkspaceLocker);            
+            WorkspaceHelper.InitWS(nameof(RepositoryTest));            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

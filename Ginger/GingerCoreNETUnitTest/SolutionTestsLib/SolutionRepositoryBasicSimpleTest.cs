@@ -32,8 +32,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
     [Level1]
     [TestClass]
     public class SolutionRepositoryBasicSimpleTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("SolutionRepositoryBasicSimpleTest");
+    {        
 
         static SolutionRepository SR;
         // Using Mutex for BF because Backup and restore can modify the same instance, so make sure we run one test at a time
@@ -43,14 +42,14 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(mWorkspaceLocker, path);
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(nameof(SolutionRepositoryBasicSimpleTest), path);
             
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

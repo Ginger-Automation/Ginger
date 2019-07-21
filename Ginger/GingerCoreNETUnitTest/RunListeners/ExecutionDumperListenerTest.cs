@@ -14,8 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [Level2]
     [TestClass]
     public class ExecutionDumperListenerTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("ExecutionDumperListenerTest");
+    {        
 
         static GingerRunner mGingerRunner;
         static ExecutionDumperListener mExecutionDumperListener;
@@ -24,7 +23,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.InitWS(mWorkspaceLocker);
+            WorkspaceHelper.InitWS(nameof(ExecutionDumperListenerTest));
 
             mGingerRunner = new GingerRunner();
             mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
@@ -36,7 +35,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

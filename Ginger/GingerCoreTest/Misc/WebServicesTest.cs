@@ -46,9 +46,7 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level3]
     public class WebServicesTest 
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("WebServicesTest");
-
+    {        
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static Agent wsAgent = new Agent();
@@ -86,14 +84,14 @@ namespace UnitTests.NonUITests
 
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, mWorkspaceLocker);
+            WorkSpace.Init(WSEH, nameof(WebServicesTest));
             WorkSpace.Instance.SolutionRepository = Amdocs.Ginger.CoreNET.Repository.GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

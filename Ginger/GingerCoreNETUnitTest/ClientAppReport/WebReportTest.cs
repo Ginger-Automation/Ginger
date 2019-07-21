@@ -11,20 +11,18 @@ namespace GingerCoreNETUnitTest.ClientAppReport
     [TestClass]
     public class WebReportTest
     {
-
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("WebReportTest");
-
+        
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
             string reportWebAppSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
-            WorkspaceHelper.CreateWorkspaceAndOpenSolution(mWorkspaceLocker, reportWebAppSolutionFolder);                     
+            WorkspaceHelper.CreateWorkspaceAndOpenSolution("WebReportTest", reportWebAppSolutionFolder);                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

@@ -34,9 +34,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [Level1]
     [TestClass]
     public class GingerRunnerActionLogTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerRunnerActionLogTest");
-
+    {        
         private const string INP_VAL_EXPECTED = "TestInputValue";
         private const string RET_VAL_EXPECTED = "123456";
 
@@ -44,13 +42,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInitialize(TestContext TestContext)
         {
             EmptyTempActionLogFolder();            
-            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);
+            WorkspaceHelper.CreateWorkspace2("GingerRunnerActionLogTest");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

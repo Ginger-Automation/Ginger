@@ -34,22 +34,20 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace UnitTests.UITests
 {
-
-
-    // Ad use Mutext to run test one by one !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    [Ignore] // fail on Azure
+    [Ignore] // temp faile on Azure
     [TestClass]
     [Level3]
     public class WebDriverUnitTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("WebDriverUnitTest");
-
+    {        
 
         static BusinessFlow mBF;
         static GingerRunner mGR = null;
+
+        Mutex mutex = new Mutex();
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -92,24 +90,30 @@ namespace UnitTests.UITests
             mGR.CurrentBusinessFlow = mBF;
             mGR.SetCurrentActivityAgent();
 
-            // helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
+            // use helper !!!!
+            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, mWorkspaceLocker);
+            WorkSpace.Init(WSEH, nameof(WebDriverUnitTest));
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
-        
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mutex.WaitOne();
+        }
 
         [TestCleanup]
         public void TestCleanup()
         {
             mBF.CurrentActivity.Acts.ClearAll();
+            mutex.ReleaseMutex();
         }
 
         [TestMethod]

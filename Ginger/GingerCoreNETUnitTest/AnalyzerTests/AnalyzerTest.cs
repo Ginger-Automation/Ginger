@@ -14,22 +14,20 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
     [TestClass]
     [Level1]
     public class AnalyzerTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("AnalyzerTest");
-
+    {        
         static SolutionRepository SR;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
             string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(mWorkspaceLocker, path);            
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution("AnalyzerTest", path);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestMethod]

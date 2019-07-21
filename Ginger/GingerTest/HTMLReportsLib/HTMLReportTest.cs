@@ -33,9 +33,7 @@ namespace GingerTest
     [TestClass]
     [Level3]
     public class HTMLReportTest
-    {
-
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("HTMLReportTest");
+    {        
 
         static GingerAutomator mGingerAutomator;
         
@@ -57,7 +55,7 @@ namespace GingerTest
         public static void ClassCleanup()
         {            
             GingerAutomator.EndSession();
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         private static void CreateTestSolution()
