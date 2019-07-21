@@ -1,42 +1,35 @@
 ﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.RecordNavPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-      xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
       xmlns:Ginger="clr-namespace:Ginger"
-      mc:Ignorable="d" 
+      xmlns:userControl="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d"
+      d:DesignHeight="800" d:DesignWidth="500"
       Title="RecordNavAction" >
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="45" />
-            <RowDefinition Height="40" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>        
         
-        <userControl:UCWindowsGrid x:Name="xWinGridUC" Margin="0, 5, 0, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
+        <userControl:UCWindowsGrid x:Name="xWindowSelectionUC" Margin="5, 10, 5, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
 
-        <usercontrols:ucButton Grid.Row="1" x:Name="xRecordingButton" Margin="3,0,0,0" ButtonType="RoundTextAndImageButton" ButtonText="Start Recording" ButtonImageType="Run" 
-                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="10" 
-                               ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-
-        <Label x:Name="xStartAgentMessage"  Grid.Row="2" Content="Please start the Agent, currently it is not running" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
-       
-        <StackPanel x:Name="xPOMPanel" Grid.Row="3" Margin="10,5,0,0" HorizontalAlignment="Stretch">
-            <DockPanel x:Name="xPOMSelection" Margin="0,1,0,0" >
-                <CheckBox x:Name="xIntegratePOM" Style="{StaticResource @CheckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate recording with POM's</CheckBox>
-            </DockPanel>      
-            <Ginger:ucGrid x:Name="gridPOMListItems" Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
-                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
-            
+        <StackPanel Orientation="Horizontal" Grid.Row="1"  Margin="0,0,0,0">
+            <usercontrols:ucButton x:Name="xRecordingButton" ButtonType="RoundTextAndImageButton" ButtonText="Record" ButtonImageType="Camera" 
+                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Start Recording" ButtonFontImageSize="15" ButtonImageWidth="15" 
+                               ButtonImageHeight="15" Click="RecordingButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}"/>
+            <usercontrols:ucButton x:Name="xStopRecordingBtn" ToolTip= "Stop Recording" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRecordingBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
         </StackPanel>
+        
+        <DockPanel x:Name="xPOMPanel" Grid.Row="2" Margin="5,10,5,0" HorizontalAlignment="Stretch">
+            <CheckBox x:Name="xIntegratePOM" DockPanel.Dock="Top"  Style="{StaticResource $CeckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate Recording with POM's</CheckBox>
+            <Ginger:ucGrid x:Name="xSelectedPOMsGrid" DockPanel.Dock="Top"  Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
+                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" Visibility="Collapsed"/>
+        </DockPanel>
     </Grid>
 </Page>

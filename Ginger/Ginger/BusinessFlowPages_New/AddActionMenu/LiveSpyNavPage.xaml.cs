@@ -15,17 +15,27 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class LiveSpyNavPage : Page
     {
         Context mContext;
-        IWindowExplorer mWindowExplorerDriver;
+        IWindowExplorer mDriver;
         List<AgentPageMappingHelper> mLiveSpyPageDictonary = null;
-        LiveSpyPage CurrentLoadedPage = null;
+        LiveSpyPage mCurrentLoadedPage = null;
 
         public LiveSpyNavPage(Context context)
         {
             InitializeComponent();
+
             mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
+
+            if (mContext.Agent != null)
+            {
+                mDriver = mContext.Agent.Driver as IWindowExplorer;
+            }
+            else
+            {
+                mDriver = null;
+            }
+
             LoadLiveSpyPage(mContext);
-            SetFrameEnableDisable();
         }
 
         /// <summary>
@@ -35,40 +45,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus))
+            if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
             {
-                SetFrameEnableDisable();
-                CurrentLoadedPage.SetLiveSpyForNewPanel(mWindowExplorerDriver);
-            }
-            else if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
-            {
-                LoadLiveSpyPage(mContext);
-                SetFrameEnableDisable();
-                CurrentLoadedPage.SetLiveSpyForNewPanel(mWindowExplorerDriver);
-            }
-        }
-
-        /// <summary>
-        /// This method will check if agent is running then it will enable the frame
-        /// </summary>
-        private void SetFrameEnableDisable()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;                  //  AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
                 if (mContext.Agent != null)
-                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-                if (isAgentRunning)
                 {
-                    xSelectedItemFrame.IsEnabled = true;
+                    mDriver = mContext.Agent.Driver as IWindowExplorer;
                 }
                 else
                 {
-                    xSelectedItemFrame.IsEnabled = false;
+                    mDriver = null;
                 }
-            });
+
+                if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
+                {
+                    LoadLiveSpyPage(mContext);
+                }
+                else
+                {
+                    mCurrentLoadedPage.SetDriver(mDriver);
+                }
+            }
         }
+
 
         /// <summary>
         /// This method is used to get the new LiveSpyPage based on Context and Agent
@@ -85,7 +83,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                                                                     x.ObjectAgent.ItemName == context.Agent.ItemName);
                     if (objHelper != null && objHelper.ObjectWindowPage != null)
                     {
-                        CurrentLoadedPage = (LiveSpyPage)objHelper.ObjectWindowPage;
+                        mCurrentLoadedPage = (LiveSpyPage)objHelper.ObjectWindowPage;
                         isLoaded = true;
                     }
                 }
@@ -95,17 +93,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
                     if (appAgent != null)
                     {
-                        CurrentLoadedPage = new LiveSpyPage(mContext);
-                        CurrentLoadedPage.SetLiveSpyForNewPanel(mWindowExplorerDriver);
+                        mCurrentLoadedPage = new LiveSpyPage(mContext, mDriver);
                         if (mLiveSpyPageDictonary == null)
                         {
                             mLiveSpyPageDictonary = new List<AgentPageMappingHelper>();
                         }
-                        mLiveSpyPageDictonary.Add(new AgentPageMappingHelper(context.Agent, CurrentLoadedPage));
+                        mLiveSpyPageDictonary.Add(new AgentPageMappingHelper(context.Agent, mCurrentLoadedPage));
                     }
                 }
 
-                xSelectedItemFrame.Content = CurrentLoadedPage;
+                xSelectedItemFrame.Content = mCurrentLoadedPage;
             });
         }
     }

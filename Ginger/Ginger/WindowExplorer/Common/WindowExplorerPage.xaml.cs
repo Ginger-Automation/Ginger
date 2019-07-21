@@ -153,7 +153,7 @@ namespace Ginger.WindowExplorer
         /// This method will set the explorer page to be fit in new right panel
         /// </summary>
         /// <param name="windowExplorerDriver"></param>
-        public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
+        public void SetDriver(IWindowExplorer windowExplorerDriver)
         {
             this.Dispatcher.Invoke(() =>
             {

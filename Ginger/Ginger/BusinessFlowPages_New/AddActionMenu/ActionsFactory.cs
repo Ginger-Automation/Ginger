@@ -125,6 +125,7 @@ namespace Ginger.BusinessFlowPages
                     if (userSelection == eUserMsgSelection.Yes)
                     {
                         instance = ((IObsoleteAction)selectedAction).GetNewAction();
+                        instance.Description = instance.ActionType;
                     }
                     else if (userSelection == eUserMsgSelection.Cancel)
                     {

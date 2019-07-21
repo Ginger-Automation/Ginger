@@ -1,41 +1,23 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.Locators.ASCF;
-using Ginger.Agents;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.Drivers.Windows;
-using Ginger.WindowExplorer.Android;
 using Ginger.WindowExplorer.Appium;
 using Ginger.WindowExplorer.HTMLCommon;
 using Ginger.WindowExplorer.Java;
 using Ginger.WindowExplorer.Mainframe;
-using GingerCore;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.DataSource;
-using GingerCore.Drivers;
-using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 
 namespace Ginger.UserControlsLib
@@ -58,12 +40,12 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        TreeViewItem mTreeRootItem;
-        ITreeViewItem mRootItem;
-        TreeView2 WindowControlsTreeView;
-        ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
+        //TreeViewItem mTreeRootItem;
+        //ITreeViewItem mRootItem;
+        //TreeView2 WindowControlsTreeView;
+        //ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         public static readonly DependencyProperty ContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCWindowsGrid));
-        public object comboBoxSelectedValue = null;
+        public object SelectedWindow = null;
         public PlatformInfoBase mPlatform;
 
         public Context mContext
@@ -78,11 +60,11 @@ namespace Ginger.UserControlsLib
             {
                 if (value == true)
                 {
-                    AddSwitchWindowActionButton.Visibility = Visibility.Visible;
+                    xAddSwitchWindowActionButton.Visibility = Visibility.Visible;
                 }
                 else if (value == false)
                 {
-                    AddSwitchWindowActionButton.Visibility = Visibility.Collapsed;
+                    xAddSwitchWindowActionButton.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -94,104 +76,87 @@ namespace Ginger.UserControlsLib
 
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            comboBoxSelectedValue = WindowsComboBox.SelectedItem;
+            SelectedWindow = WindowsComboBox.SelectedItem;
             AppWindow AW = (AppWindow)WindowsComboBox.SelectedItem;
             if (AW == null)
                 return;
 
-            //Reporter.ToUser(eUserMsgKey.)
             mWindowExplorerDriver.SwitchWindow(AW.Title);
-            //RecordingButton.IsEnabled = true;
 
-            switch (AW.WindowType)
-            {
-                case AppWindow.eWindowType.Windows:
-                    WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
-                    UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
-                    WEI.WindowExplorer = mWindowExplorerDriver;
-                    WWTI.UIAElementInfo = WEI;
-                    WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
+            //switch (AW.WindowType)
+            //{
+            //    case AppWindow.eWindowType.Windows:
+            //        WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
+            //        UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
+            //        WEI.WindowExplorer = mWindowExplorerDriver;
+            //        WWTI.UIAElementInfo = WEI;
+            //        WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
+            //        InitTree(WWTI);
+            //        break;
 
-                    InitTree(WWTI);
-                    break;
-                case AppWindow.eWindowType.PowerBuilder:
-                    PBWindowTreeItem WTI = new PBWindowTreeItem();
-                    UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
-                    PBEI.WindowExplorer = mWindowExplorerDriver;
-                    WTI.UIAElementInfo = PBEI;
-                    InitTree(WTI);
-                    break;
-                case AppWindow.eWindowType.ASCFForm:
-                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
-                    AFTI.Name = AW.Title;
-                    AFTI.Path = AW.Path;
-                    InitTree(AFTI);
-                    break;
-                case AppWindow.eWindowType.SeleniumWebPage:
-                    HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
-                    HTMLElementInfo EI = new HTMLElementInfo();
-                    EI.ElementTitle = AW.Title;
-                    EI.XPath = "/html";
-                    EI.WindowExplorer = mWindowExplorerDriver;
-                    HPTI.ElementInfo = EI;
-                    InitTree(HPTI);
-                    break;
-                case AppWindow.eWindowType.JFrmae:
-                    JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
-                    JavaElementInfo JEI = new JavaElementInfo();
-                    JEI.ElementTitle = AW.Title;
-                    JEI.Path = AW.Title;
-                    JEI.XPath = "/";
-                    JEI.IsExpandable = true;
-                    JWTI.JavaElementInfo = JEI;
-                    JEI.WindowExplorer = mWindowExplorerDriver;
-                    InitTree(JWTI);
-                    break;
-                case AppWindow.eWindowType.Appium:
-                    AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
+            //    case AppWindow.eWindowType.PowerBuilder:
+            //        PBWindowTreeItem WTI = new PBWindowTreeItem();
+            //        UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
+            //        PBEI.WindowExplorer = mWindowExplorerDriver;
+            //        WTI.UIAElementInfo = PBEI;
+            //        InitTree(WTI);
+            //        break;
 
-                    AppiumElementInfo AEI = new AppiumElementInfo();
-                    AEI.WindowExplorer = mWindowExplorerDriver;
-                    AEI.XPath = "/";
-                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+            //    case AppWindow.eWindowType.ASCFForm:
+            //        ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
+            //        AFTI.Name = AW.Title;
+            //        AFTI.Path = AW.Path;
+            //        InitTree(AFTI);
+            //        break;
 
+            //    case AppWindow.eWindowType.SeleniumWebPage:
+            //        HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
+            //        HTMLElementInfo EI = new HTMLElementInfo();
+            //        EI.ElementTitle = AW.Title;
+            //        EI.XPath = "/html";
+            //        EI.WindowExplorer = mWindowExplorerDriver;
+            //        HPTI.ElementInfo = EI;
+            //        InitTree(HPTI);
+            //        break;
 
-                    string pageSourceString = SAD.GetPageSource().Result;
-                    XmlDocument pageSourceXml = new XmlDocument();
-                    pageSourceXml.LoadXml(pageSourceString);
-                    AEI.XmlDoc = pageSourceXml;
-                    AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
+            //    case AppWindow.eWindowType.JFrmae:
+            //        JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
+            //        JavaElementInfo JEI = new JavaElementInfo();
+            //        JEI.ElementTitle = AW.Title;
+            //        JEI.Path = AW.Title;
+            //        JEI.XPath = "/";
+            //        JEI.IsExpandable = true;
+            //        JWTI.JavaElementInfo = JEI;
+            //        JEI.WindowExplorer = mWindowExplorerDriver;
+            //        InitTree(JWTI);
+            //        break;
 
-                    AWTI.AppiumElementInfo = AEI;
+            //    case AppWindow.eWindowType.Appium:
+            //        AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
+            //        AppiumElementInfo AEI = new AppiumElementInfo();
+            //        AEI.WindowExplorer = mWindowExplorerDriver;
+            //        AEI.XPath = "/";
+            //        SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+            //        string pageSourceString = SAD.GetPageSource().Result;
+            //        XmlDocument pageSourceXml = new XmlDocument();
+            //        pageSourceXml.LoadXml(pageSourceString);
+            //        AEI.XmlDoc = pageSourceXml;
+            //        AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
+            //        AWTI.AppiumElementInfo = AEI;
+            //        InitTree(AWTI);
+            //        break;
 
-                    // AWTI.UIAElementInfo = AEI;
-                    InitTree(AWTI);
-                    break;
-                //case AppWindow.eWindowType.AndroidDevice:
-                //    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
+            //    case AppWindow.eWindowType.Mainframe:
+            //        MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
+            //        MFTI.Name = AW.Title;
+            //        MFTI.Path = AW.Path;
+            //        InitTree(MFTI);
+            //        break;
 
-                //    AndroidElementInfo AWI = new AndroidElementInfo();
-                //    AWI.WindowExplorer = mWindowExplorerDriver;
-                //    AWI.XPath = "/";
-                //    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
-                //    XmlDocument pageSourceXml2 = new XmlDocument();
-                //    pageSourceXml2.LoadXml(pageSourceString2);
-                //    AWI.XmlDoc = pageSourceXml2;
-                //    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
-
-                //    ADTI.AndroidElementInfo = AWI;
-                //    InitTree(ADTI);
-                //    break;
-                case AppWindow.eWindowType.Mainframe:
-                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
-                    MFTI.Name = AW.Title;
-                    MFTI.Path = AW.Path;
-                    InitTree(MFTI);
-                    break;
-                default:
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
-                    break;
-            }
+            //    default:
+            //        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
+            //        break;
+            //}
         }
 
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
@@ -233,15 +198,16 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public void InitTree(ITreeViewItem RootItem)
-        {
-            if(WindowControlsTreeView != null)
-                WindowControlsTreeView.Tree.ClearTreeItems();
-            mRootItem = RootItem;
 
-            mTreeRootItem = WindowControlsTreeView != null ? WindowControlsTreeView.Tree.AddItem(RootItem) : null;
-            if(mTreeRootItem != null)
-                mTreeRootItem.IsExpanded = false;
-        }
+        //public void InitTree(ITreeViewItem RootItem)
+        //{
+        //    if(WindowControlsTreeView != null)
+        //        WindowControlsTreeView.Tree.ClearTreeItems();
+        //    mRootItem = RootItem;
+
+        //    mTreeRootItem = WindowControlsTreeView != null ? WindowControlsTreeView.Tree.AddItem(RootItem) : null;
+        //    if(mTreeRootItem != null)
+        //        mTreeRootItem.IsExpanded = false;
+        //}
     }
 }

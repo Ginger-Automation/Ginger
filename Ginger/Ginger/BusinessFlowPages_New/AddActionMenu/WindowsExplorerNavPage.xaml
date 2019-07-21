@@ -12,7 +12,7 @@
             <RowDefinition x:Name="WindowComboboxRow" Height="Auto" />            
         </Grid.RowDefinitions>
 
-        <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Width="Auto" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Width="Auto" Margin="3,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
         
     </Grid>
 </Page>
