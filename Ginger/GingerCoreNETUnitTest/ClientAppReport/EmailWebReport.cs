@@ -74,7 +74,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         private void CreateWorkspace()
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
+            WorkSpace.Init(WSEH, "CLITest");
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new RepoCoreItem());
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
