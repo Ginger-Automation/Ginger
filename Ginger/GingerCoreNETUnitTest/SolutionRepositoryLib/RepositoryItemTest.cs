@@ -28,21 +28,19 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
     [Level1]
     [TestClass]
     public class RepositoryItemTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryItemTest");
-
+    {        
         static WorkSpace mWorkSpace;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {            
-            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);            
+            WorkspaceHelper.CreateWorkspace2(nameof(RepositoryItemTest));            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

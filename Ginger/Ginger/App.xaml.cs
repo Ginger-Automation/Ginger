@@ -236,15 +236,14 @@ namespace Ginger
             }
         }
 
-
-        WorkspaceLocker workspaceLocker = new WorkspaceLocker("App");
+        
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Console.WriteLine("Starting Ginger");
             Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            WorkSpace.Init(new WorkSpaceEventHandler(), workspaceLocker);
+            WorkSpace.Init(new WorkSpaceEventHandler(), "App");
 
             // add additional classed from Ginger and GingerCore
             InitClassTypesDictionary();

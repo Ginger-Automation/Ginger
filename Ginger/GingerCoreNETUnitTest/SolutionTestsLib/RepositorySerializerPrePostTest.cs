@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [TestClass]
     public class RepositorySerializerPrePostTest
     {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositorySerializerPrePostTest");
+        
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
         
@@ -40,14 +40,14 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);            
+            WorkspaceHelper.CreateWorkspace2(nameof(RepositorySerializerPrePostTest));            
             NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

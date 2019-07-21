@@ -29,17 +29,16 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace UnitTest
-{
-    [Ignore]
+{    
     [Level3]
     [TestClass]
     public class PBDriverTest 
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("PBDriverTest");
+    {        
 
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
@@ -50,6 +49,9 @@ namespace UnitTest
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, nameof(PBDriverTest));
+
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
@@ -116,7 +118,7 @@ namespace UnitTest
             }
             finally
             {
-                mWorkspaceLocker.ReleaseWorkspace();
+                WorkSpace.Instance.ReleaseWorkspace();
             }
             
 

@@ -39,8 +39,7 @@ namespace WorkspaceHold
     [TestClass]
     public class GingerRunnerTest
     {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerRunnerTest");
-
+        
         static DummyDriver mDummyDriver;
         static GingerGrid mGingerGrid;
         static GingerRunner mGingerRunner;
@@ -53,7 +52,7 @@ namespace WorkspaceHold
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.InitWS(mWorkspaceLocker);
+            WorkspaceHelper.InitWS(nameof(GingerRunnerTest));
         
             mGingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
@@ -112,7 +111,7 @@ namespace WorkspaceHold
             }
             finally
             {
-                mWorkspaceLocker.ReleaseWorkspace();
+                WorkSpace.Instance.ReleaseWorkspace();
             }
         }
 

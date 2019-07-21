@@ -75,8 +75,7 @@ namespace GingerTest
                 gingerAutomatorInstance.CloseGinger();                
             }            
         }
-
-        WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerAutomator");
+        
 
         private void StartGinger()
         {                        
@@ -92,7 +91,7 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
+                WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerAutomator));
                 WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
                 
@@ -136,7 +135,7 @@ namespace GingerTest
             // app.Shutdown(0);
             MainWindowPOM.Close();
             Thread.Sleep(5000);
-            mWorkspaceLocker.ReleaseWorkspace();            
+            WorkSpace.Instance.ReleaseWorkspace();            
         }
 
 

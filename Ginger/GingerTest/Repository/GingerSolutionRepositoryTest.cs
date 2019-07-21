@@ -38,8 +38,7 @@ namespace GingerTest
     [TestClass]
     [Level2]
     public class GingerSolutionRepositoryTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerSolutionRepositoryTest");
+    {        
 
         static SolutionRepository mSolutionRepository;        
 
@@ -51,7 +50,7 @@ namespace GingerTest
             
             // Init SR
             mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
+            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerSolutionRepositoryTest));
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
@@ -60,7 +59,7 @@ namespace GingerTest
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         private static void CreateTestSolution()

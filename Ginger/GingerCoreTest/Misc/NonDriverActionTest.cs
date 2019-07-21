@@ -38,8 +38,7 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level3]
     public class NonDriverActionTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("NonDriverActionTest");
+    {        
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
@@ -66,14 +65,14 @@ namespace UnitTests.NonUITests
             
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, mWorkspaceLocker);
+            WorkSpace.Init(WSEH, nameof(NonDriverActionTest));
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         public static void AddApplicationAgent()

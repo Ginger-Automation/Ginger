@@ -27,20 +27,18 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level1]
     public class SolutionTest 
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("SolutionTest");
-
+    {        
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2(mWorkspaceLocker);                     
+            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 

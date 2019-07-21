@@ -36,9 +36,7 @@ namespace GingerTest
     [TestClass]
     [Level1]
     public class ActionConversionTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("RepositoryXMLConverterTest");
-
+    {        
 
         static SolutionRepository mSolutionRepository;
         static BusinessFlow mBF; 
@@ -50,10 +48,10 @@ namespace GingerTest
             solutionName = "ActionConversionSol";
             CreateTestSolution();
 
-            // Use helper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Use helper !!!!!
 
             // Creating workspace
-            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
+            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(ActionConversionTest));
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR

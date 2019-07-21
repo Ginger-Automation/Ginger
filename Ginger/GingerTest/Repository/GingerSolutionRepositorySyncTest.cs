@@ -36,8 +36,7 @@ namespace GingerTest
     [TestClass]
     [Level1]
     public class GingerSolutionRepositorySyncTest
-    {
-        static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerSolutionRepositorySyncTest");
+    {        
 
         static SolutionRepository mSolutionRepository;
         static BusinessFlow mBF;        
@@ -50,7 +49,7 @@ namespace GingerTest
             CreateTestSolution();
 
             // Creating workspace
-            WorkSpace.Init(new WorkSpaceEventHandler(), mWorkspaceLocker);
+            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerSolutionRepositorySyncTest));
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
@@ -63,7 +62,7 @@ namespace GingerTest
         [ClassCleanup]
         public static void ClassCleanup()
         {            
-            mWorkspaceLocker.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
 
         }
 
