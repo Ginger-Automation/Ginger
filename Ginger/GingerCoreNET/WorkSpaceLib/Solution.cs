@@ -235,8 +235,7 @@ namespace Ginger.SolutionGeneral
             }
             set
             {
-                mAccount = value;
-                AutoLogProxy.SetAccount(mAccount);
+                mAccount = value;                
             } }
 
         public ePlatformType MainPlatform {

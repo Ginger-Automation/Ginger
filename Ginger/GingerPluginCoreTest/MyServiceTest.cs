@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Plugin.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using PluginExample;

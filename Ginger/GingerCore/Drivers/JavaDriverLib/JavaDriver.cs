@@ -2514,69 +2514,78 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string ButtonXPath = pl.GetValueString();
                     string ButtonName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    var actUIElementJButton = new ActUIElement()
                     {
                         Description = "Click Button '" + ButtonName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = ButtonXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = ButtonXPath,
                         Value = ButtonName,
-                        ControlAction = ActJavaElement.eControlAction.Click,
-                        WaitforIdle=ActJavaElement.eWaitForIdle.Medium
-                    });
+                        ElementType = eElementType.Button,
+                        ElementAction = ActUIElement.eElementAction.Click,
+                    };
+                    actUIElementJButton.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    BusinessFlow.AddAct(actUIElementJButton);
                     break;
                 case "JCheckBox":
-                    string CheckBoxXPath  = pl.GetValueString();                    
-                    string CheckBoxName   = pl.GetValueString();
+                    string CheckBoxXPath = pl.GetValueString();
+                    string CheckBoxName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Click checkBox '" + CheckBoxName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = CheckBoxXPath,
-                        ControlAction = ActJavaElement.eControlAction.Toggle
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = CheckBoxXPath,
+                        ElementType = eElementType.CheckBox,
+                        ElementAction = ActUIElement.eElementAction.Toggle
                     });
                     break;
 
                 case "JTextField":
                     string TextFieldXPath = pl.GetValueString();
                     string TextFieldValue = pl.GetValueString();
-                    string TextFieldName  = pl.GetValueString();
+                    string TextFieldName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Set Text Box '" + TextFieldName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = TextFieldXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = TextFieldXPath,
                         Value = TextFieldValue,
-                        ControlAction = ActJavaElement.eControlAction.SetValue
+                        ElementType = eElementType.TextBox,
+                        ElementAction = ActUIElement.eElementAction.SetValue
                     });
                     break;
 
                 case "JComboBox":
                     string ComboBoxXPath = pl.GetValueString();
                     string ComboBoxValue = pl.GetValueString();
-                    string ComboBoxName  = pl.GetValueString();
+                    string ComboBoxName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    var actUIElementJComboBox = new ActUIElement()
                     {
                         Description = "Select ComboBox '" + ComboBoxName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = ComboBoxXPath,
-                        ControlAction = ActJavaElement.eControlAction.Select,
-                        Value = ComboBoxValue
-                    });
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = ComboBoxXPath,
+                        ElementType = eElementType.ComboBox,
+                        ElementAction = ActUIElement.eElementAction.Select
+                    };
+                    actUIElementJComboBox.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, ComboBoxValue);
+
+                    BusinessFlow.AddAct(actUIElementJComboBox);
+
                     break;
 
                 case "JRadioButton":
-                    string RadioButtonXPath = pl.GetValueString();                    
-                    string RadioButtonName  = pl.GetValueString();
+                    string RadioButtonXPath = pl.GetValueString();
+                    string RadioButtonName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Select RadioButton'" + RadioButtonName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = RadioButtonXPath,
-                        ControlAction = ActJavaElement.eControlAction.Select
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = RadioButtonXPath,
+                        ElementType = eElementType.RadioButton,
+                        ElementAction = ActUIElement.eElementAction.Select
                     });
                     break;
 
@@ -2585,94 +2594,103 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string TextAreaValue = pl.GetValueString();
                     string TextAreaName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Set Text Area '" + TextAreaName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = TextAreaXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = TextAreaXPath,
                         Value = TextAreaValue,
-                        ControlAction = ActJavaElement.eControlAction.SetValue
+                        ElementType = eElementType.TextBox,
+                        ElementAction = ActUIElement.eElementAction.SetValue
                     });
                     break;
 
                 case "JTable":
                     string JTableXPath = pl.GetValueString();
                     string JTableValue = pl.GetValueString();
-                    string JTableName  = pl.GetValueString();                    
+                    string JTableName = pl.GetValueString();
                     string row = pl.GetValueString();
                     string column = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActTableElement()
+                    var actUIElementTable = new ActUIElement()
                     {
                         Description = "Set Table '" + JTableName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = JTableXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = JTableXPath,
                         Value = JTableValue,
-                        WhereColumnValue = column,
-                        ByRowNum = true,
-                        LocateRowValue = row,
-                        ColSelectorValue =    ActTableElement.eRunColSelectorValue.ColNum,
-                        LocateColTitle=column,
-                        ControlAction = ActTableElement.eTableAction.DoubleClick
-                    });
+                        ElementType = eElementType.Table,
+                        ElementAction = ActUIElement.eElementAction.TableCellAction,
+                    };
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, column);
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, column);
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.DoubleClick.ToString());
+
+                    BusinessFlow.AddAct(actUIElementTable);
+
                     break;
 
                 case "JTextPane":
                     string TextPaneXPath = pl.GetValueString();
                     string TextPaneValue = pl.GetValueString();
-                    string TextPaneName  = pl.GetValueString();
+                    string TextPaneName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Set Text Pane '" + TextPaneName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = TextPaneXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = TextPaneXPath,
                         Value = TextPaneValue,
-                        ControlAction = ActJavaElement.eControlAction.SetValue
+                        ElementType = eElementType.TextBox,
+                        ElementAction = ActUIElement.eElementAction.SetValue
                     });
                     break;
 
-                case "JMenu":                    
+                case "JMenu":
                     string MenuValue = pl.GetValueString();
-                    string MenuName  = pl.GetValueString();
+                    string MenuName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    var actUIElementJMenu = new ActUIElement()
                     {
                         Description = "Click Menu '" + MenuName + "'",
-                        LocateBy = eLocateBy.ByName,
-                        LocateValue = MenuName,
+                        ElementLocateBy = eLocateBy.ByName,
+                        ElementLocateValue = MenuName,
                         Value = MenuValue,
-                        ControlAction = ActJavaElement.eControlAction.Click,
-                        WaitforIdle = ActJavaElement.eWaitForIdle.Medium
-                    });
-
+                        ElementType = eElementType.MenuItem,
+                        ElementAction = ActUIElement.eElementAction.Click,
+                    };
+                    actUIElementJMenu.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    BusinessFlow.AddAct(actUIElementJMenu);
                     break;
 
-                case "JMenuItem":                    
+                case "JMenuItem":
                     string MenuItemValue = pl.GetValueString();
-                    string MenuItemName  = pl.GetValueString();
+                    string MenuItemName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    var actUIElementJMenuItem = new ActUIElement()
                     {
                         Description = "Click Menu Item '" + MenuItemName + "'",
-                        LocateBy = eLocateBy.ByName,
-                        LocateValue = MenuItemName,
+                        ElementLocateBy = eLocateBy.ByName,
+                        ElementLocateValue = MenuItemName,
                         Value = MenuItemValue,
-                        ControlAction = ActJavaElement.eControlAction.Click,
-                        WaitforIdle = ActJavaElement.eWaitForIdle.None
-                    });
+                        ElementType = eElementType.MenuItem,
+                        ElementAction = ActUIElement.eElementAction.Click
+                    };
+                    actUIElementJMenuItem.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.None.ToString());
                     break;
 
                 case "JList":
                     string JList = pl.GetValueString();
                     string vJList = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Set JList '" + JList + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = JList,
-                        ControlAction = ActJavaElement.eControlAction.SetValue,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = JList,
+                        ElementType = eElementType.Unknown,
+                        ElementAction = ActUIElement.eElementAction.SetValue,
                         Value = vJList
                     });
                     break;
@@ -2680,14 +2698,15 @@ namespace GingerCore.Drivers.JavaDriverLib
                 case "JTree":
                     string JTreeXPath = pl.GetValueString();
                     string JTreeValue = pl.GetValueString();
-                    string JTreeName  = pl.GetValueString();
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    string JTreeName = pl.GetValueString();
+                    BusinessFlow.AddAct(new ActUIElement()
                     {
                         Description = "Set Tree '" + JTreeName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = JTreeXPath,
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = JTreeXPath,
                         Value = JTreeValue,
-                        ControlAction = ActJavaElement.eControlAction.Click
+                        ElementType = eElementType.Unknown,
+                        ElementAction = ActUIElement.eElementAction.Click
                     });
                     break;
 
@@ -2696,14 +2715,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string JTPaneValue = pl.GetValueString();
                     string JTPaneName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActJavaElement()
+                    var actUIElementJMenuTab = new ActUIElement()
                     {
                         Description = "Set Pane '" + JTPaneName + "'",
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = JTPaneXPath,
-                        Value = JTPaneValue,
-                        ControlAction = ActJavaElement.eControlAction.Select
-                    });
+                        ElementLocateBy = eLocateBy.ByXPath,
+                        ElementLocateValue = JTPaneXPath,
+                        ElementType = eElementType.Tab,
+                        ElementAction = ActUIElement.eElementAction.Select
+                    };
+                    actUIElementJMenuTab.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, JTPaneValue);
+                    BusinessFlow.AddAct(actUIElementJMenuTab);
                     break;
 
                 case "SwitchWindow":

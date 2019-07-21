@@ -313,11 +313,9 @@ namespace Ginger.BusinessFlowWindows
         }
 
         private void btnSpecificErrorHandler_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("cmbErrorHandlerMapping_SelectionChanged");
+        {            
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mActivityParentBusinessFlow);
-            errorHandlerMappingPage.ShowAsWindow();
-            AutoLogProxy.UserOperationEnd();
+            errorHandlerMappingPage.ShowAsWindow();         
         }
 
         private void SetExpandersLabels()

@@ -547,14 +547,12 @@ namespace Ginger.Run
         {
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
-            {
-                AutoLogProxy.UserOperationStart("Online Report");
+            {                
                 return WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
 
             }
             else
-            {
-                AutoLogProxy.UserOperationStart("Offline Report");
+            {             
                 ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)

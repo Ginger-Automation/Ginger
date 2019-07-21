@@ -1002,10 +1002,32 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "YCoordinate = " + mYCoordinate
 						+ "LocateColTitle" + mLocateColTitle
 						+ "LocateRowType" + mLocateRowType
-                        + "LocateRowValue" + mLocateRowValue);		
-			
+                        + "LocateRowValue" + mLocateRowValue);
+
+			if(ControlAction.toLowerCase().equals("sendkeys"))
+			{
+			    Component	c = mSwingHelper.FindElement(LocateBy, LocateValue);
+			    if(c!= null)
+			    {
+			    	 return TypeKeys(c,mValue);
+			    }
+			}
+			else if(ControlAction.toLowerCase().equals("settext"))
+			{
+				Component	c = mSwingHelper.FindElement(LocateBy, LocateValue);
+			    if(c!= null)
+			    {
+			    	 return SendKeys(c,mValue);
+			    }
+			}
+			else if(ControlAction.equalsIgnoreCase("GetDialogText") || ControlAction.equalsIgnoreCase("AcceptDialog") || ControlAction.equalsIgnoreCase("DismissDialog"))
+			{
+				return HandleDialogAction(LocateBy, LocateValue, ControlAction, mValue);
+			}
+
 			PayLoad plrc = HandleElementAction(LocateBy, LocateValue, ControlAction, mValue, mValueToSelect, mXCoordinate, mYCoordinate);
 			return plrc;
+
 		}
 	}
 	
@@ -1467,37 +1489,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 
 			if (controlAction.equals("Type"))
 			{
-				GingerAgent.WriteLog("Inside the HandleElementAction - Type");
-				if(mSwingHelper.getCurrentWindow() instanceof JFrame)				
-				{
-					((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
-					((JFrame)mSwingHelper.getCurrentWindow()).requestFocus();
-				}
-				else if(mSwingHelper.getCurrentWindow() instanceof JDialog)
-				{	
-					((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
-					((JDialog)mSwingHelper.getCurrentWindow()).requestFocus();
-				}
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				JTextField tf = (JTextField)c;
-				GingerAgent.WriteLog("JTextField grabFocus");
-				tf.grabFocus();
-				
-				try {
-
-				    type(Value);
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return PayLoad.Error(e.getMessage());
-				}
-				return PayLoad.OK("Type operation Passed");
+				return TypeKeys(c,Value);
 				
 			}
 
@@ -1709,6 +1701,40 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
+
+private PayLoad TypeKeys(Component c,String Value) {
+	GingerAgent.WriteLog("Inside the HandleElementAction - Type");
+	if(mSwingHelper.getCurrentWindow() instanceof JFrame)				
+	{
+		((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
+		((JFrame)mSwingHelper.getCurrentWindow()).requestFocus();
+	}
+	else if(mSwingHelper.getCurrentWindow() instanceof JDialog)
+	{	
+		((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
+		((JDialog)mSwingHelper.getCurrentWindow()).requestFocus();
+	}
+	try {
+		Thread.sleep(500);
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	JTextField tf = (JTextField)c;
+	GingerAgent.WriteLog("JTextField grabFocus");
+	tf.grabFocus();
+	
+	try {
+
+	    type(Value);
+
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return PayLoad.Error(e.getMessage());
+	}
+	return PayLoad.OK("Type operation Passed");
+}
 	
 	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
@@ -2605,8 +2631,13 @@ private PayLoad GetComponentState(Component c)
 		}else if (propertyName.equalsIgnoreCase("ISMANDATORY") || propertyName.equalsIgnoreCase("MANDATORY")) {		
 			GingerAgent.WriteLog("INSIDE ISMANDATORY");
 			propValue = Boolean.toString(mASCFHelper.checkIsMandatory(c));	
-		}  
-		else {
+		}
+		else if(propertyName.equalsIgnoreCase("TOGGLESTATE"))
+		{
+			return GetComponentState(c);
+		}
+		else 
+		{
 			return PayLoad.Error("Unsupported property name");
 		}
 				

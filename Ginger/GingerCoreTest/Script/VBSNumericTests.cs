@@ -21,7 +21,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerCoreNETUnitTest.Script
-{
+{    
     [TestClass]
     [Level1]
     public class VBSNumericTests

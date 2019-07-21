@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -51,9 +51,7 @@ namespace amdocs.ginger.GingerCoreNET
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
-    {
-        static readonly object _locker = new object();
-
+    {        
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -63,25 +61,81 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
-        {
-            // TOOD: uncomment after unit tests fixed to lock workspace
-            //if (mWorkSpace != null)
-            //{
-            //    throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
-            //}
+
+        static readonly Mutex mMutex = new Mutex();
+
+        private static string mHoldBy;
+
+        public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
+        {                        
+            if (mWorkSpace != null)
+            {                
+                Console.WriteLine("Workspace is locked by: " + HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
+            }
+            bool b = mMutex.WaitOne(new TimeSpan(0,10,0));   // Wait for the workspace to be released max 10 minutes
+
+            if (!b)
+            {
+                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
+                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
+            }
+            mHoldBy = HoldBy;
 
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
 
             mWorkSpace.InitLocalGrid();
-            
+
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
+
+
+
+        public void ReleaseWorkspace()
+        {
+            try
+            {
+
+                CloseSolution();
+                LocalGingerGrid.Stop();
+                Close();
+                mHoldBy = null;                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+                mMutex.ReleaseMutex();
+            }            
+         
+        }
+
 
         public void Close()
         {
-            mWorkSpace = null;
+            AppSolutionAutoSave.SolutionAutoSaveStop();
+            if (SolutionRepository != null)
+            {
+                CloseAllRunningAgents();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+            }
+            
+            if (!RunningInExecutionMode)
+            {
+                UserProfile.GingerStatus = eGingerStatus.Closed;
+                UserProfile.SaveUserProfile();
+                AppSolutionAutoSave.CleanAutoSaveFolders();
+            }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+            WorkSpace.Instance.Telemetry.SessionEnd();
+            mWorkSpace = null;            
         }
 
         private void InitLocalGrid()
@@ -152,7 +206,7 @@ namespace amdocs.ginger.GingerCoreNET
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
             
-            if (BetaFeatures.ShowDebugConsole)
+            if (BetaFeatures.ShowDebugConsole && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 EventHandler.ShowDebugConsole(true);                
                 BetaFeatures.DisplayStatus();
@@ -175,10 +229,7 @@ namespace amdocs.ginger.GingerCoreNET
             
             Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
-            
-            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
-            AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
-            AutoLogProxy.LogAppOpened();
+                        
             CheckWebReportFolder();
         }
 
@@ -656,6 +707,6 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public Telemetry Telemetry { get; internal set; }
     }
 }
