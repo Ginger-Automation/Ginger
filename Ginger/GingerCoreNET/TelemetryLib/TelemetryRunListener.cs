@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using GingerCore.Actions.PlugIns;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
@@ -15,8 +16,39 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
     {
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("actionend", new { ActionType = action.ActionType, Guid = action.Guid, Name = action.GetType().Name, Elasped = action.Elapsed, Status = action.Status.ToString() });
+            if (action is ActPlugIn)
+            {
+                ActPlugIn actPlugIn = ((ActPlugIn)action);
+
+
+                WorkSpace.Instance.Telemetry.Add("actionend",
+                new
+                {
+                    ActionType = action.ActionType,
+                    Guid = action.Guid,
+                    Name = action.GetType().Name,
+                    Elasped = action.Elapsed,
+                    Status = action.Status.ToString(),
+                    Plugin = actPlugIn.PluginId,
+                    ServiceId = actPlugIn.ServiceId,
+                    ActionID = actPlugIn.ActionId
+                });
+            }
+            else
+            {
+                WorkSpace.Instance.Telemetry.Add("actionend",
+                new
+                {
+                    ActionType = action.ActionType,
+                    Guid = action.Guid,
+                    Name = action.GetType().Name,
+                    Elasped = action.Elapsed,
+                    Status = action.Status.ToString()                    
+                });
+            }
+                
         }
+        
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
