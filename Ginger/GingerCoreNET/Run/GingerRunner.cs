@@ -585,8 +585,7 @@ namespace Ginger.Run
                     Status = RunsetStatus;
 
                     if (doContinueRun == false)
-                    {
-                        // ExecutionLogger.GingerEnd();                    
+                    {                   
                         NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
                     }
                     if(RunLevel == eRunLevel.Runner)
@@ -4038,9 +4037,7 @@ namespace Ginger.Run
                         BFES.ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true);
                         BFES.ExecutionBFFlowControls = BF.BFFlowControls;
                         BFES.BusinessFlow = BF;
-                        BFES.Selected = true;                        
-                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
-
+                        BFES.Selected = true;    
                         BFESs.Add(BFES);
                     }
                 }
@@ -4340,7 +4337,7 @@ namespace Ginger.Run
             uint evetTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);
+                runnerListener.RunnerRunEnd(evetTime, this);
             }
         }
 

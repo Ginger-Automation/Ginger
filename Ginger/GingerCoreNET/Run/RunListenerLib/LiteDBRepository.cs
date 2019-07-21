@@ -208,7 +208,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
-                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {

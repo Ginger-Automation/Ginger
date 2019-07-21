@@ -38,7 +38,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     public abstract class ExecutionLogger
     {
         static JsonSerializer mJsonSerializer;
-        public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;        
@@ -65,11 +64,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private GingerReport gingerReport = new GingerReport();
 
         public int ExecutionLogBusinessFlowsCounter = 0;
-
-        public string CurrentLoggerFolder
-        {
-            get { return mLogsFolder; }
-        }
 
         public string CurrentLoggerFolderName
         {
@@ -151,7 +145,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, businessFlow);
             AGR.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-            AGR.ExecutionLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
             return AGR;
         }
         internal BusinessFlowReport GetBFReportData(BusinessFlow businessFlow, ProjEnvironment environment)

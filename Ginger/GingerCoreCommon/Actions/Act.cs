@@ -1534,13 +1534,7 @@ namespace GingerCore.Actions
         {
             ScreenShots.Add(FileName);
         }
-
-        internal string GetFileNameForScreenShot()
-        {
-            return ExecutionLogFolder + @"ScreenShot_" + ScreenShots.Count + 1;
-        }
-
-
+        
         // This function is used to copy basic Act data from one type of action to another 
         // Used for conversion fro example from ActGenElement --> ActUIElement
         public void CopyInfoFrom(Act act)
