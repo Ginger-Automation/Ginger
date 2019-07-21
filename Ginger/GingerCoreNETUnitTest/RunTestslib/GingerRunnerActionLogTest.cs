@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
@@ -29,11 +30,11 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
+{    
     [Level1]
     [TestClass]
     public class GingerRunnerActionLogTest
-    {
+    {        
         private const string INP_VAL_EXPECTED = "TestInputValue";
         private const string RET_VAL_EXPECTED = "123456";
 
@@ -47,7 +48,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

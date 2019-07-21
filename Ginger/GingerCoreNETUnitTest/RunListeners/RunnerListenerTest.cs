@@ -11,6 +11,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
+    [Ignore] // temp
     [Level2]
     [TestClass]
     public class RunnerListenerTest

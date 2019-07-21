@@ -629,6 +629,9 @@
     <Content Include="TestResources\XML\TemplateVU.XML">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TestResources\Excel\Names.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
