@@ -1620,38 +1620,16 @@ namespace Ginger
 
         private void GenerateLastExecutedItemReport()
         {
-            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-            {
-                CreateLiteDBReport();
-                return;
-            }
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
+            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
             if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            //get logger files
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
-            //create the report
-            string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-
-            if (reportsResultFolder == string.Empty)
+            if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                Reporter.ToUser(eUserMsgKey.AutomationTabExecResultsNotExists);                
-            }
-            else
-            {
-                foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
-                {
-                    string fileName = Path.GetFileName(txt_file);
-                    if (fileName.Contains(".html"))
-                    {
-                        System.Diagnostics.Process.Start(reportsResultFolder);
-                        System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
-                    }
-                }
+                CreateLiteDBReport();
+                return;
             }
         }
         private void CreateLiteDBReport()
@@ -1670,59 +1648,7 @@ namespace Ginger
                 CreateLiteDBReport();
                 return;
             }
-            ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration =  WorkSpace.Instance.Solution.LoggerConfigurations;
-            if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
-                return;
-            }
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            //create the execution logger files            
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
-
-            if (Directory.Exists(exec_folder))
-            {
-                GingerCore.General.ClearDirectoryContent(exec_folder);
-            }                
-            else
-            {
-                Directory.CreateDirectory(exec_folder);
-            }
-            
-            if (((ExecutionLoggerManager)mRunner.ExecutionLoggerManager).OfflineBusinessFlowExecutionLog(mBusinessFlow, exec_folder))
-            {
-                //create the HTML report
-                try
-                {
-                    string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-                    if (reportsResultFolder == string.Empty)
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
-                        return;
-                    }
-                    else
-                    {
-                        foreach (string txt_file in System.IO.Directory.GetFiles(reportsResultFolder))
-                        {
-                            string fileName = Path.GetFileName(txt_file);
-                            if (fileName.Contains(".html"))
-                            {
-                                System.Diagnostics.Process.Start(reportsResultFolder);
-                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
-                }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
-            }
+            // message report + user
         }
 
         private void ExportBizFlowButton_Click(object sender, RoutedEventArgs e)

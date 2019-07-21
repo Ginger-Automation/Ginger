@@ -31,7 +31,7 @@ namespace Ginger.Run
     public class GingerRunnerLogger
     {
         string fileName; 
-
+        // delete 14072019
         public GingerRunnerLogger(string loggerFile)
         {
             this.fileName = loggerFile;

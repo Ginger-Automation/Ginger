@@ -93,72 +93,18 @@ namespace Ginger.Run.RunSetActions
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 ProduceLiteDBReportFolder(currentConf);
                 return;
             }
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
-            {
-                string runSetFolder = string.Empty;
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
-                { 
-                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
-                    AutoLogProxy.UserOperationStart("Online Report");
-                }
-                else
-                {
 
-                    GingerRunner gr = new GingerRunner();
-                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
-                    AutoLogProxy.UserOperationStart("Offline Report");
-                }
-                if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
-                {
-                    ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                    if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
-                    {
-                        string currentHTMLFolderName = string.Empty;
-                        if (!isHTMLReportPermanentFolderNameUsed)
-                        {
-                            currentHTMLFolderName = HTMLReportFolderNameCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder);
-                        }
-                        else
-                        {
-                            currentHTMLFolderName = HTMLReportFolderNameCalculated;
-                        }
-                        reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                                                                                                                false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                                currentHTMLFolderName,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
-                    }
-                    else
-                    {
-                        reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                                                                                                                false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                                null,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed);
-                    }
-                }
-                else
-                {
-                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder), 
-                                                                                                                                false,
-                                                                                                                                null,
-                                                                                                                                null,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed);
-                }
-            }
-            else
-            {
-                Errors = "In order to get HTML report, please, perform executions before";
-                Reporter.HideStatusMessage();
-                Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
-                return;
-            }
+            //Errors = "In order to get HTML report, please, perform executions before";
+            //Reporter.HideStatusMessage();
+            //Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+            //return;
+
         }
 
         private void ProduceLiteDBReportFolder(HTMLReportsConfiguration currentConf)

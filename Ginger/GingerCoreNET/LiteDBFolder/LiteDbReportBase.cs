@@ -192,8 +192,6 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         internal void SetReportData(ActivityGroupReport agReport)
         {
-            //this.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-            //this.ExecutionLogFolder = executionLogFolder + bf.ExecutionLogFolder;
             Seq = agReport.Seq;
             GUID = Guid.Parse(agReport.GUID);
             Name = agReport.Name;
