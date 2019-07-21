@@ -43,7 +43,6 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         [TestCleanup]
         public void TestCleanUp()
         {
-
         }
         #endregion
 
