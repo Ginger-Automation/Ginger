@@ -36,8 +36,7 @@ using System.Windows.Controls;
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {
-        private BusinessFlowPage mBusinessFlowPage;
+    {        
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -81,22 +80,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         Page ITreeViewItem.EditPage()
         {
-            if (!WorkSpace.Instance.BetaFeatures.ShowNewBusinessFlowPage)
+            if (mBusinessFlowViewPage == null)
             {
-                if (mBusinessFlowPage == null)
-                {
-                    mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
-                }
-                return mBusinessFlowPage;
+                mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.Standalone);
             }
-            else
-            {
-                if (mBusinessFlowViewPage == null)
-                {
-                    mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.Standalone);
-                }
-                return mBusinessFlowViewPage;
-            }            
+            return mBusinessFlowViewPage;
         }
 
         ContextMenu ITreeViewItem.Menu()
