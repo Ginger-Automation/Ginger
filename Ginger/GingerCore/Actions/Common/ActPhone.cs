@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Common
 {
     // this action is for Phone Actions Like:
@@ -83,6 +85,6 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.MobileDevice_16x16; } }
+        public override eImageType Image { get { return eImageType.Mobile; } }
     }
 }

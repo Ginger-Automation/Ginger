@@ -104,7 +104,7 @@
         </Expander>
 
 
-        <UserControls:ucButton x:Name="xConnectButton" Grid.Row="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" ButtonText="Connect And Search Repositories" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestConnectionAndSearchRepositories_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Visible" />
+        <UserControls:ucButton x:Name="xConnectButton" Grid.Row="2" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" ButtonText="Connect And Search Repositories" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TestConnectionAndSearchRepositories_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Visible" />
 
         <Label x:Name="SourceControlLocalFolderLable"  Content="Local Solutions Folder Path:" Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
         <TextBox x:Name="SourceControlLocalFolderTextBox" Grid.Row="4" Grid.Column="0"   Text="" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Stretch"  IsReadOnly="True" IsEnabled="False"/>

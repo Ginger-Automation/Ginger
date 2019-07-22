@@ -128,10 +128,10 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
             switch (runoption)
             {
                 case eRunOptions.ContinueToRunall:
-                    ico = eImageType.PlayCircleOutline;
+                    ico = eImageType.RunAll;
                     break;
                 case eRunOptions.StopAllBusinessFlows:
-                    ico = eImageType.StopCircleOutline;
+                    ico = eImageType.StopAll;
                     break;
             }
             return ico;

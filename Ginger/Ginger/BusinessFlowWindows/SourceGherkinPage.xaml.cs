@@ -33,8 +33,8 @@ namespace Ginger.BusinessFlowWindows
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
-            SourceTextBox.BindControl(mBusinessFlow, BusinessFlow.Fields.Source, System.Windows.Data.BindingMode.OneWay);
-            ExternalIDTextBox.BindControl(mBusinessFlow, BusinessFlow.Fields.ExternalID, System.Windows.Data.BindingMode.OneWay);            
+            SourceTextBox.BindControl(mBusinessFlow, nameof(BusinessFlow.Source), System.Windows.Data.BindingMode.OneWay);
+            ExternalIDTextBox.BindControl(mBusinessFlow, nameof(BusinessFlow.ExternalID), System.Windows.Data.BindingMode.OneWay);            
         }
     }
 }

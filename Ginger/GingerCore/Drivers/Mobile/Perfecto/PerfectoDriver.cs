@@ -473,7 +473,6 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             mDriver.ExecuteScript("mobile:presskey", params1);
         }
 
-
         //Back Click Action
         private void PressBackBtn()
         {

@@ -90,8 +90,7 @@ namespace Ginger
             SetComboTagsSource();
             if (mAddTags == false)
             {
-                TagLabel.Content = "Filter By :";
-                AddTagBtn1.Content = "Tag...";
+                xTagsLabel.Content = "Tags Filter:";
             }
         }
 
@@ -175,9 +174,9 @@ namespace Ginger
         {
             ComboTagsList.Clear();
 
-            TagsComboBox.DisplayMemberPath = RepositoryItemTag.Fields.Name;
-            TagsComboBox.SelectedValuePath = nameof(RepositoryItemBase.Guid);
-            TagsComboBox.ItemsSource = ComboTagsList;
+            xTagsComboBox.DisplayMemberPath = RepositoryItemTag.Fields.Name;
+            xTagsComboBox.SelectedValuePath = nameof(RepositoryItemBase.Guid);
+            xTagsComboBox.ItemsSource = ComboTagsList;
 
         }
 
@@ -192,7 +191,7 @@ namespace Ginger
         //Load saved tags on BF
         private void LoadItemTagsToView()
         {
-            TagsStackPanl.Children.Clear();
+            xTagsStackPanl.Children.Clear();
             IEnumerable<RepositoryItemTag> ttg = mFullTagsList.ItemsAsEnumerable();
 
             for (int i = 0; i < GetItemTagsCount(); i++)
@@ -209,7 +208,7 @@ namespace Ginger
                     // add saved tags
                     ucTag tag = new ucTag(t);
                     tag.xDeleteTagBtn.Click += XDeleteTagBtn_Click;
-                    TagsStackPanl.Children.Add(tag);
+                    xTagsStackPanl.Children.Add(tag);
                 }
                 else
                 {
@@ -233,9 +232,9 @@ namespace Ginger
 
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TagsComboBox.SelectedItem != null)
+            if (xTagsComboBox.SelectedItem != null)
             {
-                if (mFullListEditTag != null && ((RepositoryItemTag)TagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
+                if (mFullListEditTag != null && ((RepositoryItemTag)xTagsComboBox.SelectedItem).Guid == mFullListEditTag.Guid)
                 {
                     //open edit solution page
                     TagsPage page = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
@@ -246,25 +245,25 @@ namespace Ginger
                 {
                     AddSelectedTag();
                 }
-                TagsComboBox.SelectedItem = null;
-                TagsComboBox.Visibility = Visibility.Collapsed;
-                AddTagBtn1.Visibility = Visibility.Visible;
+                xTagsComboBox.SelectedItem = null;
+                xTagsComboBox.Visibility = Visibility.Collapsed;
+                xAddTagBtn.Visibility = Visibility.Visible;
             }
         }
 
-        private void AddTagBtn1_Click(object sender, RoutedEventArgs e)
+        private void AddTagBtn_Click(object sender, RoutedEventArgs e)
         {
-            TagsComboBox.Visibility = Visibility.Visible;
-            AddTagBtn1.Visibility = Visibility.Collapsed;
+            xTagsComboBox.Visibility = Visibility.Visible;
+            xAddTagBtn.Visibility = Visibility.Collapsed;
 
-            TagsComboBox.IsDropDownOpen = true;
+            xTagsComboBox.IsDropDownOpen = true;
         }
 
         // Add tags to stackpanal
         private void AddSelectedTag()
         {
             RepositoryItemTag itag;
-            itag = (RepositoryItemTag)TagsComboBox.SelectedItem;
+            itag = (RepositoryItemTag)xTagsComboBox.SelectedItem;
             if (itag != null)
             {
                 if (mItemTagsType == eItemTagsType.Guid)
@@ -284,13 +283,13 @@ namespace Ginger
             RefreshComboSelectionTagsList();
             if (ComboTagsList.Count == 0)
             {
-                TagsComboBox.MaxDropDownHeight = 20;
+                xTagsComboBox.MaxDropDownHeight = 20;
             }
             else
             {
-                TagsComboBox.MaxDropDownHeight = 200;
+                xTagsComboBox.MaxDropDownHeight = 200;
             }
-            TagsComboBox.ItemsSource = ComboTagsList;
+            xTagsComboBox.ItemsSource = ComboTagsList;
         }
 
         private void RefreshComboSelectionTagsList()
@@ -317,20 +316,20 @@ namespace Ginger
                 ComboTagsList.Add(mFullListEditTag);
 
             //refresh combo
-            TagsComboBox.Items.Refresh();
+            xTagsComboBox.Items.Refresh();
         }
 
-
-        private void TagsComboBox_MouseLeave(object sender, MouseEventArgs e)
-        {
-            TagsComboBox.Visibility = Visibility.Collapsed;
-            AddTagBtn1.Visibility = Visibility.Visible;
-        }
 
         private void EditTagBtn_Click(object sender, RoutedEventArgs e)
         {
             TagsPage s = new TagsPage(TagsPage.eViewMode.SpecificList, mFullTagsList);
             s.ShowAsWindow();
+        }
+
+        private void XTagsComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            //xTagsComboBox.Visibility = Visibility.Collapsed;
+            //xAddTagBtn.Visibility = Visibility.Visible;
         }
     }
 }

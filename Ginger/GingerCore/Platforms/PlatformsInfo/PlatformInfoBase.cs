@@ -75,6 +75,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return null;
             }
         }
+
+        /// <summary>
+        /// This method is used to check if the paltform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsPlatformSupportPOM()
+        {
+            return false;
+        }
+
         public static List<eElementType> GetPlatformUIElementsList(ePlatformType Platform)
         {
             PlatformInfoBase PB = GetPlatformImpl(Platform);
@@ -185,7 +195,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TextBox:
                     list.Add(ActUIElement.eElementAction.SetText);
                     list.Add(ActUIElement.eElementAction.GetText);
-                    list.Add(ActUIElement.eElementAction.Click);
                     break;
                 case eElementType.ComboBox:
                     list.Add(ActUIElement.eElementAction.SetText);
