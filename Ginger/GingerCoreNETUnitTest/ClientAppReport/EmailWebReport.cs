@@ -21,7 +21,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
     {
         #region Data Members
         private string mTempFolder;
-        private string mSolutionFolder; 
+        private string mSolutionFolder;
         #endregion
 
         #region Ctor
@@ -29,7 +29,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         {
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
             mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "EmailWebReport");
-        } 
+        }
         #endregion
 
         #region Events
@@ -65,9 +65,34 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             // Act            
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileContent });
-
+            CheckReportFolderCreation();
+            CheckJsDataFromFile();
             // Assert            
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed, "BF RunStatus=Passed");
+            //Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed, "BF RunStatus=Passed");
+        }
+
+        private void CheckJsDataFromFile()
+        {
+            Console.WriteLine("<<<<<<<<<<CheckJsDataFromFile start>>>>>>>>>>>>");
+            string clientAppFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data", "executiondata.js");
+            Console.WriteLine($"client app data file is :{clientAppFilePath}");
+            bool isFileExists = File.Exists(clientAppFilePath);
+            string jsDataStr = string.Empty;
+            if (isFileExists)
+                jsDataStr = File.ReadAllText(clientAppFilePath);
+            Console.WriteLine("json report data is : ");
+            Console.WriteLine(jsDataStr);
+            Assert.IsTrue(isFileExists && jsDataStr.StartsWith("window.runsetData={\"GingerVersion\":\"3.3.6.1\""));
+            Console.WriteLine("<<<<<<<<<<CheckJsDataFromFile end>>>>>>>>>>>>");
+        }
+
+        private void CheckReportFolderCreation()
+        {
+            Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation start>>>>>>>>>>>>");
+            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data");
+            Console.WriteLine($"client app folder is :{clientAppFolderPath}");
+            Assert.IsTrue(Directory.Exists(clientAppFolderPath));
+            Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation end>>>>>>>>>>>>");
         }
 
         private void CreateWorkspace()
