@@ -264,6 +264,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));
                 TableActionFieldBinding();
             }
+            if(mAct.ElementAction == ActUIElement.eElementAction.TableAction)
+            {
+                RowLabelPanel.Visibility = Visibility.Collapsed;
+                RowSelectorPanel.Visibility = Visibility.Collapsed;
+                RowSelectorValuePanel.Visibility = Visibility.Collapsed;
+                WhereColumnValue.Visibility = Visibility.Collapsed;
+                ColumnLabelPanel.Visibility = Visibility.Collapsed;
+                cmbColSelectorValuePanel.Visibility = Visibility.Collapsed;
+                cmbColumnValuePanel.Visibility = Visibility.Collapsed;
+                WherePanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void SetDescriptionDetails()
@@ -274,10 +285,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 TextBlockHelper TBH = new TextBlockHelper(txtDescription);
 
                 TBH.AddText("Select the grid cell located by ");
-                TBH.AddUnderLineText(cmbColSelectorValue.ComboBox.SelectedItem.ToString());
+                TBH.AddUnderLineText(cmbColSelectorValue.ComboBox.SelectedItem?.ToString());
                 TBH.AddText(" ");
                 if (cmbColumnValue.ComboBox.SelectedIndex != -1)
-                    TBH.AddBoldText(cmbColumnValue.ComboBox.SelectedItem.ToString());
+                    TBH.AddBoldText(cmbColumnValue.ComboBox.SelectedItem?.ToString());
                 else
                     TBH.AddBoldText(cmbColumnValue.ComboBox.Text);
                 TBH.AddText(" and ");
@@ -285,7 +296,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     TBH.AddUnderLineText(" row number ");
                     if (RowSelectorValue.ComboBox.SelectedIndex != -1)
-                        TBH.AddBoldText(RowSelectorValue.ComboBox.SelectedItem.ToString());
+                        TBH.AddBoldText(RowSelectorValue.ComboBox.SelectedItem?.ToString());
                     else
                         TBH.AddBoldText(RowSelectorValue.ComboBox.Text);
                 }
@@ -297,16 +308,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 else if (Where.IsChecked == true)
                 {
                     TBH.AddText(" the row located by a cell in ");
-                    TBH.AddUnderLineText(WhereColumn.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereColumn.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
                     if (WhereColumnTitle.ComboBox.SelectedIndex != -1)
-                        TBH.AddBoldText(WhereColumnTitle.ComboBox.SelectedItem.ToString());
+                        TBH.AddBoldText(WhereColumnTitle.ComboBox.SelectedItem?.ToString());
                     else
                         TBH.AddBoldText(WhereColumnTitle.ComboBox.Text);
                     TBH.AddText(" having control property ");
-                    TBH.AddUnderLineText(WhereProperty.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereProperty.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
-                    TBH.AddUnderLineText(WhereOperator.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereOperator.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
                     TBH.AddBoldText(WhereColumnValue.ValueTextBox.Text);
                 }
