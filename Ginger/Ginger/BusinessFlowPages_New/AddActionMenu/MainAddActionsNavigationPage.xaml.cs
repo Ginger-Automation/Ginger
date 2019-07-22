@@ -43,20 +43,23 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
+            this.Dispatcher.Invoke(() =>
             {
-                if(xSelectedItemFrame.Content == mRecordPage || xSelectedItemFrame.Content == mLiveSpyNavPage || xSelectedItemFrame.Content == mWindowsExplorerNavPage)
+                if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
                 {
+                    if (xSelectedItemFrame.Content == mRecordPage || xSelectedItemFrame.Content == mLiveSpyNavPage || xSelectedItemFrame.Content == mWindowsExplorerNavPage)
+                    {
+                        LoadActionFrame(null);
+                    }
+                    ToggleRecordLiveSpyAndExplorer();
+                }
+
+                if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
+                {
+                    ToggleApplicatoinModels();
                     LoadActionFrame(null);
                 }
-                ToggleRecordLiveSpyAndExplorer();
-            }
-
-            if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
-            {
-                ToggleApplicatoinModels();
-                LoadActionFrame(null);
-            }
+            });
         }
 
         void ToggleRecordLiveSpyAndExplorer()
@@ -248,19 +251,22 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
         {
-            xSelectedItemFrame.Content = navigationPage;
+            this.Dispatcher.Invoke(() =>
+            {
+                xSelectedItemFrame.Content = navigationPage;
 
-            if (navigationPage != null || titleImage is eImageType.ApplicationModel)
-            {
-                xNavigationBarPnl.Visibility = Visibility.Visible;
-                xSelectedItemTitlePnl.Visibility = Visibility.Visible;
-                xSelectedItemTitleImage.ImageType = titleImage;
-                xSelectedItemTitleText.Content = titleText;
-            }
-            else
-            {
-                xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
-            }
+                if (navigationPage != null || titleImage is eImageType.ApplicationModel)
+                {
+                    xNavigationBarPnl.Visibility = Visibility.Visible;
+                    xSelectedItemTitlePnl.Visibility = Visibility.Visible;
+                    xSelectedItemTitleImage.ImageType = titleImage;
+                    xSelectedItemTitleText.Content = titleText;
+                }
+                else
+                {
+                    xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void XApplicationModelsBtn_Click(object sender, RoutedEventArgs e)
