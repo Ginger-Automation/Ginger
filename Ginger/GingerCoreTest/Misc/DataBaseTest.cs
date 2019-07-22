@@ -356,7 +356,7 @@ namespace UnitTests.NonUITests
             //Act            
             db.NameBeforeEdit = actDB.DBName;
             db.Name = "MongoDBNew";
-            Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
+            //Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
             
             //Assert
             Assert.AreEqual(actDB.DBName, db.Name, "Names");

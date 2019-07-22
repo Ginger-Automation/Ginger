@@ -31,6 +31,7 @@ using GingerCore.Actions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Ginger.Environments
 {
@@ -104,16 +105,12 @@ namespace Ginger.Environments
             {
                 return;
             }
-
+            Mouse.OverrideCursor = Cursors.Wait;
             try
             {
-                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, db.Name, "Database");
-
-                //ObservableList<BusinessFlow> allBF = null;
                 await Task.Run(() =>
                 {
                     Reporter.ToStatus(eStatusMsgKey.UpdateItem, null, db.NameBeforeEdit, db.Name);
-
                     ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                     Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
                     {
@@ -134,8 +131,6 @@ namespace Ginger.Environments
                             });
                         });
                     });
-
-                    //Reporter.HideStatusMessage();
                 });
 
                 db.NameBeforeEdit = db.Name;
@@ -147,6 +142,7 @@ namespace Ginger.Environments
             finally
             {
                 Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
             }
         }
 
