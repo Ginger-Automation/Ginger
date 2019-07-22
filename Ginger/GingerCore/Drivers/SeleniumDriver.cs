@@ -6328,10 +6328,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetValue:
-                        if (!string.IsNullOrEmpty(e.Text))
-                            act.AddOrUpdateReturnParamActual("Actual", e.Text);
-                        else
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                        act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
@@ -6597,7 +6594,7 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.SetText:
                         try
                         {
-                            e.Clear();
+                            ClearText(e);
                         }
                         finally
                         {
@@ -6648,7 +6645,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
                         break;
                     case ActUIElement.eElementAction.ClearValue:
-                        e.Clear();
+                        ClearText(e);
                         break;
                     case ActUIElement.eElementAction.GetHeight:
                         act.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
@@ -6678,6 +6675,34 @@ namespace GingerCore.Drivers
                 if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
                 {
                     Driver.SwitchTo().DefaultContent();
+                }
+            }
+        }
+
+
+        private string GetElementValue(IWebElement webElement)
+        {
+            if (!string.IsNullOrEmpty(webElement.Text))
+            {
+                return webElement.Text;
+            }
+            else
+            {
+                return webElement.GetAttribute("value");
+            }
+        }
+
+        private void ClearText(IWebElement webElement)
+        {
+            webElement.Clear();
+            string elementValue = GetElementValue(webElement);
+            if (!string.IsNullOrEmpty(elementValue))
+            {
+                int length = elementValue.Length;
+
+                for (int i = 0; i < length; i++)
+                {
+                    webElement.SendKeys(Keys.Backspace);
                 }
             }
         }
