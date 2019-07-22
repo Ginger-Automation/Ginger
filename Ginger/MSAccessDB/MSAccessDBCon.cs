@@ -59,7 +59,7 @@ namespace MSAccessDB
                     DbCommand command = conn.CreateCommand();
                     command.CommandText = Query;
                     command.CommandType = CommandType.Text;
-                    
+
                     // Retrieve the data.
                     reader = command.ExecuteReader();
 
@@ -72,7 +72,6 @@ namespace MSAccessDB
 
                     while (reader.Read())
                     {
-
                         List<string> record = new List<string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
@@ -81,7 +80,6 @@ namespace MSAccessDB
                         Records.Add(record);
                         dataTable.Rows.Add(record);
                     }
-
                     ReturnList.Add(Headers);
                     ReturnList.Add(Records);
                 }
@@ -106,13 +104,13 @@ namespace MSAccessDB
             bool res;
             res = false;
 
-            string ConnectionString= parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
-            string User= parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
+            string ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
+            string User = parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
             string Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
             string TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
-
             if (String.IsNullOrEmpty(ConnectionString) == false)
             {
+
                 connStr = ConnectionString.Replace("{USER}", User);
 
                 String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
@@ -217,16 +215,6 @@ namespace MSAccessDB
             if ((conn == null) || (conn.State != ConnectionState.Open))
             {
                 isCoonected = OpenConnection(KeyvalParamatersList);
-            }
-            //make sure that the connection was not refused by the server               
-            TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
-            if (timeDiff.TotalMinutes > 5)
-            {
-                isCoonected = OpenConnection(KeyvalParamatersList);
-            }
-            else
-            {
-                LastConnectionUsedTime = DateTime.Now;
             }
             return isCoonected;
         }

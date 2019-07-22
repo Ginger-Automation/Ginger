@@ -45,7 +45,7 @@ namespace Oracle
             else
             {
                 String strConnString = TNS;
-                String strProvider;
+               
                 connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
                 String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
@@ -146,7 +146,6 @@ namespace Oracle
 
                     while (reader.Read())
                     {
-
                         List<string> record = new List<string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {

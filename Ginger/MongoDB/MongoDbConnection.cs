@@ -7,7 +7,7 @@ using Amdocs.Ginger.CoreNET;
 using System.Data.Common;
 using Amdocs.Ginger.Common;
 using System.Data;
-
+using GingerPluginCore;
 using GingerCore;
 using MongoDB.Driver;
 using MongoDB.Bson;
