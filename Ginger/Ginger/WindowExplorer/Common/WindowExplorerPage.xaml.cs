@@ -340,35 +340,35 @@ namespace Ginger.WindowExplorer
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
-            if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
-            else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
+            //if (RefreshWindowsButtonFlag)
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
+            //else
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
-            if (AddSwitchWindowActionButtonFlag)
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
-            else
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
+            //if (AddSwitchWindowActionButtonFlag)
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
+            //else
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
 
             WindowsComboBox.IsEnabled = WindowsComboBoxFlag;
-            if (WindowsComboBoxFlag)
-            {
-                WindowsComboBox.Foreground = Brushes.Orange;
-            }
-            else
-            {
-                WindowsComboBox.Foreground = Brushes.Gray;
-            }
+            //if (WindowsComboBoxFlag)
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Orange;
+            //}
+            //else
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Gray;
+            //}
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)

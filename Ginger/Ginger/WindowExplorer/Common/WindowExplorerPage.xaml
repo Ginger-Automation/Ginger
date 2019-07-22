@@ -3,20 +3,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     xmlns:Ginger="clr-namespace:Ginger"
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
-    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-    x:Class="Ginger.WindowExplorer.WindowExplorerPage" 
-    xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      mc:Ignorable="d" 
-      Height="700" Width="390"
-      MinHeight="100" MinWidth="390"
+    x:Class="Ginger.WindowExplorer.WindowExplorerPage"
+    mc:Ignorable="d" 
 	Title="Ginger Window Explorer">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Width="390" HorizontalAlignment="Left" >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="385"/>
-        </Grid.ColumnDefinitions>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" >
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="30" />
             <RowDefinition Height="32"/>
@@ -30,13 +24,14 @@
         <!--Window Selection Area-->
         <Grid Grid.Row="0" x:Name="xWindowGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="28"/>
                 <ColumnDefinition Width="28"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}"/>
-            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="3,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+            
+            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="0,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
                         
             <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh"  
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16"  
