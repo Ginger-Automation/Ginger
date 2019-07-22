@@ -436,6 +436,7 @@ namespace GingerCoreNET.Application_Models
                 //Add the New onces to the last of the list
                 if (elementToUpdate.DeltaStatus == eDeltaStatus.Added)
                 {
+                    elementToUpdate.ElementInfo.ParentGuid = POM.Guid;
                     if ((ApplicationPOMModel.eElementGroup)elementToUpdate.SelectedElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
                     {
                         POM.MappedUIElements.Add(elementToUpdate.ElementInfo);

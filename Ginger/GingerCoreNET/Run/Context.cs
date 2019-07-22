@@ -16,28 +16,156 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCore.Platforms;
+using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Amdocs.Ginger.Common
 {
-    public class Context
+    public class Context : INotifyPropertyChanged
     {
-        public GingerRunner Runner { get; set; }
+        private GingerRunner mRunner;
+        public GingerRunner Runner
+        {
+            get {
+                return mRunner;
+            }
+            set {
+                if(mRunner != value)
+                {
+                    mRunner = value;
+                    OnPropertyChanged(nameof(Runner));
+                }
+            }
+        }
+        
+        private ProjEnvironment mEnvironment;
+        public ProjEnvironment Environment
+        {
+            get
+            {
+                return mEnvironment;
+            }
+            set
+            {
+                if (mEnvironment != value)
+                {
+                    mEnvironment = value;
+                    OnPropertyChanged(nameof(Environment));
+                }
+            }
+        }
 
-        public ProjEnvironment Environment { get; set; }
+        private BusinessFlow mBusinessFlow;
+        public BusinessFlow BusinessFlow
+        {
+            get
+            {
+                return mBusinessFlow;
+            }
+            set
+            {
+                if (mBusinessFlow != value)
+                {
+                    mBusinessFlow = value;
+                    OnPropertyChanged(nameof(BusinessFlow));
+                }
+            }
+        }
 
-        public BusinessFlow BusinessFlow { get; set; }
+        private Activity mActivity;
+        public Activity Activity
+        {
+            get
+            {
+                return mActivity;
+            }
+            set
+            {
+                if (mActivity != value)
+                {
+                    mActivity = value;
+                    OnPropertyChanged(nameof(Activity));
+                }
+            }
+        }
+        
+        private TargetBase mTarget;
+        public TargetBase Target
+        {
+            get
+            {
+                return mTarget;
+            }
+            set
+            {
+                if (mTarget != value)
+                {
+                    mTarget = value;
+                    OnPropertyChanged(nameof(Target));
+                }
+            }
+        }
+                
+        private Agent mAgent;
+        public Agent Agent
+        {
+            get
+            {
+                return mAgent;
+            }
+            set
+            {
+                if (mAgent != value)
+                {
+                    mAgent = value;
+                    OnPropertyChanged(nameof(Agent));
+                }
+            }
+        }
 
-        public Activity Activity { get; set; }
-       
-        public TargetBase Target { get; set; }
+        private string mAgentStatus;
+        public string AgentStatus
+        {
+            get
+            {
+                return mAgentStatus;
+            }
+            set
+            {
+                if (mAgentStatus != value)
+                {
+                    mAgentStatus = value;
+                    OnPropertyChanged(nameof(AgentStatus));
+                }
+            }
+        }
 
+        private ePlatformType mPlatform;
+        public ePlatformType Platform
+        {
+            get
+            {
+                return mPlatform;
+            }
+            set
+            {
+                if (mPlatform != value)
+                {
+                    mPlatform = value;
+                    OnPropertyChanged(nameof(Platform));
+                }
+            }
+        }
+               
         public static Context GetAsContext(object contextObj)
         {
             if (contextObj != null && contextObj is Context)
@@ -47,6 +175,17 @@ namespace Amdocs.Ginger.Common
             else
             {
                 return null;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
     }

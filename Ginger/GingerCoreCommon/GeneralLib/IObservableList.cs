@@ -46,7 +46,12 @@ namespace Amdocs.Ginger.Common
 
         List<object> ListItems { get; }
 
-        void DoLazyLoadItem(string s);        
+        void DoLazyLoadItem(string s);
+
+        bool SyncCurrentItemWithViewSelectedItem { get; set; } 
+        bool SyncViewSelectedItemWithCurrentItem { get; set; } 
+
+        string FilterStringData { get; set; }
     }
 
     public enum eDirection

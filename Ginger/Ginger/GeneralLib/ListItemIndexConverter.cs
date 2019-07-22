@@ -28,11 +28,11 @@ namespace GingerWPF.GeneralLib
     // We use this converter in list where we want to show the index number of each row
     public class ListItemIndexConverter : IValueConverter
     {
-        // value is a ListBoxItem that contains the item - usually our ObseravleList item(s)
+        // value is a ListViewItem that contains the item - usually our ObseravleList item(s)
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {            
-            ListBoxItem LBI = (ListBoxItem)value;
-            ListBox LB = GetParentOfType<ListBox>((ListBoxItem)LBI);
+            ListViewItem LBI = (ListViewItem)value;
+            ListView LB = GetParentOfType<ListView>((ListViewItem)LBI);
             int i = LB.ItemContainerGenerator.IndexFromContainer(LBI);
             i++;  // base 1 counting
             return i.ToString();

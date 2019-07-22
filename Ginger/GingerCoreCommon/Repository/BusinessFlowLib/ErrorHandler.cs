@@ -32,16 +32,6 @@ namespace GingerCore
     // The activities can come from external like: QC TC Step, vStorm    
     public class ErrorHandler : Activity, IErrorHandler
     {
-        public new static class Fields
-        {
-            public static string HandlerType = "HandlerType";
-            public static string Description = "Description";
-            public static string HandlerMapping = "HandlerMapping";
-            public static string IsSelected = "IsSelected";
-        }
-
-        
-
         private eHandlerType mHandlerType;
         public bool IsSelected { get; set; }
 
@@ -49,7 +39,7 @@ namespace GingerCore
         public eHandlerType HandlerType
         {
             get{return mHandlerType;}
-            set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(Fields.HandlerType); } }
+            set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(nameof(HandlerType)); } }
         }
 
         public override eImageType ItemImageType
@@ -57,6 +47,20 @@ namespace GingerCore
             get
             {
                 return eImageType.Wrench;
+            }
+        }
+
+        public override string ActivityType
+        {
+            get
+            {
+                switch (HandlerType)
+                {
+                    case eHandlerType.Popup_Handler:
+                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler");
+                    default:
+                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Error Handler");
+                }
             }
         }
     }

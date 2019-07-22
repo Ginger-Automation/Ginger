@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages;
 using Ginger.GeneralWindows;
 using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
@@ -112,7 +113,9 @@ namespace Ginger.MenusLib
 
         private static Page GetGlobalVariabelsPage()
         {
-            return (new VariablesPage(eVariablesLevel.Solution, WorkSpace.Instance.Solution,null));
+            VariabelsListViewPage variabelsPage = new VariabelsListViewPage(WorkSpace.Instance.Solution, null, General.eRIPageViewMode.Standalone);
+
+            return (variabelsPage);
         }
 
         private static Page SharedActivitiesGroups()

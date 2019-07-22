@@ -261,7 +261,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xLocatorsGrid.ShowAdd = Visibility.Collapsed;
             xLocatorsGrid.ShowDelete = Visibility.Collapsed;
             xLocatorsGrid.ShowUpDown = Visibility.Collapsed;
-            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
         }
 
         private void SetDeltaControlPropertiesGridView()

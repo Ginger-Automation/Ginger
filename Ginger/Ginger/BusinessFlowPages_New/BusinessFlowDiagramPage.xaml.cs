@@ -64,14 +64,14 @@ namespace Ginger.BusinessFlowLib
             FlowElement LastActivity = StartFlowElement;
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                FlowElement ActivityFE = new FlowElement(FlowElement.eElementType.Activity, activity, Activity.Fields.ActivityName, x, y);
+                FlowElement ActivityFE = new FlowElement(FlowElement.eElementType.Activity, activity, nameof(Activity.ActivityName), x, y);
                 y += ActivityFE.Height + 50;
 
                 //TODO: fixme to see image
                 //ActivityFE.SetImage(activity.Image);
 
                 ActivityFE.Object = activity;  // keep ref to the Activity for later use
-                ActivityFE.BindStatusLabel(activity, Activity.Fields.Status);
+                ActivityFE.BindStatusLabel(activity, nameof(Activity.Status));
                 mFlowDiagram.AddFlowElem(ActivityFE);
 
                 //Add connector to last activity

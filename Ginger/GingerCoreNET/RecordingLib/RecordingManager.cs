@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -66,8 +67,15 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     LearnAdditionalDetails = true;
-                    CreatePOM = true;
-                    CurrentPOM = lstApplicationPOM[0];
+                    CreatePOM = true;                    
+                    if (lstApplicationPOM.Count > 0)
+                    {
+                        CurrentPOM = lstApplicationPOM[0]; 
+                    }
+                    else
+                    {
+                        CurrentPOM = new ApplicationPOMModel();
+                    }
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
                     foreach (var cPom in lstApplicationPOM)
                     {
@@ -77,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 BusinessFlow = bFlow;
                 Context = context;
-                PlatformDriver.RecordingEvent -= PlatformDriver_RecordingEvent;
+                PlatformDriver.ResetRecordingEventHandler();
                 PlatformDriver.RecordingEvent += PlatformDriver_RecordingEvent;
             }
             catch (Exception ex)
@@ -129,19 +137,46 @@ namespace Amdocs.Ginger.CoreNET
                     else if (!(CurrentPOM.PageURL == obj.PageURL && CurrentPOM.Name == obj.PageTitle))
                     {
                         CurrentPOM = obj.ApplicationPOM;
-                    }
+                    }                    
                 }
                 else
                 {
                     newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);
                     CurrentPOM = newPOMHelper.ApplicationPOM;
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    ListPOMObjectHelper.Add(newPOMHelper);
+                    ListPOMObjectHelper.Add(newPOMHelper);                    
                 }
+                AddBrowserAction(args.PageTitle, args.PageURL);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Page change event handler while recording", ex);
+            }
+        }
+
+        private void AddBrowserAction(string pageTitle, string pageURL)
+        {
+            try
+            {
+                ElementActionCongifuration actConfig = new ElementActionCongifuration()
+                {
+                    Description = "Go to Url - " + pageTitle,
+                    Operation = "GotoURL",
+                    ElementValue = pageURL,
+                    LocateBy = "NA"
+                };
+
+                ElementInfo einfo = new ElementInfo();
+                einfo.ElementTypeEnum = eElementType.Iframe;
+                Act actUI = PlatformInfo.GetPlatformAction(einfo, actConfig);
+                if (actUI != null)
+                {
+                    AddActionToBusinessFlow(actUI, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding browser action", ex);
             }
         }
 
@@ -186,18 +221,31 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     actUI = PlatformInfo.GetPlatformAction(null, args);
                 }
+                AddActionToBusinessFlow(actUI, einfo);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in Element recording event handler while recording", ex);
+            }
+        }
+
+        private void AddActionToBusinessFlow(Act actUI, ElementInfo einfo)
+        {
+            try
+            {
                 if (actUI != null)
                 {
                     if (CurrentPOM != null && einfo != null)
                     {
                         CurrentPOM.MappedUIElements.Add(einfo);
                     }
+                    actUI.Context = Context;
                     BusinessFlow.AddAct(actUI);
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Element recording event handler while recording", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding action to business flow", ex);
             }
         }
 
@@ -217,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                PlatformDriver.StopRecording();
+                PlatformDriver.StopRecording();                
                 if (ListPOMObjectHelper != null)
                 {
                     RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
@@ -226,15 +274,18 @@ namespace Amdocs.Ginger.CoreNET
                         if (!string.IsNullOrEmpty(cPom.PageTitle) && !string.IsNullOrEmpty(cPom.PageURL))
                         {
                             try
-                            {        
-                                PomLearnUtils utils = new PomLearnUtils(cPom.ApplicationPOM);
-                                cPom.ApplicationPOM.ContainingFolder = repositoryFolder.FolderRelativePath;
-                                cPom.ApplicationPOM.ContainingFolderFullPath = repositoryFolder.FolderFullPath;
-                                utils.SaveLearnedPOM();
+                            {
+                                if (string.IsNullOrEmpty(cPom.ApplicationPOM.ContainingFolderFullPath))
+                                {
+                                    repositoryFolder.AddRepositoryItem(cPom.ApplicationPOM); 
+                                }
+                                else
+                                {
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
+                                }
                             }
                             catch (Exception e)
-                            {
-                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(cPom.ApplicationPOM);
+                            {                                
                                 Reporter.ToLog(eLogLevel.ERROR, "Error while saving the POM", e);
                             }                            
                         }

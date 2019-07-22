@@ -81,8 +81,11 @@ namespace GingerCore.Variables
             Value = val.ToString();
         }
     
-        public override eImageType Image { get { return eImageType.Sequence; } }
-        public override string VariableType() { return "Sequence"; }
+        public override eImageType Image { get { return eImageType.SequentialExecution; } }
+        public override string VariableType
+        {
+            get { return "Sequence"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
@@ -92,5 +95,9 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
+
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return true; } }
     }
 }

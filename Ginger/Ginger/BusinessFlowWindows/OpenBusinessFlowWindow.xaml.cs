@@ -45,9 +45,9 @@ namespace Ginger.BusinessFlowWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            viewCols.Add(new GridColView() { Field = BusinessFlow.Fields.Name, WidthWeight = 250 });
-            viewCols.Add(new GridColView() { Field = BusinessFlow.Fields.Description, WidthWeight = 250 });
-            viewCols.Add(new GridColView() { Field = BusinessFlow.Fields.Status, WidthWeight = 50 });
+            viewCols.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 250 });
+            viewCols.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 250 });
+            viewCols.Add(new GridColView() { Field = nameof(BusinessFlow.Status), WidthWeight = 50 });
             grdBusinessFlows.SetAllColumnsDefaultView(view);
             grdBusinessFlows.InitViewItems();
         }
