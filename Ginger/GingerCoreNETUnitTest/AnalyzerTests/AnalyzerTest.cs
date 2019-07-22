@@ -1,10 +1,8 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using GingerCore;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +14,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
     [TestClass]
     [Level1]
     public class AnalyzerTest
-    {
+    {        
         static SolutionRepository SR;
 
         [ClassInitialize]
@@ -29,7 +27,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestMethod]

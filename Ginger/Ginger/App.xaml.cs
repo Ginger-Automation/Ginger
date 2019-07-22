@@ -20,6 +20,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
@@ -31,6 +32,7 @@ using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -165,8 +167,9 @@ namespace Ginger
         //}
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
+        {            
             Exception ex = e.Exception;
+            WorkSpace.Instance.Telemetry.AddException(ex);
             //Exceptions to avoid because it source is in some .NET issue
             if (ex.Message == "Value cannot be null.\r\nParameter name: element" && ex.Source == "PresentationCore")//Seems like WPF Bug 
             {
@@ -233,13 +236,14 @@ namespace Ginger
             }
         }
 
+        
 
-        // This is the main entry point to Ginger UI/CLI
+        // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Console.WriteLine("Starting Ginger");
             Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Init(new WorkSpaceEventHandler(), "App");
 
             // add additional classed from Ginger and GingerCore
             InitClassTypesDictionary();
@@ -254,7 +258,7 @@ namespace Ginger
             //write Ginger start to log + console
             Reporter.ToLog(eLogLevel.INFO, Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + " Started");
             Reporter.ToLog(eLogLevel.INFO, "Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-
+            
             if (e.Args.Length == 0)
             {
                 HideConsoleWindow();                
@@ -266,7 +270,7 @@ namespace Ginger
             }
         }
 
-
+        
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
 

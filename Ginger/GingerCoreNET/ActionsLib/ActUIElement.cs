@@ -207,6 +207,8 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
+            [EnumValueDescription("ToggleState")]
+            ToggleState,
         }
 
         public enum eElementAction
@@ -495,6 +497,10 @@ namespace GingerCore.Actions.Common
             Submit,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript,
+            
+            //Adding For java driver checkbox element
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
@@ -692,7 +698,16 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Double Click")]
             DoubleClick,
             [EnumValueDescription("Set Focus")]
-            SetFocus
+            SetFocus,
+            #region Adding to support conversion of JavaTable action to actuielement action
+            SendKeys,
+            IsChecked,
+            [EnumValueDescription("Set Date")]
+            SelectDate,
+            MousePressAndRelease,
+            ActivateRow,
+            isVisible
+            #endregion
         }
 
         // TODO: move Locate Value to here and remove from Act.cs

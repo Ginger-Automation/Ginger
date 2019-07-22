@@ -116,26 +116,26 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             Assert.AreEqual(1, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
         }
 
-        [Ignore] // Failing need GR + VE, Create test with GR
-        [TestMethod]
-        public void GotoURLGridWithValueExpression()
-        {
-            //Arrange
-            string VEURL = "{CS Exp=@\"badurl\".Replace(@\"bad\",@\"good\")}";
-            string CalculatedURL = "goodurl";
+        //[Ignore] // Failing need GR + VE, Create test with GR
+        //[TestMethod]
+        //public void GotoURLGridWithValueExpression()
+        //{
+        //    //Arrange
+        //    string VEURL = "{CS Exp=@\"badurl\".Replace(@\"bad\",@\"good\")}";
+        //    string CalculatedURL = "goodurl";
 
-            ActBrowserElement actBrowserElement = new ActBrowserElement();
-            actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
-            actBrowserElement.Value = VEURL;           
+        //    ActBrowserElement actBrowserElement = new ActBrowserElement();
+        //    actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+        //    actBrowserElement.Value = VEURL;           
 
-            //Act            
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
+        //    //Act            
+        //    ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
-            //Assert            
-            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
-            Assert.AreEqual("Navigated to: " + CalculatedURL, actBrowserElement.ExInfo, "ExInfo");
-            Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
-        }
+        //    //Assert            
+        //    Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
+        //    Assert.AreEqual("Navigated to: " + CalculatedURL, actBrowserElement.ExInfo, "ExInfo");
+        //    Assert.AreEqual(0, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
+        //}
 
 
 

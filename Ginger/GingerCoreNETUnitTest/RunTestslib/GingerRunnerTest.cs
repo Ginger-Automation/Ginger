@@ -34,11 +34,12 @@ using System.Diagnostics;
 using System.Threading;
 
 namespace WorkspaceHold
-{
+{    
     [Level2]
     [TestClass]
     public class GingerRunnerTest
     {
+        
         static DummyDriver mDummyDriver;
         static GingerGrid mGingerGrid;
         static GingerRunner mGingerRunner;
@@ -51,7 +52,7 @@ namespace WorkspaceHold
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.InitWS("GingerRunnerTest");
+            WorkspaceHelper.InitWS(nameof(GingerRunnerTest));
         
             mGingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
@@ -110,7 +111,7 @@ namespace WorkspaceHold
             }
             finally
             {
-                WorkspaceHelper.ReleaseWorkspace();
+                WorkSpace.Instance.ReleaseWorkspace();
             }
         }
 
