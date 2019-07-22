@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -43,7 +42,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -52,9 +51,7 @@ namespace amdocs.ginger.GingerCoreNET
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
-    {
-        static readonly object _locker = new object();
-
+    {        
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -64,13 +61,25 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
-        {
-            // TOOD: uncomment after unit tests fixed to lock workspace
+
+        static readonly Mutex mMutex = new Mutex();
+
+        private static string mHoldBy;
+
+        public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
+        {                        
             if (mWorkSpace != null)
-            {
-                throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
+            {                
+                Console.WriteLine("Workspace is locked by: " + HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
             }
+            bool b = mMutex.WaitOne(new TimeSpan(0,10,0));   // Wait for the workspace to be released max 10 minutes
+
+            if (!b)
+            {
+                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
+                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
+            }
+            mHoldBy = HoldBy;
 
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
@@ -78,10 +87,34 @@ namespace amdocs.ginger.GingerCoreNET
 
             mWorkSpace.InitLocalGrid();
 
-            Telemetry.Init();            
-            WorkSpace.Instance.Telemetry.SessionStarted();
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
-        
+
+
+
+        public void ReleaseWorkspace()
+        {
+            try
+            {
+
+                CloseSolution();
+                LocalGingerGrid.Stop();
+                Close();
+                mHoldBy = null;                
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+
+                mMutex.ReleaseMutex();
+            }            
+         
+        }
+
 
         public void Close()
         {
@@ -102,7 +135,7 @@ namespace amdocs.ginger.GingerCoreNET
 
             WorkSpace.Instance.LocalGingerGrid.Stop();
             WorkSpace.Instance.Telemetry.SessionEnd();
-            mWorkSpace = null;
+            mWorkSpace = null;            
         }
 
         private void InitLocalGrid()

@@ -21,6 +21,7 @@ using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GingerCoreCommonTest.VariableTests
@@ -382,7 +383,7 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8, "variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8");
         }
 
-        [Ignore] //not stable
+        
         [TestMethod]  [Timeout(60000)]
         public void RandomStringVar_Digit_6_10_HitAllRange()
         {
@@ -394,19 +395,35 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.IsDigit = true;
 
             //Act
-            for (int i = 0; i < 50; i++)
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            while (stopwatch.ElapsedMilliseconds < 5000 && !CheckHits(a))   // max 5 seconds
             {
                 variableRandomString.GenerateAutoValue();
                 decimal num1 = decimal.Parse(variableRandomString.Value);
                 Assert.IsTrue(variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10");
-                a[variableRandomString.Value.Length-6]++;
+                a[variableRandomString.Value.Length-6]++;                
             }
 
-            //Assert                        
-            for (int i = 0; i < 5; i++)
+            //Assert                                    
+            Assert.IsTrue(CheckHits(a), "all items in array hit");             
+        }
+
+        /// <summary>
+        /// Check if all items in array > 0
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        private bool CheckHits(int[] a)
+        {
+            for (int i = 0; i < a.Length; i++)
             {
-                Assert.IsTrue(a[i] > 2, "a[i] > 2"); // Check hit - expect at least 2 hits per, avg is 10
+                if (a[i] == 0)
+                {
+                    return false;
+                }
             }
+            return true;
         }
 
         [TestMethod]  [Timeout(60000)]

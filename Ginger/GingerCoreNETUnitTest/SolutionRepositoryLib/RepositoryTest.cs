@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -34,23 +35,23 @@ using System;
 using System.Linq;
 
 namespace UnitTests.NonUITests
-{
-    [Ignore] // temp
+{    
     [TestClass]    
     [Level1]
     public class RepositoryTest
-    {
+    {        
+
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS("RepositoryTest");            
+            WorkspaceHelper.InitWS(nameof(RepositoryTest));            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

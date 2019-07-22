@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
@@ -27,15 +27,15 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace UnitTests.UITests.PBDriverTest
 {
-    [Ignore] // temp
     [TestClass]
     public class PBDriverWidgetTest
-    {
+    {        
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
@@ -45,6 +45,10 @@ namespace UnitTests.UITests.PBDriverTest
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, "PBDriverWidgetTest");            
+
+
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
@@ -81,8 +85,6 @@ namespace UnitTests.UITests.PBDriverTest
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
-
-            
 
             ApplicationAgent AA = new ApplicationAgent();
             AA.AppName = "PBTestApp";
@@ -217,7 +219,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             }
 
-
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestMethod]  [Timeout(60000)]

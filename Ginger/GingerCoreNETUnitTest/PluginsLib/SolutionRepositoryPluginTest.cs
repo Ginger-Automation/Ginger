@@ -31,19 +31,17 @@ using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
-{
-    [Ignore]
+{    
     [TestClass]
     [Level1]
     public class SolutionRepositoryPluginTest
-    {
-
+    {        
         static SolutionRepository SR;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {            
-            WorkspaceHelper.CreateDummyWorkSpace("SolutionRepositoryPluginTest");            
+            WorkspaceHelper.CreateDummyWorkSpace(nameof(SolutionRepositoryPluginTest));            
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
@@ -77,7 +75,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 // proxy.Shutdown();
             }
 
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
 
         }
 

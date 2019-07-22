@@ -4606,7 +4606,6 @@
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
-    <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />

@@ -13,7 +13,7 @@ using System.Text;
 
 namespace GingerCoreNETUnitTest.RunListeners
 {
-    [Ignore] //temp
+
     [TestClass]
     [Level2]
     public class ExecutionListenerTest

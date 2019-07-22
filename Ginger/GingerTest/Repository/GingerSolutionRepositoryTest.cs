@@ -33,25 +33,33 @@ using System.Linq;
 using System.Reflection;
 
 namespace GingerTest
-{
-    [Ignore] // temp
+{    
+    [Ignore] // get stuck
     [TestClass]
     [Level2]
     public class GingerSolutionRepositoryTest
-    {
+    {        
+
         static SolutionRepository mSolutionRepository;        
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
+
             CreateTestSolution();
             
             // Init SR
             mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerSolutionRepositoryTest));
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         private static void CreateTestSolution()

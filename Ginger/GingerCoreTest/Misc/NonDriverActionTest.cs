@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -38,11 +35,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
-    [Ignore] // temp
     [TestClass]
     [Level3]
     public class NonDriverActionTest
-    {
+    {        
+
         static BusinessFlow mBF;
         static GingerRunner mGR;
 
@@ -64,11 +61,18 @@ namespace UnitTests.NonUITests
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.CurrentBusinessFlow = mBF;
             mGR.BusinessFlows.Add(mBF);
-
+            
+            
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
+            WorkSpace.Init(WSEH, nameof(NonDriverActionTest));
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanUp()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         public static void AddApplicationAgent()
@@ -87,6 +91,9 @@ namespace UnitTests.NonUITests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
         }
+
+
+        [Ignore] // not stable
         [TestMethod]
         [Timeout(60000)]
         public void ActXMLProcessingTest()
@@ -284,6 +291,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
         }
 
+        [Ignore]  // keep a browser open FIXME
         [TestMethod]
         public void RestartAgentNotRunningTest()
         {

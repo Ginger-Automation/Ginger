@@ -29,11 +29,12 @@ using System.Linq;
 
 namespace GingerTest
 {
-    [Ignore]
+    
     [TestClass]
     [Level3]
     public class HTMLReportTest
-    {
+    {        
+
         static GingerAutomator mGingerAutomator;
         
         
@@ -42,7 +43,7 @@ namespace GingerTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceLocker.StartSession("HTMLReportTest");
+            // mWorkspaceLocker.StartSession("HTMLReportTest", mWorkspaceLocker);
             CreateTestSolution();
 
             mGingerAutomator = GingerAutomator.StartSession();
@@ -54,7 +55,7 @@ namespace GingerTest
         public static void ClassCleanup()
         {            
             GingerAutomator.EndSession();
-            WorkspaceLocker.EndSession();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         private static void CreateTestSolution()

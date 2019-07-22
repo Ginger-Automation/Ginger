@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -27,12 +28,11 @@ using System.IO;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionTestsLib
-{
-    [Ignore] // temp
+{    
     [Level1]
     [TestClass]
     public class SolutionRepositoryBasicSimpleTest
-    {
+    {        
 
         static SolutionRepository SR;
         // Using Mutex for BF because Backup and restore can modify the same instance, so make sure we run one test at a time
@@ -42,14 +42,14 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution("SolutionRepositoryBasicSimpleTest", path);
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(nameof(SolutionRepositoryBasicSimpleTest), path);
             
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]
