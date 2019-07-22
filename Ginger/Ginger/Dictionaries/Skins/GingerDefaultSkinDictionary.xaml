@@ -475,6 +475,7 @@
         <Setter Property="Background" Value="White"/>
         <Setter Property="Height" Value="22"/>
         <Setter Property="MinHeight" Value="22"/>
+        <Setter Property="MinWidth" Value="70"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ComboBox}">

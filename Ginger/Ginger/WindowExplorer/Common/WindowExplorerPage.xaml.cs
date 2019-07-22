@@ -656,6 +656,10 @@ namespace Ginger.WindowExplorer
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
                         }
+                        else if(mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java && (EI.ObjFileExt == "Ginger.JavaElementInfo"))
+                        {
+                            list = mPlatform.GetPlatformElementActions(EI);
+                        }
                         else
                         {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
                             list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
