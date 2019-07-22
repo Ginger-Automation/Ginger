@@ -75,6 +75,12 @@ namespace Ginger.Functionalties
             AutoSaveTimer.Start();
         }
 
+        public void SolutionAutoSaveStop()
+        {
+            AutoSaveTimer.Stop();            
+        }
+
+
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
             if (mAutoSaveFolderPath != null)//meaning solution is loaded

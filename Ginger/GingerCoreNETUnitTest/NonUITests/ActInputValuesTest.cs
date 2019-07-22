@@ -45,8 +45,7 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
+        {            
             mAct = new ActDummy();
         }
 

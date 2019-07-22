@@ -22,7 +22,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace GingerCoreNETUnitTest.Script
-{
+{    
     [TestClass]
     [Level1]
     public class VBSDateTimeTests

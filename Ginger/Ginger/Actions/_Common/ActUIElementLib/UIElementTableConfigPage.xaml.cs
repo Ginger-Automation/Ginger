@@ -60,9 +60,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             eBaseWindow = BaseWindow.ActEditPage;
             mAct = Act;
-            mAct.Description = "UI Element Table";
             mPlatform = Platform;
-          
 
             InitializeComponent();
             ShowTableControlActionConfigPage(mPlatform);           

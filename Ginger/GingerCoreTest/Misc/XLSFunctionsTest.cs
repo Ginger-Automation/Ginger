@@ -29,12 +29,13 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
+using System.IO;
 
 namespace UnitTests.NonUITests
 {
     
     [TestClass]
-    [Ignore]
+    
     public class XLSFunctionsTest
     {
         BusinessFlow mBF;
@@ -93,6 +94,9 @@ namespace UnitTests.NonUITests
         //   Assert.AreEqual(dt.Rows.Count,98);
 
         //}
+
+
+        [Ignore]    // Requires Excel to be installed - change to use the new plugin with OpenXML
         [Level2]
         [TestMethod]  [Timeout(60000)]
         public void ReadDataFromXLSGetRowCount()
@@ -101,7 +105,7 @@ namespace UnitTests.NonUITests
             ActExcel actX = new ActExcel();
             
             //Act
-            string XLSFile = TestResources.GetTestResourcesFile("Names.xlsx");
+            string XLSFile = TestResources.GetTestResourcesFile("Excel" + Path.DirectorySeparatorChar + "Names.xlsx");
             // actX.ExcelFileName = XLSFile;
             actX.AddOrUpdateInputParamCalculatedValue("ExcelFileName", XLSFile);
             actX.AddOrUpdateInputParamCalculatedValue("SheetName", "Sheet1");

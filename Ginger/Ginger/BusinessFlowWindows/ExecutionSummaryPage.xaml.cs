@@ -154,6 +154,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void ShowStatus()
         {
+            // Why we create new GR? !!!
             GingerRunner Gr = new GingerRunner();           
             foreach (Activity activity in mContext.BusinessFlow.Activities)
             {
