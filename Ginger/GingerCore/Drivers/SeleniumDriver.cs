@@ -260,7 +260,7 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-
+        
         public override void StartDriver()
         {
             if (StartBMP)
@@ -5228,7 +5228,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {
+            {                
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5383,20 +5383,24 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
-
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-
+                                    
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
                                     }
+                                    else
+                                    {
+                                        eInfo = GetElementInfoFromActionConfiguration(configArgs);
+                                        configArgs.LearnedElementInfo = eInfo;
+                                    }
                                 }
-                                if (RecordingEvent != null)
+                                if (learnAdditionalChanges && RecordingEvent != null)
                                 {
                                     //New implementation supporting POM
                                     RecordingEventArgs args = new RecordingEventArgs();
@@ -5406,17 +5410,16 @@ namespace GingerCore.Drivers
                                 }
                                 else
                                 {
+                                    string url = Driver.Url;
+                                    string title = Driver.Title;
+                                    if (CurrentPageURL != url)
+                                    {
+                                        CurrentPageURL = url;
+                                        AddBrowserAction(title, url);
+                                    }
+
                                     //Temp existing implementation
-                                    ActUIElement actUI = new ActUIElement();
-                                    actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
-                                    actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
-                                    actUI.ElementLocateValue = configArgs.LocateValue;
-                                    actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
-                                    if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
-                                        actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
-                                    else
-                                        continue;
-                                    actUI.Value = configArgs.ElementValue;
+                                    ActUIElement actUI = GetActUIElementAction(configArgs);
                                     this.BusinessFlow.AddAct(actUI);
                                     if (mActionRecorded != null)
                                     {
@@ -5431,6 +5434,8 @@ namespace GingerCore.Drivers
                         Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
                     }
                 }
+                CurrentPageURL = string.Empty;
+                RecordingEvent = null;
             }
             catch (Exception e)
             {
@@ -5438,8 +5443,62 @@ namespace GingerCore.Drivers
             }
         }
 
+        /// <summary>
+        /// This method will create the element info object
+        /// </summary>
+        /// <param name="configArgs"></param>
+        /// <returns></returns>
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration configArgs)
+        {
+            ElementInfo eInfo = new ElementInfo();
+            try
+            {
+                if (Enum.IsDefined(typeof(eElementType), Convert.ToString(configArgs.Type)))
+                {
+                    eInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(configArgs.Type));
+                }
+                eInfo.ElementName = configArgs.Description;
+                eInfo.Locators.Add(new ElementLocator()
+                {
+                    ItemName = Convert.ToString(configArgs.LocateBy),
+                    LocateValue = configArgs.LocateValue
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
+            }
+            return eInfo;
+        }
+
+        /// <summary>
+        /// This method is used to get the ActUIElement action
+        /// </summary>
+        /// <param name="configArgs"></param>
+        /// <returns></returns>
+        private ActUIElement GetActUIElementAction(ElementActionCongifuration configArgs)
+        {
+            ActUIElement actUI = new ActUIElement();
+            actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
+            actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
+            actUI.ElementLocateValue = configArgs.LocateValue;
+            actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+            if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
+                actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
+            else
+            {
+                actUI = null;
+            }
+            actUI.Value = configArgs.ElementValue;
+            return actUI;
+        }
+
+        void IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         public event RecordingEventHandler RecordingEvent;
-        private List<string> lstURL = new List<string>();
         private string CurrentPageURL = string.Empty;
 
         protected void OnRecordingEvent(RecordingEventArgs e)
@@ -5456,7 +5515,7 @@ namespace GingerCore.Drivers
                 {
                     string url = Driver.Url;
                     string title = Driver.Title;
-                    if (!lstURL.Contains(url) && CurrentPageURL != url)
+                    if (CurrentPageURL != url)
                     {
                         CurrentPageURL = url;
                         PageChangedEventArgs pageArgs = new PageChangedEventArgs()
@@ -5467,8 +5526,8 @@ namespace GingerCore.Drivers
                         };
 
                         RecordingEventArgs args = new RecordingEventArgs();
-                        args.EventType = eRecordingEvent.ElementRecorded;
-                        args.EventArgs = args;
+                        args.EventType = eRecordingEvent.PageChanged;
+                        args.EventArgs = pageArgs;
                         OnRecordingEvent(args);
                     }
 
@@ -5496,6 +5555,25 @@ namespace GingerCore.Drivers
             }
 
             return eInfo;
+        }
+
+        private void AddBrowserAction(string pageTitle, string pageURL)
+        {
+            try
+            {
+                ActBrowserElement browseAction = new ActBrowserElement()
+                {
+                    Description = "Go to Url - " + pageTitle,
+                    ControlAction = ActBrowserElement.eControlAction.GotoURL,
+                    LocateBy = eLocateBy.NA,
+                    Value = pageURL
+                };
+                this.BusinessFlow.AddAct(browseAction);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding browser action", ex);
+            }
         }
 
         public static string GetLocatedValue(string Type, string LocateValue, string ElemValue)
@@ -5806,7 +5884,11 @@ namespace GingerCore.Drivers
         {
             if (IsDictionary(rc2))// For firefox execute script is returning a list dictionary
             {
-                var list = ((IEnumerable<KeyValuePair<string, object>>)rc2).OrderBy(kp => Convert.ToInt32(kp.Key)).Select(kp => kp.Value).ToList();
+                //This code is added to eleminate the additional keyvalue pair with key "toJSON", this key is getting added to dictionary
+                List<KeyValuePair<string, object>> rc3 = GetCorrectedKeyValuePair(rc2);
+                //------------------------------------------
+
+                var list = ((IEnumerable<KeyValuePair<string, object>>)rc3).OrderBy(kp => Convert.ToInt32(kp.Key)).Select(kp => kp.Value).ToList();
                 return GetPayLoadfromList(list);
 
             }
@@ -5816,6 +5898,25 @@ namespace GingerCore.Drivers
                 ReadOnlyCollection<object> la = (ReadOnlyCollection<object>)rc2;
                 return GetPayLoadfromList(la);
             }
+        }
+
+        /// <summary>
+        /// This code is added to eleminate the additional keyvalue pair with key "toJSON", this key is getting added to dictionary
+        /// </summary>
+        /// <param name="rc2"></param>
+        /// <returns></returns>
+        private List<KeyValuePair<string, object>> GetCorrectedKeyValuePair(dynamic rc2)
+        {
+            List<KeyValuePair<string, object>> rc3 = new List<KeyValuePair<string, object>>();
+            foreach (var item in ((IEnumerable<KeyValuePair<string, object>>)rc2))
+            {
+                int val;
+                if (int.TryParse(item.Key, out val))
+                {
+                    rc3.Add(item);
+                }
+            }
+            return rc3;
         }
 
         PayLoad GetPayLoadfromList(dynamic list)
@@ -7382,8 +7483,11 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.StartSpying()
         {
-            Driver.SwitchTo().DefaultContent();
-            InjectSpyIfNotIngected();
+            if (Driver != null)
+            {
+                Driver.SwitchTo().DefaultContent();
+                InjectSpyIfNotIngected();
+            }            
         }
 
         public string GetElementXpath(ElementInfo EI)

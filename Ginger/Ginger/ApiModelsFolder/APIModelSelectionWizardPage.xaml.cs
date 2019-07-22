@@ -35,10 +35,11 @@ namespace Ginger.ApiModelsFolder
     {
         AddApiModelActionWizardPage mAddApiModelActionWizardPage;
         SingleItemTreeViewSelectionPage apiModelTreeSelectionPage;
-
-        public APIModelSelectionWizardPage()
+        Context mContext;
+        public APIModelSelectionWizardPage(Context context)
         {
             InitializeComponent();
+            mContext = context;
         }
 
         private void SetAPIModelsGrid()
@@ -62,7 +63,10 @@ namespace Ginger.ApiModelsFolder
             // xApiModelsGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteApiButtonClicked));
 
             this.Visibility = Visibility.Hidden;
-            OpenAPITreeSelection();
+
+            if(mAddApiModelActionWizardPage.AAMList.Count == 0)
+                OpenAPITreeSelection();
+
             this.Visibility = Visibility.Visible;
         }
 
@@ -82,7 +86,10 @@ namespace Ginger.ApiModelsFolder
             if (apiModelTreeSelectionPage == null)
             {
                 AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-                apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi);
+                apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
+                                                                                                    new System.Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
+                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
+                                                                                                                System.Convert.ToString(mContext.Activity.TargetApplication)));
             }
             List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow();
 

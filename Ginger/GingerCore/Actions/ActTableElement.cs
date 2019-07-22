@@ -24,6 +24,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
 using System.Linq;
@@ -429,6 +431,6 @@ namespace GingerCore.Actions
         }
 
         //TODO: Change icon to Java
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.Table; } }
     }
 }

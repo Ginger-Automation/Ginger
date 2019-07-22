@@ -30,7 +30,7 @@
                 </DockPanel>
             </DockPanel>
             <DockPanel Width="272" HorizontalAlignment="Right">
-                <usercontrols:ucButton x:Name="xOpenDefectForSelectedSuggestionsBtn" ToolTip="Open Selected as Defects at ALM" ButtonType="RoundTextAndImageButton" ButtonText="Open Selected as Defects at ALM" ButtonImageType="Reply"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="OpenDefectForSelectedSuggestions_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xOpenDefectForSelectedSuggestionsBtn" ToolTip="Open Selected as Defects at ALM" ButtonType="RoundTextAndImageButton" ButtonText="Open Selected as Defects at ALM" ButtonImageType="Reply"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="OpenDefectForSelectedSuggestions_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"></usercontrols:ucButton>
             </DockPanel>
         </DockPanel>
         <StackPanel Margin="0,55,0,0" Orientation="Vertical">

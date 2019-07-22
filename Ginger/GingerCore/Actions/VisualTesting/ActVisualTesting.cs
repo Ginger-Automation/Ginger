@@ -26,6 +26,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActVisualTesting : Act {
@@ -41,7 +43,7 @@ namespace GingerCore.Actions
             TBH.AddText("To Perform Visual Testing action, Select a Visual Testing Engine and set a Baseline Image that will be compared against dynamic screenshot or image file.");
         }
 
-        public override System.Drawing.Image Image { get { return Resources.VisualTesting_16x16 ; } }
+        public override eImageType Image { get { return eImageType.Visible; } }         //eImageType.Visible => FontAwesomeIcon.Eye
 
         public enum eVisualTestingAnalyzer {
             [EnumValueDescription("ImageMagick Analyzer")]

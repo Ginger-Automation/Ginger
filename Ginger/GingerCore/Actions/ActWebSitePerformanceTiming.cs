@@ -26,6 +26,8 @@ using GingerCore.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActWebSitePerformanceTiming :  Act
@@ -146,7 +148,7 @@ namespace GingerCore.Actions
         }
 
         // TODO: make unique icon
-        public override System.Drawing.Image Image { get { return Resources.Excel16x16; } }
+        public override eImageType Image { get { return eImageType.ChartLine; } }
         
         [IsSerializedForLocalRepository]
         public string CSVFileName

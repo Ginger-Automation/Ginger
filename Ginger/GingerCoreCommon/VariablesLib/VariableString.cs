@@ -68,8 +68,11 @@ namespace GingerCore.Variables
             //NA
         }
 
-        public override eImageType Image { get { return eImageType.Variable; } }
-        public override string VariableType() { return "String"; }
+        public override eImageType Image { get { return eImageType.Label; } }
+        public override string VariableType
+        {
+            get { return "String"; }
+        }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
@@ -81,5 +84,9 @@ namespace GingerCore.Variables
         }
 
         public override bool SupportSetValue { get { return true; } }
+
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

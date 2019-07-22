@@ -73,7 +73,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionEditPage == null)
             {
-                mActionEditPage = new ActionEditPage(mAct, General.RepositoryItemPageViewMode.SharedReposiotry);
+                mActionEditPage = new ActionEditPage(mAct, General.eRIPageViewMode.SharedReposiotry);
             }
             return mActionEditPage;
         }
