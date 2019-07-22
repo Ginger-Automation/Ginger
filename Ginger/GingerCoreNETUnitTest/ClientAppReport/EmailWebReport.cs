@@ -51,6 +51,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         public void RunNewReportWithEmail()
         {
             // Arrange
+            Console.WriteLine("<<<<<<<<<<RunNewReportWithEmail start>>>>>>>>>>>>");
             CreateWorkspace();
             // Create config file
             CLIHelper cLIHelper = new CLIHelper();
@@ -67,6 +68,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileContent });
             CheckReportFolderCreation();
             CheckJsDataFromFile();
+            Console.WriteLine("<<<<<<<<<<RunNewReportWithEmail end>>>>>>>>>>>>");
             // Assert            
             //Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed, "BF RunStatus=Passed");
         }

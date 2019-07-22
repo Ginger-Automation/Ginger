@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -50,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :"+ex.ToString());
             }
             return lightDbRunSet;
         }
