@@ -17,8 +17,6 @@ namespace MySQLDatabase
     {
         private DbConnection oConn = null;
         private DbTransaction tran = null;
-
-        private DateTime LastConnectionUsedTime;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
 
         public bool OpenConnection(Dictionary<string, string> parameters)
@@ -33,7 +31,6 @@ namespace MySQLDatabase
 
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
                 {
-                    LastConnectionUsedTime = DateTime.Now;
                     return true;
                 }
             }
@@ -114,7 +111,9 @@ namespace MySQLDatabase
             try
             {
                 if (oConn == null)
+                {
                     IsConnected = OpenConnection(KeyvalParamatersList);
+                }
                 if (IsConnected || oConn != null)
                 {
                     DbCommand command = oConn.CreateCommand();
@@ -155,7 +154,9 @@ namespace MySQLDatabase
             finally
             {
                 if (reader != null)
+                {
                     reader.Close();
+                }
             }
 
             return dataTable;

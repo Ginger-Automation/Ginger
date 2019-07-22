@@ -46,9 +46,9 @@ namespace MySQLTests
 
             //Assert
             Assert.AreEqual(4, Tables.Count);
-            Assert.AreEqual("authors", Tables[1].ToString());
-            Assert.AreEqual("sys_config", Tables[2].ToString());
-            Assert.AreEqual("tutorials_tbl", Tables[3].ToString());
+            Assert.AreEqual("authors", Tables[1]);
+            Assert.AreEqual("sys_config", Tables[2]);
+            Assert.AreEqual("tutorials_tbl", Tables[3]);
         }
 
         [TestMethod]
@@ -63,9 +63,9 @@ namespace MySQLTests
 
             //Assert
             Assert.AreEqual(4, Columns.Count);
-            Assert.AreEqual("id", Columns[1].ToString());
-            Assert.AreEqual("name", Columns[2].ToString());
-            Assert.AreEqual("email", Columns[3].ToString());
+            Assert.AreEqual("id", Columns[1]);
+            Assert.AreEqual("name", Columns[2]);
+            Assert.AreEqual("email", Columns[3]);
         }
 
         [TestMethod]

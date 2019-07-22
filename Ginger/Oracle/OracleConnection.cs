@@ -127,7 +127,9 @@ namespace Oracle
             try
             {
                 if (oConn == null)
+                {
                     IsConnected = OpenConnection(KeyvalParamatersList);
+                }
                 if (IsConnected || oConn != null)
                 {
                     DbCommand command = oConn.CreateCommand();
@@ -167,7 +169,9 @@ namespace Oracle
             finally
             {
                 if (reader != null)
+                {
                     reader.Close();
+                }
             }
 
             return dataTable;

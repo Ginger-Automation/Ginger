@@ -96,7 +96,9 @@ namespace PostgreSQL
             try
             {
                 if (oConn == null)
+                {
                     IsConnected = OpenConnection(KeyvalParamatersList);
+                }
                 if (IsConnected || oConn != null)
                 {
                     DbCommand command = oConn.CreateCommand();
@@ -137,7 +139,9 @@ namespace PostgreSQL
             finally
             {
                 if (reader != null)
+                {
                     reader.Close();
+                }
             }
 
             return dataTable;

@@ -71,7 +71,7 @@ namespace GingerCoreNETUnitTest.Database
            
             //Assert
             Assert.AreEqual(2,Tables.Count);
-            Assert.AreEqual("Person", Tables[1].ToString());
+            Assert.AreEqual("Person", Tables[1]);
         }
 
         [TestMethod]
@@ -86,14 +86,14 @@ namespace GingerCoreNETUnitTest.Database
            
             //Assert
             Assert.AreEqual(9,Columns.Count);
-            Assert.AreEqual("ID", Columns[1].ToString());
-            Assert.AreEqual("FName", Columns[2].ToString());
-            Assert.AreEqual("LName", Columns[3].ToString());
-            Assert.AreEqual("Password", Columns[4].ToString());
-            Assert.AreEqual("EmailId", Columns[5].ToString());
-            Assert.AreEqual("Day", Columns[6].ToString());
-            Assert.AreEqual("Year", Columns[7].ToString());
-            Assert.AreEqual("Mobile", Columns[8].ToString());
+            Assert.AreEqual("ID", Columns[1]);
+            Assert.AreEqual("FName", Columns[2]);
+            Assert.AreEqual("LName", Columns[3]);
+            Assert.AreEqual("Password", Columns[4]);
+            Assert.AreEqual("EmailId", Columns[5]);
+            Assert.AreEqual("Day", Columns[6]);
+            Assert.AreEqual("Year", Columns[7]);
+            Assert.AreEqual("Mobile", Columns[8]);
         }
 
         [TestMethod]

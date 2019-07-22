@@ -53,7 +53,9 @@ namespace MSAccessDB
             try
             {
                 if (conn == null)
+                {
                     IsConnected = OpenConnection(KeyvalParamatersList);
+                }
                 if (IsConnected || conn != null)
                 {
                     DbCommand command = conn.CreateCommand();
@@ -246,7 +248,7 @@ namespace MSAccessDB
         public string RunUpdateCommand(string updateCmd, bool commit = true)
         {
             string result = "";
-            //if (conn == null) Connect();
+            
             if (MakeSureConnectionIsOpen())
             {
                 using (DbCommand command = conn.CreateCommand())

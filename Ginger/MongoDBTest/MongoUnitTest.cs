@@ -46,7 +46,7 @@ namespace MongoDBTest
 
             //Assert
             Assert.AreEqual(1,Tables.Count);
-            Assert.AreEqual("mycollection", Tables[0].ToString());
+            Assert.AreEqual("mycollection", Tables[0]);
         }
 
         [TestMethod]
@@ -61,9 +61,9 @@ namespace MongoDBTest
 
             //Assert
             Assert.AreEqual(3,Columns.Count);
-            Assert.AreEqual("name", Columns[0].ToString());
-            Assert.AreEqual("age", Columns[1].ToString());
-            Assert.AreEqual("website", Columns[2].ToString());
+            Assert.AreEqual("name", Columns[0]);
+            Assert.AreEqual("age", Columns[1]);
+            Assert.AreEqual("website", Columns[2]);
         }
 
         [TestMethod]
