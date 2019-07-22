@@ -86,8 +86,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {            
-            if (mApplicationPOMSelectionPage == null)
-            {
+            //if (mApplicationPOMSelectionPage == null)
+            //{
                 ApplicationPOMsTreeItem appModelFolder;
                 RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                 appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
@@ -97,7 +97,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
                                                                                                 mContext.Activity.TargetApplication));
                 mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone; 
-            }
+            //}
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
             AddSelectedPOM(selectedPOMs);

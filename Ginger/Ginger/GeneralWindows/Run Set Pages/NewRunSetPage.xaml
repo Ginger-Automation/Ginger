@@ -109,9 +109,8 @@
                         </StackPanel>
 
                         <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
-                        
+
                         <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                            <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="ImageButton" ButtonImageType="Reset"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" Click="xResetRunsetBtn_Click"/>
                             <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Rest &amp; Run All Runners"/>
@@ -127,6 +126,7 @@
                                     <GingerCore:ucTextDicResource Text="Continue All Stopped Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
+                            <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="ImageButton" ButtonImageType="Reset"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" Click="xResetRunsetBtn_Click"/>
                         </StackPanel>
                     </DockPanel>
                 </DockPanel>

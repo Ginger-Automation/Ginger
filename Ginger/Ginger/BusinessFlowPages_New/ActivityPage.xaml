@@ -33,12 +33,7 @@
         
         <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
             <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                <usercontrols:ucButton x:Name="xResetBtn" ButtonType="ImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageType="Reset" >
-                    <usercontrols:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Reset [Activity] Execution Details"/>
-                    </usercontrols:ucButton.ToolTip>
-                </usercontrols:ucButton>
-                <usercontrols:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="xUndoBtn_Click"  ButtonFontImageSize="16"  ButtonImageType="Undo" >
+                <usercontrols:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="xUndoBtn_Click"  ButtonFontImageSize="17"  ButtonImageType="Undo" >
                     <usercontrols:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Undo [Activity] Changes"/>
                     </usercontrols:ucButton.ToolTip>
@@ -80,6 +75,11 @@
                     </usercontrols:ucButton.ToolTip>
                 </usercontrols:ucButton>
                 <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                <usercontrols:ucButton x:Name="xResetBtn" ButtonType="ImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageType="Reset" >
+                    <usercontrols:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Reset [Activity] Execution Details"/>
+                    </usercontrols:ucButton.ToolTip>
+                </usercontrols:ucButton>
             </StackPanel>
         </DockPanel>
 
