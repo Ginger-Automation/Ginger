@@ -5228,7 +5228,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {
+            {                
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5434,6 +5434,8 @@ namespace GingerCore.Drivers
                         Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
                     }
                 }
+                CurrentPageURL = string.Empty;
+                RecordingEvent = null;
             }
             catch (Exception e)
             {
@@ -5490,7 +5492,12 @@ namespace GingerCore.Drivers
             actUI.Value = configArgs.ElementValue;
             return actUI;
         }
-        
+
+        void IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         public event RecordingEventHandler RecordingEvent;
         private string CurrentPageURL = string.Empty;
 

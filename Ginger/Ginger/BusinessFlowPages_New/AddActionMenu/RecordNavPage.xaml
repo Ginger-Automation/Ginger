@@ -29,7 +29,7 @@
         <DockPanel x:Name="xPOMPanel" Grid.Row="2" Margin="5,10,5,0" HorizontalAlignment="Stretch">
             <CheckBox x:Name="xIntegratePOM" DockPanel.Dock="Top"  Style="{StaticResource $CeckBoxStyle}" Checked="XIntegratePOM_Checked" Unchecked="XIntegratePOM_Unchecked" IsChecked="False" VerticalContentAlignment="Center" >Integrate Recording with POM's</CheckBox>
             <Ginger:ucGrid x:Name="xSelectedPOMsGrid" DockPanel.Dock="Top"  Title="Selected POM's" Margin="0 15 0 0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" 
-                           ShowDelete="Visible"  ShowClearAll="Collapsed" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" Visibility="Collapsed"/>
+                           ShowDelete="Visible"  ShowClearAll="Visible" Height="620" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" Visibility="Collapsed"/>
         </DockPanel>
     </Grid>
 </Page>
