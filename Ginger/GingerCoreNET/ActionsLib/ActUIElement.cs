@@ -699,15 +699,22 @@ namespace GingerCore.Actions.Common
             DoubleClick,
             [EnumValueDescription("Set Focus")]
             SetFocus,
-            #region Adding to support conversion of JavaTable action to actuielement action
+            [EnumValueDescription("Set Keys")]
             SendKeys,
+            [EnumValueDescription("Is Checked")]
             IsChecked,
             [EnumValueDescription("Set Date")]
             SelectDate,
+            [EnumValueDescription("Mouse Press & Release")]
             MousePressAndRelease,
+            [EnumValueDescription("Activate Row")]
             ActivateRow,
-            isVisible
-            #endregion
+            [EnumValueDescription("Is Visible")]
+            isVisible,            
+            [EnumValueDescription("Select All Rows")]
+            SelectAllRows,
+            [EnumValueDescription("Right Click")]
+            RightClick
         }
 
         // TODO: move Locate Value to here and remove from Act.cs
