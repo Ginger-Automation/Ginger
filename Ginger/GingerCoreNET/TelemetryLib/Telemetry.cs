@@ -16,7 +16,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
     public class Telemetry 
     {
         public Guid Guid { get; set; } // keep public
-        public bool DoNotCollect { get; set; }  // keep public
+        public bool DoNotCollect { get; set; } = true; // keep public, default is do not collect
 
         TelemetrySession TelemetrySession;
 
