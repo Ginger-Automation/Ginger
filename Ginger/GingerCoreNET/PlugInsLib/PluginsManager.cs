@@ -55,10 +55,9 @@ namespace Amdocs.Ginger.Repository
             GetPackages();
         }
 
-        public ObservableList<PluginPackage> GetPackages()
+        private void GetPackages()
         {
-            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            return mPluginPackages;
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();            
         }
 
         public class DriverInfo
@@ -97,6 +96,11 @@ namespace Amdocs.Ginger.Repository
             return folder;
         }
 
+        public void UninstallPluginPackage(OnlinePluginPackage pluginPackageInfo)
+        {
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginPackageInfo.Id select x).FirstOrDefault();
+            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(pluginPackage);
+        }
 
         public string CreatePluginPackageInfo(string id, string version)
         {
