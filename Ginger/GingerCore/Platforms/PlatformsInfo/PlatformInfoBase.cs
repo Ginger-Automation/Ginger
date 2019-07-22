@@ -195,7 +195,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TextBox:
                     list.Add(ActUIElement.eElementAction.SetText);
                     list.Add(ActUIElement.eElementAction.GetText);
-                    list.Add(ActUIElement.eElementAction.Click);
                     break;
                 case eElementType.ComboBox:
                     list.Add(ActUIElement.eElementAction.SetText);
