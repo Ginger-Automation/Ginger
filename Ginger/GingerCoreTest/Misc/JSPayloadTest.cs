@@ -1,160 +1,164 @@
-#region License
-/*
-Copyright © 2014-2019 European Support Limited
+//#region License
+///*
+//Copyright © 2014-2019 European Support Limited
 
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+//Licensed under the Apache License, Version 2.0 (the "License")
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at 
 
-http://www.apache.org/licenses/LICENSE-2.0 
+//http://www.apache.org/licenses/LICENSE-2.0 
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS, 
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+//See the License for the specific language governing permissions and 
+//limitations under the License. 
+//*/
+//#endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerTestHelper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnitTests;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using GingerCore.Actions;
+//using GingerCore.Drivers;
+//using GingerCore.Drivers.CommunicationProtocol;
+//using GingerTestHelper;
+//using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using UnitTests;
 
-namespace UnitTests.NonUITests
-{
-    [TestClass]
-    [Level3]
-    [Ignore]
-    public class JSPayloadTest 
-    {
+//namespace UnitTests.NonUITests
+//{
 
-        SeleniumDriver mDriver;
+//    // This is for old Sleenium driver FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    // Missing chromedriver.exe in dir + proxy is null - after adding Nuget still getting errors !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    // FIXME
+//    [TestClass]
+//    [Level3]
+//    [Ignore]
+//    public class JSPayloadTest 
+//    {
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            mDriver = new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);//having Firefox issue on CMI server
-            mDriver.StartDriver();
+//        SeleniumDriver mDriver;
 
-            ActGotoURL a = new ActGotoURL();
-            a.ValueForDriver = TestResources.GetTestResourcesFile(@"HTML\JSPayLoad.html");
+//        [TestInitialize]  // use Class init and Mutex !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        public void TestInitialize()
+//        {
+//            mDriver = new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
+//            mDriver.StartDriver();
 
-            mDriver.RunAction(a);
+//            ActGotoURL a = new ActGotoURL();
+//            a.ValueForDriver = TestResources.GetTestResourcesFile(@"HTML\JSPayLoad.html"); 
 
-            mDriver.InjectGingerHTMLHelper();
-        }
+//            mDriver.RunAction(a);
 
-        [TestCleanup()]
-        public void TestCleanUp()
-        {
-            mDriver.CloseDriver();
-        }
+//            mDriver.InjectGingerHTMLHelper();
+//        }
 
-        [TestMethod]  [Timeout(60000)]
-        public void EchoSimpleString()
-        {
-            // Arrange            
-            string txt = "ABC";
+//        [TestCleanup()]
+//        public void TestCleanUp()
+//        {
+//            mDriver.CloseDriver();
+//        }
 
-            PayLoad PLRequest = new PayLoad("Echo");
-            PLRequest.AddValue(txt);
-            PLRequest.ClosePackage();
+//        [TestMethod]  [Timeout(60000)]
+//        public void EchoSimpleString()
+//        {
+//            // Arrange            
+//            string txt = "ABC";
 
-            //Act            
-            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
-            string txtRC = PLRC.GetValueString();
+//            PayLoad PLRequest = new PayLoad("Echo");
+//            PLRequest.AddValue(txt);
+//            PLRequest.ClosePackage();
 
-            //Assert
-           Assert.AreEqual(PLRC.Name, "Echo Response");
-           Assert.AreEqual(txt, txtRC, "txt=txtRC");            
-        }
+//            //Act            
+//            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
+//            string txtRC = PLRC.GetValueString();
 
-        [TestMethod]  [Timeout(60000)]
-        public void EchoSringwithSymbols()
-        {
-            // Arrange            
-            string txt = "ABC } $- = 123 !@#$%(^&'~*)_+{";
-            PayLoad PLRequest = new PayLoad("Echo");
-            PLRequest.AddValue(txt);
-            PLRequest.ClosePackage();
+//            //Assert
+//           Assert.AreEqual(PLRC.Name, "Echo Response");
+//           Assert.AreEqual(txt, txtRC, "txt=txtRC");            
+//        }
 
-            //Act
-            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
-            string txtRC = PLRC.GetValueString();
+//        [TestMethod]  [Timeout(60000)]
+//        public void EchoSringwithSymbols()
+//        {
+//            // Arrange            
+//            string txt = "ABC } $- = 123 !@#$%(^&'~*)_+{";
+//            PayLoad PLRequest = new PayLoad("Echo");
+//            PLRequest.AddValue(txt);
+//            PLRequest.ClosePackage();
 
-            //Assert
-           Assert.AreEqual(PLRC.Name, "Echo Response");
-           Assert.AreEqual(txt, txtRC, "txt=txtRC");
+//            //Act
+//            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
+//            string txtRC = PLRC.GetValueString();
 
-        }
+//            //Assert
+//           Assert.AreEqual(PLRC.Name, "Echo Response");
+//           Assert.AreEqual(txt, txtRC, "txt=txtRC");
 
-        //[TestMethod]  [Timeout(60000)]
-        //[Ignore]
-        //public void EchoSringwithHebrew()
-        //{
-        //    // Arrange            
-        //    string txt = "ABC שלום גךדכחע ,גלשדףלרעחדקראוםקרוא לךגחכעחד ג";
-        //    PayLoad PLRequest = new PayLoad("Echo");
-        //    PLRequest.AddValue(txt);
-        //    PLRequest.ClosePackage();
+//        }
 
-        //    //Act
-        //    PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
-        //    string txtRC = PLRC.GetValueString();
+//        //[TestMethod]  [Timeout(60000)]
+//        //[Ignore]
+//        //public void EchoSringwithHebrew()
+//        //{
+//        //    // Arrange            
+//        //    string txt = "ABC שלום גךדכחע ,גלשדףלרעחדקראוםקרוא לךגחכעחד ג";
+//        //    PayLoad PLRequest = new PayLoad("Echo");
+//        //    PLRequest.AddValue(txt);
+//        //    PLRequest.ClosePackage();
 
-        //    //Assert
-        //   Assert.AreEqual(PLRC.Name, "Echo Response");
-        //   Assert.AreEqual(txt, txtRC, "txt=txtRC");
+//        //    //Act
+//        //    PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
+//        //    string txtRC = PLRC.GetValueString();
 
-        //}
+//        //    //Assert
+//        //   Assert.AreEqual(PLRC.Name, "Echo Response");
+//        //   Assert.AreEqual(txt, txtRC, "txt=txtRC");
 
-        [TestMethod]  [Timeout(60000)]
-        public void EchoLongSring()
-        {
-            // Arrange            
-            string txt = "AAAAAAAA";
-            while (txt.Length< 5000)
-            {
-                txt += txt;
-            }
-            PayLoad PLRequest = new PayLoad("Echo");
-            PLRequest.AddValue(txt);
-            PLRequest.ClosePackage();
+//        //}
 
-            //Act
-            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
-            string txtRC = PLRC.GetValueString();
+//        [TestMethod]  [Timeout(60000)]
+//        public void EchoLongSring()
+//        {
+//            // Arrange            
+//            string txt = "AAAAAAAA";
+//            while (txt.Length< 5000)
+//            {
+//                txt += txt;
+//            }
+//            PayLoad PLRequest = new PayLoad("Echo");
+//            PLRequest.AddValue(txt);
+//            PLRequest.ClosePackage();
 
-            //Assert
-           Assert.AreEqual(PLRC.Name, "Echo Response");
-           Assert.AreEqual(txt, txtRC, "txt=txtRC");
+//            //Act
+//            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);            
+//            string txtRC = PLRC.GetValueString();
 
-        }
+//            //Assert
+//           Assert.AreEqual(PLRC.Name, "Echo Response");
+//           Assert.AreEqual(txt, txtRC, "txt=txtRC");
 
-        [TestMethod]  [Timeout(60000)]        
-        public void GetVisibleElements()
-        {            
-            PayLoad PLRequest = new PayLoad("GetVisibleElements");         
-            PLRequest.ClosePackage();
+//        }
 
-            //Act
-            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);
-            List<PayLoad> Elements = PLRC.GetListPayLoad();
-            
-            //Assert
-           Assert.AreEqual(PLRC.Name, "HTML Elements");
-           Assert.AreEqual(Elements.Count, 11, "Elements.Count = 11");
-            
+//        [TestMethod]  [Timeout(60000)]        
+//        public void GetVisibleElements()
+//        {            
+//            PayLoad PLRequest = new PayLoad("GetVisibleElements");         
+//            PLRequest.ClosePackage();
 
-        }
+//            //Act
+//            PayLoad PLRC = mDriver.ExceuteJavaScriptPayLoad(PLRequest);
+//            List<PayLoad> Elements = PLRC.GetListPayLoad();
 
-    }
-}
+//            //Assert
+//           Assert.AreEqual(PLRC.Name, "HTML Elements");
+//           Assert.AreEqual(Elements.Count, 11, "Elements.Count = 11");
+
+
+//        }
+
+//    }
+//}

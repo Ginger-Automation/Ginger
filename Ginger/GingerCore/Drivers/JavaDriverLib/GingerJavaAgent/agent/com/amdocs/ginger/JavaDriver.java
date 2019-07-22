@@ -55,6 +55,7 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -1002,10 +1003,32 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "YCoordinate = " + mYCoordinate
 						+ "LocateColTitle" + mLocateColTitle
 						+ "LocateRowType" + mLocateRowType
-                        + "LocateRowValue" + mLocateRowValue);		
-			
+                        + "LocateRowValue" + mLocateRowValue);
+
+			if(ControlAction.toLowerCase().equals("sendkeys"))
+			{
+			    Component	c = mSwingHelper.FindElement(LocateBy, LocateValue);
+			    if(c!= null)
+			    {
+			    	 return TypeKeys(c,mValue);
+			    }
+			}
+			else if(ControlAction.toLowerCase().equals("settext"))
+			{
+				Component	c = mSwingHelper.FindElement(LocateBy, LocateValue);
+			    if(c!= null)
+			    {
+			    	 return SendKeys(c,mValue);
+			    }
+			}
+			else if(ControlAction.equalsIgnoreCase("GetDialogText") || ControlAction.equalsIgnoreCase("AcceptDialog") || ControlAction.equalsIgnoreCase("DismissDialog"))
+			{
+				return HandleDialogAction(LocateBy, LocateValue, ControlAction, mValue);
+			}
+
 			PayLoad plrc = HandleElementAction(LocateBy, LocateValue, ControlAction, mValue, mValueToSelect, mXCoordinate, mYCoordinate);
 			return plrc;
+
 		}
 	}
 	
@@ -1467,37 +1490,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 
 			if (controlAction.equals("Type"))
 			{
-				GingerAgent.WriteLog("Inside the HandleElementAction - Type");
-				if(mSwingHelper.getCurrentWindow() instanceof JFrame)				
-				{
-					((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
-					((JFrame)mSwingHelper.getCurrentWindow()).requestFocus();
-				}
-				else if(mSwingHelper.getCurrentWindow() instanceof JDialog)
-				{	
-					((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
-					((JDialog)mSwingHelper.getCurrentWindow()).requestFocus();
-				}
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				JTextField tf = (JTextField)c;
-				GingerAgent.WriteLog("JTextField grabFocus");
-				tf.grabFocus();
-				
-				try {
-
-				    type(Value);
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return PayLoad.Error(e.getMessage());
-				}
-				return PayLoad.OK("Type operation Passed");
+				return TypeKeys(c,Value);
 				
 			}
 
@@ -1709,6 +1702,40 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
 		}
 	}
+
+private PayLoad TypeKeys(Component c,String Value) {
+	GingerAgent.WriteLog("Inside the HandleElementAction - Type");
+	if(mSwingHelper.getCurrentWindow() instanceof JFrame)				
+	{
+		((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
+		((JFrame)mSwingHelper.getCurrentWindow()).requestFocus();
+	}
+	else if(mSwingHelper.getCurrentWindow() instanceof JDialog)
+	{	
+		((JFrame)mSwingHelper.getCurrentWindow()).setExtendedState(Frame.MAXIMIZED_BOTH);
+		((JDialog)mSwingHelper.getCurrentWindow()).requestFocus();
+	}
+	try {
+		Thread.sleep(500);
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	JTextField tf = (JTextField)c;
+	GingerAgent.WriteLog("JTextField grabFocus");
+	tf.grabFocus();
+	
+	try {
+
+	    type(Value);
+
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return PayLoad.Error(e.getMessage());
+	}
+	return PayLoad.OK("Type operation Passed");
+}
 	
 	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
@@ -2209,6 +2236,70 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 
 		return PayLoad.OK("Done");
 	}
+	
+	
+	
+	private PayLoad RightClickComponent(final Component c,final String Coordinate, final int NumOfClicks) 
+	{
+		Runnable r = new Runnable() {
+			public void run() 
+			{				
+					JComponent b = (JComponent)c;
+					
+					GingerAgent.WriteLog("JComponent Info: " + b.getName() 
+					+ " Actions lis=" + " Focus lis=" + b.getFocusListeners().length 
+					+ " mouse lis=" + b.getMouseListeners().length
+					+ " Coordinate=" + Coordinate);
+
+					b.grabFocus();					
+					long when = System.currentTimeMillis();
+					int x,y;
+					
+						if (!Coordinate.isEmpty())
+						 {
+							 String[] sValue = Coordinate.split(",");
+							 List<Integer> intlist =  ConvertListStringToInt(sValue);
+							  x = intlist.get(0);
+							  y = intlist.get(1);
+						 }
+						 else
+						 {
+							x = c.getWidth() /2;
+							y = c.getHeight() /2;
+						 }						
+					
+					boolean IsOfPopUp = false;					
+										
+					//TODO: verify correctness of params		
+					
+						GingerAgent.WriteLog("Mouse Event Click at point X:"+x+" Y:"+y);
+						MouseEvent me = new MouseEvent(c, MouseEvent.MOUSE_CLICKED, when, InputEvent.BUTTON3_MASK , x, y, NumOfClicks, true);
+						c.dispatchEvent(me);
+													
+			}
+		};
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			GingerAgent.WriteLog("\n***************\nMouseClickComponent-already in EDT\n***************");
+			r.run();
+		}
+		else
+		{
+			GingerAgent.WriteLog("\n***************\nMouseClickComponent-run in EDT\n***************");
+			try {
+				SunToolkit.flushPendingEvents();
+				SunToolkit.executeOnEDTAndWait(c, r);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}		
+
+		return PayLoad.OK("Done");
+	}
+
+	
 
 	private PayLoad HandleWindowAction(String locateBy, String locateValue,
 			String controlAction) 
@@ -2605,8 +2696,13 @@ private PayLoad GetComponentState(Component c)
 		}else if (propertyName.equalsIgnoreCase("ISMANDATORY") || propertyName.equalsIgnoreCase("MANDATORY")) {		
 			GingerAgent.WriteLog("INSIDE ISMANDATORY");
 			propValue = Boolean.toString(mASCFHelper.checkIsMandatory(c));	
-		}  
-		else {
+		}
+		else if(propertyName.equalsIgnoreCase("TOGGLESTATE"))
+		{
+			return GetComponentState(c);
+		}
+		else 
+		{
 			return PayLoad.Error("Unsupported property name");
 		}
 				
@@ -3753,7 +3849,7 @@ private PayLoad SetComponentFocus(Component c)
 			SwingUtilities.convertPointFromScreen(location, CurrentWindow);
 			Component c = SwingUtilities.getDeepestComponentAt(CurrentWindow,
 					location.x, location.y);
-
+			
 			if (c.getName()!=null && c.getName().contains("canvas") || 
 					c.getClass().toString().contains("com.jniwrapper.win32.ie.aw")||
 					(c.getName()!=null && c.getName().contains("LightWeightWidget"))|| //  added to support live spy in JxBrowserBrowserComponent
@@ -4166,6 +4262,36 @@ private PayLoad SetComponentFocus(Component c)
 			PL.ClosePackage();
 			return PL;
 		}
+		else if (controlAction.equals("SelectAllRows"))
+		{
+			ListSelectionModel selectmodel=CurrentTable.getSelectionModel();
+			if(selectmodel!=null && selectmodel.getSelectionMode()==DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION)
+			{
+				try
+				{
+					selectmodel.clearSelection();
+					selectmodel.setSelectionInterval(0, CurrentTable.getRowCount()-1);
+					
+					return PayLoad.OK("All Table rows are selected");	
+				}
+				catch(Exception ex)
+				{
+					GingerAgent.WriteLog("Exception during Select all rows"+ ex.getMessage());
+					return PayLoad.Error("Exception during Select all rows"+ ex.getMessage());
+				}
+				
+			}
+			else
+			{
+				return PayLoad.Error("Table do not support multiple row selection");
+			}
+		}
+//		else if (controlAction.equals("RightClick"))
+//		{
+//			return RightClickComponent(CurrentTable,"",1);
+//		}
+		
+		
 		GingerAgent.WriteLog("Get Row Number");
 		if (rowLocator.equals("Where")) 
 		{
@@ -4234,6 +4360,7 @@ private PayLoad SetComponentFocus(Component c)
 				|| controlAction.equalsIgnoreCase("MousePressAndRelease")
 				|| controlAction.equalsIgnoreCase("SendKeys")
 				|| controlAction.equalsIgnoreCase("IsChecked")
+				|| controlAction.equalsIgnoreCase("RightClick")
 			) 
 			
 		{
@@ -4660,6 +4787,21 @@ private PayLoad SetComponentFocus(Component c)
 			rect.x += rect.width/2;
 			rect.y += rect.height/2;
 			return MousePressAndReleaseComponent(CurrentTable, rect.x + "," + rect.y,mCommandTimeout,1);
+
+		}
+		else if(controlAction.equals("RightClick"))
+		{
+			Component CellComponent = CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(rowNum, colNum), rowNum,
+					colNum);
+			Component Cell =CurrentTable.prepareRenderer(CurrentTable.getCellRenderer(0, 0), 0,0);
+
+			GingerAgent.WriteLog("RightClick - CellComponent ");
+			CurrentTable.grabFocus();
+			CurrentTable.scrollRectToVisible(CurrentTable.getBounds());
+			Rectangle rect = CurrentTable.getCellRect(rowNum, colNum, true);
+			rect.x += rect.width/2;
+			rect.y += rect.height/2;
+			return RightClickComponent(CurrentTable, rect.x + "," + rect.y,1);
 
 		}
 		else if(controlAction.equals("IsChecked"))
