@@ -25,6 +25,7 @@ namespace Amdocs.Ginger.Common
     {
         RecommendNewVersion,
         SaveItem,
+        UpdateItem,
         ExitMode,
         NoDirtyItem,
         StartAgent,
@@ -67,6 +68,7 @@ namespace Amdocs.Ginger.Common
             #region General Application Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.RecommendNewVersion, new StatusMsg(eStatusMsgType.INFO, "Upgrade Required", "Newer version of Ginger exist." + System.Environment.NewLine + "You can download the latest version from http://cmitechint1srv:8089/", true, "Upgrade"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.SaveItem, new StatusMsg(eStatusMsgType.PROCESS, "Saving", "Saving '{0}' {1}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.UpdateItem, new StatusMsg(eStatusMsgType.PROCESS, "Updating", "Updating all the references of '{0}' and replacing with '{1}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExitMode, new StatusMsg(eStatusMsgType.INFO, "Oops...", "Ginger was not closed properly. Please turn to support team."));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItem, new StatusMsg(eStatusMsgType.PROCESS, "Exporting", "Exporting '{0}' {1}"));
 

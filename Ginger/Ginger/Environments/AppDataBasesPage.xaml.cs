@@ -105,31 +105,39 @@ namespace Ginger.Environments
                 return;
             }
 
-            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, db.Name, "Database");
             try
             {
-                ObservableList<BusinessFlow> allBF = null;
-                await Task.Run(() =>
-                 allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()
-                );
-                
-                Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
-                {
-                    Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
-                    {
-                        List<IAct> dbActs = activity.Acts.Where(x => (x.GetType() == typeof(ActDBValidation)) == true).ToList();
-                        Parallel.ForEach(dbActs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
-                        {
-                            ActDBValidation actDB = (ActDBValidation)act;
-                            if (actDB.DBName == db.NameBeforeEdit)
-                            {
-                                businessFlow.DirtyStatus = eDirtyStatus.Modified;
-                                actDB.DBName = db.Name;
-                            }
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, db.Name, "Database");
 
+                //ObservableList<BusinessFlow> allBF = null;
+                await Task.Run(() =>
+                {
+                    Reporter.ToStatus(eStatusMsgKey.UpdateItem, null, db.NameBeforeEdit, db.Name);
+
+                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
+                    {
+                        Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                        {
+                            Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
+                            {
+                                if (act.GetType() == typeof(ActDBValidation))
+                                {
+                                    ActDBValidation actDB = (ActDBValidation)act;
+                                    if (actDB.DBName == db.NameBeforeEdit)
+                                    {
+                                        businessFlow.DirtyStatus = eDirtyStatus.Modified;
+                                        actDB.DBName = db.Name;
+                                    }
+                                }
+
+                            });
                         });
                     });
+
+                    //Reporter.HideStatusMessage();
                 });
+
                 db.NameBeforeEdit = db.Name;
             }
             catch (Exception ex)
