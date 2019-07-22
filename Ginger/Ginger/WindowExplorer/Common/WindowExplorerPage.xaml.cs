@@ -652,7 +652,11 @@ namespace Ginger.WindowExplorer
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
                         ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                        if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                        if (mPlatform.PlatformType() == ePlatformType.Web)
+                        {
+                            list = mPlatform.GetPlatformElementActions(EI);
+                        }
+                        else if(mPlatform.PlatformType() ==ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo)))
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
                         }
