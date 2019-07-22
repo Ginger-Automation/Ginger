@@ -2414,6 +2414,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             DoRecordings();
         }
 
+        void Amdocs.Ginger.Plugin.Core.IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         private void DoRecordings()
         {
             PayLoad plJE = new PayLoad("CheckJExplorerExists");

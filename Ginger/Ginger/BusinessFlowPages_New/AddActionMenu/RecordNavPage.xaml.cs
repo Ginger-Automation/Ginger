@@ -62,6 +62,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SetDriver();
                 SetRecordingControls();
             }
+            else if(e != null && e.PropertyName == nameof(Context.Activity))
+            {
+                SetSelectedPOMsGridView();
+                mApplicationPOMSelectionPage = null;
+            }
         }
 
         private void SetSelectedPOMsGridView()
@@ -87,7 +92,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                 appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
                 mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
-                                                                                        SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+                                                                                        SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, true,
+                                                                                                new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
+                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
+                                                                                                mContext.Activity.TargetApplication));
                 mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone; 
             }
 

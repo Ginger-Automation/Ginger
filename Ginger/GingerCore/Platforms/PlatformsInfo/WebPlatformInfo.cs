@@ -202,6 +202,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                         if (actConfig.AddPOMToAction)
                         {
+                            elementAction.Description = actConfig.Operation + " - " + elementInfo.ElementName;
                             PropertyInfo pLocateBy = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateBy));
                             if (pLocateBy != null)
                             {

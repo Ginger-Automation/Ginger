@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     LearnAdditionalDetails = true;
-                    CreatePOM = true;
+                    CreatePOM = true;                    
                     if (lstApplicationPOM.Count > 0)
                     {
                         CurrentPOM = lstApplicationPOM[0]; 
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 BusinessFlow = bFlow;
                 Context = context;
-                PlatformDriver.RecordingEvent -= PlatformDriver_RecordingEvent;
+                PlatformDriver.ResetRecordingEventHandler();
                 PlatformDriver.RecordingEvent += PlatformDriver_RecordingEvent;
             }
             catch (Exception ex)
@@ -265,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                PlatformDriver.StopRecording();
+                PlatformDriver.StopRecording();                
                 if (ListPOMObjectHelper != null)
                 {
                     RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
