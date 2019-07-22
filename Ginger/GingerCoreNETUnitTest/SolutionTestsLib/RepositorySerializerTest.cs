@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -27,24 +28,25 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
-{
+{    
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {
+    {        
+
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS("RepositorySerializerTest");            
+            WorkspaceHelper.InitWS(nameof(RepositorySerializerTest));            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestCleanup]
@@ -53,7 +55,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             
         }
 
-        [Ignore] // FIXME why we have more data what chaged?
+        [Ignore] // FIXME why it give differen tlength on different machines?
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -71,10 +73,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
-            // Please double verify if the increase in size make send and is needed before changing this value of expected length
-            // Assert.AreEqual(xml.Length, 491);
-
-            Assert.AreEqual(491, xml.Length);
+            // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
+            Assert.AreEqual(776, xml.Length);  // 776 was verified and OK on 7/13/2019  
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
@@ -89,7 +89,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
             Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(xml.Contains("<Activity ActivityName=\"Activity 1\""));
+            Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
             Assert.IsTrue(xml.Contains("</Activities>"));
             Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
 
@@ -356,22 +356,22 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("meme", RAFE2.Email.MailTo);
         }
 
-        // FIXME - change the xml to new RunSet the current is very old
-        [Ignore]
-        [TestMethod]
-        [Timeout(60000)]
-        public void LoadRunSetWith5Operations()
-        {
-            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-            //Arrange
-            string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
+        //// FIXME - change the xml to new RunSet the current is very old
+        //[Ignore]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void LoadRunSetWith5Operations()
+        //{
+        //    NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+        //    //Arrange
+        //    string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
 
-            //Act
-            RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
+        //    //Act
+        //    RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
 
-            //Assert
-            Assert.AreEqual(5, RSC.RunSetActions.Count);
-        }
+        //    //Assert
+        //    Assert.AreEqual(5, RSC.RunSetActions.Count);
+        //}
 
 
     }

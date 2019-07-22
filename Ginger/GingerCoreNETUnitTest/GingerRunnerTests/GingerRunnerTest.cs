@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -28,7 +27,6 @@ using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -36,20 +34,18 @@ using System;
 using System.IO;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
+{    
     [TestClass]
     [Level1]
     public class GingerRunnerTest
-    {
-
+    {        
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static SolutionRepository SR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            AutoLogProxy.Init("Unit Tests");
+        {            
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
@@ -77,7 +73,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
 
-            WorkspaceHelper.InitWS("GingerRunnerTest");            
+            WorkspaceHelper.InitWS(nameof(GingerRunnerTest));            
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -87,136 +83,136 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void SCM_Login()
-        {
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void SCM_Login()
+        //{
 
-            ////Arrange
+        //    ////Arrange
 
-            //ResetBusinessFlow();
+        //    //ResetBusinessFlow();
 
-            //// mGR.SetSpeed(1);
+        //    //// mGR.SetSpeed(1);
 
-            //Activity a1 = new Activity();
-            //a1.Active = true;
-            //a1.TargetApplication = "SCM";
-            //mBF.Activities.Add(a1);
+        //    //Activity a1 = new Activity();
+        //    //a1.Active = true;
+        //    //a1.TargetApplication = "SCM";
+        //    //mBF.Activities.Add(a1);
 
-            //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
-            //a1.Acts.Add(act1);
+        //    //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
+        //    //a1.Acts.Add(act1);
 
-            //ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //a1.Acts.Add(act2);
+        //    //ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+        //    //a1.Acts.Add(act2);
 
-            //ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //a1.Acts.Add(act3);
+        //    //ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+        //    //a1.Acts.Add(act3);
 
-            //ActSubmit act4 = new ActSubmit() { LocateBy = eLocateBy.ByValue, LocateValue = "Log in", Active = true };
-            //a1.Acts.Add(act4);
+        //    //ActSubmit act4 = new ActSubmit() { LocateBy = eLocateBy.ByValue, LocateValue = "Log in", Active = true };
+        //    //a1.Acts.Add(act4);
 
-            //VariableString v1 = (VariableString)mBF.GetVariable("v1");
-            //v1.Value = "123";
+        //    //VariableString v1 = (VariableString)mBF.GetVariable("v1");
+        //    //v1.Value = "123";
 
-            ////Act            
-            //mGR.RunRunner();
-            //// mGR.CurrentBusinessFlow = mBF;
-            //// mGR.RunActivity(a1);
+        //    ////Act            
+        //    //mGR.RunRunner();
+        //    //// mGR.CurrentBusinessFlow = mBF;
+        //    //// mGR.RunActivity(a1);
 
-            ////Assert
-            //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            //Assert.AreEqual(a1.Status, eRunStatus.Passed);
-            //Assert.AreEqual(act1.Status, eRunStatus.Passed);
-            //Assert.AreEqual(act2.Status, eRunStatus.Passed);
-            //Assert.AreEqual(act3.Status, eRunStatus.Passed);
-            //Assert.AreEqual(act4.Status, eRunStatus.Passed);
+        //    ////Assert
+        //    //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+        //    //Assert.AreEqual(a1.Status, eRunStatus.Passed);
+        //    //Assert.AreEqual(act1.Status, eRunStatus.Passed);
+        //    //Assert.AreEqual(act2.Status, eRunStatus.Passed);
+        //    //Assert.AreEqual(act3.Status, eRunStatus.Passed);
+        //    //Assert.AreEqual(act4.Status, eRunStatus.Passed);
 
-            //Assert.AreEqual(v1.Value, "123");
-        }
-
-
-        // Test the time to enter data into text box
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void SpeedTest()
-        {
-            ////Arrange
-            //ResetBusinessFlow();
-
-            //Activity a0 = new Activity();
-            //a0.Active = true;
-
-            //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
-            //a0.Acts.Add(act1);
-
-            //mBF.Activities.Add(a0);
-
-            //Activity a1 = new Activity();
-            //a1.Active = true;
-            //mBF.Activities.Add(a1);
-
-            //for (int i = 1; i < 10; i++)
-            //{
-            //    ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //    a1.Acts.Add(act2);
-
-            //    ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
-            //    a1.Acts.Add(act3);
-            //}
-
-            //mGR.RunRunner();
-
-            ////Assert
-            //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
-            //Assert.AreEqual(mBF.Activities.Count(), (from x in mBF.Activities where x.Status == eRunStatus.Passed select x).Count(), "All activities should Passed");
-            //Assert.IsTrue(a1.Elapsed < 10000, "a1.Elapsed Time less than 10000 ms");
-        }
+        //    //Assert.AreEqual(v1.Value, "123");
+        //}
 
 
-        private void ResetBusinessFlow()
-        {
-            mBF.Activities.Clear();
-            mBF.RunStatus = eRunStatus.Pending;
-        }
+        //// Test the time to enter data into text box
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void SpeedTest()
+        //{
+        //    ////Arrange
+        //    //ResetBusinessFlow();
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void TestVariableResetIssue()
-        {
-            ////This was a tricky bug not repro every time.
-            //// the issue was when seeting Biz flow for Agent a reset vars happened.
+        //    //Activity a0 = new Activity();
+        //    //a0.Active = true;
+
+        //    //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
+        //    //a0.Acts.Add(act1);
+
+        //    //mBF.Activities.Add(a0);
+
+        //    //Activity a1 = new Activity();
+        //    //a1.Active = true;
+        //    //mBF.Activities.Add(a1);
+
+        //    //for (int i = 1; i < 10; i++)
+        //    //{
+        //    //    ActTextBox act2 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "UserName", Value = "Yaron", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+        //    //    a1.Acts.Add(act2);
+
+        //    //    ActTextBox act3 = new ActTextBox() { LocateBy = eLocateBy.ByID, LocateValue = "Password", Value = "123456", TextBoxAction = ActTextBox.eTextBoxAction.SetValue, Active = true };
+        //    //    a1.Acts.Add(act3);
+        //    //}
+
+        //    //mGR.RunRunner();
+
+        //    ////Assert
+        //    //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed, "mBF.RunStatus");
+        //    //Assert.AreEqual(mBF.Activities.Count(), (from x in mBF.Activities where x.Status == eRunStatus.Passed select x).Count(), "All activities should Passed");
+        //    //Assert.IsTrue(a1.Elapsed < 10000, "a1.Elapsed Time less than 10000 ms");
+        //}
 
 
-            ////Arrange
-            //ResetBusinessFlow();
+        //private void ResetBusinessFlow()
+        //{
+        //    mBF.Activities.Clear();
+        //    mBF.RunStatus = eRunStatus.Pending;
+        //}
 
-            //Activity a1 = new Activity();
-            //a1.Active = true;
-            //mBF.Activities.Add(a1);
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void TestVariableResetIssue()
+        //{
+        //    ////This was a tricky bug not repro every time.
+        //    //// the issue was when seeting Biz flow for Agent a reset vars happened.
 
-            //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
-            //a1.Acts.Add(act1);
 
-            //// Not happening with dummy
-            ////ActDummy act1 = new ActDummy();
-            ////a1.Acts.Add(act1);
+        //    ////Arrange
+        //    //ResetBusinessFlow();
 
-            //VariableString v1 = (VariableString)mBF.GetVariable("v1");
-            //v1.Value = "123";
+        //    //Activity a1 = new Activity();
+        //    //a1.Active = true;
+        //    //mBF.Activities.Add(a1);
 
-            ////Act            
-            //mGR.RunRunner();
+        //    //ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://ginger-automation.github.io/test.html", Active = true };
+        //    //a1.Acts.Add(act1);
 
-            ////Assert
-            //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            //Assert.AreEqual(a1.Status, eRunStatus.Passed);
+        //    //// Not happening with dummy
+        //    ////ActDummy act1 = new ActDummy();
+        //    ////a1.Acts.Add(act1);
 
-            //Assert.AreEqual(v1.Value, "123");  // <<< the importnat part as with this defect it turned to "1" - initial val
-        }
+        //    //VariableString v1 = (VariableString)mBF.GetVariable("v1");
+        //    //v1.Value = "123";
+
+        //    ////Act            
+        //    //mGR.RunRunner();
+
+        //    ////Assert
+        //    //Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
+        //    //Assert.AreEqual(a1.Status, eRunStatus.Passed);
+
+        //    //Assert.AreEqual(v1.Value, "123");  // <<< the importnat part as with this defect it turned to "1" - initial val
+        //}
 
         
         [TestMethod]
