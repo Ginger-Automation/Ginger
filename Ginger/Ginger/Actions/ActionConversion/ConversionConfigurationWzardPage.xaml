@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:usercontrols="clr-namespace:Ginger.Actions._Common.ActUIElementLib"
       mc:Ignorable="d" 
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
       d:DesignHeight="450" d:DesignWidth="700"
@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" x:Name="ControlsViewRow" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" x:Name="POMControlsViewRow" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -50,23 +50,33 @@
                 <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
             </CheckBox.Content>
         </CheckBox>-->
-        <Expander x:Name="ControlsViewsExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="10,5,10,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
+        <Expander x:Name="TargetApplicationExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="10,5,10,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
             <Expander.Header>
-                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Override Target Application"/>
+                <Label x:Name="TargetApplicationExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Margin="0,-2,0,0" Foreground="{StaticResource $Color_DarkBlue}" Content="Override Target Application"/>
             </Expander.Header>
             <Expander.Content>
-                <Ginger:ucGrid x:Name="xTargetApplication"  ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" 
+                <Ginger:ucGrid x:Name="xTargetApplication" Height="190" ShowTagsFilter="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" VerticalAlignment="Top" 
                             ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed">
                 </Ginger:ucGrid>
             </Expander.Content>
         </Expander>
         
-        <CheckBox x:Name="xChkPOM"  Grid.Column="0" Height="20" IsChecked="{Binding Path=ConvertToPOMAction, Mode=TwoWay}" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,5,0,0" >
+        <CheckBox x:Name="xChkPOM"  Grid.Column="0" Height="20" IsChecked="{Binding Path=ConvertToPOMAction, Mode=TwoWay}" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,10,0,0" >
             <CheckBox.Content>
                 <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
             </CheckBox.Content>
         </CheckBox>
 
-        <Frame x:Name="xLocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="4" Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" Margin="30,5,0,0" Width="750" HorizontalAlignment="Left" BorderBrush="Transparent" />
+        <!--<Frame x:Name="xLocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="4" Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" Margin="30,5,0,0" Width="750" HorizontalAlignment="Left" BorderBrush="Transparent" />-->
+
+        <Expander x:Name="POMSelectExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Margin="10,3,10,0"  Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" 
+                  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
+            <Expander.Header>
+                <Label x:Name="POMSelectExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Foreground="{StaticResource $Color_DarkBlue}" Content="POM"/>
+            </Expander.Header>
+            <Expander.Content>
+                <Frame x:Name="xPOMUserControl" Height="250" />                
+            </Expander.Content>
+        </Expander>
     </Grid>
 </Page>

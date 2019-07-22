@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -66,13 +65,49 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         /// <summary>
+        /// This method is used to convert actions from multiple BusinessFlows
+        /// </summary>
+        /// <param name="addNewActivity"></param>
+        /// <param name="listOfBusinessFlow"></param>
+        /// <param name="actionsToBeConverted"></param>
+        /// <param name="ConvertableTargetApplications"></param>
+        /// <param name="convertToPOMAction"></param>
+        /// <param name="SelectedPOMs"></param>
+        public void ConvertActionsOfMultipleBusinessFlows(bool addNewActivity, ObservableList<BusinessFlow> listOfBusinessFlow,
+                                                          ObservableList<ConvertableActionDetails> actionsToBeConverted,
+                                                          ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications,
+                                                          bool convertToPOMAction = false, ObservableList<string> selectedPOMs = null)
+        {
+            try
+            {
+                foreach (var bf in listOfBusinessFlow)
+                {                    
+                    foreach (var targetApplication in convertableTargetApplications)
+                    {
+                        List<ConvertableActionDetails> actionsOfType = new List<ConvertableActionDetails>();
+                        bool isDefaultTA = targetApplication.SourceTargetApplicationName == targetApplication.TargetTargetApplicationName;
+                        if (actionsToBeConverted.Where(x => x.SourceActionTypeName == targetApplication.SourceTargetApplicationName) != null)
+                        {
+                            actionsOfType = actionsToBeConverted.Where(x => x.SourceActionTypeName == targetApplication.SourceTargetApplicationName).ToList();
+                            ConvertToActions(addNewActivity, bf, actionsToBeConverted, isDefaultTA, targetApplication.TargetTargetApplicationName, convertToPOMAction, selectedPOMs);
+                        }
+                    }               
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
+            }
+        }
+
+        /// <summary>
         /// This method is used to add the actions
         /// </summary>
         /// <param name="addNewActivity"></param>
-        public void ConvertToActions(bool addNewActivity, BusinessFlow businessFlow, 
+        public void ConvertToActions(bool addNewActivity, BusinessFlow businessFlow,
                                      ObservableList<ConvertableActionDetails> actionsToBeConverted,
                                      bool isDefaultTargetApp, string strTargetApp,
-                                     bool convertToPOMAction = false, string selectedPOMObjectName = "")
+                                     bool convertToPOMAction = false, ObservableList<string> selectedPOMObjectName = null)
         {
             try
             {
@@ -81,56 +116,8 @@ namespace Amdocs.Ginger.CoreNET
                     Activity activity = businessFlow.Activities[intIndex];
                     if (activity != null && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
                     {
-                        Activity currentActivity;
-                        if (addNewActivity)
-                        {
-                            currentActivity = new Activity() { Active = true };
-                            currentActivity = (Activity)activity.CreateCopy(false);
-                            currentActivity.ActivityName = "New - " + activity.ActivityName;
-                            businessFlow.Activities.Insert(intIndex + 1, currentActivity);
-                            activity.Active = false;
-                            intIndex++;
-                        }
-                        else
-                        {
-                            currentActivity = activity;
-                        }
-                        foreach (Act act in currentActivity.Acts.ToList())
-                        {
-                            try
-                            {
-                                if (act.Active && act is IObsoleteAction &&
-                                                        actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
-                                                                                  a.Selected &&
-                                                                                  a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
-                                {
-                                    // get the index of the action that is being converted 
-                                    int selectedActIndex = currentActivity.Acts.IndexOf(act);
-
-                                    // convert the old action
-                                    Act newAct = ((IObsoleteAction)act).GetNewAction();
-                                    if (newAct != null)
-                                    {
-                                        if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
-                                        {
-                                            newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
-                                        }
-                                        currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
-
-                                        // set obsolete action in the activity as inactive
-                                        act.Active = false;
-                                        if (addNewActivity)
-                                        {
-                                            currentActivity.Acts.Remove(act);
-                                        } 
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
-                            }
-                        }
+                        Activity currentActivity = GetCurrentWorkingActivity(addNewActivity, businessFlow, ref intIndex, activity);
+                        ConvertSelectedActionsFromActivity(addNewActivity, actionsToBeConverted, convertToPOMAction, selectedPOMObjectName, currentActivity);
 
                         // if the user has not chosen any target application in the combobox then, we set it as empty
                         if (isDefaultTargetApp && !string.IsNullOrEmpty(strTargetApp))
@@ -149,17 +136,107 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
             }
         }
-        
+
+        /// <summary>
+        /// This method is used to convert the selected actions from the activity
+        /// </summary>
+        /// <param name="addNewActivity"></param>
+        /// <param name="actionsToBeConverted"></param>
+        /// <param name="convertToPOMAction"></param>
+        /// <param name="selectedPOMObjectName"></param>
+        /// <param name="currentActivity"></param>
+        private void ConvertSelectedActionsFromActivity(bool addNewActivity, ObservableList<ConvertableActionDetails> actionsToBeConverted, 
+                                                        bool convertToPOMAction, ObservableList<string> selectedPOMObjectName, Activity currentActivity)
+        {
+            foreach (Act act in currentActivity.Acts.ToList())
+            {
+                try
+                {
+                    if (act.Active && act is IObsoleteAction &&
+                                            actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
+                                                                      a.Selected &&
+                                                                      a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                    {
+                        // get the index of the action that is being converted 
+                        int selectedActIndex = currentActivity.Acts.IndexOf(act);
+
+                        // convert the old action
+                        Act newAct = ((IObsoleteAction)act).GetNewAction();
+                        if (newAct != null)
+                        {
+                            if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
+                            {
+                                bool isFound = false;
+                                foreach (string pomOj in selectedPOMObjectName)
+                                {
+                                    if (!isFound)
+                                    {
+                                        newAct = GetMappedElementFromPOMForAction(newAct, pomOj, ref isFound);  
+                                    }
+                                    else if(isFound)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                            currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+
+                            // set obsolete action in the activity as inactive
+                            act.Active = false;
+                            if (addNewActivity)
+                            {
+                                currentActivity.Acts.Remove(act);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method will get the activity by checking the flag whether to create new or use existing activity
+        /// </summary>
+        /// <param name="addNewActivity"></param>
+        /// <param name="businessFlow"></param>
+        /// <param name="intIndex"></param>
+        /// <param name="activity"></param>
+        /// <returns></returns>
+        private static Activity GetCurrentWorkingActivity(bool addNewActivity, BusinessFlow businessFlow, ref int intIndex, Activity activity)
+        {
+            Activity currentActivity;
+            if (addNewActivity)
+            {
+                currentActivity = new Activity() { Active = true };
+                currentActivity = (Activity)activity.CreateCopy(false);
+                currentActivity.ActivityName = "New - " + activity.ActivityName;
+                businessFlow.Activities.Insert(intIndex + 1, currentActivity);
+                activity.Active = false;
+                intIndex++;
+            }
+            else
+            {
+                currentActivity = activity;
+            }
+
+            return currentActivity;
+        }
+
         /// <summary>
         /// This method is used to find the relative element from POM for the existing action
         /// </summary>
         /// <param name="newActUIElement"></param>
         /// <param name="pomModelObject"></param>
+        /// <param name="elementMatchedInPOM"></param>
         /// <returns></returns>
-        public Act GetMappedElementFromPOMForAction(Act newActUIElement, string pomModelObject)
+        public Act GetMappedElementFromPOMForAction(Act newActUIElement, string pomModelObject, ref bool elementMatchedInPOM)
         {
             try
             {
+                elementMatchedInPOM = false;
                 if (!string.IsNullOrEmpty(pomModelObject))
                 {
                     ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
@@ -175,6 +252,7 @@ namespace Amdocs.Ginger.CoreNET
                         elementInfo = matchingExistingLocator.FirstOrDefault();
                         if (elementInfo != null)
                         {
+                            elementMatchedInPOM = true;
                             PropertyInfo pLocateBy = newActUIElement.GetType().GetProperty(ActUIElementElementLocateByField);
                             if (pLocateBy != null)
                             {

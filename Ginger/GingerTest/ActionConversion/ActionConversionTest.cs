@@ -121,11 +121,12 @@ namespace GingerTest
         {
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
+            ObservableList<string> poms = new ObservableList<string>() { selectedPOMObjectName };
             foreach (var item in lst)
             {
                 item.Selected = true;
             }
-            utils.ConvertToActions(addNewActivity, mBF, lst, isDefaultTargetApp, strTargetApp, convertToPOMAction, selectedPOMObjectName);
+            utils.ConvertToActions(addNewActivity, mBF, lst, isDefaultTargetApp, strTargetApp, convertToPOMAction, poms);
         }
 
         [TestMethod]

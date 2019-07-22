@@ -18,22 +18,15 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using Ginger.WizardLib;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Ginger.Actions.ActionConversion
@@ -43,8 +36,23 @@ namespace Ginger.Actions.ActionConversion
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
+        public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
+        public ObservableList<string> SelectedPOMs = new ObservableList<string>();
 
-        public bool NewActivityChecked { get; set; }
+        private bool mNewActivityChecked = true;
+        public bool NewActivityChecked
+        {
+            get
+            {
+                return mNewActivityChecked;
+            }
+            set
+            {
+                mNewActivityChecked = value;
+                SameActivityChecked = !value;
+            }
+        }
+
         public ObservableList<BusinessFlow> ListOfBusinessFlow = null;
 
         public enum eActionConversionType
@@ -57,7 +65,7 @@ namespace Ginger.Actions.ActionConversion
 
         public object BusinessFlowFolder { get; set; }
 
-        private bool mSameActivityChecked = true;
+        private bool mSameActivityChecked = false;
         public bool SameActivityChecked
         {
             get {
@@ -118,77 +126,38 @@ namespace Ginger.Actions.ActionConversion
 
         private void ConverToActions()
         {
-            if (!DoExistingPlatformCheck(ActionToBeConverted))
+            try
             {
-                //missing target application so stop the conversion
-                return;
-            }
-            else
-            {
-                try
-                {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, Context.BusinessFlow.Name);
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, Context.BusinessFlow.Name);
 
-                    // create a new converted activity
-                    ActionConversionUtils utils = new ActionConversionUtils();
-                    utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
-                    utils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
-                    utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
-                    utils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
-                    utils.ActUIElementClassName = nameof(ActUIElement);
-                    utils.ConvertToActions(NewActivityChecked, Context.BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);                    
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
-                    Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
-                }
-                finally
-                {
-                    Reporter.HideStatusMessage();
-                    Mouse.OverrideCursor = null;
-                }
+                // create a new converted activity
+                ActionConversionUtils utils = new ActionConversionUtils();
+                utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
+                utils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
+                utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
+                utils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
+                utils.ActUIElementClassName = nameof(ActUIElement);
+
+                utils.ConvertActionsOfMultipleBusinessFlows(NewActivityChecked, ListOfBusinessFlow, ActionToBeConverted, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs);
+
+                //utils.ConvertToActions(NewActivityChecked, Context.BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
             }
         }
 
         public override void Cancel()
         {
             base.Cancel();
-        }
-
-        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
-        {
-            // fetch list of existing platforms in the business flow
-            List<ePlatformType> lstExistingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms
-                                                      .Where(x => Context.BusinessFlow.TargetApplications
-                                                      .Any(a => a.Name == x.AppName))
-                                                      .Select(x => x.Platform).ToList();
-
-            Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
-            // create list of missing platforms
-            foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
-            {
-                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform)
-                    && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
-                {
-                    lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
-                }
-            }
-
-            // if there are any missing platforms
-            if (lstMissingPlatform.Count > 0)
-            {
-                foreach (var item in lstMissingPlatform)
-                {
-                    // ask the user if he wants to continue with the conversion, if there are missing target platforms
-                    if (Reporter.ToUser(eUserMsgKey.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 }

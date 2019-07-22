@@ -17,17 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.UserControls;
-using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -37,12 +35,21 @@ namespace Ginger.Actions.ActionConversion
     public partial class ConversionConfigurationWzardPage : Page, IWizardPage
     {
         ActionsConversionWizard mWizard;
+        ObservableList<string> TargetAppList;
+        POMElementGridSelectionPage mPOMControl;
 
+        /// <summary>
+        /// Constructor for configuration page
+        /// </summary>
         public ConversionConfigurationWzardPage()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Wizard events
+        /// </summary>
+        /// <param name="WizardEventArgs"></param>
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             switch (WizardEventArgs.EventType)
@@ -55,67 +62,102 @@ namespace Ginger.Actions.ActionConversion
                     break;
             }
         }
-        
-        private void Init(WizardEventArgs WizardEventArgs)
+
+        /// <summary>
+        /// This methos will set the selected POMs to the wizard object 
+        /// </summary>
+        private void POMSelectedEventHandler(object sender, string guid)
         {
-            //mWizard.DefaultTargetAppChecked = Convert.ToBoolean(xChkDefaultTargetApp.IsChecked);
-            
-            LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(mWizard.Context, null, nameof(ActUIElement.ElementType), mWizard, nameof(mWizard.SelectedPOMObjectName), true);
-            xLocateValueEditFrame.Content = locateByPOMElementPage;
-            DataContext = mWizard;
-            SetGridView();
+            if (mWizard.SelectedPOMs != null)
+            {
+                mWizard.SelectedPOMs.Add(guid);
+            }
         }
 
-        private void SetGridView()
+        /// <summary>
+        /// This method is used to init the configuration settings page
+        /// </summary>
+        /// <param name="WizardEventArgs"></param>
+        private void Init(WizardEventArgs WizardEventArgs)
+        {
+            DataContext = mWizard;
+            SetTargetApplicationGridView();
+
+            mPOMControl = new POMElementGridSelectionPage(true, 220, 560);
+            mPOMControl.POMSelectionEvent += POMSelectedEventHandler;
+            xPOMUserControl.Content = mPOMControl;
+        }
+
+        /// <summary>
+        /// This method is used to set the columns TargetApplciation GridView
+        /// </summary>
+        private void SetTargetApplicationGridView()
         {
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
+            TargetAppList = new ObservableList<string>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, Header = "Source - Taret Application" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.TargetTargetApplicationName), WidthWeight = 15, Header = "Target - Target Application" });
+            mWizard.ConvertableTargetApplications = GetTargetApplication();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Taret Application" });
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(ConvertableTargetApplicationDetails.TargetTargetApplicationName),
+                BindingMode = BindingMode.TwoWay,
+                StyleType = GridColView.eGridColStyleType.ComboBox,
+                CellValuesList = TargetAppList,
+                WidthWeight = 15,
+                Header = "Map to - Target Application"
+            });
             xTargetApplication.SetAllColumnsDefaultView(view);
             xTargetApplication.InitViewItems();
-
-            ObservableList<ConvertableTargetApplicationDetails> lst = GetTargetApplication();
-            xTargetApplication.DataSourceList = lst;
-
-            xTargetApplication.SetTitleLightStyle = true;
-            xTargetApplication.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
-            xTargetApplication.MarkUnMarkAllActive += MarkUnMarkAllTargetApplication;
-            xTargetApplication.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
-            {
-                ucGrid.eUcGridValidationRules.CheckedRowCount
-            };
+            xTargetApplication.DataSourceList = mWizard.ConvertableTargetApplications;
+            xTargetApplication.ShowTitle = Visibility.Collapsed;
         }
-
-        private void MarkUnMarkAllTargetApplication(bool Status)
-        {
-            
-        }
-
+        
+        /// <summary>
+        /// This event is used to expand the Target Application grid which helps to map the target application
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            ControlsViewRow.Height = new GridLength(200, GridUnitType.Star);
-            ControlsViewRow.MaxHeight = Double.PositiveInfinity;
-            //if (Row2Splitter != null)
-            //    Row2Splitter.IsEnabled = true;
+            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == TargetApplicationExpander.Name)
+            {
+                ControlsViewRow.Height = new GridLength(230);
+                ControlsViewRow.MaxHeight = Double.PositiveInfinity;
+            }
+            else
+            {
+                POMControlsViewRow.Height = new GridLength(270);
+                POMControlsViewRow.MaxHeight = Double.PositiveInfinity;
+            }
         }
 
+        /// <summary>
+        /// This event is used to collapsed the Target Application grid which helps to map the target application
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
-            ControlsViewRow.Height = new GridLength(35);
-            ControlsViewRow.MaxHeight = 35;
-            //if (Row2Splitter != null)
-            //    Row2Splitter.IsEnabled = false;
+            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == TargetApplicationExpander.Name)
+            {
+                ControlsViewRow.Height = new GridLength(35);
+                ControlsViewRow.MaxHeight = 35;
+            }
+            else
+            {
+                POMControlsViewRow.Height = new GridLength(35);
+                POMControlsViewRow.MaxHeight = 35;
+            }
         }
-
-        //private void btnRefresh_Click(object sender, RoutedEventArgs e)
-        //{
-        //    SetGridView();
-        //}
-
+        
+        /// <summary>
+        /// This method is used to get the Target Application
+        /// </summary>
+        /// <returns></returns>
         private ObservableList<ConvertableTargetApplicationDetails> GetTargetApplication()
         {
             ObservableList<ConvertableTargetApplicationDetails> lstTA = new ObservableList<ConvertableTargetApplicationDetails>();
@@ -124,14 +166,22 @@ namespace Ginger.Actions.ActionConversion
             {
                 foreach (var targetBase in mWizard.Context.BusinessFlow.TargetApplications)
                 {
-                    lstTA.Add(new ConvertableTargetApplicationDetails() { SourceTargetApplicationName = targetBase.ItemName, TargetTargetApplicationName = targetBase.ItemName });
+                    if (!TargetAppList.Contains(targetBase.ItemName))
+                    {
+                        lstTA.Add(new ConvertableTargetApplicationDetails() { SourceTargetApplicationName = targetBase.ItemName, TargetTargetApplicationName = targetBase.ItemName });
+                        TargetAppList.Add(targetBase.ItemName);
+                    }
                 }
             }
             else
             {
                 foreach (var targetBase in mWizard.ListOfBusinessFlow.Where(x => x.SelectedForConversion).SelectMany(y => y.TargetApplications))
                 {
-                    lstTA.Add(new ConvertableTargetApplicationDetails() { SourceTargetApplicationName = targetBase.ItemName, TargetTargetApplicationName = targetBase.ItemName });
+                    if (!TargetAppList.Contains(targetBase.ItemName))
+                    {
+                        lstTA.Add(new ConvertableTargetApplicationDetails() { SourceTargetApplicationName = targetBase.ItemName, TargetTargetApplicationName = targetBase.ItemName });
+                        TargetAppList.Add(targetBase.ItemName);
+                    }
                 }
             }
 
