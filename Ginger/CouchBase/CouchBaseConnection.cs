@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Couchbase;
 using Couchbase.Authentication;
 using Couchbase.Configuration.Client;
@@ -6,7 +7,9 @@ using Couchbase.N1QL;
 using GingerCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Reflection;
 
 namespace CouchBase
 {
@@ -63,18 +66,27 @@ namespace CouchBase
         {
             clusterCB.Dispose();
         }
-
-        public List<object> DBQuery(string Query)
+        /// <summary>
+        /// Need to fix it. (convert IQueryResult<dynamic> to Datatable)
+        /// </summary>
+        /// <param name="Query"></param>
+        /// <returns></returns>
+        public DataTable DBQuery(string Query)
         {
             List<object> list = new List<object>();
             DoBeforeExecutionOperations(Query);
             result = clusterCB.Query<dynamic>(Query);
+           
             for (int i = 0; i < result.Rows.Count; i++)
             {
                 list.Add(result.Rows[i]);
                 //Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i + 1);
             }
-            return list;
+            DataTable dataTable = new DataTable();
+            
+            //put a breakpoint here and check datatable  
+            return dataTable;
+            
         }
         private string GetBucketName(string inputSQL, bool IftinputSQL= false)
         {
@@ -149,5 +161,7 @@ namespace CouchBase
             var RS1 = clusterCB.Query<dynamic>(updateCmd);
             return RS1.ToString();
         }
+
+        
     }
 }

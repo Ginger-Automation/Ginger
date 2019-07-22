@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
-    <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
+    <ProjectReference Include="..\MongoDB\GingerMongoDB.csproj" />
   </ItemGroup>
 
 </Project>

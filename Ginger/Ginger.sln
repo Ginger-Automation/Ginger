@@ -65,23 +65,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCoreTest", "GingerCoreTest\GingerCoreTest.csproj", "{755ED4B6-2CA1-46B0-A8FC-8B4771982023}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSAccessDB", "MSAccessDB\MSAccessDB.csproj", "{B8BDF167-9BCA-4C19-85C6-87B338781F91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerMSAccessDB", "MSAccessDB\GingerMSAccessDB.csproj", "{B8BDF167-9BCA-4C19-85C6-87B338781F91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUnitTest", "DatabaseUnitTest\DatabaseUnitTest.csproj", "{5230B930-5E96-4EAD-8970-48AE8DA0C452}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerMSAccessTest", "DatabaseUnitTest\GingerMSAccessTest.csproj", "{5230B930-5E96-4EAD-8970-48AE8DA0C452}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDB", "MongoDB\MongoDB.csproj", "{48F1CDD3-F1B4-46C0-80B4-EEFCF326BB97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMongoDB", "MongoDB\GingerMongoDB.csproj", "{48F1CDD3-F1B4-46C0-80B4-EEFCF326BB97}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDBTest", "MongoDBTest\MongoDBTest.csproj", "{416A1485-831C-4293-BB47-48B65F3209F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMongoDBTest", "MongoDBTest\GingerMongoDBTest.csproj", "{416A1485-831C-4293-BB47-48B65F3209F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLDatabase", "MySQLDatabase\MySQLDatabase.csproj", "{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMySQLDatabase", "MySQLDatabase\GingerMySQLDatabase.csproj", "{6FF6AE80-D90C-4F89-9D77-5A157DF1F145}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MySQLTests", "MySQLTests\MySQLTests.csproj", "{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMySQLTests", "MySQLTests\GingerMySQLTests.csproj", "{89B1BD52-3B01-4E74-A2FE-CF232C9E616B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CouchBase", "CouchBase\CouchBase.csproj", "{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCouchBase", "CouchBase\GingerCouchBase.csproj", "{DBA81A3C-316C-4633-8CF5-C2E48EA391DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostgreSQL", "PostgreSQL\PostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPostgreSQL", "PostgreSQL\GingerPostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oracle", "Oracle\Oracle.csproj", "{350B5A70-69A8-433B-8510-AFEAD47BD449}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerOracle", "Oracle\GingerOracle.csproj", "{350B5A70-69A8-433B-8510-AFEAD47BD449}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

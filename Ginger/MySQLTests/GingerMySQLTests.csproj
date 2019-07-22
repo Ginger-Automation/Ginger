@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
-    <ProjectReference Include="..\MySQLDatabase\MySQLDatabase.csproj" />
+    <ProjectReference Include="..\MySQLDatabase\GingerMySQLDatabase.csproj" />
   </ItemGroup>
 
 </Project>
