@@ -267,6 +267,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.Type);
                     list.Add(ActUIElement.eTableAction.MousePressAndRelease);
                     list.Add(ActUIElement.eTableAction.IsChecked);
+                    list.Add(ActUIElement.eTableAction.RightClick);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);
@@ -274,6 +275,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
                 case ActUIElement.eElementAction.TableAction:
                     list.Add(ActUIElement.eTableAction.GetRowCount);
+                    list.Add(ActUIElement.eTableAction.SelectAllRows);
+                    //list.Add(ActUIElement.eTableAction.RightClick);
                     break;
                 case ActUIElement.eElementAction.Unknown:
                     list.Add(ActUIElement.eTableAction.IsCellEnabled);
