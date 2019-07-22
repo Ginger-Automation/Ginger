@@ -25,16 +25,6 @@ namespace GingerCore.Activities
 {
     public class ActivityIdentifiers : RepositoryItemBase
     {
-        public  static class Fields
-        {
-            public static string ActivityName = "ActivityName";
-            public static string ActivityDescription = "ActivityDescription";
-            public static string ActivityGuid = "ActivityGuid";
-            public static string ActivityExternalID = "ActivityExternalID";
-            public static string ActivityAutomationStatus = "ActivityAutomationStatus";
-            public static string ExistInRepository = "ExistInRepository";
-        }
-
         public ActivityIdentifiers()
         {
         }
@@ -61,12 +51,15 @@ namespace GingerCore.Activities
             }
             set
             {
-                if (mIdentifiedActivity != null)((Activity) mIdentifiedActivity).PropertyChanged -= Activity_PropertyChanged;
+                if (mIdentifiedActivity != null)
+                {
+                    ((Activity)mIdentifiedActivity).PropertyChanged -= Activity_PropertyChanged;
+                }
                 mIdentifiedActivity= value;
                 if (mIdentifiedActivity != null)
                 {
                     RefreshActivityIdentifiers();
-                  ((Activity)  mIdentifiedActivity).PropertyChanged += Activity_PropertyChanged;
+                    ((Activity)mIdentifiedActivity).PropertyChanged += Activity_PropertyChanged;
                 }
             }
         }
@@ -75,25 +68,40 @@ namespace GingerCore.Activities
         {
             if (mIdentifiedActivity != null)
             {
-                ActivityName = mIdentifiedActivity.ActivityName;
-                OnPropertyChanged(Fields.ActivityName);
-                ActivityDescription = mIdentifiedActivity.Description;
-                OnPropertyChanged(Fields.ActivityDescription);
-                ActivityGuid = mIdentifiedActivity.Guid;
-                OnPropertyChanged(Fields.ActivityGuid);
-                ActivityExternalID = mIdentifiedActivity.ExternalID;
-                OnPropertyChanged(Fields.ActivityExternalID);
-                ActivityAutomationStatus = mIdentifiedActivity.AutomationStatus;
-                OnPropertyChanged(Fields.ActivityAutomationStatus);
+                if (ActivityName != mIdentifiedActivity.ActivityName)
+                {
+                    ActivityName = mIdentifiedActivity.ActivityName;
+                    OnPropertyChanged(nameof(ActivityName));
+                }
+                if (ActivityDescription != mIdentifiedActivity.Description)
+                {
+                    ActivityDescription = mIdentifiedActivity.Description;
+                    OnPropertyChanged(nameof(ActivityDescription));
+                }
+                if (ActivityGuid != mIdentifiedActivity.Guid)
+                {
+                    ActivityGuid = mIdentifiedActivity.Guid;
+                    OnPropertyChanged(nameof(ActivityGuid));
+                }
+                if (ActivityExternalID != mIdentifiedActivity.ExternalID)
+                {
+                    ActivityExternalID = mIdentifiedActivity.ExternalID;
+                    OnPropertyChanged(nameof(ActivityExternalID));
+                }
+                if (ActivityAutomationStatus != mIdentifiedActivity.AutomationStatus)
+                {
+                    ActivityAutomationStatus = mIdentifiedActivity.AutomationStatus;
+                    OnPropertyChanged(nameof(ActivityAutomationStatus));
+                }
             }
         }
 
         private void Activity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Activity.Fields.ActivityName
-                    || e.PropertyName == Activity.Fields.Description
-                        || e.PropertyName == Activity.Fields.ExternalID
-                            || e.PropertyName == Activity.Fields.AutomationStatus)
+            if (e.PropertyName == nameof(Activity.ActivityName)
+                    || e.PropertyName == nameof(Activity.Description)
+                        || e.PropertyName == nameof(Activity.ExternalID)
+                            || e.PropertyName == nameof(Activity.AutomationStatus))
             {
                 RefreshActivityIdentifiers();
             }

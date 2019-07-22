@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Common
 {
     // common action to mimic real device button operation like the home button
@@ -98,6 +100,6 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActButton ; } }
+        public override eImageType Image { get { return eImageType.BullsEye; } }
     }
 }

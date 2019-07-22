@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -50,6 +51,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get
             {
                 return xTreeViewTree;
+            }
+        }
+
+        public Brush Background
+        {
+            get
+            {
+                return xGrid.Background;
+            }
+            set
+            {
+                xGrid.Background = value;
             }
         }
 

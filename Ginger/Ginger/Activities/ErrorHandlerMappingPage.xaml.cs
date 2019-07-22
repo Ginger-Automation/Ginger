@@ -112,8 +112,8 @@ namespace Ginger.Activities
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = ErrorHandler.Fields.IsSelected, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name of Error Handler" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorHandler.IsSelected), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of Error Handler" });
             grdErrorHandler.SetAllColumnsDefaultView(defView);
             grdErrorHandler.InitViewItems();
             grdErrorHandler.SetTitleLightStyle = true;

@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+
 namespace GingerCore.Actions
 {
     public class ActActivateRow : Act
@@ -62,6 +63,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.VariableList; } }
     }
 }
