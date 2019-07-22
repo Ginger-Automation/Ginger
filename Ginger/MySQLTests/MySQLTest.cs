@@ -6,6 +6,7 @@ using System.Data;
 
 namespace MySQLTests
 {
+    [Ignore]
     [TestClass]
     public class MySQLTest
     {

@@ -6,6 +6,7 @@ using System.Data;
 
 namespace MongoDBTest
 {
+    [Ignore]
     [TestClass]
     public class MongoUnitTest
     {

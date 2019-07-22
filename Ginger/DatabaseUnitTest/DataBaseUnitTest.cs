@@ -26,7 +26,7 @@ using System.Data;
 
 namespace GingerCoreNETUnitTest.Database
 {
-
+    [Ignore]
     [TestClass]
 
     public class DataBaseUnitTest
