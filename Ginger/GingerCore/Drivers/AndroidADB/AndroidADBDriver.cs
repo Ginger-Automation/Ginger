@@ -1093,12 +1093,17 @@ namespace GingerCore.Drivers.AndroidADB
         //    });
         //}
 
-        //void Amdocs.Ginger.Plugin.Core.IRecord.StopRecording()
+        //public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
+        //object Amdocs.Ginger.Plugin.Core.IRecord.CurrentBusinessFlow
         //{
-        //    Dispatcher.Invoke(() =>
+        //    get
         //    {
-        //        DriverWindow.StopRecording();
-        //    });
+        //        return BusinessFlow;
+        //    }
+        //    set
+        //    {
+        //        BusinessFlow = (BusinessFlow)value;
+        //    }
         //}
 
 

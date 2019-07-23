@@ -19,7 +19,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" />
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
                         <Label Content="{Binding Path=Name}" Style="{StaticResource $MainListViewItemLabelStyle}" Margin="0,0,10,0"/>
                     </StackPanel>
                 </DataTemplate>
@@ -36,8 +36,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" ToolTip="{Binding Path=ToolTip}" AutomationProperties.AutomationId="{Binding Path=AutomationID}" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" />
-                        <Label Content="{Binding Path=Name}" Style="{StaticResource $SubListViewItemLabelStyle}" Margin="0,0,10,0"/>
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="{Binding Path=IconType}" HorizontalAlignment="Center" VerticalAlignment="Center" SetBorder="False" Margin="10,0,0,0" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" />
+                        <Label Content="{Binding Path=Name}" Style="{StaticResource $SubListViewItemLabelStyle}" Margin="0,0,10,0" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

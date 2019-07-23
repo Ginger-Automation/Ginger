@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     //This class is for Text Box actions
@@ -70,6 +72,6 @@ namespace GingerCore.Actions
                 return "UIAClickOnPoint:" + ActUIAClickOnPointAction.ToString();
             }
         }
-        public override System.Drawing.Image Image { get { return Resources.ActTextBox; } } 
+        public override eImageType Image { get { return eImageType.MousePointer; } } 
     }
 }

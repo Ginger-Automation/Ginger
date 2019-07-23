@@ -47,8 +47,8 @@
 
         <DockPanel HorizontalAlignment="Right"  Grid.Row="3" Grid.Column="1">
 
-            <UserControls:ucButton x:Name="xBrowseLoadButton" ButtonType="RoundTextAndImageButton" ButtonText="Load" ButtonImageType="MoveDown" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="BrowseButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-            <UserControls:ucButton x:Name="xPreviewButton" ButtonType="RoundTextAndImageButton" ButtonText="Preview" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed" Click="PreviewButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            <UserControls:ucButton x:Name="xBrowseLoadButton" ButtonType="RoundTextAndImageButton" ButtonText="Load" ButtonImageType="MoveDown" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="BrowseButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <UserControls:ucButton x:Name="xPreviewButton" ButtonType="RoundTextAndImageButton" ButtonText="Preview" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed" Click="PreviewButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
 
             </DockPanel>
 

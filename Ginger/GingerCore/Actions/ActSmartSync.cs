@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     //This class is for UI link element
@@ -82,6 +84,6 @@ namespace GingerCore.Actions
                 return "SmartSync: " + SmartSyncAction.ToString();
             }
         }
-        public override System.Drawing.Image Image { get { return Resources.ActLink; } } 
+        public override eImageType Image { get { return eImageType.Refresh; } } 
     }
 }

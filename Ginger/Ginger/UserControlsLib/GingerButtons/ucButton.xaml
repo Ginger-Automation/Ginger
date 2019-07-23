@@ -13,4 +13,5 @@
             <usercontrols:ImageMakerControl x:Name="xButtonImage" SetAsFontImageWithSize="{Binding ButtonFontImageSize}" ImageType="Empty" HorizontalAlignment="Center" SetBorder="False"  VerticalAlignment="Center" />
         </StackPanel>
     </Button>
+
 </UserControl>

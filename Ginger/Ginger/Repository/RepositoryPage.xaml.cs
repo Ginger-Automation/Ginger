@@ -40,6 +40,7 @@ namespace Ginger.Repository
         public ActionsRepositoryPage ActionsRepoPage;
         public VariablesRepositoryPage VariablesRepoPage;
 
+        Context mContext = new Context();
         BusinessFlow mBusinessFlow;
 
         public Visibility ShowActivitiesGroupRepository
@@ -68,6 +69,7 @@ namespace Ginger.Repository
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+            mContext.BusinessFlow = businessFlow;
 
             xActivitiesGroupsTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
             xActivitiesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -77,6 +79,7 @@ namespace Ginger.Repository
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
             mBusinessFlow = bf;
+            mContext.BusinessFlow = bf;
             if (ActivitiesGroupsRepoPage != null)
             {
                 ActivitiesGroupsRepoPage.UpdateBusinessFlow(mBusinessFlow);
@@ -127,7 +130,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbActivitiesGroups.Tag) != "Done")
                 {
-                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mBusinessFlow);
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext);
                     frmActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
                     tbActivitiesGroups.Tag = "Done";
@@ -138,7 +141,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActivities.Tag) != "Done")
                 {
-                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mBusinessFlow);
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mContext);
                     frmActivities.Content = ActivitiesRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActivities.Tag = "Done";
@@ -149,7 +152,7 @@ namespace Ginger.Repository
             {
                 if (((string)tbiActions.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mBusinessFlow);
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext);
                     frmActions.Content = ActionsRepoPage;
                     // Mark that this tab is loaded with info
                     tbiActions.Tag = "Done";

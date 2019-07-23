@@ -60,9 +60,9 @@ namespace Ginger.Activities
             mActivitiesGroup.SaveBackup();
             mBusinessFlow = parentBusinessFlow;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.Description);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, ActivitiesGroup.Fields.AutomationPrecentage, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.AutomationPrecentage), BindingMode.OneWay);
 
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
@@ -88,11 +88,11 @@ namespace Ginger.Activities
             GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
             defView2.GridColsView = new ObservableList<GridColView>();
 
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityName, Header = "Name", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityDescription, Header = "Description", WidthWeight = 30, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityAutomationStatus, Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityName), Header = "Name", WidthWeight = 30, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 30, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
             if (mEditMode == eEditMode.SharedRepository)
-                defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ExistInRepository, Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
+                defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ExistInRepository), Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
             grdGroupedActivities.SetAllColumnsDefaultView(defView2);
             grdGroupedActivities.InitViewItems();
         }
@@ -129,7 +129,7 @@ namespace Ginger.Activities
         private void RefreshGroupedActivities()
         {
             AttachActivitiesGroupAndRepositoryActivities();
-            mActivitiesGroup.OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+            mActivitiesGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
         }
 
         private void RefreshGroupedActivities(object sender, RoutedEventArgs e)

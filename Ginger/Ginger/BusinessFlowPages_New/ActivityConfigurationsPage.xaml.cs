@@ -1,0 +1,137 @@
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Ginger.Activities;
+using GingerCore;
+using GingerCore.GeneralLib;
+using GingerCore.Platforms;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+
+namespace Ginger.BusinessFlowPages
+{
+    /// <summary>
+    /// Interaction logic for ActivityConfigurationsPage.xaml
+    /// </summary>
+    public partial class ActivityConfigurationsPage : Page
+    {
+        Activity mActivity;
+        Context mContext;
+        General.eRIPageViewMode mPageViewMode;
+
+        public ActivityConfigurationsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
+        {
+            InitializeComponent();
+
+            mActivity = activity;
+            mContext = context;
+            mPageViewMode = pageViewMode;
+
+            SetUI();
+            BindControls();
+        }
+
+        private void SetUI()
+        {
+            if (mPageViewMode == General.eRIPageViewMode.View)
+            {
+                xActivityNameTxtBox.IsEnabled = false;
+                xActivityDescriptionTxt.IsEnabled = false;
+                xTagsViewer.IsEnabled = false;
+                xRunDescritpion.IsEnabled = false;
+                xScreenTxt.IsEnabled = false;
+                xExpectedTxt.IsEnabled = false;
+                xMandatoryActivityCB.IsEnabled = false;
+                xTargetApplicationComboBox.IsEnabled = false;
+                xRunOptionCombo.IsEnabled = false;
+                xAutomationStatusCombo.IsEnabled = false;
+                xHandlerTypeCombo.IsEnabled = false;
+                xSpecificErrorHandlerBtn.IsEnabled = false;
+            }
+        }
+
+        public void UpdateActivity(Activity activity)
+        {
+            if (mActivity != activity)
+            {
+                RemoveBindings();
+                mActivity = activity;
+                if (mActivity != null)
+                {
+                    BindControls();
+                }
+            }
+        }
+
+        private void RemoveBindings()
+        {
+            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.SelectedValueProperty);
+            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
+            BindingOperations.ClearBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty);
+            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
+            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
+            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
+            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);
+        }
+
+        private void BindControls()
+        {
+            //Configurations Tab Bindings
+            xRunDescritpion.Init(mContext, mActivity, nameof(Activity.RunDescription));
+            xRunOptionCombo.BindControl(mActivity, nameof(Activity.ActionRunOption));
+            GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
+            xTagsViewer.Init(mActivity.Tags);
+            BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
+            BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
+            BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
+            BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
+            xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
+            BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
+            if (mContext != null && mContext.BusinessFlow != null)
+            {
+                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
+            }
+            else
+            {
+                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            }
+            xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
+            xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+            BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
+
+            if (mActivity.GetType() == typeof(ErrorHandler))
+            {
+                xHandlerTypeStack.Visibility = Visibility.Visible;
+                xHandlerMappingStack.Visibility = Visibility.Collapsed;
+                xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
+            }
+            else
+            {
+                BindingHandler.ObjFieldBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.ErrorHandlerMappingType));
+                xHandlerMappingStack.Visibility = Visibility.Visible;
+                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xErrorHandlerMappingCmb.SelectedValue != null && xErrorHandlerMappingCmb.SelectedValue.ToString() == eHandlerMappingType.SpecificErrorHandlers.ToString())
+            {
+                xSpecificErrorHandlerBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xSpecificErrorHandlerBtn.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xSpecificErrorHandlerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mContext.BusinessFlow);
+            errorHandlerMappingPage.ShowAsWindow();
+        }
+    }
+}
