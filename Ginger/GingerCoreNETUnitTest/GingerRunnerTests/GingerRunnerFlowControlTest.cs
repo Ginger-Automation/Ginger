@@ -27,6 +27,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
@@ -63,6 +64,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             string info = (string)mContext.Properties["TestName"];
             Console.WriteLine("########################### Starting Test >>>>>>>>>>>>>>>>>>>>>>>>>>" + info);
+
+
+            if (Directory.Exists(@"d:\a\1\a"))
+            {
+                File.WriteAllText(@"d:\a\1\a\testrun.log", info + Environment.NewLine);
+            }
+
             mGingerMutex.WaitOne();
         }
 
