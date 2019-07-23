@@ -708,5 +708,6 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public Telemetry Telemetry { get; internal set; }
+        public string TestArtifactsFolder { get; internal set; }
     }
 }

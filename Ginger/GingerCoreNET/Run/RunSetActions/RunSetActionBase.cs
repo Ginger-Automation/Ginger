@@ -203,7 +203,6 @@ namespace Ginger.Run.RunSetActions
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
 
-
                 Stopwatch st = new Stopwatch();
                 st.Reset();
                 st.Start();
@@ -218,6 +217,11 @@ namespace Ginger.Run.RunSetActions
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
             finally
             {
