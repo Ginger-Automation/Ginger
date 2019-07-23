@@ -53,50 +53,48 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         public void RunNewReportWithEmail()
         {
             // Arrange
-            Console.WriteLine("<<<<<<<<<<RunNewReportWithEmail start>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<RunNewReportWithEmail start>>>>>>>>>>>>");
             CreateWorkspace();
             // Create config file
             CLIHelper cLIHelper = new CLIHelper();
             cLIHelper.RunAnalyzer = true;
             cLIHelper.ShowAutoRunWindow = false;
             cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
-
             RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
             runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
             runSetAutoRunConfiguration.SelectedCLI = new CLIArgs();
-
             // Act            
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileContent });
             CheckReportFolderCreation();
             CheckJsDataFromFile();
-            Console.WriteLine("<<<<<<<<<<RunNewReportWithEmail end>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<RunNewReportWithEmail end>>>>>>>>>>>>");
             // Assert            
             //Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed, "BF RunStatus=Passed");
         }
 
         private void CheckJsDataFromFile()
         {
-            Console.WriteLine("<<<<<<<<<<CheckJsDataFromFile start>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<CheckJsDataFromFile start>>>>>>>>>>>>");
             string clientAppFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data", "executiondata.js");
-            Console.WriteLine($"client app data file is :{clientAppFilePath}");
+            Reporter.ToLog(eLogLevel.INFO, $"client app data file is :{clientAppFilePath}");
             bool isFileExists = File.Exists(clientAppFilePath);
             string jsDataStr = string.Empty;
             if (isFileExists)
                 jsDataStr = File.ReadAllText(clientAppFilePath);
-            Console.WriteLine("json report data is : ");
-            Console.WriteLine(jsDataStr);
+            Reporter.ToLog(eLogLevel.INFO, "json report data is : ");
+            Reporter.ToLog(eLogLevel.INFO, jsDataStr);
             Assert.IsTrue(isFileExists && jsDataStr.StartsWith("window.runsetData={\"GingerVersion\":\"3.3.6.1\""));
-            Console.WriteLine("<<<<<<<<<<CheckJsDataFromFile end>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<CheckJsDataFromFile end>>>>>>>>>>>>");
         }
 
         private void CheckReportFolderCreation()
         {
-            Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation start>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<CheckReportFolderCreation start>>>>>>>>>>>>");
             string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
-            Console.WriteLine($"client app folder is :{clientAppFolderPath}");
+            Reporter.ToLog(eLogLevel.INFO, $"client app folder is :{clientAppFolderPath}");
             Assert.IsTrue(Directory.Exists(clientAppFolderPath));
-            Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation end>>>>>>>>>>>>");
+            Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<CheckReportFolderCreation end>>>>>>>>>>>>");
         }
 
         private void CreateWorkspace()
