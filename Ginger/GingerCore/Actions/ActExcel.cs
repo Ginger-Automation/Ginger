@@ -30,6 +30,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 //TODO: add and use below with ReadCellDataNew - need to be tested
 // using DocumentFormat.OpenXml.Packaging;
@@ -190,7 +191,7 @@ namespace GingerCore.Actions
             get { return "Excel" + ExcelActionType.ToString(); }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Excel16x16; } }
+        public override eImageType Image { get { return eImageType.ExcelFile; } }
 
          
 

@@ -55,6 +55,7 @@ namespace Amdocs.Ginger.Common
         BusinessFlowConversion,
         Search, DownloadingMissingPluginPackages,
         GingerLoadingInfo,
+        StaticStatusMessage, StaticStatusProcess, PasteProcess,
         NewVersionAvailable
     }
 
@@ -75,7 +76,9 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.UpdateItem, new StatusMsg(eStatusMsgType.PROCESS, "Updating", "Updating all the references of '{0}' and replacing with '{1}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExitMode, new StatusMsg(eStatusMsgType.INFO, "Oops...", "Ginger was not closed properly. Please turn to support team."));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItem, new StatusMsg(eStatusMsgType.PROCESS, "Exporting", "Exporting '{0}' {1}"));
-
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StaticStatusMessage, new StatusMsg(eStatusMsgType.INFO, "Message", "{0}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StaticStatusProcess, new StatusMsg(eStatusMsgType.PROCESS, "Process", "{0}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.PasteProcess, new StatusMsg(eStatusMsgType.PROCESS, "Paste", "{0}"));
             #endregion General Application Messages
 
             #region Solution Messages

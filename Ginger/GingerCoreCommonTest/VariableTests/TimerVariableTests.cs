@@ -63,7 +63,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableTimer variableTimer = new VariableTimer();
 
             //Act
-            string varType = variableTimer.VariableType();
+            string varType = variableTimer.VariableType;
 
             //Assert
             Assert.AreEqual("Timer", varType, "Timer Variable Type");

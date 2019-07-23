@@ -80,7 +80,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableRandomString.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Random, eImageType, "RandomString Variable Image Type");
+            Assert.AreEqual(eImageType.Languages, eImageType, "RandomString Variable Image Type");
         }
 
         [TestMethod]  [Timeout(60000)]

@@ -60,7 +60,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableString variableString = new VariableString();
 
             //Act
-            string varType = variableString.VariableType();
+            string varType = variableString.VariableType;
 
             //Assert            
             Assert.AreEqual("String", varType, "String Variable Type");
@@ -89,7 +89,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableString.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Variable, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.Label, eImageType, "Image Type");
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -188,7 +188,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariablePasswordString variablePasswordString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableType();
+            string varType = variablePasswordString.VariableType;
 
             //Assert            
             Assert.AreEqual("PasswordString", varType, "Password String Type");

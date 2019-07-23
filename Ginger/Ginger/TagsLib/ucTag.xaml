@@ -5,13 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ginger.TagsLib"
              mc:Ignorable="d">
-    <StackPanel x:Name="tagStack" Orientation="Horizontal" Margin="5,0,5,0" HorizontalAlignment="Left" Height="24" MouseLeave="tagStack_MouseLeave" MouseEnter="tagStack_MouseEnter">
+
+    <StackPanel x:Name="tagStack" Background="{StaticResource $SelectionColor_VeryLightBlue}" Orientation="Horizontal" Margin="5,0,5,0" HorizontalAlignment="Left"  Height="24" MouseLeave="tagStack_MouseLeave" MouseEnter="tagStack_MouseEnter">
         <Label x:Name="lblTagName" Background="Transparent" Style="{StaticResource @SmallerInputFieldLabelStyle}"></Label>
-        <!--<Button x:Name="btnClose" VerticalAlignment="Center" Width="8" Height="8" HorizontalAlignment="Left" Click="DeleteTag_Click" Background="Transparent" BorderThickness="0" MouseEnter="btnClose_MouseEnter" MouseLeave="btnClose_MouseLeave">
-           
-            <Image x:Name="closeImage" Source="{StaticResource @TagClose_16X16.png}" ></Image>
-        </Button>-->
-        <Button x:Name="xDeleteTagBtn" BorderBrush="Transparent" VerticalAlignment="Center" HorizontalAlignment="Left" Width="8" Height="8"  BorderThickness="0">
+
+        <Button x:Name="xDeleteTagBtn" BorderBrush="Transparent" VerticalAlignment="Center" ToolTip="Remove" HorizontalAlignment="Left" Width="10" Height="10"  BorderThickness="0" Margin="0,0,2,0">
             <Button.Content>
                 <Border>
                     <Image x:Name="closeImage" Margin="1" Source="{StaticResource @TagClose_16X16.png}" />
@@ -20,7 +18,7 @@
                             <Setter Property="Background" Value="Transparent"/>
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#f9D5AE" />
+                                    <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

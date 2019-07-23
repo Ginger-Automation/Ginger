@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Windows
 {
     public class ActWindowsControl : Act
@@ -119,6 +121,6 @@ namespace GingerCore.Actions.Windows
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Act ; } }
+        public override eImageType Image { get { return eImageType.WindowsIcon; } }
     }
 }

@@ -68,9 +68,9 @@ namespace Ginger.Run
             
             mBusinessFlow.SaveBackup();
 
-			GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, BusinessFlow.Fields.Mandatory, BindingMode.TwoWay);
+			GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, nameof(BusinessFlow.Mandatory), BindingMode.TwoWay);
 
-			RunDescritpion.Init(mContext, businessFlow, BusinessFlow.Fields.RunDescription);
+			RunDescritpion.Init(mContext, businessFlow, nameof(BusinessFlow.RunDescription));
 
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));

@@ -169,7 +169,10 @@ namespace GingerCore.Variables
 
         public override eImageType Image { get { return eImageType.Timer; } }
         public override bool SupportSetValue { get { return false; } }
-        public override string VariableType() { return "Timer"; }
+        public override string VariableType
+        {
+            get { return "Timer"; }
+        }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
@@ -181,5 +184,8 @@ namespace GingerCore.Variables
             return supportedOperations;
         }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

@@ -32,8 +32,8 @@
         <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Ginger has recovered the following items.<LineBreak/>Recover the ones you need and delete the ones you don’t.</TextBlock>
 
         <StackPanel Grid.Row="1" x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" >
-            <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
-            <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+            <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
         </StackPanel>
         
         <Ginger:ucGrid x:Name="xRecoveredItemsGrid" Grid.Row="2" Title="Pending Recover Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
