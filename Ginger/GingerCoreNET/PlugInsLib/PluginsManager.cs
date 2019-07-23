@@ -75,11 +75,8 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage pluginPackage = new PluginPackage(folder);
-            if(!mSolutionRepository.GetAllRepositoryItems<PluginPackage>().Any(x => x.ItemName == pluginPackage.ItemName))
-            {
-                mSolutionRepository.AddRepositoryItem(pluginPackage);
-            }            
+            PluginPackage pluginPackage = new PluginPackage(folder);          
+            mSolutionRepository.AddRepositoryItem(pluginPackage);            
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
