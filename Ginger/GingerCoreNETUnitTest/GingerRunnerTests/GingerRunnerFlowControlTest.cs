@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -28,15 +26,17 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
-    
+
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
-    {        
+    {
+        static TestContext mContext;
 
         static GingerRunner mGR;
 
@@ -45,6 +45,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            mContext = context;            
             // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
 
             mGR = new GingerRunner();
@@ -60,12 +61,16 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestInitialize]
         public void TestInitialize()
         {
+            string info = (string)mContext.Properties["TestName"];
+            Console.WriteLine("########################### Starting Test >>>>>>>>>>>>>>>>>>>>>>>>>>" + info);
             mGingerMutex.WaitOne();
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
+            string info = (string)mContext.Properties["TestName"] + mContext.TestName + " >>> " + mContext.CurrentTestOutcome;
+            Console.WriteLine("########################### End Test >>>>>>>>>>>>>>>>>>>>>>>>>>" + info);
             mGingerMutex.ReleaseMutex();
         }
 
