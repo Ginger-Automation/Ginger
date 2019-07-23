@@ -163,10 +163,10 @@ namespace Ginger.Actions.WebServices
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new Amdocs.Ginger.Common.ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = ActSoapUiInputValue.Fields.Type, Header = type, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = paramTitle, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = valueTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = paramTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = valueTitle, WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)ProjectPropertiesGrid.controlGrid.Resources["VEGridValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = valueForDriverTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = valueForDriverTitle, WidthWeight = 100 });
 
             ProjectPropertiesGrid.VEGrid.SetAllColumnsDefaultView(view);
             ProjectPropertiesGrid.VEGrid.InitViewItems();

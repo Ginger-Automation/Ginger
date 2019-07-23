@@ -38,8 +38,12 @@ namespace Amdocs.Ginger.UserControls
 
         public static readonly DependencyProperty ButtonTypeProperty = DependencyProperty.Register("ButtonType", typeof(eButtonType), typeof(ucButton),
                               new FrameworkPropertyMetadata(OnIconPropertyChanged));
+
         public static readonly DependencyProperty ButtonImageTypeProperty = DependencyProperty.Register("ButtonImageType", typeof(eImageType), typeof(ucButton),
-                              new FrameworkPropertyMetadata(OnIconPropertyChanged));        
+                              new FrameworkPropertyMetadata(OnIconPropertyChanged));
+
+        public static readonly DependencyProperty ButtonImageForgroundProperty = DependencyProperty.Register("ButtonImageForground", typeof(SolidColorBrush), typeof(ucButton),
+                      new FrameworkPropertyMetadata(ButtonImageForgroundPropertyChanged));
 
         public eButtonType ButtonType
         {
@@ -53,6 +57,20 @@ namespace Amdocs.Ginger.UserControls
         {
             ucButton ub = (ucButton)d;
             ub.SetButtonLook();
+        }
+
+        public SolidColorBrush ButtonImageForground
+        {
+            get { return xButtonImage.ImageForeground; }
+            set { xButtonImage.ImageForeground = value; }
+        }
+        private static void ButtonImageForgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = d as ucButton;
+            if (control != null && e.NewValue != null)
+            {
+                control.ButtonImageForground = ((SolidColorBrush)e.NewValue);
+            }
         }
 
         public string ButtonText
@@ -98,11 +116,7 @@ namespace Amdocs.Ginger.UserControls
             set { xButtonImage.Width = value; }
         }
 
-        public SolidColorBrush ButtonImageForground
-        {
-            get { return xButtonImage.ImageForeground; }
-            set { xButtonImage.ImageForeground = value; }
-        }
+
 
         private void SetButtonLook()
         {
@@ -132,6 +146,12 @@ namespace Amdocs.Ginger.UserControls
                     xButton.Width = ButtonImageWidth + (ButtonImageWidth / 2);
                     xButton.Height = ButtonImageHeight + (ButtonImageHeight / 2);
                     xButtonImage.Margin = new Thickness(3);
+                    break;
+                case (Core.eButtonType.PanelButton):
+                    xButtonText.Visibility = Visibility.Visible;
+                    xButtonText.Margin = new Thickness(10, 0, 10, 0);
+                    xButtonImage.Margin = new Thickness(0, 0, 10, 0);
+                    xButton.Style = FindResource("$PanelButtonStyle") as Style;
                     break;
             }
         }     
@@ -172,6 +192,10 @@ namespace Amdocs.Ginger.UserControls
                         break;
                     case (Core.eButtonType.CircleImageButton):
                         xButton.Style = FindResource("$CircleImageButtonStyle_Disabled") as Style;
+                        break;
+                    case (Core.eButtonType.PanelButton):
+                        xButton.Style = FindResource("$PanelButtonStyle") as Style;
+
                         break;
                 }
             }

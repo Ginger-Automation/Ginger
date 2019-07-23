@@ -63,10 +63,10 @@ namespace Ginger.Actions
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = paramTitle, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = valueTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = paramTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = valueTitle, WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.controlGrid.Resources["VEGridValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = valueForDriverTitle, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = valueForDriverTitle, WidthWeight = 100 });
             VEGrid.SetAllColumnsDefaultView(view);
             VEGrid.InitViewItems();
             VEGrid.DataSourceList = DataSource;
@@ -79,7 +79,7 @@ namespace Ginger.Actions
          private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)VEGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mContext);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);
             VEEW.ShowAsWindow();
         }
 

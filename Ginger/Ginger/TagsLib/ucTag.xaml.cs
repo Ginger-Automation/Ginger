@@ -40,11 +40,13 @@ namespace Ginger
             InitializeComponent();
             mTag = tag;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ContentProperty, mTag, RepositoryItemTag.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
-            tagStack.Background = (Brush)bc.ConvertFrom("#cde0f2");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);            
             closeImage.Visibility = Visibility.Hidden;
 
             xDeleteTagBtn.Tag = tag;
+
+            tagStack.ToolTip = tag.Name;
+            lblTagName.ToolTip = tag.Name;
         }
 
         public void SetLabelText(string text)
@@ -55,13 +57,13 @@ namespace Ginger
 
         private void tagStack_MouseLeave(object sender, MouseEventArgs e)
         {
-            tagStack.Background = (Brush)bc.ConvertFrom("#cde0f2");
+            tagStack.Background = (Brush)FindResource("$SelectionColor_VeryLightBlue");
             closeImage.Visibility = Visibility.Collapsed;
         }
 
         private void tagStack_MouseEnter(object sender, MouseEventArgs e)
         {
-            tagStack.Background = (Brush)bc.ConvertFrom("#f9D5AE");
+            tagStack.Background = (Brush)FindResource("$SelectionColor_Pink");
             closeImage.Visibility = Visibility.Visible;
         }
     }

@@ -61,7 +61,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSelectionList variableSelectionList = new VariableSelectionList();
 
             //Act
-            string varType = variableSelectionList.VariableType();
+            string varType = variableSelectionList.VariableType;
 
             //Assert
             Assert.AreEqual("Selection List", varType, "Selection List Variable Type");
@@ -90,7 +90,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableSelectionList.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.MinusSquare, eImageType, "Image Type");
         }
 
     }

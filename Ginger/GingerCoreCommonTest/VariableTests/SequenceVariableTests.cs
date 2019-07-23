@@ -61,7 +61,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSequence variableSequence = new VariableSequence();
 
             //Act
-            string varType = variableSequence.VariableType();
+            string varType = variableSequence.VariableType;
 
             //Assert            
             Assert.AreEqual("Sequence", varType, "Sequence Variable Type");
@@ -90,7 +90,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableSequence.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Sequence, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.SequentialExecution, eImageType, "Image Type");
         }
 
         [TestMethod]  [Timeout(60000)]

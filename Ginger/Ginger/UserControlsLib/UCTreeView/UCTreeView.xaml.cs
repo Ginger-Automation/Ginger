@@ -284,7 +284,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             object filterByObject = treeItemToCheckObject;
             foreach (string hierarchyElement in filterByfieldHierarchyList)
             {
-                PropertyInfo pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                PropertyInfo pInfo = null;
+                if (filterByObject != null)
+                {
+                    pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                }
+
                 if (pInfo is null)
                 {
                     break;
@@ -297,7 +302,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             //compare the value
             string filterbyValue = Convert.ToString(TreeNodesFilterByField.Item2);
-            if (filterByObject.ToString() == filterbyValue)
+            if (Convert.ToString(filterByObject) == filterbyValue)
             {
                 return true;
             }

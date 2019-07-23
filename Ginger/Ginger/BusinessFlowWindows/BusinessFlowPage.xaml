@@ -30,7 +30,7 @@
                 <StackPanel  Margin="0,5,10,0">
                     <DockPanel>
                         <Label Style="{StaticResource $LabelStyle}" Content="Name:" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-                        <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate" ButtonImageType="Automate" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  Click="xAutomateBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Margin="0,5,0,5" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                        <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate" ButtonImageType="Automate" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  Click="xAutomateBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Margin="0,5,0,5" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center"/>
                     </DockPanel>
                     
                     <TextBox x:Name="txtName" AutomationProperties.AutomationId="QA-BizFlowName" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
