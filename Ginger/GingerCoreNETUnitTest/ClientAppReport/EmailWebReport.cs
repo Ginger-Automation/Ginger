@@ -93,7 +93,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         private void CheckReportFolderCreation()
         {
             Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation start>>>>>>>>>>>>");
-            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data");
+            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
             Console.WriteLine($"client app folder is :{clientAppFolderPath}");
             Assert.IsTrue(Directory.Exists(clientAppFolderPath));
             Console.WriteLine("<<<<<<<<<<CheckReportFolderCreation end>>>>>>>>>>>>");
