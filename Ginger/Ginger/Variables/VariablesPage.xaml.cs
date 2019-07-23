@@ -443,45 +443,57 @@ namespace Ginger.Variables
         {
             if (variable == null) return;
 
-            switch (mVariablesLevel)
+            Reporter.ToStatus(eStatusMsgKey.RenameItem, null, variable.NameBeforeEdit,variable.Name);
+            try
             {
-                case eVariablesLevel.Solution:
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    foreach(BusinessFlow bfl in allBF)
-                    {
-                        bfl.SetUniqueVariableName(variable);
-                        foreach (Activity activity in bfl.Activities)
+                switch (mVariablesLevel)
+                {
+                    case eVariablesLevel.Solution:
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        foreach (BusinessFlow bfl in allBF)
+                        {
+                            bfl.SetUniqueVariableName(variable);
+                            foreach (Activity activity in bfl.Activities)
+                                foreach (Act action in activity.Acts)
+                                {
+                                    bool changedwasDone = false;
+                                    VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
+                                }
+                        }
+                        break;
+
+                    case eVariablesLevel.BusinessFlow:
+                        BusinessFlow bf = (BusinessFlow)mVariablesParentObj;
+                        bf.SetUniqueVariableName(variable);
+                        foreach (Activity activity in bf.Activities)
                             foreach (Act action in activity.Acts)
                             {
                                 bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name,ref changedwasDone);                                
+                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
                             }
-                    }
-                    break;
+                        break;
 
-                case eVariablesLevel.BusinessFlow:
-                    BusinessFlow bf = (BusinessFlow)mVariablesParentObj;
-                    bf.SetUniqueVariableName(variable);
-                    foreach (Activity activity in bf.Activities)
-                        foreach (Act action in activity.Acts)
+                    case eVariablesLevel.Activity:
+                        Activity activ = (Activity)mVariablesParentObj;
+                        activ.SetUniqueVariableName(variable);
+                        foreach (Act action in activ.Acts)
                         {
                             bool changedwasDone = false;
-                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);                            
+                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
                         }
-                    break;
+                        break;
+                }
 
-                case eVariablesLevel.Activity:
-                    Activity activ = (Activity)mVariablesParentObj;
-                    activ.SetUniqueVariableName(variable);
-                    foreach (Act action in activ.Acts)
-                    {
-                        bool changedwasDone = false;
-                        VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                    }
-                    break;
+                variable.NameBeforeEdit = variable.Name;
             }
-
-            variable.NameBeforeEdit = variable.Name;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while renaming variable name", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }
