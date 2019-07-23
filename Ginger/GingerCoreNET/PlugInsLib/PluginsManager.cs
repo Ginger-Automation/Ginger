@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.Repository
 
         private void GetPackages()
         {
-            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();            
         }
 
         public class DriverInfo
@@ -76,8 +76,8 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage pluginPackage = new PluginPackage(folder);                                 
-            mSolutionRepository.AddRepositoryItem(pluginPackage);
+            PluginPackage pluginPackage = new PluginPackage(folder);          
+            mSolutionRepository.AddRepositoryItem(pluginPackage);            
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -98,6 +98,11 @@ namespace Amdocs.Ginger.Repository
             return folder;
         }
 
+        public void UninstallPluginPackage(OnlinePluginPackage pluginPackageInfo)
+        {
+            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginPackageInfo.Id select x).FirstOrDefault();
+            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(pluginPackage);
+        }
 
         public string CreatePluginPackageInfo(string id, string version)
         {
@@ -242,9 +247,10 @@ namespace Amdocs.Ginger.Repository
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {                
-                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).SingleOrDefault();
+                PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
                 if (pluginPackage != null)
-                {                
+                {
+                    onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;
                     onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
                 }
             }
