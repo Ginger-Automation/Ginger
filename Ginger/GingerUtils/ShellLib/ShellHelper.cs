@@ -29,7 +29,7 @@ public static class ShellHelper
 
 
             // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
-            string cmd = args = "-c \"" + "dotnet " + args + "\"";
+            string cmd = args = "-c \"" + "dotnet " + GetEscapeArgs(args) + "\"";
             Console.WriteLine("Command: " + cmd);            
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
@@ -48,7 +48,7 @@ public static class ShellHelper
 
 
             // cmd = "-c \"gnome-terminal -x bash -ic 'cd $HOME; dotnet " + dll + " " + nodeFileName + "'\"";  // work for Redhat
-            string cmd = args = "-c \"" + "dotnet " + args + "\"";
+            string cmd = args = "-c \"" + "dotnet " + GetEscapeArgs(args) + "\"";
             Console.WriteLine("Command: " + cmd);
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
@@ -80,7 +80,7 @@ public static class ShellHelper
 
     public static string Bash(string cmd)
     {
-        var escapedArgs = cmd.Replace("\"", "\\\"");
+        var escapedArgs = GetEscapeArgs(cmd);
 
         var process = new Process()
         {
@@ -98,4 +98,10 @@ public static class ShellHelper
         process.WaitForExit();
         return result;
     }
+
+    static string GetEscapeArgs(string cmd)
+    {
+        return cmd.Replace("\"", "\\\"");
+    }
+
 }
