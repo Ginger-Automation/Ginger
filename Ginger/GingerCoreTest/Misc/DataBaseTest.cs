@@ -324,7 +324,7 @@ namespace UnitTests.NonUITests
 
         }
 
-        //[Ignore]
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void RenameDBName()

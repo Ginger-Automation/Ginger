@@ -119,7 +119,7 @@ namespace GingerCore.Environments
         [IsSerializedForLocalRepository]
         public eDBTypes DBType { get { return mDBType; }
             set {
-                //mDBType = value;
+                mDBType = value;
                 OnPropertyChanged(Fields.Type);
                 if (DBType==eDBTypes.Cassandra)
                 {
