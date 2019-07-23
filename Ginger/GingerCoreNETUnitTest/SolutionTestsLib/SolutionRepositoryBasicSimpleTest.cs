@@ -18,23 +18,21 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionTestsLib
-{
+{    
     [Level1]
     [TestClass]
     public class SolutionRepositoryBasicSimpleTest
-    {
+    {        
 
         static SolutionRepository SR;
         // Using Mutex for BF because Backup and restore can modify the same instance, so make sure we run one test at a time
@@ -43,22 +41,15 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
-            // BasicSimple is solution which is created automatically when creating new solution, no other items added.
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions\BasicSimple"));
-            SR =  GingerSolutionRepository.CreateGingerSolutionRepository();
-            SR.Open(path);
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(nameof(SolutionRepositoryBasicSimpleTest), path);
+            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]
@@ -99,24 +90,24 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         //}
 
-        [Ignore]
-        [TestMethod]
-        [Timeout(60000)]
-        public void FoldersTerminologyTest()
-        {
+        //[Ignore]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void FoldersTerminologyTest()
+        //{
 
-            //TODO: test with different terminology, make sure when we work as QC or BDD the folder name on disk remains the same 'Business Flows', but the user see - 'Test Sets' etc..
+        //    //TODO: test with different terminology, make sure when we work as QC or BDD the folder name on disk remains the same 'Business Flows', but the user see - 'Test Sets' etc..
 
-            //Arrange            
+        //    //Arrange            
 
-            //Act
-
-
-            //Assert
+        //    //Act
 
 
+        //    //Assert
 
-        }
+
+
+        //}
 
 
 

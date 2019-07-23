@@ -8,6 +8,12 @@ namespace Amdocs.Ginger.Plugin.Core.Attributes
     {
         public readonly string Name;
         public readonly string Description;
+
+        public ServiceConfigurationAttribute()
+        {
+
+        }
+
         public ServiceConfigurationAttribute(string name, string description)
         {
             Name = name;

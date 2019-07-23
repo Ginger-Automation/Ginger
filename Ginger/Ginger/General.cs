@@ -32,6 +32,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace Ginger
 {
@@ -39,15 +40,47 @@ namespace Ginger
     {
         static HelpWindow mGingerHelpWindow = null;
 
-        public enum RepositoryItemPageViewMode
+        public enum eRIPageViewMode
         {
-            Automation = 0, //Item opened from Automate tab and saved item should be App.BusiessFlow
-            Standalone = 1, //Allow edit with Save
-            SharedReposiotry = 2,  //Item opened from Shared Repository in which the item iteself supposed to be saved to XML
-            Child = 3, //Item opened for edit without save
-            ChildWithSave = 4, //Item opened as standalone but in save allows to save it original parent
-            View = 5 //item should be open for read only
+            /// <summary>
+            /// Item opened from Automate page and saved item should be the BusiessFlow which currently loaded in Automate page
+            /// </summary>
+            Automation = 0, 
 
+            /// <summary>
+            /// Allow edit with Save
+            /// </summary>
+            Standalone = 1, 
+
+            /// <summary>
+            /// Item opened from Shared Repository in which the item iteself supposed to be saved to XML
+            /// </summary>
+            SharedReposiotry = 2, 
+            
+            /// <summary>
+            /// Item opened for edit without save
+            /// </summary>
+            Child = 3, 
+
+            /// <summary>
+            /// Item opened as standalone but in save allows to save it original parent
+            /// </summary>
+            ChildWithSave = 4, 
+
+            /// <summary>
+            /// Item should be open for read only
+            /// </summary>
+            View = 5, 
+
+            /// <summary>
+            /// List of Library items to add
+            /// </summary>
+            Add = 6, 
+
+            /// <summary>
+            /// List of items in Shared Repository to add
+            /// </summary>
+            AddFromShardRepository = 7
         }
 
         public static bool isDesignMode()
@@ -497,6 +530,35 @@ namespace Ginger
             }
 
             return tagsDesc;
+        }
+
+        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false)
+        {
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
+            {
+                try
+                {
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
+                    item.RestoreFromBackup(isLocalBackup);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
+                    return false;
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                    Mouse.OverrideCursor = null;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }         
 }

@@ -28,6 +28,11 @@ using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 using System.IO;
 using System.Linq;
 namespace GingerCore.Actions
@@ -121,7 +126,7 @@ namespace GingerCore.Actions
             get { return "Create PDF Chart from CSV data"; }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Excel16x16; } }
+        public override eImageType Image { get { return eImageType.PDFFile; } }
         
         public override void Execute()
         {

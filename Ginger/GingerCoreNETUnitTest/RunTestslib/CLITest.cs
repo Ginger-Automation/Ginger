@@ -4,8 +4,9 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using Ginger.SolutionGeneral;
 using GingerCore.Environments;
+using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -14,12 +15,12 @@ using System.IO;
 using System.Linq;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
-namespace GingerCoreNETUnitTest.RunTestslib
-{
+namespace WorkspaceHold
+{        
     [Level3]
     [TestClass]
     public class CLITest
-    {
+    {        
         // TODO: run one by one as it used same run exc
         static string mTempFolder;
         static string mSolutionFolder;
@@ -27,27 +28,29 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, "CLITest");
+
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
-            mSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
+            mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "CLI");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.CloseSolution();
+            
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-
-
+            WorkspaceHelper.InitWS("CLITest");  // we get seperate workspace for each test
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            WorkSpace.Instance.ReleaseWorkspace(); // We release the workspace after each test
         }
 
 
@@ -79,7 +82,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIConfigRegressionTest()
         {
             //Arrange
-            PrepareForCLIExecution();
+            // PrepareForCLIExecution();
             //Create config file            
             string txt = string.Format("Solution={0}", mSolutionFolder) + Environment.NewLine;
             txt += string.Format("Env={0}", "Default") + Environment.NewLine;
@@ -101,7 +104,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIDynamicTest()
         {
             // Arrange
-            PrepareForCLICreationAndExecution();
+             PrepareForCLICreationAndExecution();
             // Create config file
             CLIHelper cLIHelper = new CLIHelper();
             cLIHelper.RunAnalyzer = true;
@@ -125,9 +128,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIDynamicRegressionTest()
         {
             //Arrange
-            PrepareForCLIExecution();
+            // PrepareForCLIExecution();
             //Create config file       
-            string dynamicXML= System.IO.File.ReadAllText(TestResources.GetTestResourcesFile(@"CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml"));
+            string fileName = Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-Default Run Set.Ginger.AutoRunConfigs.xml");
+            string dynamicXML= System.IO.File.ReadAllText(fileName);
             dynamicXML = dynamicXML.Replace("SOLUTION_PATH", mSolutionFolder);
             string configFile = TestResources.GetTempFile("CLI-Default Run Set.Ginger.AutoRunConfigs.xml");
             System.IO.File.WriteAllText(configFile, dynamicXML);
@@ -145,7 +149,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIScriptTest()
         {
             // Arrange
-            PrepareForCLICreationAndExecution();
+             PrepareForCLICreationAndExecution();
             // Create config file
             CLIHelper cLIHelper = new CLIHelper();
             cLIHelper.RunAnalyzer = true;
@@ -169,7 +173,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIScriptRegressionTest()
         {
             //Arrange
-            PrepareForCLIExecution();
+            // PrepareForCLIExecution();
             // Create config file
             string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
             string jsonFileName = TestResources.GetTempFile("runset.json");
@@ -216,7 +220,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CLIArgsRegressionTest()
         {
             //Arrange
-            PrepareForCLIExecution();
+            // PrepareForCLIExecution();
             // Create config file
             string args = string.Format("--solution {0}", mSolutionFolder);
             args += string.Format("--environment {0}", "Default");
@@ -232,6 +236,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
         }
 
+        
         [TestMethod]
         public void ArgSplit1()
         {
@@ -296,10 +301,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         private void PrepareForCLICreationAndExecution()
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+            //WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            //WorkSpace.Init(WSEH);
+            //WorkSpace.Instance.RunningFromUnitTest = true;
+            //WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
@@ -310,13 +315,14 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.RunsetExecutor.InitRunners();
         }
 
-        private void PrepareForCLIExecution()
-        {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-        }
+        //private void PrepareForCLIExecution()
+        //{
+            
+            //WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            //WorkSpace.Init(WSEH);
+            //WorkSpace.Instance.RunningFromUnitTest = true;
+            //WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
+        //}
 
 
         //[Ignore]

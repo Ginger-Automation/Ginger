@@ -37,7 +37,6 @@ namespace GingerCore.Variables
 
     public abstract class VariableBase : RepositoryItemBase
     {
-
         public enum eSetValueOptions
         {
             [EnumValueDescription("Set Value")]
@@ -130,7 +129,7 @@ namespace GingerCore.Variables
 
         private string mValue;       
         //TODO: fixme value is temp and should not be serialized
-        [IsSerializedForLocalRepository]
+       // [IsSerializedForLocalRepository]
         public virtual string Value
         {
             get
@@ -144,6 +143,11 @@ namespace GingerCore.Variables
             }
         }
 
+        public override void PostSerialization()
+        {
+            ResetValue();
+        }
+
         private string mFormula;
         public string Formula
         {
@@ -153,11 +157,6 @@ namespace GingerCore.Variables
                 if (formula != mFormula)
                 {
                     mFormula = formula;
-                    if ((this is VariableSelectionList) == false) 
-                    {
-                            if(mFormula != null)
-                            this.ResetValue();
-                    }        
                     
                     OnPropertyChanged(nameof(Formula));
                 }
@@ -179,13 +178,15 @@ namespace GingerCore.Variables
             }
         }
         public abstract string GetFormula();
-        public abstract string VariableType();
+        public abstract string VariableType { get; }
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
         public virtual eImageType Image { get { return eImageType.Variable; } }
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
+        public abstract bool SupportResetValue { get; }
+        public abstract bool SupportAutoValue { get; }
 
         //all below used to describe the variable owner in a specific Business Flow
         [IsSerializedForLocalRepository]
@@ -396,8 +397,20 @@ namespace GingerCore.Variables
             }
         }
 
+        string mLinkedVariableName;
         [IsSerializedForLocalRepository]
-        public string LinkedVariableName { get; set; }
+        public string LinkedVariableName
+        {
+            get
+            {
+                return mLinkedVariableName;
+            }
+            set
+            {
+                mLinkedVariableName = value;
+                OnPropertyChanged(nameof(LinkedVariableName));
+            }
+        }
 
         public override string ItemName
         {

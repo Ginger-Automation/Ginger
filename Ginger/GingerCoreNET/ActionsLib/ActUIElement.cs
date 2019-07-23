@@ -30,6 +30,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Reflection;
 
 namespace GingerCore.Actions.Common
@@ -207,6 +212,8 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
+            [EnumValueDescription("ToggleState")]
+            ToggleState,
         }
 
         public enum eElementAction
@@ -495,6 +502,10 @@ namespace GingerCore.Actions.Common
             Submit,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript,
+            
+            //Adding For java driver checkbox element
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
@@ -692,7 +703,23 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Double Click")]
             DoubleClick,
             [EnumValueDescription("Set Focus")]
-            SetFocus
+            SetFocus,
+            [EnumValueDescription("Set Keys")]
+            SendKeys,
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
+            [EnumValueDescription("Set Date")]
+            SelectDate,
+            [EnumValueDescription("Mouse Press & Release")]
+            MousePressAndRelease,
+            [EnumValueDescription("Activate Row")]
+            ActivateRow,
+            [EnumValueDescription("Is Visible")]
+            isVisible,            
+            [EnumValueDescription("Select All Rows")]
+            SelectAllRows,
+            [EnumValueDescription("Right Click")]
+            RightClick
         }
 
         // TODO: move Locate Value to here and remove from Act.cs
@@ -708,7 +735,7 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public override System.Drawing.Image Image
+        public override eImageType Image
         {
             get
             {
@@ -717,33 +744,33 @@ namespace GingerCore.Actions.Common
                 switch (ElementType)
                 {
                     case eElementType.Button:
-                        return Resource.ActButton;
+                        return eImageType.MousePointer;
                     case eElementType.TextBox:
-                        return Resource.TextBox_16x16;
+                        return eImageType.Edit;
                     case eElementType.ComboBox:
-                        return Resource.DropDownList_16x16;
+                        return eImageType.ExpandAll;
                     case eElementType.List:
-                        return Resource.List_16x16;
+                        return eImageType.DropList;
                     case eElementType.CheckBox:
-                        return Resource.CheckBox_16x16;
+                        return eImageType.CheckBox;
                     case eElementType.Image:
-                        return Resource.Image_16x16;
+                        return eImageType.Image;
                     case eElementType.Label:
-                        return Resource.Label_16x16;
+                        return eImageType.Paragraph;
                     case eElementType.MenuItem:
-                        return Resource.MenuItem_16x16;
+                        return eImageType.Menu;
                     case eElementType.MenuBar:
-                        return Resource.MenuBar_16x16;
+                        return eImageType.Window;
                     case eElementType.RadioButton:
-                        return Resource.RadioButton_16x16;
+                        return eImageType.RadioButton;
                     case eElementType.TreeView:
-                        return Resource.TreeView_16x16;
+                        return eImageType.MapSigns;
                     case eElementType.Window:
-                        return Resource.Window_16x16;
+                        return eImageType.WindowsIcon;
                     case eElementType.Table:
-                        return Resource.Table;
+                        return eImageType.Table;
                     default:
-                        return Resource.Window_16x16;  // FIXME
+                        return eImageType.Window;  // FIXME
                 }
             }
         }
@@ -980,6 +1007,9 @@ namespace GingerCore.Actions.Common
         }
 
 
+
+        // Dup put in centralized location !!!
+
         public struct Locator
         {
             public string By;
@@ -989,13 +1019,15 @@ namespace GingerCore.Actions.Common
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Any", action: "UIElementAction");            
+            // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
+
+            PlatformAction platformAction = new PlatformAction(actionHandler:"UIElementAction", action: "UIElementAction");            
             platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
             platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
             // Add elem type POM data etc.
             List<Locator> locators = new List<Locator>();
-            locators.Add(new Locator() { By = "ID", Value = "aaa" });
+            locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
             
             platformAction.InputParams.Add("Locators", locators);
 

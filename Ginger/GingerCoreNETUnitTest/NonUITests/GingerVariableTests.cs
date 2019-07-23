@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -27,24 +26,32 @@ using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{
+{ 
+    [Ignore] // temp
     [TestClass]
     [Level1]
     public class GingerVariableTests
     {
+
+        // static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerVariableTests");
+
         static BusinessFlow mBF;
         static GingerRunner mGR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            AutoLogProxy.Init("Unit Tests");
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, "GingerVariableTests");
+
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
@@ -59,8 +66,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent a = new Agent();
-            a.DriverType = Agent.eDriverType.SeleniumChrome;
+            Agent a = new Agent();            
+            a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
@@ -69,6 +76,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+        }
+
+        [ClassCleanup()]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 
@@ -100,9 +113,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, newValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual(newValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -126,9 +139,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
-            Assert.AreEqual(v1.Value, initialValue);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus );
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status );
+            Assert.AreEqual(initialValue, v1.Value );
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -154,8 +167,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
-            Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
-            Assert.AreEqual(activity1.Status, eRunStatus.Passed);
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(expectedValue, mBF.Activities[0].Variables[0].Value);
             Assert.AreEqual(expectedValue, v1.Value);
         }

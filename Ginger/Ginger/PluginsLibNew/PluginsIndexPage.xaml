@@ -26,7 +26,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10" Name="xNewReleaseSection">
                 <Label Content="Version:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
-                <ComboBox x:Name="xVersionComboBox" Width="100" Style="{StaticResource $FlatEditInputComboBoxStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xVersionComboBox" Width="100" Style="{StaticResource $FlatEditInputComboBoxStyle}" VerticalAlignment="Center"/>                
                 <UserControls:ucButton x:Name="xInstallButton" ButtonType="RoundTextAndImageButton"  ButtonText="Install" ButtonImageType="Download" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="xInstallButonn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top"  Margin="10">

@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActBrowserElement : Act, IActPluginExecution
@@ -151,6 +153,8 @@ namespace GingerCore.Actions
             CloseTabExcept,
             [EnumValueDescription("Close All")]
             CloseAll,
+            [EnumValueDescription("Get Browser Logs")]
+            GetBrowserLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
@@ -262,6 +266,7 @@ namespace GingerCore.Actions
             }
         }
 
+        public override eImageType Image { get { return eImageType.Globe; } }
         public string PomGUID
         {
             get
@@ -279,10 +284,8 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(platform: "Web", action: "BrowserAction" );                        
-            platformAction.InputParams.Add("BrowserAction", ControlAction.ToString());            
-            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);
-            platformAction.InputParams.Add(nameof(Value), Value);   // !!!!!!!!!!!!!!!!!!!
+            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
+            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
             platformAction.InputParams.Add("URL", Value);
             return platformAction;            
         }

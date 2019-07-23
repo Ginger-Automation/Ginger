@@ -38,26 +38,28 @@ namespace Ginger.Actions
     /// </summary>
     public partial class ActionFlowControlPage : Page
     {
-        private Act mAct;
+        Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
         Activity mActParentActivity = null;
+        General.eRIPageViewMode mEditMode;
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
 
-        public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation)
         {
             InitializeComponent();
 
             mAct = act;
             mActParentBusinessFlow = actParentBusinessFlow;
-            mActParentActivity = actParentActivity;  
-            
+            mActParentActivity = actParentActivity;
+            mEditMode = editMode;
+
             SetGridView();
             FlowControlGrid.DataSourceList = mAct.FlowControls;
 
             FlowControlGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFlowControl));
 
             // TODO:  open new edit page -  FlowControlGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));                      
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
             }
@@ -101,6 +103,8 @@ namespace Ginger.Actions
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
             factory.SetValue(UCFlowControlAction.ActParentBusinessFlowProperty, mActParentBusinessFlow);
             factory.SetValue(UCFlowControlAction.ActParentActivityProperty, mActParentActivity);
+            factory.SetValue(UCFlowControlAction.ActionProperty, mAct);
+            factory.SetValue(UCFlowControlAction.RepositoryItemModeProperty, mEditMode);
             template.VisualTree = factory;
             return template;
         }

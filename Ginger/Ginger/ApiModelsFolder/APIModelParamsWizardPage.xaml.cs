@@ -188,7 +188,7 @@ namespace Ginger.ApiModelsFolder
         private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             EnhancedActInputValue AIV = (EnhancedActInputValue)xAPIModelParamsValueUCGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAddApiModelActionWizardPage.Context);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, mAddApiModelActionWizardPage.mContext);
             VEEW.ShowAsWindow();
         }
         private void MapOutputToDataSource(object sender, RoutedEventArgs e)
@@ -209,7 +209,7 @@ namespace Ginger.ApiModelsFolder
 
                 foreach (EnhancedActInputValue inputVal in mAddApiModelActionWizardPage.EnhancedInputValueList)
                 {
-                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
+                    string sColName = inputVal.Param.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "").Replace("<","").Replace(">","");
                     inputVal.Value = "{DS Name=" + dataSourceTablesListPage.DSName + " DST=" + dataSourceTablesListPage.DSTableName + " ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=" + sColName + " IROW=NxtAvail}";
                 }
 

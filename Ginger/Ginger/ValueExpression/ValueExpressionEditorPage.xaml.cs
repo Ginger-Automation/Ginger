@@ -600,7 +600,6 @@ namespace Ginger
                 //}
                 ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
                 if (ds.DSType == DataSourceBase.eDSType.MSAccess)
                     SetItemView(tviDataSource, ds.Name, ds.Name, "@AccessDataSource_16x16.png");                
@@ -835,7 +834,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType(), "Current Value", Var.Value);
+            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", Var.Value);
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)

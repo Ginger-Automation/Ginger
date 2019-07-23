@@ -22,6 +22,7 @@ using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace GingerCoreNETUnitTest.WorkSpaceLib
@@ -29,17 +30,30 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
     [TestClass]
     public class UserProfileTest
     {
+        
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws);
+            WorkspaceHelper.CreateDummyWorkSpace(nameof(UserProfileTest));            
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
 
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            
+        }
+
+        [Ignore]
         [TestMethod]
-        [Ignore] // Failing !!! needs fix!!! in UserProfile have one list of recent
+         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects 
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -65,18 +79,19 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
 
+        [Ignore] // will not work on Linux
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
         {
-            //// Arrange            
+            // Arrange            
 
-            ////Act
-            //string s = UserProfile.crea.CreateUserProfileFileName();
+            //Act
+            string s = UserProfile.UserProfileFilePath.ToLower();
 
-            ////Assert
-            //string username = Environment.UserName.ToLower();
-            //Assert.AreEqual(@"C:\Users\" + username + @"\AppData\Roaming\Ginger\" + username + ".Ginger.UserProfile.xml", s);
+            //Assert
+            string expected = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml"; //  Linux!!!!!!!!!!!
+            Assert.AreEqual(expected, s);   
         }
 
     }

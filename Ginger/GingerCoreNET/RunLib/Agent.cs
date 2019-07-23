@@ -276,10 +276,50 @@ namespace GingerCore
                 return eStatus.NotStarted;
             }
         }
-
+        
         private eDriverType mDriverType;
         [IsSerializedForLocalRepository]
-        public eDriverType DriverType { get { return mDriverType; } set { if (mDriverType != value) { mDriverType = value; OnPropertyChanged(nameof(DriverType)); } } }
+        public eDriverType DriverType
+        {
+            get
+            {
+                return mDriverType;
+            }
+            set
+            {
+                if (mDriverType != value)
+                {
+                    mDriverType = value;
+                    OnPropertyChanged(nameof(DriverType));
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method is used to check if the paltform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSupportRecording()
+        {
+            bool isSupport = false;
+            switch (DriverType)
+            {
+                case eDriverType.SeleniumFireFox:
+                case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumIE:
+                case eDriverType.SeleniumRemoteWebDriver:
+                case eDriverType.SeleniumEdge:
+                case eDriverType.ASCF:
+                case eDriverType.MobileAppiumAndroid:
+                case eDriverType.MobileAppiumIOS:
+                case eDriverType.MobileAppiumAndroidBrowser:
+                case eDriverType.MobileAppiumIOSBrowser:
+                case eDriverType.JavaDriver:
+                    isSupport = true;
+                    break;
+            }
+            return isSupport;
+        }
 
         private string mNotes;
         [IsSerializedForLocalRepository]
@@ -330,6 +370,8 @@ namespace GingerCore
 
         public void StartDriver()
         {
+            WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = AgentType.ToString(), DriverType = DriverType.ToString() });
+
             // if plugin 
             if (AgentType == eAgentType.Service)
             {
@@ -360,7 +402,7 @@ namespace GingerCore
                 gingerNodeInfo = FindFreeNode(ServiceId);                
 
                 // Service not found start new one
-                // Add plugin config start if not exist and more depeneds on the config 
+                // Add plugin config start if not exist and more depends on the config 
                 if (gingerNodeInfo == null)
                 {
                     // Dup with GR consolidate with timeout
@@ -651,20 +693,24 @@ namespace GingerCore
                         // this is plugin driver
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-                        GingerNodeProxy.CloseDriver();
+                        GingerNodeProxy.CloseDriver();                        
+
 
                         gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
                       
                    
-                        if (mProcess != null)
-                        {
-                            // mProcess.Kill();
-                            //mProcess.Close();
-                            //GingerCore.General.DoEvents();
+                        if (mProcess != null) // it means a new plugin process was started for this agent - so we close it
+                        {                            
+                            // Remove the node from the grid
+                            WorkSpace.Instance.LocalGingerGrid.NodeList.Remove(gingerNodeInfo);
+
+                            // Close the plugin process
                             mProcess.CloseMainWindow();
                         }
+
+                        GingerNodeProxy = null;
                         gingerNodeInfo = null;
-                        // GNP.Shutdown();
+                        
                         return;
                     }
                 }
@@ -687,7 +733,7 @@ namespace GingerCore
 
                 if (MSTATask != null)
                 {
-                    // Using Cancelleation token soucrce to cancel 
+                    // Using cancellation token source to cancel 
                     CancelTask = new BackgroundWorker();
                     CancelTask.DoWork += new DoWorkEventHandler(CancelTMSTATask);
                     CancelTask.RunWorkerAsync();
@@ -714,7 +760,7 @@ namespace GingerCore
             if (MSTATask == null)
                 return;
             
-                // Using Cancelleation token soucrce to cancel  getting exceptions when trying to close agent and task is in running condition
+                // Using cancellation token source to cancel  getting exceptions when trying to close agent and task is in running condition
 
                 while(MSTATask!=null &&   !(MSTATask.Status==TaskStatus.RanToCompletion ||MSTATask.Status== TaskStatus.Faulted ||MSTATask.Status== TaskStatus.Canceled))
                 {
@@ -741,8 +787,6 @@ namespace GingerCore
                 if (mPlatform != null)
                 {
                     return mPlatform.Value;
-
-
                 }
                 else
                 {
@@ -1021,6 +1065,22 @@ namespace GingerCore
             {
                 return nameof(this.Name);
             }
+        }
+
+        public override void PostSerialization()
+        {
+
+            if(DriverType == eDriverType.WindowsAutomation)
+            {
+                //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
+                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
+
+                if (actionTimeoutParameter!=null && actionTimeoutParameter.Value== "10" && actionTimeoutParameter.Description.Contains("10"))
+                {
+                    actionTimeoutParameter.Value = "30";
+                    actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
+                }
+            }          
         }
 
     }

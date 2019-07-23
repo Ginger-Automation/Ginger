@@ -11,11 +11,14 @@ import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -111,6 +114,27 @@ public class BasicSwingApp extends javax.swing.JFrame {
         jList1 = new javax.swing.JList(countries); 
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList1.setName("countryLst");
+        
+        
+        JPopupMenu popupMenu = new JPopupMenu("My Pop up");
+        JMenuItem menuItemAdd = new JMenuItem("Add New Row");
+        menuItemAdd.setName("AddNewRow");
+        JMenuItem menuItemRemove = new JMenuItem("Remove Current Row");
+        JMenuItem menuItemRemoveAll = new JMenuItem("Remove All Rows");
+         
+        
+        menuItemAdd.addActionListener(new ActionListener() {
+        	 
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(rootPane, "New row clicked!");
+            }
+        });
+        
+        popupMenu.add(menuItemAdd);
+        popupMenu.add(menuItemRemove);
+        popupMenu.add(menuItemRemoveAll);
+        
+        
         
         //create the root node
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
@@ -364,7 +388,7 @@ public class BasicSwingApp extends javax.swing.JFrame {
         });
         jTable1.setName("empDetails"); // NOI18N
         jScrollPane2.setViewportView(jTable1);
-
+        jTable1.setComponentPopupMenu(popupMenu);
         jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTabbedPane1.setName("TabbedPane1"); // NOI18N
 

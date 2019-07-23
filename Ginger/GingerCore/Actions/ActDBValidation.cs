@@ -29,6 +29,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     // TODO: rename to DBAction
@@ -431,7 +433,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.DataBase; } }
+        public override eImageType Image { get { return eImageType.Database; } }
 
         public override ActionDetails Details
         {

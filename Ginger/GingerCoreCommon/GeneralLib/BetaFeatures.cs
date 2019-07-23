@@ -73,8 +73,8 @@ namespace Amdocs.Ginger.Common
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
 
-        // CDL
-        public bool ShowNewautomate { get { return GetFeature(nameof(ShowNewautomate)).Selected; } set { UpdateFeature(nameof(ShowNewautomate), value); } }
+        // CDL      
+        public bool ShowOldAutomate { get { return GetFeature(nameof(ShowOldAutomate)).Selected; } set { UpdateFeature(nameof(ShowOldAutomate), value); } }
 
 
 
@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
 
             //New Automate
-            mFeatures.Add(new BetaFeature() { Group = "Automate", Description = "Show new automate Ribbon", ID = nameof(ShowNewautomate) });
+            mFeatures.Add(new BetaFeature() { Group = "Automate", Description = "Show Old Automate Page", ID = nameof(ShowOldAutomate) });
 
 
             //hook prop change
