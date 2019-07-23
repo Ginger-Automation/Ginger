@@ -443,7 +443,7 @@ namespace Ginger.Variables
         {
             if (variable == null) return;
 
-            Reporter.ToStatus(eStatusMsgKey.UpdateItem, null, variable.NameBeforeEdit,variable.Name);
+            Reporter.ToStatus(eStatusMsgKey.RenameItem, null, variable.NameBeforeEdit,variable.Name);
             try
             {
                 switch (mVariablesLevel)

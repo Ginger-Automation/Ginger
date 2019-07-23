@@ -110,7 +110,7 @@ namespace Ginger.Environments
             {
                 await Task.Run(() =>
                 {
-                    Reporter.ToStatus(eStatusMsgKey.UpdateItem, null, db.NameBeforeEdit, db.Name);
+                    Reporter.ToStatus(eStatusMsgKey.RenameItem, null, db.NameBeforeEdit, db.Name);
                     ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                     Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
                     {
