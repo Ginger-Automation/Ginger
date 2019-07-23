@@ -177,10 +177,6 @@ namespace Ginger.Run.RunSetActions
                 liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
             }
 
-            if (!System.IO.Directory.Exists(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder))
-            {
-                System.IO.Directory.CreateDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
-            }
             tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
             TemplatesFolder = (Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
             string runSetFolder = string.Empty;
