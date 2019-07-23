@@ -28,6 +28,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.WebServices;
 
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActWebService : Act, IObsoleteAction
@@ -180,6 +182,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Act; } }
+        public override eImageType Image { get { return eImageType.Exchange; } }
     }
 }

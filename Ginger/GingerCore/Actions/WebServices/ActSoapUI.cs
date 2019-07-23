@@ -25,6 +25,8 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActSoapUI : Act
@@ -41,7 +43,7 @@ namespace GingerCore.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
-        public override System.Drawing.Image Image { get { return Resources.SoapUI16x16; } }
+        public override eImageType Image { get { return eImageType.Exchange; } }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms

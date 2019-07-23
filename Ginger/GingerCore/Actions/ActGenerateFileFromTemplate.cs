@@ -28,6 +28,8 @@ using System.Data.OleDb;
 using System.IO;
 using System.Text;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActGenerateFileFromTemplate : ActWithoutDriver
@@ -110,7 +112,7 @@ namespace GingerCore.Actions
         }
 
         //TODO: icon
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.File; } }
 
 
         public override void Execute()

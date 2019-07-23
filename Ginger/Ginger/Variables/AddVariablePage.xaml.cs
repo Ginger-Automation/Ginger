@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.SolutionGeneral;
+using GingerCore;
+using GingerCore.Variables;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using GingerCore;
-using GingerCore.Variables;
-using Ginger.UserControls;
-using Ginger.Environments;
-using Ginger.SolutionGeneral;
 
 namespace Ginger.Variables
 {
@@ -35,125 +35,155 @@ namespace Ginger.Variables
     /// </summary>
     public partial class AddVariablePage : Page
     {
+        VariablesListViewHelper mLibraryVarsHelper;
+        ObservableList<VariableBase> mLibraryVarsList;
+        VariablesListViewHelper mSharedRepoVarsHelper;
+        ObservableList<VariableBase> mSharedRepoVarsList;
         GenericWindow _pageGenericWin = null;
-        private eVariablesLevel mVariablesLevel;
-        private object mVariablesParentObj;
+        eVariablesLevel mVariablesLevel;
+        RepositoryItemBase mVariablesParentObj;
+        Context mContext;
 
-        Context mContext = new Context();
-
-        public AddVariablePage(eVariablesLevel variablesLevel, object variablesParentObj,Context context)
+        public AddVariablePage(eVariablesLevel variablesLevel, RepositoryItemBase variablesParentObj, Context context)
         {
             InitializeComponent();
-
-            this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 
             mVariablesLevel = variablesLevel;
             mContext = context;
             mVariablesParentObj = variablesParentObj;
-            if(variablesLevel == eVariablesLevel.BusinessFlow)
-            { 
-                mContext.BusinessFlow = (BusinessFlow)variablesParentObj;
-            }
-            SetVariablesGridView();
-            LoadGridData();
-            VariablesGrid.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+
+            SetUIControlsContent();
         }
 
-        private void LoadGridData()
+        private void SetUIControlsContent()
         {
-            ObservableList<VariableBase> l = new ObservableList<VariableBase>();
+            mLibraryVarsList = LoadLibraryVarsList();
+            mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mLibraryVarsList.Count);
+            xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
+            xLibraryTabListView.DataSourceList = mLibraryVarsList;
+            xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
+
+            mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.AddFromShardRepository);
+            xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
+            xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
+            xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
+            xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
+        }
+
+        private void XLibraryTabListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AddLibraryVariables();
+        }
+
+        private void XSharedRepoTabListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (xSharedRepoTabListView.CurrentItem != null)
+            {
+                VariableEditPage w = new VariableEditPage((VariableBase)xSharedRepoTabListView.CurrentItem, mContext, false, VariableEditPage.eEditMode.SharedRepository);
+                w.ShowAsWindow(eWindowShowStyle.Dialog);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectVariable);
+            }
+        }
+
+        private ObservableList<VariableBase> LoadLibraryVarsList()
+        {
+            ObservableList<VariableBase> list = new ObservableList<VariableBase>();
             var varTypes = from type in typeof(VariableBase).Assembly.GetTypes()
                            where type.IsSubclassOf(typeof(VariableBase))
                            && type != typeof(VariableBase)
                            select type;
 
-
             foreach (Type t in varTypes)
             {
                 VariableBase v = (VariableBase)Activator.CreateInstance(t);
-                l.Add(v);
+                v.Name = v.VariableType;
+                list.Add(v);
             }
 
-            VariablesGrid.DataSourceList = l;
-        }
-
-        private void SetVariablesGridView()
-        {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
-            view.GridColsView = viewCols;
-
-            viewCols.Add(new GridColView() { Field = nameof(VariableBase.VariableUIType) , Header= GingerDicser.GetTermResValue(eTermResKey.Variable) + " Type", BindingMode=BindingMode.OneWay, ReadOnly=true});
-
-            VariablesGrid.SetAllColumnsDefaultView(view);
-            VariablesGrid.InitViewItems();
-        }
-
-        private void AddVariableButton_Click(object sender, RoutedEventArgs e)
-        {
-            AddVariable();
-        }
-
-        private void VariablesGrid_grdMain_MouseDoubleClick(object sender, EventArgs e)
-        {
-            AddVariable();
-        }
-
-        private void AddVariable()
-        {
-            VariableBase newVar= (VariableBase)((VariableBase)VariablesGrid.CurrentItem).CreateCopy();
-            if (mVariablesParentObj != null)
-            {
-                switch (mVariablesLevel)
-                {
-                    case eVariablesLevel.Solution:
-                        ((Solution)mVariablesParentObj).AddVariable(newVar);
-                        break;
-                    case eVariablesLevel.BusinessFlow:
-                        ((BusinessFlow)mVariablesParentObj).AddVariable(newVar);
-                        break;
-                    case eVariablesLevel.Activity:
-                        ((Activity)mVariablesParentObj).AddVariable(newVar);
-                        break;
-                }
-            }
-            else
-            {
-                return;
-            }
-
-            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
-            if (mVariablesLevel == eVariablesLevel.Solution)
-            {
-                editMode = VariableEditPage.eEditMode.Global;
-            }
-            VariableEditPage varEditPage = new VariableEditPage(newVar, mContext, false, editMode);
-            _pageGenericWin.Close();
-            varEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
-          
-
-            //make sure name is unique
-            switch (mVariablesLevel)
-            {
-                case eVariablesLevel.Solution:
-                    ((Solution)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
-                case eVariablesLevel.BusinessFlow:
-                    ((BusinessFlow)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
-                case eVariablesLevel.Activity:
-                    ((Activity)mVariablesParentObj).SetUniqueVariableName(newVar);
-                    break;
-            }
+            return list;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
+            this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+
             Button addVarBtn = new Button();
             addVarBtn.Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
             addVarBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
-         
+
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { addVarBtn });
+        }
+
+        private void AddVariableButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (xLibraryTab.IsSelected)
+            {
+                AddLibraryVariables();
+            }
+            else
+            {
+                AddSharedRepoVariables();
+            }
+
+            _pageGenericWin.Close();
+        }
+
+        private void AddLibraryVariables()
+        {
+            foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
+            {
+                AddVarToParent((VariableBase)varToAdd.CreateCopy());
+            }
+        }
+
+        private void AddSharedRepoVariables()
+        {
+            foreach (VariableBase varToAdd in xSharedRepoTabListView.List.SelectedItems)
+            {
+                AddVarToParent((VariableBase)varToAdd.CreateInstance(true));
+            }
+        }
+
+        private void AddVarToParent(VariableBase newVar)
+        {
+            switch (mVariablesLevel)
+            {
+                case eVariablesLevel.Solution:
+                    if (((Solution)mVariablesParentObj).Variables.CurrentItem != null)
+                    {
+                        ((Solution)mVariablesParentObj).AddVariable(newVar, ((Solution)mVariablesParentObj).Variables.IndexOf((VariableBase)((Solution)mVariablesParentObj).Variables.CurrentItem) + 1);
+                    }
+                    else
+                    {
+                        ((Solution)mVariablesParentObj).AddVariable(newVar);
+                    }
+                    break;
+                case eVariablesLevel.BusinessFlow:
+                    if (((BusinessFlow)mVariablesParentObj).Variables.CurrentItem != null)
+                    {
+                        ((BusinessFlow)mVariablesParentObj).AddVariable(newVar, ((BusinessFlow)mVariablesParentObj).Variables.IndexOf((VariableBase)((BusinessFlow)mVariablesParentObj).Variables.CurrentItem) + 1);
+                    }
+                    else
+                    {
+                        ((BusinessFlow)mVariablesParentObj).AddVariable(newVar);
+                    }
+                    break;
+                case eVariablesLevel.Activity:
+                    if (((Activity)mVariablesParentObj).Variables.CurrentItem != null)
+                    {
+                        ((Activity)mVariablesParentObj).AddVariable(newVar, ((Activity)mVariablesParentObj).Variables.IndexOf((VariableBase)((Activity)mVariablesParentObj).Variables.CurrentItem) + 1);
+                    }
+                    else
+                    {
+                        ((Activity)mVariablesParentObj).AddVariable(newVar);
+                    }
+                    break;
+            }
         }
     }
 }

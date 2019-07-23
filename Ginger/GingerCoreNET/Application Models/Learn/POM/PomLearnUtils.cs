@@ -186,7 +186,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     ElementInfo learnedElement = (ElementInfo)e.NewItems[0];
 
                     SetLearnedElementDetails(learnedElement);
-
+                    learnedElement.ParentGuid = POM.Guid;
                     //add to relevent group
                     if (SelectedElementTypesList.Contains(learnedElement.ElementTypeEnum))
                     {

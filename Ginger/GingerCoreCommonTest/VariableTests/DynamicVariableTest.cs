@@ -62,7 +62,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableDynamic variableDynamic = new VariableDynamic();
 
             //Act
-            string varType = variableDynamic.VariableType();
+            string varType = variableDynamic.VariableType;
 
             //Assert            
             Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");
@@ -91,7 +91,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eImageType = variableDynamic.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Random, eImageType, "Image Type");
+            Assert.AreEqual(eImageType.CSS3Text, eImageType, "Image Type");
         }
 
         //[Ignore]

@@ -34,6 +34,8 @@ using MySql.Data.MySqlClient;
 using Amdocs.Ginger.Common.InterfacesLib;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using GingerCore.Actions;
+
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase, IDatabase
@@ -105,9 +107,11 @@ namespace GingerCore.Environments
                 OnPropertyChanged(Fields.KeepConnectionOpen);
             }
         }
-       
+
+
+        private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
+        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(Fields.Name); } }
 
         [IsSerializedForLocalRepository]
         public string Description { get; set; }
@@ -220,7 +224,9 @@ namespace GingerCore.Environments
             }
         }
 
+        public string NameBeforeEdit;
 
+       
         public string GetConnectionString()
         {
             string connStr = null;

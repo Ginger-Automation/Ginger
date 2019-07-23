@@ -50,7 +50,7 @@
         <state:BorderStatus x:Name="xBorder" Grid.RowSpan="7"  Grid.ColumnSpan="4"></state:BorderStatus>
 
         <DockPanel x:Name="xExecutionOperationsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 4 0 0" >
-            <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Rest &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Play" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Rest &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
         </DockPanel>
@@ -76,9 +76,9 @@
             <StackPanel x:Name="xOperationsPnl" Grid.Row="2" Orientation="Horizontal" Margin="5,0,0,0">
                 <usercontrols:ImageMakerControl x:Name="xRunOption" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Thin" HorizontalAlignment="Left" Visibility="Collapsed"/>
                 <usercontrols:ImageMakerControl x:Name="xSimulationMode" ImageType="ItemModified"  SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Thin" HorizontalAlignment="Left" Visibility="Collapsed"/>
-                <usercontrols:ucButton x:Name="xRunnerActive" ButtonFontImageSize="20" ButtonImageWidth="30" ButtonImageHeight="20" ButtonType="ImageButton" ButtonImageType="Active" ToolTip="Active / Inactive Runner" Click="xRunnerActive_Click" />
-                <usercontrols:ucButton x:Name="xremoveRunner" ToolTip="Remove Runner" ButtonType="ImageButton" SetBorder="True"  ButtonFontImageSize="12" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="DeleteSingle" Click="xremoveRunner_Click"></usercontrols:ucButton>
-                <usercontrols:ucButton x:Name="xConfigButton" ButtonType="ImageButton" ToolTip="Configure Runner" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xConfigButton_Click" HorizontalAlignment="Left"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xRunnerActive" ButtonFontImageSize="18" ButtonType="ImageButton" ButtonImageType="Active" ToolTip="Active" Click="xRunnerActive_Click" />
+                <usercontrols:ucButton x:Name="xremoveRunner" ToolTip="Remove Runner" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageType="Delete" Click="xremoveRunner_Click"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xConfigButton" ButtonType="ImageButton" ToolTip="Configure Runner" ButtonFontImageSize="18" ButtonImageType="Config" Click="xConfigButton_Click" HorizontalAlignment="Left"></usercontrols:ucButton>
                 <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Height="25">
                     <MenuItem>
                         <MenuItem.Icon>

@@ -23,6 +23,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Common
 {
     // this action is for device Media actions like: Record Audio, Video Play and more
@@ -77,6 +79,6 @@ namespace GingerCore.Actions.Common
         }
 
         //TODO: put icon of Media
-        public override System.Drawing.Image Image { get { return Resources.MobileDevice_16x16; } }
+        public override eImageType Image { get { return eImageType.FileVideo; } }
     }
 }

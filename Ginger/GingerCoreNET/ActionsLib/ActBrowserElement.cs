@@ -27,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     public class ActBrowserElement : Act, IActPluginExecution
@@ -264,6 +266,7 @@ namespace GingerCore.Actions
             }
         }
 
+        public override eImageType Image { get { return eImageType.Globe; } }
         public string PomGUID
         {
             get

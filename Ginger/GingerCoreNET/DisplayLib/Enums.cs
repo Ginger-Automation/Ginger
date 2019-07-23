@@ -39,5 +39,6 @@ namespace Amdocs.Ginger.Core
         RoundTextAndImageButton,        
         CircleImageButton,
         CircleImageLightButton,
+        PanelButton,
     }
 }

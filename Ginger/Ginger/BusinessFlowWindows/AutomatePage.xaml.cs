@@ -125,8 +125,8 @@ namespace Ginger
             btnResetFromCurrentActivity.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             btnResetFromCurrentAction.ImageSource = ImageMakerControl.GetImageSource(eImageType.Reset, width: 14);
             cboSpeed.Text = "0";
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, Ginger.Run.GingerRunner.Fields.RunInSimulationMode);
-            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mContext);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SimulationMode, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.RunInSimulationMode));
+            AppAgentsMappingExpander2Frame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
             SetExpanders();
             //Bind between Menu expanders and actual grid expanders
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BFVariablesExpander, Expander.IsExpandedProperty, BFVariablesExpander2, "IsExpanded");
@@ -294,22 +294,22 @@ namespace Ginger
             CurrentBusFrame.Content = mCurrentBusPage;
             CurrentBusExpander.IsExpanded = false;
 
-            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext,General.RepositoryItemPageViewMode.Automation);
+            mVariablesPage = new VariablesPage(eVariablesLevel.BusinessFlow, mBusinessFlow, mContext,General.eRIPageViewMode.Automation);
             mVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             BFVariablesFrame.Content = mVariablesPage;
-            mActivitiesGroupsPage = new ActivitiesGroupsPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation);
+            mActivitiesGroupsPage = new ActivitiesGroupsPage(mBusinessFlow, General.eRIPageViewMode.Automation);
             mActivitiesGroupsPage.grdActivitiesGroups.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesGroupsFrame.Content = mActivitiesGroupsPage;
 
-            mActivitiesPage = new ActivitiesPage(mBusinessFlow, General.RepositoryItemPageViewMode.Automation, mContext);
+            mActivitiesPage = new ActivitiesPage(mBusinessFlow, General.eRIPageViewMode.Automation, mContext);
             mActivitiesPage.grdActivities.ShowTitle = System.Windows.Visibility.Collapsed;
             BFActivitiesFrame.Content = mActivitiesPage;
 
-            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, mContext, General.RepositoryItemPageViewMode.Automation);
+            mActivityVariablesPage = new VariablesPage(eVariablesLevel.Activity, mBusinessFlow.CurrentActivity, mContext, General.eRIPageViewMode.Automation);
             mActivityVariablesPage.grdVariables.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityVariablesFrame.Content = mActivityVariablesPage;
 
-            mActionsPage = new ActionsPage(businessFlow:mBusinessFlow, editMode: General.RepositoryItemPageViewMode.Automation, context: mContext);
+            mActionsPage = new ActionsPage(businessFlow:mBusinessFlow, editMode: General.eRIPageViewMode.Automation, context: mContext);
             mActionsPage.grdActions.ShowTitle = System.Windows.Visibility.Collapsed;
             ActivityActionsFrame.Content = mActionsPage;
 
@@ -955,7 +955,7 @@ namespace Ginger
                         mCurrentActivity.PropertyChanged += MCurrentActivity_PropertyChanged;
                     }                                  
                 }
-                else if(e.PropertyName == BusinessFlow.Fields.Name)
+                else if(e.PropertyName == nameof(BusinessFlow.Name))
                 {
                     UpdateMainBFLabel();
                 }
@@ -1770,7 +1770,7 @@ namespace Ginger
 
         private void CboSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mRunner.SetSpeed(int.Parse(cboSpeed.Text));
+            mRunner.AutoWait = int.Parse(cboSpeed.Text);
         }
     }
 }
