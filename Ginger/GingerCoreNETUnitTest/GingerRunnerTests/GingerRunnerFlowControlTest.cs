@@ -36,19 +36,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
-    {
-        static TestContext mContext;
-
+    {        
         static GingerRunner mGR;
 
         Mutex mGingerMutex = new Mutex();
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {
-            mContext = context;            
-            // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
-
+        {       
             mGR = new GingerRunner();
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
@@ -61,24 +56,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestInitialize]
         public void TestInitialize()
-        {
-            string info = (string)mContext.Properties["TestName"];
-            Console.WriteLine("########################### Starting Test >>>>>>>>>>>>>>>>>>>>>>>>>>" + info);
-
-
-            if (Directory.Exists(@"d:\a\1\a"))
-            {
-                File.WriteAllText(@"d:\a\1\a\testrun.log", info + Environment.NewLine);
-            }
-
+        {            
             mGingerMutex.WaitOne();
         }
 
         [TestCleanup]
         public void TestCleanup()
-        {
-            string info = (string)mContext.Properties["TestName"] + mContext.TestName + " >>> " + mContext.CurrentTestOutcome;
-            Console.WriteLine("########################### End Test >>>>>>>>>>>>>>>>>>>>>>>>>>" + info);
+        {            
             mGingerMutex.ReleaseMutex();
         }
 
