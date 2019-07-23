@@ -211,14 +211,14 @@ namespace GingerCore.GeneralLib
                 return mValueExpression;
             }
         }
-        public bool IsBodyHTML { get; set; } = false;
+        public bool IsBodyHTML { get; set; } = true;
         public Email()
         {
             Attachments = new List<string>();
         }
 
         public bool Send()
-        {
+        {           
             //If Outlook Option is selected
             if (EmailMethod == eEmailMethod.OUTLOOK)
             {
@@ -235,7 +235,7 @@ namespace GingerCore.GeneralLib
         public AlternateView alternateView { get; set; }
         private bool Send_Outlook(bool actualSend = true)
         {
-            bool a= RepositoryItemHelper.RepositoryItemFactory.Send_Outlook(actualSend,MailTo,Event,Subject,Body,MailCC,Attachments,EmbededAttachment);
+            bool a = RepositoryItemHelper.RepositoryItemFactory.Send_Outlook(actualSend, MailTo, Event, Subject, Body, MailCC, Attachments, EmbededAttachment);
             return a;
         }
 
@@ -245,7 +245,7 @@ namespace GingerCore.GeneralLib
             RepositoryItemHelper.RepositoryItemFactory.DisplayAsOutlookMail();
            // mOutlookMail.Display();
         }
-
+        
         public bool Send_SMTP()
         {
             try
@@ -327,7 +327,7 @@ namespace GingerCore.GeneralLib
                 mVE.Value = Body;
                 string body = mVE.ValueCalculated;
 
-                myMail.From = fromAddress;
+                myMail.From = fromAddress;                
                 myMail.IsBodyHtml = IsBodyHTML;
 
                 myMail.Subject = subject.Replace('\r', ' ').Replace('\n', ' ');

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Linq;
@@ -59,9 +60,48 @@ namespace Ginger.GingerGridLib
         {
             this.Dispatcher.Invoke(()=> {
                 ShowNodes();
-            });
 
+                if (WorkSpace.Instance.BetaFeatures.ShowSocketMonitor)
+                {
+                    ShowSocketMonitor();                    
+                }
+
+            });
         }
+
+        private void ShowSocketMonitor()
+        {
+            if (mGingerGrid == null)
+            {
+                return;
+            }
+            //Check all nodes and create new Monitor if not exist
+            foreach (GingerNodeInfo gingerNodeInfo in mGingerGrid.NodeList)
+            {
+                GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(gingerNodeInfo);
+                if (gingerNodeProxy.Monitor == null)
+                {
+                    gingerNodeProxy.Monitor = new GingerSocketMonitorWindow(gingerNodeProxy);
+                    gingerNodeProxy.StartRecordingSocketTraffic();
+                }
+            }
+        }
+
+
+        // TODO: enable close monitors
+
+        //private void ShowSocketMonitorCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (GingerNodeInfo ff in mGingerGrid.NodeList)
+        //    {
+        //        GingerNodeProxy gingerNodeProxy = mGingerGrid.GetNodeProxy(ff);
+        //        if (gingerNodeProxy.Monitor != null)
+        //        {
+        //            gingerNodeProxy.Monitor.CloseMonitor();;
+        //            gingerNodeProxy.Monitor = null;
+        //        }
+        //    }
+        // }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
@@ -99,7 +139,7 @@ namespace Ginger.GingerGridLib
 
             foreach (GingerNodeInfo GNI in mGingerGrid.NodeList)
             {
-                GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+                GingerNodeProxy GNA = mGingerGrid.GetNodeProxy(GNI);
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
@@ -165,7 +205,7 @@ namespace Ginger.GingerGridLib
         {            
             foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
             {
-                GingerNodeProxy GNA = new GingerNodeProxy(GNI);
+                GingerNodeProxy GNA = mGingerGrid.GetNodeProxy(GNI);
                 GNA.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                 GNA.Reserve();
                 string rc = GNA.Ping();
@@ -181,5 +221,7 @@ namespace Ginger.GingerGridLib
         {
             mGingerGrid.NodeList.Clear();
         }
+
+
     }
 }

@@ -32,6 +32,7 @@ using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerWPF.WizardLib;
 using Ginger.DataSource.ImportExcelWizardLib;
+using GingerCoreNET.DataSource;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -73,10 +74,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
              List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            
-                      
+
             //Get Data Source Tables List
-            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
+            DSDetails.DSTableList = DSDetails.GetTablesList();
             if (DSDetails.DSTableList == null)
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
             
@@ -116,7 +116,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                        
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh", RefreshItems, null, eImageType.Refresh);
             TV.AddToolbarTool(eImageType.Refresh, "Refresh", RefreshItems);
 
@@ -127,7 +127,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Customized Table", AddNewCustomizedTable, null, "@Add_16x16.png");
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Key Value Table", AddNewKeyValueTable, null, "@Add_16x16.png");
-            
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll,null, "@Commit_16x16.png");
             TV.AddToolbarTool("@Commit_16x16.png", "Commit All", new RoutedEventHandler(CommitAll));
 
@@ -137,11 +137,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
-
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+            }
             TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
-
             AddSourceControlOptions(mContextMenu);
         }
 
@@ -180,7 +181,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Customized Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text", DataSourceTable.eDSTableType.Customized);
+                    CreateTable(name, DSDetails.AddNewCustomizedTableQuery(), DataSourceTable.eDSTableType.Customized);
                 }
             }
             catch (Exception ex)
@@ -205,7 +206,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
-                    CreateTable(name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text",DataSourceTable.eDSTableType.GingerKeyValue);
+                    CreateTable(name, DSDetails.AddNewKeyValueTableQuery(), DataSourceTable.eDSTableType.GingerKeyValue);
+                   
                 }
             }
             catch (Exception ex)
@@ -225,7 +227,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 DataSourceTable dsTableDetails = new DataSourceTable();                
                 dsTableDetails.Name = name;
-                dsTableDetails.DSC = DSDetails.DSC;
+                dsTableDetails.DSC = DSDetails;
                 dsTableDetails.DSTableType = DSTableType;
                 DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
                 DSTTI.DSTableDetails = dsTableDetails;
@@ -264,10 +266,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 return;
             }
-            
-                
+
+
             //Add Data Source Tables List
-            DSDetails.DSTableList = DSDetails.DSC.GetTablesList();
+            DSDetails.DSTableList = DSDetails.GetTablesList();
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
@@ -297,7 +299,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             base.DeleteTreeItem(DSDetails);            
             if (File.Exists(DSDetails.FileFullPath))
             {
-                DSDetails.DSC.Close();
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
@@ -329,47 +330,54 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }        
         
         private void Duplicate(object sender, RoutedEventArgs e)
-        {   
-            AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
-            if (dsDetailsCopy == null)
-            { 
-                return;
+        {
+            //TODO: Need to move code from if else to the respective classes.
+            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
+            {
+                AccessDataSource dsDetailsCopy = (AccessDataSource)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                if (dsDetailsCopy == null)
+                {
+                    return;
+                }
+                //TODO: use Path.Combine instead of string concat
+                dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".mdb";
+                dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".mdb";
+
+                if (File.Exists(dsDetailsCopy.FileFullPath))
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
+
+                File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
+
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
             }
-            //TODO: use Path.Combine instead of string concat
+            else
+            {
+                GingerLiteDB dsDetailsCopy = (GingerLiteDB)CopyTreeItemWithNewName((RepositoryItemBase)DSDetails);
+                if (dsDetailsCopy == null)
+                {
+                    return;
+                }
+                    dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".db";
+                    dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".db";
 
-            string dsDetailsCopyName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(dsDetailsCopy.Name);
+                if (File.Exists(dsDetailsCopy.FileFullPath))
+                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
 
-            dsDetailsCopy.FilePath = System.IO.Path.Combine(DSDetails.ContainingFolder, dsDetailsCopyName + ".mdb");
-            dsDetailsCopy.FileFullPath = System.IO.Path.Combine(DSDetails.ContainingFolderFullPath, dsDetailsCopyName + ".mdb");
+                File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);
 
-            if (File.Exists(dsDetailsCopy.FileFullPath))
-            { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
-
-            File.Copy(DSDetails.FileFullPath, dsDetailsCopy.FileFullPath);            
-
-            (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+                (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)DSDetails))).AddRepositoryItem(dsDetailsCopy);
+            }
 
         }
         private void Rename(object sender, RoutedEventArgs e)
         {
             RenameItem("DataSource Name:", DSDetails, DataSourceBase.Fields.Name);
+           
         }
         private void InitDSConnection()
         {
-            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                DataSourceBase ADC;
-                ADC = new AccessDataSource();
-                //if (DSDetails.FilePath.StartsWith("~"))
-                //{
-                //    DSDetails.FileFullPath = DSDetails.FilePath.Replace(@"~\", "").Replace("~", "");
-                //    DSDetails.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, DSDetails.FileFullPath);
-                //}
-                DSDetails.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DSDetails.FilePath);
-
-                ADC.Init(DSDetails.FileFullPath);
-                DSDetails.DSC = ADC;
-            }
+            DSDetails.InitConnection();
+           
         }
     }
 }

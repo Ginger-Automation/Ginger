@@ -35,19 +35,26 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
             if (System.IO.Directory.Exists(folderName) && isCleanFile)
             {
-                foreach (System.IO.FileInfo file in di.GetFiles())
+                string[] files = Directory.GetFiles(folderName);
+                string[] dirs = Directory.GetDirectories(folderName);
+
+                foreach (string file in files)
                 {
-                    file.Delete();
+                    File.SetAttributes(file, FileAttributes.Normal);
+                    File.Delete(file);
                 }
-                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
+
+                foreach (string dir in dirs)
                 {
-                    dir.Delete(true);
+                    CleanDirectory(dir, isCleanFile);
                 }
+
+                Directory.Delete(folderName, false);
             }
         }
+
         public void CreateTempDirectory()
         {
             try
@@ -110,6 +117,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception ex)
             {
+                Console.WriteLine("CheckOrCreateDirectory - " + ex.Message);
                 return false;
             }
         }

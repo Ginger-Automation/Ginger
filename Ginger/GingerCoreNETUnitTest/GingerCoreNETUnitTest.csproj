@@ -17,8 +17,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Drivers\**" />
+    <Compile Remove="SolutionUpgrade\**" />
+    <Compile Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <EmbeddedResource Remove="Drivers\**" />
+    <EmbeddedResource Remove="SolutionUpgrade\**" />
+    <EmbeddedResource Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+    <None Remove="Drivers\**" />
+    <None Remove="SolutionUpgrade\**" />
+    <None Remove="TestResources\Solutions\BasicSimple\SharedRepository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="TestResources\JSON\Request JSON.TXT" />
     <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
+    <None Remove="TestResources\Repository\dummyAction.xml" />
     <None Remove="TestResources\XML\createPaymentRequest2.xml" />
   </ItemGroup>
 
@@ -27,6 +40,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Repository\dummyAction.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\XML\createPaymentRequest2.xml">
@@ -66,18 +82,14 @@
 
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="1.0.5" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Drivers\" />
     <Folder Include="TestResources\Conversion\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\ActivitiesGroups\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Activities\" />
-    <Folder Include="TestResources\Solutions\BasicSimple\SharedRepository\Variables\" />
     <Folder Include="TestResources\Solutions\CLI\" />
   </ItemGroup>
 
@@ -87,6 +99,51 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.Services.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\GingerPluginCore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\Microsoft.Win32.SystemEvents.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\PluginDriverExample4.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\runtimes\unix\lib\netcoreapp2.0\System.Drawing.Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\runtimes\win\lib\netcoreapp2.0\Microsoft.Win32.SystemEvents.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\runtimes\win\lib\netcoreapp2.0\System.Drawing.Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\System.Drawing.Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Plugins\PluginDriverExample4\System.Reflection.DispatchProxy.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Reports\Activity.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -210,6 +267,39 @@
     <None Update="TestResources\Reports\PassedAction.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Repository\Windows.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\MissingVariableUsedInMultipleActions.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\MissingVariableUsedOnlyInSetVariable.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\BusinessFlows\Demo Flow 01.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AnalyzerTestSolution\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -221,6 +311,9 @@
     </None>
     <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -240,6 +333,12 @@
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\ReportWebApp\ExecutionResults\LiteDbData.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportWebApp\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\Variables\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -247,6 +346,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\UserProfiles\GingerUserProfile.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\VariableTest\Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\XML\XmlDoc.xml">

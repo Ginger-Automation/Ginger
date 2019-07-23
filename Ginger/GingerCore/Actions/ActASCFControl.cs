@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -458,6 +459,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }        
+        public override eImageType Image { get { return eImageType.Java; } }        
     }
 }

@@ -27,6 +27,11 @@ using Amdocs.Ginger.Common.Enums;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.Actions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Ginger.Environments
 {
@@ -51,10 +56,20 @@ namespace Ginger.Environments
             if (grdAppDbs.grdMain != null)
             {
                 grdAppDbs.grdMain.CellEditEnding += grdMain_CellEditEnding;
+                grdAppDbs.grdMain.PreparingCellForEdit += grdMain_PreparingCellForEdit;
             }
         }
 
-        private void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if (e.Column.Header.ToString() == nameof(Database.Name))
+            {
+                Database selectedDB = (Database)grdAppDbs.CurrentItem;
+                selectedDB.NameBeforeEdit = selectedDB.Name;
+            }
+        }
+
+        private async void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if (e.Column.Header.ToString() == "User Password")
             {
@@ -72,6 +87,62 @@ namespace Ginger.Environments
                         }
                     }                   
                 }
+            }
+
+            if (e.Column.Header.ToString() == nameof(Database.Name))
+            {
+                Database selectedDB = (Database)grdAppDbs.CurrentItem;
+                if (selectedDB.Name != selectedDB.NameBeforeEdit)
+                {
+                    await UpdateDatabaseNameChange(selectedDB);
+                }
+            }
+        }
+
+        public async Task UpdateDatabaseNameChange(Database db)
+        {
+            if (db == null)
+            {
+                return;
+            }
+            Mouse.OverrideCursor = Cursors.Wait;
+            try
+            {
+                await Task.Run(() =>
+                {
+                    Reporter.ToStatus(eStatusMsgKey.RenameItem, null, db.NameBeforeEdit, db.Name);
+                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
+                    {
+                        Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                        {
+                            Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
+                            {
+                                if (act.GetType() == typeof(ActDBValidation))
+                                {
+                                    ActDBValidation actDB = (ActDBValidation)act;
+                                    if (actDB.DBName == db.NameBeforeEdit)
+                                    {
+                                        businessFlow.DirtyStatus = eDirtyStatus.Modified;
+                                        actDB.DBName = db.Name;
+                                    }
+                                }
+
+                            });
+                        });
+                    });
+                });
+
+                db.NameBeforeEdit = db.Name;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while renaming DBName", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
             }
         }
 
@@ -112,18 +183,19 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                if (ex.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
+                if (ex.Message.Contains("Oracle.ManagedDataAccess.dll is missing"))
                 {
                     if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
-                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
+                        System.Threading.Thread.Sleep(2000);
+                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html"); 
                         
                     }
                     return;
                 }
-
-                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+                
+               Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
         }
         #endregion Events

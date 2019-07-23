@@ -56,6 +56,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
         }
 
+        bool isClosing = false;
+
         void DoStartServer(int port)
         {
             mPort = port;
@@ -74,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 mServerSocketlistener.Bind(localEndPoint); // TODO: Add Endpoint, config - can bind several IPs on same machine
                 mServerSocketlistener.Listen(100);
                 isReady = true;
-                while (true)
+                while (!isClosing)
                 {
                     // Set the event to nonsignaled state.  
                     allDone.Reset();
@@ -87,6 +89,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     Thread.Sleep(250);
                 }
             }
+            catch(ObjectDisposedException ex)
+            {
+                // ignore 
+            }
             catch (Exception ex)
             {
                 throw ex;
@@ -95,26 +101,40 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         public void Shutdown()
         {
+            isClosing = true;
+            allDone.Reset();
+            if (mServerSocketlistener != null)
+            {
+                mServerSocketlistener.Close();
+            }
+             
             //TODO: send message to all clients of shut down
         }
         
         // New incoming Ginger Client
         public void AcceptCallback(IAsyncResult ar)
         {
-            // Signal the main thread to continue.  
-            allDone.Set();
+            try
+            {
+                // Signal the main thread to continue.  
+                allDone.Set();
 
-            // Get the socket that handles the client request.  
-            Socket listener = (Socket)ar.AsyncState;
-            Socket socket = listener.EndAccept(ar);
-            
-            // Create the state object - one per Ginger client
-            GingerSocketInfo gingerSocketInfo = new GingerSocketInfo();
-            gingerSocketInfo.Socket = socket;
-            gingerSocketInfo.SessionID = Guid.NewGuid();  // Create new session id
-            gingerSocketInfo.MessageHandler = MessageHandler;
-            gingerSocketInfo.Receive();
-            Clients.Add(gingerSocketInfo);                        
+                // Get the socket that handles the client request.  
+                Socket listener = (Socket)ar.AsyncState;
+                Socket socket = listener.EndAccept(ar);
+
+                // Create the state object - one per Ginger client
+                GingerSocketInfo gingerSocketInfo = new GingerSocketInfo();
+                gingerSocketInfo.Socket = socket;
+                gingerSocketInfo.SessionID = Guid.NewGuid();  // Create new session id
+                gingerSocketInfo.MessageHandler = MessageHandler;
+                gingerSocketInfo.Receive();
+                Clients.Add(gingerSocketInfo);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("AcceptCallback Error: " + ex.Message);
+            }
         }
 
         // Sending a Payload from server to client expecting an answer, server initiated the request

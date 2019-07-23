@@ -63,11 +63,11 @@ namespace Ginger.Run
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         uint meventtime;
-        IValueExpression mVE;
+        //IValueExpression mVE;
         ProjEnvironment mExecutionEnvironment = null;
 
         int mBusinessFlowCounter { get; set; }
-        Context mContext;
+        public Context mContext;
         public ExecutionLogger mExecutionLogger;
         public ExecutionLoggerHelper executionLoggerHelper;
         //public ProjEnvironment ExecutionEnvironment
@@ -95,7 +95,7 @@ namespace Ginger.Run
             get { return mConfiguration; }
             set
             {
-                if (value != null && Configuration.SelectedDataRepositoryMethod != ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (value != null)
                 {
                     mConfiguration = value;
                     mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = executionLoggerHelper.GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
@@ -317,7 +317,7 @@ namespace Ginger.Run
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             //BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
-            Object BFR = mExecutionLogger.SetReportBusinessFlow(businessFlow, mContext.Environment, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
+            Object BFR = mExecutionLogger.SetReportBusinessFlow(mContext, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -547,14 +547,12 @@ namespace Ginger.Run
         {
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
-            {
-                AutoLogProxy.UserOperationStart("Online Report");
+            {                
                 return WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
 
             }
             else
-            {
-                AutoLogProxy.UserOperationStart("Offline Report");
+            {             
                 ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -581,7 +579,7 @@ namespace Ginger.Run
                         System.IO.Directory.CreateDirectory(folder);
                     }
 
-                    mContext = gingerrunner.mContext;
+                    mContext = gingerrunner.Context;
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus gingerRunnerStatus = gingerrunner.RunsetStatus;
                     if (gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {

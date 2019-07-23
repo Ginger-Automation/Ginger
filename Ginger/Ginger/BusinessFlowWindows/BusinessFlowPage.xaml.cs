@@ -44,7 +44,7 @@ namespace Ginger.BusinessFlowFolder
     public partial class BusinessFlowPage : Page
     {
         BusinessFlow mBusinessFlow;
-        RepositoryPage mReposiotryPage;
+        // RepositoryPage mReposiotryPage;
         ActivitiesGroupsPage mActivitiesGroupsPage;
         VariablesPage mVariablesPage;
         ActivitiesPage mActivitiesPage;
@@ -56,15 +56,15 @@ namespace Ginger.BusinessFlowFolder
         public bool OKButtonClicked = false;
         private bool saveWasDone = false;
 
-        public General.RepositoryItemPageViewMode mEditMode { get; set; }
+        public General.eRIPageViewMode mEditMode { get; set; }
 
-        public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.SharedReposiotry)
+        public BusinessFlowPage(BusinessFlow BizFlow, bool showMiniView=false, General.eRIPageViewMode editMode = General.eRIPageViewMode.SharedReposiotry)
         {
             InitializeComponent();
 
             mBusinessFlow = BizFlow;
             mContext = new Context() { BusinessFlow = BizFlow, Activity= BizFlow.CurrentActivity };
-            RunDescritpion.Init(mContext, BizFlow, BusinessFlow.Fields.RunDescription);
+            RunDescritpion.Init(mContext, BizFlow, nameof(BusinessFlow.RunDescription));
             mEditMode = editMode;
             LoadBizFlowData();            
 
@@ -84,7 +84,7 @@ namespace Ginger.BusinessFlowFolder
             if (!showMiniView)
             {
                 mActivitiesPage = new ActivitiesPage(mBusinessFlow, mEditMode, mContext);
-                if(mEditMode!= General.RepositoryItemPageViewMode.View)
+                if(mEditMode!= General.eRIPageViewMode.View)
                 {
                     mActivitiesPage.grdActivities.ChangeGridView(eAutomatePageViewStyles.Design.ToString());
                     mBusinessFlow.SaveBackup();
@@ -112,7 +112,7 @@ namespace Ginger.BusinessFlowFolder
                 Row5.MinHeight = 0;
                 Row5.Height = new GridLength(0);
             }
-            if(mEditMode == General.RepositoryItemPageViewMode.View)
+            if(mEditMode == General.eRIPageViewMode.View)
             {
                 txtName.IsEnabled = false;
                 txtDescription.IsEnabled = false;
@@ -142,7 +142,7 @@ namespace Ginger.BusinessFlowFolder
         }
         private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            mBusinessFlow.OnPropertyChanged(BusinessFlow.Fields.AutomationPrecentage);
+            mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
             
             //Perf imrprovements
             if (WorkSpace.Instance.BetaFeatures.BFPageActivitiesHookOnlyNewActivities)
@@ -167,16 +167,16 @@ namespace Ginger.BusinessFlowFolder
         }
         private void mBusinessFlowActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Activity.Fields.AutomationStatus)
+            if (e.PropertyName == nameof(Activity.AutomationStatus))
             {
-                mBusinessFlow.OnPropertyChanged(BusinessFlow.Fields.AutomationPrecentage);
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.AutomationPrecentage));
                 Activity changedActivity= (Activity)sender;
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
                     foreach(ActivitiesGroup actGroup in mBusinessFlow.ActivitiesGroups)
                         if (actGroup.Name == changedActivity.ActivitiesGroupID)
                         {
-                            actGroup.OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+                            actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
                             break;
                         }                    
                 }
@@ -185,12 +185,12 @@ namespace Ginger.BusinessFlowFolder
        
         private void LoadBizFlowData()
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Description);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             GingerCore.General.FillComboFromEnumObj(StatusComboBox, mBusinessFlow.Status);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.Status);                     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));                     
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader,  nameof(RepositoryItemHeader.CreatedBy));  
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, BusinessFlow.Fields.AutomationPrecentage, System.Windows.Data.BindingMode.OneWay);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);            
             
             // Per source we can show specific source page info
             if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
@@ -251,7 +251,7 @@ namespace Ginger.BusinessFlowFolder
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
             {
-                case General.RepositoryItemPageViewMode.Automation:
+                case General.eRIPageViewMode.Automation:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -261,7 +261,7 @@ namespace Ginger.BusinessFlowFolder
                     winButtons.Add(undoBtn);
                     winButtons.Add(okBtn);
                     break;
-                case General.RepositoryItemPageViewMode.Standalone:
+                case General.eRIPageViewMode.Standalone:
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button saveBtn = new Button();
                     saveBtn.Content = "Save";
@@ -272,7 +272,7 @@ namespace Ginger.BusinessFlowFolder
                     winButtons.Add(undoBtnSr);
                     winButtons.Add(saveBtn);
                     break;
-                case General.RepositoryItemPageViewMode.View:
+                case General.eRIPageViewMode.View:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button okBtnView = new Button();
                     okBtnView.Content = "Ok";

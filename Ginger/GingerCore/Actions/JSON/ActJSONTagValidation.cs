@@ -25,6 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.JSON
 {
     public class ActJSONTagValidation : ActWithoutDriver
@@ -100,7 +102,7 @@ namespace GingerCore.Actions.JSON
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+        public override eImageType Image { get { return eImageType.Search; } }        // eImageType.Help = LifeRing in FontAwesomeIcon
 
         public override void Execute()
         {

@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (mFolderItemsList == null)
             {
-                ObservableList<T> list = LoadFolderFiles<T>(FolderFullPath);
+                ObservableList<T> list = LoadFolderFiles(FolderFullPath);
                 mFolderItemsList = list;
 
                 //add it to general item cache if needed
@@ -250,7 +250,7 @@ namespace Amdocs.Ginger.Repository
 
         // Generic handling for any RI type
         // This is recursive function which run in parallel for extreme speed, be careful! 
-        private ObservableList<T> LoadFolderFiles<T>(string Folder = null)
+        private ObservableList<T> LoadFolderFiles(string Folder = null)
         {
             // for each file we check if in cache return from cache else load from file system and cache the item             
 
@@ -277,7 +277,7 @@ namespace Amdocs.Ginger.Repository
                     T item = (T)mFolderItemsCache[FileName];
                     if (item == null)
                     {
-                        item = LoadItemfromFile<T>(FileName, ContainingFolder);
+                        item = LoadItemfromFile(FileName, ContainingFolder);
                         AddItemtoCache(FileName, item);
                     }
                     list.Add(item);
@@ -292,7 +292,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        T LoadItemfromFile<T>(string fileName, string containingFolder)
+        T LoadItemfromFile(string fileName, string containingFolder)
         {
             T item = (T)SolutionRepository.RepositorySerializer.DeserializeFromFileObj(typeof(T), fileName);
             SetRepositoryItemInfo(item, fileName, containingFolder);
@@ -500,7 +500,7 @@ namespace Amdocs.Ginger.Repository
                     case WatcherChangeTypes.Created:
                         WaitforFileIsReadable(e.FullPath);
                         // add item to cache and list
-                        T newItem = LoadItemfromFile<T>(e.FullPath, Path.GetDirectoryName(e.FullPath));
+                        T newItem = LoadItemfromFile(e.FullPath, Path.GetDirectoryName(e.FullPath));
                         AddItemtoCache(e.FullPath, newItem);
                         mSolutionRepositoryItemInfo.AddItemToCache((T)(object)newItem);
                         mFolderItemsList.Add(newItem);
@@ -614,7 +614,7 @@ namespace Amdocs.Ginger.Repository
             string FullPath = Path.Combine(FolderFullPath, folderName);
 
             //add to folders cache
-            string relativeFolder = FolderRelativePath + Path.DirectorySeparatorChar + folderName;
+            string relativeFolder =  Path.Combine(FolderRelativePath, folderName);
             RepositoryFolder<T> subfolder = new RepositoryFolder<T>(SolutionRepository, mSolutionRepositoryItemInfo, ItemFilePattern, relativeFolder, ContainsRepositoryItems, null);
 
             PauseFileWatcher();

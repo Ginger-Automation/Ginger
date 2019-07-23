@@ -62,6 +62,7 @@ namespace Ginger
         string mAttrName;
         Context mContext;
         ValueExpression mVE = null;
+        GingerCore.Actions.ActDSTableElement actDStable = null;
         static List<HighlightingRule> mHighlightingRules = null;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
         ObservableList<ProjEnvironment> mEnvs;
@@ -599,7 +600,6 @@ namespace Ginger
                 //}
                 ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
 
-                ds.Init(ds.FileFullPath);
                 TreeViewItem tviDataSource = new TreeViewItem();
                 if (ds.DSType == DataSourceBase.eDSType.MSAccess)
                     SetItemView(tviDataSource, ds.Name, ds.Name, "@AccessDataSource_16x16.png");                
@@ -631,7 +631,8 @@ namespace Ginger
             DataSourceTable dsTable = (DataSourceTable)tvi.DataContext;
             ActDataSourcePage dsVEPage;
             string VE = "";
-                dsVEPage = new ActDataSourcePage(((TreeViewItem)tvi.Parent).Tag.ToString(),dsTable);
+            dsVEPage = new ActDataSourcePage(((TreeViewItem)tvi.Parent).Tag.ToString(),dsTable);
+            actDStable = dsVEPage.mActDSTblElem;
                 dsVEPage.ShowAsWindow();
                 VE = dsVEPage.VE;
             if (VE != "")    
@@ -773,6 +774,7 @@ namespace Ginger
                     mContext.Environment = mEnvs[0];
                 }
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                
             }
             mVE.Value = this.ValueUCTextEditor.textEditor.Text;
             ValueCalculatedTextBox.Text = mVE.ValueCalculated;
@@ -781,7 +783,11 @@ namespace Ginger
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             string value = ValueUCTextEditor.textEditor.Text;
-
+            if (mVE == null)
+            {
+                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE.actDSTableElement = actDStable;
+            }
             //Update the obj attr with new Value
             if (mObj is ExpandoObject)
             {
@@ -828,7 +834,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType(), "Current Value", Var.Value);
+            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", Var.Value);
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)

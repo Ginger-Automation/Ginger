@@ -25,9 +25,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.WebServices;
+
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
-    public class ActWebService : Act
+    public class ActWebService : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Web Service Action"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
@@ -72,7 +77,85 @@ namespace GingerCore.Actions
             list.Add(DynamicXMLElements);
             return list;
         }
-                
+
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if (Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActWebAPISoap>(); });
+            ActWebAPISoap convertedActWebAPISoap = mapperConfiguration.CreateMapper().Map<Act, ActWebAPISoap>(this);
+
+            convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.EndPointURL, this.URL.Value);
+
+            convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+
+            if(!string.IsNullOrEmpty(this.URLDomain.Value) || (!string.IsNullOrEmpty(this.URLUser.Value) && !string.IsNullOrEmpty(this.URLPass.Value )))
+            {
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Custom.ToString());
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, this.URLDomain.Value);
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, this.URLUser.Value);
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, this.URLPass.Value);
+            }
+            else
+            {
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            }
+            
+
+            if (!string.IsNullOrEmpty(this.XMLfileName.ToString()))
+            {
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString());
+                convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, this.XMLfileName.Value);
+            }
+
+            if (convertedActWebAPISoap.ReturnValues != null && convertedActWebAPISoap.ReturnValues.Count != 0)
+            {
+                //Old web service action add response as --> FullReponseXML
+                //And new adds it as Response:
+                // so we update it when converting from old action to new
+                ActReturnValue ARC = convertedActWebAPISoap.ReturnValues.Where(x => x.Param == "FullReponseXML").FirstOrDefault();
+                if (ARC != null)
+                {
+                    ARC.Param = "Response:";
+                    if(!string.IsNullOrEmpty(ARC.Expected))
+                    {
+                        ARC.Expected = XMLDocExtended.PrettyXml(ARC.Expected);
+                    }
+                }
+            }
+            convertedActWebAPISoap.DynamicElements = this.DynamicXMLElements;
+
+            return convertedActWebAPISoap;
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return typeof(ActWebAPISoap);
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            ActWebAPISoap newActApiSoap = new ActWebAPISoap();
+            return newActApiSoap.ActionDescription;
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.WebServices;
+        }
+
         public ActInputValue URL { get { return GetOrCreateInputParam(Fields.URL); } }
             
         [IsSerializedForLocalRepository]
@@ -99,6 +182,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Act; } }
+        public override eImageType Image { get { return eImageType.Exchange; } }
     }
 }

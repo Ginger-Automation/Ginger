@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UCListView.UcItemExecutionStatus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="25" d:DesignWidth="50">
+
+    <DockPanel>
+        <Polygon x:Name="xPolygon" DockPanel.Dock="Right" Points="0,0,24,0,0,25"  Stroke="{StaticResource $PendingStatusColor}" Fill="{StaticResource $PendingStatusColor}" HorizontalAlignment="Right" >
+            <Polygon.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="0"/>
+                    <RotateTransform Angle="90"/>
+                    <TranslateTransform X="25" Y="0"/>
+                </TransformGroup>
+            </Polygon.RenderTransform>
+        </Polygon>
+        <usercontrols:ImageMakerControl x:Name="xStatusIcon" DockPanel.Dock="Right" Margin="0,-8,-25,0"  Padding="0" SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
+    </DockPanel>
+
+</UserControl>

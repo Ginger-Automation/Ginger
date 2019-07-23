@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -94,7 +95,7 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
             ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
 
-            Type currentType = GetActionTypeByElementActionName(GenElementAction);
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);            
             if (currentType == typeof(ActBrowserElement))
             {
                 switch (GenElementAction)
@@ -222,6 +223,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.SwitchToParentFrame:
                 case eGenElementAction.AcceptMessageBox:
                 case eGenElementAction.GetWindowTitle:
+                case eGenElementAction.StartBrowser:
                     currentType = typeof(ActBrowserElement);
                     break;
 
@@ -256,6 +258,8 @@ namespace GingerCore.Actions
                 case eGenElementAction.XYClick:
                 case eGenElementAction.Focus:
                 case eGenElementAction.RunJavaScript:
+                case eGenElementAction.AsyncSelectFromDropDownByIndex:
+                case eGenElementAction.SetAttributeUsingJs:
                     currentType =  typeof(ActUIElement);
                     break;
 
@@ -423,7 +427,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Scroll Up")]
             ScrollUp = 65,
             [EnumValueDescription("Set Attribute Value")]
-            SetAttributeValue = 66
+            SetAttributeValue = 66,
+            [EnumValueDescription("Expand Drop Down")]
+            Expand = 67
         }
         
         [IsSerializedForLocalRepository]
@@ -479,7 +485,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActLink; } }  // TODO: make me dynamic based on elem type
+        public override eImageType Image { get { return eImageType.Screen; } }  // TODO: make me dynamic based on elem type
         
         public override ActionDetails Details
         {            

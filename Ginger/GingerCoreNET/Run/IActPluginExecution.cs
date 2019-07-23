@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,9 @@ using System.Text;
 namespace Amdocs.Ginger.CoreNET.Run
 {
    public interface IActPluginExecution
-    {
+    {        
+        PlatformAction GetAsPlatformAction();
 
-        NewPayLoad GetActionPayload();
+        string GetName();
     }
 }

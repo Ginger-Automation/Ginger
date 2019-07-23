@@ -24,21 +24,35 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerWPF.WizardLib;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
+using System;
 
 namespace Ginger.ApiModelsFolder
 {
     public class AddApiModelActionWizardPage : WizardBase
     {
-        public Context Context;
+        public Context mContext;
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
 
         ObservableList<IAct> mActions;
 
+        public AddApiModelActionWizardPage(Context context, ObservableList<ApplicationAPIModel> APIModelsList = null)
+        {
+            mContext = context;
+            mActions = mContext.BusinessFlow.CurrentActivity.Acts;
+
+            if (APIModelsList != null)
+                mAAMList = APIModelsList;
+
+            AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage(context));
+            AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
+        }
+
         public AddApiModelActionWizardPage(Context context)
         {
-            Context = context;
-            mActions = Context.BusinessFlow.CurrentActivity.Acts;
-            AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage());
+            mContext = context;
+            mActions = mContext.BusinessFlow.CurrentActivity.Acts;
+
+            AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage(context));
             AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
         }
 

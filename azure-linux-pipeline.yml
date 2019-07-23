@@ -1,6 +1,4 @@
 
-# .NET
-
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
@@ -8,7 +6,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 - job: Linux
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
 
 # ------------------------------------------------------------------------------------------------------
 # Job Variables
@@ -20,44 +18,22 @@ jobs:
   
   steps:
   
-# ------------------------------------------------------------------------------------------------------
-# Install Nuget tool
-# ------------------------------------------------------------------------------------------------------
-  #- task: NuGetToolInstaller@0  
-  #  displayName: NuGet Tool Installer
 
-# ------------------------------------------------------------------------------------------------------
-# Restore Ginger solution NuGet packages
-# ------------------------------------------------------------------------------------------------------
-  #- task: NuGetCommand@2
-  #  inputs:
-  #    command: restore  
-  #    restoreSolution: '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj **\GingerCoreNetTest\GingerCoreNetTest.csproj)'       
-  #  displayName: Restore Ginger .net core projects Nuget Packages
-  
-# ------------------------------------------------------------------------------------------------------
-# Build Ginger DLLs .Net Core only
-# ------------------------------------------------------------------------------------------------------
+  - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerCoreCommonTest'
 
-  #- script: dotnet build '$(**\GingerCoreCommonTest\GingerCoreCommonTest.csproj)'
-  #  displayName: Build Ginger DLLs
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerCoreNETUnitTest'
 
-# ------------------------------------------------------------------------------------------------------
-# Run Unit Test Level 1,2,3 for .NET Core testDLLs
-# ------------------------------------------------------------------------------------------------------
+  - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerPluginCoreTest'
+
+  - script: dotnet test  Ginger/GingerConsoleTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerConsoleTest'
+
+  - script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerAutoPilotTest'
     
-    # TODO: run unit test by level 1,2,3 continue on success only
-
-  #- task: DotNetCoreCLI@2
-  #  displayName: 'Run Unit tests Level for .Net Core test DLLs'
-  #  inputs:
-  #    command: test
-  #    projects: '**/**/*Test.csproj'          # test all csproj, it will skip .Net Framework
-  #    arguments: '--configuration $(buildConfiguration)'   # not working on Linux !?  --collect "Code coverage"
-      
-
-  - script: dotnet test  Ginger/Ginger.sln --configuration $(buildConfiguration) --logger trx
-    displayName: 'Run tests on Ginger solution'
 
   - task: PublishTestResults@2
     displayName: Publish test result
@@ -66,24 +42,3 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
 
-  #- task: PublishBuildArtifacts@1
-
-  
-  #- task: PublishTestResults@2
-  #  condition: succeededOrFailed()
-  #  inputs:
-  #    testRunner: VSTest
-  #    testResultsFiles: '**/*.trx'
-
-
- # - task: PublishBuildArtifacts@1
-
-
- # failTaskOnFailedTests: true
-
- #- task: PublishBuildArtifacts@1
- # displayName: "Publish artifacts"
- # inputs:
- #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
- #   ArtifactName: app
- #   publishLocation: Container

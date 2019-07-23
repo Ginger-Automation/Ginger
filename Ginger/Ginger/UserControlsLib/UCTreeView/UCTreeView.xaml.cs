@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.Repository;
-using GingerWPF.DragDropLib;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -285,7 +284,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             object filterByObject = treeItemToCheckObject;
             foreach (string hierarchyElement in filterByfieldHierarchyList)
             {
-                PropertyInfo pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                PropertyInfo pInfo = null;
+                if (filterByObject != null)
+                {
+                    pInfo = filterByObject.GetType().GetProperty(hierarchyElement);
+                }
+
                 if (pInfo is null)
                 {
                     break;
@@ -298,7 +302,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             //compare the value
             string filterbyValue = Convert.ToString(TreeNodesFilterByField.Item2);
-            if (filterByObject.ToString() == filterbyValue)
+            if (Convert.ToString(filterByObject) == filterbyValue)
             {
                 return true;
             }
@@ -693,7 +697,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     currentItem = o.GetType();
 
-                    if (currentItem == searchItem)
+                    if (currentItem.GetType() == searchItem)
                     {
                         return TVI;
                     }

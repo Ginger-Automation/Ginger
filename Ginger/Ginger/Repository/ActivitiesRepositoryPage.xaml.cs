@@ -16,23 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerWPF.DragDropLib;
-using Ginger.SolutionWindows.TreeViewItems;
+using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages;
 using Ginger.UserControls;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
-using GingerCore.Activities;
+using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository
 {
@@ -41,20 +37,18 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesRepositoryPage : Page
     {
-        readonly RepositoryFolder<Activity> mActivitiesFolder;
-        bool TreeInitDone = false;
+        readonly RepositoryFolder<Activity> mActivitiesFolder;        
         bool mInTreeModeView = false;
-        BusinessFlow mBusinessFlow;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
-        Context mContext = new Context();
+        Context mContext;
 
-        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, BusinessFlow businessFlow=null,ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null)
+        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null)
         {          
             InitializeComponent();
 
             mActivitiesFolder = activitiesFolder;
-
+            mContext = context;
             if (Tags != null)
             {
                 mTags = Tags;
@@ -64,11 +58,7 @@ namespace Ginger.Repository
             if (AddActivityHandler != null)
                 mAddActivityHandler = AddActivityHandler;
             else
-                mAddActivityHandler = AddFromRepository;
-
-            
-            mBusinessFlow = businessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
+                mAddActivityHandler = AddFromRepository;           
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -88,8 +78,6 @@ namespace Ginger.Repository
 
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            mBusinessFlow = bf;
-            mContext.BusinessFlow = mBusinessFlow;
             xActivitiesRepositoryGrid.ClearFilters();
         }
 
@@ -98,8 +86,8 @@ namespace Ginger.Repository
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            viewCols.Add(new GridColView() { Field = Activity.Fields.ActivityName, Header="Name", WidthWeight = 50, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = Activity.Fields.Description, WidthWeight = 35, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(Activity.ActivityName), Header="Name", WidthWeight = 50, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(Activity.Description), WidthWeight = 35, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });
             xActivitiesRepositoryGrid.SetAllColumnsDefaultView(view);           
             xActivitiesRepositoryGrid.InitViewItems();
@@ -121,20 +109,20 @@ namespace Ginger.Repository
             {
                 if (xActivitiesRepositoryGrid.Grid.SelectedItems != null && xActivitiesRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    foreach (Activity selectedItem in xActivitiesRepositoryGrid.Grid.SelectedItems)
+                    if (mContext.BusinessFlow != null)
                     {
-                        if (mBusinessFlow != null)
+                        List<Activity> list = new List<Activity>();
+                        foreach (Activity selectedItem in xActivitiesRepositoryGrid.Grid.SelectedItems)
                         {
-                            Activity instance = (Activity)selectedItem.CreateInstance(true);
-                            instance.Active = true;
-                            mBusinessFlow.SetActivityTargetApplication(instance);
-                            mBusinessFlow.AddActivity(instance);
-                            mBusinessFlow.Activities.CurrentItem = instance;
+                            list.Add(selectedItem);
                         }
+                        ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow);
                     }
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                }
             }
         }
 
@@ -143,7 +131,7 @@ namespace Ginger.Repository
             if (xActivitiesRepositoryGrid.CurrentItem != null)
             {
                 Activity a = (Activity)xActivitiesRepositoryGrid.CurrentItem;
-                BusinessFlowWindows.ActivityEditPage w = new BusinessFlowWindows.ActivityEditPage(a, General.RepositoryItemPageViewMode.SharedReposiotry);
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context(), General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -153,6 +154,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 UpdateActionInfo(mAction.ElementAction);
                 ShowControlSpecificPage();
             }
+            mAction.OnPropertyChanged(nameof(Act.ActionType));
         }
 
         public Page GetPlatformEditPage()

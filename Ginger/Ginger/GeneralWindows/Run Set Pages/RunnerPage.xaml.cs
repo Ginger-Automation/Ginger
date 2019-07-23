@@ -21,9 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.UserControls;
-using Ginger.Logger;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.UserControlsLib.PieChart;
@@ -714,7 +714,7 @@ namespace Ginger.Run
         }
         private void xConfigButton_Click(object sender, RoutedEventArgs e)
         {
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageContext.RunTab);
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
 
             UpdateRunnerInfo();
@@ -764,17 +764,17 @@ namespace Ginger.Run
             }
         }
 
-        private void GenerateIndividualReport(object sender, RoutedEventArgs e)
-        {
-            ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.Instance.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, true);
-        }
+        //private void GenerateIndividualReport(object sender, RoutedEventArgs e)
+        //{
+        //    ReportTemplate.GenerateIndividualReport(mRunner,  WorkSpace.Instance.UserProfile.GetDefaultReport(), (ProjEnvironment)WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, true);
+        //}
 
-        private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
-        {
-            var RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
-            var repFileName = ReportTemplate.GenerateReport( WorkSpace.Instance.UserProfile.GetDefaultReport(), RI);
-            Process.Start(repFileName);
-        }
+        //private void GenerateConsolidatedReport(object sender, RoutedEventArgs e)
+        //{
+        //    var RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mRunner, true);
+        //    var repFileName = ReportTemplate.GenerateReport( WorkSpace.Instance.UserProfile.GetDefaultReport(), RI);
+        //    Process.Start(repFileName);
+        //}
 
         private void xRunnerActive_Click(object sender, RoutedEventArgs e)
         {

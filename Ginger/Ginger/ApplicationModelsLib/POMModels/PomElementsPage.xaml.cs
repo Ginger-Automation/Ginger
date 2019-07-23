@@ -26,6 +26,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
@@ -147,9 +148,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PasteElementEvent(PasteItemEventArgs EventArgs)
         {
-            ElementInfo copiedElement = (ElementInfo)EventArgs.RepositoryItemBaseObject;
+            ElementInfo copiedElement = (ElementInfo)EventArgs.Item;
             copiedElement.IsAutoLearned = false;
-            foreach(ElementLocator locator in copiedElement.Locators)
+            foreach (ElementLocator locator in copiedElement.Locators)
             {
                 locator.IsAutoLearned = false;
             }
@@ -157,8 +158,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
         {
-            ElementLocator copiedLocator = (ElementLocator)EventArgs.RepositoryItemBaseObject;
-            copiedLocator.IsAutoLearned = false;            
+            ElementLocator copiedLocator = (ElementLocator)EventArgs.Item;
+            copiedLocator.IsAutoLearned = false;
         }
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -381,10 +382,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             HandelElementSelectionChange();
         }
 
-        bool disabeledElementMsgShown;
+        // bool disabeledElementMsgShown;
         private void MainElementsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if (e.Column.Header == "Name" || e.Column.Header == nameof(ElementInfo.Description))
+            if ((string)e.Column.Header == "Name" || (string)e.Column.Header == nameof(ElementInfo.Description))
             {
                 return;
             }
@@ -470,7 +471,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xLocatorsGrid.InitViewItems();
 
             xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
 

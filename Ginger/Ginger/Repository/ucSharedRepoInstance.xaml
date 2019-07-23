@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Ginger.Repository"
              mc:Ignorable="d" 
              d:DesignHeight="55" d:DesignWidth="50">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="24"/>

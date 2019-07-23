@@ -18,14 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Plugin.Core.Drivers;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -38,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public readonly bool isDriverPlugin;
 
-        ObservableList<PluginPackage> Plugins;
+        // ObservableList<PluginPackage> Plugins;
 
         public List<object> services = new List<object>();
 
@@ -92,9 +89,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
                     foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains("IWebPlatform")))
                     {
-               
+
                         DI.services.Add(PI.ServiceId);
-                    
+
                     }
                     if (DI.services.Count > 0)
                     {
@@ -167,10 +164,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 DI.services.Add(Agent.eDriverType.WebServices);
             }
 
-            else if (platformType == ePlatformType.AndroidDevice.ToString())
-            {
-                DI.services.Add(Agent.eDriverType.AndroidADB);
-            }
+            //else if (platformType == ePlatformType.AndroidDevice.ToString())
+            //{
+            //    DI.services.Add(Agent.eDriverType.AndroidADB);
+            //}
             else if (platformType == ePlatformType.ASCF.ToString())
             {
                 DI.services.Add(Agent.eDriverType.ASCF);

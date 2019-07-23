@@ -39,6 +39,12 @@ namespace Amdocs.Ginger.Repository
         public Guid newGuid { get; set; } // pointer to obj
     }
 
+    public enum SerializationErrorType
+    {
+        PropertyNotFound,
+        SetValueException   // if type changed, and we can add more handling...
+    }
+
     public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -553,7 +559,7 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
-            // Create a copy by serailized and load from the text, it will not copy all atrs only the one which are saved to XML
+            // Create a copy by serailized and load from the text, it will not copy all attrs only the one which are saved to XML
             string s = RepositorySerializer.SerializeToString(this);
             // TODO: fixme not good practice and not safe, add param to handle in function or another solution...
             RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:this.FilePath);
@@ -561,10 +567,9 @@ namespace Amdocs.Ginger.Repository
             //change the GUID of duplicated item
             if (setNewGUID && duplicatedItem != null)
             {
-                duplicatedItem.ParentGuid = Guid.Empty;
+                duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                 duplicatedItem.ExternalID = string.Empty;
                 duplicatedItem.Guid = Guid.NewGuid();
-
 
                 List<GuidMapper> guidMappingList = new List<GuidMapper>();
 
@@ -857,7 +862,24 @@ namespace Amdocs.Ginger.Repository
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
             DirtyStatus = eDirtyStatus.Modified;
-            // RaiseDirtyChangedEvent();
+
+            // if item added set tracking too
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (object obj in e.NewItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                        repositoryItemBase.StartDirtyTracking();
+                        repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                    }
+                    else
+                    {
+                        // not RI no tracking...
+                    }
+                }
+            }
         }
 
         List<string> DirtyTrackingFields;
@@ -1026,6 +1048,7 @@ namespace Amdocs.Ginger.Repository
                     mIsSharedRepositoryInstance = value;
                     
                     OnPropertyChanged(nameof(SharedRepoInstanceImage));
+                    OnPropertyChanged(nameof(IsSharedRepositoryInstance));
                 }
             }
         }
@@ -1074,8 +1097,38 @@ namespace Amdocs.Ginger.Repository
         {
             // from old RI
         }
-       
-      
+
+        /// <summary>
+        /// This method is being called when object type is read in xml which is being serialzied and before the properties/fields are updated
+        /// Overrid this method if you need to initial repository item as soon as it is created to set default for example
+        /// </summary>
+        public virtual void PreSerialization()
+        {            
+        }
+
+        /// <summary>
+        /// This method is being called afetr object type is read from xml and all properties/fields been serialzied
+        /// Use this method to do updates to the object being serialzied 
+        /// </summary>
+        public virtual void PostSerialization()
+        {
+        }
+
+        /// <summary>
+        // When xml contain field/property which doesn't exist in the object being deserialzed to, then this method will be called
+        // Use it when you need to convert old property to new name or type
+        // if handled return true
+        /// </summary>
+        /// <param name="errorType"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>        
+        public virtual bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            // override method in sub class need to impelment and return true if handled
+            return false;
+        }
+
+        
 
     }
 }

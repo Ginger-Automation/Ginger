@@ -235,8 +235,7 @@ namespace Ginger.SolutionGeneral
             }
             set
             {
-                mAccount = value;
-                AutoLogProxy.SetAccount(mAccount);
+                mAccount = value;                
             } }
 
         public ePlatformType MainPlatform {
@@ -314,11 +313,11 @@ namespace Ginger.SolutionGeneral
                 // executionLogger.Configuration = executionLoggerConfiguration;
               
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
-            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -352,7 +351,7 @@ namespace Ginger.SolutionGeneral
             return solTargetApplications;
         }
 
-        MRUManager mRecentUsedBusinessFlows;
+        // MRUManager mRecentUsedBusinessFlows;
 
         //public MRUManager RecentlyUsedBusinessFlows
         //{
@@ -515,13 +514,20 @@ namespace Ginger.SolutionGeneral
         //        va.ResetValue();
         //}
 
-        public void AddVariable(VariableBase v)
+        public void AddVariable(VariableBase v, int insertIndex=-1)
         {
             if (v != null)
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
-                Variables.Add(v);
+                if (insertIndex < 0|| insertIndex > Variables.Count - 1)
+                {
+                    Variables.Add(v);
+                }
+                else
+                {
+                    Variables.Insert(insertIndex, v);
+                }
             }
         }
 

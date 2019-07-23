@@ -23,6 +23,9 @@ using System.Data;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.Actions;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.DataSource
 {    
@@ -34,6 +37,8 @@ namespace GingerCore.DataSource
             // Access
             [EnumValueDescription("MS Access")]
             MSAccess,
+            [EnumValueDescription("LiteDataBase")]
+            LiteDataBase,
         }
 
         public  static class Fields
@@ -89,11 +94,9 @@ namespace GingerCore.DataSource
         [IsSerializedForLocalRepository]
         public eDSType DSType { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //Do not use this Observable List
         public ObservableList<DataSourceTable> DSTableList = new ObservableList<DataSourceTable>();
         
-        public DataSourceBase DSC { get; set; }
-
 
         public override string ItemName
         {
@@ -112,9 +115,7 @@ namespace GingerCore.DataSource
         {
             return Name;
         }
-        public abstract void Init(string sFilePath, string sMode = "Read");
-
-        public abstract void Close();
+       
         public abstract ObservableList<DataSourceTable> GetTablesList();
 
         public abstract void UpdateTableList(ObservableList<DataSourceTable> dsTableList);
@@ -122,8 +123,25 @@ namespace GingerCore.DataSource
 
         public abstract DataTable GetQueryOutput(string query);
 
+        public abstract void InitConnection();
+        public abstract void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails);
+
+        public abstract void DeleteAll(List<object> AllItemsList, string TName=null);
+        public abstract DataTable GetKeyName(string mDSTableName);
+
+        public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
+        
+        public abstract DataTable GetTable(string TableName);
+        
+        public abstract string AddNewCustomizedTableQuery();
+
+        public abstract string AddColumnName(string ColunmName);
+        public abstract string UpdateDSReturnValues(string Name, string sColList, string sColVals);
+        public abstract string GetExtension();
+        public abstract string AddNewKeyValueTableQuery();
         public abstract void RunQuery(string query);
 
+        public abstract int GetRowCount(string TableName);
         public abstract void AddTable(string tableName, string columnList = "");
 
         public abstract void AddColumn(string tableName, string columnName, string columnType);
@@ -131,7 +149,7 @@ namespace GingerCore.DataSource
         public abstract void RemoveColumn(string tableName, string columnName);
 
         public abstract void DeleteTable(string tableName);
-
+        
         public abstract void RenameTable(string tableName, string newTableName);
 
         public abstract string CopyTable(string tableName);
@@ -168,6 +186,92 @@ namespace GingerCore.DataSource
             get
             {
                 return nameof(this.Name);
+            }
+        }
+
+        public void UpdateDSNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
+        {
+            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in properties)
+            {
+                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                {
+                    continue;
+                }
+
+                //Get the attr value
+                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                dynamic value = null;
+                try
+                {
+                    if (mi.MemberType == MemberTypes.Property)
+                    {
+                        if (PI.CanWrite)
+                        {
+                            value = PI.GetValue(item);
+                        }
+                    }
+                    else if (mi.MemberType == MemberTypes.Field)
+                    {
+                        value = item.GetType().GetField(mi.Name).GetValue(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during UpdateVariableNameChangeInItem", ex);
+                }
+
+                if (value is IObservableList)
+                {
+                    List<dynamic> list = new List<dynamic>();
+                    foreach (object o in value)
+                    {
+                        UpdateDSNameChangeInItem(o, prevVarName, newVarName, ref namechange);
+                    }
+                }
+                else
+                {
+                    if (value != null)
+                    {
+                        if (mi.Name == "VariableName")
+                        {
+                            if (value == prevVarName)
+                            {
+                                PI.SetValue(item, newVarName);
+                            }
+                            namechange = true;
+                        }
+                        else if (mi.Name == "StoreToValue")
+                        {
+                            if (value == prevVarName)
+                            {
+                                PI.SetValue(item, newVarName);
+                            }
+                            else if (value.IndexOf("{Var Name=" + prevVarName + "}") > 0)
+                            {
+                                PI.SetValue(item, value.Replace("{Var Name=" + prevVarName + "}", "{Var Name=" + newVarName + "}"));
+                            }
+                            namechange = true;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                if (PI.CanWrite)
+                                {
+                                    string stringValue = value.ToString();
+                                    string variablePlaceHoler = "{Var Name=xx}";
+                                    if (stringValue.Contains(variablePlaceHoler.Replace("xx", prevVarName)))
+                                    {
+                                        PI.SetValue(item, stringValue.Replace(variablePlaceHoler.Replace("xx", prevVarName), variablePlaceHoler.Replace("xx", newVarName)));
+                                        namechange = true;
+                                    }
+                                }
+                            }
+                            catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        }
+                    }
+                }
             }
         }
     }

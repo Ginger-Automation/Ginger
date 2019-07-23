@@ -1,12 +1,12 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace GingerCoreNETUnitTest.RunTestslib
@@ -14,7 +14,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [Level2]
     [TestClass]
     public class ExecutionDumperListenerTest
-    {
+    {        
+
         static GingerRunner mGingerRunner;
         static ExecutionDumperListener mExecutionDumperListener;
         static string mDumpFolder = TestResources.GetTempFolder("ExecutionDumperListener");
@@ -22,12 +23,21 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
+            WorkspaceHelper.InitWS(nameof(ExecutionDumperListenerTest));
+
             mGingerRunner = new GingerRunner();
             mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             mGingerRunner.RunListeners.Add(mExecutionDumperListener);
             RunListenerBase.Start();
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
+        }
+
 
         private void RunFlow(BusinessFlow businessFlow)
         {
@@ -41,11 +51,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             }
         }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-
-        }
+        
 
         [TestInitialize]
         public void TestInitialize()
@@ -58,8 +64,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             
         }
-
-
+        
         [TestMethod]
         public void DumperListener()
         {                        
@@ -125,7 +130,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             
         }
 
-        [Ignore]  // it fails !!!!!!
+        [Ignore] // it fails !!!!!! needs code fix to check BF is null
         [TestMethod]
         public void DumperListenerEmptyFlow()
         {            

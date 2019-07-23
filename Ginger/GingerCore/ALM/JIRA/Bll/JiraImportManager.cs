@@ -687,7 +687,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("getSelectedFieldValue error: " + ex.Message);
             }
             return valuesList;
         }
@@ -730,7 +730,7 @@ namespace GingerCore.ALM.JIRA
                 tcActivsGroup.Name = tc.TestName;
                 tcActivsGroup.ExternalID = tc.TestKey;
                 tcActivsGroup.Description = tc.Description;
-                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+                busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
                 //Add the TC steps as Activities if not already on the Activities group
                 foreach (JiraTestStep step in tc.Steps)

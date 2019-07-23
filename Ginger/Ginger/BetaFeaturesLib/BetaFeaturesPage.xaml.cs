@@ -52,7 +52,8 @@ namespace Ginger
 
             // General
             ShowDebugConsoleCheckBox.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.ShowDebugConsole));
-            ShowTimingsCheckBox.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.ShowTimings));         
+            ShowTimingsCheckBox.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.ShowTimings));
+            ShowSocketMonitorCheckBox.BindControl(WorkSpace.Instance.BetaFeatures, nameof(BetaFeatures.ShowSocketMonitor));
         }
 
         public void ShowAsWindow()

@@ -24,9 +24,15 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
+using System.Linq;
+
 namespace GingerCore.Actions
 {
-    public class ActTableElement : Act
+    public class ActTableElement : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Table Element Action"; } }
         public override string ActionUserDescription { get { return "Create Java/PowerBulider/Windows Table Action "; } }
@@ -284,7 +290,147 @@ namespace GingerCore.Actions
             }
         }
 
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        {
+            if (Platform == ePlatformType.Java || Platform == ePlatformType.NA)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        Act IObsoleteAction.GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newActUIElement = mapConfigUIElement.CreateMapper().Map<Act, ActUIElement>(this);
+            
+            //TODO: Call below method for Java Platform only
+            newActUIElement = ConvertJavaTableToActUITable(newActUIElement);
+
+            return newActUIElement;
+        }
+
+        private ActUIElement ConvertJavaTableToActUITable(ActUIElement newActUIElement)
+        {
+            newActUIElement.ElementLocateBy = this.LocateBy;
+            newActUIElement.ElementLocateValue = this.LocateValue;
+            newActUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Table;
+            newActUIElement.ElementAction = GetTableElementActionType(this.ControlAction);
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, this.ControlAction.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, this.LocateRowType);
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, this.LocateRowType);
+
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByWhere, this.ByWhere.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRowNum, this.ByRowNum.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRandRow, this.ByRandRow.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.BySelectedRow, this.BySelectedRow.ToString());
+
+            newActUIElement.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, GetCheckedRadioButton());
+
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, this.LocateColTitle);
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, Convert.ToString(this.ColSelectorValue));
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, Convert.ToString(this.WhereColSelector));
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, this.WhereColumnTitle);
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, this.WhereColumnValue);
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, Convert.ToString(this.WhereOperator));
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, Convert.ToString(this.WhereProperty));
+
+
+
+            if (this.ReturnValues.Count > 0)
+            {
+                if (this.ReturnValues[0].Param == "Actual")
+                {
+                    newActUIElement.ReturnValues[0].Param = "Actual0";
+                }
+            }
+
+            return newActUIElement;
+        }
+
+        private string GetCheckedRadioButton()
+        {
+            var rdbTag = string.Empty;
+            if (this.ByRowNum)
+            {
+                rdbTag = "RowNum";
+            }
+            else if (this.ByWhere)
+            {
+                rdbTag = "Where";
+            }
+            else if (this.ByRandRow)
+            {
+                rdbTag = "AnyRow";
+            }
+            else if (this.BySelectedRow)
+            {
+                rdbTag = this.BySelectedRow.ToString();
+            }
+
+            return rdbTag;
+        }
+
+        private ActUIElement.eElementAction GetTableElementActionType(eTableAction controlAction)
+        {
+            ActUIElement.eElementAction elementAction;
+            switch (controlAction)
+            {
+                case eTableAction.SetValue:
+                case eTableAction.SetFocus:
+                case eTableAction.GetValue:
+                case eTableAction.Toggle:
+                case eTableAction.Click:
+                case eTableAction.SelectDate:
+                case eTableAction.Type:
+                case eTableAction.WinClick:
+                case eTableAction.AsyncClick:
+                case eTableAction.IsCellEnabled:
+                case eTableAction.IsVisible:
+                case eTableAction.DoubleClick:
+                case eTableAction.MousePressAndRelease:
+                case eTableAction.SendKeys:
+                case eTableAction.IsChecked:
+                    elementAction = ActUIElement.eElementAction.TableCellAction;
+                    break;
+
+                case eTableAction.GetSelectedRow:
+                case eTableAction.ActivateRow:
+                    elementAction = ActUIElement.eElementAction.TableRowAction;
+                    break;
+
+                case eTableAction.GetRowCount:
+                    elementAction = ActUIElement.eElementAction.TableAction;
+                    break;
+                default:
+                    elementAction = ActUIElement.eElementAction.Unknown;
+                    break;
+            }
+
+            return elementAction;
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            return typeof(ActUIElement);
+        }
+
+        string IObsoleteAction.TargetActionTypeName()
+        {
+            ActUIElement actUIElement = new ActUIElement();
+            return actUIElement.ActionDescription;
+        }
+
+        ePlatformType IObsoleteAction.GetTargetPlatform()
+        {
+            return ePlatformType.Java;
+        }
+
         //TODO: Change icon to Java
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+        public override eImageType Image { get { return eImageType.Table; } }
     }
 }

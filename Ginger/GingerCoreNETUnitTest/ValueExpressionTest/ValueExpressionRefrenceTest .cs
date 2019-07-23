@@ -20,20 +20,31 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using GingerCoreNET.RosLynLib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
     [TestClass]
     public class ValueExpressionRefrenceTest
-    {
+    {        
+
+        [ClassInitialize()]
+        public static void ClassInit(TestContext context)
+        {
+            WorkspaceHelper.InitConsoleWorkspace(nameof(ValueExpressionRefrenceTest));
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
+        }
+
         [TestInitialize]
         public void TestInitialize()
         {
-
+            
         }
 
         [TestCleanup]
@@ -43,32 +54,20 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         }
 
 
-    
-        [TestMethod]    
+
+        [TestMethod]
         public void LoadandTestFile()
-        {
-            if(WorkSpace.Instance==null)
-            {
-                ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
-                WorkSpace.Init(consoleWorkspaceEventHandler);
-    
-            }
-           foreach(ValueExpressionReference ver in  WorkSpace.Instance.VERefrences.Refrences)
+        {                        
+            foreach (ValueExpressionReference ver in WorkSpace.Instance.VERefrences.Refrences)
             {
                 if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
                 {
                     string actualResult = CodeProcessor.GetResult(ver.Expression);
-                  
-                        Assert.AreEqual(ver.ExpressionResult, actualResult);
-                    
+                    Assert.AreEqual(ver.ExpressionResult, actualResult);
                 }
-
             }
-
-
-
-
         }
+
 
     }
 }

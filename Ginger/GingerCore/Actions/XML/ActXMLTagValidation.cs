@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions.XML
 {
@@ -128,7 +129,7 @@ namespace GingerCore.Actions.XML
         }
 
 
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+        public override eImageType Image { get { return eImageType.CodeFile; } }
 
 
 

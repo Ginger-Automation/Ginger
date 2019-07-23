@@ -24,8 +24,8 @@ using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -52,22 +52,31 @@ namespace Ginger.BusinessFlowWindows
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
-                if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
+                try
                 {
-                    if (mNewAutomatePage == null)
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                    if (WorkSpace.Instance.BetaFeatures.ShowOldAutomate)
                     {
-                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                        if (mAutomatePage == null)
+                        {
+                            mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
+                        }
+                        xContentFrame.Content = mAutomatePage;
                     }
-                    xContentFrame.Content = mNewAutomatePage;
+                    else
+                    {
+                        if (mNewAutomatePage == null)
+                        {
+                            mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                        }
+                        xContentFrame.Content = mNewAutomatePage;
+                    }
                 }
-                else
+                finally
                 {
-                    if (mAutomatePage == null)
-                    {
-                        mAutomatePage = new AutomatePage((BusinessFlow)args.Object);                       
-                    }
-                    xContentFrame.Content = mAutomatePage;
-                }                
+                    Mouse.OverrideCursor = null;
+                }
             }
             else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
             {

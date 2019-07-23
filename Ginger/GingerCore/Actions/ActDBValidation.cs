@@ -29,6 +29,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     // TODO: rename to DBAction
@@ -81,8 +83,9 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string AppName { set; get; }
 
+        public string mDBName;
         [IsSerializedForLocalRepository]
-        public string DBName { set; get; }
+        public string DBName { get { return mDBName; } set { mDBName = value; OnPropertyChanged(Fields.DBName); } }
 
         [IsSerializedForLocalRepository]
         public string Keyspace { set; get; }
@@ -431,7 +434,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.DataBase; } }
+        public override eImageType Image { get { return eImageType.Database; } }
 
         public override ActionDetails Details
         {

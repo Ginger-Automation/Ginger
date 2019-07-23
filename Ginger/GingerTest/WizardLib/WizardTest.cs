@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 using GingerTest.WizardLib;
 
 namespace GingerTest
-{
+{    
     [TestClass]
     public class WizardTest
     {

@@ -327,11 +327,14 @@ namespace Ginger.AnalyzerLib
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var + "' is missing";
                         AA.Details = "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ": '" + Var + "' Does not exist In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                        AA.HowToFix = " Create new " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " or Delete it from the action.";
+                        AA.HowToFix = " Create new " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " or Delete it from the action";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
                         AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
                         AA.Severity = eSeverity.High;
+
+                        AA.IssueCategory = eIssueCategory.MissingVariable;
+                        AA.IssueReferenceObject = Var;
 
                         IssuesList.Add(AA);
                     }
@@ -451,6 +454,8 @@ namespace Ginger.AnalyzerLib
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Analyzer" + ex.Message);
+                    //TODO: try to find the failure outside exception
                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                     AA.Description = "Action's mapped Page Objects Model or Element is invalid";
                     AA.Details = "Action " + a.ActionDescription + " has invalid mapped Page Objects Model or Element.";
@@ -540,7 +545,7 @@ namespace Ginger.AnalyzerLib
 
             AA.Status = eStatus.CannotFix;
             return;
-        }
+        }             
 
         static AnalyzeAction CreateNewIssue(BusinessFlow BusinessFlow, Activity Activity, Act action)
         {

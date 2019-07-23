@@ -17,19 +17,23 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Environments;
+using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.Run
@@ -38,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Run
     {
 
         // keep list of GNI for Plugin which are session
-        static Dictionary<string, GingerNodeInfo> dic = new Dictionary<string, GingerNodeInfo>();
+        static Dictionary<string, GingerNodeInfo> SessionsNodes = new Dictionary<string, GingerNodeInfo>();
 
         internal static GingerNodeInfo GetGingerNodeInfoForPluginAction(ActPlugIn actPlugin)
         {
@@ -54,20 +58,20 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID)
+        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID, ObservableList<DriverConfigParam> DriverConfiguration = null)
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
-            bool DoStartSession = false;
+            bool DoStartSession = false;            
             bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(PluginId, ServiceID);
             GingerNodeInfo gingerNodeInfo;
-            string key = PluginId + "." + ServiceID;
+            string key = PluginId + "." + ServiceID;   
 
             Console.WriteLine("Plugin Key:" + key);
 
             if (IsSessionService)
             {
-                bool found = dic.TryGetValue(key, out gingerNodeInfo);
+                bool found = SessionsNodes.TryGetValue(key, out gingerNodeInfo);
                 if (found)
                 {
                     if (gingerNodeInfo.IsAlive())
@@ -76,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     }
                     else
                     {
-                        dic.Remove(key);
+                        SessionsNodes.Remove(key);
                     }
                 }
             }
@@ -122,8 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             }
 
             // keep the proxy on agent
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
+            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid
 
             Console.WriteLine("Checking for DoStartSession..");
 
@@ -131,8 +134,8 @@ namespace Amdocs.Ginger.CoreNET.Run
             if (DoStartSession)
             {
                 gingerNodeInfo.Status = GingerNodeInfo.eStatus.Reserved;
-                GNP.StartDriver();
-                dic.Add(key, gingerNodeInfo);
+                GNP.StartDriver(DriverConfiguration);
+                SessionsNodes.Add(key, gingerNodeInfo);
             }
 
             return gingerNodeInfo;
@@ -175,49 +178,67 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {
-            // Get the action payload
-            NewPayLoad p = actPlugin.GetActionPayload();
+        {                        
+            NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
+
+
+            // Temp design !!!!!!!!!!!!!!!!!!
+            ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(p);
-
-            // Pasrse the result
+            NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+            
             ParseActionResult(RC, (Act)actPlugin);
         }
+
 
 
         // Use for Actions which run without agent and are of the generic type ActPlugin - 
         internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
-            // first verify we have service ready or start service
-            Stopwatch st = Stopwatch.StartNew();
-            
-            GingerNodeProxy GNP = new GingerNodeProxy(gingerNodeInfo);
-            GNP.GingerGrid = WorkSpace.Instance.LocalGingerGrid; // FIXME for remote grid
-
-            NewPayLoad p = CreateActionPayload(actPlugin);
-            NewPayLoad RC = GNP.RunAction(p);
-
-            // release the node as soon as the result came in
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
-            if (!IsSessionService)
+            try
             {
-                // standalone plugin action release the node
-                gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                // first verify we have service ready or start service
+
+                Stopwatch st = Stopwatch.StartNew();
+                GingerNodeProxy gingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);  // FIXME for remote grid
+
+                //!!!!!!!!!!!!! TODO: check if null set err
+
+                NewPayLoad p = CreateActionPayload(actPlugin);
+                NewPayLoad RC = gingerNodeProxy.RunAction(p);
+
+                // release the node as soon as the result came in
+                bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(actPlugin.PluginId, gingerNodeInfo.ServiceId);
+                if (!IsSessionService)
+                {
+                    // standalone plugin action release the node
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
+                }
+                ParseActionResult(RC, actPlugin);
+
+                gingerNodeInfo.IncreaseActionCount();
+
+                st.Stop();
+                long millis = st.ElapsedMilliseconds;
+                actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                string errorMessage = "";
+                if (gingerNodeInfo == null)
+                {
+                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)actPlugin).PluginId + ", Service " + ((ActPlugIn)actPlugin).ServiceId + Environment.NewLine;
+                }
+                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                errorMessage += ex.Message;
+                actPlugin.Error = errorMessage;
             }
 
-            ParseActionResult(RC, actPlugin);
-            
-
-            gingerNodeInfo.IncreaseActionCount();
-
-            st.Stop();
-            long millis = st.ElapsedMilliseconds;
-            actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
         }
 
-        private static void ParseActionResult(NewPayLoad RC, Act actPlugin)
+        public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
@@ -267,7 +288,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         }
 
         // Move code to the ActPlugIn and make it impl IACtPlug...
-        private static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
+        public static NewPayLoad CreateActionPayload(ActPlugIn ActPlugIn)
         {
             // Here we decompose the GA and create Payload to transfer it to the agent
             NewPayLoad PL = new NewPayLoad("RunAction");
@@ -337,26 +358,12 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-
-
-        internal static void RunServiceAction(NewPayLoad ActionPayload, string PluginId, string ServiceID)
-        {
-            GingerNodeInfo GNI = GetGingerNodeInfo(PluginId, ServiceID);
-
-
-
-        }
-
         public static void ExecutesScreenShotActionOnAgent(Agent agent, Act act)
-
         {
-
-
             NewPayLoad PL = new NewPayLoad("ScreenshotAction");
-       
             List<NewPayLoad> PLParams = new List<NewPayLoad>();
 
-           NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
+            NewPayLoad AIVPL = new NewPayLoad("AIV", "WindowsToCapture", act.WindowsToCapture.ToString());
             PLParams.Add(AIVPL);
             PL.AddListPayLoad(PLParams);
             // Get the action payload
@@ -384,7 +391,93 @@ namespace Amdocs.Ginger.CoreNET.Run
                 string Err = RC.GetValueString();
                 act.Error += Err;
             }
-     
+
+        }
+
+
+        static NewPayLoad GeneratePlatformActionPayload(IActPluginExecution ACT, Agent agent)
+        {
+            PlatformAction platformAction = ACT.GetAsPlatformAction();
+
+            // TODO: calculate VE ??!!            
+
+            NewPayLoad payload = new NewPayLoad("RunPlatformAction");
+            payload.AddJSONValue<PlatformAction>(platformAction);
+            payload.ClosePackage();
+
+            // TODO: Process Valuefordriver!!!!
+
+            return payload;
+        }
+
+        private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
+        {
+            NewPayLoad PL = new NewPayLoad("POMPayload");
+           
+
+            string[] pOMandElementGUIDs = actUi.ElementLocateValue.ToString().Split('_');
+            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            if (currentPOM == null)
+            {
+                actUi.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                return null;
+            }
+
+            {
+                Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+
+                PL.AddValue(selectedPOMElement.ElementTypeEnum.ToString());
+                if (selectedPOMElement == null)
+                {
+                    actUi.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                    return null;
+                }
+                else
+                {
+                    List<NewPayLoad> switchframpayload = new List<NewPayLoad>();
+
+                    if (selectedPOMElement.Path != null)
+                    {
+                        string[] spliter = new string[] { "," };
+                        string[] iframesPathes = selectedPOMElement.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string iframePath in iframesPathes)
+                        {
+                            NewPayLoad FieldPL = new NewPayLoad("Frame-Xpath", iframePath);
+                            switchframpayload.Add(FieldPL);
+
+                        }
+                    }
+                    PL.AddListPayLoad(switchframpayload);
+
+
+                    //adding all locators from POM
+                    List<NewPayLoad> LocatorsPayload = new List<NewPayLoad>();
+                    foreach (ElementLocator locator in selectedPOMElement.Locators.Where(x => x.Active == true).ToList())
+                    {
+                        NewPayLoad LocatorPayload;
+                        string locateValue;
+                        if (locator.IsAutoLearned)
+                        {
+
+                            locateValue = locator.LocateValue;
+                        }
+                        else
+                        {
+                            ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+                            GingerCore.ValueExpression VE = new GingerCore.ValueExpression(projEnvironment, businessFlow);
+                            locateValue =  VE.Calculate(evaluatedLocator.LocateValue);
+                  
+                        }
+                        LocatorPayload = new NewPayLoad("Locator", locator.LocateBy.ToString(), locateValue);
+                        LocatorsPayload.Add(LocatorPayload);
+                    }
+                    PL.AddListPayLoad(LocatorsPayload);
+                }
+                PL.ClosePackage();
+                return PL;
+            }
         }
     }
 }

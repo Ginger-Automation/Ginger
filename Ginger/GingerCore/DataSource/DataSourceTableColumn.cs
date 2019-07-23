@@ -35,11 +35,6 @@ namespace GingerCore.DataSource
             DateTime,
         }
 
-        public new static class Fields
-        {
-            public static string DSTableColType = "DSTableColType";
-            public static string Name = "Name";         
-        }
                 
         public string Name { get; set; }                  
 

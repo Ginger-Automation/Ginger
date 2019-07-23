@@ -16,11 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
-using GingerCore.DataSource;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -29,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using Amdocs.Ginger.Repository;
 
 
 namespace Amdocs.Ginger.Common
@@ -47,7 +44,7 @@ namespace Amdocs.Ginger.Common
 
         public new event PropertyChangedEventHandler PropertyChanged;
         public bool RaiseOnCollectionChanged = true;
-           
+
         private object mCurrentItem;
 
         public ObservableList()
@@ -63,7 +60,7 @@ namespace Amdocs.Ginger.Common
         {
         }
 
-     
+
         void IObservableList.Move(int oldIndex, int newIndex)
         {
             //SaveUndoData();
@@ -81,11 +78,12 @@ namespace Amdocs.Ginger.Common
             set { Items[Index] = value; }
         }
 
-           
+
         public object CurrentItem
         {
             get { return mCurrentItem; }
-            set {
+            set
+            {
                 if (mCurrentItem != value)
                 {
                     mCurrentItem = value;
@@ -93,8 +91,8 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-     
-        
+
+
 
         protected void OnPropertyChanged(string name)
         {
@@ -120,12 +118,12 @@ namespace Amdocs.Ginger.Common
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
                 // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
-                return true;                
+                return true;
             }
             else
             {
-                throw new Exception("Current item not found in list for Move Next");             
-            }          
+                throw new Exception("Current item not found in list for Move Next");
+            }
         }
 
 
@@ -138,12 +136,12 @@ namespace Amdocs.Ginger.Common
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
                 // Check if it is possible to move next need to be in the calling function, can use the list check IsLastItem()
                 CurrentItem = Items[index];
-                return true;                
+                return true;
             }
             else
             {
                 throw new Exception("Current item not found in list for Move Next");
-                
+
             }
         }
 
@@ -189,7 +187,7 @@ namespace Amdocs.Ginger.Common
         void IObservableList.SaveUndoData()
         {
             if (mDoingUndo) return;
-            
+
             mUndoData = new List<T>();
             foreach (T item in this.Items)
             {
@@ -197,7 +195,7 @@ namespace Amdocs.Ginger.Common
             }
         }
 
-        void IObservableList.Undo()        
+        void IObservableList.Undo()
         {
             if (mUndoData != null)
             {
@@ -236,7 +234,7 @@ namespace Amdocs.Ginger.Common
             return source.Provider.CreateQuery<T>(resultExpression);
         }
 
-       
+
 
         //Todo created wrapper bc .Clear() is protected and using just .Clear() will not always send property change notification 
         public void ClearAll()
@@ -247,12 +245,12 @@ namespace Amdocs.Ginger.Common
         }
 
         public void Append(ObservableList<T> ItemsToadd)
-        {   
+        {
             foreach(T item  in ItemsToadd)
             {
                 this.Items.Add(item);
             }
-           
+
         }
 
         public IEnumerable<T> ItemsAsEnumerable()
@@ -262,6 +260,7 @@ namespace Amdocs.Ginger.Common
 
         bool mLazyLoad = false;
         string mStringData = null;
+        string mFilterStringData = null;
         MemoryStream mMemoryStream = null;
         int mDataLen;
 
@@ -302,7 +301,7 @@ namespace Amdocs.Ginger.Common
         public void DoLazyLoadItem(string s)
         {
             //option 1 simple string 
-              StringData = s;
+            StringData = s;
 
             //Option 2 compressed string
             // observableList.StringData = StringCompressor.CompressString(s);
@@ -311,11 +310,11 @@ namespace Amdocs.Ginger.Common
             //StringDataMS = StringCompressor.CompressStringToBytes(s);
             // DataLen = s.Length;
 
-             mLazyLoad = true;
+            mLazyLoad = true;
 
         }
 
-        bool loadingata = false;        
+        bool loadingata = false;
 
         public void GetItemsInfo()
         {
@@ -350,7 +349,7 @@ namespace Amdocs.Ginger.Common
 
                 ObservableList<T> l = new ObservableList<T>();
                 try
-                {                   
+                {
                     NewRepositorySerializer.DeserializeObservableListFromText(this, s);
                 }
                 catch (Exception ex)
@@ -385,38 +384,54 @@ namespace Amdocs.Ginger.Common
         }
 
         public void RemoveItem(T obj)
-        {            
+        {
             base.Remove(obj);
         }
 
         public List<object> ListItems
         {
             get
-            {                
+            {
                 return Items.Cast<object>().ToList();
+            }
+        }
+
+        public bool SyncCurrentItemWithViewSelectedItem { get; set; } = true;
+        public bool SyncViewSelectedItemWithCurrentItem { get; set; } = true;
+        public string FilterStringData
+        {
+            get
+            {
+                return mFilterStringData;
+            }
+            set
+            {
+                if (mFilterStringData != value)
+                {
+                    mFilterStringData = value;
+                    OnPropertyChanged("FilterStringData");
+                }
             }
         }
 
         public ObservableList<NewType> ListItemsCast<NewType>()
         {
             ObservableList<NewType> list = new ObservableList<NewType>();
-            var v = Items.Cast<NewType>().ToList();            
+            var v = Items.Cast<NewType>().ToList();
             foreach (NewType item in v)
             {
                 list.Add(item);
             }
-            return list;           
+            return list;
         }
 
         public void AddToFirstIndex(T obj)
         {
+            // TODO: why not to use Insert ?
             Add(obj);
             Move(Count - 1, 0);
         }
 
-        public static implicit operator ObservableList<T>(ObservableList<DataSourceBase> v)
-        {
-            throw new NotImplementedException();
-        }
-    } 
+
+    }
 }
