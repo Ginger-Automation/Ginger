@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                    CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+                   // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)

@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -50,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :"+ex.ToString());
             }
             return lightDbRunSet;
         }
@@ -61,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
             try
             {
-                json = $"window.runsetData={json}";
+                json = $"window.runsetData={json};";
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
                 pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
@@ -155,8 +156,11 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             {
                                 string fileName = Path.GetFileName(screenshot);
                                 string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
-                                System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
-                                newScreenShotsList.Add(fileName);
+                                if (File.Exists(newScreenshotPath))
+                                {
+                                    System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
+                                    newScreenShotsList.Add(fileName);
+                                }
                             }
                             liteDbAction.ScreenShots = newScreenShotsList;
                         }
