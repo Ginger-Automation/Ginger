@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
@@ -29,6 +30,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         {
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
             mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "EmailWebReport");
+            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
         }
         #endregion
 
