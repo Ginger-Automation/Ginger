@@ -158,8 +158,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activeUnactiveAllActivities.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             activeUnactiveAllActivities.AutomationID = "activeUnactiveAllActivities";
             activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActivities.Header = "Activate/Un-Activate All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activeUnactiveAllActivities.Header = "Activate/De-Activate All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activeUnactiveAllActivities.ToolTip = "Activate/De-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
             activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
             extraOperationsList.Add(activeUnactiveAllActivities);
 
