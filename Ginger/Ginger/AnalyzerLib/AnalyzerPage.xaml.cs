@@ -57,7 +57,7 @@ namespace Ginger.AnalyzerLib
         GenericWindow _pageGenericWin = null;
 
         ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
-
+       
         private Solution mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
@@ -153,7 +153,7 @@ namespace Ginger.AnalyzerLib
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
-
+            mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
