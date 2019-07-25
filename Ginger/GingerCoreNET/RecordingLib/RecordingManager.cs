@@ -106,8 +106,13 @@ namespace Amdocs.Ginger.CoreNET
                 newPOM.Guid = new Guid();
                 newPOM.ItemName = pageTitle;
                 newPOM.PageURL = pageURL;
+                newPOM.TargetApplicationKey = new RepositoryItemKey() { ItemName = Context.Target.ItemName, Guid = Context.Target.Guid, Key = Context.Target.Key.Key };
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
+
+                //Save new POM
+                RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                repositoryFolder.AddRepositoryItem(newPOM);
 
                 recordingHelper.PageTitle = pageTitle;
                 recordingHelper.PageURL = pageURL;
@@ -275,14 +280,7 @@ namespace Amdocs.Ginger.CoreNET
                         {
                             try
                             {
-                                if (string.IsNullOrEmpty(cPom.ApplicationPOM.ContainingFolderFullPath))
-                                {
-                                    repositoryFolder.AddRepositoryItem(cPom.ApplicationPOM); 
-                                }
-                                else
-                                {
-                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
-                                }
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
                             }
                             catch (Exception e)
                             {                                

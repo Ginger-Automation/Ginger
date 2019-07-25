@@ -80,7 +80,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SetDriver();
                 SetRecordingControls();
             }
-            else if(e != null && e.PropertyName == nameof(Context.Activity))
+            else if(e != null && e.PropertyName == nameof(Context.Target))
             {
                 SetSelectedPOMsGridView();
                 mApplicationPOMSelectionPage = null;
