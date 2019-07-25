@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="2c7de24a-6b9b-4a47-b790-e54eaca05711" ItemType="Solution" CreatedBy="LIRANMES" Created="201901161049" GingerVersion="3.3.0.0" Version="48" LastUpdateBy="LIRANMES" LastUpdate="201907100636" />
+<Solution ALMDomain="DE" ALMProject="Amdocs Digital – DE R&amp;D" ALMProjectKey="DE" ALMServerURL="https://jirapbguat" AlmType="Jira" ConfigPackageFolderPath="C:\GINGER\JIRA CON\Configurations\JiraConfigurationsPackage" Guid="2c7de24a-6b9b-4a47-b790-e54eaca05711" Name="test" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ApplicationPlatforms>
+<ApplicationPlatform AppName="MyWebApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="f2460cff-6aa0-41f7-ba1b-6395eceace1d" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
+</ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration ExecutionLoggerConfigurationExecResultsFolder="C:\Ginger\test\ExecutionResults\" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="ea0761b4-81d1-45cb-bcab-2ed4993ed8ac" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="b326bb87-841e-4456-ac71-d059fb805d64" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports\" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
+</Solution></GingerRepositoryItem>

@@ -1,0 +1,239 @@
+#layout-right-sidebar {
+    width: 230px;
+    right: -231px;
+    background-color: $sidebarBgColor;
+    border-left: solid 1px $sidebarBorderColor;
+    position: fixed;
+    z-index: 999;
+    top: 60px;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    @include transition(right $transitionDuration);
+
+    &.layout-right-sidebar-active {
+        right: 0;
+        display: block;
+    }
+    .ui-tabview {
+        padding: 0;
+        .ui-tabview-panels {
+            padding: 0;
+        }
+        .ui-tabview-nav {
+            li {
+                padding: 0px 4px;
+
+                a {
+                    padding-top: 5px;
+                    font-size: 20px;
+                }
+            }
+
+            .ui-tabview-left-icon {
+                margin-right: 0;
+            }
+        }
+    }
+    .submenu-title {
+        padding: 4px 0 4px 11px;
+        background-color: #f1f1f1;
+        border-bottom: 1px solid #d6d7d9;
+        span {
+            color: #212121;
+            font-weight: 600;
+            line-height: 42px;
+            font-size: 16px;
+        }
+    }
+    .submenu-content {
+        list-style-type: none;
+        &.settings {
+            padding: 0 11px;
+        }
+        ul {
+            padding: 0;
+            li {
+                display: inline-block;
+                padding: 11px;
+            }
+        }
+        img {
+            float: left;
+            margin-right: 8px;
+            width: 27px;
+            height: 27px;
+        }
+        span {
+            display: block;
+            font-size: 12px;
+            color: #212121;
+            &.messager-name {
+                font-weight: 600;
+            }
+            &.message-text {
+                width: 83%;
+                float: right;
+            }
+            &.time-stamp {
+                color: #80848b;
+                position: absolute;
+                text-align: center;
+                margin-top: 30px;
+                width: 10%;
+            }
+        }
+        .calendar-event-date {
+            float: left;
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            padding: 6px 0 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            box-sizing: border-box;
+            margin-right: 8px;
+            background-color: #0071bc;
+            display: block;
+            span {
+                width: 100%;
+                display: inline-block;
+                &.date {
+                    color: #ffffff;
+                }
+            }
+        }
+        .calendar-event-detail {
+            float: left;
+            display: block;
+            .calendar-event-title {
+                font-weight: 600;
+                display: block;
+            }
+            i {
+                margin-right: 4px;
+                margin-top: 2px;
+                display: block;
+            }
+            .material-icons {
+                font-size: 17px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .calendar-event-location {
+                top: -6px;
+                left: -4px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+        .order-settings {
+            background-color: #e5f0f8;
+            color: #205493;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #205493;
+                font-weight: 600;
+            }
+        }
+        .sales-settings {
+            background-color: #d5e6d8;
+            color: #2e8540;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #2e8540;
+                font-weight: 600;
+            }
+        }
+        .shipment-settings {
+            background-color: #fef0d2;
+            color: #e3a51b;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #e3a51b;
+                font-weight: 600;
+            }
+        }
+        .visitors-settings {
+            background-color: #fce8eb;
+            color: #cd2026;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #cd2026;
+                font-weight: 600;
+            }
+        }
+        .history-settings {
+            background-color: #dbd4e9;
+            color: #4c2c92;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #4c2c92;
+                font-weight: 600;
+            }
+        }
+        .leads-settings {
+            background-color: #dedfe1;
+            color: #5b616b;
+            text-align: center;
+            width: 80px;
+            height: 74px;
+            &:hover {
+                box-shadow: 0 0 8px #aeb0b5;
+            }
+            i {
+                font-size: 30px;
+            }
+            span {
+                color: #5b616b;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    #layout-right-sidebar {
+        top: 105px;
+    }
+}
