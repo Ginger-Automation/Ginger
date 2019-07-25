@@ -1077,7 +1077,14 @@ namespace Ginger.Run
                 UpdateDSReturnValues(act);
 
                 // Add time stamp 
-                act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo;
+                if (!string.IsNullOrEmpty(act.ExInfo))
+                {
+                    act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo; 
+                }
+                else
+                {
+                    act.ExInfo = DateTime.Now.ToString();
+                }
                 ProcessScreenShot(act, ActionExecutorType);
                 mErrorHandlerExecuted = false;
 
