@@ -36,6 +36,8 @@ namespace Amdocs.Ginger.CoreNET
     {       
         private bool CreatePOM { get; set; }
 
+        ObservableList<ApplicationPOMModel> mlstApplicationPOM;
+
         public List<POMObjectRecordingHelper> ListPOMObjectHelper { get; set; }
         
         public Context Context { get; set; }
@@ -50,15 +52,16 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool LearnAdditionalDetails { get; set; }
 
-        public RecordingManager(List<ApplicationPOMModel> lstApplicationPOM, BusinessFlow bFlow, Context context, IRecord platformDriver, IPlatformInfo pInfo)
+        public RecordingManager(ObservableList<ApplicationPOMModel> lstApplicationPOM, BusinessFlow bFlow, Context context, IRecord platformDriver, IPlatformInfo pInfo)
         {
             try
             {
                 PlatformInfo = pInfo;
                 PlatformDriver = platformDriver;
+                mlstApplicationPOM = lstApplicationPOM;
                 //if lstApplicationPOM == null then dont create POM or if applicationPOM.Name has some value then use the existing POM
                 //or else create new POM
-                if (lstApplicationPOM == null)
+                if (mlstApplicationPOM == null)
                 {
                     LearnAdditionalDetails = false;
                     CreatePOM = false;
@@ -68,16 +71,16 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     LearnAdditionalDetails = true;
                     CreatePOM = true;                    
-                    if (lstApplicationPOM.Count > 0)
+                    if (mlstApplicationPOM.Count > 0)
                     {
-                        CurrentPOM = lstApplicationPOM[0]; 
+                        CurrentPOM = mlstApplicationPOM[0]; 
                     }
                     else
                     {
                         CurrentPOM = new ApplicationPOMModel();
                     }
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    foreach (var cPom in lstApplicationPOM)
+                    foreach (var cPom in mlstApplicationPOM)
                     {
                         ListPOMObjectHelper.Add(new POMObjectRecordingHelper() { PageTitle = cPom.ItemName, PageURL = cPom.PageURL, ApplicationPOM = cPom });
                     }
@@ -106,13 +109,17 @@ namespace Amdocs.Ginger.CoreNET
                 newPOM.Guid = new Guid();
                 newPOM.ItemName = pageTitle;
                 newPOM.PageURL = pageURL;
-                newPOM.TargetApplicationKey = new RepositoryItemKey() { ItemName = Context.Target.ItemName, Guid = Context.Target.Guid, Key = Context.Target.Key.Key };
+                newPOM.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).FirstOrDefault().Key;
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
 
                 //Save new POM
                 RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                 repositoryFolder.AddRepositoryItem(newPOM);
+                if (mlstApplicationPOM != null)
+                {
+                    mlstApplicationPOM.Add(newPOM);//adding so user will notice it was added during recording
+                }
 
                 recordingHelper.PageTitle = pageTitle;
                 recordingHelper.PageURL = pageURL;
