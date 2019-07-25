@@ -49,8 +49,9 @@ body .ui-corner-right {
   border-bottom-right-radius: 0;
 }
 body a {
-  color: #D5665F;
+  color: #0098ff;
   text-decoration: none;
+  font-weight: normal;
 }
 body a:hover {
   color: #D5665F;
@@ -1530,8 +1531,8 @@ body .ui-accordion .ui-accordion-header :focus {
   outline: 0 none;
 }
 body .ui-accordion .ui-accordion-header:not(.ui-state-disabled).ui-state-active a {
-  background-color: #6E7CA0;
-  border: 1px solid #6E7CA0;
+  background-color: #9086a2;
+  border: 1px solid #9086a2;
   color: #ffffff;
 }
 body .ui-accordion .ui-accordion-header:not(.ui-state-disabled).ui-state-active a .ui-accordion-toggle-icon {
@@ -1793,10 +1794,10 @@ body .ui-table .ui-table-summary {
 }
 body .ui-table .ui-table-thead > tr > th {
   padding: 0.286em 0.571em;
-  border: 1px solid #d6d7d9;
+  border: 1px solid #ffffff;
   font-weight: 400;
-  color: #212121;
-  background-color: #E3E5E3;
+  color: #ffffff;
+  background-color: #7f7989;
 }
 body .ui-table .ui-table-tbody > tr > td {
   padding: 0.286em 0.571em;
@@ -3452,3 +3453,39 @@ body .ui-inplace.ui-inplace-closable .ui-inplace-content > :first-child {
 }
 
 /* Add your customizations of the theme here */
+.runset-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/run-set.png');
+}
+.runner-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/runner.png');
+}
+.businessFlow-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/flow.png');
+}
+.activityGroup-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/activity-group.png');
+}
+.activity-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/activity.png');
+}
+.action-menu-icon{
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  content: url('../images/action.png');
+}
