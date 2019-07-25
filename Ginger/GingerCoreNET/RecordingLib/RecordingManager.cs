@@ -94,19 +94,38 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        /// <summary>
+        /// This method is used to get the new POM object for new creation while recording
+        /// </summary>
+        /// <param name="pageTitle"></param>
+        /// <param name="pageURL"></param>
+        /// <param name="screenShot"></param>
+        /// <returns></returns>
         private POMObjectRecordingHelper GetNewPOM(string pageTitle, string pageURL, string screenShot)
         {
             POMObjectRecordingHelper recordingHelper = new POMObjectRecordingHelper();
             try
             {
+                string uniquTitle = GetUniquePOMName(pageTitle);
+
                 ApplicationPOMModel newPOM = new ApplicationPOMModel();
-                newPOM.FileName = pageTitle;
-                newPOM.FilePath = pageTitle;
-                newPOM.Name = pageTitle;
+                newPOM.FileName = uniquTitle;
+                newPOM.FilePath = uniquTitle;
+                newPOM.Name = uniquTitle;
                 newPOM.Guid = new Guid();
-                newPOM.ItemName = pageTitle;
+                newPOM.ItemName = uniquTitle;
                 newPOM.PageURL = pageURL;
-                newPOM.TargetApplicationKey = new RepositoryItemKey() { ItemName = Context.Target.ItemName, Guid = Context.Target.Guid, Key = Context.Target.Key.Key };
+
+                RepositoryItemKey key = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == Context.Target.ItemName).Select(x => x.Key).FirstOrDefault();
+                if (key != null)
+                {
+                    newPOM.TargetApplicationKey = key;
+                }
+                else
+                {
+                    newPOM.TargetApplicationKey = new RepositoryItemKey() { ItemName = Context.Target.ItemName, Guid = Context.Target.Guid, Key = Context.Target.Key.Key };
+                }
+
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
 
@@ -114,7 +133,7 @@ namespace Amdocs.Ginger.CoreNET
                 RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                 repositoryFolder.AddRepositoryItem(newPOM);
 
-                recordingHelper.PageTitle = pageTitle;
+                recordingHelper.PageTitle = uniquTitle;
                 recordingHelper.PageURL = pageURL;
                 recordingHelper.ApplicationPOM = newPOM;
             }
@@ -123,6 +142,40 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToLog(eLogLevel.ERROR, "Error in creating Recording object", ex);
             }
             return recordingHelper;
+        }
+
+        /// <summary>
+        /// This method is used to get the unique POM name for new POM creation
+        /// </summary>
+        /// <param name="pageTitle"></param>
+        /// <returns></returns>
+        private string GetUniquePOMName(string pageTitle)
+        {
+            string uniqueName = string.Empty;
+            try
+            {
+                RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                int count = repositoryFolder.GetFolderItemsRecursive().Where(x => x.ItemName == pageTitle).Count();
+                if (count == 0)
+                {
+                    uniqueName = pageTitle;
+                }
+                else
+                {
+                    int appendCount = 1;
+                    while (count > 0)
+                    {
+                        uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
+                        count = repositoryFolder.GetFolderItemsRecursive().Where(x => x.ItemName == uniqueName).Count();
+                        appendCount++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in getting the unique name while POM creation", ex);
+            }
+            return uniqueName;
         }
 
         private void PlatformDriverPageChangedHandler(PageChangedEventArgs args)
