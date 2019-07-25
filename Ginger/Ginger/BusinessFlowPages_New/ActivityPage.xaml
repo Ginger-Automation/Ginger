@@ -55,7 +55,7 @@
                                     <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" />
+                                    <GingerCore:ucTextDicResource Text="Add [Activity] to Shared Repository" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>

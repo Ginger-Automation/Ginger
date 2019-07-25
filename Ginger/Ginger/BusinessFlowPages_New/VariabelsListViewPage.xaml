@@ -33,7 +33,7 @@
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
                     <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="16" ButtonImageType="Undo" />
+                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
                     <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Next [Variable]"/>

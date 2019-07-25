@@ -129,7 +129,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemIconTooltipField()
         {
-            return nameof(VariableBase.VariableType);
+            return nameof(VariableBase.VariableUIType);
         }
 
         public List<ListItemOperation> GetListOperations()
