@@ -29,17 +29,32 @@ namespace GingerCoreCommonTest.Repository
     [Level1]
     public class DirtyTest
     {
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
+        [ClassInitialize()]
+        public static void ClassInit(TestContext TestContext)
         {
-
-
-
+            mTestHelper.ClassInitialize(TestContext);
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            mTestHelper.ClassCleanup();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -79,6 +94,7 @@ namespace GingerCoreCommonTest.Repository
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
             item.Name = "aaa";            
+
             item.StartDirtyTracking();
 
             //Act            
@@ -209,7 +225,7 @@ namespace GingerCoreCommonTest.Repository
             newChild.Name = "NewName"; //expecting parent to show as dirty again because one of it's childs modified
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changedt to modified since one child was added and then child was modified");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was added and then child was modified");
         }
 
 

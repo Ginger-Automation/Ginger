@@ -44,6 +44,18 @@ jobs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
 
+# ------------------------------------------------------------------------------------------------------
+# Package Test Artifacts
+# ------------------------------------------------------------------------------------------------------
+
+
+  - task: PowerShell@2
+    displayName: Package test artifacts
+    inputs:
+      filePath: PackageTestArtifacts.ps1
+
+
+
 
 # ------------------------------------------------------------------------------------------------------
 # Publish Test Artifacts
