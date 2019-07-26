@@ -44,10 +44,12 @@ namespace GingerUtilsTest
             //Arrange
             string s1 = "abcdefghijklmnop";
 
-
             //Act
             string compressed = StringCompressor.CompressString(s1);
             string uncompressed = StringCompressor.DecompressString(compressed);
+
+            //Artifacts
+            mTestHelper.CreateTestArtifact("Stringcompression", s1 + Environment.NewLine + compressed);
 
             //Assert
             Assert.AreEqual(uncompressed, s1, "uncompressed=s1");
