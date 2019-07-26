@@ -54,8 +54,9 @@ namespace Ginger.DataSource
             mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
             mDSDetails.Name = "GingerDataSource";
 
-            FilePathTextBox.IsEnabled = true;
-            FileBrowseButton.IsEnabled = true;
+            FilePathTextBox.IsEnabled = false;
+            FileBrowseButton.IsEnabled = false;
+            DSName.IsEnabled = false;
             DSTypeComboBox.IsEnabled = true;
 
             GingerCore.General.FillComboFromEnumType(DSTypeComboBox, typeof(DataSourceBase.eDSType));
@@ -63,7 +64,8 @@ namespace Ginger.DataSource
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSName, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType); 
+            
         }
         
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -187,13 +189,15 @@ namespace Ginger.DataSource
             if (DSTypeComboBox == null)
                 return;               
             
-            DSTypeComboBox.IsEnabled = false;            
+            DSTypeComboBox.IsEnabled = true;            
             FilePathTextBox.IsEnabled = false;
             FileBrowseButton.IsEnabled = false;
+            DSName.IsEnabled = false;
 
             DSTypeComboBox.SelectedItem = DataSourceBase.eDSType.MSAccess;
             DSName.Text = "GingerDataSource";            
             FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
+            
         }
 
         private void New_Checked(object sender, RoutedEventArgs e)
@@ -210,6 +214,8 @@ namespace Ginger.DataSource
             DSTypeComboBox.SelectedItem = DataSourceBase.eDSType.MSAccess;
             DSName.Text = "";
             FilePathTextBox.Text = "";
+            FilePathTextBox.IsEnabled = true;
+            DSName.IsEnabled = true;
         }
 
         private void DSName_TextChanged(object sender, TextChangedEventArgs e)
