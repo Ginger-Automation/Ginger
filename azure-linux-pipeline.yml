@@ -50,3 +50,4 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()

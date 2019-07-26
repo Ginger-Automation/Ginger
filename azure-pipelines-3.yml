@@ -35,3 +35,10 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
+
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Artifacts
+# ------------------------------------------------------------------------------------------------------
+
+  - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()
