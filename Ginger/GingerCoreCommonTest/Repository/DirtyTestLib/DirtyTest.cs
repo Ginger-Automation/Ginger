@@ -122,7 +122,7 @@ namespace GingerCoreCommonTest.Repository
             child1.Name = "def";
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changedt to modified");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changed to modified");
             Assert.AreEqual(eDirtyStatus.Modified, child1.DirtyStatus,  "child item dirty status changed to modified");
             Assert.IsTrue(DirtyStatusChangedTriggered, "DirtyStatusChangedTriggered=true");
         }
