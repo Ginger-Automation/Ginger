@@ -26,17 +26,19 @@ if ($LastExitCode -ne 0)
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                        Tests Completed                    -"
 Write-Host "-------------------------------------------------------------"
+cd d:\a\1\s\TestResults
+dir
 
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Copy Test Artifacts                    -"
 Write-Host "-------------------------------------------------------------"
-
+New-Item -Path "d:\a\1\a" -Name "TestCompleted.txt" -ItemType "file" -Value "Test Completed Artifacts"
 Copy-Item  'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\netcoreapp2.2\TestArtifacts' 'D:\a\1\a'
 
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                         Artifacts List                    -"
 Write-Host "-------------------------------------------------------------"
-cd d:\a\1\s\TestResults
+cd d:\a\1\a\
 dir
 
 
