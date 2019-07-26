@@ -23,10 +23,21 @@ if ($LastExitCode -ne 0)
 	$exitcode = 1
 }
 
-cd d:\a\1\s\TestResults
-dir
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                        Tests Completed                    -"
 Write-Host "-------------------------------------------------------------"
+
+Write-Host "-------------------------------------------------------------"
+Write-Host "-                    Copy Test Artifacts                    -"
+Write-Host "-------------------------------------------------------------"
+
+Copy-Item  'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\netcoreapp2.2\TestArtifacts' 'D:\a\1\a'
+
+Write-Host "-------------------------------------------------------------"
+Write-Host "-                         Artifacts List                    -"
+Write-Host "-------------------------------------------------------------"
+cd d:\a\1\s\TestResults
+dir
+
 
 exit $exitcode
