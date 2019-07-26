@@ -56,7 +56,7 @@ namespace GingerCoreCommonTest.Repository
 
 
         [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        public static void ClassInitialize(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
 
