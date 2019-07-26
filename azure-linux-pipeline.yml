@@ -2,7 +2,7 @@
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
-# Request Linux Ubunto 16.04 VM 
+# Request latest Ubunto/Linux
 # ------------------------------------------------------------------------------------------------------
 - job: Linux
   pool:
@@ -18,6 +18,8 @@ jobs:
   
   steps:
   
+  - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
+    displayName: 'Testing GingerUtilsTest'
 
   - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
     displayName: 'Testing GingerCoreCommonTest'
