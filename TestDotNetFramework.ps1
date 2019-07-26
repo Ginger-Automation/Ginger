@@ -33,7 +33,8 @@ Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Copy Test Artifacts                    -"
 Write-Host "-------------------------------------------------------------"
 New-Item -Path "d:\a\1\a" -Name "TestCompleted.txt" -ItemType "file" -Value "Test Completed Artifacts"
-Copy-Item  'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\netcoreapp2.2\TestArtifacts' 'D:\a\1\a'
+
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\netcoreapp2.2\TestArtifacts' -DestinationPath 'D:\a\1\a\TestArtifacts'
 
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                         Artifacts List                    -"
