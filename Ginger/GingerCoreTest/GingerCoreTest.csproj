@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GingerTestHelper">
-      <Version>1.0.5</Version>
+      <Version>2.0.2</Version>
     </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.8</Version>
