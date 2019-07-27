@@ -115,19 +115,26 @@ namespace Amdocs.Ginger.CoreNET
                 newPOM.PageURL = pageURL;
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
-                RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
-                if (tAppkey != null)
+                if (WorkSpace.Instance.Solution != null)//check for unit tests
                 {
-                    newPOM.TargetApplicationKey = tAppkey;
-                }
-                else
-                {
-                    newPOM.TargetApplicationKey = Context.Target.Key;
+                    RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
+                    if (tAppkey != null)
+                    {
+                        newPOM.TargetApplicationKey = tAppkey;
+                    }
+                    else
+                    {
+                        newPOM.TargetApplicationKey = Context.Target.Key;
+                    }
                 }
 
                 //Save new POM
-                RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
-                repositoryFolder.AddRepositoryItem(newPOM);
+                if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
+                {
+                    RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                    repositoryFolder.AddRepositoryItem(newPOM);
+                }
+
                 if (mApplicationPOMList != null)
                 {
                     mApplicationPOMList.Add(newPOM);//adding so user will notice it was added during recording
