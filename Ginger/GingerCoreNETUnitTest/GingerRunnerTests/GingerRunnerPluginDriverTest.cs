@@ -35,15 +35,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
 
         static BusinessFlow mBusinessFlow;
         static GingerRunner mGingerRunner;
         static string mAppName = "Memo app";
 
         [ClassInitialize()]
-        public static void ClassInit(TestContext context)
-        {            
+        public static void ClassInit(TestContext TestContext)
+        {
+            mTestHelper.ClassInitialize(TestContext);
+
             // Create new solution
             mBusinessFlow = new BusinessFlow();
             mBusinessFlow.Activities = new ObservableList<Activity>();
@@ -83,10 +88,27 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {            
             WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
             WorkSpace.Instance.ReleaseWorkspace();
+
+            mTestHelper.ClassCleanup();
         }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            mTestHelper.TestCleanup();
+        }
+
 
         private void ResetBusinessFlow()
         {
+            mTestHelper.Log("Reset Business Flow");
             mBusinessFlow.Activities.Clear();
             mBusinessFlow.RunStatus = eRunStatus.Pending;
         }
@@ -95,7 +117,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod] 
         public void PluginSay()
         {
-            Console.WriteLine(">>>>> test PluginSay <<<<<<<<<");
+            mTestHelper.Log("test PluginSay");
+            
             //Arrange
             ResetBusinessFlow();            
 
@@ -107,7 +130,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             a1.Acts.Add(act1);
 
             //Act            
+            mTestHelper.Log("Before Ginger Runner");
             mGingerRunner.RunRunner();
+            mTestHelper.Log("After Ginger Runner");
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, act1.Status);
