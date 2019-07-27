@@ -118,7 +118,7 @@ namespace GingerCoreNETUnitTest.Examples
             //Act
             for (int i=0;i<10;i++)
             {
-                System.IO.File.AppendAllText(fileName, "line " + i + Environment.NewLine);
+                System.IO.File.AppendAllText(fileName, "line " + i + "##");
             }
 
             //Artifacts
