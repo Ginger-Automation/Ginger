@@ -44,7 +44,7 @@ namespace WorkspaceHold
         [TestInitialize]
         public void TestInitialize()
         {
-            WorkspaceHelper.InitWS("CLITest");  // we get seperate workspace for each test
+            WorkspaceHelper.InitWS("CLITest");  // we get separate workspace for each test
         }
 
         [TestCleanup]

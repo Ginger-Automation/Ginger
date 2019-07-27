@@ -43,13 +43,23 @@ namespace GingerCoreCommonTest.Repository
     [Level1]
     public class SolutionRepositoryTest
     {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
         static SolutionRepository mSolutionRepository;
         static NewRepositorySerializer mRepositorySerializer;
         static string TempRepositoryFolder;
 
+        
+
+        
+
+
         [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
-        {            
+        public static void ClassInitialize(TestContext TestContext)
+        {
+            mTestHelper.ClassInitialize(TestContext);
+
             TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
@@ -70,6 +80,12 @@ namespace GingerCoreCommonTest.Repository
             NewRepositorySerializer RS = new NewRepositorySerializer();                        
             NewRepositorySerializer.AddClassesFromAssembly(typeof(MyRepositoryItem).Assembly);            
             mSolutionRepository.Open(TempRepositoryFolder);            
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            mTestHelper.ClassCleanup();
         }
 
         private static void CreateTestSolution()
@@ -129,13 +145,19 @@ namespace GingerCoreCommonTest.Repository
             SR.Close();
         }
 
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
-      
 
         [TestMethod]
         public void GetAllRepositoryItems()

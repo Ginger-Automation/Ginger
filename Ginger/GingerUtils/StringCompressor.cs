@@ -21,9 +21,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace GingerCore.GeneralLib
+namespace GingerUtils
 {
-    internal static class StringCompressor
+    public static class StringCompressor
     {
         /// <summary>
         /// Compresses the string.
