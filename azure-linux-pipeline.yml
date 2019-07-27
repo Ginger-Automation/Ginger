@@ -53,6 +53,7 @@ jobs:
     displayName: Package test artifacts
     inputs:
       filePath: PackageTestArtifacts.ps1
+    condition: succeededOrFailed()
 
 
 
