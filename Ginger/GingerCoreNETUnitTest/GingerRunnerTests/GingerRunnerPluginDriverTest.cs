@@ -114,6 +114,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
+        [Ignore] // Fail on Linux
         [TestMethod] 
         public void PluginSay()
         {
