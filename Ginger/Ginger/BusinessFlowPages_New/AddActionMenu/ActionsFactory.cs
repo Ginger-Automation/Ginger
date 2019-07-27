@@ -53,6 +53,11 @@ namespace Ginger.BusinessFlowPages
         {
             Act instance = null;
 
+            if (mContext.Activity != null)
+            {
+                mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
+            }
+
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
