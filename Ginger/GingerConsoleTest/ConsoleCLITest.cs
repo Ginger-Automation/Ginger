@@ -8,7 +8,7 @@ namespace GingerConsoleTest
 {
 
     [TestClass]
-    class ConsoleCLITest
+    public class ConsoleCLITest
     {
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }
@@ -43,6 +43,9 @@ namespace GingerConsoleTest
         [TestMethod]
         public void SampleTest1()
         {
+            mTestHelper.Log("aaa");
+
+
             //Arrange
             string s1 = "aaa";
             string s2 = "bbb";
