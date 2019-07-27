@@ -129,7 +129,11 @@ namespace GingerTest
             isReady = true;
         }
 
-        
+        internal void TakeScreenShot(string fileName)
+        {
+            // TODO:
+        }
+
         void CloseGinger()
         {
             // app.Shutdown(0);
