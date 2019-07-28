@@ -50,7 +50,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             
             WorkspaceHelper.InitWS(nameof(PluginAgentTest));
             
-
             // Create temp solution
             SolutionRepository solutionRepository;
             string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "AgentTestSolution"));
@@ -66,11 +65,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
             WorkSpace.Instance.PlugInsManager.Init(solutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
-
-            // Start a Ginger Services grid
-            // int HubPort = SocketHelper.GetOpenPort();
-            mGingerGrid = WorkSpace.Instance.LocalGingerGrid; //new GingerGrid(HubPort);  
-            // mGingerGrid.Start();
+            
+            mGingerGrid = WorkSpace.Instance.LocalGingerGrid;            
         }
 
         [ClassCleanup]
@@ -107,16 +103,19 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Act
             mTestHelper.Log("agent.StartDriver()");
             agent.StartDriver();
+
+            int count = mGingerGrid.NodeList.Count;
+
             mTestHelper.Log("agent.Close();");
             agent.Close();
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
             //Assert
-            Assert.AreEqual(list.Count, 0);
+            Assert.AreEqual(0, list.Count);
+            Assert.AreEqual(1, count);
         }
 
-
-        [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
         [TestMethod]
         [Timeout(60000)]
         public void StartX3LocalDriverFromPlugin()
@@ -131,7 +130,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             a1.StartDriver();
             a2.StartDriver();
             a3.StartDriver();
-            
+
+            int count = mGingerGrid.NodeList.Count;
+
             a1.Close();
             a2.Close();
             a3.Close();
@@ -139,7 +140,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
             //Assert
-            Assert.AreEqual(list.Count, 0);
+            Assert.AreEqual(3, count);
+            Assert.AreEqual(0, list.Count);
         }
 
 
