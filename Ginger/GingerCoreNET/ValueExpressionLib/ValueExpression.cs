@@ -116,8 +116,7 @@ namespace GingerCore
         ProjEnvironment Env;
         bool bUpdate;
         string updateValue;
-        bool bDone;
-        string DSName;
+        bool bDone;        
 
 
         public bool DecryptFlag { get; set; } = false;
