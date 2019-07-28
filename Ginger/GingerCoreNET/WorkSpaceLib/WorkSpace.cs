@@ -97,7 +97,6 @@ namespace amdocs.ginger.GingerCoreNET
         {
             try
             {
-
                 CloseSolution();
                 LocalGingerGrid.Stop();
                 Close();
@@ -105,11 +104,10 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("ReleaseWorkspace error - " + ex.Message);
             }
             finally
             {
-
                 mMutex.ReleaseMutex();
             }            
          
@@ -249,7 +247,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("CheckWebReportFolder error - " + ex.Message);
             }
         }
 
@@ -261,7 +259,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("TryFolderDelete error - " + ex.Message);
             }
         }
 

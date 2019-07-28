@@ -121,6 +121,9 @@ namespace Amdocs.Ginger.Common.APIModelLib
 
                 catch(Exception ex)
                 {
+                    Console.WriteLine("GenerateBodyANdModelParameters error - " + ex.Message);
+
+                    // Why do we do work in exception !!!!!!!!!!!!!
                     if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array)
                     {
                         consts.Add(param);
