@@ -928,9 +928,6 @@
     <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
       <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\GingerActionEditPage.xaml.cs">
-      <DependentUpon>GingerActionEditPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
     </Compile>
@@ -3177,10 +3174,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowPages_New\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
