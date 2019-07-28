@@ -29,14 +29,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 
-// FIXME to use local html test page
+// FIXME to use local HTML test page
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {        
     [Level3]
     [TestClass]
     public class PluginAgentTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
         static GingerGrid mGingerGrid;
         
@@ -44,8 +46,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            // Create temp solution
-
+            mTestHelper.ClassInitialize(TestContext);
+            
             WorkspaceHelper.InitWS(nameof(PluginAgentTest));
             
 
@@ -76,23 +78,22 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             mGingerGrid.Stop();
             WorkSpace.Instance.ReleaseWorkspace();
+            mTestHelper.ClassCleanup();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-
-
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
-
-        [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
@@ -101,10 +102,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Agent agent = new Agent() { Name = "agent 1" };            
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "Memo";
-            agent.ServiceId = "DictionaryService";            
+            agent.ServiceId = "DictionaryService";
 
             //Act
+            mTestHelper.Log("agent.StartDriver()");
             agent.StartDriver();
+            mTestHelper.Log("agent.Close();");
             agent.Close();
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
