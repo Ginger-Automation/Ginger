@@ -169,7 +169,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
             catch(Exception ex)
             {
-                // TODO:
+                Console.WriteLine("Telemetry Ex: " + ex.Message);
             }
             return null;
         }
@@ -319,7 +319,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
             catch(Exception ex)
             {
-                
+                Console.WriteLine("Telemetry Ex: " + ex.Message);
             }
 
             done = true;
