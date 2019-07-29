@@ -1359,17 +1359,23 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (mBusinessFlow != null)
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                ScenariosGenerator SG = new ScenariosGenerator();
-                SG.CreateScenarios(mBusinessFlow);
-                int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
-                if (optCount > 0)
+                try
                 {
-                    cnt = cnt - optCount;
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    ScenariosGenerator SG = new ScenariosGenerator();
+                    SG.CreateScenarios(mBusinessFlow);
+                    int cnt = mBusinessFlow.ActivitiesGroups.Count;
+                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    if (optCount > 0)
+                    {
+                        cnt = cnt - optCount;
+                    }
+                    Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
                 }
-                Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
-                Mouse.OverrideCursor = null;
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
             }
         }
 
