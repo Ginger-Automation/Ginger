@@ -24,6 +24,7 @@ using GingerCore.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -66,7 +67,8 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.Act; } }
+        //public override System.Drawing.Image Image { get { return Resources.Act; } }
+        public override eImageType Image { get { return eImageType.Check; } }
 
         public override void Execute()
         {

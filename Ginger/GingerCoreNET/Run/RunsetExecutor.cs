@@ -165,7 +165,7 @@ namespace Ginger.Run
             }
 
             //Load the biz flows     
-            runner.BusinessFlows.Clear();
+            ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
@@ -225,9 +225,11 @@ namespace Ginger.Run
                     }
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;
-                    runner.BusinessFlows.Add(BFCopy);
+                    runnerFlows.Add(BFCopy);
                 }
             }
+
+            runner.BusinessFlows = runnerFlows;
         }
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)

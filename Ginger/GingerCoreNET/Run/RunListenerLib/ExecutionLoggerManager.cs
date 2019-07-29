@@ -67,7 +67,7 @@ namespace Ginger.Run
         ProjEnvironment mExecutionEnvironment = null;
 
         int mBusinessFlowCounter { get; set; }
-        Context mContext;
+        public Context mContext;
         public ExecutionLogger mExecutionLogger;
         public ExecutionLoggerHelper executionLoggerHelper;
         //public ProjEnvironment ExecutionEnvironment
@@ -547,14 +547,12 @@ namespace Ginger.Run
         {
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
-            {
-                AutoLogProxy.UserOperationStart("Online Report");
+            {                
                 return WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
 
             }
             else
-            {
-                AutoLogProxy.UserOperationStart("Offline Report");
+            {             
                 ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
 
                 if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -581,7 +579,7 @@ namespace Ginger.Run
                         System.IO.Directory.CreateDirectory(folder);
                     }
 
-                    mContext = gingerrunner.mContext;
+                    mContext = gingerrunner.Context;
                     Amdocs.Ginger.CoreNET.Execution.eRunStatus gingerRunnerStatus = gingerrunner.RunsetStatus;
                     if (gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && gingerRunnerStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
                     {

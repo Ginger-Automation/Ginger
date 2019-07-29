@@ -41,63 +41,65 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
 
         }
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void CheckReferences()
-        {
-            // we check reference to make sure we keep Gigner CoreNET minimal with less dependecies
-            // if this test fail and you need to add ref or change please add relevant comment why we need this ref
-            // see examples 
 
-            //Arrange
-            // Get the Ginger Core assembly
-            Assembly a = Assembly.GetAssembly(typeof(GingerCoreNET.DriversLib.GingerNode));
-            List<string> assemblies = new List<string>();
+        // Put back after moving to .NET core 3
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void CheckReferences()
+        //{
+        //    // we check reference to make sure we keep Gigner CoreNET minimal with less dependecies
+        //    // if this test fail and you need to add ref or change please add relevant comment why we need this ref
+        //    // see examples 
 
-            // Core Net lib
-            assemblies.Add("netstandard");
+        //    //Arrange
+        //    // Get the Ginger Core assembly
+        //    Assembly a = Assembly.GetAssembly(typeof(GingerCoreNET.DriversLib.GingerNode));
+        //    List<string> assemblies = new List<string>();
 
-            // Ginger Core Common with old Ginger
-            assemblies.Add("GingerCoreCommon");
+        //    // Core Net lib
+        //    assemblies.Add("netstandard");
 
-            // for JSON
-            assemblies.Add("Newtonsoft.Json");
-            // For Ginger Plugins
-            assemblies.Add("GingerPluginCore");
-            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
-            assemblies.Add("Microsoft.CodeAnalysis");
-            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
-            assemblies.Add("Microsoft.CodeAnalysis.Scripting");
-            // ??? TODO: verify
-            assemblies.Add("System.Collections.Immutable");
-            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
-            assemblies.Add("Microsoft.CSharp");
-            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
-            assemblies.Add("Microsoft.CodeAnalysis.CSharp.Scripting");
-            // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
-            assemblies.Add("Microsoft.CodeAnalysis.CSharp");
-            // Added for RemoteObjectServerClient - enable to cretae object proxy/wrapper in .NET standards 2.0, repalces RealProxy from 4.6
-            assemblies.Add("System.Reflection.DispatchProxy");
+        //    // Ginger Core Common with old Ginger
+        //    assemblies.Add("GingerCoreCommon");
 
-            //Act
-            AssemblyName[] referencedAssemblies = a.GetReferencedAssemblies();
+        //    // for JSON
+        //    assemblies.Add("Newtonsoft.Json");
+        //    // For Ginger Plugins
+        //    assemblies.Add("GingerPluginCore");
+        //    // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
+        //    assemblies.Add("Microsoft.CodeAnalysis");
+        //    // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
+        //    assemblies.Add("Microsoft.CodeAnalysis.Scripting");
+        //    // ??? TODO: verify
+        //    assemblies.Add("System.Collections.Immutable");
+        //    // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
+        //    assemblies.Add("Microsoft.CSharp");
+        //    // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
+        //    assemblies.Add("Microsoft.CodeAnalysis.CSharp.Scripting");
+        //    // For evaluatng C# code at run time, will replace the VB script, so we can run on Linux - cross platform
+        //    assemblies.Add("Microsoft.CodeAnalysis.CSharp");
+        //    // Added for RemoteObjectServerClient - enable to cretae object proxy/wrapper in .NET standards 2.0, repalces RealProxy from 4.6
+        //    assemblies.Add("System.Reflection.DispatchProxy");
+
+        //    //Act
+        //    AssemblyName[] referencedAssemblies = a.GetReferencedAssemblies();
 
 
 
-            //Assert
+        //    //Assert
 
-            // We make sure we have exact ref count - if ref are added please add with explanantion 
-            Assert.AreEqual(referencedAssemblies.Length, 11);
+        //    // We make sure we have exact ref count - if ref are added please add with explanantion 
+        //    Assert.AreEqual(referencedAssemblies.Length, 11);
 
-            foreach  (string s in assemblies)
-            {
-                AssemblyName name = (from x in referencedAssemblies where x.Name == s select x).FirstOrDefault();                
-                Assert.IsTrue(name != null, "Verify assembly ref exist - " + s);
-            }
+        //    foreach  (string s in assemblies)
+        //    {
+        //        AssemblyName name = (from x in referencedAssemblies where x.Name == s select x).FirstOrDefault();                
+        //        Assert.IsTrue(name != null, "Verify assembly ref exist - " + s);
+        //    }
             
             
             
-        }
+        //}
         
     }
 }

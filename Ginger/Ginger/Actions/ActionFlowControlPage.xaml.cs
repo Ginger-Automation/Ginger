@@ -41,10 +41,10 @@ namespace Ginger.Actions
         Act mAct;
         BusinessFlow mActParentBusinessFlow = null;
         Activity mActParentActivity = null;
-        General.RepositoryItemPageViewMode mEditMode;
+        General.eRIPageViewMode mEditMode;
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator),FlowControl.ActionFlowControls);
 
-        public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public ActionFlowControlPage(Act act, BusinessFlow actParentBusinessFlow, Activity actParentActivity, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation)
         {
             InitializeComponent();
 
@@ -59,7 +59,7 @@ namespace Ginger.Actions
             FlowControlGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFlowControl));
 
             // TODO:  open new edit page -  FlowControlGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));                      
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
             }

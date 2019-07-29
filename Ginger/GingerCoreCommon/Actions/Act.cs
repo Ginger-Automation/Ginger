@@ -357,14 +357,29 @@ namespace GingerCore.Actions
         // Stop on this act if in debug mode
         // No need to serialize
         private bool mBreakPoint;
-        public bool BreakPoint { get { return mBreakPoint; } set { if (mBreakPoint != value) { mBreakPoint = value; OnPropertyChanged(Fields.BreakPoint); } } }
+        public bool BreakPoint
+        {
+            get
+            {
+                return mBreakPoint;
+            }
+            set
+            {
+                if(mBreakPoint != value)
+                {
+                    mBreakPoint = value;
+                    OnPropertyChanged(Fields.BreakPoint);
+                }
+            }
+        }
 
         //TODO: need to remove from here and use only ActUIElement         
         public string LocateValueCalculated { get; set; }
 
 
         // show image base on Act type near the line number
-        public virtual System.Drawing.Image Image { get { return null; } } //TODO: to be replaced with ItemImageType for all Actions types
+        //public virtual System.Drawing.Image Image { get { return null; } } //TODO: to be replaced with ItemImageType for all Actions types
+        public virtual eImageType Image { get { return eImageType.Action; } } //TODO: to be replaced with ItemImageType for all Actions types
 
 
         // [IsSerializedForLocalRepository]

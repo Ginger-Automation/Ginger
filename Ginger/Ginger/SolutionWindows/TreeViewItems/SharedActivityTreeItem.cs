@@ -26,13 +26,14 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common.Enums;
+using System.Runtime.Remoting.Contexts;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActivityTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private readonly Activity mActivity;
-        private ActivityEditPage mActivityEditPage;        
+        private GingerWPF.BusinessFlowsLib.ActivityPage mActivityEditPage;        
         private SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode mShowMode;
 
         public SharedActivityTreeItem(Activity activity, SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode showMode = SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadWrite)
@@ -73,7 +74,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivityEditPage == null)
             {
-                mActivityEditPage = new ActivityEditPage(mActivity, General.RepositoryItemPageViewMode.SharedReposiotry);
+                mActivityEditPage = new GingerWPF.BusinessFlowsLib.ActivityPage(mActivity, new Amdocs.Ginger.Common.Context(), General.eRIPageViewMode.SharedReposiotry);
             }
             return mActivityEditPage;
         }

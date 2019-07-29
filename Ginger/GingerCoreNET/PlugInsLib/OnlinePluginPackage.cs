@@ -34,6 +34,8 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
         public string URL { get; set; }
 
+        public string CurrentPackage { get; set; }
+
         /// Calculated - if exist on machine: "Installed", if seelcted for solution and exits, if not exist on file system then...
         private string mStatus;
         public string Status

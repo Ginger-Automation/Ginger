@@ -23,8 +23,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
+    <EmbeddedResource Remove="DataBaseAbstarct\**" />
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
+    <None Remove="DataBaseAbstarct\**" />
     <None Remove="GeneralLib\JSON\**" />
   </ItemGroup>
 
@@ -35,12 +38,90 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Reports\GingerExecutionReport\assets\css\bootstrap.css" />
+    <None Remove="Reports\GingerExecutionReport\assets\css\font-awesome.css" />
+    <None Remove="Reports\GingerExecutionReport\assets\css\styles.css" />
+    <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.eot" />
+    <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.ttf" />
+    <None Remove="Reports\GingerExecutionReport\assets\fonts\SourceSansPro-Regular.ttf" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\@item_next.png" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\@item_prev.png" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\comments-icon.jpg" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\babel.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\bootstrap.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\circlechart.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\donutchart.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\jquery.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\prop-types.min.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\react-dom.min.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\react-with-addons.min.js" />
+    <None Remove="Reports\GingerExecutionReport\assets\js\Recharts.min.js" />
+    <None Remove="Reports\GingerExecutionReport\EmailExecutionReport.html" />
+    <None Remove="Reports\GingerExecutionReport\Images\GingerLogo.png" />
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
     <None Remove="RosLynLib\ValueExpressionRefrences.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Reports\GingerExecutionReport\assets\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\css\font-awesome.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\css\styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.eot">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\fonts\SourceSansPro-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\@item_next.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\@item_prev.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\comments-icon.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\babel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\circlechart.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\donutchart.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\prop-types.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\react-dom.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\react-with-addons.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\EmailExecutionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\Images\GingerLogo.png" />
     <Content Include="RosLynLib\ValueExpressionRefrences.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -100,6 +181,21 @@
     <Compile Update="RosLynLib\ValueExpressionReference.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40BeatLogo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40Ginger.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40item_next.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

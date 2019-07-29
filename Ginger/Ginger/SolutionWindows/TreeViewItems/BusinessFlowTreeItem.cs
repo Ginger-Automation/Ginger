@@ -25,6 +25,7 @@ using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
 using Ginger.VisualAutomate;
 using GingerCore;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -35,8 +36,9 @@ using System.Windows.Controls;
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {
-        private BusinessFlowPage mBusinessFlowPage;
+    {        
+        private BusinessFlowViewPage mBusinessFlowViewPage;
+
         private BusinessFlow mBusinessFlow { get; set; }
         private readonly eBusinessFlowsTreeViewMode mViewMode;
 
@@ -78,11 +80,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         Page ITreeViewItem.EditPage()
         {
-            if (mBusinessFlowPage == null)
+            if (mBusinessFlowViewPage == null)
             {
-                mBusinessFlowPage = new BusinessFlowPage(mBusinessFlow);
+                mBusinessFlowViewPage = new BusinessFlowViewPage(mBusinessFlow, null, General.eRIPageViewMode.Standalone);
             }
-            return mBusinessFlowPage;
+            return mBusinessFlowViewPage;
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -104,9 +106,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 AddSourceControlOptions(mContextMenu);
 
-                MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, "@ALM_16x16.png");
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, "@CSV_16x16.png");
+                MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
                     TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to Java", ExportToJava, null, "");
             }

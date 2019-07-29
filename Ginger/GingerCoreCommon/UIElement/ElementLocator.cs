@@ -39,8 +39,13 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); }
         }
 
+        bool mIsAutoLearned;
         [IsSerializedForLocalRepository]
-        public bool IsAutoLearned { get; set; }
+        public bool IsAutoLearned
+        {
+            get { return mIsAutoLearned; }
+            set { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); }
+        }
 
         private string mLocateValue { get; set; }
         [IsSerializedForLocalRepository]

@@ -25,6 +25,7 @@ namespace Amdocs.Ginger.Common
     {
         RecommendNewVersion,
         SaveItem,
+        RenameItem,
         ExitMode,
         NoDirtyItem,
         StartAgent,
@@ -53,7 +54,9 @@ namespace Amdocs.Ginger.Common
         StartAgentFailed,
         BusinessFlowConversion,
         Search, DownloadingMissingPluginPackages,
-        GingerLoadingInfo
+        GingerLoadingInfo,
+        StaticStatusMessage, StaticStatusProcess, PasteProcess,
+        NewVersionAvailable
     }
 
     public static class StatusMsgsPool
@@ -65,11 +68,17 @@ namespace Amdocs.Ginger.Common
 
             //Add To Status messages to the pool
             #region General Application Messages
-            Reporter.StatusMsgsPool.Add(eStatusMsgKey.RecommendNewVersion, new StatusMsg(eStatusMsgType.INFO, "Upgrade Required", "Newer version of Ginger exist." + System.Environment.NewLine + "You can download the latest version from http://cmitechint1srv:8089/", true, "Upgrade"));
+
+            // FIXME not available outside amdocs
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.RecommendNewVersion, new StatusMsg(eStatusMsgType.INFO, "Upgrade Required", "Newer version of Ginger exist." + System.Environment.NewLine + "You can download the latest version from https://ginger.amdocs.com/", true, "Upgrade"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.NewVersionAvailable, new StatusMsg(eStatusMsgType.INFO, "New version ({0}) is available", "Newer version of Ginger is available." + System.Environment.NewLine + "You can download the latest version from https://ginger.amdocs.com/", true, "Upgrade"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.SaveItem, new StatusMsg(eStatusMsgType.PROCESS, "Saving", "Saving '{0}' {1}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.RenameItem, new StatusMsg(eStatusMsgType.PROCESS, "Renaming", "Renaming all the references of '{0}' to '{1}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExitMode, new StatusMsg(eStatusMsgType.INFO, "Oops...", "Ginger was not closed properly. Please turn to support team."));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItem, new StatusMsg(eStatusMsgType.PROCESS, "Exporting", "Exporting '{0}' {1}"));
-
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StaticStatusMessage, new StatusMsg(eStatusMsgType.INFO, "Message", "{0}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StaticStatusProcess, new StatusMsg(eStatusMsgType.PROCESS, "Process", "{0}"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.PasteProcess, new StatusMsg(eStatusMsgType.PROCESS, "Paste", "{0}"));
             #endregion General Application Messages
 
             #region Solution Messages

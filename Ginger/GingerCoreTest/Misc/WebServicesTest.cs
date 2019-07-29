@@ -46,7 +46,7 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level3]
     public class WebServicesTest 
-    {
+    {        
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static Agent wsAgent = new Agent();
@@ -55,8 +55,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-         
-            AutoLogProxy.Init("NonUITests");
+                     
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF WebServices Web API";
@@ -85,8 +84,14 @@ namespace UnitTests.NonUITests
 
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
+            WorkSpace.Init(WSEH, nameof(WebServicesTest));
             WorkSpace.Instance.SolutionRepository = Amdocs.Ginger.CoreNET.Repository.GingerSolutionRepository.CreateGingerSolutionRepository();
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            WorkSpace.Instance.ReleaseWorkspace();
         }
 
         [TestInitialize]

@@ -1048,6 +1048,7 @@ namespace Amdocs.Ginger.Repository
                     mIsSharedRepositoryInstance = value;
                     
                     OnPropertyChanged(nameof(SharedRepoInstanceImage));
+                    OnPropertyChanged(nameof(IsSharedRepositoryInstance));
                 }
             }
         }

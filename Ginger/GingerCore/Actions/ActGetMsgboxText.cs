@@ -22,6 +22,8 @@ using GingerCore.Helpers;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions
 {
     // Action class for ASCF control
@@ -65,6 +67,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }        
+        public override eImageType Image { get { return eImageType.Label; } }        
     }
 }

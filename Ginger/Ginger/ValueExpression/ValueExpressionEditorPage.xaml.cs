@@ -834,7 +834,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType(), "Current Value", Var.Value);
+            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", Var.Value);
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)

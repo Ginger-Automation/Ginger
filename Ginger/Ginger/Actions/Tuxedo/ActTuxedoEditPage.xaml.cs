@@ -42,8 +42,8 @@ namespace Ginger.Actions.Tuxedo
             this.mAct = (ActTuxedo)act;            
 
             // Bind Controls
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, ActInputValue.Fields.Value);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, ActInputValue.Fields.Value);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, nameof(ActInputValue.Value));            
              
             UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.UnixPath);
             HostUCVE.Init(Context.GetAsContext(mAct.Context), mAct.Host);
@@ -62,10 +62,10 @@ namespace Ginger.Actions.Tuxedo
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header="Parameter" ,WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header="Value" ,WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header="Parameter" ,WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header="Value" ,WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });            
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.ValueForDriver, Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             UDParamsGrid.SetAllColumnsDefaultView(view);
             UDParamsGrid.InitViewItems();
@@ -76,7 +76,7 @@ namespace Ginger.Actions.Tuxedo
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)UDParamsGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
              VEEW.ShowAsWindow();
          }
 

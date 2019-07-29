@@ -53,8 +53,8 @@ namespace Ginger.Actions.JSON
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Path", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Attribute", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 });
             DynamicParametersGrid.SetAllColumnsDefaultView(view);
             DynamicParametersGrid.InitViewItems();
             DynamicParametersGrid.DataSourceList = mAct.DynamicElements;
@@ -63,7 +63,7 @@ namespace Ginger.Actions.JSON
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
     }

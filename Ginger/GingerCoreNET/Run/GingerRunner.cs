@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -96,9 +97,22 @@ namespace Ginger.Run
             StopAllBusinessFlows = 1,
         }
 
-        public Context mContext = new Context();
 
-        
+        Context mContext = new Context();
+        public Context Context
+        {
+            get
+            {
+                return mContext;
+            }
+            set
+            {
+                mContext = value;
+                ExecutionLoggerManager.mContext = value;
+            }
+        }
+
+
         // !!! change name to runContext - and remove the ExecutionLogConfiguration
         // public AutomationTabContext ExecutionLoggerAutomationTabContext { get; set; }
 
@@ -112,31 +126,18 @@ namespace Ginger.Run
             FromSpecificActivityOnwards,
         }
 
-        public  static class Fields
-        {
-            public static string RunOption = "RunOption";
-            public static string Name = "Name";
-            public static string Selected = "Selected";
-            public static string Status = "Status";
-            public static string CyclesToRun = "CyclesToRun";
-            public static string CurrentCycle = "CurrentCycle";
-            public static string UseSpecificEnvironment = "UseSpecificEnvironment";
-            public static string SpecificEnvironmentName = "SpecificEnvironmentName";
-            public static string FilterExecutionByTags = "FilterExecutionByTags";
-            public static string RunInSimulationMode = "RunInSimulationMode";
-        }
-
-
         List<RunListenerBase> mRunListeners = new List<RunListenerBase>();
         public List<RunListenerBase> RunListeners { get { return mRunListeners; } }
 
-        private int mSpeed = 0;
+
+        [IsSerializedForLocalRepository]
+        public int AutoWait { get; set; } = 0;
+
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
 
         private bool mCurrentActivityChanged = false;
-        private bool mErrorHandlerExecuted = false;
-        private bool mIsRunning=false;
+        private bool mErrorHandlerExecuted = false;        
 
         BusinessFlow mExecutedBusinessFlowWhenStopped=null;
         Activity mExecutedActivityWhenStopped=null;
@@ -172,10 +173,18 @@ namespace Ginger.Run
         public string SolutionFolder { get; set; }
         public bool HighLightElement { get; set; }
 
-
+        private bool mIsRunning = false;
         public bool IsRunning
         {
-            get { return mIsRunning; }
+            get
+            {
+                return mIsRunning;
+            }
+            set
+            {
+                mIsRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
+            }
         }
 
         public double? Elapsed
@@ -237,7 +246,7 @@ namespace Ginger.Run
             set
             {
                 mName = value;
-                OnPropertyChanged(Fields.Name);
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -252,7 +261,7 @@ namespace Ginger.Run
                 if (_Selected != value)
                 {
                     _Selected = value;
-                    OnPropertyChanged("Selected");
+                    OnPropertyChanged(nameof(Selected));
                 }
             }
         }
@@ -281,7 +290,7 @@ namespace Ginger.Run
                 if (mStatus != value)
                 {
                     mStatus = value;
-                    OnPropertyChanged(Fields.Status);
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -289,8 +298,20 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public bool UseSpecificEnvironment { get; set; }
 
+        string mSpecificEnvironmentName;
         [IsSerializedForLocalRepository]
-        public string SpecificEnvironmentName { get; set; }
+        public string SpecificEnvironmentName
+        {
+            get
+            {
+                return mSpecificEnvironmentName;
+            }
+            set
+            {
+                mSpecificEnvironmentName = value;
+                OnPropertyChanged(nameof(SpecificEnvironmentName));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public bool FilterExecutionByTags { get; set; }
@@ -317,6 +338,7 @@ namespace Ginger.Run
              
 
         private bool mRunInSimulationMode;
+        [IsSerializedForLocalRepository]
         public bool RunInSimulationMode
         {
             get
@@ -338,6 +360,9 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
 
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+            
+            RunListeners.Add(new TelemetryRunListener());            
+            
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -347,6 +372,8 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabeling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+
+            RunListeners.Add(new TelemetryRunListener());
         }
 
 
@@ -474,7 +501,7 @@ namespace Ginger.Run
 
                 //Init 
                 Status = eRunStatus.Started;
-                mIsRunning = true;
+                IsRunning = true;
                 mStopRun = false;
                 if (doContinueRun == false)
                 {
@@ -580,7 +607,7 @@ namespace Ginger.Run
                         Status = eRunStatus.Completed;
                     }
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
-                    mIsRunning = false;
+                    IsRunning = false;
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
@@ -882,14 +909,16 @@ namespace Ginger.Run
             
             try
             {
-                //init
-                act.SolutionFolder = SolutionFolder;
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {
-                    mIsRunning = true;
+                    IsRunning = true;
                     mStopRun = false;
                 }
+
+                //init
+                act.SolutionFolder = SolutionFolder;
+
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
@@ -924,7 +953,7 @@ namespace Ginger.Run
             {
                 if (standaloneExecution)
                 {
-                    mIsRunning = false;
+                    IsRunning = false;
                 }
                 act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));                             
             }
@@ -1048,7 +1077,14 @@ namespace Ginger.Run
                 UpdateDSReturnValues(act);
 
                 // Add time stamp 
-                act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo;
+                if (!string.IsNullOrEmpty(act.ExInfo))
+                {
+                    act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo; 
+                }
+                else
+                {
+                    act.ExInfo = DateTime.Now.ToString();
+                }
                 ProcessScreenShot(act, ActionExecutorType);
                 mErrorHandlerExecuted = false;
 
@@ -2436,13 +2472,13 @@ namespace Ginger.Run
                 Activity sharedActivityInstance = (Activity)sharedActivity.CreateInstance();
                 sharedActivityInstance.Active = true;
                 sharedActivityInstance.AddDynamicly = true;
-                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;
+                sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;                
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
-                CurrentBusinessFlow.AddActivity(sharedActivityInstance);
+
+                CurrentBusinessFlow.AddActivity(sharedActivityInstance, CurrentBusinessFlow.ActivitiesGroups.Where(x=>x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault());
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
                   
-
                 //set it as next activity to run           
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
@@ -2841,20 +2877,26 @@ namespace Ginger.Run
             }
         }
 
-        public async Task<int> RunActivityAsync(Activity activity, bool Continue=false )
+        public async Task<int> RunActivityAsync(Activity activity, bool Continue=false, bool standaloneExecution = false)
         {
             NotifyExecutionContext(AutomationTabContext.ActivityRun);
             var result = await Task.Run(() => {
-                RunActivity(activity, false);
+                RunActivity(activity, false, standaloneExecution);
                 return 1;  
             });
             return result;
         }
 
         
-        public void RunActivity(Activity activity, bool doContinueRun = false)
+        public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false)
         {
-            
+            //set Runner details if running in stand alone mode (Automate tab)
+            if (standaloneExecution)
+            {
+                IsRunning = true;
+                mStopRun = false;
+            }
+
             bool statusCalculationIsDone = false;
 
             //check if Activity is allowed to run
@@ -3002,10 +3044,10 @@ namespace Ginger.Run
                         }
                         GiveUserFeedback();
                         // If the user selected slower speed then do wait
-                        if (mSpeed > 0)
+                        if (AutoWait > 0)
                         {
                             // TODO: sleep 100 and do events
-                            Thread.Sleep(mSpeed * 1000);
+                            Thread.Sleep(AutoWait * 1000);
                         }
 
                         if (mStopRun || mStopBusinessFlow)
@@ -3101,6 +3143,10 @@ namespace Ginger.Run
                 }
 
                 //NotifyActivityEnd(activity);
+                if (standaloneExecution)
+                {
+                    IsRunning = false;
+                }
             }
         }
 
@@ -3307,7 +3353,7 @@ namespace Ginger.Run
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {
-                    mIsRunning = true;
+                    IsRunning = true;
                     mStopRun = false;
                 }
 
@@ -3480,7 +3526,7 @@ namespace Ginger.Run
 
                 if (standaloneExecution)
                 {
-                    mIsRunning = false;
+                    IsRunning = false;
                     Status = RunsetStatus;            
                 }
 
@@ -3800,11 +3846,6 @@ namespace Ginger.Run
             }
         }
 
-        public void SetSpeed(int Speed)
-        {
-            mSpeed = Speed;
-        }
-
         public void StopRun()
         {
             mStopRun = true;
@@ -3821,7 +3862,7 @@ namespace Ginger.Run
         {
             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             mStopRun = false;
-            mIsRunning = false;
+            IsRunning = false;
             PublishToALMConfig = null;
             if (doNotResetBusFlows == false)
             {

@@ -16,24 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.UserControls;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.DataSource;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using Ginger.Run;
-using Ginger.WindowExplorer;
-using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Platforms;
-using GingerCore.Drivers.ASCF;
-using GingerCore.Drivers.WebServicesDriverLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
+using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Ginger.Agents
 {
@@ -43,18 +42,31 @@ namespace Ginger.Agents
     public partial class ApplicationAgentsMapPage : Page
     {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
+        GingerRunner mRunner;
         Context mContext;
-        public ApplicationAgentsMapPage(Context context)
+
+        bool AllowAgentsManipulation;
+
+        public ListBox MappingList
+        {
+            get { return xAppAgentsListBox; }
+        }
+
+        public ApplicationAgentsMapPage(GingerRunner runner, Context context, bool allowAgentsManipulation=true)
         {
             InitializeComponent();
+            mRunner = runner;
             mContext = context;
-            mContext.Runner.PropertyChanged += MGR_PropertyChanged; 
+            AllowAgentsManipulation = allowAgentsManipulation;
+            xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
+            mRunner.PropertyChanged += MGR_PropertyChanged;
+            
             RefreshApplicationAgentsList();
         }
 
         private void MGR_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mContext.Runner.ApplicationAgents))
+            if (e.PropertyName == nameof(mRunner.ApplicationAgents))
             {
                 RefreshApplicationAgentsList();
             }
@@ -62,121 +74,166 @@ namespace Ginger.Agents
 
         private void RefreshApplicationAgentsList()
         {
-            ApplicationAgents = new ObservableList<ApplicationAgent>();
-
-            foreach (ApplicationAgent Apag in mContext.Runner.ApplicationAgents)
+            this.Dispatcher.Invoke(() =>
             {
-                if (mContext.Runner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                ApplicationAgents = new ObservableList<ApplicationAgent>();
+
+                foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
                 {
-                    ApplicationAgents.Add(Apag);
-                }
-            }
-
-            AppAgentsListBox.ItemsSource = ApplicationAgents;
-        }
-
-        private void StartAgentButton_Click(object sender, RoutedEventArgs e)
-        {                                    
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            try
-            {
-                StartAppAgent(AG);
-
-                //If there is errorMessageFromDriver is populated then do not wait. 
-                if(((Agent)AG.Agent).Driver!=null && String.IsNullOrEmpty(((Agent)AG.Agent).Driver.ErrorMessageFromDriver))
-                    ((Agent)AG.Agent).WaitForAgentToBeReady();
-                Agent.eStatus Status = ((Agent)AG.Agent).Status;
-                if (Status!= Agent.eStatus.Running && Status!= Agent.eStatus.Starting)
-                {
-                    string errorMessage = ((Agent)AG.Agent).Driver.ErrorMessageFromDriver;
-                    if (String.IsNullOrEmpty(errorMessage))
-                        errorMessage = "Failed to Connect the agent";
-                    
-                    Reporter.ToStatus(eStatusMsgKey.StartAgentFailed,null, errorMessage);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, ex.Message);
-           }         
-        }
-
-        private void ConfigAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
-            w.ShowAsWindow();
-        }
-
-        private void CloseAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            ((Agent)AG.Agent).Close();
-        }
-
-        private void ExplorerAgentButton_Click(object sender, RoutedEventArgs e)
-        {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            if (AG.Agent != null)
-            {
-                if (((Agent)AG.Agent).Status == Agent.eStatus.NotStarted)
-                    StartAppAgent(AG);
-                //TODO: Temporary to launch Web service window, till we merge web services to window explorer
-                if (((Agent)AG.Agent).Driver is WebServicesDriver)
-                {
-                    ((WebServicesDriver)((Agent)AG.Agent).Driver).LauncDriverWindow();
-                    return;
+                    if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                    {
+                        ApplicationAgents.Add(Apag);
+                    }
                 }
 
-                //if (((Agent)AG.Agent).Driver is IWindowExplorer)
-                //Once all the driver implementing IwindowExplorer are ready, simply checking is IWindowExplorer will server the purpose and flag IsWindowExplorerSupportReady can be removed
-                if (((Agent)AG.Agent).IsWindowExplorerSupportReady)
+                xAppAgentsListBox.ItemsSource = ApplicationAgents;
+            });
+        }
+
+        private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (AllowAgentsManipulation)
+            {
+                ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
+                Agent agent = ((Agent)AG.Agent);
+                if (agent.Status != Agent.eStatus.Running)
                 {
-                    WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
-                    WEP.ShowAsWindow();
-                }               
+                    //start Agent
+                    Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                    ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                    ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                    ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                    ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                    ((Agent)AG.Agent).StartDriver();
+                    Reporter.HideStatusMessage();
+                }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.DriverNotSupportingWindowExplorer, ((Agent)AG.Agent).DriverType);
+                    //close Agent
+                    agent.Close();
                 }
             }
         }
 
-        private void StartAppAgent(ApplicationAgent AG)
+        private void XAgentNameComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            AutoLogProxy.UserOperationStart("StartAgentButton_Click");
-            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-            if (((Agent)AG.Agent).Status == Agent.eStatus.Running) ((Agent)AG.Agent).Close();
+            ApplicationAgent applicationAgent = (ApplicationAgent)((ComboBox)sender).DataContext;
+            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
-            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow; 
-            ((Agent)AG.Agent).SolutionFolder =  WorkSpace.Instance.Solution.Folder;
-            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            ((Agent)AG.Agent).StartDriver();               
-            //For ASCF, launch explorer automatically when launching Agent
-            if (((Agent)AG.Agent).IsShowWindowExplorerOnStart && ((Agent)AG.Agent).Status == Agent.eStatus.Running)
+            ////remove already mapped agents
+            //List<IAgent> alreadyMappedAgents = mRunner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
+            //foreach (IAgent mappedAgent in alreadyMappedAgents)
+            //{
+            //    if (mappedAgent != applicationAgent.Agent)
+            //    {
+            //        if (filteredOptionalAgents.Contains(mappedAgent))
+            //        {
+            //            filteredOptionalAgents.Remove(mappedAgent);
+            //        }
+            //    }
+            //}
+
+            ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
+        }
+
+        private void XAgentNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //save last used agent on the Solution Target Applications
+            ApplicationAgent ag = ApplicationAgents.Where(x => x.Agent == (Agent)((ComboBox)sender).SelectedValue).FirstOrDefault();
+            if (ag != null)
             {
-                WindowExplorerPage WEP = new WindowExplorerPage(AG, mContext);
-                WEP.ShowAsWindow();
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
+                if (ap != null)
+                {
+                    ap.LastMappedAgentName = ag.AgentName;
+                }
             }
+        }
+    }
 
-            Reporter.HideStatusMessage();
-            AutoLogProxy.UserOperationEnd();
+    public class AgentForgroundTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null)
+            {
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#152B37"));//blue
+            }
+            else
+            {
+                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+            }
         }
 
-        private void AppAgentsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            ApplicationAgent AG = (ApplicationAgent)AppAgentsListBox.SelectedItem;
-            if (AG == null) return;
-            ApplicationAgentSelectionPage w = new ApplicationAgentSelectionPage(mContext.Runner, AG);
-            w.ShowAsWindow();
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentStatusColorTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch((Agent.eStatus)value)
+            {
+                case Agent.eStatus.Running:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
+
+                case Agent.eStatus.Starting:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//orange
+
+                default:
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+            }
         }
 
-        private void LoadingAgentButton_Click(object sender, RoutedEventArgs e)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            ApplicationAgent AG = (ApplicationAgent)((Button)sender).DataContext;
-            ((Agent)AG.Agent).Driver.cancelAgentLoading = true;
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentVisibilityTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentStatusTooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((Agent.eStatus)value)
+            {
+                case Agent.eStatus.Running:
+                    return "Agent is Running, Click to Close it";
+
+                case Agent.eStatus.Starting:
+                    return "Agent is Starting...";
+
+                default:
+                    return "Agent is Not Running, Click to Start it";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
