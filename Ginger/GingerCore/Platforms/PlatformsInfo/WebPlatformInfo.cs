@@ -263,6 +263,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     //actConfig.Operation = ActUIElement.eElementAction.SetText.ToString();
                     return ActBrowserElement.eControlAction.SwitchFrame.ToString();
 
+                case eElementType.ComboBox:
+                    return ActUIElement.eElementAction.SelectByText.ToString();
+
                 default:
                     //actConfig.Operation = ActUIElement.eElementAction.NotExist.ToString();
                     return ActUIElement.eElementAction.NotExist.ToString();

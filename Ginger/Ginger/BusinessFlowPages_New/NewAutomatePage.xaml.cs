@@ -1029,12 +1029,11 @@ namespace GingerWPF.BusinessFlowsLib
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
             xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
-
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            
+            if(GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
             {
-                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 xEnvironmentComboBox.SelectedIndex = 0;
-            }
+            }            
             else
             {
                 //select last used environment
