@@ -1,11 +1,15 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions.Common;
+using GingerCoreNETUnitTest.RunTestslib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
@@ -17,6 +21,13 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         BusinessFlow mBF;
         Context Context;
         IPlatformInfo PlatformInfo;
+
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext TestContext)
+        {
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH, "RecordingManagerTest");
+        }
 
         [TestInitialize]
         public void TestInitialize()
@@ -42,15 +53,15 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithoutPOMTest()
         {
             //Arrange
-            List<ApplicationPOMModel> currentPOM = null;          
+            ObservableList<ApplicationPOMModel> currentPOM = null;          
             RecordingManager mngr = new RecordingManager(currentPOM, mBF, Context, mDriver, PlatformInfo);
 
             //Act
             mngr.StartRecording();
             mngr.StopRecording();
+            TestAction actUI = (TestAction)mBF.Activities[0].Acts[1];
 
             //Assert
-            TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
             Assert.AreEqual(actUI.ElementLocateBy, eLocateBy.ByID);
             Assert.AreEqual(actUI.ElementAction, "Click");
             Assert.AreEqual(actUI.ElementType, "Button");
@@ -63,7 +74,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithPOMTest()
         {
             //Arrange
-            List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
+            ObservableList<ApplicationPOMModel> lstPOM = new ObservableList<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
@@ -71,15 +82,15 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             //Act
             mngr.StartRecording();
             mngr.StopRecording();
+            ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
+            TestAction actUI = (TestAction)mBF.Activities[0].Acts[1];
 
             //Assert
-            ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
-            TestAction actUI = (TestAction)mBF.Activities[0].Acts[0];
             Assert.AreEqual(actUI.ElementLocateBy, eLocateBy.POMElement);
             Assert.AreEqual(actUI.ElementAction, "Click");
             Assert.AreEqual(actUI.ElementType, "Button");
             Assert.AreEqual(cPOM.MappedUIElements[0].ElementTypeEnum.ToString(), eElementType.Button.ToString());
-            Assert.AreEqual(cPOM.MappedUIElements.Count, mBF.Activities[0].Acts.Count);
+            Assert.AreEqual(cPOM.MappedUIElements.Count, 2);
         }
 
         [TestMethod]
@@ -87,7 +98,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithMultiplePageHandledTest()
         {
             //Arrange
-            List<ApplicationPOMModel> lstPOM = new List<ApplicationPOMModel>();
+            ObservableList<ApplicationPOMModel> lstPOM = new ObservableList<ApplicationPOMModel>();
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
@@ -95,9 +106,9 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             //Act
             mngr.StartRecording();
             mngr.StopRecording();
+            ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
 
             //Assert
-            ApplicationPOMModel cPOM = mngr.ListPOMObjectHelper[1].ApplicationPOM;
             Assert.AreEqual(cPOM.PageURL, "www.google.com");
             Assert.AreEqual(mngr.ListPOMObjectHelper.Count, 2);
         }
