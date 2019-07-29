@@ -102,10 +102,15 @@ namespace Ginger.Variables
      
             if (setGeneralConfigsAsReadOnly)
             {
-                txtVarName.IsReadOnly = true;
-                txtVarDescritpion.IsReadOnly = true;
+                txtVarName.IsEnabled = false;
+                txtVarDescritpion.IsEnabled = false;
+                TagsViewer.IsEnabled = false;
+                SharedRepoInstanceUC.IsEnabled = false;
                 cbSetAsInputValue.IsEnabled = false;
                 cbSetAsOutputValue.IsEnabled = false;
+                linkedvariableCombo.IsEnabled = false;
+                publishValueToLinkedBtn.IsEnabled = false;
+                frmVarTypeInfo.IsEnabled = false;
             }             
             
             mVariable.PropertyChanged += mVariable_PropertyChanged;

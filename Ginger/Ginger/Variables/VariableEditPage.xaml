@@ -7,15 +7,15 @@
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Variable"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="800">
+      d:DesignHeight="1000" d:DesignWidth="800">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="250" />
             <RowDefinition x:Name="VarTypeConfigsRow" Height="130*" MinHeight="130"/>
-            <RowDefinition Height="130"/>
+            <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
-        
+
         <StackPanel Grid.Row="0">
             <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
                 <StackPanel Orientation="Vertical" >
@@ -30,7 +30,7 @@
                     </Grid>
                 </StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Description:</Label>
-                <TextBox x:Name="txtVarDescritpion" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="40" Margin="0,0,0,5"></TextBox>
+                <TextBox x:Name="txtVarDescritpion" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="40" Margin="0,0,50,5"></TextBox>
                 <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
             </StackPanel>
             <StackPanel Margin="0,10,0,0" >
@@ -65,22 +65,22 @@
                         <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
                     </Label.Content>
                 </Label>
-                <Frame x:Name="frmVarTypeInfo" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                <Frame x:Name="frmVarTypeInfo" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,40,0"/>
             </DockPanel>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="3">
-            <Label HorizontalAlignment="Stretch" Style="{StaticResource $HeaderStyle}">
-                <Label.Content>
-                    <GingerCore:ucTextDicResource Text="[Variable] Auto Configurations:"/>
-                </Label.Content>
-            </Label>
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Formula:</Label>
-                <TextBox x:Name="txtFormula" IsReadOnly="True" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2"></TextBox>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Current Value:</Label>
-                <TextBox x:Name="txtCurrentValue" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2" IsReadOnly="True"></TextBox>
-            </StackPanel>
-        </StackPanel>
+        <ScrollViewer Grid.Row="3">
+            <DockPanel>
+                <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
+                    <Label.Content>
+                        <GingerCore:ucTextDicResource Text="[Variable] Auto Configurations:"/>
+                    </Label.Content>
+                </Label>
+                <Label DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}">Formula:</Label>
+                <TextBox x:Name="txtFormula" DockPanel.Dock="Top" IsReadOnly="True" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2"></TextBox>
+                <Label DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}">Current Value:</Label>
+                <TextBox x:Name="txtCurrentValue" DockPanel.Dock="Top" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2" IsReadOnly="True"></TextBox>
+            </DockPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
