@@ -2465,10 +2465,14 @@ namespace Ginger.Run
         {
             if (CheckIfExecutionIsInProgress()) return;
 
+            mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+
             if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
             {
                 mRunSetConfig.SaveBackup();
             }
+            mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+            LoadRunSetConfig(mRunSetConfig, true);
         }
     }
 }
