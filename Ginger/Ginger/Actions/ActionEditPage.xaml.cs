@@ -574,7 +574,7 @@ namespace Ginger.Actions
                 {
                     throw new Exception("Action edit page not found - " + classname);
                 }
-                Page p = Activator.CreateInstance(t, a) as Page;
+                Page p = (Page)Activator.CreateInstance(t, a);
                 if (p != null)
                 {
                     // For no driver actions we give the BF and env - used for example in set var value.
