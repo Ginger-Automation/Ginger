@@ -2463,16 +2463,23 @@ namespace Ginger.Run
 
         private void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
-
-            mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
-
-            if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
+            try
             {
-                mRunSetConfig.SaveBackup();
+                if (CheckIfExecutionIsInProgress()) return;
+
+                mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+
+                if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
+                {
+                    mRunSetConfig.SaveBackup();
+                }
+                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                LoadRunSetConfig(mRunSetConfig, true);
+            }            
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while undoing changes", ex);
             }
-            mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-            LoadRunSetConfig(mRunSetConfig, true);
         }
     }
 }
