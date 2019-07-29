@@ -29,38 +29,40 @@
             <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Action" HorizontalAlignment="Center" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
             <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Action Description" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
 
-            <StackPanel x:Name="xEditOperationsPnl" Grid.Column="3" Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 0 0">
+            <StackPanel x:Name="xEditOperationsPnl" Grid.Column="3" Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 10 0">
                 <UserControls:ucButton x:Name="xPreviousActionBtn" ButtonType="ImageButton" Click="xPreviousActionBtn_Click" ToolTip="Previous Action"  ButtonFontImageSize="16"  ButtonImageType="MoveUp" />
                 <UserControls:ucButton x:Name="xNextActionBtn" ButtonType="ImageButton" Click="xNextActionBtn_Click" ToolTip="Next Action"  ButtonFontImageSize="16"  ButtonImageType="MoveDown" />
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="16" ButtonImageType="Undo" />
-                <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ToolTip="Delete Action"  ButtonFontImageSize="16" ButtonImageType="Delete" />
-                <UserControls:ucButton x:Name="xActiveBtn" ButtonType="ImageButton" Click="xActiveBtn_Click" ToolTip="Active"  ButtonFontImageSize="16" ButtonImageType="Active" />
-                <Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
-                    <MenuItem Cursor="Hand">
-                        <MenuItem.Header>
-                            <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                        </MenuItem.Header>
-                        <MenuItem x:Name="xBreakPointMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBreakPointMenuItem_Click">
-                            <MenuItem.Icon>
-                                <UserControls:ImageMakerControl x:Name="xBreakPointMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="16" />
-                            </MenuItem.Icon>
+                <StackPanel  x:Name="xEditAndRunOperationsPnl" Orientation="Horizontal">
+                    <GridSplitter x:Name="xOperationsSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="16" ButtonImageType="Undo" />
+                    <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ToolTip="Delete Action"  ButtonFontImageSize="16" ButtonImageType="Delete" />
+                    <UserControls:ucButton x:Name="xActiveBtn" ButtonType="ImageButton" Click="xActiveBtn_Click" ToolTip="Active"  ButtonFontImageSize="16" ButtonImageType="Active" />
+                    <Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
+                        <MenuItem Cursor="Hand">
                             <MenuItem.Header>
-                                <GingerCore:ucTextDicResource Text="Break Point"/>
+                                <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Header>
+                            <MenuItem x:Name="xBreakPointMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBreakPointMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl x:Name="xBreakPointMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Break Point"/>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <MenuItem x:Name="xResetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Reset Execution Details"/>
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
-                        <MenuItem x:Name="xResetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xResetMenuItem_Click">
-                            <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Reset" SetAsFontImageWithSize="16" />
-                            </MenuItem.Icon>
-                            <MenuItem.Header>
-                                <GingerCore:ucTextDicResource Text="Reset Execution Details"/>
-                            </MenuItem.Header>
-                        </MenuItem>
-                    </MenuItem>
-                </Menu>
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+                    </Menu>
+                    <GridSplitter x:Name="xRunSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" />
+                </StackPanel>
             </StackPanel>
         </Grid>
 

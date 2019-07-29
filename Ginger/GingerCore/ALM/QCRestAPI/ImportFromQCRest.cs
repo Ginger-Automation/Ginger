@@ -287,8 +287,7 @@ namespace GingerCore.ALM.QCRestAPI
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            busFlow.AddActivity(stepActivity);
-                            tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);                           
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -772,8 +771,7 @@ namespace GingerCore.ALM.QCRestAPI
                 if (toAddStepActivity)
                 {
                     //not in group- need to add it
-                    busFlow.AddActivity(stepActivity);
-                    tcActivsGroup.AddActivityToGroup(stepActivity);
+                    busFlow.AddActivity(stepActivity, tcActivsGroup);                    
                 }
 
                 QCTestInstanceParamColl paramsColl = QCRestAPIConnect.GetTestInstanceParams(testInstance.Id);
