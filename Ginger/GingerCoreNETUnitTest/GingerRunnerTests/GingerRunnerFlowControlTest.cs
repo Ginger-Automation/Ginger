@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,9 +28,8 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace UnitTests.NonUITests.GingerRunnerTests
+namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
 {
-    
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest

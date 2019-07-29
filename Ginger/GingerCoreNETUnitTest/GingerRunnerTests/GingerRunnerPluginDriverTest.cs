@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
-namespace UnitTests.NonUITests.GingerRunnerTests
+namespace amdocs.ginger.GingerCoreNETTest
 {    
     [TestClass]
     [Level1]
@@ -85,8 +85,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
-            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
+        {                        
             WorkSpace.Instance.ReleaseWorkspace();
 
             mTestHelper.ClassCleanup();
@@ -114,7 +113,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [Ignore] // Fail on Linux
+        
         [TestMethod] 
         public void PluginSay()
         {
@@ -144,7 +143,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [Ignore]  // Fail on Linux
+        
         [TestMethod]  [Timeout(6000)]
         public void MemoPluginSpeedTest()
         {

@@ -71,8 +71,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            mGingerGrid.Stop();
+        {            
             WorkSpace.Instance.ReleaseWorkspace();
             mTestHelper.ClassCleanup();
         }
