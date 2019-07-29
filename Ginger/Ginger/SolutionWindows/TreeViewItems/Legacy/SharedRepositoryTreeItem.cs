@@ -26,6 +26,7 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using GingerCore.Activities;
 using GingerCore.Actions;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -78,7 +79,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mSharedRepositoryPage == null)
             {

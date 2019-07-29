@@ -70,7 +70,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActivityEditPage == null)
             {

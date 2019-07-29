@@ -97,7 +97,7 @@ namespace Ginger.WindowExplorer.Appium
 
 
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             //TODO: currently return the default generic page, later on create for Appium elem
             return new ElementInfoPage(AppiumElementInfo);

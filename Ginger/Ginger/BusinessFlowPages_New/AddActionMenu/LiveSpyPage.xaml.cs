@@ -7,6 +7,7 @@ using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -279,6 +280,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     {
                         list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }
+                    else if (xWindowSelectionUC.mPlatform.PlatformType() == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo)))
+                    {
+                        list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
+                    }
                     else
                     {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
                         list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
@@ -292,7 +297,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        Page DataPage = mCurrentControlTreeViewItem.EditPage();
+
+                        Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                         actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
                         CAP = new ControlActionsPage(xWindowSelectionUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                     }

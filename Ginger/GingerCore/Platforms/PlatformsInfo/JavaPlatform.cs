@@ -72,23 +72,68 @@ namespace GingerCore.Platforms.PlatformsInfo
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
             eElementType elementType = GetElementType(elementInfo.ElementType);
 
-            var actionList = GetPlatformUIElementActionsList(elementType);
-
-            if (actionList.Count > 0)
+            if (elementType.Equals(eElementType.Table))
             {
-                foreach (var action in actionList)
+                //get all action list supported to tablecell action
+                var tableActionList = GetTableControlActions(ActUIElement.eElementAction.TableCellAction);
+                tableActionList.AddRange(GetTableControlActions(ActUIElement.eElementAction.TableAction));
+                tableActionList.AddRange(GetTableControlActions(ActUIElement.eElementAction.TableRowAction));
+
+                foreach (var action in tableActionList)
                 {
-                    UIElementsActionsList.Add(
-                        new ActUIElement()
-                        {
-                            Description = action + " : " + elementInfo.ElementTitle,
-                            ElementAction = (ActUIElement.eElementAction)action,
-                            ElementType = elementType,
-                        }
-                        );
+                    var elementAction = ActUIElement.eElementAction.TableCellAction;
+
+                    if (action.Equals(ActUIElement.eTableAction.GetRowCount) || action.Equals(ActUIElement.eTableAction.SelectAllRows))
+                    {
+                        elementAction = ActUIElement.eElementAction.TableAction;
+                    }
+                    else if (action.Equals(ActUIElement.eTableAction.GetSelectedRow) || action.Equals(ActUIElement.eTableAction.ActivateRow))
+                    {
+                        elementAction = ActUIElement.eElementAction.TableRowAction;
+                    }
+
+                    var actUITableAction = new ActUIElement()
+                    {
+                        Description = action + " : " + elementInfo.ElementTitle,
+                        ElementType = eElementType.Table,
+                        ElementAction = elementAction,
+                    };
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, "0");
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
+                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    UIElementsActionsList.Add(actUITableAction);
                 }
             }
+            else
+            {
+                var actionList = GetPlatformUIElementActionsList(elementType);
+
+                if (actionList.Count > 0)
+                {
+                    foreach (var action in actionList)
+                    {
+                        UIElementsActionsList.Add(
+                            new ActUIElement()
+                            {
+                                Description = action + " : " + elementInfo.ElementTitle,
+                                ElementAction = (ActUIElement.eElementAction)action,
+                                ElementType = elementType,
+                            }
+                            );
+                    }
+                }
+            }
+            
             return UIElementsActionsList;
+        }
+
+        private List<ActUIElement> CreateActUITableAction(List<ActUIElement.eTableAction> tableActionList)
+        {
+            throw new NotImplementedException();
         }
 
         private eElementType GetElementType(string elementType)
@@ -99,6 +144,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 case "javax.swing.JTextField":
                 case "javax.swing.JTextPane":
+                case "javax.swing.JTextArea":
                     element = eElementType.TextBox;
                     break;
                 case "javax.swing.JButton":
@@ -135,6 +181,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case "javax.swing.JTabbedPane":
                     element = eElementType.Tab;
                     break;
+                case "javax.swing.JEditorPane":
+                    element = eElementType.EditorPane;
+                    break;
                 default:
                     element = eElementType.Unknown;
                     break;
@@ -160,8 +209,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.winDoubleClick);
                     break;
                 case eElementType.TextBox:
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);

@@ -20,15 +20,15 @@ using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System.Windows.Controls;
-using Ginger.Actions;
+using Ginger.Actions._Common.ActUIElementLib;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Java
 {
     public class JavaTableTreeItem : JavaElementTreeItem, ITreeViewItem, IWindowExplorerTreeItem
     {
       ObservableList<Act> mAvailableActions = new ObservableList<Act>();
-      ActTableEditPage mActTableEditPage = null;
-
+      UIElementTableConfigPage mActTableEditPage = null;
       StackPanel ITreeViewItem.Header()
       {
           string ImageFileName = "@Grid_16x16.png";
@@ -36,28 +36,18 @@ namespace Ginger.WindowExplorer.Java
       }
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            if (mAvailableActions.Count == 0)
-            {
-                mAvailableActions.Clear();
-                mAvailableActions.Add(new ActTableElement()
-                { //TODO:get Row Count
-                    Description = "Get " + Name + " Table RowCount",
-                    ControlAction = ActTableElement.eTableAction.GetRowCount,
-                    ColSelectorValue = ActTableElement.eRunColSelectorValue.ColNum,
-                    LocateColTitle = "0",
-                    ByRowNum = true,
-                    LocateRowValue = "0",
-                    LocateRowType = "Row Number"
-                });
-            }
             return mAvailableActions;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActTableEditPage == null)
-                mActTableEditPage = new ActTableEditPage(base.JavaElementInfo, mAvailableActions);            
+                mActTableEditPage = new UIElementTableConfigPage(base.JavaElementInfo, mAvailableActions,mContext);            
             return mActTableEditPage;
+        }
+        ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
+        {
+            return mActTableEditPage.GetTableRelatedInputValues();
         }
     }
 }

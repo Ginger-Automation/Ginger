@@ -93,7 +93,7 @@ namespace Ginger.WindowExplorer.Android
             return AndroidElementInfo.XmlNode.HasChildNodes;            
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             //TODO: currently return the default generic page, later on create for Android
             return null;
