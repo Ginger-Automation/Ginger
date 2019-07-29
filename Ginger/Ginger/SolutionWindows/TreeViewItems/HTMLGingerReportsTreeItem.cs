@@ -130,7 +130,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if (mHtmlReportsFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowAddSubFolder: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowAddSubFolder: false, allowDeleteAllItems: true);
             else//Not supposed to have sub folders
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowRenameFolder: false, allowAddSubFolder: false, allowDeleteFolder: false);          
 

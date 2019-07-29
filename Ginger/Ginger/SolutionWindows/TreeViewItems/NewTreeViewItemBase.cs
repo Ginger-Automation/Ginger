@@ -27,6 +27,7 @@ using GingerCoreNET.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -604,5 +605,44 @@ namespace GingerWPF.TreeViewItemsLib
             return stack;
         }
 
+        public override void DeleteAllTreeItems(Type typeOfFolder)
+        {
+            if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+                childNodes.Reverse();
+                foreach (ITreeViewItem node in childNodes)
+                {
+                    if (node == null) continue;
+                    if (node.NodeObject() != null)
+                    {
+                        if (node.NodeObject() is RepositoryFolderBase==false)
+                        {
+                            //if(node.GetType()== GingerCore.Common.Utility.)
+                            ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
+                        }
+                        else
+                        {
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.Exists(this.NodePath()))
+                        {
+                            //Directory.Delete(this.NodePath(), true);
+
+                           String [] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
+                            foreach(String path in DocFolderChildItems)
+                            {
+                                Directory.Delete(path, true);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+        }    
     }
 }

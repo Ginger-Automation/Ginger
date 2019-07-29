@@ -138,7 +138,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             if (mAPIModelFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
 

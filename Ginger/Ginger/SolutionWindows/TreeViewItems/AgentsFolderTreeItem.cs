@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
                                  
             if (mAgentsFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Agent", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Agent", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Agent", allowRefresh: false);
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh Application Agents Lists", RefreshApplicationAgents, null, eImageType.Refresh);

@@ -152,7 +152,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else
             {
                 if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
                 else
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
                 AddSourceControlOptions(mContextMenu, false, false);
@@ -291,6 +291,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
             }
         }
+        //public override void DeleteAllTreeItems(Type typeOfFolder)
+        //{
+
+        //}
 
         public override ITreeViewItem AddSubFolder(Type typeOfFolder, string newFolderName, string newFolderPath)
         {
@@ -312,7 +316,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 }
 
-        public override void DeleteTreeFolder()
+        public override void  DeleteTreeFolder()
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, Folder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {

@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -134,7 +135,26 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }            
         }
 
-        private void ExportToExcel(object sender, RoutedEventArgs e)
+        public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
+        {
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
+            {
+                if (!deleteWithoutAsking)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            mTreeView.Tree.DeleteItemAndSelectParent(this);
+            DSDetails.DSTableList.Remove(DSTableDetails);
+            DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+            return true;
+        }
+
+            private void ExportToExcel(object sender, RoutedEventArgs e)
         {                      
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();

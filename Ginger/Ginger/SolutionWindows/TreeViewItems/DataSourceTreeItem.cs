@@ -293,26 +293,47 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     dsTable.DataTable.RejectChanges();
             }
         }
-
-        private void Delete(object sender, RoutedEventArgs e)
-        {            
-            base.DeleteTreeItem(DSDetails);            
+        private void DeleteDataSourceItems()
+        {
             if (File.Exists(DSDetails.FileFullPath))
             {
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Error while deleting Data Source File", ex);
-                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);                    
+                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);
                 }
             }
-                
         }
 
-        private void CommitAll(object sender, RoutedEventArgs e)
+        private void Delete(object sender, RoutedEventArgs e)
+        {
+            base.DeleteTreeItem(DSDetails);
+            DeleteDataSourceItems();
+        }
+
+        public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
+        {
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
+            {
+                if (!deleteWithoutAsking)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            base.DeleteTreeItem(DSDetails,true);
+            DeleteDataSourceItems();
+            return true;
+        }
+
+                private void CommitAll(object sender, RoutedEventArgs e)
         {
             SaveTreeItem(DSDetails);            
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
