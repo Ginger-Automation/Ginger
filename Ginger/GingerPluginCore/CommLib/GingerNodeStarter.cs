@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Plugin.Core
             }
 
             Console.WriteLine("Press any key to close");
-            Console.ReadKey();
+            Console.Read();
         }
 
         public void ClosedAllNodes()
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Plugin.Core
         public void StartNode(string name, object gingerServiceObject)
         {
             GingerNode gingerNode = new GingerNode(gingerServiceObject);
-            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15001);   // !!!!!!!!!!!!!!!! Get free port, but prefer 15001 if free            
+            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15004);   // !!!!!!!!!!!!!!!! Get free port, but prefer 15001 if free            
             CheckAddGingerNode(gingerNode);
         }
 
