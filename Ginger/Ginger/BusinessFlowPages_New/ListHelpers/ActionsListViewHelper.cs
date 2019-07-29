@@ -621,13 +621,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             //reset current Activity
             mContext.Activity.Elapsed = null;
             mContext.Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-            for (int indx = mContext.Activity.Acts.IndexOf(mAction); indx <= mContext.Activity.Acts.Count; indx++)
+            for (int indx = mContext.Activity.Acts.IndexOf(mAction); indx < mContext.Activity.Acts.Count; indx++)
             {
                 ((Act)mContext.Activity.Acts[indx]).Reset();
             }
 
             //reset next Activities
-            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mContext.Activity) + 1; indx <= mContext.BusinessFlow.Activities.Count; indx++)
+            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mContext.Activity) + 1; indx < mContext.BusinessFlow.Activities.Count; indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
             }
