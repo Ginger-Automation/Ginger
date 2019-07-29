@@ -7,6 +7,8 @@
         xmlns:local1="clr-namespace:GingerWPF.GeneralLib"       
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
+        xmlns:h="clr-namespace:Ginger.Help"
+        h:GingerHelpProvider.HelpString="Automate"
         d:DesignHeight="800" d:DesignWidth="1500"
         Title="AutomatePage">
 
@@ -255,7 +257,7 @@
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="400"/>
+                            <ColumnDefinition Width="382"/>
                             <ColumnDefinition Width="300*"/>
                             <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
