@@ -101,7 +101,7 @@ namespace Ginger.Variables
             foreach (Type t in varTypes)
             {
                 VariableBase v = (VariableBase)Activator.CreateInstance(t);
-                v.Name = v.VariableType;
+                v.Name = v.VariableUIType;
                 list.Add(v);
             }
 
@@ -137,7 +137,9 @@ namespace Ginger.Variables
         {
             foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
             {
-                AddVarToParent((VariableBase)varToAdd.CreateCopy());
+                VariableBase addedVar = (VariableBase)varToAdd.CreateCopy();
+                addedVar.Name = string.Format("New {0}", addedVar.VariableUIType);
+                AddVarToParent(addedVar);
             }
         }
 
@@ -162,6 +164,7 @@ namespace Ginger.Variables
                     {
                         ((Solution)mVariablesParentObj).AddVariable(newVar);
                     }
+                    ((Solution)mVariablesParentObj).Variables.CurrentItem = newVar;
                     break;
                 case eVariablesLevel.BusinessFlow:
                     if (((BusinessFlow)mVariablesParentObj).Variables.CurrentItem != null)
@@ -172,6 +175,7 @@ namespace Ginger.Variables
                     {
                         ((BusinessFlow)mVariablesParentObj).AddVariable(newVar);
                     }
+                    ((BusinessFlow)mVariablesParentObj).Variables.CurrentItem = newVar;
                     break;
                 case eVariablesLevel.Activity:
                     if (((Activity)mVariablesParentObj).Variables.CurrentItem != null)
@@ -182,6 +186,7 @@ namespace Ginger.Variables
                     {
                         ((Activity)mVariablesParentObj).AddVariable(newVar);
                     }
+                     ((Activity)mVariablesParentObj).Variables.CurrentItem = newVar;
                     break;
             }
         }

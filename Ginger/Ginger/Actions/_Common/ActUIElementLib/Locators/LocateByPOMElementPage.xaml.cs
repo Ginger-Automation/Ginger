@@ -244,9 +244,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SetPOMPathToShow()
         {
-            string pathToShow;
-            pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            xHTMLReportFolderTextBox.Text = pathToShow;
+            //string pathToShow;
+            //pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
+            xPomPathTextBox.Text = mSelectedPOM.NameWithRelativePath; 
             xViewPOMBtn.Visibility = Visibility.Visible;
         }
 
