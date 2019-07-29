@@ -442,7 +442,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-                    xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
+                    xBusinessFlowNameTxtBlock.ToolTip = mBusinessFlow.ContainingFolder + "\\" + mBusinessFlow.Name;
 
                     if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
                     {
@@ -664,6 +664,8 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         CollapseAddActionsPnl();
                     }
+                    xAddActionsBtn.Visibility = Visibility.Collapsed;
+                    xAddActionSectionSpliter.Visibility = Visibility.Collapsed;
 
                     if (mBusinessFlow != null)
                     {
@@ -689,6 +691,9 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mApplicationAgentsMapPage.MappingList.IsEnabled = true;
                     }
+
+                    xAddActionsBtn.Visibility = Visibility.Visible;
+                    xAddActionSectionSpliter.Visibility = Visibility.Visible;
 
                     if (mBusinessFlow != null)
                     {
@@ -1446,13 +1451,13 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mSyncSelectedItemWithExecution = false;
                 xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Invisible;
-                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is not Synced with Execution Progress, Click to Sync it";
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists items selection not in sync with execution progress. Click to sync it";
             }
             else
             {
                 mSyncSelectedItemWithExecution = true;
                 xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Visible;
-                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it";
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists items selection in sync with execution progress. Click to un-sync it";
             }
 
             if (mBusinessFlow != null)

@@ -180,5 +180,14 @@ namespace Amdocs.Ginger.Repository
         Guid mLastUsedAgent;
         [IsSerializedForLocalRepository]
         public Guid LastUsedAgent { get { return mLastUsedAgent; } set { if (mLastUsedAgent != value) { mLastUsedAgent = value; OnPropertyChanged(nameof(LastUsedAgent)); } } }
+
+        public string NameWithRelativePath
+        {
+            get
+            {
+                return this.ContainingFolder.Substring(this.ContainingFolder.IndexOf(@"\POM Models") + 11) + "\\" + Name;
+            }
+
+        }
     }
 }

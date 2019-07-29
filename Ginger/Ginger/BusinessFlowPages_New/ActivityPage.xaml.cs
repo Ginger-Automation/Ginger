@@ -142,13 +142,15 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
             BindingOperations.ClearBinding(xNameTextBlock, TextBlock.TextProperty);
-                  
+            BindingOperations.ClearBinding(xNameTextBlock, TextBlock.ToolTipProperty);
+
         }
 
         private void BindControls()
         {
             //General Info Section Bindings
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mActivity, nameof(Activity.ActivityName));
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mActivity, nameof(Activity.ActivityName));
             mActivity.PropertyChanged += mActivity_PropertyChanged;
             UpdateDescription();
             xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
@@ -195,7 +197,7 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
                     {
-                        xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
+                        xDescTextBlockHelper.AddText("Parent Group: " + mActivity.ActivitiesGroupID);
                         xDescTextBlockHelper.AddLineBreak();
                     }
                     xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
