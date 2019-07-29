@@ -63,24 +63,13 @@ namespace Ginger.Run
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         uint meventtime;
-        //IValueExpression mVE;
-        ProjEnvironment mExecutionEnvironment = null;
+        
 
         int mBusinessFlowCounter { get; set; }
         public Context mContext;
         public ExecutionLogger mExecutionLogger;
         public ExecutionLoggerHelper executionLoggerHelper;
-        //public ProjEnvironment ExecutionEnvironment
-        //{
-        //    get
-        //    {
-        //        return mExecutionEnvironment;
-        //    }
-        //    set
-        //    {
-        //        mExecutionEnvironment = value;
-        //    }
-        //}
+        
 
         private GingerReport gingerReport = new GingerReport();
 
