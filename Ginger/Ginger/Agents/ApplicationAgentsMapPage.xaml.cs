@@ -135,6 +135,20 @@ namespace Ginger.Agents
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }
+
+        private void XAgentNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //save last used agent on the Solution Target Applications
+            ApplicationAgent ag = ApplicationAgents.Where(x => x.Agent == (Agent)((ComboBox)sender).SelectedValue).FirstOrDefault();
+            if (ag != null)
+            {
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
+                if (ap != null)
+                {
+                    ap.LastMappedAgentName = ag.AgentName;
+                }
+            }
+        }
     }
 
     public class AgentForgroundTypeConverter : IValueConverter

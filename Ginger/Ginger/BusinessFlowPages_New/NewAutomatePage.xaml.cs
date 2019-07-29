@@ -442,7 +442,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-                    xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
+                    xBusinessFlowNameTxtBlock.ToolTip = mBusinessFlow.ContainingFolder + "\\" + mBusinessFlow.Name;
 
                     if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
                     {
