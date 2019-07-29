@@ -50,8 +50,7 @@ namespace Ginger.BusinessFlowPages
                 ApplicationPOMModel currentPOM = mItem as ApplicationPOMModel;
                 foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
                 {
-                    HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
-                    instance = GeneratePOMElementRelatedAction(htmlElementInfo, mContext);
+                    instance = GeneratePOMElementRelatedAction(elemInfo, mContext);
                     if (instance != null)
                     {
                         instance.Active = true;
@@ -177,11 +176,17 @@ namespace Ginger.BusinessFlowPages
         {
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+            string elementVal = string.Empty;
+            if(elementInfo.OptionalValuesObjectsList.Count > 0)
+            {
+                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+            }
+
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
             {
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = string.Empty,
+                ElementValue = elementVal,
                 AddPOMToAction = true,
                 POMGuid = elementInfo.ParentGuid.ToString(),
                 ElementGuid = elementInfo.Guid.ToString(),

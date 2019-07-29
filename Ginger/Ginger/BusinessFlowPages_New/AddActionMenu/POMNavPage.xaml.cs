@@ -106,6 +106,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void UpdatePOMTree()
         {
+            CollapseDetailsGrid();
+
             mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
             mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
@@ -138,11 +140,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             else
             {
-                xMainElementsGrid.Visibility = Visibility.Collapsed;
-                xPOMSplitter.Visibility = Visibility.Collapsed;
-                xPOMItems.Height = new GridLength(100, GridUnitType.Star);
-                xPOMDetails.Height = new GridLength(0);
+                CollapseDetailsGrid();
             }
+        }
+
+        void CollapseDetailsGrid()
+        {
+            xMainElementsGrid.Visibility = Visibility.Collapsed;
+            xPOMSplitter.Visibility = Visibility.Collapsed;
+            xPOMItems.Height = new GridLength(100, GridUnitType.Star);
+            xPOMDetails.Height = new GridLength(0);
         }
 
         private void SetElementsGridView()
