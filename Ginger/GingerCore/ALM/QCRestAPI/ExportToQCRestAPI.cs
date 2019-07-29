@@ -296,9 +296,9 @@ namespace GingerCore.ALM.QCRestAPI
                                     //update the TC general status based on the activities status collection.                                
                                     if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
                                         currentRun.Status = "Failed";
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count-1 || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
                                         currentRun.Status = "No Run";
-                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count-1 || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
                                         currentRun.ElementsField["status"] = "Passed";
                                     else
                                         currentRun.ElementsField["status"] = "Not Completed";
@@ -806,7 +806,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             if (itemVals.GetType().GetProperty("TestOrder") != null && itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null) != null && !isUpdate)
             {
-                itemWithValues.Fields.Add("test-order", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
+                itemWithValues.Fields.Add("order-id", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
             }
             if (itemVals.GetType().GetProperty("TestId") != null && itemVals.GetType().GetProperty("TestId").GetValue(itemVals, null) != null && !isUpdate)
             {
