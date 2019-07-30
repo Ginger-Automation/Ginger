@@ -440,11 +440,13 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.CollapseAll;
+                mListViewHelper.ExpandItemOnLoad = true;
             }
             else
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.CollapseAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                mListViewHelper.ExpandItemOnLoad = false;
             }
         }
 
