@@ -95,8 +95,9 @@ namespace Ginger.UserControlsLib.UCListView
             }
             set
             {
-                SetValue(ListHelperProperty, value);
+                SetValue(ListHelperProperty, value);               
                 ConfigItem();
+                SetViewWithHelper();
             }
         }
         private static void OnItemInfoPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -125,8 +126,23 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetInitView()
         {
-            //collapse
-            xExtraDetailsRow.Height = new GridLength(0);
+            CollapseItem();
+        }
+
+        private void SetViewWithHelper()            
+        {
+            if (ListHelper != null)
+            {
+                if (ListHelper.AllowExpandItems == false)
+                {
+                    CollapseItem();
+                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;
+                }
+                else if(ListHelper.ExpandItemOnLoad)
+                {
+                    ExpandItem();
+                }
+            }
         }
 
         private void ParentList_UcListViewEvent(UcListViewEventArgs EventArgs)
@@ -518,12 +534,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ExpandItem()
         {
+            if (ListHelper.AllowExpandItems == false) return;
+
             this.Dispatcher.Invoke(() =>
-            {
-                xExtraDetailsRow.Height = new GridLength(25);
-                xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
-                xExpandCollapseBtn.ToolTip = "Collapse";
-            });
+                {
+                    xExtraDetailsRow.Height = new GridLength(25);
+                    xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
+                    xExpandCollapseBtn.ToolTip = "Collapse";
+                });
         }
 
         public void CollapseItem()

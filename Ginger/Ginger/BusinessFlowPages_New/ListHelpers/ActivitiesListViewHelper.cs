@@ -57,6 +57,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 handler(new ActivityListItemEventArgs(eventType, eventObject));
             }
         }
+
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
+
         public ActivitiesListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
@@ -638,15 +643,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void MoveUpHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
+            ExpandItemOnLoad = true;
             mContext.BusinessFlow.MoveActivityUp(mActivity);
-            //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void MoveDownHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
+            ExpandItemOnLoad = true;
             mContext.BusinessFlow.MoveActivityDown(mActivity);
-           //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)
