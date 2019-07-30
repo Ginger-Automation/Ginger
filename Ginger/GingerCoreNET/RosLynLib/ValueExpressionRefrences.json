@@ -263,7 +263,7 @@
     {
       "Category": "Regular Expressions",
       "Name": "Remove Characters From Numbers",
-      "Expression": "Replace Pat=\\D+ P1=(404) 200-0352",
+      "Expression": "{RegEx Fun= Replace Pat=\\D+ P1=(404) 200-0352}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
