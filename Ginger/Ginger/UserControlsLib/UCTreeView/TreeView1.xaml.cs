@@ -176,6 +176,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             if (string.IsNullOrEmpty(xSearchTextBox.Text))
             {
+                await ClearSearch();
                 return;
             }
             // this inner method checks if user is still typing
@@ -194,14 +195,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         
         private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
+            await ClearSearch();
+        }
+
+        private async Task ClearSearch()
+        {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
-            xSearchTextBox.Text = "";
-            mSearchString = null;
+           
 
             if (mSearchTask?.IsCompleted==false && mSearchTask?.IsCanceled == false)
             {
-               await CancelSearchAsync();
+                await CancelSearchAsync();
             }
             else
             {
@@ -213,6 +218,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
                 UCTreeView.CollapseUnselectedTreeNodes(xTreeViewTree.TreeItemsCollection, pathNodes);
             }
+            xSearchTextBox.Text = "";
+            mSearchString = null;
         }
 
       
@@ -327,7 +334,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             mCancellationTokenSource?.Dispose();
             mSearchTask = null;   
-            if (SearchCancelled == null)
+            if (SearchCancelled != null)
             {
                 SearchCancelled.Invoke(Tree, new EventArgs());
             }
