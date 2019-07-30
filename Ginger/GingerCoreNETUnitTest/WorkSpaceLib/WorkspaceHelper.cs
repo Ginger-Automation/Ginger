@@ -37,6 +37,9 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             WorkSpace.Init(consoleWorkspaceEventHandler, workspaceLocker);
         }
 
+
+       
+
         internal static SolutionRepository CreateWorkspaceAndOpenSolution(string workspaceLocker, string path)
         {         
             SolutionRepository solutionRepository;            

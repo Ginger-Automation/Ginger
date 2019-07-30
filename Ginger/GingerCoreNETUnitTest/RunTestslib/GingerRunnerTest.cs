@@ -89,8 +89,7 @@ namespace WorkspaceHold
         public void RunFlow()
         {
             //Arrange  
-            lock (WorkSpace.Instance)
-            {
+            WorkSpace.LockWS();
                 Agent agent =prep();
                 BusinessFlow BF = new BusinessFlow("BF1");
                 BF.TargetApplications.Add(new TargetApplication() { AppName = cWebApp });
@@ -107,7 +106,7 @@ namespace WorkspaceHold
                 Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");
                 Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
                 Assert.AreEqual(eRunStatus.Passed, BF.Activities[0].Status, "Activity Status = Pass");
-            }
+            WorkSpace.RelWS();
         }
 
         Agent prep()

@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -60,7 +61,30 @@ namespace amdocs.ginger.GingerCoreNET
                 return mWorkSpace;                
             }
         }
-        
+
+        static bool lockit;
+
+        public static void LockWS()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                lock (WorkSpace.Instance)
+                {
+                    lockit = true;
+                    while (lockit)
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+        }
+
+        public static void RelWS()
+        {
+            lockit = false;
+        }
+
+
         public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
         {
             mWorkSpace = new WorkSpace();         
