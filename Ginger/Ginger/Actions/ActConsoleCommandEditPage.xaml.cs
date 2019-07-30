@@ -54,16 +54,15 @@ namespace Ginger.Actions
         private List<object> GetActionListPlatform()
         {
             List<object> actionList = new List<object>();
-            string targetapp = Context.GetAsContext(mActConsoleCommand.Context).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+           
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
 
-            if (platform == ePlatformType.Unix)
+            if (mActConsoleCommand.Platform == ePlatformType.Unix)
             {                
                 actionList.Add(ActConsoleCommand.eConsoleCommand.ParametrizedCommand);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.Script);
             }
-            else if(platform == ePlatformType.DOS)
+            else if(mActConsoleCommand.Platform == ePlatformType.DOS)
             {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.CopyFile);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.IsFileExist);

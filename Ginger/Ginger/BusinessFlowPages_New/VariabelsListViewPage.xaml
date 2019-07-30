@@ -29,7 +29,7 @@
             <UserControls:ImageMakerControl Grid.Column="1" SetAsFontImageWithSize="16" ImageType="Variable" HorizontalAlignment="Left" SetBorder="False" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
             <TextBlock x:Name="xSelectedItemTitleText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Action Description" Style="{StaticResource $TextBlockStyle}" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" />
 
-            <StackPanel x:Name="xEditOperationsPnl" Grid.Column="3" Orientation="Horizontal"  VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 0 0">
+            <StackPanel x:Name="xEditOperationsPnl" Grid.Column="3" Orientation="Horizontal"  VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 10 0">
                 <UserControls:ucButton x:Name="xPreviousBtn" ButtonType="ImageButton" Click="xPreviousBtn_Click"  ButtonFontImageSize="16"  ButtonImageType="MoveUp">
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Previous [Variable]"/>
@@ -40,14 +40,15 @@
                         <GingerCore:ucTextDicResource Text="Next [Variable]"/>
                     </UserControls:ucButton.ToolTip>
                 </UserControls:ucButton>
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
-                <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
-                    <UserControls:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Next [Variable]"/>
-                    </UserControls:ucButton.ToolTip>
-                </UserControls:ucButton>
-                <!--<Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
+                <StackPanel  x:Name="xEditAndValueChangeOperationsPnl" Orientation="Horizontal">
+                    <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
+                    <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Next [Variable]"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                    <!--<Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
@@ -62,19 +63,19 @@
                             </MenuItem>
                         </MenuItem>
                     </Menu>-->
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                <UserControls:ucButton x:Name="xResetValueBtn" ButtonType="ImageButton" Click="xResetValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Reset">
-                    <UserControls:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Reset [Variable] Value"/>
-                    </UserControls:ucButton.ToolTip>
-                </UserControls:ucButton>
-                <UserControls:ucButton x:Name="xAutoValueBtn" ButtonType="ImageButton" Click="xAutoValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Action">
-                    <UserControls:ucButton.ToolTip>
-                        <GingerCore:ucTextDicResource Text="Generate Auto Value"/>
-                    </UserControls:ucButton.ToolTip>
-                </UserControls:ucButton>
+                    <GridSplitter x:Name="xValueChangeSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xResetValueBtn" ButtonType="ImageButton" Click="xResetValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Reset">
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Reset [Variable] Value"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                    <UserControls:ucButton x:Name="xAutoValueBtn" ButtonType="ImageButton" Click="xAutoValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Action">
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Generate Auto Value"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                </StackPanel>
             </StackPanel>
-
         </Grid>
 
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
