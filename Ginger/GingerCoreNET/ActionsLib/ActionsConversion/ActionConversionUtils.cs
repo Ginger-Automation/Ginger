@@ -81,17 +81,9 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 foreach (var bf in listOfBusinessFlow)
-                {                    
-                    foreach (var targetApplication in convertableTargetApplications)
-                    {
-                        List<ConvertableActionDetails> actionsOfType = new List<ConvertableActionDetails>();
-                        bool isDefaultTA = targetApplication.SourceTargetApplicationName == targetApplication.TargetTargetApplicationName;
-                        if (actionsToBeConverted.Where(x => x.SourceActionTypeName == targetApplication.SourceTargetApplicationName) != null)
-                        {
-                            actionsOfType = actionsToBeConverted.Where(x => x.SourceActionTypeName == targetApplication.SourceTargetApplicationName).ToList();
-                            ConvertToActions(addNewActivity, bf, actionsToBeConverted, isDefaultTA, targetApplication.TargetTargetApplicationName, convertToPOMAction, selectedPOMs);
-                        }
-                    }               
+                {
+                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, bf.Name);
+                    ConvertToActions(addNewActivity, bf, actionsToBeConverted, convertableTargetApplications, convertToPOMAction, selectedPOMs);
                 }
             }
             catch (Exception ex)
@@ -106,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET
         /// <param name="addNewActivity"></param>
         public void ConvertToActions(bool addNewActivity, BusinessFlow businessFlow,
                                      ObservableList<ConvertableActionDetails> actionsToBeConverted,
-                                     bool isDefaultTargetApp, string strTargetApp,
+                                     ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications,
                                      bool convertToPOMAction = false, ObservableList<string> selectedPOMObjectName = null)
         {
             try
@@ -119,15 +111,7 @@ namespace Amdocs.Ginger.CoreNET
                         Activity currentActivity = GetCurrentWorkingActivity(addNewActivity, businessFlow, ref intIndex, activity);
                         ConvertSelectedActionsFromActivity(addNewActivity, actionsToBeConverted, convertToPOMAction, selectedPOMObjectName, currentActivity);
 
-                        // if the user has not chosen any target application in the combobox then, we set it as empty
-                        if (isDefaultTargetApp && !string.IsNullOrEmpty(strTargetApp))
-                        {
-                            currentActivity.TargetApplication = strTargetApp;
-                        }
-                        else
-                        {
-                            currentActivity.TargetApplication = activity.TargetApplication;
-                        }
+                        currentActivity.TargetApplication = convertableTargetApplications.Where(x => x.SourceTargetApplicationName == activity.TargetApplication).Select(x => x.TargetTargetApplicationName).FirstOrDefault();
                     }
                 }
             }

@@ -83,7 +83,7 @@ namespace Ginger.Actions.ActionConversion
             DataContext = mWizard;
             SetTargetApplicationGridView();
 
-            mPOMControl = new POMElementGridSelectionPage(true, 220, 560);
+            mPOMControl = new POMElementGridSelectionPage(true, 220, 555);
             mPOMControl.POMSelectionEvent += POMSelectedEventHandler;
             xPOMUserControl.Content = mPOMControl;
         }

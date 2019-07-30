@@ -129,8 +129,7 @@ namespace Ginger.Actions.ActionConversion
             try
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, Context.BusinessFlow.Name);
-
+                
                 // create a new converted activity
                 ActionConversionUtils utils = new ActionConversionUtils();
                 utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
@@ -140,8 +139,6 @@ namespace Ginger.Actions.ActionConversion
                 utils.ActUIElementClassName = nameof(ActUIElement);
 
                 utils.ConvertActionsOfMultipleBusinessFlows(NewActivityChecked, ListOfBusinessFlow, ActionToBeConverted, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs);
-
-                //utils.ConvertToActions(NewActivityChecked, Context.BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);
             }
             catch (Exception ex)
             {
