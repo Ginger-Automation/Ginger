@@ -228,10 +228,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    DataSourceBase dataSource= (((DataSourceTable)selectedRunSet[0]).DSC);
+                   
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
-                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName); 
+                    im.ExportSelectedParametersToDataSouce(parameters, dataSource, tableName); 
                 }
             }
             catch (System.Exception ex)
