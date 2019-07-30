@@ -151,7 +151,7 @@ namespace WorkspaceHold
         }
 
 
-        
+        [Ignore]
         [TestMethod]  [Timeout(6000)]
         public void MemoPluginSpeedTest()
         {
