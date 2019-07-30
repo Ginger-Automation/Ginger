@@ -91,7 +91,7 @@ namespace UnitTests.NonUITests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]

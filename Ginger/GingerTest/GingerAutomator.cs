@@ -137,8 +137,7 @@ namespace GingerTest
         {
             // app.Shutdown(0);
             MainWindowPOM.Close();
-            Thread.Sleep(5000);
-            WorkSpace.Instance.ReleaseWorkspace();            
+            Thread.Sleep(5000);            
         }
 
 
