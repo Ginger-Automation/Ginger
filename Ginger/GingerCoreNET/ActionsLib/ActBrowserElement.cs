@@ -302,12 +302,14 @@ namespace GingerCore.Actions
             PlatformAction platformAction = new PlatformAction(this);
 
 
-     
 
-            foreach(ActInputValue aiv in this.InputValues)
+
+            foreach (ActInputValue aiv in this.InputValues)
             {
-                if(!platformAction.InputParams.ContainsKey(aiv.Param))
+                if (!platformAction.InputParams.ContainsKey(aiv.Param))
+                {
                     platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
+                }
             }
      
 

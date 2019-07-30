@@ -81,7 +81,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             string Value = (string)InputParams["Value"];
             List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
-         //  Dictionary<string,object> InputParams = InputParams;
+
             try
             {
                 // use enum or string/const ??? 
