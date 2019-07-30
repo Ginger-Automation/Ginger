@@ -26,24 +26,23 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
 using System.Threading;
 
-namespace UnitTests.NonUITests.GingerRunnerTests
+namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
 {
-
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
     {        
-        static GingerRunner mGR;
 
-        Mutex mGingerMutex = new Mutex();
+        static GingerRunner mGR;
+        
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {       
+        {
+            // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
+
             mGR = new GingerRunner();
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
@@ -56,14 +55,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestInitialize]
         public void TestInitialize()
-        {            
-            mGingerMutex.WaitOne();
+        {
+            
         }
 
         [TestCleanup]
         public void TestCleanup()
-        {            
-            mGingerMutex.ReleaseMutex();
+        {
+            
         }
 
 

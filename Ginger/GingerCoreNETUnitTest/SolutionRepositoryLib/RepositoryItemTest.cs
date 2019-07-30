@@ -33,18 +33,21 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {            
-            WorkspaceHelper.CreateWorkspace2(nameof(RepositoryItemTest));            
+        {
+            WorkspaceHelper.CreateWorkspace2(nameof(RepositoryItemTest));
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
-
-        
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            
+        }
 
         [TestCleanup]
         public void TestCleanUp()
@@ -94,5 +97,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 
         //TODO: Add more test for all RI functions
 
+
+      
     }
 }

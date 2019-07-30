@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            WorkSpace.Instance.ReleaseWorkspace(); 
+            
         }
 
         [TestInitialize]
@@ -100,8 +100,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(env.Name, "CMI IIS test server");
            Assert.AreEqual(env.Applications.Count, 2);
             //TODO: add more asserts
-    }
-
+        }
+      
 
 
     }

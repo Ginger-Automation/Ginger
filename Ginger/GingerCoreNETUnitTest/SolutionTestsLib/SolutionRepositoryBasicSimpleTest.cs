@@ -49,7 +49,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -196,5 +196,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             //Assert
             Assert.AreEqual(BF2.Name, BFOriginalName);  // Make sure we didn't get the one from mem                        
         }
+
+        
+
     }
 }

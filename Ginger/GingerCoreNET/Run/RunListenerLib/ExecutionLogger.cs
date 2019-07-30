@@ -39,10 +39,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     {
         static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
-        public string ExecutionLogfolder { get; set; }
-        string mLogsFolderName;
-        DateTime mCurrentExecutionDateTime;        
-        private eExecutedFrom ExecutedFrom;
+        public string ExecutionLogfolder { get; set; }        
+        DateTime mCurrentExecutionDateTime;                
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
@@ -70,11 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             get { return mLogsFolder; }
         }
-
-        public string CurrentLoggerFolderName
-        {
-            get { return mLogsFolderName; }
-        }
+        
 
         public DateTime CurrentExecutionDateTime
         {

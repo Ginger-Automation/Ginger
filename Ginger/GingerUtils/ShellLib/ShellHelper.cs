@@ -19,8 +19,8 @@ public static class ShellHelper
         }
         else if (GingerUtils.OperatingSystem.IsLinux())
         {
-
             Console.WriteLine("*** OS is Linux ***");
+            Console.WriteLine("*** dotnet --version ***");
             var output = ShellHelper.Bash("dotnet --version");
             Console.WriteLine("=====================================================================");
             Console.WriteLine("<<<<<<<<<<<<<<<          Shell result                    >>>>>>>>>>>>");
@@ -40,6 +40,7 @@ public static class ShellHelper
         else if (GingerUtils.OperatingSystem.IsMacOS())
         {
             Console.WriteLine("*** OS is Mac ***");
+            Console.WriteLine("*** dotnet --version ***");
             var output = ShellHelper.Bash("dotnet --version");
             Console.WriteLine("=====================================================================");
             Console.WriteLine("<<<<<<<<<<<<<<<          Shell result                    >>>>>>>>>>>>");
@@ -52,10 +53,8 @@ public static class ShellHelper
             Console.WriteLine("Command: " + cmd);
             procStartInfo.FileName = "/bin/bash";
             procStartInfo.Arguments = args;
-
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = false;
-
             procStartInfo.RedirectStandardOutput = true;
         }
 
@@ -66,11 +65,11 @@ public static class ShellHelper
         bool started = process.Start();
         if (started)
         {
-            Console.WriteLine("Error: Not able to start Process..");
+            Console.WriteLine("Process started");            
         }
         else
         {
-            Console.WriteLine("Starting Process..");
+            Console.WriteLine("No process not started");
         }
         
         return process;

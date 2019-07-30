@@ -81,7 +81,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup()]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -291,6 +291,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual("Jupiter", v1.Value);
         }
+
+
+        
 
 
     }

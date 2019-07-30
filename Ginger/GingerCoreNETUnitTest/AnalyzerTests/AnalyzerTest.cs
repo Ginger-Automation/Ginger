@@ -27,7 +27,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
 
         }
 
-
+        
     }
 
 }

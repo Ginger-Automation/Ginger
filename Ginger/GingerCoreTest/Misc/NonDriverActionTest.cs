@@ -72,7 +72,7 @@ namespace UnitTests.NonUITests
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         public static void AddApplicationAgent()
@@ -309,5 +309,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
             Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
         }
+        
+
     }
 }

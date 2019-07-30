@@ -75,7 +75,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 // proxy.Shutdown();
             }
 
-            WorkSpace.Instance.ReleaseWorkspace();
+            
 
         }
 
@@ -223,5 +223,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(Directory.Exists(folder));
         }
 
-    }       
+
+      
+
+    }
 }

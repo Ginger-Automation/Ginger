@@ -455,7 +455,7 @@ namespace GingerCoreNET.DataSource
 
                         foreach (DataRow dr in dt.Rows)
                         {
-                            if (dr["GINGER_ID"] == "")
+                            if ((string)dr["GINGER_ID"] == "")
                             {
                                 dosort = false;
                             }
@@ -530,7 +530,7 @@ namespace GingerCoreNET.DataSource
 
                             foreach (DataRow dr in dataTable.Rows)
                             {
-                                if (dr["GINGER_ID"] == "")
+                                if ((string)dr["GINGER_ID"] == "")
                                 {
                                     dosort = false;
                                 }
@@ -558,13 +558,13 @@ namespace GingerCoreNET.DataSource
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception Occured: ", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred: ", ex);
                         }
                     }
                 }
                 catch(Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred: ", ex);
                 }
             }
             dataTable.AcceptChanges();

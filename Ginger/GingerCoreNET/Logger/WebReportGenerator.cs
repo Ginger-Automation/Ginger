@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("RunNewHtmlReport error " + ex.Message);
             }
             return lightDbRunSet;
         }

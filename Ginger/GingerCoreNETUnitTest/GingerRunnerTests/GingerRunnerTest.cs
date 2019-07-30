@@ -73,7 +73,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
 
-            WorkspaceHelper.InitWS(nameof(GingerRunnerTest));            
+            
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -83,7 +83,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -264,6 +264,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(mGR.BusinessFlows[2].Variables[0].Value, "bbb");
 
         }
+
+        
 
     }
 }

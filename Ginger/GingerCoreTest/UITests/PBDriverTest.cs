@@ -118,7 +118,7 @@ namespace UnitTest
             }
             finally
             {
-                WorkSpace.Instance.ReleaseWorkspace();
+                
             }
             
 
