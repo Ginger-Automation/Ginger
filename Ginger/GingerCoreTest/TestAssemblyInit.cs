@@ -20,6 +20,9 @@ using Amdocs.Ginger.Common;
 using Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 
 namespace GingerAutoPilotTest
@@ -37,6 +40,24 @@ namespace GingerAutoPilotTest
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             // Init Reporter
             Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
+
+
+            ExtractTestResources();
+        }
+
+        private static void ExtractTestResources()
+        {            
+            string PBAppZip = TestResources.GetTestResourcesFile("PBTestApp.zip");
+            string targetFolder = PBAppZip.Replace("PBTestApp.zip", "");
+
+            string appFolder = targetFolder + Path.DirectorySeparatorChar + "PBTestApp";
+            if (Directory.Exists(appFolder))
+            {
+                Directory.Delete(appFolder, true);
+            }
+            
+            ZipFile.ExtractToDirectory(PBAppZip, targetFolder);           
+
         }
     }
 }
