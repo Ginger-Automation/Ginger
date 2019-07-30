@@ -18,23 +18,23 @@ jobs:
   
   steps:
   
-  - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerUtilsTest'
 
-  - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerCoreCommonTest'
 
     # for GingerCoreNET we use run setting to limit to have one worker thread due to workspace limitation
   - script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerCoreNETUnitTest'
 
-  - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerPluginCoreTest'
 
-  - script: dotnet test  Ginger/GingerConsoleTest --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerConsoleTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerConsoleTest'
 
-  - script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerAutoPilotTest'
     
 
