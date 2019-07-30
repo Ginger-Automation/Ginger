@@ -32,6 +32,7 @@ using System.IO;
 
 namespace WorkspaceHold
 {        
+    [Ignore]
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest

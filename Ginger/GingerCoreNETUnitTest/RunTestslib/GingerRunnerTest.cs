@@ -34,6 +34,7 @@ using System.Threading;
 
 namespace WorkspaceHold
 {
+    [Ignore]
     [Level2]
     [TestClass]
     public class GingerRunnerTest
