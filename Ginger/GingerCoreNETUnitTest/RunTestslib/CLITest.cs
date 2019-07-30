@@ -10,7 +10,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.IO;W
+using System.IO;
 using System.Linq;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
