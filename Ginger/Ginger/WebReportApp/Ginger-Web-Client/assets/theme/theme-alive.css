@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 /* Add your variable customizations of theme here */
 * {
   -moz-box-sizing: border-box;
@@ -1844,6 +1844,7 @@ body .ui-table .ui-table-tbody > tr {
 body .ui-table .ui-table-tbody > tr > td {
   background: inherit;
   border: 1px solid #d6d7d9;
+  word-break: normal;
 }
 body .ui-table .ui-table-tbody > tr.ui-state-highlight {
   background-color: #85344E;
