@@ -25,7 +25,7 @@ jobs:
     displayName: 'Testing GingerCoreCommonTest'
 
     # for GingerCoreNET we use run setting to limit to have one worker thread due to workspace limitation
-  - script: dotnet test  Ginger/GingerCoreNETUnitTest --settings:/home/vsts/work/1/s/Ginger/.runsettings --configuration $(buildConfiguration) --logger trx
+  - script: dotnet test  Ginger/GingerCoreNETUnitTest --configuration $(buildConfiguration) --logger trx
     displayName: 'Testing GingerCoreNETUnitTest'
 
   - script: dotnet test  Ginger/GingerPluginCoreTest --configuration $(buildConfiguration) --logger trx
