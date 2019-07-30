@@ -214,8 +214,7 @@ namespace Ginger.DataSource
             DSTypeComboBox.SelectedItem = DataSourceBase.eDSType.MSAccess;
             DSName.Text = "";
             FilePathTextBox.Text = "";
-            FilePathTextBox.IsEnabled = true;
-            DSName.IsEnabled = true;
+            
         }
 
         private void DSName_TextChanged(object sender, TextChangedEventArgs e)
