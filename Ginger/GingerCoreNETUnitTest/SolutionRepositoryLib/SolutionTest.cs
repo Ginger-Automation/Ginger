@@ -38,7 +38,7 @@ namespace UnitTests.NonUITests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -96,5 +96,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
+
+        
+
     }
 }

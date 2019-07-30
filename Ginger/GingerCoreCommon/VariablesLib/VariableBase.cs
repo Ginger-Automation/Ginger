@@ -319,6 +319,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "GetListOfUsedVariables - " + ex.Message);
                     value = null;
                 } 
                 

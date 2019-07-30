@@ -59,7 +59,7 @@ namespace GingerTest
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         private static void CreateTestSolution()
@@ -367,5 +367,7 @@ namespace GingerTest
                 prop = e.PropertyName;
             }
         }
+
+
     }
 }

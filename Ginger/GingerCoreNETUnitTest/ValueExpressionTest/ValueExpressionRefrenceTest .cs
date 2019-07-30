@@ -38,7 +38,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -68,6 +68,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             }
         }
 
+      
 
     }
 }

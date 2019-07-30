@@ -219,7 +219,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             }
 
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -814,8 +814,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-
-
+      
 
 
     }

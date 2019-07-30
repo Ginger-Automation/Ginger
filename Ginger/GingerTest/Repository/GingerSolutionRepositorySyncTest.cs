@@ -62,7 +62,7 @@ namespace GingerTest
         [ClassCleanup]
         public static void ClassCleanup()
         {            
-            WorkSpace.Instance.ReleaseWorkspace();
+            
 
         }
 
@@ -254,6 +254,6 @@ namespace GingerTest
         //    Assert.AreNotSame(V1, V2);
         //    Assert.AreEqual(updatedValue, V2.InitialStringValue);
         //}
-
+      
     }
 }

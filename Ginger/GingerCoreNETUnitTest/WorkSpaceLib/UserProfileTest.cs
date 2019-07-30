@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -93,6 +93,8 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             string expected = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml"; //  Linux!!!!!!!!!!!
             Assert.AreEqual(expected, s);   
         }
+
+    
 
     }
 }

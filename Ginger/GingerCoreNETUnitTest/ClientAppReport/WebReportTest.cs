@@ -22,7 +22,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             
         }
 
-
+        
 
     }
 }
