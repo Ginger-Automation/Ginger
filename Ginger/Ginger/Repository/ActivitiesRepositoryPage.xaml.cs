@@ -131,7 +131,7 @@ namespace Ginger.Repository
             if (xActivitiesRepositoryGrid.CurrentItem != null)
             {
                 Activity a = (Activity)xActivitiesRepositoryGrid.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context(), General.eRIPageViewMode.SharedReposiotry);
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else

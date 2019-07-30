@@ -80,14 +80,23 @@ namespace GingerWPF.BusinessFlowsLib
             if (actionToEdit != null)
             {
                 xBackToListGrid.Visibility = Visibility.Visible;
-                mActionBeenEdit = actionToEdit;                                
+                mActionBeenEdit = actionToEdit;
+                mActionBeenEdit.Context = mContext;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
-                BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                mActionBeenEdit.Context = mContext;
-                mActionBeenEdit.SaveBackup();
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
+                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Visible;
+                    mActionBeenEdit.SaveBackup();
+                    BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                }               
+
+                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
                 xMainFrame.Content = mActionEditPage;
                 if (ShiftToActionEditEvent != null)
                 {
