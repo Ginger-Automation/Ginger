@@ -598,21 +598,6 @@ namespace GingerCore
             }
         }
 
-        public void InsertActivity(Activity a, int index = -1)
-        {
-            if (a == null)
-                return;
-
-            if ((index != -1) && (ActivitiesGroups.Count > index))
-            {
-                Activities.Insert(index, a);
-            }
-            else
-            {
-                Activities.Add(a);
-            }
-        }
-
         public void AddVariable(VariableBase v, int insertIndex = -1)
         {
             if (v != null)

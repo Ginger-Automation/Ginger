@@ -305,10 +305,8 @@ namespace Ginger.GherkinLib
                             a.Tags.Add(guid);
                     }
                         
-
-                    UpdateActivityVars(a1, a.ActivityName);
-                    AG.AddActivityToGroup(a1);
-                    mBizFlow.AddActivity(a1);
+                    UpdateActivityVars(a1, a.ActivityName);                    
+                    mBizFlow.AddActivity(a1, AG);
                 }
                 else
                 {

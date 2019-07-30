@@ -688,45 +688,48 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
-                if (notifications != null && notifications.Count > 0)
+                if (panel.Tag != null)
                 {
-                    panel.Visibility = Visibility.Visible;
-                    foreach (ListItemNotification notification in notifications)
+                    List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
+                    if (notifications != null && notifications.Count > 0)
                     {
-                        ImageMakerControl itemInd = new ImageMakerControl();
-                        itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
-                        itemInd.ImageType = notification.ImageType;
-                        itemInd.ToolTip = notification.ToolTip;
-                        itemInd.Margin = new Thickness(3, 0, 3, 0);
-                        itemInd.Height = 16;
-                        itemInd.Width = 16;
-                        itemInd.SetAsFontImageWithSize = notification.ImageSize;
+                        panel.Visibility = Visibility.Visible;
+                        foreach (ListItemNotification notification in notifications)
+                        {
+                            ImageMakerControl itemInd = new ImageMakerControl();
+                            itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
+                            itemInd.ImageType = notification.ImageType;
+                            itemInd.ToolTip = notification.ToolTip;
+                            itemInd.Margin = new Thickness(3, 0, 3, 0);
+                            itemInd.Height = 16;
+                            itemInd.Width = 16;
+                            itemInd.SetAsFontImageWithSize = notification.ImageSize;
 
-                        if (notification.ImageForeground == null)
-                        {
-                            itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
-                        }
-                        else
-                        {
-                            itemInd.ImageForeground = notification.ImageForeground;
-                        }
+                            if (notification.ImageForeground == null)
+                            {
+                                itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
+                            }
+                            else
+                            {
+                                itemInd.ImageForeground = notification.ImageForeground;
+                            }
 
-                        if (notification.BindingConverter == null)
-                        {
-                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
-                        }
-                        else
-                        {
-                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
-                        }
+                            if (notification.BindingConverter == null)
+                            {
+                                BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
+                            }
+                            else
+                            {
+                                BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                            }
 
-                        panel.Children.Add(itemInd);
+                            panel.Children.Add(itemInd);
+                        }
                     }
-                }
-                else
-                {
-                    panel.Visibility = Visibility.Collapsed;
+                    else
+                    {
+                        panel.Visibility = Visibility.Collapsed;
+                    }
                 }
             });
         }
