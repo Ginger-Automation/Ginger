@@ -52,21 +52,12 @@ namespace WorkspaceHold
         public static void ClassInitialize(TestContext TestContext)
         {            
             
-
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            try
-            {
-                
-                
-            }
-            finally
-            {
-                
-            }
+           
         }
 
         

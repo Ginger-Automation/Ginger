@@ -46,17 +46,37 @@ namespace WorkspaceHold
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
-        {            
+        {
+            
 
             mTestHelper.ClassInitialize(TestContext);
 
+           
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {            
+            mTestHelper.ClassCleanup();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            WorkSpace.LockWS();
+            Prep();
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+        private void Prep()
+        {
             // Create new solution
             mBusinessFlow = new BusinessFlow();
             mBusinessFlow.Activities = new ObservableList<Activity>();
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.NA;             
+            p.PlatformType = ePlatformType.NA;
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
@@ -76,30 +96,18 @@ namespace WorkspaceHold
             WorkspaceHelper.CreateWorkspaceWithTempSolution(nameof(GingerRunnerPluginDriverTest), "sol1");
 
             // Add the plugin to solution
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
-            
+
             Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {            
-            mTestHelper.ClassCleanup();
-        }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            mTestHelper.TestInitialize(TestContext);
-        }
-
 
         [TestCleanup]
         public void TestCleanUp()
         {
+            WorkSpace.RelWS();
             mTestHelper.TestCleanup();
         }
 

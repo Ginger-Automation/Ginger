@@ -16,6 +16,7 @@ using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace WorkspaceHold
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class CLITest

@@ -66,12 +66,14 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void LockWS()
         {
+            Console.WriteLine("Lock Workspace");
+            
             Task.Factory.StartNew(() =>
             {
                 lock (WorkSpace.Instance)
-                {
+                {                    
                     lockit = true;
-                    while (lockit)
+                    while (lockit)  // TODO: add timeout max 60 seconds
                     {
                         Thread.Sleep(100);
                     }
@@ -82,6 +84,7 @@ namespace amdocs.ginger.GingerCoreNET
         public static void RelWS()
         {
             lockit = false;
+            Console.WriteLine("Workspace released");
         }
 
 
@@ -364,9 +367,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;
+                Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
-
+                
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -501,10 +504,10 @@ namespace amdocs.ginger.GingerCoreNET
             Solution = null;
 
             EventHandler.SolutionClosed();
-        }        
+        }
 
         public UserProfile UserProfile { get; set; }
-       
+
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
