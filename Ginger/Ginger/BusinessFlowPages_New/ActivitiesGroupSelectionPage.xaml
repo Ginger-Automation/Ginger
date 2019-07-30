@@ -5,6 +5,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Activities Group"
       d:DesignHeight="100" d:DesignWidth="400"
       Title="Select Activities Group">
 

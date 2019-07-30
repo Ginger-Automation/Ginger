@@ -603,9 +603,8 @@ namespace Ginger.GherkinLib
                         //FIXME
                         if (a2 != null)
                         {
-                            mBizFlow.AddActivity(a2);
-                            a2.Active = false;                            
-                            AG.AddActivityToGroup(a2);                            
+                            a2.Active = false;
+                            mBizFlow.AddActivity(a2, AG);                            
                         }
                     }
                     else
@@ -617,9 +616,7 @@ namespace Ginger.GherkinLib
                         a.ActionRunOption = eActionRunOption.ContinueActionsRunOnFailure;
                         CreateActivityVariables(a);
                         CreateActivitySelectionVariables(a);                        
-                        mBizFlow.AddActivity(a);
-
-                        AG.AddActivityToGroup(a);
+                        mBizFlow.AddActivity(a, AG);
                     }
                 }
                 //TODO: handle if exist we need to update !?
