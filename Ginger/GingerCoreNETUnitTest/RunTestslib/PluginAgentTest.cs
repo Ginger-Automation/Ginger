@@ -48,8 +48,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             mTestHelper.ClassInitialize(TestContext);
             
-            WorkspaceHelper.InitWS(nameof(PluginAgentTest));
-            
+
             // Create temp solution
             SolutionRepository solutionRepository;
             string path = Path.Combine(TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "AgentTestSolution"));
@@ -58,21 +57,20 @@ namespace GingerCoreNETUnitTest.RunTestslib
                 Directory.Delete(path, true);
             }
             solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            solutionRepository.CreateRepository(path);     
+            solutionRepository.CreateRepository(path);
             WorkSpace.Instance.SolutionRepository = solutionRepository;
 
             // add Example4 Plugin to solution
             string pluginPath = Path.Combine(TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4"));
             WorkSpace.Instance.PlugInsManager.Init(solutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
-            
-            mGingerGrid = WorkSpace.Instance.LocalGingerGrid;            
+
+            mGingerGrid = WorkSpace.Instance.LocalGingerGrid;
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
-            WorkSpace.Instance.ReleaseWorkspace();
+        {                        
             mTestHelper.ClassCleanup();
         }
 
@@ -84,7 +82,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         [TestCleanup]
         public void TestCleanUp()
-        {
+        {            
             mTestHelper.TestCleanup();
         }
 
@@ -142,6 +140,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(3, count);
             Assert.AreEqual(0, list.Count);
         }
+
+
+      
 
 
         // FIXME and use when we have the selenium plugin working 

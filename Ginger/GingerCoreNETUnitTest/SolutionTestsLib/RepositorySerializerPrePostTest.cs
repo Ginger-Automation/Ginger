@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -180,7 +180,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("Action Timeout - default is 30 seconds", actionTimeoutParameter.Description, "ActionTimeout Description Validation");
         }
 
-
+     
 
 
     }

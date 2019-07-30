@@ -36,8 +36,7 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
     {        
 
         static GingerRunner mGR;
-
-        Mutex mGingerMutex = new Mutex();
+        
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -57,13 +56,13 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
         [TestInitialize]
         public void TestInitialize()
         {
-            mGingerMutex.WaitOne();
+            
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            mGingerMutex.ReleaseMutex();
+            
         }
 
 

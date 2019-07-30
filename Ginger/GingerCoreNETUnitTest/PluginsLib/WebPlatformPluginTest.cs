@@ -49,7 +49,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -127,6 +127,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
+      
 
     }
 }

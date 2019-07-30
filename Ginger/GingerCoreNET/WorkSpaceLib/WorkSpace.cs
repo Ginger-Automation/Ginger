@@ -57,60 +57,32 @@ namespace amdocs.ginger.GingerCoreNET
         {
             get
             {                
-                return mWorkSpace;
+                return mWorkSpace;                
             }
         }
-
-
-        static readonly Mutex mMutex = new Mutex();
-
-        private static string mHoldBy;
-
+        
         public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
-        {                        
-            if (mWorkSpace != null)
-            {                
-                Console.WriteLine("Workspace is locked by: " + HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
-            }
-            bool b = mMutex.WaitOne(new TimeSpan(0,10,0));   // Wait for the workspace to be released max 10 minutes
-
-            if (!b)
-            {
-                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
-                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
-            }
-            mHoldBy = HoldBy;
-
-            mWorkSpace = new WorkSpace();
+        {
+            mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
             mWorkSpace.InitLocalGrid();
-
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
-
-
-
-        public void ReleaseWorkspace()
+      
+        public void CloseWorkspace()
         {
             try
             {
                 CloseSolution();
                 LocalGingerGrid.Stop();
-                Close();
-                mHoldBy = null;                
+                Close();             
             }
             catch (Exception ex)
             {
                 Console.WriteLine("ReleaseWorkspace error - " + ex.Message);
-            }
-            finally
-            {
-                mMutex.ReleaseMutex();
             }            
-         
         }
 
 
@@ -499,7 +471,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             //Reset values
-            mPluginsManager = null;
+            mPluginsManager = new PluginsManager();
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;
@@ -688,6 +660,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        
         bool mLoadingSolution;
         public bool LoadingSolution
         {

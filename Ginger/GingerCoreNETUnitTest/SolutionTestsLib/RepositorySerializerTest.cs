@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
-{    
+{
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
@@ -39,14 +37,14 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS(nameof(RepositorySerializerTest));            
+            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestCleanup]
@@ -55,7 +53,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             
         }
 
-        [Ignore] // FIXME why it give differen tlength on different machines?
+        [Ignore] // FIXME why it give different length on different machines?
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -372,6 +370,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         //    //Assert
         //    Assert.AreEqual(5, RSC.RunSetActions.Count);
         //}
+
+        
 
 
     }

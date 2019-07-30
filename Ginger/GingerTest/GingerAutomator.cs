@@ -69,7 +69,6 @@ namespace GingerTest
             SessionCount--;
             TestMutex.ReleaseMutex();
 
-
             if (SessionCount == 0)
             {
                 gingerAutomatorInstance.CloseGinger();                

@@ -30,8 +30,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
-namespace amdocs.ginger.GingerCoreNETTest
-{    
+namespace WorkspaceHold
+{        
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -46,7 +46,8 @@ namespace amdocs.ginger.GingerCoreNETTest
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
-        {
+        {            
+
             mTestHelper.ClassInitialize(TestContext);
 
             // Create new solution
@@ -85,9 +86,7 @@ namespace amdocs.ginger.GingerCoreNETTest
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {                        
-            WorkSpace.Instance.ReleaseWorkspace();
-
+        {            
             mTestHelper.ClassCleanup();
         }
 
@@ -132,6 +131,7 @@ namespace amdocs.ginger.GingerCoreNETTest
             //Act            
             mTestHelper.Log("Before Ginger Runner");
             mGingerRunner.RunRunner();
+            mGingerRunner.CloseAgents();
             mTestHelper.Log("After Ginger Runner");
 
             //Assert
@@ -178,7 +178,7 @@ namespace amdocs.ginger.GingerCoreNETTest
         }
 
 
-        
+      
 
 
     }

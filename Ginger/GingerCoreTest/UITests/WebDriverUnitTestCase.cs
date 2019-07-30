@@ -100,7 +100,7 @@ namespace UnitTests.UITests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -1064,6 +1064,8 @@ namespace UnitTests.UITests
             //assert
             Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
         }
+
+
     }
 }
 
