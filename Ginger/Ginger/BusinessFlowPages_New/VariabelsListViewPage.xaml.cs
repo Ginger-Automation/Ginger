@@ -160,6 +160,8 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.ItemDropped += ListVars_ItemDropped;
 
             mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
+
+            mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
         }
 
         private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
@@ -215,18 +217,37 @@ namespace Ginger.BusinessFlowPages
 
         private void ListVars_ItemDropped(object sender, EventArgs e)
         {
-            VariableBase a = (VariableBase)((DragInfo)sender).Data;
-            VariableBase instance = (VariableBase)a.CreateInstance(true);
-            GetVariablesList().Add(instance);
+            object droppedItem = ((DragInfo)sender).Data as object;
 
-            int selectedActIndex = -1;
-            if (GetVariablesList().CurrentItem != null)
+            if (droppedItem != null)
             {
-                selectedActIndex = GetVariablesList().IndexOf((VariableBase)GetVariablesList().CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                GetVariablesList().Move(GetVariablesList().Count - 1, selectedActIndex + 1);
+                VariableBase droppedAtVar = DragDrop2.GetRepositoryItemHit(ListView) as VariableBase;
+
+                VariableBase varDropped = droppedItem as VariableBase;
+
+                VariableBase instance = (VariableBase)varDropped.CreateInstance(true);
+
+                if (droppedAtVar != null)
+                {
+                    int targetIndex = GetVariablesList().IndexOf(droppedAtVar);
+
+                    GetVariablesList().Insert(targetIndex, instance);
+                    ListView.xListView.SelectedItem = instance;
+                }
+                else
+                {
+                    GetVariablesList().Add(instance);
+
+                    int selectedActIndex = -1;
+                    if (GetVariablesList().CurrentItem != null)
+                    {
+                        selectedActIndex = GetVariablesList().IndexOf((VariableBase)GetVariablesList().CurrentItem);
+                    }
+                    if (selectedActIndex >= 0)
+                    {
+                        GetVariablesList().Move(GetVariablesList().Count - 1, selectedActIndex + 1);
+                    }
+                }
             }
         }
 

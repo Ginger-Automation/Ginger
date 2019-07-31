@@ -172,13 +172,13 @@ namespace Ginger.UserControlsLib.UCListView
                         xSearchTextBox.Text = "";
                         xListView.ItemsSource = mObjList;
 
-                            // Make the first row selected
-                            if (value != null && value.Count > 0)
+                        // Make the first row selected
+                        if (value != null && value.Count > 0)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
                             {
                                 mObjList.CurrentItem = value[0];
                             }
@@ -256,7 +256,7 @@ namespace Ginger.UserControlsLib.UCListView
                     SetListSelectedItemAsSourceCurrentItem();
                 }
             }
-            if(e.PropertyName == nameof(IObservableList.FilterStringData))
+            if (e.PropertyName == nameof(IObservableList.FilterStringData))
             {
                 this.Dispatcher.Invoke(() => xSearchTextBox.Text = mObjList.FilterStringData);
             }
@@ -605,7 +605,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         void IDragDrop.StartDrag(DragInfo Info)
-        {            
+        {
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
             Info.DragSource = this;
             if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is ListViewItem)
@@ -630,6 +630,19 @@ namespace Ginger.UserControlsLib.UCListView
             // first check if we did drag and drop on the same ListView then it is a move - reorder
             if (Info.DragSource == this)
             {
+                RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
+
+                if (draggedItem != null)
+                {
+                    RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
+                    if (draggedOnItem != null)
+                    {
+                        int newIndex = this.DataSourceList.IndexOf(draggedOnItem);
+                        int oldIndex = DataSourceList.IndexOf(draggedItem);
+
+                        DataSourceList.Move(oldIndex, newIndex);
+                    }
+                }
                 //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
                 return;
             }
