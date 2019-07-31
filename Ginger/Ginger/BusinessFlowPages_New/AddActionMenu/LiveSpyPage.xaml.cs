@@ -294,11 +294,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     ObservableList<Act> list = new ObservableList<Act>();
                     ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                    if (xWindowSelectionUC.mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
-                    {
-                        list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
-                    }
-                    else if (xWindowSelectionUC.mPlatform.PlatformType() == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo)))
+
+                    ePlatformType mPlatformType = xWindowSelectionUC.mPlatform.PlatformType();
+
+                    // if platform is web or
+                    // platform is java and element info type is javaelementinfo 
+                    if (mPlatformType == ePlatformType.Web || (mPlatformType == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo))))
                     {
                         list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }
