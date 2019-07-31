@@ -56,6 +56,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
+
         public ActionsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
@@ -586,6 +590,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index > 0)
             {
                 //move
+                ExpandItemOnLoad = true;
                 mContext.Activity.Acts.Move(index, index - 1);
             }
         }
@@ -598,6 +603,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index < mContext.Activity.Acts.Count-1)
             {
                 //move
+                ExpandItemOnLoad = true;
                 mContext.Activity.Acts.Move(index, index + 1);
             }
         }

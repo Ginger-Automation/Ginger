@@ -117,21 +117,33 @@ namespace Ginger.BusinessFlowPages
                 mVarBeenEdit = variabelToEdit;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mVarBeenEdit, nameof(VariableBase.Name));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
-                BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
-                BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                                
+                bool showAsReadOnly = false;
+                if (mPageViewMode == General.eRIPageViewMode.View)
+                {
+                    showAsReadOnly = true;
+                    xEditAndValueChangeOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xEditAndValueChangeOperationsPnl.Visibility = Visibility.Visible;
+                    BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                    mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
+                    mVarBeenEdit.SaveBackup();
+                }
 
-                mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
                 if (mVariabelsParent is Solution)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.Global);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global);
                 }
                 else if (mVariabelsParent is BusinessFlow)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.BusinessFlow);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.BusinessFlow);
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.Activity);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Activity);
                 }                
                 xMainFrame.Content = mVariabelEditPage;
             }

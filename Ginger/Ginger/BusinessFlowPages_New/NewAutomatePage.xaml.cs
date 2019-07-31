@@ -893,8 +893,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (activity.CurrentAgent != null)
+                {
+                    ((Agent)activity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 
@@ -938,10 +940,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
-                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
-                {
-                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
-                }
+               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -952,8 +951,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                {
+                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 
@@ -1029,12 +1030,11 @@ namespace GingerWPF.BusinessFlowsLib
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
             xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
-
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            
+            if(GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
             {
-                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 xEnvironmentComboBox.SelectedIndex = 0;
-            }
+            }            
             else
             {
                 //select last used environment
@@ -1359,17 +1359,23 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (mBusinessFlow != null)
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                ScenariosGenerator SG = new ScenariosGenerator();
-                SG.CreateScenarios(mBusinessFlow);
-                int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
-                if (optCount > 0)
+                try
                 {
-                    cnt = cnt - optCount;
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    ScenariosGenerator SG = new ScenariosGenerator();
+                    SG.CreateScenarios(mBusinessFlow);
+                    int cnt = mBusinessFlow.ActivitiesGroups.Count;
+                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    if (optCount > 0)
+                    {
+                        cnt = cnt - optCount;
+                    }
+                    Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
                 }
-                Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
-                Mouse.OverrideCursor = null;
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
             }
         }
 
