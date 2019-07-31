@@ -94,7 +94,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             }
             else  // Linux /Mac
             {
-                expected = @"/data/" + Environment.UserName + @"/AppData/Amdocs/Ginger/" + "Ginger.UserProfile.xml";
+                expected = @"/Users/vsts/.config/Amdocs/Ginger/Ginger.UserProfile.xml";
             }
 
             //Assert
