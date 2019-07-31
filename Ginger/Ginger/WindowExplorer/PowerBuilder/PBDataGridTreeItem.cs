@@ -60,7 +60,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActTableEditPage == null)
                 mActTableEditPage = new ActTableEditPage(base.UIAElementInfo, mAvailableActions);            

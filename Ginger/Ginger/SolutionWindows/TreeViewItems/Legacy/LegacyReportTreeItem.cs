@@ -59,7 +59,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        public Page EditPage()
+        public Page EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return mReportTemplatesPage;
         }

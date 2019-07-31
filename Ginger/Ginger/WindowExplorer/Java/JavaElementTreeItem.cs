@@ -58,7 +58,7 @@ namespace Ginger.WindowExplorer.Java
             return IsExpandable;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             //Override if needed with specific Element Info Page
             return null;

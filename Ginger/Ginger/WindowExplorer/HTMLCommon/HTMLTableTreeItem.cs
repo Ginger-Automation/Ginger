@@ -53,7 +53,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             return mAvailableActions;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             mHTMLTablePage = new ActTableEditPage(ElementInfo, mAvailableActions);
             return mHTMLTablePage;
