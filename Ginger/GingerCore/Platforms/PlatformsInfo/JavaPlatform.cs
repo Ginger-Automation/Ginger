@@ -75,10 +75,9 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (elementType.Equals(eElementType.Table))
             {
                 //get all action list supported to tablecell action
-                var tableActionList = GetTableControlActions(ActUIElement.eElementAction.TableCellAction);
-                tableActionList.AddRange(GetTableControlActions(ActUIElement.eElementAction.TableAction));
-                tableActionList.AddRange(GetTableControlActions(ActUIElement.eElementAction.TableRowAction));
-
+                var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
+                                            .SelectMany(action => GetTableControlActions(action))
+                                            .ToList();
                 foreach (var action in tableActionList)
                 {
                     var elementAction = ActUIElement.eElementAction.TableCellAction;
@@ -98,13 +97,17 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ElementType = eElementType.Table,
                         ElementAction = elementAction,
                     };
-                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
-                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
-                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
-                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
-                    actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, "0");
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    if (!action.Equals(ActUIElement.eElementAction.TableAction))
+                    {
+                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
+                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
+
+                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
+                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, "0");
+                    }
                     UIElementsActionsList.Add(actUITableAction);
                 }
             }
@@ -131,10 +134,6 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
-        private List<ActUIElement> CreateActUITableAction(List<ActUIElement.eTableAction> tableActionList)
-        {
-            throw new NotImplementedException();
-        }
 
         private eElementType GetElementType(string elementType)
         {

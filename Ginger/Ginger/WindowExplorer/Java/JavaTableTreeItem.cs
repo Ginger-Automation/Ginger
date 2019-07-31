@@ -28,7 +28,7 @@ namespace Ginger.WindowExplorer.Java
     public class JavaTableTreeItem : JavaElementTreeItem, ITreeViewItem, IWindowExplorerTreeItem
     {
       ObservableList<Act> mAvailableActions = new ObservableList<Act>();
-      UIElementTableConfigPage mActTableEditPage = null;
+      UIElementTableConfigPage mUIElementTableConfigPage = null;
       StackPanel ITreeViewItem.Header()
       {
           string ImageFileName = "@Grid_16x16.png";
@@ -41,13 +41,13 @@ namespace Ginger.WindowExplorer.Java
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            if (mActTableEditPage == null)
-                mActTableEditPage = new UIElementTableConfigPage(base.JavaElementInfo, mAvailableActions,mContext);            
-            return mActTableEditPage;
+            if (mUIElementTableConfigPage == null)
+                mUIElementTableConfigPage = new UIElementTableConfigPage(base.JavaElementInfo, mAvailableActions,mContext);            
+            return mUIElementTableConfigPage;
         }
         ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
         {
-            return mActTableEditPage.GetTableRelatedInputValues();
+            return mUIElementTableConfigPage.GetTableRelatedInputValues();
         }
     }
 }
