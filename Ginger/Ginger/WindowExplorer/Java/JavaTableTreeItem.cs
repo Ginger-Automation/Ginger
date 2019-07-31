@@ -42,7 +42,9 @@ namespace Ginger.WindowExplorer.Java
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mUIElementTableConfigPage == null)
-                mUIElementTableConfigPage = new UIElementTableConfigPage(base.JavaElementInfo, mAvailableActions,mContext);            
+            {
+                mUIElementTableConfigPage = new UIElementTableConfigPage(base.JavaElementInfo, mAvailableActions, mContext);
+            }
             return mUIElementTableConfigPage;
         }
         ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
