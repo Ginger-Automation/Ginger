@@ -17,6 +17,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 {
     // Generic platform plugin tester
     
+    [Ignore]  // Fail on Linux with permission denied, on Mac get stuck
     [TestClass]
     [Level3]
     public class WebPlatformPluginTest
