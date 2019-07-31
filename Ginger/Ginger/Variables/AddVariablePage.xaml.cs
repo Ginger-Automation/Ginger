@@ -59,6 +59,7 @@ namespace Ginger.Variables
         {
             mLibraryVarsList = LoadLibraryVarsList();
             mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
+            mLibraryVarsHelper.AllowExpandItems = false;
             xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mLibraryVarsList.Count);
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
             xLibraryTabListView.DataSourceList = mLibraryVarsList;
