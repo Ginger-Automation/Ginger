@@ -21,13 +21,18 @@ namespace GingerCoreNETUnitTest.PluginsLib
     [Level3]
     public class WebPlatformPluginTest
     {
-        
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
         static GingerGrid GG;
         static Agent agent;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
+            mTestHelper.ClassInitialize(TestContext);
+
+            mTestHelper.Log("Creating temp solution");
             // Init workspace
             string solutionFolder = TestResources.GetTempFolder("WebPlatformPluginTest");
             WorkspaceHelper.CreateWorkspaceWithTempSolution("WebPlatformPluginTest", solutionFolder);
@@ -36,6 +41,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             // To debug SeleniumPlugin start the plugin from VS to register to LocalGrid             
             string pluginFolder = TestResources.GetTestResourcesFolder("Plugins" + Path.DirectorySeparatorChar + "SeleniumPlugin");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
+            mTestHelper.Log("Adding SeleniumPlugin from: " + pluginFolder);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
             // Start Agent
@@ -44,33 +50,44 @@ namespace GingerCoreNETUnitTest.PluginsLib
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "SeleniumPlugin";
             agent.ServiceId = "SeleniumChromeService";
+            mTestHelper.Log("StartDriver SeleniumPlugin SeleniumChromeService");
             agent.StartDriver();
 
             GingerGrid GG = WorkSpace.Instance.LocalGingerGrid;
             Stopwatch stopwatch = Stopwatch.StartNew();
+            mTestHelper.Log("Waiting for node to connect");
             while (GG.NodeList.Count == 0 && stopwatch.ElapsedMilliseconds < 10000)   // wait max 10 seconds
             {
+                mTestHelper.Log("GG.NodeList.Count == 0");
                 Thread.Sleep(100);
             }
+
+            if (GG.NodeList.Count == 0)
+            {
+                throw new Exception ("GG.NodeList.Count == 0");
+            }
+
+            mTestHelper.Log("Done Waiting");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
             agent.Close();
+            mTestHelper.ClassCleanup();
         }
 
 
         [TestInitialize]
         public void TestInitialize()
         {
-
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
         [TestMethod]        
