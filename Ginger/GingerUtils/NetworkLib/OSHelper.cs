@@ -42,7 +42,7 @@ namespace GingerUtils
                     }
                     else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
-                        mOperationgSystem = new LinuxOS(); // Mac is like Linux if we will need we can split Linux & Mac separate sub class
+                        mOperationgSystem = new MacOS();
                     }
                 }
 
