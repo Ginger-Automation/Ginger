@@ -40,6 +40,10 @@ namespace GingerPluginCore
             {
                 networkIP = GetFirstLocalHostIPAddress_Linux();
             }
+            else if (OperatingSystem.IsMacOS())
+            {
+                networkIP = GetFirstLocalHostIPAddress_Linux();
+            }
             return networkIP;
         }
 
