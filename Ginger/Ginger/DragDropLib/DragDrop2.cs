@@ -96,6 +96,14 @@ namespace GingerWPF.DragDropLib
             }
         }
 
+        public static void ShuffleControlsItems(RepositoryItemBase draggedItem, RepositoryItemBase itemDroppedOver, UcListView xUCListView)
+        {
+            int newIndex = xUCListView.DataSourceList.IndexOf(itemDroppedOver);
+            int oldIndex = xUCListView.DataSourceList.IndexOf(draggedItem);
+
+            xUCListView.DataSourceList.Move(oldIndex, newIndex);
+        }
+
         public static object GetRepositoryItemHit(UcListView xUCListView)
         {
             if (_DroppedPoint != null)

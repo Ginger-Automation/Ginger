@@ -64,6 +64,9 @@ namespace Ginger.UserControlsLib.UCListView
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
 
+        public event EventHandler SameFrameItemDropped;
+        public delegate void SameFrameItemDroppedEventHandler(DragInfo DragInfo);
+
         public event EventHandler PreviewDragItem;
         public event PasteItemEventHandler PasteItemEvent;
 
@@ -632,17 +635,22 @@ namespace Ginger.UserControlsLib.UCListView
             // first check if we did drag and drop on the same ListView then it is a move - reorder
             if (Info.DragSource == this)
             {
-                RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
-
-                if (draggedItem != null)
+                EventHandler mHandler = SameFrameItemDropped;
+                if (mHandler != null)
                 {
-                    RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
-                    if (draggedOnItem != null)
-                    {
-                        int newIndex = this.DataSourceList.IndexOf(draggedOnItem);
-                        int oldIndex = DataSourceList.IndexOf(draggedItem);
+                    mHandler(Info, new EventArgs());
+                }
+                else
+                {
+                    RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
 
-                        DataSourceList.Move(oldIndex, newIndex);
+                    if (draggedItem != null)
+                    {
+                        RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
+                        if (draggedOnItem != null)
+                        {
+                            DragDrop2.ShuffleControlsItems(draggedItem, draggedOnItem, this);
+                        }
                     }
                 }
                 //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed

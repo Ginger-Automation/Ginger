@@ -88,9 +88,36 @@ namespace Ginger.BusinessFlowPages
 
             xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
             xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
+            xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
 
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
             xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+        }
+
+        private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
+        {
+            object droppedItem = ((DragInfo)sender).Data as object;
+            if (droppedItem != null)
+            {
+                if (droppedItem is Activity)
+                {
+                    Activity draggedActivity = droppedItem as Activity;
+                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
+
+                    if (activityDroppedOn != null)
+                    {
+                        if (activityDroppedOn.ActivitiesGroupID != draggedActivity.ActivitiesGroupID)
+                        {
+                            draggedActivity.ActivitiesGroupID = activityDroppedOn.ActivitiesGroupID;
+                            ListView.UpdateGrouping();
+                        }
+                        else
+                        {
+                            DragDrop2.ShuffleControlsItems(draggedActivity, activityDroppedOn, ListView);
+                        }
+                    }
+                }
+            }
         }
 
         private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
