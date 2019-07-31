@@ -331,7 +331,7 @@ namespace GingerCore
             get { return mTargetApplication; }
             set
             {
-                if (mTargetApplication != value)
+                if (!string.IsNullOrEmpty(value) && mTargetApplication != value)
                 {
                     mTargetApplication = value;
                     OnPropertyChanged(nameof(TargetApplication));
