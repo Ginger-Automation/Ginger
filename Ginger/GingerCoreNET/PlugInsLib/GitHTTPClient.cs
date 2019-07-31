@@ -33,8 +33,9 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             using (var client = new HttpClient())
             {
                 // Simulate a browser
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                
+                // client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Mozilla / 5.0(X11; od - database - crawler) Gecko / 20100101 Firefox / 52.0"Gecko) Chrome/58.0.3029.110 Safari/537.36");
+                client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);                
+
                 var result = client.GetAsync(url).Result;
 
                 if (result.IsSuccessStatusCode)

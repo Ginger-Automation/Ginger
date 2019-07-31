@@ -22,12 +22,12 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
+using GingerUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Repository
@@ -189,7 +189,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
-            Console.WriteLine("Plugin dll path: " + dll);
+            Console.WriteLine("Plug-in dll path: " + dll);
             string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);
             Console.WriteLine("nodeFileName: " + nodeFileName);
 
@@ -197,12 +197,10 @@ namespace Amdocs.Ginger.Repository
 
             Console.WriteLine("Creating Process..");
 
-            System.Diagnostics.Process proc = ShellHelper.Dotnet(cmd);
-
-          
+            System.Diagnostics.Process proc = OSHelper.Current.Dotnet(cmd);
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
-            Console.WriteLine("Plugin Running on the Process ID: " + proc.Id);
+            Console.WriteLine("Plug-in Running on the Process ID: " + proc.Id);
             return proc;
             //TODO: delete the temp file - or create temp files tracker with auto delete 
         }
