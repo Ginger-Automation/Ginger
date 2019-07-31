@@ -560,10 +560,11 @@ namespace Ginger.Repository
         {
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-            if (Directory.Exists(tempFolder))
+            if (!Directory.Exists(tempFolder))
             {
-                CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
+                Directory.CreateDirectory(tempFolder); 
             }
+            CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 
