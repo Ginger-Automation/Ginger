@@ -52,8 +52,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         {
             
         }
-
-        [Ignore] // FIXME why it give different length on different machines?
+        
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -64,32 +63,33 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             string xml = RS.SerializeToString(BF);
 
-
             /// to see the xml as file uncomment below line
             // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
+            
+            string compressed = xml.Replace(Environment.NewLine, "");  // For Linux it is one char new line
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(776, xml.Length);  // 776 was verified and OK on 7/13/2019  
+            Assert.AreEqual(780, compressed.Length);  // 776 was verified and OK on 7/13/2019  
 
             //Verify the major element of the expected xml
-            Assert.IsTrue(xml.Contains("utf-8"));
-            Assert.IsTrue(xml.Contains("<GingerRepositoryItem>"));
-            Assert.IsTrue(xml.Contains("CreatedBy"));
+            Assert.IsTrue(compressed.Contains("utf-8"));
+            Assert.IsTrue(compressed.Contains("<GingerRepositoryItem>"));
+            Assert.IsTrue(compressed.Contains("CreatedBy"));
             // Verify we get the short name: 'BusinessFlow'
             // and not 'GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib.BusinessFlow'
-            Assert.IsTrue(xml.Contains("ItemType=\"BusinessFlow\""));
+            Assert.IsTrue(compressed.Contains("ItemType=\"BusinessFlow\""));
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
-            Assert.IsTrue(xml.Contains(" Name=\"BF1"));
-            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
-            Assert.IsTrue(xml.Contains("<Activities>"));
+            Assert.IsTrue(compressed.Contains(" Name=\"BF1"));
+            Assert.IsTrue(compressed.Contains("<BusinessFlow Guid="));
+            Assert.IsTrue(compressed.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
-            Assert.IsTrue(xml.Contains("</Activities>"));
-            Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
+            Assert.IsTrue(compressed.Contains("ActivityName=\"Activity 1\""));
+            Assert.IsTrue(compressed.Contains("</Activities>"));
+            Assert.IsTrue(compressed.Contains("</BusinessFlow></GingerRepositoryItem>"));
 
         }
 
