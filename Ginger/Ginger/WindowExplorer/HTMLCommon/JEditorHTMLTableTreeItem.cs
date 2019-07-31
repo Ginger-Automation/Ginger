@@ -24,12 +24,13 @@ using GingerCore.Actions.Common;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.WindowExplorer.HTMLCommon;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Java
 {
     class JEditorHTMLTableTreeItem : HTMLElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-        Page mHTMLTablePage;
+        UIElementTableConfigPage mHTMLTablePage;
         ObservableList<Act> mAvailableActions = new ObservableList<Act>();
         StackPanel ITreeViewItem.Header()
         {
@@ -58,19 +59,57 @@ namespace Ginger.WindowExplorer.Java
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, "0");
             act.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
             mAvailableActions.Add(act);
+
+            ActUIElement act1 = new ActUIElement();
+
+            act1.AddNewReturnParams = true;
+            act1.Description = "Get " + ElementInfo.ElementTitle + " Value";
+
+            act1.ElementType = eElementType.EditorPane;
+            act1.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.GetValue.ToString());
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColTitle.ToString());
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateColTitle, "0");
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.ByRowNum, "true");
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, "0");
+            act1.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
+            mAvailableActions.Add(act1);
+
+            ActUIElement act2 = new ActUIElement();
+
+            act2.AddNewReturnParams = true;
+            act2.Description = "Click " + ElementInfo.ElementTitle;
+
+            act2.ElementType = eElementType.EditorPane;
+            act2.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.Click.ToString());
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColTitle.ToString());
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateColTitle, "0");
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.ByRowNum, "true");
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, "0");
+            act2.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
+            mAvailableActions.Add(act2);
+
             return mAvailableActions;
         }
         bool ITreeViewItem.IsExpandable()
         {
             return true;
         }
-
-        Page ITreeViewItem.EditPage()
+        ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
+        {
+            return mHTMLTablePage.GetTableRelatedInputValues();
+        }
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             
             if (mHTMLTablePage == null)
             {
-                mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions);
+                mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions,mContext);
             }
             return mHTMLTablePage;
         }      

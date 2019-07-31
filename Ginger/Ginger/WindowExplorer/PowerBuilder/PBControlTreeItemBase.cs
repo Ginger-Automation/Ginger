@@ -100,7 +100,7 @@ namespace Ginger.Drivers.PowerBuilder
             return base.IsExpandable;           
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return new UIAElementPage(base.UIAElementInfo);            
         }
