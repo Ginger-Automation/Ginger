@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -26,15 +25,15 @@ using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.RunTestslib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{ 
-    [Ignore] // temp
+{
+
     [TestClass]
     [Level1]
     public class GingerVariableTests
@@ -48,8 +47,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, "GingerVariableTests");
+            string solutionfolder = TestResources.GetTempFolder("GingerVariableTests");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution("aaa", solutionfolder);            
 
 
             mBF = new BusinessFlow();
@@ -113,6 +112,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
+            
+            Assert.AreEqual(eRunStatus.Passed, actSetVariableValue.Status);
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(newValue, v1.Value );
