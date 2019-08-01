@@ -76,14 +76,17 @@ namespace GingerWPF.BusinessFlowsLib
 
             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
             mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            xActivitiesTabFrame.Content = mActivitiesPage;
+            xActivitiesTabFrame.SetContent(mActivitiesPage);
 
             mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
-            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            xVariabelsTabFrame.Content = mVariabelsPage;
+            if (mVariabelsPage.ListView != null)
+            {
+                mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+            }
+            xVariabelsTabFrame.SetContent(mVariabelsPage);
 
             mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
-            xConfigurationsTabFrame.Content = mConfigurationsPage;
+            xConfigurationsTabFrame.SetContent(mConfigurationsPage);
         }
 
         public void UpdateBusinessFlow(BusinessFlow businessFlow)

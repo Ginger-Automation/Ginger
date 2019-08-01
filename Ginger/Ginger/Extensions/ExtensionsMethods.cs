@@ -302,7 +302,7 @@ namespace Ginger
         // ------------------------------------------------------------
         // Frame
         // ------------------------------------------------------------
-        public static void SetContent(this Frame Frame, Page Page)
+        public static void SetContent(this Frame Frame, UIElement uiElemnt)
         {
             // Clear history first
             if (!Frame.CanGoBack && !Frame.CanGoForward)
@@ -317,11 +317,25 @@ namespace Ginger
                 {
                     entry = Frame.RemoveBackEntry();
                 }
+                Frame.Content = null;
+                //Frame.Unloaded += Frame_Unloaded;
+                //Frame.Navigated += Frame_Navigated;
             }
 
             // Set the frame content
-            Frame.Content = Page;
+            Frame.Content = uiElemnt;
         }
+
+        //private static void Frame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        //{
+        //    ((Frame)sender).NavigationService.RemoveBackEntry();
+        //}
+
+        //private static void Frame_Unloaded(object sender, RoutedEventArgs e)
+        //{
+        //    ((Frame)sender).Content = null;
+        //    ((Frame)sender).NavigationService.RemoveBackEntry();
+        //}
 
         // ------------------------------------------------------------
         // ucGrid
@@ -436,5 +450,31 @@ namespace Ginger
             return null;
         }
 
+        public static void ClearControlsBindings(this DependencyObject dependencyObject)
+        {
+            foreach (DependencyObject element in dependencyObject.EnumerateVisualDescendents())
+            {
+                BindingOperations.ClearAllBindings(element);
+            }
+        }
+        public static IEnumerable<DependencyObject> EnumerateVisualDescendents(this DependencyObject dependencyObject)
+        {
+            yield return dependencyObject;
+
+            foreach (DependencyObject child in dependencyObject.EnumerateVisualChildren())
+            {
+                foreach (DependencyObject descendent in child.EnumerateVisualDescendents())
+                {
+                    yield return descendent;
+                }
+            }
+        }
+        public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject dependencyObject)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
+            {
+                yield return VisualTreeHelper.GetChild(dependencyObject, i);
+            }
+        }
     }
 }

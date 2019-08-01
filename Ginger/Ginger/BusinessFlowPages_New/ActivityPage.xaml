@@ -10,6 +10,7 @@
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="1000" d:DesignWidth="1000"
+      Unloaded="Page_Unloaded"
       Title="ActivityPage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -104,7 +105,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}"/>
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">

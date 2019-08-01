@@ -33,6 +33,13 @@ namespace Ginger.BusinessFlowPages
     /// </summary>
     public partial class ActivityConfigurationsPage : Page
     {
+        static int ConfigPagesNum = 0;
+        static int LiveConfigPagesCounter = 0;
+        ~ActivityConfigurationsPage()
+        {
+            LiveConfigPagesCounter--;
+        }
+
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
@@ -40,6 +47,9 @@ namespace Ginger.BusinessFlowPages
         public ActivityConfigurationsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
+
+            ConfigPagesNum++;
+            LiveConfigPagesCounter++;
 
             mActivity = activity;
             mContext = context;
@@ -72,7 +82,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mActivity != activity)
             {
-                RemoveBindings();
+                ClearBindings();
                 mActivity = activity;
                 if (mActivity != null)
                 {
@@ -81,18 +91,19 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void RemoveBindings()
+        public void ClearBindings()
         {
-            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);
+            this.ClearControlsBindings();
+            BindingOperations.ClearAllBindings(xRunOptionCombo);
+            BindingOperations.ClearAllBindings(xActivityNameTxtBox);
+            BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
+            BindingOperations.ClearAllBindings(xExpectedTxt);
+            BindingOperations.ClearAllBindings(xScreenTxt);
+            BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xAutomationStatusCombo);
+            BindingOperations.ClearAllBindings(xMandatoryActivityCB);
+            BindingOperations.ClearAllBindings(xHandlerTypeCombo);
+            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
         }
 
         private void BindControls()

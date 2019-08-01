@@ -41,6 +41,14 @@ namespace Ginger.BusinessFlowPages
     /// </summary>
     public partial class VariabelsListViewPage : Page
     {
+        static int VarPagesNum = 0;
+        static int LiveVarPagesCounter = 0;
+
+        ~VariabelsListViewPage()
+        {
+            LiveVarPagesCounter--;
+        }
+
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;
         Context mContext;
@@ -59,6 +67,9 @@ namespace Ginger.BusinessFlowPages
         public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
+
+            VarPagesNum++;
+            LiveVarPagesCounter++;
 
             mVariabelsParent = variabelsParent;
             mVariablesLevel = GetVariablesLevel();
@@ -145,13 +156,40 @@ namespace Ginger.BusinessFlowPages
                 {
                     mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Activity);
                 }                
-                xMainFrame.Content = mVariabelEditPage;
+                xMainFrame.SetContent(mVariabelEditPage);
             }
             else
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mVariabelEditPage = null;
-                xMainFrame.Content = mVariabelsListView;
+                xMainFrame.SetContent(mVariabelsListView);
+            }
+        }
+
+        public void ClearBindings()
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
+
+            this.ClearControlsBindings();
+            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+            BindingOperations.ClearAllBindings(xResetValueBtn);
+            BindingOperations.ClearAllBindings(xAutoValueBtn);
+
+            if (mVariabelListHelper != null)
+            {
+                mVariabelListHelper.VariabelListItemEvent -= MVariabelListItemInfo_VariabelListItemEvent;
+                mVariabelListHelper = null;
+            }
+
+            if (mVariabelsListView != null)
+            {
+                mVariabelsListView.PreviewDragItem -= ListVars_PreviewDragItem;
+                mVariabelsListView.ItemDropped -= ListVars_ItemDropped;
+                mVariabelsListView.List.MouseDoubleClick -= VariabelsListView_MouseDoubleClick;
+                mVariabelsListView.ClearBindings();
+                mVariabelsListView.DataSourceList = null;
+                mVariabelsListView = null;
             }
         }
 
@@ -356,6 +394,12 @@ namespace Ginger.BusinessFlowPages
         private void xAutoValueBtn_Click(object sender, RoutedEventArgs e)
         {
             mVarBeenEdit.GenerateAutoValue();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
         }
     }
 }

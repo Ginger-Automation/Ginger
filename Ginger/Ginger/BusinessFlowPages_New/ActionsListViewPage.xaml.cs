@@ -45,6 +45,13 @@ namespace GingerWPF.BusinessFlowsLib
     /// </summary>
     public partial class ActionsListViewPage : Page
     {
+        static int ActsPagesNum = 0;
+        static int LiveActsPagesCounter = 0;
+        ~ActionsListViewPage()
+        {
+            LiveActsPagesCounter--;
+        }
+
         Activity mActivity;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
@@ -65,6 +72,9 @@ namespace GingerWPF.BusinessFlowsLib
         public ActionsListViewPage(Activity Activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
+
+            ActsPagesNum++;
+            LiveActsPagesCounter++;
 
             mActivity = Activity;
             mContext = context;
@@ -97,7 +107,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }               
 
                 mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
-                xMainFrame.Content = mActionEditPage;
+                xMainFrame.SetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this,null);
@@ -108,11 +118,38 @@ namespace GingerWPF.BusinessFlowsLib
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mActionBeenEdit = null;                
                 mActionEditPage = null;
-                xMainFrame.Content = mActionsListView;
+                xMainFrame.SetContent(mActionsListView);
                 if (ShiftToActionsListEvent != null)
                 {
                     ShiftToActionsListEvent.Invoke(this, null);
                 }
+            }
+        }
+
+        public void ClearBindings()
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
+
+            this.ClearControlsBindings();
+            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+            BindingOperations.ClearAllBindings(xActiveBtn);
+            BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
+
+            if (mActionsListHelper != null)
+            {
+                mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
+                mActionsListHelper = null;
+            }
+
+            if (mActionsListView != null)
+            {
+                mActionsListView.PreviewDragItem -= listActions_PreviewDragItem;
+                mActionsListView.ItemDropped -= listActions_ItemDropped;
+                mActionsListView.List.MouseDoubleClick -= ActionsListView_MouseDoubleClick;
+                mActionsListView.ClearBindings();
+                mActionsListView.DataSourceList = null;
+                mActionsListView = null;
             }
         }
 
@@ -273,6 +310,12 @@ namespace GingerWPF.BusinessFlowsLib
         private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
         {
             mActionBeenEdit.Reset();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
         }
     }
 }
