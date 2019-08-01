@@ -49,7 +49,7 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="mItem"> of type object and would successfully add an action with Act/ElementInfo/ApplicationModels type object is provided</param>
         /// <param name="mContext"> required to identify the currently selected Activity, Action is to be added to </param>
-        public static void AddActionsHandler(object mItem, Context mContext)
+        public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
 
@@ -71,16 +71,28 @@ namespace Ginger.BusinessFlowPages
             else if (mItem is ApplicationPOMModel)
             {
                 ApplicationPOMModel currentPOM = mItem as ApplicationPOMModel;
+                //required to show all the actions added as selected
+                int updatedTargetIndex = targetIndex;
                 foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
                 {
                     instance = GeneratePOMElementRelatedAction(elemInfo, mContext);
                     if (instance != null)
                     {
                         instance.Active = true;
-                        mContext.BusinessFlow.AddAct(instance, true);
+                        if (updatedTargetIndex > -1)
+                        {
+                            mContext.Activity.Acts.Insert(updatedTargetIndex, instance);
+                            updatedTargetIndex++;
+                        }
+                        else
+                        {
+                            mContext.BusinessFlow.AddAct(instance, true);
+                        }
                     }
                 }
+                mContext.Activity.Acts.CurrentItem = instance;
                 instance = null;
+                targetIndex = updatedTargetIndex;
             }
             else if (mItem is ApplicationAPIModel || mItem is RepositoryFolder<ApplicationAPIModel>)
             {
@@ -101,9 +113,20 @@ namespace Ginger.BusinessFlowPages
 
             if (instance != null)
             {
-                mContext.BusinessFlow.AddAct(instance, true);
+                instance.Active = true;
+
+                if (targetIndex > -1)
+                {
+                    mContext.Activity.Acts.Insert(targetIndex, instance);
+                }
+                else
+                {
+                    mContext.BusinessFlow.AddAct(instance, true);
+                }
                 mContext.Activity.Acts.CurrentItem = instance;
             }
+
+            return targetIndex;
         }
 
         /// <summary>
@@ -225,10 +248,18 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
         /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow)
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null)
         {
             ActivitiesGroup parentGroup = null;
-            parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+            if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
+            {
+                parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
+            }
+            else
+            {
+                parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+            }
+
             if (parentGroup != null)
             {
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)

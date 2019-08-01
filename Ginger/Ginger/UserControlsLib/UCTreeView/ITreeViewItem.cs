@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         StackPanel Header();
         List<ITreeViewItem> Childrens();
         bool IsExpandable();
-        Page EditPage();
+        Page EditPage(Context mContext = null);
         ContextMenu Menu();
         void SetTools(ITreeView TV);
         Object NodeObject();

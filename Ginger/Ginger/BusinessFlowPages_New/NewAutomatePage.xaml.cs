@@ -903,8 +903,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (activity.CurrentAgent != null)
+                {
+                    ((Agent)activity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 
@@ -948,10 +950,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
-                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
-                {
-                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
-                }
+               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -962,8 +961,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                {
+                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 

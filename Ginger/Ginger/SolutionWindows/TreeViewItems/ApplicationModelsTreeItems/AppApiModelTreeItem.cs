@@ -60,7 +60,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             return NewTVItemHeaderStyle(mApiModel);
         }
 
-        public Page EditPage()
+        public Page EditPage(Context mContext)
         {
             if(mAPIModelPage == null)
                 mAPIModelPage = new APIModelPage(mApiModel);
