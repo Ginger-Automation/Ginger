@@ -12,11 +12,9 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
     public class WorkspaceHelper
     {
 
-        public static void CreateWorkspaceWithTempSolution(string workspaceLocker, string solutionFolderName)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder, workspaceLocker);
-            WorkSpace.Init(new WorkSpaceEventHandler(), workspaceLocker);
+        public static void CreateWorkspaceWithTempSolution(string solutionFolderName)
+        {            
+            WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
@@ -31,40 +29,40 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         }
 
      
-        internal static void InitConsoleWorkspace(string workspaceLocker)
+        internal static void InitConsoleWorkspace()
         {            
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
-            WorkSpace.Init(consoleWorkspaceEventHandler, workspaceLocker);
+            WorkSpace.Init(consoleWorkspaceEventHandler);
         }
 
 
        
 
-        internal static SolutionRepository CreateWorkspaceAndOpenSolution(string workspaceLocker, string path)
+        internal static SolutionRepository CreateWorkspaceAndOpenSolution(string path)
         {         
             SolutionRepository solutionRepository;            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, workspaceLocker);
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             solutionRepository.Open(path);
             return solutionRepository;
         }
 
-        internal static void CreateWorkspace2(string holdBy)
+        internal static void CreateWorkspace2()
         {         
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, holdBy);
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
 
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
         }
 
-        internal static void CreateDummyWorkSpace(string workspaceLocker)
+        internal static void CreateDummyWorkSpace()
         {         
             DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws, workspaceLocker);
+            WorkSpace.Init(ws);
             WorkSpace.Instance.RunningFromUnitTest = true;
         }
 

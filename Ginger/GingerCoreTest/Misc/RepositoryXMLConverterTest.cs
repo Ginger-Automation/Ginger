@@ -39,7 +39,7 @@ namespace UnitTests.NonUITests
         public static void ClassInitialize(TestContext TC)
         {
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(RepositoryXMLConverterTest));                   
+            WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 
         [ClassCleanup]

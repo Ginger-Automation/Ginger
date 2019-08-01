@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest
             // TODO: check if ws is null
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, "GingerCoreNETUnitTest");
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
         }

@@ -49,7 +49,7 @@ namespace GingerTest
             CreateTestSolution();
 
             // Creating workspace
-            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerSolutionRepositorySyncTest));
+            WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR

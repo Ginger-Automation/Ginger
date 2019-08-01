@@ -50,7 +50,7 @@ namespace UnitTest
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, nameof(PBDriverTest));
+            WorkSpace.Init(WSEH);
 
             // launch PB Test App
             if (proc == null || proc.HasExited)

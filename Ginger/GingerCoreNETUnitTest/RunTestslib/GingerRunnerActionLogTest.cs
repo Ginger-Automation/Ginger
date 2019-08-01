@@ -42,7 +42,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInitialize(TestContext TestContext)
         {
             EmptyTempActionLogFolder();            
-            WorkspaceHelper.CreateWorkspace2("GingerRunnerActionLogTest");
+            WorkspaceHelper.CreateWorkspace2();
         }
 
         [ClassCleanup]

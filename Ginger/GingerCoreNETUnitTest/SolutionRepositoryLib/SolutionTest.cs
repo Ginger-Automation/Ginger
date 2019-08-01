@@ -32,7 +32,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
+            WorkspaceHelper.CreateWorkspace2();                     
         }
 
         [ClassCleanup]

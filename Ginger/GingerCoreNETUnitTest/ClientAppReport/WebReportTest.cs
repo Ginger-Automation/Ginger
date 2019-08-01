@@ -16,7 +16,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         public static void ClassInitialize(TestContext TestContext)
         {
             string reportWebAppSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
-            WorkspaceHelper.CreateWorkspaceAndOpenSolution("WebReportTest", reportWebAppSolutionFolder);                     
+            WorkspaceHelper.CreateWorkspaceAndOpenSolution(reportWebAppSolutionFolder);                     
         }
 
         [ClassCleanup]

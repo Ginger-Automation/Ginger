@@ -46,7 +46,7 @@ namespace UnitTests.UITests.PBDriverTest
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, "PBDriverWidgetTest");            
+            WorkSpace.Init(WSEH);            
 
 
             // launch PB Test App
