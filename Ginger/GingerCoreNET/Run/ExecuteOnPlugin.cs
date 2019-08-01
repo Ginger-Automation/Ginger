@@ -311,10 +311,6 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 // Why we need GA?
                 if (AP.Param == "GA") continue;
-                if(AP.ParamType==null)
-                {
-                    continue;
-                }
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network traffic we send just one letter
                 p.AddValue(AP.Param);
@@ -358,10 +354,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
                 ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
-                if (actionInputValueInfo == null)
-                {
-                    continue;
-                }
+
 
                 AP.ParamType = actionInputValueInfo.ParamType;
             }

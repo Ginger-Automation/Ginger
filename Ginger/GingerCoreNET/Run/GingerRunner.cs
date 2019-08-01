@@ -1579,7 +1579,9 @@ namespace Ginger.Run
 
             ProcessInputValueForDriver(act);
             // TODO: remove when we no longer use LocateValue in Action
-            if (!string.IsNullOrEmpty(act.LocateValue))
+
+          
+            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
             {
 
                 VE.Value = act.LocateValue;
