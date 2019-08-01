@@ -311,6 +311,10 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 // Why we need GA?
                 if (AP.Param == "GA") continue;
+                if(AP.ParamType==null)
+                {
+                    continue;
+                }
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network traffic we send just one letter
                 p.AddValue(AP.Param);
@@ -334,11 +338,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
-                else if (AP == null || AP.ParamType==null)
-                {
-                    continue;
-                    //TODO: Level 1 ignoring default values which are present in act input values but not asked by plugin
-                }
+
                 else
                 {
                     throw new Exception("Unknown param type to pack: " + AP.ParamType.FullName);
