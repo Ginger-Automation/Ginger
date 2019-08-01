@@ -16,33 +16,30 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Linq;
-using System.IO;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Text.RegularExpressions;
-using Amdocs.Ginger.Common.GeneralLib;
-using Newtonsoft.Json.Linq;
-using System.Data;
-using System.Data.OleDb;
-using GingerCore;
 using Amdocs.Ginger.Common.APIModelLib;
-using GingerCore.Environments;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using System.Diagnostics;
-using DocumentFormat.OpenXml;
-using amdocs.ginger.GingerCoreNET;
-using System.Text;
 using GingerCore.DataSource;
+using GingerCore.Environments;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
-   public class ImportOptionalValuesForParameters
+    public class ImportOptionalValuesForParameters
     {
         public enum eParameterType
         {
@@ -1612,7 +1609,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void ExecuteFreeSQL(string command)
         {
-             SQLResult = db.FreeSQL(command);
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+             // SQLResult = db.FreeSQL(command);
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {

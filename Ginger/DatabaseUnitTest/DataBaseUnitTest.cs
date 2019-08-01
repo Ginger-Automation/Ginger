@@ -26,7 +26,7 @@ using System.Data;
 
 namespace GingerCoreNETUnitTest.Database
 {
-    [Ignore]
+    
     [TestClass]
 
     public class DataBaseUnitTest
@@ -70,8 +70,8 @@ namespace GingerCoreNETUnitTest.Database
              Tables= db.GetTablesList();
            
             //Assert
-            Assert.AreEqual(2,Tables.Count);
-            Assert.AreEqual("Person", Tables[1]);
+            Assert.AreEqual(1,Tables.Count);
+            Assert.AreEqual("Person", Tables[0]);
         }
 
         [TestMethod]

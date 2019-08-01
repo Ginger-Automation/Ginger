@@ -1,26 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.OleDb;
-using Amdocs.Ginger.CoreNET;
-using System.Data.Common;
-using Amdocs.Ginger.Common;
-using System.Data;
-
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerCore;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.Linq;
 
 
 
 namespace MSAccessDB
 {
-    public class MSAccessDBCon : Amdocs.Ginger.CoreNET.IDatabase
+    public class MSAccessDBCon : IDatabase
     {
-        private DbConnection conn = null;
+        private OleDbConnection conn = null;
+        SqlConnection sqlConnection;
+        // private OdbcConnection conn;
+
         private DbTransaction tran = null;
         private DateTime LastConnectionUsedTime;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+
+        public string Name => throw new NotImplementedException();
+
         public void CloseConnection()
         {
             try
@@ -43,61 +47,86 @@ namespace MSAccessDB
 
         public DataTable DBQuery(string Query)
         {
-            MakeSureConnectionIsOpen();
-            List<string> Headers = new List<string>();
-            List<List<string>> Records = new List<List<string>>();
-            bool IsConnected = false;
-            List<object> ReturnList = new List<object>();
-            DataTable dataTable = new DataTable();
-            DbDataReader reader = null;
-            try
-            {
-                if (conn == null)
-                {
-                    IsConnected = OpenConnection(KeyvalParamatersList);
-                }
-                if (IsConnected || conn != null)
-                {
-                    DbCommand command = conn.CreateCommand();
-                    command.CommandText = Query;
-                    command.CommandType = CommandType.Text;
+            DataTable results = new DataTable();
 
-                    // Retrieve the data.
-                    reader = command.ExecuteReader();
+            //using (OleDbConnection conn = new OleDbConnection())
+            //{
 
-                    // Create columns headers
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        Headers.Add(reader.GetName(i));
-                        dataTable.Columns.Add(reader.GetName(i));
-                    }
 
-                    while (reader.Read())
-                    {
-                        List<string> record = new List<string>();
-                        for (int i = 0; i < reader.FieldCount; i++)
-                        {
-                            record.Add(reader[i].ToString());
-                        }
-                        Records.Add(record);
-                        dataTable.Rows.Add(record);
-                    }
-                    ReturnList.Add(Headers);
-                    ReturnList.Add(Records);
-                }
-            }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
-                throw e;
-            }
-            finally
-            {
-                if (reader != null)
-                    reader.Close();
-            }
+            OleDbCommand cmd = new OleDbCommand(Query, conn);
+
+                // conn.Open();
+
+                OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+
+                adapter.Fill(results);
+            //}
+
+            return results;
+
+            //using (SqlDataAdapter dataAdapter= new SqlDataAdapter(Query, sqlConnection))
+            //{
+            //    // create the DataSet 
+            //    DataSet dataSet = new DataSet();
+            //    // fill the DataSet using our DataAdapter 
+            //    dataAdapter.Fill(dataSet);
+            //}
+
+            //// MakeSureConnectionIsOpen();
+            //List<string> Headers = new List<string>();
+            //List<List<string>> Records = new List<List<string>>();
+            //bool IsConnected = false;
+            //List<object> ReturnList = new List<object>();
+            //DataTable dataTable = new DataTable();
+            //DbDataReader reader = null;
+            //try
+            //{
+            //    if (conn == null)
+            //    {
+            //        IsConnected = OpenConnection(KeyvalParamatersList);
+            //    }
+            //    if (IsConnected || conn != null)
+            //    {
+            //        DbCommand command = conn.CreateCommand();
+            //        command.CommandText = Query;
+            //        command.CommandType = CommandType.Text;
+
+            //        // Retrieve the data.
+            //        reader = command.ExecuteReader();
+
+            //        // Create columns headers
+            //        for (int i = 0; i < reader.FieldCount; i++)
+            //        {
+            //            Headers.Add(reader.GetName(i));
+            //            dataTable.Columns.Add(reader.GetName(i));
+            //        }
+
+            //        while (reader.Read())
+            //        {
+            //            List<string> record = new List<string>();
+            //            for (int i = 0; i < reader.FieldCount; i++)
+            //            {
+            //                record.Add(reader[i].ToString());
+            //            }
+            //            Records.Add(record);
+            //            dataTable.Rows.Add(record);
+            //        }
+            //        ReturnList.Add(Headers);
+            //        ReturnList.Add(Records);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
+            //    throw e;
+            //}
+            //finally
+            //{
+            //    if (reader != null)
+            //        reader.Close();
+            //}
             
-            return dataTable;
+            //return dataTable;
         }
        
         public string GetConnectionString(Dictionary<string,string> parameters)
@@ -223,12 +252,27 @@ namespace MSAccessDB
 
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
+            // Work with DbConnection;
+            //DbConnection
             
+
+
             KeyvalParamatersList = parameters;
-            string connectConnectionString = GetConnectionString(parameters);
+            
+            // string connectConnectionString = GetConnectionString(parameters);
+            string connectConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
             try
             {
-                conn = new OleDbConnection(connectConnectionString);
+                // SqlConnection sqlConnection = new SqlConnection(connectConnectionString);
+
+                // DataTable dt =  System.Data.Common.DbProviderFactories.GetFactoryClasses();  // get installed provider oledb, odbc, sql serv oracle
+
+
+                // conn = new OdbcConnection(connectConnectionString);
+
+                // sqlConnection = new SqlConnection(connectConnectionString);
+
+                 conn = new OleDbConnection(connectConnectionString);
                 conn.Open();
                 
                 if ((conn != null) && (conn.State == ConnectionState.Open))
@@ -320,7 +364,7 @@ namespace MSAccessDB
 
         public List<string> GetTablesList(string Name = null)
         {
-            List<string> rc = new List<string>() { "" };
+            List<string> rc = new List<string>();
             if (MakeSureConnectionIsOpen())
             {
                 try
@@ -330,8 +374,12 @@ namespace MSAccessDB
                     foreach (DataRow row in table.Rows)
                     {
                         tableName = (string)row[2];
+                        if (!tableName.StartsWith("MSys"))  // ignore access system table
+                        {
+                            rc.Add(tableName);
+                        }
                     }
-                    rc.Add(tableName);
+                    
                 }
                 catch (Exception e)
                 {

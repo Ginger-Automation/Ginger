@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.CoreNET;
-using System.Data.Common;
-using Amdocs.Ginger.Common;
-using System.Data;
-using GingerPluginCore;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerCore;
-using MongoDB.Driver;
 using MongoDB.Bson;
+using MongoDB.Driver;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace MongoDB
 {
-    public class MongoDbConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class MongoDbConnection : IDatabase
     {
         MongoClient mMongoClient = null;
         string DbName;
@@ -26,7 +22,9 @@ namespace MongoDB
         string TNS = null;
         private DateTime LastConnectionUsedTime;
         string collectionName = "";
-        
+
+        public string Name => throw new NotImplementedException();
+
         public void CloseConnection()
         {
             //Driver maintains a connection pool internally. 

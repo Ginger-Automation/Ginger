@@ -1,12 +1,12 @@
-    <Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.ValidationDBPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
-      xmlns:local="clr-namespace:Ginger.Actions"
-      xmlns:Ginger="clr-namespace:Ginger"
-      mc:Ignorable="d" 
+    <Page   x:Class="Ginger.Actions.ValidationDBPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Ginger="clr-namespace:Ginger"
+        xmlns:Actions="clr-namespace:Ginger.Actions"
+        xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+        mc:Ignorable="d" 
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ValidationDBPage" >
 
@@ -15,6 +15,11 @@
             <RowDefinition Height="170*"/>
             <RowDefinition Height="387*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150*"/>
+            <ColumnDefinition Width="100*"/>
+
+        </Grid.ColumnDefinitions>
         <Grid.Resources>
             <DataTemplate x:Key="QueryParamExpressionButton">
                 <Button x:Name="QueryParamGridVEButton" Content="..." Click="QueryParamGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
@@ -47,12 +52,16 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="Keyspace">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">KeySpace:</Label>
-                <DockPanel HorizontalAlignment="Left"  >
-                    
-                    <ComboBox x:Name="KeySpaceComboBox" DropDownOpened="KeySpaceComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" Width="950"></ComboBox>
-                    <Button x:Name="KeySpaceVEButton" Content="..." Click="KeySpaceVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
-                </DockPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}">KeySpace</Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="KeySpaceComboBox"  DropDownOpened="KeySpaceComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                    <Button x:Name="KeySpaceVEButton" Grid.Column="1" Content="..." Click="KeySpaceVEButton_Click" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24"  />
+                </Grid>
+
             </StackPanel>
             <StackPanel x:Name="FreeSQLStackPanel">
                 <Label x:Name="FreeSQLLabel"  Style="{StaticResource @InputFieldLabelStyle}">Free SQL:</Label>
@@ -90,6 +99,10 @@
             <StackPanel x:Name="DoCommit">
                 <CheckBox x:Name="CommitDB"  Content="Do Commit after Update"  HorizontalAlignment="Left" Margin="10,10,0,0"/>
             </StackPanel>
+            
+            
         </StackPanel>
+        <Button x:Name="xViewButton" Click="XViewButton_Click" Grid.Column="1">View</Button>
+        <DataGrid x:Name="xDataGrid" Grid.Column="1" Grid.Row="1" ></DataGrid>
     </Grid>
 </Page>

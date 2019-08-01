@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -16,20 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.Environments;
-using GingerCore.Helpers;
-using GingerCore.NoSqlBase;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -219,9 +217,9 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-          if(String.IsNullOrEmpty(GetInputParamValue("SQL")))
+            if(String.IsNullOrEmpty(GetInputParamValue("SQL")))
             {
-             AddOrUpdateInputParamValue("SQL",GetInputParamValue("Value"));
+                AddOrUpdateInputParamValue("SQL",GetInputParamValue("Value"));
             }
            
             if (SetDBConnection() == false)
@@ -268,26 +266,28 @@ namespace GingerCore.Actions
 
         private void HandleNoSQLDBAction()
         {
-            NoSqlBase.NoSqlBase NoSqlDriver = null;
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            switch(this.DB.DBType)
-            {
-                case Database.eDBTypes.Cassandra:
-                    NoSqlDriver= new GingerCassandra(DBValidationType,DB,this);
-                    NoSqlDriver.PerformDBAction();
+            //NoSqlBase.NoSqlBase NoSqlDriver = null;
+
+            //switch(this.DB.DBType)
+            //{
+            //    case Database.eDBTypes.Cassandra:
+            //        NoSqlDriver= new GingerCassandra(DBValidationType,DB,this);
+            //        NoSqlDriver.PerformDBAction();
                    
-                    break;
-                case Database.eDBTypes.Couchbase:
-                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
+            //        break;
+            //    case Database.eDBTypes.Couchbase:
+            //        NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+            //        NoSqlDriver.PerformDBAction();
 
-                    break;
-                case Database.eDBTypes.MongoDb:
-                    NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
+            //        break;
+            //    case Database.eDBTypes.MongoDb:
+            //        NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+            //        NoSqlDriver.PerformDBAction();
 
-                    break;
-            }
+            //        break;
+            //}
         }
 
         private bool SetDBConnection()
@@ -330,8 +330,8 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    string filePath = "bbb";  // amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
@@ -372,8 +372,8 @@ namespace GingerCore.Actions
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
-                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    // FIXME: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    string filePath = "ccc"; // amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();
@@ -389,33 +389,45 @@ namespace GingerCore.Actions
                 foreach (ActInputValue param in QueryParams)
                     SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
-                List<object> DBResponse = DB.FreeSQL(SQL, queryTimeout); 
-                
-                List<string> headers=( List<string>) DBResponse.ElementAt(0);
-                List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt (1);
+                DataTable DBResponse = DB.FreeSQL(SQL, queryTimeout);
 
-
-                if (Records.Count == 0) return;
-            
-                int recordcount = Records.Count;
-                for (int j = 0; j < Records.Count; j++)
-                   
-                {   List<string> currentrow = Records.ElementAt(j);
-
-
-                for (int k = 0; k < currentrow.Count; k++)
+                int row = 0;
+                int col = 0;
+                foreach (DataRow dataRow in DBResponse.Rows)
+                {
+                    row++;
+                    foreach(object obj in dataRow.ItemArray)
                     {
-                        if (recordcount == 1 )
-                        {
-                            this.AddOrUpdateReturnParamActual (headers.ElementAt (k), currentrow.ElementAt (k));
-                        }
-                        else
-                        {
-                            // Add the record number in the path col
-                            this.AddOrUpdateReturnParamActualWithPath (headers.ElementAt (k), currentrow.ElementAt (k), (j+1).ToString() + "");
-                        }
-                    }   
+                        col++;
+                        this.AddOrUpdateReturnParamActualWithPath("p1", obj.ToString(), row + "/" + col);
+                    }
                 }
+
+                //List<string> headers=( List<string>) DBResponse.ElementAt(0);
+                //List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt (1);
+
+
+                //if (Records.Count == 0) return;
+            
+                //int recordcount = Records.Count;
+                //for (int j = 0; j < Records.Count; j++)
+                   
+                //{   List<string> currentrow = Records.ElementAt(j);
+
+
+                //for (int k = 0; k < currentrow.Count; k++)
+                //    {
+                //        if (recordcount == 1 )
+                //        {
+                //            this.AddOrUpdateReturnParamActual (headers.ElementAt (k), currentrow.ElementAt (k));
+                //        }
+                //        else
+                //        {
+                //            // Add the record number in the path col
+                //            this.AddOrUpdateReturnParamActualWithPath (headers.ElementAt (k), currentrow.ElementAt (k), (j+1).ToString() + "");
+                //        }
+                //    }   
+                //}
                 
             }
             catch (Exception e)
@@ -460,6 +472,14 @@ namespace GingerCore.Actions
                     AIV.ValueForDriver = ValueExpression.Calculate(AIV.Value);
                 }
             }
+        }
+
+        public DataTable GetResultView()
+        {
+            SetDBConnection();
+            DB.Connect();
+            DataTable DBResponse = DB.FreeSQL(SQL, 1000);
+            return DBResponse;
         }
     }
 }

@@ -25,7 +25,6 @@ using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace UnitTests.NonUITests

@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerCore;
 using Npgsql;
 using System;
@@ -9,11 +10,14 @@ using System.Linq;
 
 namespace PostgreSQL
 {
-    public class PostgreSQLConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class PostgreSQLConnection : IDatabase
     {
         private DbConnection oConn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+
+        public string Name => throw new NotImplementedException();
+
         public string GetConnectionString(Dictionary<string, string> parameters)
         {
             string connStr = null;

@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Oracle
 {
-    public class OracleConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class OracleConnection : IDatabase
     {
         private DbConnection oConn = null;
         private DbTransaction tran = null;
@@ -20,6 +21,8 @@ namespace Oracle
         string User = null;
         string Password = null;
         string TNS = null;
+
+        public string Name => throw new NotImplementedException();
 
         public string GetConnectionString(Dictionary<string, string> parameters)
         {

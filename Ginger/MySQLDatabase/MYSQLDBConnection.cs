@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.CoreNET;
-using System.Data.Common;
-using Amdocs.Ginger.Common;
-using System.Data;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerCore;
-using MySql;
 using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
 
 namespace MySQLDatabase
 {
-    public class MYSQLDBConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class MYSQLDBConnection : IDatabase
     {
         private DbConnection oConn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+
+        public string Name => throw new NotImplementedException();
 
         public bool OpenConnection(Dictionary<string, string> parameters)
         {

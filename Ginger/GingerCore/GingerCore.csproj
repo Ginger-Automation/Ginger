@@ -93,9 +93,6 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra, Version=3.99.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
-      <HintPath>..\packages\CassandraCSharpDriver.3.10.0\lib\net45\Cassandra.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
@@ -198,26 +195,11 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>D:\Sandesh workspace\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
-    <Reference Include="MongoDB.Bson, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Bson.2.8.1\lib\net452\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.2.8.1\lib\net452\MongoDB.Driver.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver.Core, Version=2.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MongoDB.Driver.Core.2.8.1\lib\net452\MongoDB.Driver.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Posix">
       <HintPath>..\packages\Mono.Posix.4.0.0.0\lib\net40\Mono.Posix.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.16.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.8.0.16\lib\net452\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Npgsql, Version=4.0.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.4.0.7\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -225,9 +207,6 @@
     </Reference>
     <Reference Include="OpenTracing, Version=0.12.0.0, Culture=neutral, PublicKeyToken=61503406977abdaf, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTracing.0.12.0\lib\net45\OpenTracing.dll</HintPath>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.19.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
@@ -512,7 +491,6 @@
     <Compile Include="Actions\ActCheckbox.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActDropDownList.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
@@ -715,12 +693,6 @@
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
-    <Compile Include="NoSqlBase\GingerMongoDb.cs" />
-    <Compile Include="NoSqlBase\GingerCouchbase.cs" />
-    <Compile Include="NoSqlBase\GingerUDTMap.cs" />
-    <Compile Include="NoSqlBase\GingerCassandra.cs" />
-    <Compile Include="NoSqlBase\MyClassBuilder.cs" />
-    <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Platforms\PlatformsInfo\AndroidPlatformInfo.cs" />
     <Compile Include="Platforms\PlatformsInfo\MobilePlatform.cs" />
     <Compile Include="Platforms\PlatformsInfo\WindowsPlatform.cs" />
@@ -770,7 +742,6 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
@@ -928,6 +899,7 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
+    <Folder Include="Environments\" />
     <Folder Include="Plugins\Jenkins\" />
   </ItemGroup>
   <ItemGroup>

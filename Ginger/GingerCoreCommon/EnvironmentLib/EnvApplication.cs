@@ -20,6 +20,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System.Linq;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Plugin.Core.Database;
 
 namespace GingerCore.Environments
 {
@@ -60,7 +61,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs = new ObservableList<IDatabase>();
+        public ObservableList<Database> Dbs = new ObservableList<Database>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();

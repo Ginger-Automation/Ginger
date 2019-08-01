@@ -16,17 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerExternal;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Amdocs.Ginger.Common;
-using GingerExternal;
 
 namespace GingerCore
 {
+
+    // TODO: move to GingerUtils
+
     public class EncryptionHandler
     {
         //Configuring the details to create the Encrypt key

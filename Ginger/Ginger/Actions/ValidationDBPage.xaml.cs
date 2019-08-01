@@ -16,21 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore.Environments;
-using GingerCore.Actions;
-using GingerCore.NoSqlBase;
 using amdocs.ginger.GingerCoreNET;
-using System.IO;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using Amdocs.Ginger.Common;
-using System.Windows.Data;
+using GingerCore.Actions;
+using GingerCore.Environments;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Actions
 {
@@ -254,31 +254,33 @@ namespace Ginger.Actions
 
         private void KeySpaceComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            KeySpaceComboBox.Items.Clear();
-            string DBName = DBNameComboBox.Text;
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
-            if (db.DBType == Database.eDBTypes.Cassandra)
-            {
-                NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerCassandra(db);
+            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                List<string> keyspace = NoSqlDriver.GetKeyspaceList();
-                foreach (string s in keyspace)
-                {
-                    KeySpaceComboBox.Items.Add(s);
-                }
-            }else if (db.DBType == Database.eDBTypes.Couchbase)
-            {
-                NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerCouchbase(db);
+            //KeySpaceComboBox.Items.Clear();
+            //string DBName = DBNameComboBox.Text;
+            //db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+            //if (db == null) return;
+            //if (db.DBType == Database.eDBTypes.Cassandra)
+            //{
+            //    NoSqlBase NoSqlDriver = null;
+            //    NoSqlDriver = new GingerCassandra(db);
 
-                List<string> keyspace = NoSqlDriver.GetKeyspaceList();
-                foreach (string s in keyspace)
-                {
-                    KeySpaceComboBox.Items.Add(s);
-                }
-            }
+            //    List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+            //    foreach (string s in keyspace)
+            //    {
+            //        KeySpaceComboBox.Items.Add(s);
+            //    }
+            //}else if (db.DBType == Database.eDBTypes.Couchbase)
+            //{
+            //    NoSqlBase NoSqlDriver = null;
+            //    NoSqlDriver = new GingerCouchbase(db);
+
+            //    List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+            //    foreach (string s in keyspace)
+            //    {
+            //        KeySpaceComboBox.Items.Add(s);
+            //    }
+            //}
         }
 
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
@@ -529,6 +531,15 @@ namespace Ginger.Actions
             ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
+        }
+
+        private void XViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataTable dataTable = mAct.GetResultView();
+            xDataGrid.ItemsSource = dataTable.DefaultView;
+            xDataGrid.IsReadOnly = true;
+            xDataGrid.AutoGenerateColumns = true;
+            // xDataGrid.CanUserAddRows = false;
         }
     }
 }

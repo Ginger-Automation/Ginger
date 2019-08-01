@@ -1,5 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core.Database;
 using Couchbase;
 using Couchbase.Authentication;
 using Couchbase.Configuration.Client;
@@ -9,11 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 
 namespace CouchBase
 {
-    public class CouchBaseConnection : Amdocs.Ginger.CoreNET.IDatabase
+    public class CouchBaseConnection : IDatabase
     {
         Cluster clusterCB = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
@@ -23,6 +22,8 @@ namespace CouchBase
         string TNS = null;
         IQueryResult<dynamic> result = null;
         string bucketName = null;
+
+        public string Name => throw new NotImplementedException();
 
         public void GetConnectionString(Dictionary<string, string> parameters)
         {

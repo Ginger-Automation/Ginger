@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DatabaseLib\" />
     <Folder Include="TestResources\" />
   </ItemGroup>
 
