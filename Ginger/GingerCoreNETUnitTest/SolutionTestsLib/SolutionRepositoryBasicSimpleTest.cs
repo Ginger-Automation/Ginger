@@ -42,7 +42,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(nameof(SolutionRepositoryBasicSimpleTest), path);
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
             
         }
 

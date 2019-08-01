@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.CreateDummyWorkSpace(nameof(UserProfileTest));            
+            WorkspaceHelper.CreateDummyWorkSpace();            
         }
 
         [ClassCleanup]

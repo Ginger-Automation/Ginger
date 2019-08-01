@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            WorkspaceHelper.InitConsoleWorkspace(nameof(ValueExpressionRefrenceTest));
+            WorkspaceHelper.InitConsoleWorkspace();
         }
 
         [ClassCleanup]

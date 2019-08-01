@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             mTestHelper.Log("Creating temp solution");
             // Init workspace
             string solutionFolder = TestResources.GetTempFolder("WebPlatformPluginTest");
-            WorkspaceHelper.CreateWorkspaceWithTempSolution("WebPlatformPluginTest", solutionFolder);
+            WorkspaceHelper.CreateWorkspaceWithTempSolution(solutionFolder);
 
 
             // To debug SeleniumPlugin start the plugin from VS to register to LocalGrid             

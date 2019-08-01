@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {            
-            WorkspaceHelper.CreateDummyWorkSpace(nameof(SolutionRepositoryPluginTest));            
+            WorkspaceHelper.CreateDummyWorkSpace();            
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 

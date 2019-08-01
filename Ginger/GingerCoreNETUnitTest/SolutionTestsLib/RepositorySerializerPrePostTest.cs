@@ -40,7 +40,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2(nameof(RepositorySerializerPrePostTest));            
+            WorkspaceHelper.CreateWorkspace2();            
             NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 

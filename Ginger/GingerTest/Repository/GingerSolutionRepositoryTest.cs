@@ -50,7 +50,7 @@ namespace GingerTest
             
             // Init SR
             mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerSolutionRepositoryTest));
+            WorkSpace.Init(new WorkSpaceEventHandler());
             Ginger.App.InitClassTypesDictionary();            
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
             mSolutionRepository.Open(TempRepositoryFolder);

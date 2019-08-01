@@ -94,7 +94,7 @@ namespace WorkspaceHold
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
-            WorkspaceHelper.CreateWorkspaceWithTempSolution(nameof(GingerRunnerPluginDriverTest), "sol1");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution("sol1");
 
             // Add the plugin to solution
             string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4");

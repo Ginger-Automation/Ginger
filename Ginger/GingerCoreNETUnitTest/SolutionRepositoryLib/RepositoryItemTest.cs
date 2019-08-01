@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2(nameof(RepositoryItemTest));
+            WorkspaceHelper.CreateWorkspace2();
         }
 
         [ClassCleanup]
