@@ -76,7 +76,7 @@ namespace Ginger.AnalyzerLib
         {
             get { return (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()); }
         }
-
+       
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
 
@@ -88,7 +88,7 @@ namespace Ginger.AnalyzerLib
 
             AnalyzerItemsGrid.DataSourceList = mIssues;
 
-            mIssues.CollectionChanged += MIssues_CollectionChanged;
+            mIssues.CollectionChanged += MIssues_CollectionChanged; 
         }
         
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -110,6 +110,7 @@ namespace Ginger.AnalyzerLib
                 CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
                 CanAutoFixLable.Visibility = Visibility.Visible;
             }
+            System.Collections.Specialized.NotifyCollectionChangedAction action = e.Action;
 
         });
 
@@ -143,7 +144,8 @@ namespace Ginger.AnalyzerLib
             if (mAnalyzeDoneOnce == false)
             {
                 await Analyze();
-            }             
+            }
+           
         }
 
         private async void RerunButton_Click(object sender, RoutedEventArgs e)
@@ -153,6 +155,7 @@ namespace Ginger.AnalyzerLib
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
+            mIssues.CollectionChanged -= MIssues_CollectionChanged;
             mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
