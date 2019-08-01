@@ -265,9 +265,19 @@ namespace GingerCore.Actions
         }
 
 
-        //private int? mTimeout; //timeout in secs
+        private int? mTimeout;
         [IsSerializedForLocalRepository]
-        public int? Timeout { get; set; } //timeout in secs
+        public int? Timeout {
+            get
+            {
+                return mTimeout;
+            }
+            set
+            {
+                mTimeout = value;
+                OnPropertyChanged(nameof(Timeout));
+            }
+            } //timeout in secs
 
         private bool mConfigOutputDS;
         [IsSerializedForLocalRepository]
@@ -293,8 +303,20 @@ namespace GingerCore.Actions
             set { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); }
         }
 
-        [IsSerializedForLocalRepository]
-        public eStatusConverterOptions StatusConverter { get; set; }
+        private eStatusConverterOptions mStatusConverter;
+       [IsSerializedForLocalRepository]
+        public eStatusConverterOptions StatusConverter
+        {
+            get
+            {
+                return mStatusConverter;
+            }
+            set
+            {
+                mStatusConverter = value;
+                OnPropertyChanged(nameof(StatusConverter));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
@@ -505,7 +527,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("Value", value);
+              AddOrUpdateInputParamValue("Value", value);
             }
         }
 
