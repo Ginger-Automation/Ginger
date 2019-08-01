@@ -47,7 +47,7 @@ namespace Ginger.WindowExplorer.Appium
             return list;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {            
             if (mAppiumWindowPage == null)
             {
