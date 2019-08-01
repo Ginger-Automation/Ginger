@@ -22,6 +22,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -51,7 +52,7 @@ namespace Ginger.ALM.QC.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return null;
         }
