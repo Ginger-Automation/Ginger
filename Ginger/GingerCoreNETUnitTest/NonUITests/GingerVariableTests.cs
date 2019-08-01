@@ -48,7 +48,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInit(TestContext context)
         {
             string solutionfolder = TestResources.GetTempFolder("GingerVariableTests");
-            WorkspaceHelper.CreateWorkspaceWithTempSolution("aaa", solutionfolder);            
+            WorkspaceHelper.CreateWorkspaceWithTempSolution(solutionfolder);            
 
 
             mBF = new BusinessFlow();

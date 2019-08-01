@@ -88,7 +88,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
+        public static void Init(IWorkSpaceEventHandler WSEH)
         {
             mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
