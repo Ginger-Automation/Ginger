@@ -110,7 +110,6 @@ namespace Ginger.AnalyzerLib
                 CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
                 CanAutoFixLable.Visibility = Visibility.Visible;
             }
-            System.Collections.Specialized.NotifyCollectionChangedAction action = e.Action;
 
         });
 
