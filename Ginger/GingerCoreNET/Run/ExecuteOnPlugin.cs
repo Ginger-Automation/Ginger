@@ -334,6 +334,11 @@ namespace Amdocs.Ginger.CoreNET.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
+                else if (AP == null || AP.ParamType==null)
+                {
+                    continue;
+                    //TODO: Level 1 ignoring default values which are present in act input values but not asked by plugin
+                }
                 else
                 {
                     throw new Exception("Unknown param type to pack: " + AP.ParamType.FullName);
@@ -353,6 +358,11 @@ namespace Amdocs.Ginger.CoreNET.Run
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
                 ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
+                if (actionInputValueInfo == null)
+                {
+                    continue;
+                }
+
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
