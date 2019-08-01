@@ -93,7 +93,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mEnvsListPage == null)
                 mEnvsListPage = new EnvsListPage(mProjEnvironmentFolder);

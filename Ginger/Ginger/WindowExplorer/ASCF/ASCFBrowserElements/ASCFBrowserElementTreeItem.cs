@@ -105,7 +105,7 @@ namespace Ginger.WindowExplorer.ASCF
             return ASCFBrowserElementInfo.Properties;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mASCFBrowserElementInfoPage == null)
             {

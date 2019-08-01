@@ -16,10 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Repository;
+using Ginger.UserControlsLib.UCListView;
 using GingerWPF.DragDropLib;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GingerWPF.DragDropLib
 {
@@ -28,6 +32,7 @@ namespace GingerWPF.DragDropLib
         private static Point _startPoint;
         private static bool IsDragging;
         public static DragInfo DragInfo;
+        private static Point _DroppedPoint;
 
         private static DragDropWindow DDW = new DragDropWindow();
 
@@ -83,11 +88,45 @@ namespace GingerWPF.DragDropLib
         {
             if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Copy || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
             {
+                if (sender is UcListView)
+                {
+                    _DroppedPoint = e.GetPosition(sender as UcListView);
+                }
                 ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
             }
         }
 
-      
+        public static void ShuffleControlsItems(RepositoryItemBase draggedItem, RepositoryItemBase itemDroppedOver, UcListView xUCListView)
+        {
+            int newIndex = xUCListView.DataSourceList.IndexOf(itemDroppedOver);
+            int oldIndex = xUCListView.DataSourceList.IndexOf(draggedItem);
+
+            xUCListView.DataSourceList.Move(oldIndex, newIndex);
+        }
+
+        public static object GetRepositoryItemHit(UcListView xUCListView)
+        {
+            if (_DroppedPoint != null)
+            {
+                HitTestResult htResult = VisualTreeHelper.HitTest(xUCListView, _DroppedPoint);
+
+                if (htResult != null)
+                {
+                    FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
+                    if (fwElem != null)
+                    {
+                        if (fwElem.DataContext != null && fwElem.DataContext is RepositoryItemBase)
+                        {
+                            return fwElem.DataContext;
+                        }
+                    }
+                }
+
+            }
+
+            return null;
+        }
+
         private static void DragTarget_DragEnter(object sender, DragEventArgs e)
         {
              DragInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;
