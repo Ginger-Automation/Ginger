@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -45,6 +63,9 @@ namespace Ginger.UserControlsLib.UCListView
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
+
+        public event EventHandler SameFrameItemDropped;
+        public delegate void SameFrameItemDroppedEventHandler(DragInfo DragInfo);
 
         public event EventHandler PreviewDragItem;
         public event PasteItemEventHandler PasteItemEvent;
@@ -154,13 +175,13 @@ namespace Ginger.UserControlsLib.UCListView
                         xSearchTextBox.Text = "";
                         xListView.ItemsSource = mObjList;
 
-                            // Make the first row selected
-                            if (value != null && value.Count > 0)
+                        // Make the first row selected
+                        if (value != null && value.Count > 0)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
                             {
                                 mObjList.CurrentItem = value[0];
                             }
@@ -238,7 +259,7 @@ namespace Ginger.UserControlsLib.UCListView
                     SetListSelectedItemAsSourceCurrentItem();
                 }
             }
-            if(e.PropertyName == nameof(IObservableList.FilterStringData))
+            if (e.PropertyName == nameof(IObservableList.FilterStringData))
             {
                 this.Dispatcher.Invoke(() => xSearchTextBox.Text = mObjList.FilterStringData);
             }
@@ -422,11 +443,13 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.CollapseAll;
+                mListViewHelper.ExpandItemOnLoad = true;
             }
             else
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.CollapseAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                mListViewHelper.ExpandItemOnLoad = false;
             }
         }
 
@@ -587,7 +610,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         void IDragDrop.StartDrag(DragInfo Info)
-        {            
+        {
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
             Info.DragSource = this;
             if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is ListViewItem)
@@ -612,6 +635,24 @@ namespace Ginger.UserControlsLib.UCListView
             // first check if we did drag and drop on the same ListView then it is a move - reorder
             if (Info.DragSource == this)
             {
+                EventHandler mHandler = SameFrameItemDropped;
+                if (mHandler != null)
+                {
+                    mHandler(Info, new EventArgs());
+                }
+                else
+                {
+                    RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
+
+                    if (draggedItem != null)
+                    {
+                        RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
+                        if (draggedOnItem != null)
+                        {
+                            DragDrop2.ShuffleControlsItems(draggedItem, draggedOnItem, this);
+                        }
+                    }
+                }
                 //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
                 return;
             }
@@ -670,45 +711,48 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
-                if (notifications != null && notifications.Count > 0)
+                if (panel.Tag != null)
                 {
-                    panel.Visibility = Visibility.Visible;
-                    foreach (ListItemNotification notification in notifications)
+                    List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
+                    if (notifications != null && notifications.Count > 0)
                     {
-                        ImageMakerControl itemInd = new ImageMakerControl();
-                        itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
-                        itemInd.ImageType = notification.ImageType;
-                        itemInd.ToolTip = notification.ToolTip;
-                        itemInd.Margin = new Thickness(3, 0, 3, 0);
-                        itemInd.Height = 16;
-                        itemInd.Width = 16;
-                        itemInd.SetAsFontImageWithSize = notification.ImageSize;
+                        panel.Visibility = Visibility.Visible;
+                        foreach (ListItemNotification notification in notifications)
+                        {
+                            ImageMakerControl itemInd = new ImageMakerControl();
+                            itemInd.SetValue(AutomationProperties.AutomationIdProperty, notification.AutomationID);
+                            itemInd.ImageType = notification.ImageType;
+                            itemInd.ToolTip = notification.ToolTip;
+                            itemInd.Margin = new Thickness(3, 0, 3, 0);
+                            itemInd.Height = 16;
+                            itemInd.Width = 16;
+                            itemInd.SetAsFontImageWithSize = notification.ImageSize;
 
-                        if (notification.ImageForeground == null)
-                        {
-                            itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
-                        }
-                        else
-                        {
-                            itemInd.ImageForeground = notification.ImageForeground;
-                        }
+                            if (notification.ImageForeground == null)
+                            {
+                                itemInd.ImageForeground = System.Windows.Media.Brushes.LightPink;
+                            }
+                            else
+                            {
+                                itemInd.ImageForeground = notification.ImageForeground;
+                            }
 
-                        if (notification.BindingConverter == null)
-                        {
-                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
-                        }
-                        else
-                        {
-                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
-                        }
+                            if (notification.BindingConverter == null)
+                            {
+                                BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, BindingMode.OneWay);
+                            }
+                            else
+                            {
+                                BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                            }
 
-                        panel.Children.Add(itemInd);
+                            panel.Children.Add(itemInd);
+                        }
                     }
-                }
-                else
-                {
-                    panel.Visibility = Visibility.Collapsed;
+                    else
+                    {
+                        panel.Visibility = Visibility.Collapsed;
+                    }
                 }
             });
         }

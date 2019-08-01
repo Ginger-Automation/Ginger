@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -80,14 +81,23 @@ namespace GingerWPF.BusinessFlowsLib
             if (actionToEdit != null)
             {
                 xBackToListGrid.Visibility = Visibility.Visible;
-                mActionBeenEdit = actionToEdit;                                
+                mActionBeenEdit = actionToEdit;
+                mActionBeenEdit.Context = mContext;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
-                BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                mActionBeenEdit.Context = mContext;
-                mActionBeenEdit.SaveBackup();
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
+                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Visible;
+                    mActionBeenEdit.SaveBackup();
+                    BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                }               
+
+                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
                 xMainFrame.Content = mActionEditPage;
                 if (ShiftToActionEditEvent != null)
                 {
@@ -97,7 +107,7 @@ namespace GingerWPF.BusinessFlowsLib
             else
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
-                mActionBeenEdit = null;                
+                mActionBeenEdit = null;
                 mActionEditPage = null;
                 xMainFrame.Content = mActionsListView;
                 if (ShiftToActionsListEvent != null)
@@ -124,12 +134,15 @@ namespace GingerWPF.BusinessFlowsLib
             mActionsListView.ItemDropped += listActions_ItemDropped;
 
             mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+
+            // Enable Virtualization for Actions ListView to improve the loading time/performance
+            mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
         }
 
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (mActionsListView.CurrentItem != null)
-            {                
+            {
                 ShowHideEditPage((Act)mActionsListView.CurrentItem);
             }
         }
@@ -179,9 +192,32 @@ namespace GingerWPF.BusinessFlowsLib
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data as object;
+
             if (droppedItem != null)
             {
-                ActionsFactory.AddActionsHandler(droppedItem, mContext);
+                int mouseIndex = -1;
+                int lastAddedIndex = -1;
+                Act actDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Act;
+
+                if (actDroppedOn != null)
+                {
+                    mouseIndex = ListView.DataSourceList.IndexOf(actDroppedOn);
+                }
+
+                lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
+
+                if (lastAddedIndex > mouseIndex)
+                {
+                    ListView.xListView.SelectedItems.Clear();
+                    for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
+                    {
+                        RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
+                        if (repoBaseItem != null)
+                        {
+                            ListView.xListView.SelectedItems.Add(repoBaseItem);
+                        }
+                    }
+                }
             }
         }
 
@@ -209,7 +245,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActionsListView.List.Items.CurrentPosition >= 1)
             {
                 mActionsListView.List.Items.MoveCurrentToPrevious();
-                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);                
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
             }
             else
             {

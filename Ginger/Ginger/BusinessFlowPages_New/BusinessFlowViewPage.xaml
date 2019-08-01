@@ -6,6 +6,8 @@
         xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
+        xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Business Flow"
       d:DesignHeight="300" d:DesignWidth="800"
       Title="BusinessFlowViewPage">
 
@@ -18,7 +20,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"></ColumnDefinition>
             <ColumnDefinition Width="200*"></ColumnDefinition>
-            <ColumnDefinition Width="300"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="BusinessFlow" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,-5,0,0">
@@ -27,7 +29,6 @@
             </UserControls:ImageMakerControl.ToolTip>
         </UserControls:ImageMakerControl>
         <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Business Flow Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="2" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
 
         <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
             <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
@@ -82,6 +83,8 @@
                 </UserControls:ucButton>
             </StackPanel>
         </DockPanel>
+
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
 
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
             <TabItem x:Name="xActivitisTab"  Style="{StaticResource $CoolTab}" TabIndex="1">

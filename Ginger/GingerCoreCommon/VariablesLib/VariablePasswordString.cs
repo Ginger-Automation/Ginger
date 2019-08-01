@@ -39,7 +39,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string Password 
         {
-            set { mPassword = value; Value = value; OnPropertyChanged("Formula"); }
+            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
             get { return mPassword; } 
         }
         

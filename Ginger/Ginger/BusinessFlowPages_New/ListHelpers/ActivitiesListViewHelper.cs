@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
@@ -39,6 +57,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 handler(new ActivityListItemEventArgs(eventType, eventObject));
             }
         }
+
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
+
         public ActivitiesListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
@@ -158,8 +181,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activeUnactiveAllActivities.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             activeUnactiveAllActivities.AutomationID = "activeUnactiveAllActivities";
             activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActivities.Header = "Activate/Un-Activate All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activeUnactiveAllActivities.Header = "Activate/De-Activate All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activeUnactiveAllActivities.ToolTip = "Activate/De-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
             activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
             extraOperationsList.Add(activeUnactiveAllActivities);
 
@@ -620,15 +643,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void MoveUpHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
+            ExpandItemOnLoad = true;
             mContext.BusinessFlow.MoveActivityUp(mActivity);
-            //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void MoveDownHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
+            ExpandItemOnLoad = true;
             mContext.BusinessFlow.MoveActivityDown(mActivity);
-           //ListView.OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandItem, mActivity);
         }
 
         private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)

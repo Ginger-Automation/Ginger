@@ -7,9 +7,11 @@
         xmlns:local1="clr-namespace:GingerWPF.GeneralLib"       
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
+        xmlns:h="clr-namespace:Ginger.Help"
+        h:GingerHelpProvider.HelpString="Automate"
         d:DesignHeight="800" d:DesignWidth="1500"
         Title="AutomatePage">
-    
+
     <Page.Resources>
         <local1:ListItemIndexConverter x:Key="RowNumberConverter" />
     </Page.Resources>
@@ -19,7 +21,7 @@
             <RowDefinition Height="80"/>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
-        
+
         <!--Top Row displaying Business Flow level controls-->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
             <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -65,7 +67,7 @@
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
                 </StackPanel>
-                
+
                 <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
                     <StackPanel VerticalAlignment="Center" >
@@ -73,7 +75,7 @@
                         <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                     </StackPanel>
                     <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
-                    <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
+                    <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
                 </StackPanel>
 
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
@@ -98,7 +100,7 @@
                                     <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] for Detecting Integrity Issues" />
+                                    <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] to Detect Integrity Issues" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem x:Name="xAutoAnalyzeConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoAnalyzeConfigMenuItem_Click">
@@ -255,7 +257,7 @@
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="400"/>
+                            <ColumnDefinition Width="382"/>
                             <ColumnDefinition Width="300*"/>
                             <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
@@ -270,7 +272,7 @@
                             <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
                         </StackPanel>
-                       
+
                         <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
                         <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />

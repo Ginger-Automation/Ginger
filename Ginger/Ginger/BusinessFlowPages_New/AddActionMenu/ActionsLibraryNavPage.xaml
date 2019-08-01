@@ -1,12 +1,12 @@
 ﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.ActionsLibraryNavPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.BusinessFlowsLibNew.AddActionMenu"
-      xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:userControlsLib1="clr-namespace:Ginger.UserControlsLib.UCListView"
-      mc:Ignorable="d" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Ginger="clr-namespace:Ginger"      
+      mc:Ignorable="d"
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Action"
       Title="ActionsLibraryNavAction">
 
     <Grid>

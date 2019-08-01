@@ -238,11 +238,15 @@ namespace GingerCore.Actions.Java
             convertedActUIElement.ElementAction = elmentActionType;
             
             convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, this.WaitforIdle.ToString());
-
+            
             if (elmentActionType.Equals(ActUIElement.eElementAction.GetControlProperty))
             {
                 string propertyName = GetPropertyName(this.ControlAction);
                 convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, propertyName);
+            }
+            else
+            {
+                convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
             }
 
             if (this.ReturnValues.Count > 0)

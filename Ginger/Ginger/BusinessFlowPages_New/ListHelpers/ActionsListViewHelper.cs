@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -37,6 +55,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 handler(new ActionListItemEventArgs(eventType, eventObject));
             }
         }
+
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
 
         public ActionsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
@@ -155,8 +177,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activeUnactiveAllActions.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             activeUnactiveAllActions.AutomationID = "activeUnactiveAllActions";
             activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActions.Header = "Activate/Un-Activate all Actions";
-            activeUnactiveAllActions.ToolTip = "Activate/Un-Activate all Actions";
+            activeUnactiveAllActions.Header = "Activate/De-Activate all Actions";
+            activeUnactiveAllActions.ToolTip = "Activate/De-Activate all Actions";
             activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
             extraOperationsList.Add(activeUnactiveAllActions);
 
@@ -568,6 +590,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index > 0)
             {
                 //move
+                ExpandItemOnLoad = true;
                 mContext.Activity.Acts.Move(index, index - 1);
             }
         }
@@ -580,6 +603,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index < mContext.Activity.Acts.Count-1)
             {
                 //move
+                ExpandItemOnLoad = true;
                 mContext.Activity.Acts.Move(index, index + 1);
             }
         }
@@ -603,13 +627,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             //reset current Activity
             mContext.Activity.Elapsed = null;
             mContext.Activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-            for (int indx = mContext.Activity.Acts.IndexOf(mAction); indx <= mContext.Activity.Acts.Count; indx++)
+            for (int indx = mContext.Activity.Acts.IndexOf(mAction); indx < mContext.Activity.Acts.Count; indx++)
             {
                 ((Act)mContext.Activity.Acts[indx]).Reset();
             }
 
             //reset next Activities
-            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mContext.Activity) + 1; indx <= mContext.BusinessFlow.Activities.Count; indx++)
+            for (int indx = mContext.BusinessFlow.Activities.IndexOf(mContext.Activity) + 1; indx < mContext.BusinessFlow.Activities.Count; indx++)
             {
                 mContext.BusinessFlow.Activities[indx].Reset();
             }

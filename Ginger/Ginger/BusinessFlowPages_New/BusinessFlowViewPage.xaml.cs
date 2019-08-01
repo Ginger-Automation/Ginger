@@ -110,6 +110,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             //General Info Section Bindings
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
             UpdateDescription();
 
