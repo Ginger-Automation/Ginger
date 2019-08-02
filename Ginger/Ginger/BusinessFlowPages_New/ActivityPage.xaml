@@ -7,6 +7,8 @@
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="ActivityPage">
 
@@ -55,7 +57,7 @@
                                     <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" />
+                                    <GingerCore:ucTextDicResource Text="Add [Activity] to Shared Repository" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>
