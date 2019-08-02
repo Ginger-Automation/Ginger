@@ -125,6 +125,7 @@ namespace GingerCore.Actions
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.IsVisible;
                         break;
                     case eGenElementAction.SelectFromListScr:
+                    case eGenElementAction.AsyncSelectFromDropDownByIndex:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
                         uIElementTypeAssigned = true;                        
