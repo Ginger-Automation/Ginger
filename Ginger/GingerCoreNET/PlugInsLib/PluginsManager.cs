@@ -312,8 +312,12 @@ namespace Amdocs.Ginger.Repository
                 ObservableList<OnlinePluginPackage> OnlinePlugins = null;
                 foreach (PluginPackage SolutionPlugin in mPluginPackages)
                 {
-                    //TODO: Make it work for linux environments 
-                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming") && !System.IO.File.Exists(Path.Combine(SolutionPlugin.Folder, @"Ginger.PluginPackage.Services.json")))
+                    if (Directory.Exists(SolutionPlugin.Folder))
+                    {
+                        continue;   // Plugin folder exist so no need to download
+                    }
+                    //TODO: Make it work for linux environments  !!!! 
+                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming"))
                     {
                         if (OnlinePlugins == null)
                         {
@@ -332,8 +336,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             OnlinePlugin.InstallPluginPackage(OPR);
                         }
-
-                        //WorkSpace.Instance.PlugInsManager.InstallPluginPackage(OnlinePlugin, OPR);
+                        
                     }
                 }
             }

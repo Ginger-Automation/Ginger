@@ -52,9 +52,13 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         }
 
         internal static T GetJSON<T>(string url)
-        {            
+        {
+            T t = default(T);            
             string packagesjson = GetResponseString(url).Result;
-
+            if (packagesjson.Contains("Error: Forbidden"))
+            {
+                return t;
+            }
             T list = JsonConvert.DeserializeObject<T>(packagesjson);
             return list;
         }
