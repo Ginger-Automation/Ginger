@@ -427,8 +427,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         Title = "Value",
                         BindedString = ActUIElement.Fields.ValueToSelect,
                         ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) }
+                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
+                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) }
                     });
                 }
             }

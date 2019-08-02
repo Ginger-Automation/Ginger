@@ -136,6 +136,13 @@ namespace GingerCore.Actions
                     break;
             }
             MapMenuActionItems(this.LocateValue, newAct);
+
+            // if Locate value = Create/Contact
+            if (newAct.LocateBy.Equals(eLocateBy.ByTitle) && !this.LocateValue.ToLower().StartsWith("menu"))
+            {
+                newAct.ElementLocateBy = eLocateBy.ByName;
+                newAct.ElementLocateValue = string.Concat(@"menu", newAct.ElementLocateValue);
+            }
             newAct.Active = true;
             return newAct;
         }
@@ -165,7 +172,7 @@ namespace GingerCore.Actions
                 if (menuLocateValue.IndexOf(";") != -1)
                 {
                     newAct.ElementLocateValue = menuLocateValue.Substring(0, menuLocateValue.IndexOf(';'));
-                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.Value, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));// menuLocateValue.Substring(menuLocateValue.IndexOf(';') + 1, menuLocateValue.Length - menuLocateValue.IndexOf(';') - 2));
+                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));// menuLocateValue.Substring(menuLocateValue.IndexOf(';') + 1, menuLocateValue.Length - menuLocateValue.IndexOf(';') - 2));
                 }
                 else
                     newAct.ElementLocateValue = menuLocateValue;
