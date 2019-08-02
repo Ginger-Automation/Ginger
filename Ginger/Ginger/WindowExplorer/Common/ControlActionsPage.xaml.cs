@@ -180,7 +180,11 @@ namespace Ginger.WindowExplorer
             {
                 foreach (ActInputValue iv in mActInputValues)
                 {
-                    act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                    if(iv.Value != null)
+                    {
+                        act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                    }
+                    
                 }
             }
 

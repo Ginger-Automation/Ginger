@@ -25,6 +25,7 @@ using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -293,7 +294,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     ObservableList<Act> list = new ObservableList<Act>();
                     ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                    if (xWindowSelectionUC.mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+
+                    ePlatformType mPlatformType = xWindowSelectionUC.mPlatform.PlatformType();
+
+                    // if platform is web or
+                    // platform is java and element info type is javaelementinfo 
+                    if (mPlatformType == ePlatformType.Web || (mPlatformType == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo))))
                     {
                         list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }
@@ -310,7 +316,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        Page DataPage = mCurrentControlTreeViewItem.EditPage();
+
+                        Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                         actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
                         CAP = new ControlActionsPage(xWindowSelectionUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                     }

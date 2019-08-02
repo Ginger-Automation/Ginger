@@ -33,6 +33,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public UcListView ListView { get; set; }
 
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
+
         public ActivitiesGroupsListViewHelper(Context context)
         {
             mContext = context;

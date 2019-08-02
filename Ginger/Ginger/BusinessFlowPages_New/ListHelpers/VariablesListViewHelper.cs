@@ -60,6 +60,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
+        public bool AllowExpandItems { get; set; } = true;
+
+        public bool ExpandItemOnLoad { get; set; } = false;
+
         public VariablesListViewHelper(ObservableList<VariableBase> variables, RepositoryItemBase variablesParent, eVariablesLevel variablesLevel, Context context, General.eRIPageViewMode pageViewMode)
         {
             Variables = variables;
@@ -520,6 +524,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index > 0)
             {
                 //move
+                ExpandItemOnLoad = true;
                 Variables.Move(index, index - 1);
             }
         }
@@ -532,6 +537,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (index < Variables.Count - 1)
             {
                 //move
+                ExpandItemOnLoad = true;
                 Variables.Move(index, index + 1);
             }
         }

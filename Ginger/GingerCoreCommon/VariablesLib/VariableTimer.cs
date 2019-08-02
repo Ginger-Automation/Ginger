@@ -44,9 +44,21 @@ namespace GingerCore.Variables
             Hours
         }
 
+        private eTimerUnit mTimerUnit;
         
         [IsSerializedForLocalRepository]
-        public eTimerUnit TimerUnit { get; set; }
+        public eTimerUnit TimerUnit
+        {
+            get
+            {
+                return mTimerUnit;
+            }
+            set
+            {
+                mTimerUnit = value;
+                OnPropertyChanged(nameof(this.TimerUnit));
+            }
+        }
 
         public override string VariableEditPage { get { return  "VariableTimerPage"; } }
 

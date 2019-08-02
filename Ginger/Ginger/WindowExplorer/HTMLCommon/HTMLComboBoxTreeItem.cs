@@ -67,7 +67,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             return list;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mHTMLComboBoxPage == null)
             {

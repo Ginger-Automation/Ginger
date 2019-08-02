@@ -113,7 +113,7 @@
                         <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                             <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                                 <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Rest &amp; Run All Runners"/>
+                                    <GingerCore:ucTextDicResource Text="Reset &amp; Run All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
                             <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed">

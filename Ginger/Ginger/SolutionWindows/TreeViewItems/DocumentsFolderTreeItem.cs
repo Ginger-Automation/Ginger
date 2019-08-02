@@ -130,7 +130,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
            
         //}
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return null;
         }

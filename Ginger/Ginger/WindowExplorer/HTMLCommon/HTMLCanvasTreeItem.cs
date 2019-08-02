@@ -34,7 +34,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         }
 
         HTMLCanvasElementPage mHTMLCanvasElementPage;
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
                 if (mHTMLCanvasElementPage == null)
                 {
