@@ -733,6 +733,7 @@ namespace GingerCore.Environments
 
         public string GetSingleValue(string Table, string Column, string Where)
         {
+            LoadDBAssembly();
             string vv = database.GetSingleValue(Table, Column, Where);  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             return vv;
             //string sql = "SELECT {0} FROM {1} WHERE {2}";
@@ -833,41 +834,43 @@ namespace GingerCore.Environments
         }
 
 
-        internal string GetRecordCount(string SQL)
+        internal int GetRecordCount(string SQL)
         {
-           
-            string sql = "SELECT COUNT(1) FROM " + SQL;
+            int count = database.GetRecordCount(SQL);
+            return count;
 
-            String rc = null;
-            DbDataReader reader = null;
-            if (MakeSureConnectionIsOpen())
-            {
-                try
-                {
-                    DbCommand command = oConn.CreateCommand();
-                    command.CommandText = sql;
-                    command.CommandType = CommandType.Text;
+            //string sql = "SELECT COUNT(1) FROM " + SQL;
 
-                    // Retrieve the data.
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        rc = reader[0].ToString();
-                        break; // We read only first row = count of records
-                    }
-                }
-                catch (Exception e)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
-                    throw e;
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }
+            //String rc = null;
+            //DbDataReader reader = null;
+            //if (MakeSureConnectionIsOpen())
+            //{
+            //    try
+            //    {
+            //        DbCommand command = oConn.CreateCommand();
+            //        command.CommandText = sql;
+            //        command.CommandType = CommandType.Text;
+
+            //        // Retrieve the data.
+            //        reader = command.ExecuteReader();
+            //        while (reader.Read())
+            //        {
+            //            rc = reader[0].ToString();
+            //            break; // We read only first row = count of records
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
+            //        throw e;
+            //    }
+            //    finally
+            //    {
+            //        reader.Close();
+            //    }
+            //}
             
-            return rc;
+            //return rc;
         }
 
      

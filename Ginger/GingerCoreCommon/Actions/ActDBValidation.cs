@@ -317,12 +317,21 @@ namespace GingerCore.Actions
 
         private void RecordCountHandler()
         {
+            string count = GetRecordCount() + "";
+            this.AddOrUpdateReturnParamActual("Record Count", count);
+        }
+
+        int GetRecordCount()
+        {
             string SQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(SQL))
-                Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
-            string val = DB.GetRecordCount(SQL);
-            this.AddOrUpdateReturnParamActual("Record Count", val);
+            {
+                Error = "GetRecordCount missing SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
+            }
+            int count = DB.GetRecordCount(SQL);
+            return count;
         }
+
         private void UpdateSqlHndler()
         {
             string SQL = string.Empty;
@@ -499,7 +508,10 @@ namespace GingerCore.Actions
                     DBResponse.Rows.Add(new string[] { value });                    
                     break;
                 case eDBValidationType.RecordCount:
-                    // TODOL: fix me
+                    string count = GetRecordCount() + "";
+                    DBResponse = new DataTable();
+                    DBResponse.Columns.Add("Count");
+                    DBResponse.Rows.Add(new string[] { count });
                     break;
                 case eDBValidationType.UpdateDB:
                     // TODOL: fix me
