@@ -148,12 +148,13 @@ namespace Ginger.Environments
         {
             try
             {
-                Database db = (Database)grdAppDbs.grdMain.SelectedItem;
+                Database db = (Database)grdAppDbs.grdMain.SelectedItem;                                
                 if (db == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
+
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow =  null;
@@ -167,8 +168,8 @@ namespace Ginger.Environments
                     db.ConnectionString = scSB.ConnectionString;
                 }
 
-                db.CloseConnection();
-                if (db.Connect(true))
+                // db.CloseConnection();
+                if (db.TestConnection() == true)
                 {
                     Reporter.ToUser(eUserMsgKey.DbConnSucceed);
                 }

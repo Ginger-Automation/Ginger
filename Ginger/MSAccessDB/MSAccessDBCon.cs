@@ -79,7 +79,7 @@ namespace MSAccessDB
                 OleDbCommand cmd = new OleDbCommand(Query, conn);
                 conn.Open();
                 OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-                adapter.Fill(results);
+                adapter.Fill(results);                
                 // conn.Close();
             }
 
@@ -396,7 +396,7 @@ namespace MSAccessDB
 
         public List<string> GetTablesList(string Name = null)
         {
-            List<string> rc = new List<string>();
+            List<string> tables = new List<string>();
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 try
@@ -409,7 +409,7 @@ namespace MSAccessDB
                         tableName = (string)row[2];
                         if (!tableName.StartsWith("MSys"))  // ignore access system table
                         {
-                            rc.Add(tableName);
+                            tables.Add(tableName);
                         }
                     }
                     
@@ -420,12 +420,12 @@ namespace MSAccessDB
                     throw (e);
                 }
             }
-            return rc;
+            return tables;
         }
 
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }

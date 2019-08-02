@@ -217,7 +217,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            if(String.IsNullOrEmpty(GetInputParamValue("SQL")))
+            if (String.IsNullOrEmpty(GetInputParamValue("SQL")))
             {
                 AddOrUpdateInputParamValue("SQL",GetInputParamValue("Value"));
             }
@@ -356,11 +356,19 @@ namespace GingerCore.Actions
             }
         }
         private void SimpleSQLOneValueHandler()
-        {            
-            if (string.IsNullOrEmpty(Where))
-                Where = "rownum<2";
-            string val = DB.fTableColWhere(Table, Column, Where);
+        {
+            string val = GetSingleValue();
             this.AddOrUpdateReturnParamActual(Column , val);
+        }
+
+        string GetSingleValue()
+        {
+            if (string.IsNullOrEmpty(Where))
+            {
+                Where = "rownum<2";
+            }
+            string val = DB.GetSingleValue(Table, Column, Where);
+            return val;
         }
 
         private void FreeSQLHandler()
@@ -476,10 +484,31 @@ namespace GingerCore.Actions
 
         public DataTable GetResultView()
         {
+            DataTable DBResponse = null;
             SetDBConnection();
-            DB.Connect();
-            DataTable DBResponse = DB.FreeSQL(SQL, 1000);
+            // DB.Connect();
+            switch (DBValidationType)
+            {
+                case eDBValidationType.FreeSQL:                    
+                    DBResponse = DB.FreeSQL(SQL, 1000);                    
+                    break;
+                case eDBValidationType.SimpleSQLOneValue:
+                    string value = GetSingleValue();
+                    DBResponse = new DataTable();
+                    DBResponse.Columns.Add("Result");
+                    DBResponse.Rows.Add(new string[] { value });                    
+                    break;
+                case eDBValidationType.RecordCount:
+                    // TODOL: fix me
+                    break;
+                case eDBValidationType.UpdateDB:
+                    // TODOL: fix me
+                    break;
+            }
+
             return DBResponse;
+
+
         }
     }
 }

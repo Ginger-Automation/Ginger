@@ -133,7 +133,6 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
-
-        // object ProjEnvironment.Guid => throw new NotImplementedException();
+        
     }
 }

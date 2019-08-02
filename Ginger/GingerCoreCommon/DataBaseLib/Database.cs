@@ -319,27 +319,60 @@ namespace GingerCore.Environments
             return message;
         }
 
-        public Boolean Connect(bool displayErrorPopup = false)
-        {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
+        public Boolean TestConnection()
+        {
+            LoadDBAssembly();            
+            bool b = database.TestConnection();
+            return b;
+        }
+
+
+        
+        void LoadDBAssembly()
+        {
+            if (database != null) return;  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
             switch (DBType)
             {
                 case eDBTypes.MSAccess:
-
-                    // TODO: move provider to key/value
-                    string FilePath = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\DatabaseUnitTest\TestResources\SignUp.accdb";
-                    keyValuePairs.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";");
-                    // keyValuePairs.Add("ConnectionString", @"Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBq=" + FilePath);
-
+                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Assembly assembly = Assembly.LoadFrom(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
                     database = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
+
+                    // FIXME Temp !!!!!!!!!!!!
+                    string filePath = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\DatabaseUnitTest\TestResources\SignUp.accdb";
+                    database.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";
+                    // keyValuePairs.Add("ConnectionString", @"Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBq=" + FilePath);
+
+
                     break;
+
+
+
+
+                    // TODO: add the rest DBs
+            }
+        }
+
+        public Boolean Connect(bool displayErrorPopup = false)
+        {
+            LoadDBAssembly();
+            if (database != null)
+            {
+                return database.TestConnection();                
+            }
+            else
+            {
+                return false;
             }
 
+            //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-            database.OpenConnection(keyValuePairs);
-            return true;
+            
+
+
+            //database.OpenConnection(keyValuePairs);
+            //return true;
 
             //DbProviderFactory factory;
 
@@ -534,7 +567,9 @@ namespace GingerCore.Environments
 
         public List<string> GetTablesList(string Keyspace = null)
         {
-            return null;
+            LoadDBAssembly();
+            return database.GetTablesList();
+            
             //List<string> rc = new List<string>() { "" };
             //if (MakeSureConnectionIsOpen())
             //{
@@ -599,7 +634,10 @@ namespace GingerCore.Environments
 
         public List<string> GetTablesColumns(string table)
         {
-            return null;
+            LoadDBAssembly();
+            return database.GetTablesColumns(table);
+
+            
             //DbDataReader reader = null;
             //List<string> rc = new List<string>() { "" };
             //if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
@@ -693,46 +731,46 @@ namespace GingerCore.Environments
             return result;
         }
 
-        public string fTableColWhere(string Table, string Column, string Where)
+        public string GetSingleValue(string Table, string Column, string Where)
         {
-          
+            string vv = database.GetSingleValue(Table, Column, Where);  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            return vv;
+            //string sql = "SELECT {0} FROM {1} WHERE {2}";
+            //sql = String.Format(sql, Column, Table, Where);
+            //String rc = null;
+            //DbDataReader reader = null;
+            //if (MakeSureConnectionIsOpen())
+            //{
+            //    try
+            //    {
+            //        DbCommand command = oConn.CreateCommand();
+            //        command.CommandText = sql;
+            //        command.CommandType = CommandType.Text;
 
-            string sql = "SELECT {0} FROM {1} WHERE {2}";
-            sql = String.Format(sql, Column, Table, Where);
-            String rc = null;
-            DbDataReader reader = null;
-            if (MakeSureConnectionIsOpen())
-            {
-                try
-                {
-                    DbCommand command = oConn.CreateCommand();
-                    command.CommandText = sql;
-                    command.CommandType = CommandType.Text;
-
-                    // Retrieve the data.
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        rc = reader[0].ToString();
-                        break; // We read only first row
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
-                finally
-                {
-                    reader.Close();
-                }
-            }            
-            return rc;
+            //        // Retrieve the data.
+            //        reader = command.ExecuteReader();
+            //        while (reader.Read())
+            //        {
+            //            rc = reader[0].ToString();
+            //            break; // We read only first row
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        throw e;
+            //    }
+            //    finally
+            //    {
+            //        reader.Close();
+            //    }
+            //}            
+            //return rc;
         }
 
 
         public DataTable FreeSQL(string SQL, int? timeout=null)
         {            
-            MakeSureConnectionIsOpen();
+            // MakeSureConnectionIsOpen();
             DataTable dataTable = database.DBQuery(SQL);
             return dataTable;
 

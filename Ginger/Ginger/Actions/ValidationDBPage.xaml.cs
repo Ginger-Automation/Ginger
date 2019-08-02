@@ -536,8 +536,8 @@ namespace Ginger.Actions
         private void XViewButton_Click(object sender, RoutedEventArgs e)
         {
             DataTable dataTable = mAct.GetResultView();
-            xDataGrid.ItemsSource = dataTable.DefaultView;
-            xDataGrid.IsReadOnly = true;
+            xDataGrid.ItemsSource = dataTable.DefaultView;            
+            xDataGrid.IsReadOnly = true;            
             xDataGrid.AutoGenerateColumns = true;
             // xDataGrid.CanUserAddRows = false;
         }
