@@ -333,7 +333,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_LightBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -343,7 +343,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $SelectionColor_LightBlue}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -353,7 +353,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}" />
+                            <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>

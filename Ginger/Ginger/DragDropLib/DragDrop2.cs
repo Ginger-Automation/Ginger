@@ -78,11 +78,15 @@ namespace GingerWPF.DragDropLib
             
             //TODO decide effects
             DragDropEffects de = DragDrop.DoDragDrop(DragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
-            
+
+            ResetDragDrop();
+        }
+
+        public static void ResetDragDrop()
+        {
             IsDragging = false;
             DDW.Hide();
         }
-        
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
@@ -92,7 +96,14 @@ namespace GingerWPF.DragDropLib
                 {
                     _DroppedPoint = e.GetPosition(sender as UcListView);
                 }
-                ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                try
+                {
+                    ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                }
+                catch(Exception ex)
+                {
+                    ResetDragDrop();
+                }
             }
         }
 

@@ -223,7 +223,14 @@ namespace Ginger.BusinessFlowPages
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
                 // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                if ((sender as DragInfo).DragSource == (sender as DragInfo).DragTarget)
+                    DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Move;
+                else
+                    DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+            }
+            else
+            {
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.DoNotDrop;
             }
         }
 
