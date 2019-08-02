@@ -25,6 +25,8 @@ namespace MongoDB
 
         public string Name => throw new NotImplementedException();
 
+        string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void CloseConnection()
         {
             //Driver maintains a connection pool internally. 
@@ -365,6 +367,11 @@ namespace MongoDB
                 table.Add(item.ToString());
             }
             return table;
+        }
+
+        public bool TestConnection()
+        {
+            throw new NotImplementedException();
         }
     }
 }

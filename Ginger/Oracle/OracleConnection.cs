@@ -24,6 +24,8 @@ namespace Oracle
 
         public string Name => throw new NotImplementedException();
 
+        string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public string GetConnectionString(Dictionary<string, string> parameters)
         {
              ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
@@ -330,6 +332,11 @@ namespace Oracle
                 }
             }
             return result;
+        }
+
+        public bool TestConnection()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -25,6 +25,31 @@ namespace MSAccessDB
 
         public string Name => throw new NotImplementedException();
 
+        string mConnectionString;
+        public string ConnectionString { get => mConnectionString; set => mConnectionString = value; }
+
+        public bool TestConnection()
+        {
+            try
+            {
+                using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+                {                    
+                    conn.Open();
+                    if (conn.State == ConnectionState.Open)
+                    {
+                        return true;
+                    }
+                    conn.Close();
+                    return false;                    
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public void CloseConnection()
         {
             try
@@ -49,18 +74,14 @@ namespace MSAccessDB
         {
             DataTable results = new DataTable();
 
-            //using (OleDbConnection conn = new OleDbConnection())
-            //{
-
-
-            OleDbCommand cmd = new OleDbCommand(Query, conn);
-
-                // conn.Open();
-
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+            {
+                OleDbCommand cmd = new OleDbCommand(Query, conn);
+                conn.Open();
                 OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-
                 adapter.Fill(results);
-            //}
+                conn.Close();
+            }
 
             return results;
 
@@ -389,5 +410,7 @@ namespace MSAccessDB
             }
             return rc;
         }
+
+
     }
 }

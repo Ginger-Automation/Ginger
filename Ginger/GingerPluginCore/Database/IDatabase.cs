@@ -7,6 +7,10 @@ namespace Amdocs.Ginger.Plugin.Core.Database
 {
     public interface IDatabase
     {
+        string ConnectionString { get; set; }
+
+        bool TestConnection();
+
         string Name { get; }
         Boolean OpenConnection(Dictionary<string, string> parameters);
         void CloseConnection();
@@ -15,10 +19,6 @@ namespace Amdocs.Ginger.Plugin.Core.Database
         string RunUpdateCommand(string updateCmd, bool commit = true);
         string GetSingleValue(string Table, string Column, string Where);
         DataTable DBQuery(string Query); //  int? timeout = null : TODO // Return Data table 
-        int GetRecordCount(string Query);
-
-        //string GetConnectionString();
-        //bool MakeSureConnectionIsOpen();
-        //string GetMissingDLLErrorDescription();
+        int GetRecordCount(string Query);        
     }
 }

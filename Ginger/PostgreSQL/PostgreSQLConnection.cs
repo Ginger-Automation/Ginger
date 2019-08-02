@@ -18,6 +18,8 @@ namespace PostgreSQL
 
         public string Name => throw new NotImplementedException();
 
+        public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public string GetConnectionString(Dictionary<string, string> parameters)
         {
             string connStr = null;
@@ -302,6 +304,11 @@ namespace PostgreSQL
                 }
             }
             return result;
+        }
+
+        public bool TestConnection()
+        {
+            throw new NotImplementedException();
         }
     }
 }

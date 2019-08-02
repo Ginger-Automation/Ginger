@@ -25,6 +25,8 @@ namespace CouchBase
 
         public string Name => throw new NotImplementedException();
 
+        string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void GetConnectionString(Dictionary<string, string> parameters)
         {
             ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
@@ -163,6 +165,9 @@ namespace CouchBase
             return RS1.ToString();
         }
 
-        
+        public bool TestConnection()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -31,32 +31,27 @@ namespace GingerCoreNETUnitTest.Database
 
     public class DataBaseUnitTest
     {
-        public static MSAccessDBCon db = new MSAccessDBCon();
-        static string FilePath = null;
+        public static MSAccessDBCon accessDB;
+        static string mAccessDBFile = null;
 
         [ClassInitialize]
         public static void ClassInit(TestContext context)
-        {
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            FilePath = TestResources.GetTestResourcesFile(@"SignUp.accdb");
-            param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath +";");
-            db.KeyvalParamatersList = param;
-            Boolean testconn = db.OpenConnection(param);
-            
+        {            
+            mAccessDBFile = TestResources.GetTestResourcesFile(@"SignUp.accdb");         
+            accessDB = new MSAccessDBCon();
+            accessDB.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + mAccessDBFile + ";";
         }
 
         [TestMethod]
-        public void OpenConnection()
+        public void TestConnection()
         {
-            //Arrange
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("ConnectionString", @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FilePath + ";");
+            //Arrange            
 
             //Act
-            Boolean testconn = db.OpenConnection(param);
+            Boolean testconn = accessDB.TestConnection();            
 
             //Assert
-            Assert.IsTrue(testconn);
+            Assert.IsTrue(testconn, "testconn");
         }
 
         [TestMethod]
@@ -67,7 +62,7 @@ namespace GingerCoreNETUnitTest.Database
             List<string> Tables= null;
             
             //Act
-             Tables= db.GetTablesList();
+             Tables= accessDB.GetTablesList();
            
             //Assert
             Assert.AreEqual(1,Tables.Count);
@@ -82,7 +77,7 @@ namespace GingerCoreNETUnitTest.Database
             string tablename = "Person";
             
             //Act
-            Columns = db.GetTablesColumns(tablename);
+            Columns = accessDB.GetTablesColumns(tablename);
            
             //Assert
             Assert.AreEqual(9,Columns.Count);
@@ -105,8 +100,8 @@ namespace GingerCoreNETUnitTest.Database
             string updatedval = null;
             
             //Act
-            result = db.RunUpdateCommand(upadateCommand, false);
-            updatedval = db.GetSingleValue("Person", "LName", "ID=1");
+            result = accessDB.RunUpdateCommand(upadateCommand, false);
+            updatedval = accessDB.GetSingleValue("Person", "LName", "ID=1");
 
             //Assert
             Assert.AreEqual( "1", result);
@@ -121,7 +116,7 @@ namespace GingerCoreNETUnitTest.Database
             string result = null;
             
             //Act
-            result = db.GetSingleValue("Person", "FName", "ID=2");
+            result = accessDB.GetSingleValue("Person", "FName", "ID=2");
             
             //Assert
             Assert.AreEqual( "LMPO", result);
@@ -134,7 +129,7 @@ namespace GingerCoreNETUnitTest.Database
             DataTable result = null;
             
             //Act
-            result = db.DBQuery("Select * from Person");
+            result = accessDB.DBQuery("Select * from Person");
             
             //Assert
             Assert.AreEqual(2,result.Rows.Count);
@@ -147,7 +142,7 @@ namespace GingerCoreNETUnitTest.Database
              int a = 0;
             
             //Act
-             a = db.GetRecordCount("Person");
+             a = accessDB.GetRecordCount("Person");
             
             //Assert
             Assert.AreEqual(2,a);
@@ -157,9 +152,9 @@ namespace GingerCoreNETUnitTest.Database
         public void CloseConnection()
         {
             Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("ConnectionString", FilePath);
+            param.Add("ConnectionString", mAccessDBFile);
 
-            db.CloseConnection();
+            accessDB.CloseConnection();
         }
     }
 }

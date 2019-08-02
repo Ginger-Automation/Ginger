@@ -18,6 +18,8 @@ namespace MySQLDatabase
 
         public string Name => throw new NotImplementedException();
 
+        public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
             KeyvalParamatersList = parameters;
@@ -315,6 +317,11 @@ namespace MySQLDatabase
                     }
                 }
             return result;
+        }
+
+        public bool TestConnection()
+        {
+            throw new NotImplementedException();
         }
     }
 }
