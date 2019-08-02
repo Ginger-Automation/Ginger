@@ -139,22 +139,15 @@ namespace GingerCoreNETUnitTest.Database
         public void GetRecordCount()
         {
             //Arrange
-             int a = 0;
+             int recordCount = 0;
             
             //Act
-             a = accessDB.GetRecordCount("Person");
+             recordCount = accessDB.GetRecordCount("Person");
             
             //Assert
-            Assert.AreEqual(2,a);
+            Assert.AreEqual(2,recordCount, "recordCount");
         }
 
-        [TestCleanup]
-        public void CloseConnection()
-        {
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("ConnectionString", mAccessDBFile);
-
-            accessDB.CloseConnection();
-        }
+        
     }
 }

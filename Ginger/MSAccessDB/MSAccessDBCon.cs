@@ -15,13 +15,13 @@ namespace MSAccessDB
 {
     public class MSAccessDBCon : IDatabase
     {
-        private OleDbConnection conn = null;
-        SqlConnection sqlConnection;
+        // private OleDbConnection conn = null;
+        // SqlConnection sqlConnection;
         // private OdbcConnection conn;
 
         private DbTransaction tran = null;
-        private DateTime LastConnectionUsedTime;
-        public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
+        // private DateTime LastConnectionUsedTime;
+        // public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
 
         public string Name => throw new NotImplementedException();
 
@@ -39,7 +39,7 @@ namespace MSAccessDB
                     {
                         return true;
                     }
-                    conn.Close();
+                    // conn.Close();  // is needed ??
                     return false;                    
                 }
             }
@@ -52,22 +52,22 @@ namespace MSAccessDB
 
         public void CloseConnection()
         {
-            try
-            {
-                if (conn != null)
-                {
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
-                throw (e);
-            }
-            finally
-            {
-                conn?.Dispose();
-            }
+            //try
+            //{
+            //    if (conn != null)
+            //    {
+            //        conn.Close();
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+            //    throw (e);
+            //}
+            //finally
+            //{
+            //    conn?.Dispose();
+            //}
         }
 
         public DataTable DBQuery(string Query)
@@ -80,7 +80,7 @@ namespace MSAccessDB
                 conn.Open();
                 OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
                 adapter.Fill(results);
-                conn.Close();
+                // conn.Close();
             }
 
             return results;
@@ -150,58 +150,60 @@ namespace MSAccessDB
             //return dataTable;
         }
        
-        public string GetConnectionString(Dictionary<string,string> parameters)
-        {
-            string connStr = null;
-            bool res;
-            res = false;
+        //public string GetConnectionString(Dictionary<string,string> parameters)
+        //{
+        //    string connStr = null;
+        //    bool res;
+        //    res = false;
 
-            string ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
-            string User = parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
-            string Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
-            string TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
-            if (String.IsNullOrEmpty(ConnectionString) == false)
-            {
+        //    string ConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
+        //    string User = parameters.FirstOrDefault(pair => pair.Key == "UserName").Value;
+        //    string Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
+        //    string TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
+        //    if (String.IsNullOrEmpty(ConnectionString) == false)
+        //    {
 
-                connStr = ConnectionString.Replace("{USER}", User);
+        //        connStr = ConnectionString.Replace("{USER}", User);
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
-                if (res == true)
-                { connStr = connStr.Replace("{PASS}", deCryptValue); }
-                else
-                { connStr = connStr.Replace("{PASS}", Password); }
-            }
-            else
-            {
-                String strConnString = TNS;
-                String strProvider;
-                connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
+        //        String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+        //        if (res == true)
+        //        { connStr = connStr.Replace("{PASS}", deCryptValue); }
+        //        else
+        //        { connStr = connStr.Replace("{PASS}", Password); }
+        //    }
+        //    else
+        //    {
+        //        String strConnString = TNS;
+        //        String strProvider;
+        //        connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+        //        String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
 
-                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
-                else { connStr = connStr + "Password=" + Password + ";"; }
+        //        if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
+        //        else { connStr = connStr + "Password=" + Password + ";"; }
 
 
-                if (strConnString.Contains(".accdb"))
-                {
-                    strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                }
-                else { strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;"; }
+        //        if (strConnString.Contains(".accdb"))
+        //        {
+        //            strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+        //        }
+        //        else { strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;"; }
 
-                connStr = strProvider + connStr;
-            }
-            return connStr;
-        }
+        //        connStr = strProvider + connStr;
+        //    }
+        //    return connStr;
+        //}
 
         public string GetSingleValue(string Table, string Column, string Where)
         {
             string sql = "SELECT {0} FROM {1} WHERE {2}";
             sql = String.Format(sql, Column, Table, Where);
-            String rc = null;
-            DbDataReader reader = null;
-            if (MakeSureConnectionIsOpen())
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
+                conn.Open();
+                String rc = null;
+                DbDataReader reader = null;
+
                 try
                 {
                     DbCommand command = conn.CreateCommand();
@@ -224,14 +226,20 @@ namespace MSAccessDB
                 {
                     reader.Close();
                 }
+
+                return rc;
             }
-            return rc;
+
+            
         }
 
         public List<string> GetTablesColumns(string table)
         {
-            DbDataReader reader = null;
-            List<string> rc = new List<string>() { "" };
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+            {
+                conn.Open();
+                DbDataReader reader = null;
+                List<string> rc = new List<string>() { "" };
                 try
                 {
                     DbCommand command = conn.CreateCommand();
@@ -257,67 +265,69 @@ namespace MSAccessDB
                 {
                     reader.Close();
                 }
-            return rc;
-        }
-
-        public bool MakeSureConnectionIsOpen()
-        {
-            Boolean isCoonected = true;
-
-            if ((conn == null) || (conn.State != ConnectionState.Open))
-            {
-                isCoonected = OpenConnection(KeyvalParamatersList);
+                return rc;
             }
-            return isCoonected;
         }
 
-        public bool OpenConnection(Dictionary<string, string> parameters)
-        {
-            // Work with DbConnection;
-            //DbConnection
+        //public bool MakeSureConnectionIsOpen()
+        //{
+        //    Boolean isCoonected = true;
+
+        //    if ((conn == null) || (conn.State != ConnectionState.Open))
+        //    {
+        //        isCoonected = OpenConnection(KeyvalParamatersList);
+        //    }
+        //    return isCoonected;
+        //}
+
+        //public bool OpenConnection(Dictionary<string, string> parameters)
+        //{
+        //    // Work with DbConnection;
+        //    //DbConnection
             
 
 
-            KeyvalParamatersList = parameters;
+        //    KeyvalParamatersList = parameters;
             
-            // string connectConnectionString = GetConnectionString(parameters);
-            string connectConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
-            try
-            {
-                // SqlConnection sqlConnection = new SqlConnection(connectConnectionString);
+        //    // string connectConnectionString = GetConnectionString(parameters);
+        //    string connectConnectionString = parameters.FirstOrDefault(pair => pair.Key == "ConnectionString").Value;
+        //    try
+        //    {
+        //        // SqlConnection sqlConnection = new SqlConnection(connectConnectionString);
 
-                // DataTable dt =  System.Data.Common.DbProviderFactories.GetFactoryClasses();  // get installed provider oledb, odbc, sql serv oracle
+        //        // DataTable dt =  System.Data.Common.DbProviderFactories.GetFactoryClasses();  // get installed provider oledb, odbc, sql serv oracle
 
 
-                // conn = new OdbcConnection(connectConnectionString);
+        //        // conn = new OdbcConnection(connectConnectionString);
 
-                // sqlConnection = new SqlConnection(connectConnectionString);
+        //        // sqlConnection = new SqlConnection(connectConnectionString);
 
-                 conn = new OleDbConnection(connectConnectionString);
-                conn.Open();
+        //         conn = new OleDbConnection(connectConnectionString);
+        //        conn.Open();
                 
-                if ((conn != null) && (conn.State == ConnectionState.Open))
-                {
-                    LastConnectionUsedTime = DateTime.Now;
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, Connection String =" + connectConnectionString, ex);
-                throw (ex);
-            }
-            return false;
-        }
+        //        if ((conn != null) && (conn.State == ConnectionState.Open))
+        //        {
+        //            LastConnectionUsedTime = DateTime.Now;
+        //            return true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, Connection String =" + connectConnectionString, ex);
+        //        throw (ex);
+        //    }
+        //    return false;
+        //}
 
         public string RunUpdateCommand(string updateCmd, bool commit = true)
         {
             string result = "";
-            
-            if (MakeSureConnectionIsOpen())
+
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 using (DbCommand command = conn.CreateCommand())
                 {
+                    conn.Open();
                     try
                     {
                         if (commit)
@@ -353,10 +363,11 @@ namespace MSAccessDB
 
             String rc = null;
             DbDataReader reader = null;
-            if (MakeSureConnectionIsOpen())
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 try
                 {
+                    conn.Open();
                     DbCommand command = conn.CreateCommand();
                     command.CommandText = sql;
                     command.CommandType = CommandType.Text;
@@ -386,10 +397,11 @@ namespace MSAccessDB
         public List<string> GetTablesList(string Name = null)
         {
             List<string> rc = new List<string>();
-            if (MakeSureConnectionIsOpen())
+            using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 try
                 {
+                    conn.Open();
                     DataTable table = conn.GetSchema("Tables");
                     string tableName = "";
                     foreach (DataRow row in table.Rows)
@@ -411,6 +423,9 @@ namespace MSAccessDB
             return rc;
         }
 
-
+        public bool OpenConnection(Dictionary<string, string> parameters)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
