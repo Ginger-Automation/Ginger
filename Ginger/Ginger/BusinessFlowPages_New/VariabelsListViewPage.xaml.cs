@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -166,16 +167,8 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        public void ClearBindings()
+        private void ClearListViewBindings()
         {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
-
-            this.ClearControlsBindings();
-            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
-            BindingOperations.ClearAllBindings(xResetValueBtn);
-            BindingOperations.ClearAllBindings(xAutoValueBtn);
-
             if (mVariabelListHelper != null)
             {
                 mVariabelListHelper.VariabelListItemEvent -= MVariabelListItemInfo_VariabelListItemEvent;
@@ -191,6 +184,19 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.DataSourceList = null;
                 mVariabelsListView = null;
             }
+        }
+
+        public void ClearBindings()
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
+
+            ClearListViewBindings();
+
+            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+            BindingOperations.ClearAllBindings(xResetValueBtn);
+            BindingOperations.ClearAllBindings(xAutoValueBtn);
+            this.ClearControlsBindings();            
         }
 
         private void SetListView()
@@ -212,6 +218,11 @@ namespace Ginger.BusinessFlowPages
             mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
 
             mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+
+            if(mVariablesLevel != eVariablesLevel.Solution)
+            {
+                SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
+            }
         }
 
         private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
@@ -236,20 +247,12 @@ namespace Ginger.BusinessFlowPages
         {
             if (mVariabelsParent != parent)
             {
+                ClearListViewBindings();
                 mVariabelsParent = parent;
                 mVariablesLevel = GetVariablesLevel();
                 if (mVariabelsParent != null)
                 {
-                    mVariabelListHelper.VariablesParent = mVariabelsParent;
-                    mVariabelListHelper.VariablesLevel = mVariablesLevel;
-                    mVariabelListHelper.Variables = GetVariablesList();
-                    mVariabelsListView.DataSourceList = GetVariablesList();
-                }
-                else
-                {
-                    mVariabelListHelper.VariablesParent = null;
-                    mVariabelListHelper.Variables = null;
-                    mVariabelsListView.DataSourceList = null;
+                    SetListView();
                 }
                 ShowHideEditPage(null);
             }
@@ -419,8 +422,7 @@ namespace Ginger.BusinessFlowPages
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
+            //ClearBindings();
         }
     }
 }

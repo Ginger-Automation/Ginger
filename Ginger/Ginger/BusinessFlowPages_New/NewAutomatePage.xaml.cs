@@ -559,23 +559,24 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mContext.Activity != null)
                 {
-                    //if (mActivityPage == null)
-                    //{
-                    //    mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
-                    //}
-                    //else
-                    //{
-                    //    mActivityPage.UpdateActivity(mContext.Activity);
-                    //}
-
-                    if (mActivityPage != null)
+                    if (mActivityPage == null)
                     {
-                        mActivityPage.ClearBindings();
-                        mActivityPage.KeepAlive = false;
-                        mActivityPage = null;
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                    }
+                    else
+                    {
+                        mActivityPage.UpdateActivity(mContext.Activity);
                         GC.Collect();
                     }
-                    mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+
+                    //if (mActivityPage != null)
+                    //{
+                    //    mActivityPage.ClearBindings();
+                    //    mActivityPage.KeepAlive = false;
+                    //    mActivityPage = null;
+                    //    GC.Collect();
+                    //}
+                    //mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
                 }
                 else
                 {

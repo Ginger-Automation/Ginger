@@ -612,11 +612,14 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         public void ClearBindings()
-        {            
-            xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
-            xTagsFilter.ClearBinding();
-            xTagsFilter.ClearControlsBindings();
-            xTagsFilter = null;
+        {
+            if (xTagsFilter != null)
+            {
+                xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
+                xTagsFilter.ClearBinding();
+                xTagsFilter.ClearControlsBindings();
+                xTagsFilter = null;
+            }
 
             if (mObjList != null)
             {

@@ -82,7 +82,6 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetListView();
-            SetSharedRepositoryMark();
             ShowHideEditPage(null);
         }
 
@@ -127,16 +126,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public void ClearBindings()
+        private void ClearListViewBindings()
         {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
-
-            this.ClearControlsBindings();
-            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
-            BindingOperations.ClearAllBindings(xActiveBtn);
-            BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
-
             if (mActionsListHelper != null)
             {
                 mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
@@ -152,6 +143,20 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionsListView.DataSourceList = null;
                 mActionsListView = null;
             }
+        }
+
+        public void ClearBindings()
+        {
+            xMainFrame.Content = null;
+            xMainFrame.NavigationService.RemoveBackEntry();
+            
+            ClearListViewBindings();
+
+            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+            BindingOperations.ClearAllBindings(xActiveBtn);
+            BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
+            this.ClearControlsBindings();
+
         }
 
         private void SetListView()
@@ -174,6 +179,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             // Enable Virtualization for Actions ListView to improve the loading time/performance
             mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+
+            SetSharedRepositoryMark();
         }
 
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -198,16 +205,12 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActivity != activity)
             {
+                ClearListViewBindings();
                 mActivity = activity;
                 if (mActivity != null)
                 {
-                    mActionsListView.DataSourceList = mActivity.Acts;
-                    SetSharedRepositoryMark();
-                }
-                else
-                {
-                    mActionsListView.DataSourceList = null;
-                }
+                    SetListView();
+                }               
                 ShowHideEditPage(null);
             }
         }
@@ -341,8 +344,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
+            //ClearBindings();
         }
     }
 }

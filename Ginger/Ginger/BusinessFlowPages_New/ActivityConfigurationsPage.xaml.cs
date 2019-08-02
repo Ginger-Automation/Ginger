@@ -74,6 +74,7 @@ namespace Ginger.BusinessFlowPages
                 xRunOptionCombo.IsEnabled = false;
                 xAutomationStatusCombo.IsEnabled = false;
                 xHandlerTypeCombo.IsEnabled = false;
+                xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
             }
         }
@@ -92,8 +93,7 @@ namespace Ginger.BusinessFlowPages
         }
 
         public void ClearBindings()
-        {
-            this.ClearControlsBindings();
+        {            
             BindingOperations.ClearAllBindings(xRunOptionCombo);
             BindingOperations.ClearAllBindings(xActivityNameTxtBox);
             BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
@@ -104,6 +104,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
+            this.ClearControlsBindings();
         }
 
         private void BindControls()
@@ -161,6 +162,11 @@ namespace Ginger.BusinessFlowPages
         {
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mContext.BusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ClearBindings();
         }
     }
 }
