@@ -172,7 +172,7 @@ namespace GingerCore.Actions
                 if (menuLocateValue.IndexOf(";") != -1)
                 {
                     newAct.ElementLocateValue = menuLocateValue.Substring(0, menuLocateValue.IndexOf(';'));
-                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));// menuLocateValue.Substring(menuLocateValue.IndexOf(';') + 1, menuLocateValue.Length - menuLocateValue.IndexOf(';') - 2));
+                    newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));
                 }
                 else
                     newAct.ElementLocateValue = menuLocateValue;
