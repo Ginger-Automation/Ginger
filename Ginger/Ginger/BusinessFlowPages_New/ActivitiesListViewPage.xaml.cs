@@ -59,8 +59,7 @@ namespace Ginger.BusinessFlowPages
             mContext = context;
             mPageViewMode = pageViewMode;
 
-            SetListView();
-            SetSharedRepositoryMark();
+            SetListView();            
         }
 
         /// <summary>
@@ -71,27 +70,37 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         private void SetListView()
         {
-            //List Title
-            xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
-            xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
+            if (xActivitiesListView != null)
+            {
+                //List Title
+                xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
+                xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
-            //List Items
-            ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
-            activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
-            xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
+                //List Items
+                ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
+                activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
+                xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
-            //List Data
-            xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+                xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
+                xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
+                xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
 
-            //List Grouping
-            xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+                // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
+                xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+            }
 
-            xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
-            xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
-            xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
-
-            // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
-            xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+            if (mBusinessFlow != null)
+            {
+                //List Data
+                xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+                //List Grouping
+                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+                SetSharedRepositoryMark();
+            }
+            else
+            {
+                xActivitiesListView.DataSourceList = null;
+            }
         }
 
         private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
@@ -172,17 +181,11 @@ namespace Ginger.BusinessFlowPages
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
-            mBusinessFlow = updateBusinessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
-            if (mBusinessFlow != null)
+            if (mBusinessFlow != updateBusinessFlow)
             {
-                xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
-                SetSharedRepositoryMark();
-            }
-            else
-            {
-                xActivitiesListView.DataSourceList = null;
+                mBusinessFlow = updateBusinessFlow;
+                mContext.BusinessFlow = mBusinessFlow;
+                SetListView();
             }
         }
 
