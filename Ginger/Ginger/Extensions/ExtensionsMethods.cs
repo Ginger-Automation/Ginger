@@ -312,7 +312,6 @@ namespace Ginger
             else
             {
                 // clear frame history
-                Frame.Content = null;
                 var entry = Frame.RemoveBackEntry();
                 while (entry != null)
                 {

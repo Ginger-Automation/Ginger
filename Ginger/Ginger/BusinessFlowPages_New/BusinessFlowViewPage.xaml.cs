@@ -110,48 +110,54 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        TabItem mLastSelectedTab = null;
         private void XItemsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xActivitisTab.IsSelected == true)
+            if (xItemsTabs.SelectedItem != mLastSelectedTab)
             {
-                if (mActivitiesPage == null)
+                if (xActivitisTab.IsSelected == true)
                 {
-                    mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
-                    mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-                    xActivitiesTabFrame.SetContent(mActivitiesPage);
-                }
-                else
-                {
-                    mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
-                }
-            }
-            else if (xVariablesTab.IsSelected == true)
-            {
-                if (mVariabelsPage == null)
-                {
-                    mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
-                    if (mVariabelsPage.ListView != null)
+                    if (mActivitiesPage == null)
                     {
-                        mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
+                        mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        xActivitiesTabFrame.SetContent(mActivitiesPage);
                     }
-                    xVariabelsTabFrame.SetContent(mVariabelsPage);
+                    else
+                    {
+                        mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
                 }
-                else
+                else if (xVariablesTab.IsSelected == true)
                 {
-                    mVariabelsPage.UpdateParent(mBusinessFlow);
+                    if (mVariabelsPage == null)
+                    {
+                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
+                        if (mVariabelsPage.ListView != null)
+                        {
+                            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        xVariabelsTabFrame.SetContent(mVariabelsPage);
+                    }
+                    else
+                    {
+                        mVariabelsPage.UpdateParent(mBusinessFlow);
+                    }
                 }
-            }
-            else if (xConfigurationsTab.IsSelected == true)
-            {
-                if (mConfigurationsPage == null)
+                else if (xConfigurationsTab.IsSelected == true)
                 {
-                    mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
-                    xConfigurationsTabFrame.SetContent(mConfigurationsPage);
+                    if (mConfigurationsPage == null)
+                    {
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
+                        xConfigurationsTabFrame.SetContent(mConfigurationsPage);
+                    }
+                    else
+                    {
+                        mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
                 }
-                else
-                {
-                    mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
-                }
+
+                mLastSelectedTab = (TabItem)xItemsTabs.SelectedItem;
             }
         }
 

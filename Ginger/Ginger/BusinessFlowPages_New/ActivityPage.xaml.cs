@@ -145,53 +145,59 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        TabItem mLastSelectedTab = null;
         private void XItemsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xActionsTab.IsSelected == true)
+            if (xItemsTabs.SelectedItem != mLastSelectedTab)
             {
-                if (mActionsPage == null)
+                if (xActionsTab.IsSelected == true)
                 {
-                    mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
-                    if (mActionsPage.ListView != null)
+                    if (mActionsPage == null)
                     {
-                        mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
+                        if (mActionsPage.ListView != null)
+                        {
+                            mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
+                        mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
+                        xActionsTabFrame.SetContent(mActionsPage);
                     }
-                    mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
-                    mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
-                    xActionsTabFrame.SetContent(mActionsPage);
-                }
-                else
-                {
-                    mActionsPage.UpdateActivity(mActivity);
-                }
-            }
-            else if (xVariablesTab.IsSelected == true)
-            {
-                if (mVariabelsPage == null)
-                {
-                    mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
-                    if (mVariabelsPage.ListView != null)
+                    else
                     {
-                        mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        mActionsPage.UpdateActivity(mActivity);
                     }
-                    xVariabelsTabFrame.SetContent(mVariabelsPage);
                 }
-                else
+                else if (xVariablesTab.IsSelected == true)
                 {
-                    mVariabelsPage.UpdateParent(mActivity);
+                    if (mVariabelsPage == null)
+                    {
+                        mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
+                        if (mVariabelsPage.ListView != null)
+                        {
+                            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        xVariabelsTabFrame.SetContent(mVariabelsPage);
+                    }
+                    else
+                    {
+                        mVariabelsPage.UpdateParent(mActivity);
+                    }
                 }
-            }
-            else if (xConfigurationsTab.IsSelected == true)
-            {
-                if (mConfigurationsPage == null)
+                else if (xConfigurationsTab.IsSelected == true)
                 {
-                    mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
-                    xConfigurationsFrame.SetContent(mConfigurationsPage);
+                    if (mConfigurationsPage == null)
+                    {
+                        mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
+                        xConfigurationsFrame.SetContent(mConfigurationsPage);
+                    }
+                    else
+                    {
+                        mConfigurationsPage.UpdateActivity(mActivity);
+                    }
                 }
-                else
-                {
-                    mConfigurationsPage.UpdateActivity(mActivity);
-                }
+
+                mLastSelectedTab = (TabItem)xItemsTabs.SelectedItem;
             }
         }
 

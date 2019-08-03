@@ -566,7 +566,7 @@ namespace GingerWPF.BusinessFlowsLib
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
-                        GC.Collect();
+                        //GC.Collect();
                     }
                 }
                 else
