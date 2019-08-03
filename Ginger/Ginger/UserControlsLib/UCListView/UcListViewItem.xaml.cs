@@ -38,12 +38,12 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcListViewItem : UserControl, INotifyPropertyChanged
     {
-        static int ListViewItemsNum = 0;
-        static int LiveListViewItemsCounter = 0;
-        ~UcListViewItem()
-        {
-            LiveListViewItemsCounter--;
-        }
+        //static int ListViewItemsNum = 0;
+        //static int LiveListViewItemsCounter = 0;
+        //~UcListViewItem()
+        //{
+        //    LiveListViewItemsCounter--;
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
@@ -132,8 +132,8 @@ namespace Ginger.UserControlsLib.UCListView
         {
             InitializeComponent();
 
-            ListViewItemsNum++;
-            LiveListViewItemsCounter++;
+            //ListViewItemsNum++;
+            //LiveListViewItemsCounter++;
 
             SetInitView();
         }
