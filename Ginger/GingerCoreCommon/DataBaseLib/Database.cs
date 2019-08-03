@@ -338,19 +338,14 @@ namespace GingerCore.Environments
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Assembly assembly = Assembly.LoadFrom(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
                     database = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
-
-                    // FIXME Temp !!!!!!!!!!!!
-                    string filePath = @"C:\Users\yaronwe\source\repos\Ginger\Ginger\DatabaseUnitTest\TestResources\SignUp.accdb";
-                    database.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";
-                    // keyValuePairs.Add("ConnectionString", @"Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBq=" + FilePath);
-
-
+                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
 
-
-
-
-                    // TODO: add the rest DBs
+                // TODO: add the rest DBs
+                case eDBTypes.Cassandra:
+                    break;
+                default:
+                    throw new Exception("LoadAssembly failed for: " + DBType);
             }
         }
 
@@ -770,8 +765,9 @@ namespace GingerCore.Environments
 
 
         public DataTable FreeSQL(string SQL, int? timeout=null)
-        {            
+        {
             // MakeSureConnectionIsOpen();
+            LoadDBAssembly();
             DataTable dataTable = database.DBQuery(SQL);
             return dataTable;
 

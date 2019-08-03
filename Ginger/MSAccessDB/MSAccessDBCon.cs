@@ -1,13 +1,10 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core.Database;
-using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.Linq;
 
 
 
