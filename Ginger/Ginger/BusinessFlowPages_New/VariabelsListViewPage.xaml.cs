@@ -201,25 +201,28 @@ namespace Ginger.BusinessFlowPages
 
         private void SetListView()
         {
-            mVariabelsListView = new UcListView();
-            mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-            mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
+            if (mVariabelsListView == null)
+            {
+                mVariabelsListView = new UcListView();
+                mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
+                mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
-            mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
-            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
+                mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
+                mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
+                mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
-            mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
+                mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
+                
+                mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;
+                mVariabelsListView.ItemDropped += ListVars_ItemDropped;
+
+                mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
+
+                mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
+
             mVariabelsListView.DataSourceList = GetVariablesList();
-
-            mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;
-            mVariabelsListView.ItemDropped += ListVars_ItemDropped;
-
-            mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
-
-            mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
-
-            if(mVariablesLevel != eVariablesLevel.Solution)
+            if (mVariablesLevel != eVariablesLevel.Solution)
             {
                 SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
             }
@@ -247,7 +250,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mVariabelsParent != parent)
             {
-                ClearListViewBindings();
+                //ClearListViewBindings();
                 mVariabelsParent = parent;
                 mVariablesLevel = GetVariablesLevel();
                 if (mVariabelsParent != null)

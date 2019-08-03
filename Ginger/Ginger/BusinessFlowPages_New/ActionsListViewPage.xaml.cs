@@ -161,25 +161,28 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetListView()
         {
-            mActionsListView = new UcListView();
-            mActionsListView.Title = "Actions";
-            mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+            if (mActionsListView == null)
+            {
+                mActionsListView = new UcListView();
+                mActionsListView.Title = "Actions";
+                mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
-            mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
-            mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+                mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
+                mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
+                mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
-            mActionsListView.ListSelectionMode = SelectionMode.Extended;
+                mActionsListView.ListSelectionMode = SelectionMode.Extended;
+                
+                mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
+                mActionsListView.ItemDropped += listActions_ItemDropped;
+
+                mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+
+                // Enable Virtualization for Actions ListView to improve the loading time/performance
+                mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
+
             mActionsListView.DataSourceList = mActivity.Acts;
-
-            mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
-            mActionsListView.ItemDropped += listActions_ItemDropped;
-
-            mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
-
-            // Enable Virtualization for Actions ListView to improve the loading time/performance
-            mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
-
             SetSharedRepositoryMark();
         }
 
@@ -205,7 +208,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActivity != activity)
             {
-                ClearListViewBindings();
+                //ClearListViewBindings();
                 mActivity = activity;
                 if (mActivity != null)
                 {

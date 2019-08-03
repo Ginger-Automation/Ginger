@@ -157,6 +157,8 @@ namespace Ginger.UserControlsLib.UCListView
                     if (mObjList != null)
                     {
                         mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        mObjList.CollectionChanged -= CollectionChangedHandler;
+                        OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);//so all list items will release their binding
                     }
 
                     mObjList = value;
