@@ -60,6 +60,8 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        NotifyCollectionChangedEventHandler CollectionChangedHandler;
+
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
@@ -281,8 +283,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             });
         }
-
-        NotifyCollectionChangedEventHandler CollectionChangedHandler;
+        
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -613,34 +614,34 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public void ClearBindings()
-        {
-            if (xTagsFilter != null)
-            {
-                xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
-                xTagsFilter.ClearBinding();
-                xTagsFilter.ClearControlsBindings();
-                xTagsFilter = null;
-            }
+        //public void ClearBindings()
+        //{
+        //    if (xTagsFilter != null)
+        //    {
+        //        xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
+        //        xTagsFilter.ClearBinding();
+        //        xTagsFilter.ClearControlsBindings();
+        //        xTagsFilter = null;
+        //    }
 
-            if (mObjList != null)
-            {
-                mObjList.PropertyChanged -= ObjListPropertyChanged;
-                BindingOperations.DisableCollectionSynchronization(mObjList);
-                mObjList.CollectionChanged -= CollectionChangedHandler;
-            }
+        //    if (mObjList != null)
+        //    {
+        //        mObjList.PropertyChanged -= ObjListPropertyChanged;
+        //        BindingOperations.DisableCollectionSynchronization(mObjList);
+        //        mObjList.CollectionChanged -= CollectionChangedHandler;
+        //    }
 
-            foreach (ucButton operation in xListOperationsPnl.Children)
-            {
-                BindingOperations.ClearAllBindings(operation);
-            }
-            foreach (MenuItem extraOperation in xListExtraOperationsMenu.Items)
-            {
-                BindingOperations.ClearAllBindings(extraOperation);
-            }
-            OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);
-            this.ClearControlsBindings();
-        }
+        //    foreach (ucButton operation in xListOperationsPnl.Children)
+        //    {
+        //        BindingOperations.ClearAllBindings(operation);
+        //    }
+        //    foreach (MenuItem extraOperation in xListExtraOperationsMenu.Items)
+        //    {
+        //        BindingOperations.ClearAllBindings(extraOperation);
+        //    }
+        //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);
+        //    this.ClearControlsBindings();
+        //}
 
         void IDragDrop.StartDrag(DragInfo Info)
         {

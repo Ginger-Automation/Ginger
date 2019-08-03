@@ -33,13 +33,6 @@ namespace Ginger.BusinessFlowPages
     /// </summary>
     public partial class ActivityConfigurationsPage : Page
     {
-        static int ConfigPagesNum = 0;
-        static int LiveConfigPagesCounter = 0;
-        ~ActivityConfigurationsPage()
-        {
-            LiveConfigPagesCounter--;
-        }
-
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
@@ -47,9 +40,6 @@ namespace Ginger.BusinessFlowPages
         public ActivityConfigurationsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
-            ConfigPagesNum++;
-            LiveConfigPagesCounter++;
 
             mActivity = activity;
             mContext = context;
@@ -162,11 +152,6 @@ namespace Ginger.BusinessFlowPages
         {
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mContext.BusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ClearBindings();
         }
     }
 }

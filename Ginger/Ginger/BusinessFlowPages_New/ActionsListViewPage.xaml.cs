@@ -46,13 +46,6 @@ namespace GingerWPF.BusinessFlowsLib
     /// </summary>
     public partial class ActionsListViewPage : Page
     {
-        static int ActsPagesNum = 0;
-        static int LiveActsPagesCounter = 0;
-        ~ActionsListViewPage()
-        {
-            LiveActsPagesCounter--;
-        }
-
         Activity mActivity;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
@@ -73,9 +66,6 @@ namespace GingerWPF.BusinessFlowsLib
         public ActionsListViewPage(Activity Activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
-            ActsPagesNum++;
-            LiveActsPagesCounter++;
 
             mActivity = Activity;
             mContext = context;
@@ -126,38 +116,38 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void ClearListViewBindings()
-        {
-            if (mActionsListHelper != null)
-            {
-                mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
-                mActionsListHelper = null;
-            }
+        //private void ClearListViewBindings()
+        //{
+        //    if (mActionsListHelper != null)
+        //    {
+        //        mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
+        //        mActionsListHelper = null;
+        //    }
 
-            if (mActionsListView != null)
-            {
-                mActionsListView.PreviewDragItem -= listActions_PreviewDragItem;
-                mActionsListView.ItemDropped -= listActions_ItemDropped;
-                mActionsListView.List.MouseDoubleClick -= ActionsListView_MouseDoubleClick;
-                mActionsListView.ClearBindings();
-                mActionsListView.DataSourceList = null;
-                mActionsListView = null;
-            }
-        }
+        //    if (mActionsListView != null)
+        //    {
+        //        mActionsListView.PreviewDragItem -= listActions_PreviewDragItem;
+        //        mActionsListView.ItemDropped -= listActions_ItemDropped;
+        //        mActionsListView.List.MouseDoubleClick -= ActionsListView_MouseDoubleClick;
+        //        mActionsListView.ClearBindings();
+        //        mActionsListView.DataSourceList = null;
+        //        mActionsListView = null;
+        //    }
+        //}
 
-        public void ClearBindings()
-        {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
+        //public void ClearBindings()
+        //{
+        //    xMainFrame.Content = null;
+        //    xMainFrame.NavigationService.RemoveBackEntry();
             
-            ClearListViewBindings();
+        //    ClearListViewBindings();
 
-            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
-            BindingOperations.ClearAllBindings(xActiveBtn);
-            BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
-            this.ClearControlsBindings();
+        //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+        //    BindingOperations.ClearAllBindings(xActiveBtn);
+        //    BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
+        //    this.ClearControlsBindings();
 
-        }
+        //}
 
         private void SetListView()
         {
@@ -215,7 +205,6 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActivity != activity)
             {
-                //ClearListViewBindings();
                 mActivity = activity;
                 SetListView();
                 ShowHideEditPage(null);
@@ -347,11 +336,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
         {
             mActionBeenEdit.Reset();
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //ClearBindings();
         }
     }
 }

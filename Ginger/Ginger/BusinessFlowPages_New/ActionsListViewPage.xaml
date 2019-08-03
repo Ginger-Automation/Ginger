@@ -9,7 +9,6 @@
         xmlns:h="clr-namespace:Ginger.Help"
         h:GingerHelpProvider.HelpString="Action"
       d:DesignHeight="400" d:DesignWidth="600"
-        Unloaded="Page_Unloaded"
       Title="ActionsListViewPage">
 
     <DockPanel>

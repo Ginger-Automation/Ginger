@@ -568,15 +568,6 @@ namespace GingerWPF.BusinessFlowsLib
                         mActivityPage.UpdateActivity(mContext.Activity);
                         GC.Collect();
                     }
-
-                    //if (mActivityPage != null)
-                    //{
-                    //    mActivityPage.ClearBindings();
-                    //    mActivityPage.KeepAlive = false;
-                    //    mActivityPage = null;
-                    //    GC.Collect();
-                    //}
-                    //mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
                 }
                 else
                 {

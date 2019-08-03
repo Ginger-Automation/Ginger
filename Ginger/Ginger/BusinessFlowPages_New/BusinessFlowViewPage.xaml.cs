@@ -361,7 +361,5 @@ namespace GingerWPF.BusinessFlowsLib
             //OKButtonClicked = true;
             mGenericWin.Close();
         }
-
-
     }
 }

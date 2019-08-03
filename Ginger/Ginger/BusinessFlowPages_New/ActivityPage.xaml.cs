@@ -43,13 +43,6 @@ namespace GingerWPF.BusinessFlowsLib
     /// </summary>
     public partial class ActivityPage : Page
     {
-        static int ActivityPagesNum = 0;
-        static int LiveActivityPagesCounter = 0;
-        ~ActivityPage()
-        {
-            LiveActivityPagesCounter--;
-        }
-
         Activity mActivity;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
@@ -69,9 +62,6 @@ namespace GingerWPF.BusinessFlowsLib
         public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
-            ActivityPagesNum++;
-            LiveActivityPagesCounter++;
 
             mActivity = activity;
             mContext = context;
@@ -234,47 +224,47 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public void ClearBindings()
-        {
-            //clean Tabs
-            xActionsTabFrame.Content = null;
-            xActionsTabFrame.NavigationService.RemoveBackEntry();
-            xVariabelsTabFrame.Content = null;
-            xVariabelsTabFrame.NavigationService.RemoveBackEntry();
-            xConfigurationsFrame.Content = null;
-            xConfigurationsFrame.NavigationService.RemoveBackEntry();
+        //public void ClearBindings()
+        //{
+        //    //clean Tabs
+        //    xActionsTabFrame.Content = null;
+        //    xActionsTabFrame.NavigationService.RemoveBackEntry();
+        //    xVariabelsTabFrame.Content = null;
+        //    xVariabelsTabFrame.NavigationService.RemoveBackEntry();
+        //    xConfigurationsFrame.Content = null;
+        //    xConfigurationsFrame.NavigationService.RemoveBackEntry();
 
-            if (mActivity != null)
-            {
-                ClearActivityBindings();
-            }
+        //    if (mActivity != null)
+        //    {
+        //        ClearActivityBindings();
+        //    }
 
-            this.ClearControlsBindings();
-            BindingOperations.ClearAllBindings(xNameTextBlock);
+        //    this.ClearControlsBindings();
+        //    BindingOperations.ClearAllBindings(xNameTextBlock);
 
-            if (mActionsPage != null)
-            {
-                mActionsPage.ShiftToActionEditEvent -= MActionsPage_ShiftToActionEditEvent;
-                mActionsPage.ShiftToActionsListEvent -= MActionsPage_ShiftToActionsListEvent;
-                mActionsPage.ClearBindings();
-                mActionsPage.KeepAlive = false;
-                mActionsPage = null;
-            }
+        //    if (mActionsPage != null)
+        //    {
+        //        mActionsPage.ShiftToActionEditEvent -= MActionsPage_ShiftToActionEditEvent;
+        //        mActionsPage.ShiftToActionsListEvent -= MActionsPage_ShiftToActionsListEvent;
+        //        mActionsPage.ClearBindings();
+        //        mActionsPage.KeepAlive = false;
+        //        mActionsPage = null;
+        //    }
 
-            if (mVariabelsPage != null)
-            {
-                mVariabelsPage.ClearBindings();
-                mVariabelsPage.KeepAlive = false;
-                mVariabelsPage = null;
-            }
+        //    if (mVariabelsPage != null)
+        //    {
+        //        mVariabelsPage.ClearBindings();
+        //        mVariabelsPage.KeepAlive = false;
+        //        mVariabelsPage = null;
+        //    }
 
-            if (mConfigurationsPage != null)
-            {
-                mConfigurationsPage.ClearBindings();
-                mConfigurationsPage.KeepAlive = false;
-                mConfigurationsPage = null;
-            }
-        }
+        //    if (mConfigurationsPage != null)
+        //    {
+        //        mConfigurationsPage.ClearBindings();
+        //        mConfigurationsPage.KeepAlive = false;
+        //        mConfigurationsPage = null;
+        //    }
+        //}
        
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -354,7 +344,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xVariabelsTabHeaderText.Text = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mActivity.Variables.Count);
             });
         }
-
         private void UpdateActionsTabHeader()
         {
             this.Dispatcher.Invoke(() =>
@@ -499,11 +488,5 @@ namespace GingerWPF.BusinessFlowsLib
                 mActivity.SaveBackup();
             }
         }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //ClearBindings();
-        }
-
     }
 }

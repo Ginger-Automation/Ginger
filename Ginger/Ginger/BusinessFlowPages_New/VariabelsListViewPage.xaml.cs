@@ -42,14 +42,6 @@ namespace Ginger.BusinessFlowPages
     /// </summary>
     public partial class VariabelsListViewPage : Page
     {
-        static int VarPagesNum = 0;
-        static int LiveVarPagesCounter = 0;
-
-        ~VariabelsListViewPage()
-        {
-            LiveVarPagesCounter--;
-        }
-
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;
         Context mContext;
@@ -68,9 +60,6 @@ namespace Ginger.BusinessFlowPages
         public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
-            VarPagesNum++;
-            LiveVarPagesCounter++;
 
             mVariabelsParent = variabelsParent;
             mVariablesLevel = GetVariablesLevel();
@@ -167,37 +156,37 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void ClearListViewBindings()
-        {
-            if (mVariabelListHelper != null)
-            {
-                mVariabelListHelper.VariabelListItemEvent -= MVariabelListItemInfo_VariabelListItemEvent;
-                mVariabelListHelper = null;
-            }
+        //private void ClearListViewBindings()
+        //{
+        //    if (mVariabelListHelper != null)
+        //    {
+        //        mVariabelListHelper.VariabelListItemEvent -= MVariabelListItemInfo_VariabelListItemEvent;
+        //        mVariabelListHelper = null;
+        //    }
 
-            if (mVariabelsListView != null)
-            {
-                mVariabelsListView.PreviewDragItem -= ListVars_PreviewDragItem;
-                mVariabelsListView.ItemDropped -= ListVars_ItemDropped;
-                mVariabelsListView.List.MouseDoubleClick -= VariabelsListView_MouseDoubleClick;
-                mVariabelsListView.ClearBindings();
-                mVariabelsListView.DataSourceList = null;
-                mVariabelsListView = null;
-            }
-        }
+        //    if (mVariabelsListView != null)
+        //    {
+        //        mVariabelsListView.PreviewDragItem -= ListVars_PreviewDragItem;
+        //        mVariabelsListView.ItemDropped -= ListVars_ItemDropped;
+        //        mVariabelsListView.List.MouseDoubleClick -= VariabelsListView_MouseDoubleClick;
+        //        mVariabelsListView.ClearBindings();
+        //        mVariabelsListView.DataSourceList = null;
+        //        mVariabelsListView = null;
+        //    }
+        //}
 
-        public void ClearBindings()
-        {
-            xMainFrame.Content = null;
-            xMainFrame.NavigationService.RemoveBackEntry();
+        //public void ClearBindings()
+        //{
+        //    xMainFrame.Content = null;
+        //    xMainFrame.NavigationService.RemoveBackEntry();
 
-            ClearListViewBindings();
+        //    ClearListViewBindings();
 
-            BindingOperations.ClearAllBindings(xSelectedItemTitleText);
-            BindingOperations.ClearAllBindings(xResetValueBtn);
-            BindingOperations.ClearAllBindings(xAutoValueBtn);
-            this.ClearControlsBindings();            
-        }
+        //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+        //    BindingOperations.ClearAllBindings(xResetValueBtn);
+        //    BindingOperations.ClearAllBindings(xAutoValueBtn);
+        //    this.ClearControlsBindings();            
+        //}
 
         private void SetListView()
         {
@@ -223,6 +212,9 @@ namespace Ginger.BusinessFlowPages
 
             if (mVariabelsParent != null)
             {
+                mVariabelListHelper.VariablesParent = mVariabelsParent;
+                mVariabelListHelper.VariablesLevel = mVariablesLevel;
+                mVariabelListHelper.Variables = GetVariablesList(); 
                 mVariabelsListView.DataSourceList = GetVariablesList();
                 if (mVariablesLevel != eVariablesLevel.Solution)
                 {
@@ -231,6 +223,8 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
+                mVariabelListHelper.VariablesParent = null;
+                mVariabelListHelper.Variables = null;
                 mVariabelsListView.DataSourceList = null;
             }
         }
@@ -257,7 +251,6 @@ namespace Ginger.BusinessFlowPages
         {
             if (mVariabelsParent != parent)
             {
-                //ClearListViewBindings();
                 mVariabelsParent = parent;
                 mVariablesLevel = GetVariablesLevel();                
                 SetListView();                
@@ -425,11 +418,6 @@ namespace Ginger.BusinessFlowPages
         private void xAutoValueBtn_Click(object sender, RoutedEventArgs e)
         {
             mVarBeenEdit.GenerateAutoValue();
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //ClearBindings();
         }
     }
 }

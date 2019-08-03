@@ -312,30 +312,17 @@ namespace Ginger
             else
             {
                 // clear frame history
+                Frame.Content = null;
                 var entry = Frame.RemoveBackEntry();
                 while (entry != null)
                 {
                     entry = Frame.RemoveBackEntry();
-                }
-                Frame.Content = null;
-                //Frame.Unloaded += Frame_Unloaded;
-                //Frame.Navigated += Frame_Navigated;
+                }                
             }
 
             // Set the frame content
             Frame.Content = uiElemnt;
         }
-
-        //private static void Frame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        //{
-        //    ((Frame)sender).NavigationService.RemoveBackEntry();
-        //}
-
-        //private static void Frame_Unloaded(object sender, RoutedEventArgs e)
-        //{
-        //    ((Frame)sender).Content = null;
-        //    ((Frame)sender).NavigationService.RemoveBackEntry();
-        //}
 
         // ------------------------------------------------------------
         // ucGrid

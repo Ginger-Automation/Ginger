@@ -10,7 +10,6 @@
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Unloaded="Page_Unloaded"
       Title="ActivityPage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -96,7 +95,7 @@
         </Grid>
         
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
-            <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1" IsSelected="False" >
+            <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
@@ -108,7 +107,7 @@
                 <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}"/>
             </TabItem>
 
-            <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2" IsSelected="False">
+            <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
@@ -120,7 +119,7 @@
                 <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
-            <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3" IsSelected="False">
+            <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
