@@ -97,14 +97,14 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xRunOptionCombo);
             BindingOperations.ClearAllBindings(xActivityNameTxtBox);
             BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
+            xTagsViewer.ClearBinding();
             BindingOperations.ClearAllBindings(xExpectedTxt);
             BindingOperations.ClearAllBindings(xScreenTxt);
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
-            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
-            this.ClearControlsBindings();
+            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
         }
 
         private void BindControls()

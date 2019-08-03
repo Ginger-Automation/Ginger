@@ -221,10 +221,17 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
 
-            mVariabelsListView.DataSourceList = GetVariablesList();
-            if (mVariablesLevel != eVariablesLevel.Solution)
+            if (mVariabelsParent != null)
             {
-                SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
+                mVariabelsListView.DataSourceList = GetVariablesList();
+                if (mVariablesLevel != eVariablesLevel.Solution)
+                {
+                    SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
+                }
+            }
+            else
+            {
+                mVariabelsListView.DataSourceList = null;
             }
         }
 
@@ -252,11 +259,8 @@ namespace Ginger.BusinessFlowPages
             {
                 //ClearListViewBindings();
                 mVariabelsParent = parent;
-                mVariablesLevel = GetVariablesLevel();
-                if (mVariabelsParent != null)
-                {
-                    SetListView();
-                }
+                mVariablesLevel = GetVariablesLevel();                
+                SetListView();                
                 ShowHideEditPage(null);
             }
         }

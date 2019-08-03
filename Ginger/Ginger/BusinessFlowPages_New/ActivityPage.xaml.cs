@@ -102,19 +102,6 @@ namespace GingerWPF.BusinessFlowsLib
             xRunBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.Activity, "Run");
         }
 
-        public void UpdateActivity(Activity activity)
-        {
-            if (mActivity != activity)
-            {
-                ClearActivityBindings();
-                mActivity = activity;
-                if (mActivity != null)
-                {
-                    BindControlsToActivity();
-                }
-            }
-        }
-
         private void BindControlsToActivity()
         {
             if (mPageViewMode != Ginger.General.eRIPageViewMode.View)
@@ -152,6 +139,19 @@ namespace GingerWPF.BusinessFlowsLib
             if (mConfigurationsPage != null && xConfigurationsTab.IsSelected)
             {
                 mConfigurationsPage.UpdateActivity(mActivity);
+            }
+        }
+
+        public void UpdateActivity(Activity activity)
+        {
+            if (mActivity != activity)
+            {
+                ClearActivityBindings();
+                mActivity = activity;
+                if (mActivity != null)
+                {
+                    BindControlsToActivity();
+                }
             }
         }
 
@@ -293,15 +293,22 @@ namespace GingerWPF.BusinessFlowsLib
                         //Application info
                         if (!string.IsNullOrEmpty(mActivity.Description))
                         {
-                            xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                            if (mActivity.Description.Length > 100)
+                            {
+                                xDescTextBlockHelper.AddText("Description: " + mActivity.Description.Substring(0,99) + "...");
+                            }
+                            else
+                            {
+                                xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                            }
                             xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
                             xDescTextBlockHelper.AddLineBreak();
                         }
-                        if (!string.IsNullOrEmpty(mActivity.RunDescription))
-                        {
-                            xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
-                            xDescTextBlockHelper.AddLineBreak();
-                        }
+                        //if (!string.IsNullOrEmpty(mActivity.RunDescription))
+                        //{
+                        //    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
+                        //    xDescTextBlockHelper.AddLineBreak();
+                        //}
                         if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
                         {
                             xDescTextBlockHelper.AddText("Parent Group: " + mActivity.ActivitiesGroupID);

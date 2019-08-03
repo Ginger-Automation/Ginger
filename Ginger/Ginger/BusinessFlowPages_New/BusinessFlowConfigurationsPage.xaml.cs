@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -133,11 +134,26 @@ namespace GingerWPF.BusinessFlowsLib
             xTargetsListBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 
+        private void ClearBindings()
+        {
+            BindingOperations.ClearAllBindings(xNameTxtBox);
+            BindingOperations.ClearAllBindings(xDescriptionTxt);
+            xTagsViewer.ClearBinding();
+            BindingOperations.ClearAllBindings(xStatusComboBox);
+            BindingOperations.ClearAllBindings(xCreatedByTextBox);
+            BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
+            BindingOperations.ClearAllBindings(xTargetsListBox);
+        }
+
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
-            mBusinessFlow = updateBusinessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
-            BindControls();
+            if (mBusinessFlow != updateBusinessFlow)
+            {
+                ClearBindings();
+                mBusinessFlow = updateBusinessFlow;
+                mContext.BusinessFlow = mBusinessFlow;
+                BindControls();
+            }
         }
 
         private void AddPlatformButton_Click(object sender, RoutedEventArgs e)

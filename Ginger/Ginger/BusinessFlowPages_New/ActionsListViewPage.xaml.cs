@@ -182,8 +182,15 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
 
-            mActionsListView.DataSourceList = mActivity.Acts;
-            SetSharedRepositoryMark();
+            if (mActivity != null)
+            {
+                mActionsListView.DataSourceList = mActivity.Acts;
+                SetSharedRepositoryMark();
+            }
+            else
+            {
+                mActionsListView.DataSourceList = null;
+            }
         }
 
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -210,10 +217,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 //ClearListViewBindings();
                 mActivity = activity;
-                if (mActivity != null)
-                {
-                    SetListView();
-                }               
+                SetListView();
                 ShowHideEditPage(null);
             }
         }
