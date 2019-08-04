@@ -101,7 +101,6 @@ namespace Ginger
             //mItemTags = new ObservableList<object>(itemTags.Cast<object>());
             mItemTagsGUID = itemTags;
 
-
             BaseInit(fullTagsList);
         }
 
@@ -317,6 +316,24 @@ namespace Ginger
 
             //refresh combo
             xTagsComboBox.Items.Refresh();
+        }
+
+        public void ClearBinding()
+        {
+            if (mFullTagsList != null)
+            {
+                mFullTagsList.CollectionChanged -= mFullTagsList_CollectionChanged;
+                mFullTagsList = null;
+            }
+
+            if (mItemTagsGUID != null)
+            {
+                mItemTagsGUID.CollectionChanged -= MItemTags_CollectionChanged;
+            }
+            if (mItemTagsKey != null)
+            {
+                mItemTagsKey.CollectionChanged -= MItemTags_CollectionChanged;
+            }
         }
 
 

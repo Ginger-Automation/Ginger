@@ -72,7 +72,6 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetListView();
-            SetSharedRepositoryMark();
             ShowHideEditPage(null);
         }
 
@@ -98,7 +97,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }               
 
                 mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
-                xMainFrame.Content = mActionEditPage;
+                xMainFrame.SetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this,null);
@@ -109,7 +108,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mActionBeenEdit = null;
                 mActionEditPage = null;
-                xMainFrame.Content = mActionsListView;
+                xMainFrame.SetContent(mActionsListView);
                 if (ShiftToActionsListEvent != null)
                 {
                     ShiftToActionsListEvent.Invoke(this, null);
@@ -117,26 +116,71 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        //private void ClearListViewBindings()
+        //{
+        //    if (mActionsListHelper != null)
+        //    {
+        //        mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
+        //        mActionsListHelper = null;
+        //    }
+
+        //    if (mActionsListView != null)
+        //    {
+        //        mActionsListView.PreviewDragItem -= listActions_PreviewDragItem;
+        //        mActionsListView.ItemDropped -= listActions_ItemDropped;
+        //        mActionsListView.List.MouseDoubleClick -= ActionsListView_MouseDoubleClick;
+        //        mActionsListView.ClearBindings();
+        //        mActionsListView.DataSourceList = null;
+        //        mActionsListView = null;
+        //    }
+        //}
+
+        //public void ClearBindings()
+        //{
+        //    xMainFrame.Content = null;
+        //    xMainFrame.NavigationService.RemoveBackEntry();
+            
+        //    ClearListViewBindings();
+
+        //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+        //    BindingOperations.ClearAllBindings(xActiveBtn);
+        //    BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
+        //    this.ClearControlsBindings();
+
+        //}
+
         private void SetListView()
         {
-            mActionsListView = new UcListView();
-            mActionsListView.Title = "Actions";
-            mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+            if (mActionsListView == null)
+            {
+                mActionsListView = new UcListView();
+                mActionsListView.Title = "Actions";
+                mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
-            mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
-            mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+                mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
+                mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
+                mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
-            mActionsListView.ListSelectionMode = SelectionMode.Extended;
-            mActionsListView.DataSourceList = mActivity.Acts;
+                mActionsListView.ListSelectionMode = SelectionMode.Extended;
+                
+                mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
+                mActionsListView.ItemDropped += listActions_ItemDropped;
 
-            mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
-            mActionsListView.ItemDropped += listActions_ItemDropped;
+                mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
 
-            mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+                // Enable Virtualization for Actions ListView to improve the loading time/performance
+                mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
 
-            // Enable Virtualization for Actions ListView to improve the loading time/performance
-            mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            if (mActivity != null)
+            {
+                mActionsListView.DataSourceList = mActivity.Acts;
+                SetSharedRepositoryMark();
+            }
+            else
+            {
+                mActionsListView.DataSourceList = null;
+            }
         }
 
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -162,15 +206,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActivity != activity)
             {
                 mActivity = activity;
-                if (mActivity != null)
-                {
-                    mActionsListView.DataSourceList = mActivity.Acts;
-                    SetSharedRepositoryMark();
-                }
-                else
-                {
-                    mActionsListView.DataSourceList = null;
-                }
+                SetListView();
                 ShowHideEditPage(null);
             }
         }

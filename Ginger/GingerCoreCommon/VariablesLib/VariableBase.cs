@@ -408,7 +408,7 @@ namespace GingerCore.Variables
             set
             {
                 mLinkedVariableName = value;
-                OnPropertyChanged(nameof(LinkedVariableName));
+                OnPropertyChanged(nameof(this.LinkedVariableName));
             }
         }
 

@@ -236,7 +236,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
-            xAppsAgentsMappingFrame.Content = mApplicationAgentsMapPage;
+            xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
 
@@ -453,6 +453,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
+                        mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                         mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
@@ -514,9 +515,9 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mContext.Activity != null)
+            if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
@@ -528,8 +529,8 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity = mActivity;
             if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged += Activity_PropertyChanged;
             }
 
             UpdateContextWithActivityDependencies();
@@ -565,6 +566,7 @@ namespace GingerWPF.BusinessFlowsLib
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
+                        //GC.Collect();
                     }
                 }
                 else
@@ -576,7 +578,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xCurrentActivityLoadingIconPnl.Visibility = Visibility.Collapsed;
                 xCurrentActivityFrame.Visibility = Visibility.Visible;
-                xCurrentActivityFrame.Content = mActivityPage;
+                xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
 

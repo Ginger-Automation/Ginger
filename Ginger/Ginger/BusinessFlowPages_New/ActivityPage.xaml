@@ -94,7 +94,7 @@
             <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Right"/>
         </Grid>
         
-        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
@@ -104,7 +104,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}"/>
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
