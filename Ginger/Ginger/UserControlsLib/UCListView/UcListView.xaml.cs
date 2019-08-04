@@ -60,6 +60,8 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        NotifyCollectionChangedEventHandler CollectionChangedHandler;
+
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
@@ -157,6 +159,8 @@ namespace Ginger.UserControlsLib.UCListView
                     if (mObjList != null)
                     {
                         mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        mObjList.CollectionChanged -= CollectionChangedHandler;
+                        OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);//so all list items will release their binding
                     }
 
                     mObjList = value;
@@ -199,7 +203,8 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     mObjList.PropertyChanged += ObjListPropertyChanged;
                     BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    CollectionChangedHandler = new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    mObjList.CollectionChanged += CollectionChangedHandler;
                     UpdateTitleListCount();
                 }
             }
@@ -278,7 +283,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             });
         }
-
+        
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -416,7 +421,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void xListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mObjList.SyncCurrentItemWithViewSelectedItem)
+            if (mObjList != null && mObjList.SyncCurrentItemWithViewSelectedItem)
             {
                 SetSourceCurrentItemAsListSelectedItem();
             }
@@ -608,6 +613,35 @@ namespace Ginger.UserControlsLib.UCListView
                 xListExtraOperationsMenu.Visibility = Visibility.Collapsed;
             }
         }
+
+        //public void ClearBindings()
+        //{
+        //    if (xTagsFilter != null)
+        //    {
+        //        xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
+        //        xTagsFilter.ClearBinding();
+        //        xTagsFilter.ClearControlsBindings();
+        //        xTagsFilter = null;
+        //    }
+
+        //    if (mObjList != null)
+        //    {
+        //        mObjList.PropertyChanged -= ObjListPropertyChanged;
+        //        BindingOperations.DisableCollectionSynchronization(mObjList);
+        //        mObjList.CollectionChanged -= CollectionChangedHandler;
+        //    }
+
+        //    foreach (ucButton operation in xListOperationsPnl.Children)
+        //    {
+        //        BindingOperations.ClearAllBindings(operation);
+        //    }
+        //    foreach (MenuItem extraOperation in xListExtraOperationsMenu.Items)
+        //    {
+        //        BindingOperations.ClearAllBindings(extraOperation);
+        //    }
+        //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);
+        //    this.ClearControlsBindings();
+        //}
 
         void IDragDrop.StartDrag(DragInfo Info)
         {
@@ -921,6 +955,7 @@ namespace Ginger.UserControlsLib.UCListView
             ExpandItem,
             CollapseAllItems,
             UpdateIndex,
+            ClearBindings,
         }
 
         public eEventType EventType;
