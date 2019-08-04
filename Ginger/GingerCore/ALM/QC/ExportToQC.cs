@@ -512,7 +512,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", ex);
                 return false;
             }
         }
