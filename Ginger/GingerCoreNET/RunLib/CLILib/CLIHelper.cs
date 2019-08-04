@@ -36,9 +36,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     public class CLIHelper : INotifyPropertyChanged
-    {
-        static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
-
+    {        
         public string Solution;
         public string Env;
         public string Runset;
@@ -255,7 +253,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
             if (value == "Y")
             {
-                pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, ENCRYPTION_KEY);
+                try
+                {
+                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password", ex);
+                }
             }
 
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
@@ -264,6 +269,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
 
             WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
+            sourceControlPass = pswd;
         }
 
         internal void SourceControlProxyPort(string value)
