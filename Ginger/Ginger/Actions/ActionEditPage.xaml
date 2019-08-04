@@ -48,12 +48,16 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="187"/>
+            <RowDefinition Height="220" Name="ActionDetailsRow"/>
             <RowDefinition />
             <RowDefinition x:Name="xRunStatusRow" Height="125" />
         </Grid.RowDefinitions>
 
-        <DockPanel  x:Name="xActionsDetails" Grid.Row="0">
+        <Expander x:Name="xActionDetailsExpander" Grid.Row="0"  ExpandDirection="Down" IsExpanded="False" Expanded="xActionLogConfigExpander_Expanded" Collapsed="xActionLogConfigExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+            <Expander.Header>
+                <Label Content="Action Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
+            </Expander.Header>
+            <DockPanel  x:Name="xActionsDetails" Grid.Row="0">
             <StackPanel Orientation="Vertical" DockPanel.Dock="Top" Height="143">
                 <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Description:</Label>
@@ -62,7 +66,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition x:Name="SharedRepoInstanceUC_Col"  Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="txtDescription" Grid.Column="0" Style="{StaticResource @TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="50"></TextBox>
+                        <TextBox x:Name="txtDescription" Grid.Column="0" Style="{StaticResource @TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"></TextBox>
                         <Ginger:ucSharedRepoInstance x:Name="SharedRepoInstanceUC" Grid.Column="1" />
                     </Grid>
                 </StackPanel>
@@ -97,6 +101,7 @@
                 <CheckBox x:Name="FailIgnoreCheckBox" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="20,0,0,0" Style="{StaticResource @CheckBoxStyle}" FontSize="14" Height="18"/>
             </StackPanel>
         </DockPanel>
+        </Expander>
         <!--</Grid>-->
 
         <!--Tabs Area-->

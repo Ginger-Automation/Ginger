@@ -1706,5 +1706,15 @@ namespace Ginger.Actions
                 ((ActReturnValue)OutputValuesGrid.Grid.SelectedItem).Expected = null;
             }
         }
+
+        private void xActionLogConfigExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height = new GridLength(220);
+        }
+
+        private void xActionLogConfigExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height= new GridLength(30);
+        }
     }
 }
