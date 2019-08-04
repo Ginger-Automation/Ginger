@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
     x:Class="Ginger.ALM.QC.QCTestPlanExplorerPage" 
       mc:Ignorable="d" 
       Height="600" Width="700" Title="QC/ALM Test Plan">
@@ -12,7 +13,11 @@
         
 
         <UCTreeView:TreeView1 x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
-        <CheckBox x:Name="xCreateBusinessFlowFolder" Content="Create Business Flow Folder and Export the Activity Groups to this folder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked"/>
+        <CheckBox x:Name="xCreateBusinessFlowFolder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked">
+            <CheckBox.Content>
+                <GingerCore:ucTextDicResource Text="Create [BusinessFlow] Folder and Export the [ActivityGroups] to this folder"></GingerCore:ucTextDicResource>
+            </CheckBox.Content>
+        </CheckBox>
     </Grid>
 
 </Page>

@@ -187,7 +187,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to drop Activities Group into Sahred Repository", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to drop " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " into Sahred Repository", ex);
             }
         }
 
