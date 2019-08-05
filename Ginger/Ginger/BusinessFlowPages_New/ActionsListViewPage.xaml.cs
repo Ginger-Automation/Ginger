@@ -107,7 +107,12 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mActionBeenEdit = null;
-                mActionEditPage = null;
+                if (mActionEditPage != null)
+                {                   
+                    mActionEditPage.KeepAlive = false;
+                    mActionEditPage = null;
+                    //GC.Collect();
+                }
                 xMainFrame.SetContent(mActionsListView);
                 if (ShiftToActionsListEvent != null)
                 {
@@ -278,6 +283,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
             {
                 mActionBeenEdit.SaveBackup();
+                ShowHideEditPage(mActionBeenEdit);
             }
         }
 

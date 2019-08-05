@@ -420,7 +420,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
             {
-                if (mAction.ElementType == eElementType.MenuItem)
+                if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                 {
                     elementList.Add(new ElementConfigControl()
                     {

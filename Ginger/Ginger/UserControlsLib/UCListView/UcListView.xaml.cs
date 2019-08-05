@@ -191,6 +191,8 @@ namespace Ginger.UserControlsLib.UCListView
                             }
                         }
 
+                        //show items as collapsed
+                        mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     });
                 }

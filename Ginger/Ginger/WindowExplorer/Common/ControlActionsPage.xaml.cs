@@ -195,7 +195,8 @@ namespace Ginger.WindowExplorer
                 //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;                                        
+                actUI.ElementLocateValue = EL.LocateValue;
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, act.Value);
                 act = actUI;
             }
             else

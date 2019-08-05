@@ -58,7 +58,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 Args += string.Format(" --sourceControlType {0}" , solution.SourceControl.GetSourceControlType.ToString());
-                Args += string.Format(" --sourceControlUrl {0}" , solution.SourceControl.SourceControlURL);
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+                {
+                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    int lastSlash = modifiedURI.LastIndexOf('/');
+                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    Args += string.Format(" --sourceControlUrl {0}", modifiedURI);
+                }
+                else
+                {
+                    Args += string.Format(" --sourceControlUrl {0}", solution.SourceControl.SourceControlURL);
+                }
                 Args += string.Format(" --sourceControlUser {0}" , solution.SourceControl.SourceControlUser);
                 Args += string.Format(" --sourceControlPassword {0}" , EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass));
                 Args += string.Format(" --sourceControlPasswordEncrypted {0}" , "Y");

@@ -563,6 +563,7 @@ namespace Amdocs.Ginger.Common.UIElement
             MenuItem,
             [EnumValueDescription("Menu Bar")]
             MenuBar,
+            [EnumValueDescription("Tree View")]
             TreeView,
             Window,
             HyperLink,

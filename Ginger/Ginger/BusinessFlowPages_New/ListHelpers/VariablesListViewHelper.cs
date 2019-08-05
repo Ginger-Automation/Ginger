@@ -172,7 +172,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
             ListItemOperation resetAll = new ListItemOperation();
-            resetAll.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            resetAll.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation};
             resetAll.AutomationID = "resetAll";
             resetAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
             resetAll.Header = "Reset All " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -349,7 +349,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mVariable.SupportResetValue)
             {
                 ListItemOperation reset = new ListItemOperation();
-                reset.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                reset.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation};
                 reset.AutomationID = "reset";
                 reset.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Reset;
                 reset.Header = "Reset";
@@ -361,7 +361,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mVariable.SupportAutoValue)
             {
                 ListItemOperation autoValue = new ListItemOperation();
-                autoValue.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                autoValue.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
                 autoValue.AutomationID = "autoValue";
                 autoValue.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
                 autoValue.Header = "Generate Auto Value";
