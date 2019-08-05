@@ -13,23 +13,23 @@
 <body class="no-skin">
     <div style="background-color:#EBEFF2">
         <div style="height:50px;background-color:#AAD0EE">
-        </div>        
+        </div>
         <div id="navbar" class="navbar navbar-default">
             <div class="navbar-container" id="navbar-container">
-                <div class="navbar-header pull-left">
+                <div class="navbar-header pull-left" style="margin-top:10px">
                     {beat_logo}
                 </div>
-                <div style="float:left;display:block;width:40%">
+                <div style="float:left;display:block;width:47%">
                     {ginger_logo}
                 </div>
-                <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">                  
+                <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
                     {company_logo}
                 </div>
             </div>
         </div>
         <div class="main-container" id="main-container">
             <div class="main-content">
-                <div class="main-content-inner">                    
+                <div class="main-content-inner">
                     <div class="breadcrumbs" id="breadcrumbs">
                     </div>
                     <div class="page-content">
@@ -68,10 +68,10 @@
                                 </table>
                             </div>
                         </div>
-                    </div>                   
+                    </div>
                     <div class="page-content" style="margin-top:0 auto">
                         <div class="row">
-                            <div class="col-xs-12">                          
+                            <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="panel-heading">
@@ -84,22 +84,22 @@
                                             <table class="table table-striped table-bordered table-hover">
                                                 <thead>
                                                     <tr>
-                                                        {ActivityGroup_Headers}                                                    
+                                                        {ActivityGroup_Headers}
                                                     </tr>
                                                 </thead>
-                                                <tbody >
-                                                    <tr>                                                        
+                                                <tbody>
+                                                    <tr>
                                                         {ActivityGroup_Data}
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="page-content">
                         <div class="row">
                             <div class="col-xs-12">
@@ -138,19 +138,19 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        </div>                                       
+                                        </div>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
-                    </div>  
+                    </div>
                     <!--ActivitiesDetails_End-->
 
-                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>                  
+                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>
                 </div>
             </div>
             <div class="footer">
-                <div class="footer-inner">                  
+                <div class="footer-inner">
                     <div class="footer-content">
                     </div>
                 </div>
@@ -161,7 +161,7 @@
         </div>
         {js_path}
         <script type="text/javascript">
-            {js_to_place}
+            { js_to_place }
         </script>
         <!-- The Modal -->
         <div id="myModal" class="modal">
@@ -171,26 +171,26 @@
         </div>
 
         <script>
-    // Get the modal
-    var modal = document.getElementById('myModal');
+            // Get the modal
+            var modal = document.getElementById('myModal');
 
-    function show_modal(image_id) {
-        var img = document.getElementById(image_id);
-        var modalImg = document.getElementById("current_image_in_modal");
-        var captionText = document.getElementById("caption");
+            function show_modal(image_id) {
+                var img = document.getElementById(image_id);
+                var modalImg = document.getElementById("current_image_in_modal");
+                var captionText = document.getElementById("caption");
 
-        modal.style.display = "block";
-        modalImg.src = img.src;
-        captionText.innerHTML = img.alt;
-    }
+                modal.style.display = "block";
+                modalImg.src = img.src;
+                captionText.innerHTML = img.alt;
+            }
 
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }   
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
         </script>
 
     </div>
