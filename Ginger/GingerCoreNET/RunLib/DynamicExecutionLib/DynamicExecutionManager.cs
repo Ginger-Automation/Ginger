@@ -45,7 +45,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {                
                 dynamicExecution.SolutionDetails.SourceControlDetails = new SourceControlDetails();
                 dynamicExecution.SolutionDetails.SourceControlDetails.Type = solution.SourceControl.GetSourceControlType.ToString();
-                dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+                {
+                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    int lastSlash = modifiedURI.LastIndexOf('/');
+                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = modifiedURI;
+                }
+                else
+                {
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Url = solution.SourceControl.SourceControlURL.ToString();
+                }
                 dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
                 dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                 dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
