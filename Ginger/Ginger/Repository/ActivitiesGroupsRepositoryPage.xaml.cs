@@ -149,7 +149,7 @@ namespace Ginger.Repository
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(CollectionViewGroup)))
             {
                 // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
             }            
         }
 

@@ -75,7 +75,7 @@ namespace GingerWPF.DragDropLib
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Orange);
                     xDragOperationImage.ImageType = eImageType.Blocked;
                     break;
-                case DragInfo.eDragIcon.Copy:
+                case DragInfo.eDragIcon.Add:
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
                     xDragOperationImage.ImageType = eImageType.PlusSquare;
                     break;

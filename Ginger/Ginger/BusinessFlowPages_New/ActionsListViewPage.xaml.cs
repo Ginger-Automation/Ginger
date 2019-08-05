@@ -185,18 +185,11 @@ namespace GingerWPF.BusinessFlowsLib
                             || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
                 // OK to drop                         
-                if ((sender as DragInfo).DragSource == (sender as DragInfo).DragTarget)
-                {
-                    DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Move;
-                }
-                else
-                {
-                    DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
-                }
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
             }
             else
             {
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.DoNotDrop;
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
             }
         }
 

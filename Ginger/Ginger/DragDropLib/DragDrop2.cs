@@ -90,7 +90,7 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Copy || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
+            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
             {
                 if (sender is UcListView)
                 {

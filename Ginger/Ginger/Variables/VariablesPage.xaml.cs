@@ -87,7 +87,7 @@ namespace Ginger.Variables
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
                 // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
             }
         }
 

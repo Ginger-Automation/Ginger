@@ -78,7 +78,7 @@ namespace Ginger.Repository
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
             {
                 // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
             }
         }
 

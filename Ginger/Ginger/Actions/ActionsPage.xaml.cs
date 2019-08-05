@@ -151,7 +151,7 @@ namespace Ginger.Actions
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))            
             {
                 // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Add;
             }            
         }
 
