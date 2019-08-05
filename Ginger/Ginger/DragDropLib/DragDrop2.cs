@@ -41,7 +41,23 @@ namespace GingerWPF.DragDropLib
             _startPoint = e.GetPosition(null);            
         }
 
-      
+        /// <summary>
+        /// SetDragIcon to set an appropriate Icon for Drag Drop events
+        /// value = true : allows item to be dropped/added on the target region with "+" icon
+        /// value = false : means "Do Not Drop"
+        /// </summary>
+        /// <param name="isDraggable"></param>
+        public static void SetDragIcon(bool isDraggable)
+        {
+            if(isDraggable == true)
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+            }
+            else
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+            }
+        }
 
         public static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
         {

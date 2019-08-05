@@ -263,12 +263,13 @@ namespace Ginger.BusinessFlowPages
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
             }
             else
             {
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 

@@ -87,11 +87,6 @@ namespace GingerCore.Activities
             }
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
-
         [IsSerializedForLocalRepository]
         public ObservableList<ActivityIdentifiers> ActivitiesIdentifiers { get; set; } = new ObservableList<ActivityIdentifiers>();
 

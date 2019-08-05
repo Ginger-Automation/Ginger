@@ -77,8 +77,13 @@ namespace Ginger.Repository
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 

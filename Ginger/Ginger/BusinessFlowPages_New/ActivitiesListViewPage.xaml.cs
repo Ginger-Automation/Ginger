@@ -104,7 +104,7 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-            private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
+        private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
@@ -136,11 +136,12 @@ namespace Ginger.BusinessFlowPages
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
                 // OK to drop
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                DragDrop2.SetDragIcon(true);
             }
             else
             {
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 

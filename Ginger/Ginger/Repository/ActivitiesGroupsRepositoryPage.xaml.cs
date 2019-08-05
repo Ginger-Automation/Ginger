@@ -148,9 +148,14 @@ namespace Ginger.Repository
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(CollectionViewGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Add;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActivitiesGroupsRepository_ItemDropped(object sender, EventArgs e)

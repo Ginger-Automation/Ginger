@@ -148,11 +148,16 @@ namespace Ginger.Actions
         // Drag Drop handlers
         private void grdActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))            
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Add;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActions_ItemDropped(object sender, EventArgs e)
