@@ -49,7 +49,6 @@ namespace Ginger.Actions.ActionConversion
             set
             {
                 mNewActivityChecked = value;
-                SameActivityChecked = !value;
             }
         }
 
@@ -64,20 +63,7 @@ namespace Ginger.Actions.ActionConversion
         public eActionConversionType ConversionType { get; set; }
 
         public object BusinessFlowFolder { get; set; }
-
-        private bool mSameActivityChecked = false;
-        public bool SameActivityChecked
-        {
-            get {
-                return mSameActivityChecked;
-            }
-            set
-            {
-                mSameActivityChecked = value;
-                NewActivityChecked = !value;
-            }
-        }
-
+        
         public bool DefaultTargetAppChecked { get; set; }
 
         public string SelectedTargetApp { get; set; }
