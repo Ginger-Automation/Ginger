@@ -365,7 +365,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_ExecutionRunning">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource $SelectionColor_LightBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -385,7 +385,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource $SelectionColor_LightBlue}" />
+                            <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
