@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
@@ -55,7 +56,7 @@ namespace Ginger.BusinessFlowWindows
                 try
                 {
                     Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Automate Page...");
                     if (WorkSpace.Instance.BetaFeatures.ShowOldAutomate)
                     {
                         if (mAutomatePage == null)
@@ -76,6 +77,7 @@ namespace Ginger.BusinessFlowWindows
                 finally
                 {
                     Mouse.OverrideCursor = null;
+                    Reporter.HideStatusMessage();
                 }
             }
             else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)

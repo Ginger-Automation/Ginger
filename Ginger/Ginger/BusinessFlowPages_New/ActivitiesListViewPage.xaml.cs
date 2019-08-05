@@ -59,7 +59,8 @@ namespace Ginger.BusinessFlowPages
             mContext = context;
             mPageViewMode = pageViewMode;
 
-            SetListView();            
+            SetListView();
+            SetListViewData();
         }
 
         /// <summary>
@@ -70,25 +71,25 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         private void SetListView()
         {
-            if (xActivitiesListView != null)
-            {
-                //List Title
-                xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
-                xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
+            //List Title
+            xActivitiesListView.Title = GingerDicser.GetTermResValue(eTermResKey.Activities);
+            xActivitiesListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Activity;
 
-                //List Items
-                ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
-                activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
-                xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
+            //List Items
+            ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
+            activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
+            xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
-                xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
-                xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
-                xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
+            xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
+            xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
+            xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
 
-                // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
-                xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
-            }
+            // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
+            xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+        }
 
+        private void SetListViewData()
+        {
             if (mBusinessFlow != null)
             {
                 //List Data
@@ -103,7 +104,7 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
+            private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
@@ -185,7 +186,7 @@ namespace Ginger.BusinessFlowPages
             {
                 mBusinessFlow = updateBusinessFlow;
                 mContext.BusinessFlow = mBusinessFlow;
-                SetListView();
+                SetListViewData();
             }
         }
 

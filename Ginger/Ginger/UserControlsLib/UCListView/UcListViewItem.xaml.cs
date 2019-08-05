@@ -743,6 +743,18 @@ namespace Ginger.UserControlsLib.UCListView
         {
             ExpandItem();
         }
+
+        private void XListItemGrid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            xItemOperationsMainPnl.Visibility = Visibility.Visible;
+            xItemOperationsClm.Width = new GridLength(175);
+        }
+
+        private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
+            xItemOperationsClm.Width = new GridLength(0);
+        }
     }
 
     public class ActiveBackgroundColorConverter : IValueConverter

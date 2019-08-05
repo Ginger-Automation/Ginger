@@ -655,7 +655,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
                     xStopRunBtn.Visibility = Visibility.Visible;
-
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
                     xEnvironmentComboBox.IsEnabled = false;
                     if (mApplicationAgentsMapPage != null)
                     {
@@ -686,6 +686,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ButtonText = "Run Flow";
                     xRunFlowBtn.ToolTip = "Reset & Run Flow";
                     xRunFlowBtn.IsEnabled = true;
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
                     xStopRunBtn.Visibility = Visibility.Collapsed;
 
                     xEnvironmentComboBox.IsEnabled = true;
@@ -707,9 +708,7 @@ namespace GingerWPF.BusinessFlowsLib
                             activity.Acts.SyncViewSelectedItemWithCurrentItem = true;
                         }
                     }
-                }
-
-                xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                }                
             });
         }
 

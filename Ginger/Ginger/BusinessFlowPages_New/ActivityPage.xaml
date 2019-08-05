@@ -23,7 +23,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30"></ColumnDefinition>
                 <ColumnDefinition Width="200*"></ColumnDefinition>
-                <ColumnDefinition Width="550"></ColumnDefinition>
+                <ColumnDefinition Width="580"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Column="0" ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}">
