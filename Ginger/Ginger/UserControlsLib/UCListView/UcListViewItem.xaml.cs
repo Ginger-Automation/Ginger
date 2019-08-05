@@ -38,6 +38,13 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcListViewItem : UserControl, INotifyPropertyChanged
     {
+        //static int ListViewItemsNum = 0;
+        //static int LiveListViewItemsCounter = 0;
+        //~UcListViewItem()
+        //{
+        //    LiveListViewItemsCounter--;
+        //}
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
@@ -96,8 +103,8 @@ namespace Ginger.UserControlsLib.UCListView
             set
             {
                 SetValue(ListHelperProperty, value);               
-                ConfigItem();
-                SetViewWithHelper();
+                SetInitViewWithHelper();
+                SetItemMainView();
             }
         }
         private static void OnItemInfoPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -108,18 +115,25 @@ namespace Ginger.UserControlsLib.UCListView
                 c.ListHelper = ((IListViewHelper)e.NewValue);
             }
         }
-        public string ItemNameField { get; set; }
-        public string ItemDescriptionField { get; set; }
-        public string ItemNameExtentionField { get; set; }
-        public string ItemTagsField { get; set; }
-        public string ItemIconField { get; set; }
-        public string ItemIconTooltipField { get; set; }
-        public string ItemExecutionStatusField { get; set; }
-        public string ItemActiveField { get; set; }
+
+        string mItemNameField;
+        string mItemDescriptionField;
+        string mItemNameExtentionField;
+        string mItemTagsField;
+        string mItemIconField;
+        string mItemIconTooltipField;
+        string mItemExecutionStatusField;
+        string mItemActiveField;
+
+        bool mMainViewWasSet;
+        bool mSubViewWasSet;
 
         public UcListViewItem()
         {
             InitializeComponent();
+
+            //ListViewItemsNum++;
+            //LiveListViewItemsCounter++;
 
             SetInitView();
         }
@@ -129,7 +143,7 @@ namespace Ginger.UserControlsLib.UCListView
             CollapseItem();
         }
 
-        private void SetViewWithHelper()            
+        private void SetInitViewWithHelper()            
         {
             if (ListHelper != null)
             {
@@ -143,6 +157,119 @@ namespace Ginger.UserControlsLib.UCListView
                     ExpandItem();
                 }
             }
+        }
+
+        private void SetItemMainView()
+        {
+            if (!mMainViewWasSet)
+            {
+                mItemIconField = ListHelper.GetItemIconField();
+                mItemIconTooltipField = ListHelper.GetItemIconTooltipField();
+                mItemNameField = ListHelper.GetItemNameField();
+                mItemNameExtentionField = ListHelper.GetItemNameExtentionField();
+                mItemExecutionStatusField = ListHelper.GetItemExecutionStatusField();
+                mItemActiveField = ListHelper.GetItemActiveField();
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    if (Item is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+                        ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+                    }
+
+                    if (!string.IsNullOrEmpty(mItemIconField))
+                    {
+                        BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, mItemIconField, BindingMode: BindingMode.OneWay);
+                    }
+                    if (!string.IsNullOrEmpty(mItemIconTooltipField))
+                    {
+                        BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, mItemIconTooltipField, BindingMode: BindingMode.OneWay);
+                    }
+
+                    SetItemFullName();
+
+                    SetItemUniqueIdentifier();
+
+                    SetItemNotifications();
+
+                    if (string.IsNullOrEmpty(mItemExecutionStatusField))
+                    {
+                        xItemStatusImage.Visibility = Visibility.Collapsed;
+                        xItemStatusClm.Width = new GridLength(0);
+                    }
+                    else
+                    {
+                        BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, mItemExecutionStatusField);
+                        xItemStatusClm.Width = new GridLength(25);
+                    }
+
+                    if (!string.IsNullOrEmpty(mItemActiveField))
+                    {
+                        System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                        b.Source = Item;
+                        b.Path = new PropertyPath(mItemActiveField);
+                        b.Mode = BindingMode.OneWay;
+                        b.Converter = new ActiveBackgroundColorConverter();
+                        b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                        xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
+                    }
+                });
+            }
+
+            mMainViewWasSet = true;
+        }
+            
+
+        private void SetItemSubView()
+        {
+            if (!mSubViewWasSet)
+            {
+                mItemDescriptionField = ListHelper.GetItemDescriptionField();
+                mItemTagsField = ListHelper.GetItemTagsField();
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    SetItemDescription();
+
+                    SetItemOperations();
+
+                    SetItemExtraOperations();
+
+                    SetItemExecutionOperations();
+                });
+            }
+
+            mSubViewWasSet = true;
+        }
+
+        public void ClearBindings()
+        {
+            ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
+            ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
+            ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+
+            BindingOperations.ClearAllBindings(xItemIcon);
+            foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
+            {
+                BindingOperations.ClearAllBindings(notification);
+            }
+            BindingOperations.ClearAllBindings(xItemStatusImage);
+            BindingOperations.ClearAllBindings(xListItemGrid);
+            foreach (ucButton operation in xItemOperationsPnl.Children)
+            {
+                BindingOperations.ClearAllBindings(operation);
+            }
+            foreach (MenuItem extraOperation in xItemExtraOperationsMenu.Items)
+            {
+                BindingOperations.ClearAllBindings(extraOperation);
+            }
+            foreach (ucButton executionOperation in xItemExecutionOperationsPnl.Children)
+            {
+                BindingOperations.ClearAllBindings(executionOperation);
+            }
+
+            this.ClearControlsBindings();
         }
 
         private void ParentList_UcListViewEvent(UcListViewEventArgs EventArgs)
@@ -167,27 +294,11 @@ namespace Ginger.UserControlsLib.UCListView
                 case UcListViewEventArgs.eEventType.UpdateIndex:
                     SetItemIndex();
                     break;
+
+                case UcListViewEventArgs.eEventType.ClearBindings:
+                    ClearBindings();
+                    break;
             }
-        }
-        public void ConfigItem()
-        {
-            ItemNameField = ListHelper.GetItemNameField();
-            ItemDescriptionField = ListHelper.GetItemDescriptionField();
-            ItemNameExtentionField = ListHelper.GetItemNameExtentionField();
-            ItemTagsField = ListHelper.GetItemTagsField();
-            ItemIconField = ListHelper.GetItemIconField();
-            ItemIconTooltipField = ListHelper.GetItemIconTooltipField();
-            ItemExecutionStatusField = ListHelper.GetItemExecutionStatusField();
-            ItemActiveField = ListHelper.GetItemActiveField();
-            this.Dispatcher.Invoke(() =>
-            {
-                SetItemUniqueIdentifier();
-                SetItemNotifications();
-                SetItemOperations();
-                SetItemExtraOperations();
-                SetItemExecutionOperations();
-                SetItemBindings();
-            });
         }
 
         private void SetItemUniqueIdentifier()
@@ -459,59 +570,14 @@ namespace Ginger.UserControlsLib.UCListView
             });
         }
 
-        private void SetItemBindings()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                if (Item is RepositoryItemBase)
-                {
-                    ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-                    ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
-                }
-                SetItemFullName();
-
-                SetItemDescription();
-
-                if (!string.IsNullOrEmpty(ItemIconField))
-                {
-                    BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageTypeProperty, Item, ItemIconField, BindingMode: BindingMode.OneWay);
-                }
-                if (!string.IsNullOrEmpty(ItemIconTooltipField))
-                {
-                    BindingHandler.ObjFieldBinding(xItemIcon, ImageMakerControl.ImageToolTipProperty, Item, ItemIconTooltipField, BindingMode: BindingMode.OneWay);
-                }
-
-                if (!string.IsNullOrEmpty(ItemActiveField))
-                {
-                    System.Windows.Data.Binding b = new System.Windows.Data.Binding();
-                    b.Source = Item;
-                    b.Path = new PropertyPath(ItemActiveField);
-                    b.Mode = BindingMode.OneWay;
-                    b.Converter = new ActiveBackgroundColorConverter();
-                    b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                    xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
-                }
-
-                if (string.IsNullOrEmpty(ItemExecutionStatusField))
-                {
-                    xItemStatusImage.Visibility = Visibility.Collapsed;
-                    xItemStatusClm.Width = new GridLength(0);
-                }
-                else
-                {
-                    BindingHandler.ObjFieldBinding(xItemStatusImage, UcItemExecutionStatus.StatusProperty, Item, ItemExecutionStatusField);
-                    xItemStatusClm.Width = new GridLength(25);
-                }
-            });
-        }
 
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == ItemNameField || e.PropertyName == ItemNameExtentionField)
+            if (e.PropertyName == mItemNameField || e.PropertyName == mItemNameExtentionField)
             {
                 SetItemFullName();
             }
-            else if (e.PropertyName == ItemDescriptionField || e.PropertyName == ItemTagsField)
+            else if (e.PropertyName == mItemDescriptionField || e.PropertyName == mItemTagsField)
             {
                 SetItemDescription();
             }
@@ -541,6 +607,7 @@ namespace Ginger.UserControlsLib.UCListView
                     xExtraDetailsRow.Height = new GridLength(25);
                     xExpandCollapseBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Collapse;
                     xExpandCollapseBtn.ToolTip = "Collapse";
+                    SetItemSubView();
                 });
         }
 
@@ -600,9 +667,9 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xItemNameTxtBlock.Text = string.Empty;
                     string fullname = string.Empty;
-                    if (!string.IsNullOrEmpty(ItemNameField))
+                    if (!string.IsNullOrEmpty(mItemNameField))
                     {
-                        Object name = Item.GetType().GetProperty(ItemNameField).GetValue(Item);
+                        Object name = Item.GetType().GetProperty(mItemNameField).GetValue(Item);
                         if (name != null)
                         {
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
@@ -614,9 +681,9 @@ namespace Ginger.UserControlsLib.UCListView
                             fullname += name;
                         }
                     }
-                    if (!string.IsNullOrEmpty(ItemNameExtentionField))
+                    if (!string.IsNullOrEmpty(mItemNameExtentionField))
                     {
-                        Object group = Item.GetType().GetProperty(ItemNameExtentionField).GetValue(Item);
+                        Object group = Item.GetType().GetProperty(mItemNameExtentionField).GetValue(Item);
                         if (group != null)
                         {
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
@@ -646,18 +713,18 @@ namespace Ginger.UserControlsLib.UCListView
                 try
                 {
                     string fullDesc = string.Empty;
-                    if (!string.IsNullOrEmpty(ItemDescriptionField))
+                    if (!string.IsNullOrEmpty(mItemDescriptionField))
                     {
-                        Object desc = Item.GetType().GetProperty(ItemDescriptionField).GetValue(Item);
+                        Object desc = Item.GetType().GetProperty(mItemDescriptionField).GetValue(Item);
                         if (desc != null)
                         {
                             fullDesc += desc.ToString() + " ";
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(ItemTagsField))
+                    if (!string.IsNullOrEmpty(mItemTagsField))
                     {
-                        Object tags = Item.GetType().GetField(ItemTagsField).GetValue(Item);
+                        Object tags = Item.GetType().GetField(mItemTagsField).GetValue(Item);
                         fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";
                     }
 
@@ -675,6 +742,18 @@ namespace Ginger.UserControlsLib.UCListView
         private void XListItemGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ExpandItem();
+        }
+
+        private void XListItemGrid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            xItemOperationsMainPnl.Visibility = Visibility.Visible;
+            xItemOperationsClm.Width = new GridLength(175);
+        }
+
+        private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
+            xItemOperationsClm.Width = new GridLength(0);
         }
     }
 
