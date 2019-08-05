@@ -273,6 +273,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
             {
                 mActionBeenEdit.SaveBackup();
+                ShowHideEditPage(mActionBeenEdit);
             }
         }
 
