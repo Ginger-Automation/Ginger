@@ -21,10 +21,10 @@
         </div>
         <div id="navbar" class="navbar navbar-default">
             <div class="navbar-container" id="navbar-container">
-                <div class="navbar-header pull-left">
+                <div class="navbar-header pull-left" style="margin-top:10px">
                     {beat_logo}
                 </div>
-                <div style="float:left;display:block;width:40%">
+                <div style="float:left;display:block;width:47%">
                     {ginger_logo}
                 </div>
                 <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
@@ -44,9 +44,9 @@
                                 <a href=".\..\GingerExecutionReport.html">{Parent_RunSetReport_Name_Link}</a>
                                 <small>
                                     {Parent_RunSetReport_delimiter}
-                                    <a href=".\GingerRunnerReport.html">{Parent_GingerRunner_Name}</a>                                    
+                                    <a href=".\GingerRunnerReport.html">{Parent_GingerRunner_Name}</a>
                                 </small>
-                            </h1>                            
+                            </h1>
                             <h1 id="clsh1">
                                 Ginger Execution Report
                             </h1>
@@ -73,7 +73,7 @@
                     </div>
                     <div class="page-content" style="margin-top:0 auto">
                         <div class="row">
-                            <div class="col-xs-12">                            
+                            <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="panel-heading">
@@ -97,7 +97,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -115,11 +115,10 @@
                         </div>
                     </div>
                     <!--ApplicationAgentsMapping_End-->
-
                     <!--BusinessFlowsDetails_Start-->
                     <div class="page-content" style="margin-top:0 auto">
                         <div class="row">
-                            <div class="col-xs-12">                          
+                            <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="panel-heading">
@@ -132,7 +131,7 @@
                                             <div class="row">
                                                 <div class="percentSpace" style="position:relative;left:30%;width:70%">
                                                     <div class="col-xs-6">
-                                                        <div style='height: 150px; float:left' id="passContainer">                                                          
+                                                        <div style='height: 150px; float:left' id="passContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -142,7 +141,7 @@
                                                                 CreateChart(PassStat, 'passContainer', 'Passed', {TotalPass}, {PassPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="failContainer">                                                        
+                                                        <div style='height: 150px; float:left' id="failContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -152,7 +151,7 @@
                                                                 CreateChart(failStat, 'failContainer', 'Failed', {TotalFail},  {FailPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="stoppedContainer">                                                           
+                                                        <div style='height: 150px; float:left' id="stoppedContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -162,7 +161,7 @@
                                                                 CreateChart(StopStat, 'stoppedContainer', 'Stopped', {TotalStopped}, {StoppedPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="otherContainer">                                                            
+                                                        <div style='height: 150px; float:left' id="otherContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -188,20 +187,20 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        </div>  
-                                       
+                                        </div>
+
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </div>
                     <!--BusinessFlowsDetails_End-->
 
-                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>                  
+                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>
                 </div>
             </div>
             <div class="footer">
-                <div class="footer-inner">                  
+                <div class="footer-inner">
                     <div class="footer-content">
                     </div>
                 </div>
@@ -209,7 +208,7 @@
             <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
                 <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
             </a>
-        </div>       
+        </div>
         <!-- The Modal -->
         <div id="myModal" class="modal">
             <span class="close">&times;</span>
@@ -218,26 +217,26 @@
         </div>
 
         <script>
-    // Get the modal
-    var modal = document.getElementById('myModal');
+            // Get the modal
+            var modal = document.getElementById('myModal');
 
-    function show_modal(image_id) {
-        var img = document.getElementById(image_id);
-        var modalImg = document.getElementById("current_image_in_modal");
-        var captionText = document.getElementById("caption");
+            function show_modal(image_id) {
+                var img = document.getElementById(image_id);
+                var modalImg = document.getElementById("current_image_in_modal");
+                var captionText = document.getElementById("caption");
 
-        modal.style.display = "block";
-        modalImg.src = img.src;
-        captionText.innerHTML = img.alt;
-    }
+                modal.style.display = "block";
+                modalImg.src = img.src;
+                captionText.innerHTML = img.alt;
+            }
 
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }   
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
         </script>
 
     </div>
