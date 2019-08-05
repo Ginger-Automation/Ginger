@@ -302,7 +302,7 @@ namespace Ginger.DataSource
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
                 mDSTableDetails.DSC.DeleteAll(AllItemsList, mDSTableDetails.Name);
-                RefreshGrid();
+                //RefreshGrid();
             }            
         }
         private void DuplicateRow(object sender, RoutedEventArgs e)
