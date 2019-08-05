@@ -91,6 +91,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        string mTestArtifactsFolder;
+        public string TestArtifactsFolder
+        {
+            get
+            {
+                return mTestArtifactsFolder;
+            }
+            set
+            {
+                mTestArtifactsFolder = value;
+                OnPropertyChanged(nameof(TestArtifactsFolder));
+            }
+        }
+
+
         RunsetExecutor mRunsetExecutor;
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
@@ -166,6 +181,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred while preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 return false;
+            }
+        }
+
+        internal void SetTestArtifactsFolder()
+        {
+            if (!string.IsNullOrEmpty(mTestArtifactsFolder))
+            {
+                WorkSpace.Instance.TestArtifactsFolder = mTestArtifactsFolder;
             }
         }
 

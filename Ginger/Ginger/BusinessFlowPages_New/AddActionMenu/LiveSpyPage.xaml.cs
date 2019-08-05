@@ -1,42 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.Common;
-using Ginger.Drivers.PowerBuilder;
 using Ginger.UserControls;
 using Ginger.WindowExplorer;
-using Ginger.WindowExplorer.Appium;
-using Ginger.WindowExplorer.HTMLCommon;
-using Ginger.WindowExplorer.Java;
-using Ginger.WindowExplorer.Windows;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Common;
-using GingerCore.Drivers.JavaDriverLib;
-using GingerCore.Drivers.PBDriver;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -47,231 +25,175 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         bool isSpying = false;
         Context mContext;
+        IWindowExplorer mDriver;
+
         System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
         ElementInfo mSpyElement;
         ITreeViewItem mCurrentControlTreeViewItem;
         Page mControlFrameContentPage = null;
         bool mFirstElementSelectionDone = false;
-        private Act mAction;        
-        IWindowExplorer mWindowExplorerDriver;
+        private Act mAction;     
+        
+        
 
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        /// <param name="context"></param>
-        public LiveSpyPage(Context context)
+        public LiveSpyPage(Context context, IWindowExplorer driver)
         {
             InitializeComponent();
+
             mContext = context;
-            xWinGridUC.mContext = mContext;
-            context.PropertyChanged += Context_PropertyChanged;
-            InitMethod();
-            AgentBasedManipulations();
-            InitWinGridUC();
+            xWindowSelectionUC.mContext = mContext;
+
+            SetDriver(driver);
+            SetSpyingControls();
             InitControlPropertiesGridView();
         }
 
-        /// <summary>
-        /// This event is used to initialise the WinGrid
-        /// </summary>
-        private void InitWinGridUC()
+        public void SetDriver(IWindowExplorer windowExplorerDriver)
         {
-            xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-            xWinGridUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
-            xWinGridUC.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
-        }
+            this.Dispatcher.Invoke(() =>
+            {
+                if (mDriver != windowExplorerDriver)
+                {
+                    mDriver = windowExplorerDriver;
+                    xWindowSelectionUC.mWindowExplorerDriver = mDriver;
+                    xWindowSelectionUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+                }
 
-        /// <summary>
-        /// This method is used to set controls to initialise or set to default
-        /// </summary>
-        private void InitMethod()
-        {
-            this.Dispatcher.Invoke(() => {
-                xWinGridUC.IsEnabled = false;
-                xSpyingButton.IsEnabled = false;
-                xStartAgentMessage.Visibility = Visibility.Visible;
-                ControlPropertiesGrid.Visibility = Visibility.Collapsed;
+                if (windowExplorerDriver == null)
+                {
+                    xWindowSelectionUC.WindowsComboBox.ItemsSource = null;
+                }
+
+                if (windowExplorerDriver != null && xWindowSelectionUC.WindowsComboBox.ItemsSource == null)
+                {
+                    xWindowSelectionUC.UpdateWindowsList();
+                }
             });
         }
 
-        void AgentBasedManipulations()
-        {
-            if (mContext.Agent != null)
-            {
-                bool isAgentRunning = mContext.Agent.Status == Agent.eStatus.Running;           //      AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-
-                if (mContext.Agent != null)
-                    mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-                if (isAgentRunning)
-                {
-                    xStartAgentMessage.Visibility = Visibility.Collapsed;
-                    xWinGridUC.IsEnabled = true;
-
-                    if (ControlPropertiesGrid.DataSourceList != null)
-                    {
-                        ControlPropertiesGrid.Visibility = Visibility.Visible;
-                    }
-
-                    if ((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem != null
-                        && !string.IsNullOrEmpty(((AppWindow)xWinGridUC.WindowsComboBox.SelectedItem).Title))
-                    {
-                        xSpyingButton.IsEnabled = true;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// This method will set the explorer page to be fit in new right panel
-        /// </summary>
-        /// <param name="windowExplorerDriver"></param>
-        public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
-        {
-            if (mWindowExplorerDriver != windowExplorerDriver)
-            {
-                mWindowExplorerDriver = windowExplorerDriver;
-                xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver; 
-            }
-            else if(windowExplorerDriver == null)
-            {
-                xWinGridUC.WindowsComboBox.ItemsSource = null;
-            }
-
-            if (windowExplorerDriver != null && xWinGridUC.WindowsComboBox.ItemsSource == null)
-            {
-                xWinGridUC.UpdateWindowsList();
-            }
-        }
-
-        /// <summary>
-        /// Context Property changed event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
-            {
-                InitMethod();
-                AgentBasedManipulations();
-                if (xWinGridUC.mWindowExplorerDriver == null)
-                {
-                    xWinGridUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                }
-            }
-        }
-
-        /// <summary>
-        /// This event is used to handle the selection event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            xStartAgentMessage.Visibility = Visibility.Collapsed;
-            xSpyingButton.IsEnabled = true;
-        }
-
-        /// <summary>
-        /// This is the event to handle the spyclick
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SpyingButton_Click(object sender, RoutedEventArgs e)
         {
-            SpyButtonClick();
-        }
-
-        /// <summary>
-        /// This method is used to perform the button click opertion
-        /// </summary>
-        private void SpyButtonClick()
-        {
-            isSpying = !isSpying;
-            UpdateUI();
-
-            if (xWinGridUC.comboBoxSelectedValue != null)
+            if (xWindowSelectionUC.SelectedWindow != null)
             {
-                if (isSpying)
-                {
-                    if (dispatcherTimer == null)
-                    {
-                        dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                        dispatcherTimer.Tick += new EventHandler(timenow);
-                        dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-                    }
+                isSpying = true;
+                SetSpyingControls();
 
-                    dispatcherTimer.IsEnabled = true;
-                }
-                else
+                if (dispatcherTimer == null)
                 {
-                    dispatcherTimer.IsEnabled = false;
+                    dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                    dispatcherTimer.Tick += new EventHandler(SpyTimerHandler);
+                    dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
                 }
+
+                dispatcherTimer.IsEnabled = true;
             }
             else
             {
-                isSpying = false;
                 Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
+                StopSpying();
             }
         }
 
-        private void UpdateUI()
+        private void xStopSpyingBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StopSpying();
+        }
+
+        private void StopSpying()
+        {
+            if (dispatcherTimer != null)
+            {
+                dispatcherTimer.IsEnabled = false;
+            }
+            isSpying = false;
+            SetSpyingControls();
+        }
+
+        private void SetSpyingControls()
         {
             if (isSpying)
             {
-                xSpyingButton.ToolTip = "Stop Spying";
-                xSpyingButton.Background = Brushes.DeepSkyBlue;
-                xSpyingButton.BorderThickness = new Thickness(2);
-                StatusTextBlock.Text = "Spying...";
+                xSpyingButton.ButtonText = "Spying...";
+                xSpyingButton.ToolTip = "Spying Window Elements";
+                xSpyingButton.ButtonImageType = eImageType.Processing;
+                xSpyingButton.IsEnabled = false;
+
+                xStatusTextBlock.Text = "Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key";
+                xStatusTextBlock.Visibility = Visibility.Visible;
+
+                xStopSpyingBtn.Visibility = Visibility.Visible;
             }
             else
             {
-                StatusTextBlock.Text = "";
+                xSpyingButton.ButtonText = "Spy";
                 xSpyingButton.ToolTip = "Start Spying";
-                xSpyingButton.Background = Brushes.Transparent;
+                xSpyingButton.ButtonImageType = eImageType.Spy;
+                xSpyingButton.IsEnabled = true;
+
+                xStatusTextBlock.Visibility = Visibility.Collapsed;
+
+                xStopSpyingBtn.Visibility = Visibility.Collapsed;
+            }
+            xSpyingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Highlighted");            
+
+            if (xControlPropertiesGrid.DataSourceList != null)
+            {
+                xControlPropertiesGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xControlPropertiesGrid.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void timenow(object sender, EventArgs e)
+        private void SpyTimerHandler(object sender, EventArgs e)
         {
-            if (xWinGridUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
-                && ((GingerCore.Drivers.SeleniumDriver)xWinGridUC.mWindowExplorerDriver).Platform == ePlatformType.Web)
+            if (mDriver != null)
             {
-                xWinGridUC.mWindowExplorerDriver.StartSpying(); 
-            }
-            // Get control info only if control key is pressed
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            {
-                StatusTextBlock.Text = "Spying Element, Please Wait...";
-                GingerCore.General.DoEvents();
-                mSpyElement = xWinGridUC.mWindowExplorerDriver.GetControlFromMousePosition();
-                if (mSpyElement != null)
+                ///?? why we have specific driver handleing?
+                //if (xWindowSelectionUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
+                //&& ((GingerCore.Drivers.SeleniumDriver)xWindowSelectionUC.mWindowExplorerDriver).Platform == ePlatformType.Web)
+                //{
+                //    xWindowSelectionUC.mWindowExplorerDriver.StartSpying();
+                //}
+
+                // Get control info only if control key is pressed
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    xWinGridUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                    StatusTextBlock.Text = mSpyElement.ElementName;
-                    mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
-                    ShowCurrentControlInfo();
-                }
-                else
-                {
-                    StatusTextBlock.Text = "Failed to spy element.";
+                    xStatusTextBlock.Text = "Element been identified, please wait...";
                     GingerCore.General.DoEvents();
+                    mSpyElement = xWindowSelectionUC.mWindowExplorerDriver.GetControlFromMousePosition();
+                    if (mSpyElement != null)
+                    {
+                        xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
+                        xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
+                        GingerCore.General.DoEvents();
+                        mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
+                        ShowCurrentControlInfo();
+                    }
+                    else
+                    {
+                        xStatusTextBlock.Text = "Failed to identify the element.";
+                        GingerCore.General.DoEvents();
+                    }
                 }
+            }
+            else
+            {
+                StopSpying();
             }
         }
 
         private void InitControlPropertiesGridView()
         {
-            // Grid View
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 8, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 20, ReadOnly = true });
 
-            ControlPropertiesGrid.SetAllColumnsDefaultView(view);
-            ControlPropertiesGrid.InitViewItems();
+            xControlPropertiesGrid.SetAllColumnsDefaultView(view);
+            xControlPropertiesGrid.InitViewItems();
         }
 
         private void ShowCurrentControlInfo()
@@ -280,10 +202,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ElementInfo EI = (ElementInfo)mCurrentControlTreeViewItem.NodeObject();
             try
             {
-                if (xWinGridUC.mWindowExplorerDriver.IsElementObjectValid(EI.ElementObject))
+                if (xWindowSelectionUC.mWindowExplorerDriver.IsElementObjectValid(EI.ElementObject))
                 {
-                    EI.WindowExplorer = xWinGridUC.mWindowExplorerDriver;
-                    xWinGridUC.mWindowExplorerDriver.HighLightElement(EI);
+                    EI.WindowExplorer = xWindowSelectionUC.mWindowExplorerDriver;
+                    xWindowSelectionUC.mWindowExplorerDriver.HighLightElement(EI);
 
                     //General tab will show the generic element info page, customized page will be in Data tab
                     mControlFrameContentPage = new ElementInfoPage(EI);
@@ -291,14 +213,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     SetDetailsExpanderDesign(true, EI);
                     if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
                     {
-                        ControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
-                        ControlPropertiesGrid.Visibility = System.Windows.Visibility.Visible;
+                        xControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Visible;
                     }
                     else
                     {
-                        ControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+                        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
                     }
-
                     ShowControlActions(mCurrentControlTreeViewItem);
                 }
                 else
@@ -308,7 +229,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in LiveSpy page ShowCurrentControlInfo", ex);
                 Reporter.ToUser(eUserMsgKey.ObjectLoad);
             }
         }
@@ -317,21 +238,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (detailsExist == false)
             {
-                SelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
-                SelectedControlDetailsExpanderLable.Content = "Selected Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
-                SelectedControlDetailsExpander.IsEnabled = false;
-                SelectedControlDetailsExpander.IsExpanded = false;
+                xSelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
+                xSelectedControlDetailsExpanderLable.Content = "Selected Element Details & Actions";
+                xSelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
+                xSelectedControlDetailsExpander.IsEnabled = false;
+                xSelectedControlDetailsExpander.IsExpanded = false;
             }
             else
             {
-                SelectedControlDetailsExpander.Visibility = Visibility.Visible;
-                SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementType + " : " + selectedElementInfo.ElementName + "' Element Details & Actions";
-                SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
-                SelectedControlDetailsExpander.IsEnabled = true;
+                xSelectedControlDetailsExpander.Visibility = Visibility.Visible;
+                xSelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementType + " : " + selectedElementInfo.ElementName + "' Element Details & Actions";
+                xSelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_DarkBlue")).ToString()); ;
+                xSelectedControlDetailsExpander.IsEnabled = true;
                 if (mFirstElementSelectionDone == false)
                 {
-                    SelectedControlDetailsExpander.IsExpanded = true;
+                    xSelectedControlDetailsExpander.IsExpanded = true;
                     mFirstElementSelectionDone = true;
                 }
             }
@@ -354,9 +275,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     ObservableList<Act> list = new ObservableList<Act>();
                     ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                    if (xWinGridUC.mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                    if (xWindowSelectionUC.mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                     {
-                        list = xWinGridUC.mPlatform.GetPlatformElementActions(EI);
+                        list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }
                     else
                     {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
@@ -373,7 +294,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     {
                         Page DataPage = mCurrentControlTreeViewItem.EditPage();
                         actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-                        CAP = new ControlActionsPage(xWinGridUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
+                        CAP = new ControlActionsPage(xWindowSelectionUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                     }
                 }
                 ControlActionsFrame.Content = CAP;
@@ -389,14 +310,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (actionsExist == false)
             {
-                ActionsTab.IsEnabled = false;
+                xActionsTab.IsEnabled = false;
                 ControlActionsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                GeneralTab.IsSelected = true;
+                xGeneralTab.IsSelected = true;
             }
             else
             {
-                ActionsTab.IsEnabled = true;
-                ActionsTab.IsSelected = true;
+                xActionsTab.IsEnabled = true;
+                xActionsTab.IsSelected = true;
                 ControlActionsFrame.Visibility = System.Windows.Visibility.Visible;
             }
         }
@@ -411,7 +332,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mControlFrameContentPage == null)
             {
-                SelectedControlDetailsExpander.IsExpanded = false;
+                xSelectedControlDetailsExpander.IsExpanded = false;
                 return;
             }
             ControlDetailsRow.Height = new GridLength(200, GridUnitType.Star);
@@ -427,5 +348,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //    ShowCurrentControlInfo();
             //}
         }
+
+
     }
 }

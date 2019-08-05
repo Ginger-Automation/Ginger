@@ -3125,6 +3125,7 @@ namespace GingerCore.Drivers
 
                     // check box handler
                     case "check box":
+                    case "tree item":
                         if (value != "Checked" && value != "Unchecked")
                         {
                             throw new Exception(
@@ -4097,6 +4098,7 @@ namespace GingerCore.Drivers
             {
                 // check box handler
                 case "check box":
+                case "tree item":
                     element.TryGetCurrentPattern(TogglePattern.Pattern, out vp);
                     ToggleState x = ((TogglePattern)vp).Current.ToggleState;
                     if (x == ToggleState.Off)

@@ -27,23 +27,31 @@ using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+
 namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level1]
-    public class RepositoryXMLConverterTest 
-    {
+    public class RepositoryXMLConverterTest
+    {                
 
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
-        {            
+        {
+            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
             WorkSpace.Init(new WorkSpaceEventHandler());                   
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanUp()
+        {
+            
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            
         }
 
         [Ignore] // need to add handle for old serializer event to handle old action 
@@ -92,8 +100,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(env.Name, "CMI IIS test server");
            Assert.AreEqual(env.Applications.Count, 2);
             //TODO: add more asserts
-    }
-
+        }
+      
 
 
     }

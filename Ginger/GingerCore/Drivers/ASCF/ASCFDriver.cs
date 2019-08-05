@@ -1067,6 +1067,11 @@ namespace GingerCore.Drivers.ASCF
             //TODO: check RC            
         }
 
+        void Amdocs.Ginger.Plugin.Core.IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         public override void StartRecording()
         {
  	        StartRecord();

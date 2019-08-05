@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers.CommunicationProtocol;
@@ -30,11 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Run;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Reflection;
 
 namespace GingerCore.Actions.Common
@@ -212,6 +207,8 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
+            [EnumValueDescription("ToggleState")]
+            ToggleState,
         }
 
         public enum eElementAction
@@ -500,6 +497,10 @@ namespace GingerCore.Actions.Common
             Submit,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript,
+            
+            //Adding For java driver checkbox element
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
@@ -697,7 +698,23 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Double Click")]
             DoubleClick,
             [EnumValueDescription("Set Focus")]
-            SetFocus
+            SetFocus,
+            [EnumValueDescription("Set Keys")]
+            SendKeys,
+            [EnumValueDescription("Is Checked")]
+            IsChecked,
+            [EnumValueDescription("Set Date")]
+            SelectDate,
+            [EnumValueDescription("Mouse Press & Release")]
+            MousePressAndRelease,
+            [EnumValueDescription("Activate Row")]
+            ActivateRow,
+            [EnumValueDescription("Is Visible")]
+            isVisible,            
+            [EnumValueDescription("Select All Rows")]
+            SelectAllRows,
+            [EnumValueDescription("Right Click")]
+            RightClick
         }
 
         // TODO: move Locate Value to here and remove from Act.cs

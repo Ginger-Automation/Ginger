@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerPluginCore;
+using GingerUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,8 +43,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            LocalHostIP = Network.GetFirstLocalHostIPAddress();
-            Console.WriteLine("Selected '" + LocalHostIP + "' as Local Host IP");
+            LocalHostIP = OSHelper.Current.GetFirstLocalHostIPAddress();
+            Console.WriteLine("Ginger local Services grid Host:IP = " + LocalHostIP);
         }
 
         

@@ -554,6 +554,7 @@ namespace GingerCore.Drivers
 
         private void SetProxy(dynamic options)
         {
+            if (mProxy == null) return;
             options.Proxy = new Proxy();
             switch (mProxy.Kind)
             {
@@ -5227,7 +5228,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {
+            {                
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5433,6 +5434,8 @@ namespace GingerCore.Drivers
                         Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
                     }
                 }
+                CurrentPageURL = string.Empty;
+                RecordingEvent = null;
             }
             catch (Exception e)
             {
@@ -5489,7 +5492,12 @@ namespace GingerCore.Drivers
             actUI.Value = configArgs.ElementValue;
             return actUI;
         }
-        
+
+        void IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         public event RecordingEventHandler RecordingEvent;
         private string CurrentPageURL = string.Empty;
 
@@ -6301,7 +6309,7 @@ namespace GingerCore.Drivers
             if (act.ElementLocateBy != eLocateBy.NA)
             {
                 e = LocateElement(act);
-                if (e == null)
+                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
                 {
                     act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
                 }
@@ -6320,14 +6328,19 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetValue:
-                        if (!string.IsNullOrEmpty(e.Text))
-                            act.AddOrUpdateReturnParamActual("Actual", e.Text);
-                        else
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                        act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
-                        act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                        if(e!=null)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                        }
+                        else
+                        {
+                            act.ExInfo += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                            act.AddOrUpdateReturnParamActual("Actual","False");
+                        }
                         break;
 
                     case ActUIElement.eElementAction.SetValue:
@@ -6581,7 +6594,7 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.SetText:
                         try
                         {
-                            e.Clear();
+                            ClearText(e);
                         }
                         finally
                         {
@@ -6632,7 +6645,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
                         break;
                     case ActUIElement.eElementAction.ClearValue:
-                        e.Clear();
+                        ClearText(e);
                         break;
                     case ActUIElement.eElementAction.GetHeight:
                         act.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
@@ -6662,6 +6675,34 @@ namespace GingerCore.Drivers
                 if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
                 {
                     Driver.SwitchTo().DefaultContent();
+                }
+            }
+        }
+
+
+        private string GetElementValue(IWebElement webElement)
+        {
+            if (!string.IsNullOrEmpty(webElement.Text))
+            {
+                return webElement.Text;
+            }
+            else
+            {
+                return webElement.GetAttribute("value");
+            }
+        }
+
+        private void ClearText(IWebElement webElement)
+        {
+            webElement.Clear();
+            string elementValue = GetElementValue(webElement);
+            if (!string.IsNullOrEmpty(elementValue))
+            {
+                int length = elementValue.Length;
+
+                for (int i = 0; i < length; i++)
+                {
+                    webElement.SendKeys(Keys.Backspace);
                 }
             }
         }

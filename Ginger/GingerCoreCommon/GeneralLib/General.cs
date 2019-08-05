@@ -17,13 +17,9 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using Amdocs.Ginger.Repository;
-using System.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -34,10 +30,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public static string LocalUserApplicationDataFolderPath
         {
             get
-            {
-                //TODO: check where it goes - not roaming,.,
+            {                
                 string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                appDataFolder = Path.Combine(appDataFolder, @"Amdocs\Ginger");    // Linux !!!!!!!!!!!!!!!!!!!!!!!!
+                appDataFolder = Path.Combine(appDataFolder, "Amdocs" + Path.DirectorySeparatorChar + "Ginger");    
 
                 if (!Directory.Exists(appDataFolder))
                 {

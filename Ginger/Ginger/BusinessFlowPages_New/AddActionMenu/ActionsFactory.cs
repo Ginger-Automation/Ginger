@@ -108,13 +108,24 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                Act instance = (Act)selectedAction.CreateCopy();
+                Act instance = null;
+
+                if (selectedAction.IsSharedRepositoryInstance || selectedAction.ContainingFolder.Contains("SharedRepository"))
+                {
+                    instance = (Act)selectedAction.CreateInstance(true);
+                }
+                else
+                {
+                    instance = (Act)selectedAction.CreateCopy();
+                }
+
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
                     eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                     if (userSelection == eUserMsgSelection.Yes)
                     {
                         instance = ((IObsoleteAction)selectedAction).GetNewAction();
+                        instance.Description = instance.ActionType;
                     }
                     else if (userSelection == eUserMsgSelection.Cancel)
                     {

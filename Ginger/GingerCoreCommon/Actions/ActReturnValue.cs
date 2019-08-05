@@ -133,27 +133,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private string mStoreToVariable = string.Empty;
-        /// <summary>
-        /// Do not use - check if can be deleted
-        /// </summary>
-        public string StoreToVariable
-        {
-            get
-            {
-                return mStoreToVariable;
-            }
-            set
-            {
-                if (value != null && value != "")
-                {
-                    mStoreTo = eStoreTo.Variable;
-                    mStoreToValue = value;
-                    OnPropertyChanged(Fields.StoreTo);
-                    OnPropertyChanged(Fields.StoreToValue);
-                }
-            }
-        }
+       
 
         private string mStoreToValue;
         [IsSerializedForLocalRepository]

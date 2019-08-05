@@ -21,7 +21,6 @@ using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -31,20 +30,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {
+    {        
+
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS("RepositorySerializerTest");            
+            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
         [TestCleanup]
@@ -52,8 +52,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         {
             
         }
-
-        [Ignore] // FIXME why we have more data what chaged?
+        
+        [Ignore] // different length on Linux Mac, Win...
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -64,34 +64,33 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             string xml = RS.SerializeToString(BF);
 
-
             /// to see the xml as file uncomment below line
             // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
+            
+            string compressed = xml.Replace(Environment.NewLine, "");  // For Linux it is one char new line
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
-            // Please double verify if the increase in size make send and is needed before changing this value of expected length
-            // Assert.AreEqual(xml.Length, 491);
-
-            Assert.AreEqual(491, xml.Length);
+            // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
+            Assert.AreEqual(780, compressed.Length);  // 776 was verified and OK on 7/13/2019  
 
             //Verify the major element of the expected xml
-            Assert.IsTrue(xml.Contains("utf-8"));
-            Assert.IsTrue(xml.Contains("<GingerRepositoryItem>"));
-            Assert.IsTrue(xml.Contains("CreatedBy"));
+            Assert.IsTrue(compressed.Contains("utf-8"));
+            Assert.IsTrue(compressed.Contains("<GingerRepositoryItem>"));
+            Assert.IsTrue(compressed.Contains("CreatedBy"));
             // Verify we get the short name: 'BusinessFlow'
             // and not 'GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib.BusinessFlow'
-            Assert.IsTrue(xml.Contains("ItemType=\"BusinessFlow\""));
+            Assert.IsTrue(compressed.Contains("ItemType=\"BusinessFlow\""));
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
-            Assert.IsTrue(xml.Contains(" Name=\"BF1"));
-            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
-            Assert.IsTrue(xml.Contains("<Activities>"));
+            Assert.IsTrue(compressed.Contains(" Name=\"BF1"));
+            Assert.IsTrue(compressed.Contains("<BusinessFlow Guid="));
+            Assert.IsTrue(compressed.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(xml.Contains("<Activity ActivityName=\"Activity 1\""));
-            Assert.IsTrue(xml.Contains("</Activities>"));
-            Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
+            Assert.IsTrue(compressed.Contains("ActivityName=\"Activity 1\""));
+            Assert.IsTrue(compressed.Contains("</Activities>"));
+            Assert.IsTrue(compressed.Contains("</BusinessFlow></GingerRepositoryItem>"));
 
         }
 
@@ -356,22 +355,24 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("meme", RAFE2.Email.MailTo);
         }
 
-        // FIXME - change the xml to new RunSet the current is very old
-        [Ignore]
-        [TestMethod]
-        [Timeout(60000)]
-        public void LoadRunSetWith5Operations()
-        {
-            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-            //Arrange
-            string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
+        //// FIXME - change the xml to new RunSet the current is very old
+        //[Ignore]
+        //[TestMethod]
+        //[Timeout(60000)]
+        //public void LoadRunSetWith5Operations()
+        //{
+        //    NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+        //    //Arrange
+        //    string FileName = TestResources.GetTestResourcesFile(@"Repository\Default Run Set.Ginger.RunSetConfig.xml");
 
-            //Act
-            RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
+        //    //Act
+        //    RunSetConfig RSC = (RunSetConfig)RepositorySerializer.DeserializeFromFile(FileName);
 
-            //Assert
-            Assert.AreEqual(5, RSC.RunSetActions.Count);
-        }
+        //    //Assert
+        //    Assert.AreEqual(5, RSC.RunSetActions.Count);
+        //}
+
+        
 
 
     }

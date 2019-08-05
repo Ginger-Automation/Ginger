@@ -33,13 +33,35 @@ namespace UnitTests.NonUITests.AutoPilot
     [TestClass]
     public class SwaggetTests
     {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext tc)
+        [ClassInitialize()]
+        public static void ClassInit(TestContext TestContext)
         {
-
+            mTestHelper.ClassInitialize(TestContext);
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            mTestHelper.ClassCleanup();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            mTestHelper.TestCleanup();
+        }
+
         [Level2]
         [TestMethod]  [Timeout(60000)]
         public void SwaggerParseCheckHeaderAndParamsCount()

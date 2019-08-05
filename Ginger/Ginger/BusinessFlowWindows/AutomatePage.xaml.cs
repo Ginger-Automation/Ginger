@@ -1119,23 +1119,15 @@ namespace Ginger
         }
 
         private void AutomateAnalyzerButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("AutomateAnalyzerButton_Click");
-
+        {            
             AnalyzerPage AP = new AnalyzerPage();
             AP.Init( WorkSpace.Instance.Solution, mBusinessFlow);
             AP.ShowAsWindow();
-
-            AutoLogProxy.UserOperationEnd();
         }
 
         private void btnActionConversion_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("btnConversionMechanism_Click");
-            
-
-            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);
-            AutoLogProxy.UserOperationEnd();
+        {            
+            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);         
         }
 
         private void btnResetFlow_Click(object sender, RoutedEventArgs e)
@@ -1156,8 +1148,7 @@ namespace Ginger
         private async Task ResetStatusRunFRomAutomateTab(Run.GingerRunner.eResetStatus resetFrom)
         {
             try
-            {
-                AutoLogProxy.UserOperationStart("ResetStatusFrom" + resetFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
+            {                
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
                 switch (resetFrom)
                 {
@@ -1173,8 +1164,7 @@ namespace Ginger
                     default:
                         throw new NotImplementedException();
                 }
-
-                AutoLogProxy.UserOperationEnd();
+                
             }
             catch (Exception ex)
             {
@@ -1247,16 +1237,10 @@ namespace Ginger
             try
             {
                 btnGridViewExecution_Click(sender, e);
-
-                DisableGridSelectedItemChangeOnClick(ActPage.grdActions);
-                AutoLogProxy.UserOperationStart("btnRunActivity_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-
+                DisableGridSelectedItemChangeOnClick(ActPage.grdActions);                
                 SetAutomateTabRunnerForExecution();
-
-                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
-                
-                RunActivity();
-                AutoLogProxy.UserOperationEnd();
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;                
+                RunActivity();                
             }
             finally
             {
@@ -1368,8 +1352,7 @@ namespace Ginger
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
                 }
                 this.Dispatcher.Invoke(() =>
-                {
-                    AutoLogProxy.UserOperationEnd();
+                {                    
                     if (ReportNeeded)
                     {
                         btnLastExecutionHTMLReport_click(this, null);
@@ -1403,16 +1386,13 @@ namespace Ginger
         {
             btnGridViewExecution_Click(null, null);//shift to execution view
 
-            AutoLogProxy.UserOperationStart(runType,  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-
             //disable grids  
             EnableDisableAutomateTabGrids(false);
 
             //execute preparations
             SetAutomateTabRunnerForExecution();
             mRunner.ResetRunnerExecutionDetails();
-            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
-            
+            mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;            
         }
 
         private void EnableDisableAutomateTabGrids(bool enableGrids)
@@ -1461,9 +1441,7 @@ namespace Ginger
 
 
         public async Task RunCurrentAutomatePageAction(bool checkIfActionAllowedToRun = true)
-        {
-            AutoLogProxy.UserOperationStart("RunActionButton_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
-
+        {            
             //TODO: Check if grid we are in execution view, no need to try and change of already in correct view
             btnGridViewExecution_Click(null, null);
 
@@ -1506,8 +1484,7 @@ namespace Ginger
                 mRunner.ExecutionLoggerManager.ActivityEnd(0, mCurrentActivity);
                 mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                 mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(runSetLiteDbId, runnerLiteDbId, mRunner);
-            }
-            AutoLogProxy.UserOperationEnd();
+            }            
         }
 
         private void StopRunButton_Click(object sender, RoutedEventArgs e)
@@ -1543,8 +1520,7 @@ namespace Ginger
             {
                 btnGridViewExecution_Click(null, null);
                 EnableDisableAutomateTabGrids(false);
-
-                AutoLogProxy.UserOperationStart("ContinuteRunFrom" + continueFrom.ToString() + "_Click",  WorkSpace.Instance.Solution.Name, GetProjEnvironmentName());
+                
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
                 switch (continueFrom)
                 {
@@ -1559,9 +1535,7 @@ namespace Ginger
                         break;
                     default:
                         throw new NotImplementedException();
-                }
-
-                AutoLogProxy.UserOperationEnd();
+                }                
             }
             catch (Exception ex)
             {
@@ -1579,9 +1553,7 @@ namespace Ginger
         }
 
         private void StartAgent_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("StartAgent_Click");
-
+        {            
             string agentsNames = mRunner.GetAgentsNameToRun();
             Reporter.ToStatus(eStatusMsgKey.StartAgents, null, agentsNames);
 
@@ -1589,8 +1561,7 @@ namespace Ginger
             SetAutomateTabRunnerForExecution();
             mRunner.StartAgents();
 
-            Reporter.HideStatusMessage();
-            AutoLogProxy.UserOperationEnd();
+            Reporter.HideStatusMessage();         
         }
 
         private void btnGridViewAll_Click(object sender, RoutedEventArgs e)

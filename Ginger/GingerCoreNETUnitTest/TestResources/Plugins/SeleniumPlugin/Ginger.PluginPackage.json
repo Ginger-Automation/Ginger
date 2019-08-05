@@ -1,0 +1,8 @@
+{
+  "Id": "SeleniumPlugin",
+  "Version": "1.0.0",
+  "ProjectUrl": "git\\Pluginex1...",
+  "Description": "Example1",
+  "Summary": "Selenium Web driver",
+  "StartupDll" :  "SeleniumPlugin.dll"
+}

@@ -24,27 +24,30 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
-{
+{    
     [Level1]
     [TestClass]
     public class RepositoryItemTest
-    {
+    {        
         static WorkSpace mWorkSpace;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {            
-            WorkspaceHelper.CreateWorkspace2("RepositoryItemTest");            
+        {
+            WorkspaceHelper.CreateWorkspace2();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
-
-        
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            
+        }
 
         [TestCleanup]
         public void TestCleanUp()
@@ -94,5 +97,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
 
         //TODO: Add more test for all RI functions
 
+
+      
     }
 }

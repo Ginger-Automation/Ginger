@@ -94,6 +94,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+            mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
+            mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
             xActionsTabFrame.Content = mActionsPage;
 
             mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
@@ -102,6 +104,22 @@ namespace GingerWPF.BusinessFlowsLib
 
             mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
             xConfigurationsFrame.Content = mConfigurationsPage;
+        }
+
+        private void MActionsPage_ShiftToActionsListEvent(object sender, RoutedEventArgs e)
+        {
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation)
+            {
+                xRunSelectedActionBtn.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MActionsPage_ShiftToActionEditEvent(object sender, RoutedEventArgs e)
+        {
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation)
+            {
+                xRunSelectedActionBtn.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateActivity(Activity activity)

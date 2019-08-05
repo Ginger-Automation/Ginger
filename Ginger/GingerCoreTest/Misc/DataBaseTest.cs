@@ -323,5 +323,44 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 
         }
+
+        [Ignore]
+        [TestMethod]
+        [Timeout(60000)]
+        public void RenameDBName()
+        {
+            //Arrange
+            ProjEnvironment projEnvironment = new ProjEnvironment();
+            projEnvironment.Name = "MongoDbApp";
+
+            EnvApplication envApplication = new EnvApplication();
+            envApplication.Name = "DB";
+
+            Database db = new Database();
+            db.Name = "MongoDb";
+            db.DBType = Database.eDBTypes.MongoDb;
+
+            envApplication.Dbs.Add(db);
+            projEnvironment.Applications.Add(envApplication);
+            mGR.ProjEnvironment = projEnvironment;
+
+            ActDBValidation actDB = new ActDBValidation();
+            actDB.DBValidationType = ActDBValidation.eDBValidationType.UpdateDB;
+
+            actDB.AppName = "DB";
+            actDB.DBName = "MongoDb";
+
+            mBF.CurrentActivity.Acts.Add(actDB);
+            mBF.CurrentActivity.Acts.CurrentItem = actDB;
+            
+            //Act            
+            db.NameBeforeEdit = actDB.DBName;
+            db.Name = "MongoDBNew";
+            //Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
+            
+            //Assert
+            Assert.AreEqual(actDB.DBName, db.Name, "Names");
+
+        }
     }
 }

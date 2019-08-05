@@ -153,11 +153,14 @@ namespace Ginger.WindowExplorer
         /// This method will set the explorer page to be fit in new right panel
         /// </summary>
         /// <param name="windowExplorerDriver"></param>
-        public void SetWindowExplorerForNewPanel(IWindowExplorer windowExplorerDriver)
+        public void SetDriver(IWindowExplorer windowExplorerDriver)
         {
-            RecordingButton.Visibility = Visibility.Collapsed;
-            mWindowExplorerDriver = windowExplorerDriver;
-            UpdateWindowsList();
+            this.Dispatcher.Invoke(() =>
+            {
+                RecordingButton.Visibility = Visibility.Collapsed;
+                mWindowExplorerDriver = windowExplorerDriver;
+                UpdateWindowsList();
+            });
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -337,35 +340,35 @@ namespace Ginger.WindowExplorer
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
-            if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
-            else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
+            //if (RefreshWindowsButtonFlag)
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
+            //else
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
-            if (AddSwitchWindowActionButtonFlag)
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
-            else
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
+            //if (AddSwitchWindowActionButtonFlag)
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
+            //else
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
 
             WindowsComboBox.IsEnabled = WindowsComboBoxFlag;
-            if (WindowsComboBoxFlag)
-            {
-                WindowsComboBox.Foreground = Brushes.Orange;
-            }
-            else
-            {
-                WindowsComboBox.Foreground = Brushes.Gray;
-            }
+            //if (WindowsComboBoxFlag)
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Orange;
+            //}
+            //else
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Gray;
+            //}
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
@@ -666,7 +669,11 @@ namespace Ginger.WindowExplorer
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
                         ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                        if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                        if (mPlatform.PlatformType() == ePlatformType.Web)
+                        {
+                            list = mPlatform.GetPlatformElementActions(EI);
+                        }
+                        else if(mPlatform.PlatformType() ==ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo)))
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
                         }

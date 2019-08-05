@@ -154,8 +154,8 @@ namespace Ginger.UserControlsLib
                 catch (Exception ex)
                 {                   
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied/cut items type and destination type is matching." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
-                    CutSourceList = null;
-                    CopiedorCutItems.Clear();                    
+                    //CutSourceList = null;
+                    //CopiedorCutItems.Clear();                    
                 }
                 finally
                 {

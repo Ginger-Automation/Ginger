@@ -417,7 +417,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return null;
         }
 
-        public List<ListItemNotification> GetItemGroupNotificationsList()
+        public List<ListItemNotification> GetItemGroupNotificationsList(string GroupName)
         {
             return null;
         }
@@ -452,7 +452,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 return;
             }
 
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll) == eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems) == eUserMsgSelection.Yes)
             {
                 List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
                 foreach (VariableBase var in SelectedItemsList)

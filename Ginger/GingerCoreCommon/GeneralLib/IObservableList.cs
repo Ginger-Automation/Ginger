@@ -50,6 +50,8 @@ namespace Amdocs.Ginger.Common
 
         bool SyncCurrentItemWithViewSelectedItem { get; set; } 
         bool SyncViewSelectedItemWithCurrentItem { get; set; } 
+
+        string FilterStringData { get; set; }
     }
 
     public enum eDirection

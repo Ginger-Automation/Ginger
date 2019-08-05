@@ -59,10 +59,13 @@
                     <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
                     <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
                     <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
                 </StackPanel>
-
-                <!--<GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>-->
-
+                
                 <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
                     <StackPanel VerticalAlignment="Center" >
@@ -70,11 +73,6 @@
                         <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                     </StackPanel>
                     <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
                     <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
                 </StackPanel>
 

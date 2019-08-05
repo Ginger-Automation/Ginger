@@ -35,20 +35,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
         }
 
-
-        //public void UpdateBusinessFlow(BusinessFlow bf)
-        //{
-        //    mBusinessFlow = bf;
-        //    if (ActionsRepoPage != null)
-        //    {
-        //        ActionsRepoPage.UpdateBusinessFlow(mBusinessFlow);
-        //    }
-        //    if (VariablesRepoPage != null)
-        //    {
-        //        VariablesRepoPage.UpdateBusinessFlow(mBusinessFlow);
-        //    }
-        //}
-
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try

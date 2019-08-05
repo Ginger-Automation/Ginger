@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -26,102 +27,114 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private bool applicationModelView;
 
         public MainAddActionsNavigationPage(Context context)
-        {
-            mContext = context;
+        {           
             InitializeComponent();
+
+            mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
+
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
-            SetRecordButtonAccessebility();
-            ToggleApplicatoinModels();
-            ToggleLiveSpyAndWindowsExplorer();
-            xApplicationModelsPnl.Visibility = Visibility.Collapsed;
-        }
 
-        private void SetRecordButtonAccessebility()
-        {
-            if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
-            {
-                xRecordItemBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xRecordItemBtn.Visibility = Visibility.Collapsed;
-            }
+            ToggleApplicatoinModels();
+            xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+            ToggleRecordLiveSpyAndExplorer();            
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null && (e.PropertyName is nameof(mContext.BusinessFlow) || e.PropertyName is nameof(mContext.Agent) || e.PropertyName == nameof(mContext.Platform)))
+            this.Dispatcher.Invoke(() =>
             {
-                SetRecordButtonAccessebility();
-                ToggleApplicatoinModels();
-                ToggleLiveSpyAndWindowsExplorer();
+                if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
+                {
+                    if (xSelectedItemFrame.Content == mRecordPage || xSelectedItemFrame.Content == mLiveSpyNavPage || xSelectedItemFrame.Content == mWindowsExplorerNavPage)
+                    {
+                        LoadActionFrame(null);
+                    }
+                    ToggleRecordLiveSpyAndExplorer();
+                }
+
                 if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
                 {
-                    LoadActionFrame(null); 
-                }                
-            }
+                    ToggleApplicatoinModels();
+                    LoadActionFrame(null);
+                }
+            });
         }
 
-        void ToggleLiveSpyAndWindowsExplorer()
+        void ToggleRecordLiveSpyAndExplorer()
         {
-            if (mContext.Agent != null && mContext.Agent.Driver != null)
+            this.Dispatcher.Invoke(() =>
             {
-                if (mContext.Agent.Driver.IsWindowExplorerSupportReady())
+                if (mContext.Agent != null && mContext.Agent.Driver != null)
                 {
-                    xWindowExplorerItemBtn.Visibility = Visibility.Visible;
+                    if (mContext.Agent.Driver is IWindowExplorer)
+                    {
+                        xWindowExplorerItemBtn.Visibility = Visibility.Visible;
+                        xLiveSpyItemBtn.Visibility = Visibility.Visible;
+                    }
+                    if (mContext.Agent.Driver is IRecord)
+                    {
+                        xRecordItemBtn.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
                     xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
+                    xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
+                    xRecordItemBtn.Visibility = Visibility.Collapsed;
                 }
-            }
+            });
         }
 
         void ToggleApplicatoinModels()
         {
-            bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
-            bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
+            this.Dispatcher.Invoke(() =>
+            {
+                bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
+                bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
 
-            if (POMCompliantPlatform)
-            {
-                xApplicationPOMItemBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xApplicationPOMItemBtn.Visibility = Visibility.Collapsed;
-            }
+                if (POMCompliantPlatform)
+                {
+                    xApplicationPOMItemBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xApplicationPOMItemBtn.Visibility = Visibility.Collapsed;
+                }
 
-            if (APICompliantPlatform)
-            {
-                xAPIBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xAPIBtn.Visibility = Visibility.Collapsed;
-            }
+                if (APICompliantPlatform)
+                {
+                    xAPIBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xAPIBtn.Visibility = Visibility.Collapsed;
+                }
 
-            if (APICompliantPlatform || POMCompliantPlatform)
-            {
-                xApplicationModelsBtn.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xApplicationModelsBtn.Visibility = Visibility.Collapsed;
-            }
-
+                if (APICompliantPlatform || POMCompliantPlatform)
+                {
+                    xApplicationModelsBtn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xApplicationModelsBtn.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         public void ResetAddActionPages()
         {
-            mRecordPage = null;
-            mSharedRepositoryNavPage = null;
-            mPOMNavPage = null;
-            mActionsLibraryNavPage = null;
-            mLiveSpyNavPage = null;
-            mWindowsExplorerNavPage = null;
-            mAPINavPage = null;
+            this.Dispatcher.Invoke(() =>
+            {
+                mRecordPage = null;
+                mSharedRepositoryNavPage = null;
+                mPOMNavPage = null;
+                mActionsLibraryNavPage = null;
+                mLiveSpyNavPage = null;
+                mWindowsExplorerNavPage = null;
+                mAPINavPage = null;
+            });
         }
 
         private void NavPnlActionFrame_ContentRendered(object sender, EventArgs e)
@@ -193,7 +206,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mLiveSpyNavPage == null)
             {
-                mLiveSpyNavPage = new LiveSpyNavPage(mContext); 
+                mLiveSpyNavPage = new LiveSpyNavPage(mContext);
             }
             LoadActionFrame(mLiveSpyNavPage, "Live Spy", eImageType.Spy);
         }
@@ -218,12 +231,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
+            if (xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
             {
                 applicationModelView = true;
                 LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
             }
-            else if(xSelectedItemFrame.Content is null)
+            else if (xSelectedItemFrame.Content is null)
             {
                 applicationModelView = false;
                 xNavigationBarPnl.Visibility = Visibility.Collapsed;
@@ -231,24 +244,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xApplicationModelsPnl.Visibility = Visibility.Collapsed;
             }
             else
+            {
                 LoadActionFrame(null);
+            }
         }
 
         private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
         {
-            xSelectedItemFrame.Content = navigationPage;
+            this.Dispatcher.Invoke(() =>
+            {
+                xSelectedItemFrame.Content = navigationPage;
 
-            if (navigationPage != null || titleImage is eImageType.ApplicationModel)
-            {
-                xNavigationBarPnl.Visibility = Visibility.Visible;
-                xSelectedItemTitlePnl.Visibility = Visibility.Visible;
-                xSelectedItemTitleImage.ImageType = titleImage;
-                xSelectedItemTitleText.Content = titleText;
-            }
-            else
-            {
-                xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
-            }
+                if (navigationPage != null || titleImage is eImageType.ApplicationModel)
+                {
+                    xNavigationBarPnl.Visibility = Visibility.Visible;
+                    xSelectedItemTitlePnl.Visibility = Visibility.Visible;
+                    xSelectedItemTitleImage.ImageType = titleImage;
+                    xSelectedItemTitleText.Content = titleText;
+                }
+                else
+                {
+                    xSelectedItemTitlePnl.Visibility = Visibility.Collapsed;
+                }
+            });
         }
 
         private void XApplicationModelsBtn_Click(object sender, RoutedEventArgs e)

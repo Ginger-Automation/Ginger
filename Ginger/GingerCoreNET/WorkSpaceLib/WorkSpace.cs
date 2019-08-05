@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -51,37 +52,87 @@ namespace amdocs.ginger.GingerCoreNET
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
-    {
-        static readonly object _locker = new object();
-
+    {        
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
             get
             {                
-                return mWorkSpace;
+                return mWorkSpace;                
             }
         }
 
+        static bool lockit;
+
+        public static void LockWS()
+        {
+            Console.WriteLine("Lock Workspace");
+            
+            Task.Factory.StartNew(() =>
+            {
+                lock (WorkSpace.Instance)
+                {                    
+                    lockit = true;
+                    while (lockit)  // TODO: add timeout max 60 seconds
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+        }
+
+        public static void RelWS()
+        {
+            lockit = false;
+            Console.WriteLine("Workspace released");
+        }
+
+
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
-            // TOOD: uncomment after unit tests fixed to lock workspace
-            //if (mWorkSpace != null)
-            //{
-            //    throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
-            //}
-
-            mWorkSpace = new WorkSpace();
+            mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
             mWorkSpace.InitLocalGrid();
-            
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
+      
+        public void CloseWorkspace()
+        {
+            try
+            {
+                CloseSolution();
+                LocalGingerGrid.Stop();
+                Close();             
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ReleaseWorkspace error - " + ex.Message);
+            }            
+        }
+
 
         public void Close()
         {
-            mWorkSpace = null;
+            AppSolutionAutoSave.SolutionAutoSaveStop();
+            if (SolutionRepository != null)
+            {
+                CloseAllRunningAgents();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+            }
+            
+            if (!RunningInExecutionMode)
+            {
+                UserProfile.GingerStatus = eGingerStatus.Closed;
+                UserProfile.SaveUserProfile();
+                AppSolutionAutoSave.CleanAutoSaveFolders();
+            }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+            WorkSpace.Instance.Telemetry.SessionEnd();
+            mWorkSpace = null;            
         }
 
         private void InitLocalGrid()
@@ -152,7 +203,7 @@ namespace amdocs.ginger.GingerCoreNET
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
             
-            if (BetaFeatures.ShowDebugConsole)
+            if (BetaFeatures.ShowDebugConsole && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 EventHandler.ShowDebugConsole(true);                
                 BetaFeatures.DisplayStatus();
@@ -175,10 +226,7 @@ namespace amdocs.ginger.GingerCoreNET
             
             Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
-            
-            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
-            AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
-            AutoLogProxy.LogAppOpened();
+                        
             CheckWebReportFolder();
         }
 
@@ -198,7 +246,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine("CheckWebReportFolder error - " + ex.Message);
             }
         }
 
@@ -210,7 +258,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("TryFolderDelete error - " + ex.Message);
             }
         }
 
@@ -319,9 +367,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;
+                Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
-
+                
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -450,16 +498,16 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             //Reset values
-            mPluginsManager = null;
+            mPluginsManager = new PluginsManager();
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;
 
             EventHandler.SolutionClosed();
-        }        
+        }
 
         public UserProfile UserProfile { get; set; }
-       
+
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
@@ -639,6 +687,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        
         bool mLoadingSolution;
         public bool LoadingSolution
         {
@@ -656,6 +705,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public Telemetry Telemetry { get; internal set; }
+        public string TestArtifactsFolder { get; internal set; }
     }
 }

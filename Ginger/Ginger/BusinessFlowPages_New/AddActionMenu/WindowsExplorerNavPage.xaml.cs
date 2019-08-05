@@ -16,16 +16,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class WindowsExplorerNavPage : Page
     {
         Context mContext;
-        IWindowExplorer mWindowExplorerDriver;
+        IWindowExplorer mDriver;
         List<AgentPageMappingHelper> mWinExplorerPageList = null;
-        WindowExplorerPage CurrentLoadedPage = null;
+        WindowExplorerPage mCurrentLoadedPage = null;
 
         public WindowsExplorerNavPage(Context context)
         {
             InitializeComponent();
+
             mContext = context;            
             context.PropertyChanged += Context_PropertyChanged;
-            SetFrameEnableDisable();
+
+            if (mContext.Agent != null)
+            {
+                mDriver = mContext.Agent.Driver as IWindowExplorer;
+            }
+            else
+            {
+                mDriver = null;
+            }
+
             LoadWindowExplorerPage();            
         }
         
@@ -36,47 +46,25 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus))
+            if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
             {
-                SetFrameEnableDisable();
-                CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
-            }
-            else if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
-            {
-                SetFrameEnableDisable();
-                LoadWindowExplorerPage();
-                CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
-            }
-        }
-
-        /// <summary>
-        /// This method will check if agent is running then it will enable the frame
-        /// </summary>
-        private void SetFrameEnableDisable()
-        {
-            bool isAgentRunning = mContext.Agent.Status == GingerCore.Agent.eStatus.Running;               //AgentHelper.CheckIfAgentIsRunning(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext, out mWindowExplorerDriver);
-
-            if (mContext.Agent != null)
-                mWindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
-
-            if (isAgentRunning)
-            {
-                xSelectedItemFrame.IsEnabled = true;
-            }
-            else
-            {
-                if (mWinExplorerPageList != null)
+                if (mContext.Agent != null)
                 {
-                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
-                                                                                            x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
-                    if (objHelper != null && objHelper.ObjectWindowPage != null)
-                    {
-                        objHelper.ObjectWindowPage = new WindowExplorerPage(AgentHelper.GetAppAgent(mContext.Activity, mContext.Runner, mContext), mContext);
-                        CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
-                        xSelectedItemFrame.Content = CurrentLoadedPage;
-                    } 
+                    mDriver = mContext.Agent.Driver as IWindowExplorer;
                 }
-                xSelectedItemFrame.IsEnabled = false;
+                else
+                {
+                    mDriver = null;
+                }
+
+                if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
+                {
+                    LoadWindowExplorerPage();
+                }
+                else
+                {
+                    mCurrentLoadedPage.SetDriver(mDriver);
+                }
             }
         }
 
@@ -86,7 +74,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <returns></returns>
         public bool DoSearchControls()
         {            
-            return CurrentLoadedPage.DoSearchControls();
+            return mCurrentLoadedPage.DoSearchControls();
         }
 
         /// <summary>
@@ -95,34 +83,37 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <returns></returns>
         private void LoadWindowExplorerPage()
         {
-            bool isLoaded = false;
-            if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType && 
-                                                                                x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
-                if (objHelper != null && objHelper.ObjectWindowPage != null)
+                bool isLoaded = false;
+                if (mWinExplorerPageList != null && mWinExplorerPageList.Count > 0)
                 {
-                    CurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
-                    isLoaded = true;
-                }
-            }
-
-            if (!isLoaded)
-            {
-                ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
-                if (appAgent != null)
-                {
-                    CurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
-                    CurrentLoadedPage.SetWindowExplorerForNewPanel(mWindowExplorerDriver);
-                    if (mWinExplorerPageList == null)
+                    AgentPageMappingHelper objHelper = mWinExplorerPageList.Where(x => x.ObjectAgent.DriverType == mContext.Agent.DriverType &&
+                                                                                    x.ObjectAgent.ItemName == mContext.Agent.ItemName).FirstOrDefault();
+                    if (objHelper != null && objHelper.ObjectWindowPage != null)
                     {
-                        mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                        mCurrentLoadedPage = (WindowExplorerPage)objHelper.ObjectWindowPage;
+                        isLoaded = true;
                     }
-                    mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, CurrentLoadedPage)); 
                 }
-            }
 
-            xSelectedItemFrame.Content = CurrentLoadedPage;
+                if (!isLoaded)
+                {
+                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+                    if (appAgent != null)
+                    {
+                        mCurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
+                        mCurrentLoadedPage.SetDriver(mDriver);
+                        if (mWinExplorerPageList == null)
+                        {
+                            mWinExplorerPageList = new List<AgentPageMappingHelper>();
+                        }
+                        mWinExplorerPageList.Add(new AgentPageMappingHelper(mContext.Agent, mCurrentLoadedPage));
+                    }
+                }
+
+                xSelectedItemFrame.Content = mCurrentLoadedPage;
+            });
         }
     }
 }

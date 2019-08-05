@@ -396,9 +396,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return executionOperationsList;
         }
 
-        public List<ListItemNotification> GetItemGroupNotificationsList()
+        public List<ListItemNotification> GetItemGroupNotificationsList(string GroupName)
         {
-            return null;
+            ActivitiesGroup group = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == GroupName).FirstOrDefault();
+            if (group != null)
+            {
+                List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+
+                ListItemNotification sharedRepoInd = new ListItemNotification();
+                sharedRepoInd.AutomationID = "sharedRepoInd";
+                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                sharedRepoInd.ImageForeground = Brushes.Orange;
+                sharedRepoInd.BindingObject = group;
+                sharedRepoInd.BindingFieldName = nameof(ActivitiesGroup.IsSharedRepositoryInstance);
+                sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(sharedRepoInd);
+
+                return notificationsList;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<ListItemGroupOperation> GetItemGroupOperationsList()
@@ -789,10 +809,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             try
             {
-                if (ClipboardOperationsHandler.CopiedorCutItems.Count > 0)
+                List<RepositoryItemBase> CopiedorCutActivities = ClipboardOperationsHandler.CopiedorCutItems.Where(x => x is Activity).ToList();
+                if (CopiedorCutActivities.Count > 0)
                 {
                     Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, string.Format("Performing paste operation for {0} items...", ClipboardOperationsHandler.CopiedorCutItems.Count));
-                    foreach (RepositoryItemBase item in ClipboardOperationsHandler.CopiedorCutItems)
+
+                    foreach (RepositoryItemBase item in CopiedorCutActivities)
                     {
                         if (item is Activity)
                         {
@@ -853,7 +875,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
                 else
                 {
-                    Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, "No items found to paste");
+                    Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, string.Format("No {0} found to paste", GingerDicser.GetTermResValue(eTermResKey.Activities)));
                 }
             }
             finally

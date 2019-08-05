@@ -1,22 +1,16 @@
-    <Page
+<Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     xmlns:Ginger="clr-namespace:Ginger"
     xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
-    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-    x:Class="Ginger.WindowExplorer.WindowExplorerPage" 
-    xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      mc:Ignorable="d" 
-      Height="700" Width="390"
-      MinHeight="100" MinWidth="390"
+    x:Class="Ginger.WindowExplorer.WindowExplorerPage"
+    mc:Ignorable="d" 
 	Title="Ginger Window Explorer">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Width="390" HorizontalAlignment="Left" >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="385"/>
-        </Grid.ColumnDefinitions>
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" >
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="30" />
             <RowDefinition Height="32"/>
@@ -30,21 +24,22 @@
         <!--Window Selection Area-->
         <Grid Grid.Row="0" x:Name="xWindowGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="28"/>
+                <ColumnDefinition Width="28"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="3,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource @InputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
-            <Button Grid.Column="2" x:Name="RefreshWindowsButton" Click="RefreshWindowsButton_Click" usercontrols:ImageMaker.Content="Refresh" Width="18" ToolTip="Refresh Windows List" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">                
-            </Button>
-            <Button Grid.Column="3" x:Name="AddSwitchWindowActionButton" Click="AddSwitchWindowActionButton_Click" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button.ToolTip>
-                    <GingerCore:ucTextDicResource Text="Add Switch Window Action to [BusinessFlow]"/>
-                </Button.ToolTip>
-                <Image Source="{StaticResource @AddToList_16x16}" Height="16" Width="16"/>
-            </Button>
+            <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}"/>
+            
+            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="0,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+                        
+            <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh"  
+                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16"  
+                               Click="RefreshWindowsButton_Click" />
+
+            <usercontrols:ucButton Grid.Column="3" x:Name="AddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="Add"  
+                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Add Switch Window Action to Flow" ButtonFontImageSize="16"  
+                               Click="AddSwitchWindowActionButton_Click" />
         </Grid>       
 
         <!--Window Operations Area-->

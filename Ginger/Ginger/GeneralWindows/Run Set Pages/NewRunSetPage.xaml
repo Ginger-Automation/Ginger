@@ -54,6 +54,11 @@
                                     <GingerCore:ucTextDicResource Text="Save [RunSet] Changes"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
+                            <usercontrols:ucButton x:Name="xUndoChangesBtn"  ButtonType="ImageButton"  ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Undo" Click="xUndoChangesBtn_Click">
+                                <usercontrols:ucButton.ToolTip>
+                                    <GingerCore:ucTextDicResource Text="Undo [RunSet] Changes"/>
+                                </usercontrols:ucButton.ToolTip>
+                            </usercontrols:ucButton>
                             <usercontrols:ucButton x:Name="xRunsetReportBtn" ButtonType="ImageButton"  ButtonFontImageSize="22" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Report" Click="xRunsetReportBtn_Click">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Generate [RunSet] Report"/>
@@ -104,18 +109,14 @@
                         </StackPanel>
 
                         <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
-                        
+
                         <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                            <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="RoundTextAndImageButton" ButtonText="Reset"
-                                       ButtonImageType="Reset"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" 
-                                       Click="xResetRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
-                            </usercontrols:ucButton>
                             <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Rest &amp; Run All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                            <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Stop All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
@@ -125,6 +126,7 @@
                                     <GingerCore:ucTextDicResource Text="Continue All Stopped Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
+                            <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="ImageButton" ButtonImageType="Reset"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" Click="xResetRunsetBtn_Click"/>
                         </StackPanel>
                     </DockPanel>
                 </DockPanel>

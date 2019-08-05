@@ -49,7 +49,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eLogLevel.ERROR, "Refresh uiElement failed - " + uiElement.GetType().Name, ex); 
             }
 
         }
@@ -210,7 +210,7 @@ namespace Ginger
 
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
         {
-            TextBox.BindControl(AIV, ActInputValue.Fields.Value);
+            TextBox.BindControl(AIV, nameof(ActInputValue.Value));
         }
 
 

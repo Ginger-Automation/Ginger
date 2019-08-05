@@ -128,20 +128,20 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
         //}
 
 
-        [Ignore]
+        
         [TestMethod]
         public void Eval21Equel1()
         {
-            //Arrange
-            // string VE = "{CS Eval=2>1;}";
-            string VE = "if (1=1) return true; else return false;";
+            //Arrange            
+            string VE = "if (1==1) return true; else return false;";
 
             //Act
             object result = mCodeProcessor.EvalExpression(VE);
 
             //assert
-            Assert.AreEqual(result.GetType(), typeof(int));
-            Assert.AreEqual(result, 2);
+            Assert.AreEqual(result.GetType(), typeof(bool));
+            Assert.AreEqual(true, result);
+            
         }
 
         

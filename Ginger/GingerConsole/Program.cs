@@ -127,6 +127,7 @@ namespace Amdocs.Ginger.GingerConsole
             Console.Out.Flush();            
             Thread.Sleep(5000);
         }
+        
 
         private static void InitWorkSpace()
         {

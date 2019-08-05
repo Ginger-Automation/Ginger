@@ -381,12 +381,31 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
+            if (e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
             {
                 if (!string.IsNullOrEmpty(mRunner.SpecificEnvironmentName))
                 {
                     xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mRunner.SpecificEnvironmentName).First());
                 }
+            }
+            //else if (e.PropertyName == nameof(GingerRunner.Status))
+            //{
+            //    if (mRunner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Started
+            //        || mRunner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running
+            //            || mRunner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Canceling)
+            //    {
+            //        mExecutionIsInProgress = true;
+            //    }
+            //    else
+            //    {
+            //        mExecutionIsInProgress = false;
+            //    }
+            //    SetUIElementsBehaverDuringExecution();
+            //}
+            else if (e.PropertyName == nameof(GingerRunner.IsRunning))
+            {
+                mExecutionIsInProgress = mRunner.IsRunning;
+                SetUIElementsBehaverDuringExecution();
             }
         }
 
@@ -711,8 +730,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mExecutionIsInProgress = false;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = false;
+                //SetUIElementsBehaverDuringExecution();
             }
         }
 
@@ -778,8 +797,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             try
             {
-                mExecutionIsInProgress = true;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = true;
+                //SetUIElementsBehaverDuringExecution();
 
                 if (AutoRunAnalyzer)
                 {
@@ -833,8 +852,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mExecutionIsInProgress = false;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = false;
+                //SetUIElementsBehaverDuringExecution();
                 mRunner.ResetFailedToStartFlagForAgents();
             }
         }
@@ -845,13 +864,13 @@ namespace GingerWPF.BusinessFlowsLib
 
             try
             {
-                mExecutionIsInProgress = true;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = true;
+                //SetUIElementsBehaverDuringExecution();
 
                 mContext.BusinessFlow.CurrentActivity = activity;
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
 
-                await mRunner.RunActivityAsync((Activity)activity, false).ConfigureAwait(false);
+                await mRunner.RunActivityAsync((Activity)activity, false, true).ConfigureAwait(false);
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
                 foreach (Act act in activity.Acts)
@@ -869,8 +888,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mExecutionIsInProgress = false;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = false;
+                //SetUIElementsBehaverDuringExecution();
             }
         }
 
@@ -894,8 +913,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             try
             {
-                mExecutionIsInProgress = true;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = true;
+                //SetUIElementsBehaverDuringExecution();
 
                 //No need of agent for actions like DB and read for excel. For other need agent  
                 Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
@@ -928,8 +947,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mExecutionIsInProgress = false;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = false;
+                //SetUIElementsBehaverDuringExecution();
             }
         }
 
@@ -939,8 +958,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             try
             {
-                mExecutionIsInProgress = true;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = true;
+                //SetUIElementsBehaverDuringExecution();
 
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun;
 
@@ -966,8 +985,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mExecutionIsInProgress = false;
-                SetUIElementsBehaverDuringExecution();
+                //mExecutionIsInProgress = false;
+                //SetUIElementsBehaverDuringExecution();
             }
         }
 

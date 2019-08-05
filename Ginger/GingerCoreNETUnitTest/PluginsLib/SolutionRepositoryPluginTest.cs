@@ -31,18 +31,17 @@ using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
-{
+{    
     [TestClass]
     [Level1]
     public class SolutionRepositoryPluginTest
-    {
-
+    {        
         static SolutionRepository SR;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {            
-            WorkspaceHelper.CreateDummyWorkSpace("SolutionRepositoryPluginTest");            
+            WorkspaceHelper.CreateDummyWorkSpace();            
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
@@ -76,7 +75,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 // proxy.Shutdown();
             }
 
-            WorkspaceHelper.ReleaseWorkspace();
+            
 
         }
 
@@ -112,20 +111,20 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //[TestMethod]  [Timeout(60000)]
         //public void GetPluginServices()        
 
-        [Ignore]
-        [TestMethod]  [Timeout(60000)]
-        public void GetPluginTextEditor()
-        {
-            //Arrange            
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\ExamplePlugin");
-            PluginPackage plugin =  new PluginPackage(pluginFolder);
+        //[Ignore]
+        //[TestMethod]  [Timeout(60000)]
+        //public void GetPluginTextEditor()
+        //{
+        //    //Arrange            
+        //    string pluginFolder = TestResources.GetTestResourcesFolder(@"PluginPackages\ExamplePlugin");
+        //    PluginPackage plugin =  new PluginPackage(pluginFolder);
 
-            // Act            
-            ObservableList<ITextEditor> list = plugin.GetTextFileEditors();
+        //    // Act            
+        //    ObservableList<ITextEditor> list = plugin.GetTextFileEditors();
 
-            //Assert                        
-            Assert.AreEqual(1, list.Count, "There are one text editor");
-        }
+        //    //Assert                        
+        //    Assert.AreEqual(1, list.Count, "There are one text editor");
+        //}
 
         [TestMethod]  [Timeout(60000)]
         public void GingerOfficePluginTestAction()
@@ -224,5 +223,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(Directory.Exists(folder));
         }
 
-    }       
+
+      
+
+    }
 }

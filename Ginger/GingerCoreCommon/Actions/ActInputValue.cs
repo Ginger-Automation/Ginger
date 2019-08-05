@@ -26,18 +26,6 @@ namespace Amdocs.Ginger.Repository
 {
     public class ActInputValue : RepositoryItemBase
     {
-        //TODO: Add Param type and valid value, if it is number , date etc... so we can have controls created for it 
-
-        public static partial class Fields
-        {
-            public static string Param = "Param";
-            public static string Value = "Value";
-            public static string ValueForDriver = "ValueForDriver";
-            public static string StoreToVariable = "StoreToVariable";
-            public static string StoreToDataSource = "StoreToDataSource";
-        }
-
-
         public static explicit operator ActInputValue(string Value)
         {
             ActInputValue AIV = new ActInputValue();
@@ -60,7 +48,7 @@ namespace Amdocs.Ginger.Repository
                 if (mValue != value)
                 {
                     mValue = value;                    
-                    OnPropertyChanged(Fields.Value);
+                    OnPropertyChanged(nameof(Value));
                 }
             }
         }
@@ -78,7 +66,7 @@ namespace Amdocs.Ginger.Repository
             set
             {
                 mValue = value.ToString();
-                OnPropertyChanged(Fields.Value);
+                OnPropertyChanged(nameof(Value));
             }
         }
 
@@ -94,7 +82,7 @@ namespace Amdocs.Ginger.Repository
             set
             {
                 mValue = value.ToString();
-                OnPropertyChanged(Fields.Value);
+                OnPropertyChanged(Value);
             }
         }
 
@@ -146,14 +134,9 @@ namespace Amdocs.Ginger.Repository
 
         private string mValueForDriver;
 
-        public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(Fields.ValueForDriver); } }
+        public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } }
 
-        //TODO: fix me soemthing wrong here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! - not needed - commented out - delete me later
-        // when delete - reading exisitng flow will not load the Value!!!!!!!!!!!!!!!! be careful
-        //private string mStoreToVariable;
-        [IsSerializedForLocalRepository]
-        public virtual string StoreToVariable { get { return mValue; } set { mValue = value; OnPropertyChanged(Fields.ValueForDriver); } }
-
+        
         public override string ItemName
         {
             get

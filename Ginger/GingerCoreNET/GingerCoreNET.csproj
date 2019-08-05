@@ -23,8 +23,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
+    <EmbeddedResource Remove="DataBaseAbstarct\**" />
     <EmbeddedResource Remove="GeneralLib\JSON\**" />
+    <None Remove="DataBaseAbstarct\**" />
     <None Remove="GeneralLib\JSON\**" />
   </ItemGroup>
 

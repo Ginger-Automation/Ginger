@@ -10,6 +10,11 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         private bool LearnAdditionalDetails { get; set; }
         public event RecordingEventHandler RecordingEvent;
 
+        void Amdocs.Ginger.Plugin.Core.IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
+        }
+
         public void StartRecording(bool learnAdditionalChanges = false)
         {
             LearnAdditionalDetails = learnAdditionalChanges;

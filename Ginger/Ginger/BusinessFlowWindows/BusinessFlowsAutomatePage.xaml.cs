@@ -56,21 +56,21 @@ namespace Ginger.BusinessFlowWindows
                 {
                     Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-                    if (WorkSpace.Instance.BetaFeatures.ShowNewautomate)
-                    {
-                        if (mNewAutomatePage == null)
-                        {
-                            mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
-                        }
-                        xContentFrame.Content = mNewAutomatePage;
-                    }
-                    else
+                    if (WorkSpace.Instance.BetaFeatures.ShowOldAutomate)
                     {
                         if (mAutomatePage == null)
                         {
                             mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
                         }
                         xContentFrame.Content = mAutomatePage;
+                    }
+                    else
+                    {
+                        if (mNewAutomatePage == null)
+                        {
+                            mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                        }
+                        xContentFrame.Content = mNewAutomatePage;
                     }
                 }
                 finally

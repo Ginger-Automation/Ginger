@@ -12,7 +12,7 @@ namespace GingerCore.GeneralLib
         #region Binding
         public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, BindingMode BindingMode = BindingMode.TwoWay)
         {
-            ObjFieldBinding(control, dependencyProperty, actInputValue, ActInputValue.Fields.Value, BindingMode);
+            ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), BindingMode);
         }
 
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
