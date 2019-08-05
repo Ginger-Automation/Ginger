@@ -33,8 +33,8 @@
             <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_LightGray}"  >
                 <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_LightGray}"
                      IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" Width="{Binding ElementName=ToolsTray,Path=ActualWidth}">
-                    <Button x:Name="btnMarkAll" ToolTip="Mark All As InActive"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
-                        <Image Source="{DynamicResource @UnCheckAllColumn_16x16.png}"/>
+                    <Button x:Name="btnMarkAll" ToolTip="Mark All As Active"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
+                        <Image Source="{DynamicResource @CheckAllColumn_16x16.png}"/>
                     </Button>
                     <Button x:Name="btnSaveAllChanges" ToolTip="Save All Changes" Click="btnSaveAllChanges_Click" Visibility="Collapsed">
                         <Image Source="{DynamicResource @SaveAll_16x16}" />
