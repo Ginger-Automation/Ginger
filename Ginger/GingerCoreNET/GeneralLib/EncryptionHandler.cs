@@ -37,7 +37,7 @@ namespace GingerCore
         private static int PASSWORD_ITERATIONS = 3; // can be any number
         private static int KEY_SIZE = 128; // can be 192 or 256
 
-        private static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//To be moved to GingerExternal DLL
+        private static readonly string ENCRYPTION_KEY = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(4)));
 
         public static string EncryptString(string strToEncrypt, ref bool result)
         {
