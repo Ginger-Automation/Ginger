@@ -262,7 +262,7 @@
                             <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_Gray}" Margin="0,0,0,0">
+                        <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
                             <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                         </Border>
 

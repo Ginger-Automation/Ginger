@@ -64,6 +64,7 @@ namespace Ginger.BusinessFlowPages
                 xRunOptionCombo.IsEnabled = false;
                 xAutomationStatusCombo.IsEnabled = false;
                 xHandlerTypeCombo.IsEnabled = false;
+                xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
             }
         }
@@ -72,7 +73,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mActivity != activity)
             {
-                RemoveBindings();
+                ClearBindings();
                 mActivity = activity;
                 if (mActivity != null)
                 {
@@ -81,18 +82,19 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void RemoveBindings()
-        {
-            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);
+        public void ClearBindings()
+        {            
+            BindingOperations.ClearAllBindings(xRunOptionCombo);
+            BindingOperations.ClearAllBindings(xActivityNameTxtBox);
+            BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
+            xTagsViewer.ClearBinding();
+            BindingOperations.ClearAllBindings(xExpectedTxt);
+            BindingOperations.ClearAllBindings(xScreenTxt);
+            BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xAutomationStatusCombo);
+            BindingOperations.ClearAllBindings(xMandatoryActivityCB);
+            BindingOperations.ClearAllBindings(xHandlerTypeCombo);
+            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
         }
 
         private void BindControls()

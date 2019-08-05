@@ -236,7 +236,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
-            xAppsAgentsMappingFrame.Content = mApplicationAgentsMapPage;
+            xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
 
@@ -453,6 +453,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
+                        mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                         mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
@@ -514,9 +515,9 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mContext.Activity != null)
+            if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
@@ -528,8 +529,8 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity = mActivity;
             if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged += Activity_PropertyChanged;
             }
 
             UpdateContextWithActivityDependencies();
@@ -565,6 +566,7 @@ namespace GingerWPF.BusinessFlowsLib
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
+                        //GC.Collect();
                     }
                 }
                 else
@@ -576,7 +578,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xCurrentActivityLoadingIconPnl.Visibility = Visibility.Collapsed;
                 xCurrentActivityFrame.Visibility = Visibility.Visible;
-                xCurrentActivityFrame.Content = mActivityPage;
+                xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
 
@@ -653,7 +655,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
                     xStopRunBtn.Visibility = Visibility.Visible;
-
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
                     xEnvironmentComboBox.IsEnabled = false;
                     if (mApplicationAgentsMapPage != null)
                     {
@@ -684,6 +686,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ButtonText = "Run Flow";
                     xRunFlowBtn.ToolTip = "Reset & Run Flow";
                     xRunFlowBtn.IsEnabled = true;
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
                     xStopRunBtn.Visibility = Visibility.Collapsed;
 
                     xEnvironmentComboBox.IsEnabled = true;
@@ -705,9 +708,7 @@ namespace GingerWPF.BusinessFlowsLib
                             activity.Acts.SyncViewSelectedItemWithCurrentItem = true;
                         }
                     }
-                }
-
-                xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                }                
             });
         }
 
@@ -1305,7 +1306,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " report", ex);
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }

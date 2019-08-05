@@ -218,7 +218,7 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_LightBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -233,7 +233,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_LightBlue}" />
                             <Setter Property="Background" Value="Transparent" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -333,7 +333,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_LightBlue}" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -343,7 +343,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $SelectionColor_LightBlue}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -353,7 +353,39 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}" />
+                            <Setter Property="Background" Value="{StaticResource $SelectionColor_LightBlue}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_ExecutionRunning">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $SelectionColor_LightBlue}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{StaticResource $SelectionColor_LightBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>

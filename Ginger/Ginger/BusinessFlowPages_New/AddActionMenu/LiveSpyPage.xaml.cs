@@ -139,7 +139,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 xStatusTextBlock.Text = "Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key";
                 xStatusTextBlock.Visibility = Visibility.Visible;
-
+                xStatusTextBlock.Foreground = (Brush)FindResource("$HighlightColor_Purple");
                 xStopSpyingBtn.Visibility = Visibility.Visible;
             }
             else
@@ -180,12 +180,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
                     xStatusTextBlock.Text = "Element been identified, please wait...";
+                    xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                     GingerCore.General.DoEvents();
                     mSpyElement = xWindowSelectionUC.mWindowExplorerDriver.GetControlFromMousePosition();
                     if (mSpyElement != null)
                     {
                         xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                         xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
+                        xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
                         GingerCore.General.DoEvents();
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
                         ShowCurrentControlInfo();
@@ -193,6 +195,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     else
                     {
                         xStatusTextBlock.Text = "Failed to identify the element.";
+                        xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
                         GingerCore.General.DoEvents();
                     }
                 }
