@@ -300,6 +300,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
                 case eElementType.TreeView:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     break;
             }
@@ -331,6 +333,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 javaPlatformElementTypelist.Add(eElementType.EditorPane);
             }
+            javaPlatformElementTypelist.Add(eElementType.TreeView);
+
             return javaPlatformElementTypelist;
         }
 
