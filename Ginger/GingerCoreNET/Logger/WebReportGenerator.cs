@@ -174,7 +174,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             {
                                 string fileName = Path.GetFileName(screenshot);
                                 string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
-                                if (File.Exists(newScreenshotPath))
+                                if (File.Exists(screenshot))
                                 {
                                     System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
                                     newScreenShotsList.Add(fileName);
