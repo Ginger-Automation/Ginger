@@ -157,8 +157,13 @@ namespace Ginger.Repository
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Add;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
