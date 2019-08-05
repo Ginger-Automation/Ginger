@@ -148,6 +148,7 @@ namespace Amdocs.Ginger.CoreNET
                         Act newAct = ((IObsoleteAction)act).GetNewAction();
                         if (newAct != null)
                         {
+                            newAct.Description = string.Format("New - {0}", newAct.Description);
                             if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
                             {
                                 bool isFound = false;

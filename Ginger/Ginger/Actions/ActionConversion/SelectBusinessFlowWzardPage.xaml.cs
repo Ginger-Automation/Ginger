@@ -172,7 +172,12 @@ namespace Ginger.Actions.ActionConversion
                 foreach (var bf in items)
                 {
                     mWizard.ListOfBusinessFlow.Add(bf);
-                }
+
+                    if (items.Count == 1)
+                    {
+                        bf.SelectedForConversion = true;
+                    }
+                }                
             }
             return mWizard.ListOfBusinessFlow;
         }
