@@ -216,7 +216,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
+      <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="Template">

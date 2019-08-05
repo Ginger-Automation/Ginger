@@ -225,8 +225,13 @@ namespace GingerWPF.BusinessFlowsLib
                         || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
                             || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 

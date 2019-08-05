@@ -163,7 +163,6 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;

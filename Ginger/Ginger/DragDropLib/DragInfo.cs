@@ -42,7 +42,7 @@ namespace GingerWPF.DragDropLib
         public enum eDragIcon
         {
             DoNotDrop,
-            Copy,
+            Add,
             Move,
             Unknown
         }
