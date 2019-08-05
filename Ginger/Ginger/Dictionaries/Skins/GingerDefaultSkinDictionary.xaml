@@ -353,7 +353,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource $SelectionColor_LightBlue}" />
+                            <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
