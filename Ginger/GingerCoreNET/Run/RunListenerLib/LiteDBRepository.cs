@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.Seq = ++this.activitySeq;
-            if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
+            if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
                 var ARToUpdate = liteDbManager.GetActivitiesLiteData().IncludeAll().Find(x => x._id == AR._id).ToList();
@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
             AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
             AGR.Seq = ++this.acgSeq;
-            if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
+            if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 AGR._id = activityGroup.LiteDbId;
             }
@@ -191,11 +191,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
-            ClearSeq();
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
+            if (liteDbBFList.Count >= context.Runner.BusinessFlows.Count)
+            {
+                liteDbBFList.RemoveRange(0, context.Runner.BusinessFlows.Count);
+            }
             if (lastBfStatus == eRunStatus.Stopped && context.BusinessFlow.RunStatus != eRunStatus.Stopped)
             {
                 BFR._id = lastBfObjId;
+                ClearSeq();
             }
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
@@ -242,6 +246,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     this.lastBfObjId = BFR._id;
+                    if (liteDbBFList.Exists(bf => bf._id == this.lastBfObjId))
+                        liteDbBFList.RemoveAll(bf => bf._id == this.lastBfObjId);
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
@@ -279,11 +285,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
-          
+
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
             runner.BusinessFlowsColl.AddRange(liteDbBFList);
-            if (lastRunnertStatus == eRunStatus.Stopped && gingerRunner.RunsetStatus != eRunStatus.Stopped&& runner.BusinessFlowsColl.Count> gingerRunner.BusinessFlows.Count)
+            if (lastRunnertStatus == eRunStatus.Stopped && gingerRunner.RunsetStatus != eRunStatus.Stopped && runner.BusinessFlowsColl.Count > gingerRunner.BusinessFlows.Count)
             {
                 runner.BusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
             }
@@ -311,6 +317,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 System.IO.Directory.Delete(runSetReport.LogFolder, true);
             }
+            ClearSeq();
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
         {
