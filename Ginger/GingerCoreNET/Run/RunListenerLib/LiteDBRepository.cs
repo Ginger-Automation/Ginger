@@ -192,6 +192,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
+            if(executedFrom==eExecutedFrom.Automation)
+                ClearSeq();
+
             if (liteDbBFList.Count >= context.Runner.BusinessFlows.Count)
             {
                 liteDbBFList.RemoveRange(0, context.Runner.BusinessFlows.Count);
