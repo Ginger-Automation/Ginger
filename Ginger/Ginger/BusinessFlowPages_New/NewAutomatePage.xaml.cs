@@ -62,6 +62,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -656,6 +657,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.IsEnabled = false;
                     xStopRunBtn.Visibility = Visibility.Visible;
                     xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
                     xEnvironmentComboBox.IsEnabled = false;
                     if (mApplicationAgentsMapPage != null)
                     {
@@ -687,6 +689,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Reset & Run Flow";
                     xRunFlowBtn.IsEnabled = true;
                     xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     xStopRunBtn.Visibility = Visibility.Collapsed;
 
                     xEnvironmentComboBox.IsEnabled = true;
@@ -1475,6 +1478,16 @@ namespace GingerWPF.BusinessFlowsLib
                     activity.Acts.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
                 }
             }
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
     }
 
