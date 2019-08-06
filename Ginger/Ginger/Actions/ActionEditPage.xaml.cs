@@ -1788,12 +1788,12 @@ namespace Ginger.Actions
             ActionLogConfigFrame.NavigationService.RemoveBackEntry();
         }
 
-        private void xActionLogConfigExpander_Expanded(object sender, RoutedEventArgs e)
+        private void xActionDetailsExpander_Expanded(object sender, RoutedEventArgs e)
         {
             ActionDetailsRow.Height = new GridLength(220);
         }
 
-        private void xActionLogConfigExpander_Collapsed(object sender, RoutedEventArgs e)
+        private void xActionDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             ActionDetailsRow.Height= new GridLength(30);
         }

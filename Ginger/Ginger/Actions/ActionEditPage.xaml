@@ -53,7 +53,7 @@
             <RowDefinition x:Name="xRunStatusRow" Height="125" />
         </Grid.RowDefinitions>
 
-        <Expander x:Name="xActionDetailsExpander" Grid.Row="0"  ExpandDirection="Down" IsExpanded="True" Expanded="xActionLogConfigExpander_Expanded" Collapsed="xActionLogConfigExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+        <Expander x:Name="xActionDetailsExpander" Grid.Row="0"  ExpandDirection="Down" IsExpanded="True" Expanded="xActionDetailsExpander_Expanded" Collapsed="xActionDetailsExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
                 <Label Content="Action Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
             </Expander.Header>
