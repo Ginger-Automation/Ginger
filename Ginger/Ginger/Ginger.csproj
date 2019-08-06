@@ -696,6 +696,7 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlugInsWindows\PluginTextEditorHelper.cs" />
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
     <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
       <DependentUpon>UserMessageBox.xaml</DependentUpon>
