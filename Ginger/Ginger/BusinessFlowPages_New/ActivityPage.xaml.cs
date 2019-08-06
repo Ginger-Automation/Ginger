@@ -20,6 +20,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
@@ -493,6 +494,16 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActivity.SaveBackup();
             }
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
     }
 }
