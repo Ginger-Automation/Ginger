@@ -554,6 +554,9 @@
     <None Update="TestResources\VariableTest\Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\XML\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\XML\XmlDoc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

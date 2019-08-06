@@ -32,6 +32,7 @@ using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests
@@ -352,6 +353,21 @@ namespace UnitTests.NonUITests
             RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
+        [TestMethod]
+        
+        public void DataSourceWhereConditionSerialisedRemovedTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+
+            string FileName = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+              
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+
+        }
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]       
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
@@ -385,7 +401,7 @@ namespace UnitTests.NonUITests
         //    RunSetActionSendFreeEmail RAFE = new RunSetActionSendFreeEmail();
         //    RAFE.Email.MailTo = "meme";
         //    RSC.RunSetActions.Add(RAFE);
-            
+
 
         //    RSC.SaveToFile(FileName);
         //    //Act
