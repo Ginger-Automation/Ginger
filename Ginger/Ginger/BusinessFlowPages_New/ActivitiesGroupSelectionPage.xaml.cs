@@ -41,6 +41,8 @@ namespace Ginger.BusinessFlowPages
 
             mBusinessFlow = businessFlow;
 
+            xAddGroupBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New");
+
             xGroupComboBox.ItemsSource = mBusinessFlow.ActivitiesGroups;
             xGroupComboBox.DisplayMemberPath = nameof(ActivitiesGroup.Name);
             if (businessFlow.ActivitiesGroups.Count > 0)
@@ -81,7 +83,7 @@ namespace Ginger.BusinessFlowPages
             winButtons.Add(selectBtn);
 
             this.Height = 200;
-            this.Width = 400;
+            this.Width = 500;
 
             GingerCore.General.LoadGenericWindow(ref mPageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
             return mSelectedAG;

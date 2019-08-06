@@ -348,5 +348,15 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mActionBeenEdit.Reset();
         }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+        }
     }
 }
