@@ -242,7 +242,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlPassword(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");//we should not show the password in log
             WorkSpace.Instance.UserProfile.SourceControlPass = value;
             sourceControlPass = value;
         }
@@ -259,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
                 }
             }
 

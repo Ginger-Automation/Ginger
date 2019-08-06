@@ -70,7 +70,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             ePlatformType platform;            
-            if ((Context.GetAsContext(mAction.Context)).BusinessFlow != null)
+            if (mAction.Context != null && (Context.GetAsContext(mAction.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
                 platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
@@ -420,7 +420,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
             {
-                if (mAction.ElementType == eElementType.MenuItem)
+                if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                 {
                     elementList.Add(new ElementConfigControl()
                     {
