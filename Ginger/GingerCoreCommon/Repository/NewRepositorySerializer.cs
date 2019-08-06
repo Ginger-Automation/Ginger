@@ -675,7 +675,25 @@ namespace Amdocs.Ginger.Repository
                 {
                     obj = targetObj;
                 }
-
+                 
+                if (obj==null)
+                {
+                    if (className == "GingerCore.DataSource.ActDSConditon")
+                    {
+                        xdr.Read();
+                        while (xdr.Depth == level + 1)
+                        {
+                           // xdr.ReadStartElement();
+                            xdr.Read();
+                            //xdr.ReadEndElement();
+                        }
+                        return null; 
+                    }
+                    else
+                    {
+                        throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                    }
+                }
                 SetObjectSerialziedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
 
@@ -690,7 +708,7 @@ namespace Amdocs.Ginger.Repository
                     MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     if (mi==null)
-                    {                        
+                    {                     
                         throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
 
@@ -779,8 +797,8 @@ namespace Amdocs.Ginger.Repository
 
                 return obj;
             }
-            
-            throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
+            return  null;
+            //throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
 
         }
 

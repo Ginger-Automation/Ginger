@@ -366,6 +366,7 @@ namespace UnitTests.NonUITests
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
+            Assert.AreEqual(businessFlow.Activities.Count, 2);
 
         }
         //[Ignore]
