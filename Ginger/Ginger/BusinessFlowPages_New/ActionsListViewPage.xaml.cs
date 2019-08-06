@@ -107,7 +107,12 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mActionBeenEdit = null;
-                mActionEditPage = null;
+                if (mActionEditPage != null)
+                {                   
+                    mActionEditPage.KeepAlive = false;
+                    mActionEditPage = null;
+                    //GC.Collect();
+                }
                 xMainFrame.SetContent(mActionsListView);
                 if (ShiftToActionsListEvent != null)
                 {
@@ -220,8 +225,13 @@ namespace GingerWPF.BusinessFlowsLib
                         || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
                             || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
@@ -273,6 +283,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
             {
                 mActionBeenEdit.SaveBackup();
+                ShowHideEditPage(mActionBeenEdit);
             }
         }
 

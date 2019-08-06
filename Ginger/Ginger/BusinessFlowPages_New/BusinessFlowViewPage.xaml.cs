@@ -119,7 +119,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivitiesPage == null)
                     {
-                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
                         mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xActivitiesTabFrame.SetContent(mActivitiesPage);
                     }
@@ -132,7 +132,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mVariabelsPage == null)
                     {
-                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
+                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
                         if (mVariabelsPage.ListView != null)
                         {
                             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
@@ -148,7 +148,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
                         xConfigurationsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else

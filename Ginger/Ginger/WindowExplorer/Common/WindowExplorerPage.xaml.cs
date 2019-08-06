@@ -146,6 +146,11 @@ namespace Ginger.WindowExplorer
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
+            if(mAction==null)
+            {
+                StepstoUpdateActionRow.Height = new GridLength(0);
+            }
+
             ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
         }
 
