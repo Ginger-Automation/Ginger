@@ -82,6 +82,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public override string ToString()
+        {
+            return DisplayName;
+        }
+
         public string FolderName
         {
             get

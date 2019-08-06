@@ -191,6 +191,8 @@ namespace Ginger.UserControlsLib.UCListView
                             }
                         }
 
+                        //show items as collapsed
+                        mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     });
                 }
@@ -704,10 +706,17 @@ namespace Ginger.UserControlsLib.UCListView
         {
             Info.DragTarget = this;
 
-            EventHandler handler = PreviewDragItem;
-            if (handler != null)
+            if (Info.DragSource == Info.DragTarget)
             {
-                handler(Info, new EventArgs());
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Move;
+            }
+            else
+            {
+                EventHandler handler = PreviewDragItem;
+                if (handler != null)
+                {
+                    handler(Info, new EventArgs());
+                }
             }
         }
 
