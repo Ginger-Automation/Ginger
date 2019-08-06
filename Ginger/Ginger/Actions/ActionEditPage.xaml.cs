@@ -1773,7 +1773,7 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(EnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(txtLocateValue);
             TagsViewer.ClearBinding();
-            this.ClearControlsBindings();
+            //this.ClearControlsBindings();
             if (mAction != null)
             {
                 mAction.PropertyChanged -= ActionPropertyChanged;
