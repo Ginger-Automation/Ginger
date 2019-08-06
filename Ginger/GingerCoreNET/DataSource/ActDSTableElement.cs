@@ -206,7 +206,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string ValueUC { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository]
         public ObservableList<ActDSConditon> WhereConditions { get;
             set; }
 
