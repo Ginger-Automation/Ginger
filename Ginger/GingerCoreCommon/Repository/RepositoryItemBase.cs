@@ -98,6 +98,10 @@ namespace Amdocs.Ginger.Repository
             return s;
         }
 
+        public override string ToString()
+        {
+            return ItemName;
+        }
 
 
         // TypeName cache

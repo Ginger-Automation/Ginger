@@ -152,9 +152,14 @@ namespace Ginger.BusinessFlowFolder
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
                  || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActivities_ItemDropped(object sender, EventArgs e)

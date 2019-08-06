@@ -41,7 +41,23 @@ namespace GingerWPF.DragDropLib
             _startPoint = e.GetPosition(null);            
         }
 
-      
+        /// <summary>
+        /// SetDragIcon to set an appropriate Icon for Drag Drop events
+        /// value = true : allows item to be dropped/added on the target region with "+" icon
+        /// value = false : means "Do Not Drop"
+        /// </summary>
+        /// <param name="isDraggable"></param>
+        public static void SetDragIcon(bool isDraggable)
+        {
+            if(isDraggable == true)
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+            }
+            else
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+            }
+        }
 
         public static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
         {
@@ -78,21 +94,32 @@ namespace GingerWPF.DragDropLib
             
             //TODO decide effects
             DragDropEffects de = DragDrop.DoDragDrop(DragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
-            
+
+            ResetDragDrop();
+        }
+
+        public static void ResetDragDrop()
+        {
             IsDragging = false;
             DDW.Hide();
         }
-        
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Copy || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
+            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
             {
                 if (sender is UcListView)
                 {
                     _DroppedPoint = e.GetPosition(sender as UcListView);
                 }
-                ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                try
+                {
+                    ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                }
+                catch(Exception ex)
+                {
+                    ResetDragDrop();
+                }
             }
         }
 

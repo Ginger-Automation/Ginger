@@ -104,7 +104,7 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-            private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
+        private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
@@ -135,8 +135,13 @@ namespace Ginger.BusinessFlowPages
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
