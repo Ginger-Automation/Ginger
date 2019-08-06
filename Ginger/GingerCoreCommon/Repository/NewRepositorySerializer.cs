@@ -669,31 +669,22 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetObj == null)
                 {
-                    obj = CreateObject(className);
+                    bool isClassToSkip = HandleClassToSkip(xdr, className);
+                    if(isClassToSkip)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        obj = CreateObject(className);
+                    }
+                    
                 }
                 else
                 {
                     obj = targetObj;
                 }
-                 
-                if (obj==null)
-                {
-                    if (className == "GingerCore.DataSource.ActDSConditon")
-                    {
-                        xdr.Read();
-                        while (xdr.Depth == level + 1)
-                        {
-                           // xdr.ReadStartElement();
-                            xdr.Read();
-                            //xdr.ReadEndElement();
-                        }
-                        return null; 
-                    }
-                    else
-                    {
-                        throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
-                    }
-                }
+
                 SetObjectSerialziedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
 
@@ -796,9 +787,8 @@ namespace Amdocs.Ginger.Repository
                 }
 
                 return obj;
-            }
-            return  null;
-            //throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
+            }            
+            throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
 
         }
 
@@ -1258,7 +1248,25 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        private static bool HandleClassToSkip(XmlReader xdr, string className)
+        {
+            //TODO: If need to add more classed then create a dictionary of Classes to Skip
+            if (className == "GingerCore.DataSource.ActDSConditon")
+            {
+                int level = xdr.Depth;
+                while (xdr.Depth == level)
+                {
+                    xdr.Skip();
+                }
 
+                if (xdr.NodeType == XmlNodeType.EndElement)
+                {
+                    xdr.ReadEndElement();
+                }
+                return true;
+            }
+            return false;
+        }
 
         //Prep if we want to switch enable JSON
         //public class JSonHelper

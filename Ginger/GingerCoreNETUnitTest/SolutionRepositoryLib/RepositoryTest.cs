@@ -355,18 +355,21 @@ namespace UnitTests.NonUITests
 
         [TestMethod]
         
-        public void DataSourceWhereConditionSerialisedRemovedTest()
+        public void SkipClassesFromDeserializeTest()
         {
             //Arrange
             //Put the BF in Test Resource
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
 
-            string FileName = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml");
               
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
-            Assert.AreEqual(businessFlow.Activities.Count, 2);
+
+            //Assert
+            Assert.AreEqual(2, businessFlow.Activities.Count, "BF Activities Count");
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count,"Activity Actions Count");
 
         }
         //[Ignore]
