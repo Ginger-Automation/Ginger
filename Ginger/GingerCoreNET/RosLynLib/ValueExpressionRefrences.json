@@ -233,7 +233,7 @@
     {
       "Category": "Regular Expressions",
       "Name": "Extract Initial Digits",
-      "Expression": "1 Pat=([\\d\\D]{2}).*$ P1=12345",
+      "Expression": "{RegEx Fun= 1 Pat=([\\d\\D]{2}).*$ P1=12345}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -243,7 +243,7 @@
     {
       "Category": "Regular Expressions",
       "Name": "Extract Last Digits",
-      "Expression": "1 Pat=.+([\\d\\D]{2})$ P1=12345",
+      "Expression": "{RegEx Fun=  1 Pat=.+([\\d\\D]{2})$ P1=12345}",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
@@ -253,7 +253,7 @@
     {
       "Category": "Regular Expressions",
       "Name": "Extract Number From Text",
-      "Expression": "matchValue Pat=\\d+ P1= aaa 123 bbb",
+      "Expression": "{RegEx Fun= matchValue Pat=\\d+ P1= aaa 123 bbb }",
       "UseCase": null,
       "Samples": [],
       "ReturnType": null,
