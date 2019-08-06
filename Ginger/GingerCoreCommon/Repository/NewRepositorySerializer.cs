@@ -669,7 +669,16 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetObj == null)
                 {
-                    obj = CreateObject(className);
+                    bool isHandled = CheckMissingClass(xdr, className);
+                    if(isHandled)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        obj = CreateObject(className);
+                    }
+                    
                 }
                 else
                 {
@@ -690,7 +699,7 @@ namespace Amdocs.Ginger.Repository
                     MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     if (mi==null)
-                    {                        
+                    {                     
                         throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
 
@@ -778,8 +787,7 @@ namespace Amdocs.Ginger.Repository
                 }
 
                 return obj;
-            }
-            
+            }            
             throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
 
         }
@@ -1240,7 +1248,32 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        private static bool CheckMissingClass(XmlReader xdr, string className)
+        {            
+            switch(className)
+            {
+                case "GingerCore.DataSource.ActDSConditon":
+                    MoveXdrToNextElement(xdr);
+                    return true;
 
+                default:
+                    return false;
+            }
+        }
+
+        private static void MoveXdrToNextElement(XmlReader xdr)
+        {
+            int level = xdr.Depth;
+            while (xdr.Depth == level)
+            {
+                xdr.Skip();
+            }
+
+            if (xdr.NodeType == XmlNodeType.EndElement)
+            {
+                xdr.ReadEndElement();
+            }
+        }
 
         //Prep if we want to switch enable JSON
         //public class JSonHelper
