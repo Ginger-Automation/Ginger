@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
@@ -32,6 +33,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -58,9 +60,15 @@ namespace Ginger.BusinessFlowPages
             mPageViewMode = pageViewMode;
 
             SetListView();
-            SetSharedRepositoryMark();
+            SetListViewData();
         }
-        
+
+        /// <summary>
+        ///             CanContentScroll = true ===> Scrolling Mode = Items and it supports Virtugalization
+        ///             CanContentScroll = false ===> Scrolling Mode = Pixels but disables Virtualization
+        ///             As we're grouping the Activities based on Activity Groups, scrolling is thus effected and ScrollingMode being Items produces messy scrolling experience
+        ///             Thus, we're disabling the ListView's ScrollViewer.CanContentScroll property as false for smooth scrolling
+        /// </summary>
         private void SetListView()
         {
             //List Title
@@ -72,14 +80,54 @@ namespace Ginger.BusinessFlowPages
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
-            //List Data
-            xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-
-            //List Grouping
-            xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
-
             xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
             xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
+            xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
+
+            // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
+            xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+        }
+
+        private void SetListViewData()
+        {
+            if (mBusinessFlow != null)
+            {
+                //List Data
+                xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+                //List Grouping
+                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
+                SetSharedRepositoryMark();
+            }
+            else
+            {
+                xActivitiesListView.DataSourceList = null;
+            }
+        }
+
+        private void ActivitiesListView_SameFrameItemDropped(object sender, EventArgs e)
+        {
+            object droppedItem = ((DragInfo)sender).Data as object;
+            if (droppedItem != null)
+            {
+                if (droppedItem is Activity)
+                {
+                    Activity draggedActivity = droppedItem as Activity;
+                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
+
+                    if (activityDroppedOn != null)
+                    {
+                        if (activityDroppedOn.ActivitiesGroupID != draggedActivity.ActivitiesGroupID)
+                        {
+                            draggedActivity.ActivitiesGroupID = activityDroppedOn.ActivitiesGroupID;
+                            ListView.UpdateGrouping();
+                        }
+                        else
+                        {
+                            DragDrop2.ShuffleControlsItems(draggedActivity, activityDroppedOn, ListView);
+                        }
+                    }
+                }
+            }
         }
 
         private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
@@ -87,8 +135,13 @@ namespace Ginger.BusinessFlowPages
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
@@ -96,28 +149,37 @@ namespace Ginger.BusinessFlowPages
         {
             object droppedItem = ((DragInfo)sender).Data as object;
             if (droppedItem != null)
-            {                
+            {
                 if (droppedItem is Activity)
                 {
+                    string activityGroupID = null;
+
+                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
+
+                    if (activityDroppedOn != null)
+                    {
+                        activityGroupID = activityDroppedOn.ActivitiesGroupID;
+                    }
+
                     List<Activity> list = new List<Activity>();
                     list.Add((Activity)droppedItem);
-                    ActionsFactory.AddActivitiesFromSRHandler(list,mContext.BusinessFlow);
+                    ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID);
                 }
                 else if (droppedItem is ActivitiesGroup)
                 {
                     List<ActivitiesGroup> list = new List<ActivitiesGroup>();
                     list.Add((ActivitiesGroup)droppedItem);
                     ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
-                }               
+                }
             }
-        }       
+        }
 
         private void ActivityListItemInfo_ActivityListItemEvent(ActivityListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
                 case ActivityListItemEventArgs.eEventType.UpdateGrouping:
-                    xActivitiesListView.UpdateGrouping();                    
+                    xActivitiesListView.UpdateGrouping();
                     break;
             }
         }
@@ -125,17 +187,11 @@ namespace Ginger.BusinessFlowPages
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)
         {
-            mBusinessFlow = updateBusinessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
-            if (mBusinessFlow != null)
+            if (mBusinessFlow != updateBusinessFlow)
             {
-                xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
-                xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
-                SetSharedRepositoryMark();
-            }
-            else
-            {
-                xActivitiesListView.DataSourceList = null;
+                mBusinessFlow = updateBusinessFlow;
+                mContext.BusinessFlow = mBusinessFlow;
+                SetListViewData();
             }
         }
 

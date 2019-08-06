@@ -26,6 +26,10 @@ namespace Ginger.UserControlsLib.UCListView
 
         General.eRIPageViewMode PageViewMode { get; set; }
 
+        bool AllowExpandItems { get; set; }
+
+        bool ExpandItemOnLoad { get; set; }
+
         void SetItem(object item);
 
         string GetItemNameField();

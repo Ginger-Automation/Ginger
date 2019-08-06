@@ -147,7 +147,7 @@ namespace Ginger.Actions.Locators.ASCF
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return null;
         }

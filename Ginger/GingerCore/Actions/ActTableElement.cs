@@ -291,9 +291,9 @@ namespace GingerCore.Actions
         }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
-            if (Platform == ePlatformType.Java || Platform == ePlatformType.NA)
+            if (actionPlatform == ePlatformType.Java)
             {
                 return true;
             }

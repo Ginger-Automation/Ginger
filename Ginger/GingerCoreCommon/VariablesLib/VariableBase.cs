@@ -390,7 +390,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used variables", ex); 
+                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used " + GingerDicser.GetTermResValue(eTermResKey.Variables), ex); 
                         } 
                     }
                 }
@@ -408,7 +408,7 @@ namespace GingerCore.Variables
             set
             {
                 mLinkedVariableName = value;
-                OnPropertyChanged(nameof(LinkedVariableName));
+                OnPropertyChanged(nameof(this.LinkedVariableName));
             }
         }
 

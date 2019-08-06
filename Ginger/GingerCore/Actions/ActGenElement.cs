@@ -129,6 +129,10 @@ namespace GingerCore.Actions
                         NewActUIElement.ElementType = eElementType.List;
                         uIElementTypeAssigned = true;                        
                         break;
+                    case eGenElementAction.AsyncSelectFromDropDownByIndex:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
+                        NewActUIElement.ElementType = eElementType.ComboBox;
+                        break;
                     case eGenElementAction.KeyboardInput:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
                         break;

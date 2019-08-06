@@ -60,9 +60,14 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        NotifyCollectionChangedEventHandler CollectionChangedHandler;
+
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
+
+        public event EventHandler SameFrameItemDropped;
+        public delegate void SameFrameItemDroppedEventHandler(DragInfo DragInfo);
 
         public event EventHandler PreviewDragItem;
         public event PasteItemEventHandler PasteItemEvent;
@@ -154,6 +159,8 @@ namespace Ginger.UserControlsLib.UCListView
                     if (mObjList != null)
                     {
                         mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        mObjList.CollectionChanged -= CollectionChangedHandler;
+                        OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);//so all list items will release their binding
                     }
 
                     mObjList = value;
@@ -172,18 +179,20 @@ namespace Ginger.UserControlsLib.UCListView
                         xSearchTextBox.Text = "";
                         xListView.ItemsSource = mObjList;
 
-                            // Make the first row selected
-                            if (value != null && value.Count > 0)
+                        // Make the first row selected
+                        if (value != null && value.Count > 0)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
-                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
                             {
                                 mObjList.CurrentItem = value[0];
                             }
                         }
 
+                        //show items as collapsed
+                        mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     });
                 }
@@ -196,7 +205,8 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     mObjList.PropertyChanged += ObjListPropertyChanged;
                     BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    CollectionChangedHandler = new NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    mObjList.CollectionChanged += CollectionChangedHandler;
                     UpdateTitleListCount();
                 }
             }
@@ -256,7 +266,7 @@ namespace Ginger.UserControlsLib.UCListView
                     SetListSelectedItemAsSourceCurrentItem();
                 }
             }
-            if(e.PropertyName == nameof(IObservableList.FilterStringData))
+            if (e.PropertyName == nameof(IObservableList.FilterStringData))
             {
                 this.Dispatcher.Invoke(() => xSearchTextBox.Text = mObjList.FilterStringData);
             }
@@ -275,7 +285,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             });
         }
-
+        
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -413,7 +423,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void xListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mObjList.SyncCurrentItemWithViewSelectedItem)
+            if (mObjList != null && mObjList.SyncCurrentItemWithViewSelectedItem)
             {
                 SetSourceCurrentItemAsListSelectedItem();
             }
@@ -440,11 +450,13 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.ExpandAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.CollapseAll;
+                mListViewHelper.ExpandItemOnLoad = true;
             }
             else
             {
                 OnUcListViewEvent(UcListViewEventArgs.eEventType.CollapseAllItems);
                 xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                mListViewHelper.ExpandItemOnLoad = false;
             }
         }
 
@@ -604,8 +616,37 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        //public void ClearBindings()
+        //{
+        //    if (xTagsFilter != null)
+        //    {
+        //        xTagsFilter.TagsStackPanlChanged -= TagsFilter_TagsStackPanlChanged;
+        //        xTagsFilter.ClearBinding();
+        //        xTagsFilter.ClearControlsBindings();
+        //        xTagsFilter = null;
+        //    }
+
+        //    if (mObjList != null)
+        //    {
+        //        mObjList.PropertyChanged -= ObjListPropertyChanged;
+        //        BindingOperations.DisableCollectionSynchronization(mObjList);
+        //        mObjList.CollectionChanged -= CollectionChangedHandler;
+        //    }
+
+        //    foreach (ucButton operation in xListOperationsPnl.Children)
+        //    {
+        //        BindingOperations.ClearAllBindings(operation);
+        //    }
+        //    foreach (MenuItem extraOperation in xListExtraOperationsMenu.Items)
+        //    {
+        //        BindingOperations.ClearAllBindings(extraOperation);
+        //    }
+        //    OnUcListViewEvent(UcListViewEventArgs.eEventType.ClearBindings);
+        //    this.ClearControlsBindings();
+        //}
+
         void IDragDrop.StartDrag(DragInfo Info)
-        {            
+        {
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
             Info.DragSource = this;
             if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is ListViewItem)
@@ -630,6 +671,24 @@ namespace Ginger.UserControlsLib.UCListView
             // first check if we did drag and drop on the same ListView then it is a move - reorder
             if (Info.DragSource == this)
             {
+                EventHandler mHandler = SameFrameItemDropped;
+                if (mHandler != null)
+                {
+                    mHandler(Info, new EventArgs());
+                }
+                else
+                {
+                    RepositoryItemBase draggedItem = Info.Data as RepositoryItemBase;
+
+                    if (draggedItem != null)
+                    {
+                        RepositoryItemBase draggedOnItem = DragDrop2.GetRepositoryItemHit(this) as RepositoryItemBase;
+                        if (draggedOnItem != null)
+                        {
+                            DragDrop2.ShuffleControlsItems(draggedItem, draggedOnItem, this);
+                        }
+                    }
+                }
                 //if (!(xMoveUpBtn.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
                 return;
             }
@@ -647,10 +706,17 @@ namespace Ginger.UserControlsLib.UCListView
         {
             Info.DragTarget = this;
 
-            EventHandler handler = PreviewDragItem;
-            if (handler != null)
+            if (Info.DragSource == Info.DragTarget)
             {
-                handler(Info, new EventArgs());
+                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Move;
+            }
+            else
+            {
+                EventHandler handler = PreviewDragItem;
+                if (handler != null)
+                {
+                    handler(Info, new EventArgs());
+                }
             }
         }
 
@@ -898,6 +964,7 @@ namespace Ginger.UserControlsLib.UCListView
             ExpandItem,
             CollapseAllItems,
             UpdateIndex,
+            ClearBindings,
         }
 
         public eEventType EventType;
