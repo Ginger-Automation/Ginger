@@ -1399,12 +1399,7 @@ public void RemoveCustomView(string viewName)
 
                     //Add the column to the grid 
                     if (!grdMain.Columns.Contains(gridCol))
-                    {
-                        // if selection has changed runtime -(Fix for DataSource Table Data)
-                        if (grdMain.Columns.Count < gridCol.DisplayIndex)
-                        {
-                            gridCol.DisplayIndex = 0;
-                        }
+                    {                       
                         grdMain.Columns.Add(gridCol);
                         _CurrentGridCols.Add(colView.Field, gridCol);
                     }
