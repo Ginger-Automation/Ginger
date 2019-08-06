@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -33,7 +34,6 @@ namespace Ginger.Run.RunSetActions
         public RunSetActionEditPage(RunSetActionBase RunSetAction)
         {
             InitializeComponent();
-
             mRunSetAction = RunSetAction;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
@@ -81,6 +81,11 @@ namespace Ginger.Run.RunSetActions
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
+            if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod ==Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                Reporter.ToUser(eUserMsgKey.ActionNotImplemented, "not supported on Lite Db");
+                return;
+            }
             mRunSetAction.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             mRunSetAction.ExecuteWithRunPageBFES();
         }
