@@ -206,12 +206,13 @@ namespace Amdocs.Ginger.Repository
 
         void LoadPluginServicesFromDll()
         {                    
-            if (mServices == null)
+            if (mServices == null)  // Done only once
             {
-                mServices = new ObservableList<PluginServiceInfo>();
-                foreach (PluginAssemblyInfo asssembly in mAssembliesInfo)
-                {                    
-                    IEnumerable<Type> types = from x in asssembly.Assembly.GetTypes() where x.GetCustomAttribute(typeof(GingerServiceAttribute)) != null select x;
+                mServices = new ObservableList<PluginServiceInfo>();    // Move down !!!!!!!!!!!!!!!
+                foreach (PluginAssemblyInfo pluginAssemblyInfo in mAssembliesInfo)
+                {
+                    var types2 = pluginAssemblyInfo.Assembly.GetExportedTypes();
+                    IEnumerable<Type> types = from x in pluginAssemblyInfo.Assembly.GetTypes() where x.GetCustomAttribute(typeof(GingerServiceAttribute)) != null select x;
                     foreach (Type type in types)
                     {
                         GingerServiceAttribute gingerServiceAttribute = (GingerServiceAttribute)Attribute.GetCustomAttribute(type, typeof(GingerServiceAttribute), false);
@@ -364,6 +365,8 @@ namespace Amdocs.Ginger.Repository
             }            
         }
 
+        
+
         public PluginServiceInfo GetService(string serviceId)
         {
             return (from x in Services where x.ServiceId == serviceId select x).SingleOrDefault();
@@ -424,43 +427,37 @@ namespace Amdocs.Ginger.Repository
         }
 
         
+        // doesn't worj whne we mix .NET framework, restore after moving to .NET Core 3
+        //public ObservableList<ITextEditor> GetTextFileEditors()
+        //{
+        //    //TODO: cache
+        //    if (mPluginPackageInfo == null)
+        //    {                
+        //        LoadInfoFromJSON();
+        //    }
 
-        public ObservableList<ITextEditor> GetTextFileEditors()
-        {
-            //TODO: cache
-            if (!Isloaded)
-            {
-                LoadInfoFromDLL();
-            }
+        //    ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();            
+        //    if (!string.IsNullOrEmpty(mPluginPackageInfo.UIDLL))
+        //    { 
+        //        string UIDLLFileName = Path.Combine(mFolder, "UI", mPluginPackageInfo.UIDLL);                
+        //        if (!File.Exists(UIDLLFileName))
+        //        {
+        //            throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);
+        //        }
+        //        Assembly assembly = Assembly.Load(UIDLLFileName); // Assembly.UnsafeLoadFrom(UIDLLFileName);               
 
-            ObservableList<ITextEditor> textEditors = new ObservableList<ITextEditor>();
-            foreach (PluginAssemblyInfo PAI in mAssembliesInfo)
-            {
+        //        var list = from type in assembly.GetTypes()
+        //                   where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false
+        //                   select type;
 
-                Assembly assembly = null;
-                if (string.IsNullOrEmpty(mPluginPackageInfo.UIDLL))
-                {
-                    continue;
-                }
-                string UIDLLFileName = Path.Combine(mFolder, "UI", mPluginPackageInfo.UIDLL);                
-                if (!File.Exists(UIDLLFileName))
-                {
-                    throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);
-                }                
-                assembly = Assembly.UnsafeLoadFrom(UIDLLFileName);               
-
-                var list = from type in assembly.GetTypes()
-                           where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false
-                           select type;
-
-                foreach (Type t in list)
-                {                    
-                    ITextEditor textEditor = (ITextEditor)assembly.CreateInstance(t.FullName); // Activator.CreateInstance(t);
-                    textEditors.Add(textEditor);                    
-                }
-            }
-            return textEditors;
-        }
+        //        foreach (Type t in list)
+        //        {                    
+        //            ITextEditor textEditor = (ITextEditor)assembly.CreateInstance(t.FullName); // Activator.CreateInstance(t);
+        //            textEditors.Add(textEditor);                    
+        //        }
+        //    }
+        //    return textEditors;
+        //}
 
         public override eImageType ItemImageType
         {
