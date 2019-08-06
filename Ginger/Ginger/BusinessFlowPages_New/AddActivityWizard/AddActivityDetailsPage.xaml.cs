@@ -38,7 +38,7 @@ namespace Ginger.BusinessFlowPages
         {
             InitializeComponent();
 
-            xAddGroupBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Add New");
+            xAddGroupBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New");
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

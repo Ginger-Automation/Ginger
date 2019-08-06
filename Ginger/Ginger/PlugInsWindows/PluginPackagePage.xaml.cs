@@ -107,17 +107,10 @@ namespace Ginger.PlugInsWindows
             PlugInsEditorActionsGrid.SetAllColumnsDefaultView(view1);
             PlugInsEditorActionsGrid.InitViewItems();
 
-            var textEditors = mPluginPackage.GetTextFileEditors();
-            PlugInsEditorActionsGrid.Grid.ItemsSource = textEditors;
+            PlugInsEditorActionsGrid.Grid.ItemsSource = PluginTextEditorHelper.GetTextFileEditors(mPluginPackage); 
         }
 
-        //private ObservableList<PlugInTextFileEditorBase> ConvertToObservalbe(List<PlugInTextFileEditorBase> T)
-        //{
-        //    ObservableList<PlugInTextFileEditorBase> OL = new ObservableList<PlugInTextFileEditorBase>();
-        //    foreach (PlugInTextFileEditorBase PTE in T)
-        //        OL.Add(PTE);
-        //    return OL;
-        //}
+        
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

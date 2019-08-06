@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Ginger.PlugInsWindows;
 using Ginger.UserControlsLib.TextEditor.Common;
 using Ginger.UserControlsLib.TextEditor.Office;
 using Ginger.UserControlsLib.TextEditor.VBS;
@@ -215,21 +216,21 @@ namespace Ginger.UserControlsLib.TextEditor
                 // Add all plugins TextEditors 
                 ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
 
-                foreach (PluginPackage PP in Plugins)
+                foreach (PluginPackage pluginPackage in Plugins)
                 {
-                    foreach (ITextEditor TE in PP.GetTextFileEditors())
+                    if (string.IsNullOrEmpty(pluginPackage.PluginPackageInfo.UIDLL)) continue;
+                    
+                    foreach (ITextEditor TE in PluginTextEditorHelper.GetTextFileEditors(pluginPackage))
                     {
-                        PlugInTextEditorWrapper w = new PlugInTextEditorWrapper(TE);
-                        //PlugInTextEditorWrapper f = (PlugInTextEditorWrapper)TextEditors.Where(x => x is PlugInTextEditorWrapper ? ((PlugInTextEditorWrapper)x).GetEditorID() == w.GetEditorID() : false).FirstOrDefault();
-
-
-                        TextEditors.Add(w);
-
-                    }
+                        PlugInTextEditorWrapper plugInTextEditorWrapper = new PlugInTextEditorWrapper(TE);                        
+                        TextEditors.Add(plugInTextEditorWrapper);
+                    }                    
                 }
             }
-
         }
+
+       
+       
 
         public void Save()
         {
