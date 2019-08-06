@@ -355,12 +355,11 @@ namespace UnitTests.NonUITests
 
         [TestMethod]
         
-        public void SkipClassesFromDeserializeTest()
+        public void DSConditionClassSkipSerializeTest()
         {
             //Arrange
-            //Put the BF in Test Resource
+            //Put the BF in Test Resource having class "GingerCore.DataSource.ActDSConditon" serialized in xml
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-
             string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml");
               
             //Load BF

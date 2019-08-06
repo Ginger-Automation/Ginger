@@ -669,8 +669,8 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetObj == null)
                 {
-                    bool isClassToSkip = HandleClassToSkip(xdr, className);
-                    if(isClassToSkip)
+                    bool isHandled = CheckMissingClass(xdr, className);
+                    if(isHandled)
                     {
                         return null;
                     }
@@ -1248,24 +1248,31 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private static bool HandleClassToSkip(XmlReader xdr, string className)
-        {
-            //TODO: If need to add more classed then create a dictionary of Classes to Skip
-            if (className == "GingerCore.DataSource.ActDSConditon")
+        private static bool CheckMissingClass(XmlReader xdr, string className)
+        {            
+            switch(className)
             {
-                int level = xdr.Depth;
-                while (xdr.Depth == level)
-                {
-                    xdr.Skip();
-                }
+                case "GingerCore.DataSource.ActDSConditon":
+                    MoveXdrToNextElement(xdr);
+                    return true;
 
-                if (xdr.NodeType == XmlNodeType.EndElement)
-                {
-                    xdr.ReadEndElement();
-                }
-                return true;
+                default:
+                    return false;
             }
-            return false;
+        }
+
+        private static void MoveXdrToNextElement(XmlReader xdr)
+        {
+            int level = xdr.Depth;
+            while (xdr.Depth == level)
+            {
+                xdr.Skip();
+            }
+
+            if (xdr.NodeType == XmlNodeType.EndElement)
+            {
+                xdr.ReadEndElement();
+            }
         }
 
         //Prep if we want to switch enable JSON
