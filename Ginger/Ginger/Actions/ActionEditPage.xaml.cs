@@ -1787,5 +1787,15 @@ namespace Ginger.Actions
             ActDescriptionFrm.NavigationService.RemoveBackEntry();
             ActionLogConfigFrame.NavigationService.RemoveBackEntry();
         }
+
+        private void xActionDetailsExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height = new GridLength(220);
+        }
+
+        private void xActionDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height= new GridLength(30);
+        }
     }
 }
