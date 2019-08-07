@@ -113,13 +113,22 @@ namespace GingerWPF.BusinessFlowsLib
         TabItem mLastSelectedTab = null;
         private void XItemsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Ginger.General.eRIPageViewMode childPagesMode;
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                childPagesMode = Ginger.General.eRIPageViewMode.View;
+            }
+            else
+            {
+                childPagesMode = Ginger.General.eRIPageViewMode.Child;
+            }
             if (xItemsTabs.SelectedItem != mLastSelectedTab)
             {
                 if (xActivitisTab.IsSelected == true)
                 {
                     if (mActivitiesPage == null)
                     {
-                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, childPagesMode);
                         mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xActivitiesTabFrame.SetContent(mActivitiesPage);
                     }
@@ -132,7 +141,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mVariabelsPage == null)
                     {
-                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
+                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, childPagesMode);
                         if (mVariabelsPage.ListView != null)
                         {
                             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
@@ -148,7 +157,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Child);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
                         xConfigurationsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
