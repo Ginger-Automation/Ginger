@@ -78,9 +78,9 @@ namespace GingerCore.Actions
             return list;
         }
 
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
-            if (Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
+            if (actionPlatform == ePlatformType.WebServices || actionPlatform == ePlatformType.NA)
             {
                 return true;
             }

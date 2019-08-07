@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -71,7 +72,6 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetListView();
-            SetSharedRepositoryMark();
             ShowHideEditPage(null);
         }
 
@@ -80,15 +80,24 @@ namespace GingerWPF.BusinessFlowsLib
             if (actionToEdit != null)
             {
                 xBackToListGrid.Visibility = Visibility.Visible;
-                mActionBeenEdit = actionToEdit;                                
+                mActionBeenEdit = actionToEdit;
+                mActionBeenEdit.Context = mContext;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
-                BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                mActionBeenEdit.Context = mContext;
-                mActionBeenEdit.SaveBackup();
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, Ginger.General.eRIPageViewMode.Automation);
-                xMainFrame.Content = mActionEditPage;
+                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xEditAndRunOperationsPnl.Visibility = Visibility.Visible;
+                    mActionBeenEdit.SaveBackup();
+                    BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+                }               
+
+                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
+                xMainFrame.SetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this,null);
@@ -97,9 +106,14 @@ namespace GingerWPF.BusinessFlowsLib
             else
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
-                mActionBeenEdit = null;                
-                mActionEditPage = null;
-                xMainFrame.Content = mActionsListView;
+                mActionBeenEdit = null;
+                if (mActionEditPage != null)
+                {                   
+                    mActionEditPage.KeepAlive = false;
+                    mActionEditPage = null;
+                    //GC.Collect();
+                }
+                xMainFrame.SetContent(mActionsListView);
                 if (ShiftToActionsListEvent != null)
                 {
                     ShiftToActionsListEvent.Invoke(this, null);
@@ -107,29 +121,77 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        //private void ClearListViewBindings()
+        //{
+        //    if (mActionsListHelper != null)
+        //    {
+        //        mActionsListHelper.ActionListItemEvent -= MActionListItemInfo_ActionListItemEvent;
+        //        mActionsListHelper = null;
+        //    }
+
+        //    if (mActionsListView != null)
+        //    {
+        //        mActionsListView.PreviewDragItem -= listActions_PreviewDragItem;
+        //        mActionsListView.ItemDropped -= listActions_ItemDropped;
+        //        mActionsListView.List.MouseDoubleClick -= ActionsListView_MouseDoubleClick;
+        //        mActionsListView.ClearBindings();
+        //        mActionsListView.DataSourceList = null;
+        //        mActionsListView = null;
+        //    }
+        //}
+
+        //public void ClearBindings()
+        //{
+        //    xMainFrame.Content = null;
+        //    xMainFrame.NavigationService.RemoveBackEntry();
+            
+        //    ClearListViewBindings();
+
+        //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+        //    BindingOperations.ClearAllBindings(xActiveBtn);
+        //    BindingOperations.ClearAllBindings(xBreakPointMenuItemIcon);
+        //    this.ClearControlsBindings();
+
+        //}
+
         private void SetListView()
         {
-            mActionsListView = new UcListView();
-            mActionsListView.Title = "Actions";
-            mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
+            if (mActionsListView == null)
+            {
+                mActionsListView = new UcListView();
+                mActionsListView.Title = "Actions";
+                mActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
 
-            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
-            mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
-            mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+                mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
+                mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
+                mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
-            mActionsListView.ListSelectionMode = SelectionMode.Extended;
-            mActionsListView.DataSourceList = mActivity.Acts;
+                mActionsListView.ListSelectionMode = SelectionMode.Extended;
+                
+                mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
+                mActionsListView.ItemDropped += listActions_ItemDropped;
 
-            mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
-            mActionsListView.ItemDropped += listActions_ItemDropped;
+                mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
 
-            mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+                // Enable Virtualization for Actions ListView to improve the loading time/performance
+                mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
+
+            if (mActivity != null)
+            {
+                mActionsListView.DataSourceList = mActivity.Acts;
+                SetSharedRepositoryMark();
+            }
+            else
+            {
+                mActionsListView.DataSourceList = null;
+            }
         }
 
         private void ActionsListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (mActionsListView.CurrentItem != null)
-            {                
+            {
                 ShowHideEditPage((Act)mActionsListView.CurrentItem);
             }
         }
@@ -149,15 +211,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActivity != activity)
             {
                 mActivity = activity;
-                if (mActivity != null)
-                {
-                    mActionsListView.DataSourceList = mActivity.Acts;
-                    SetSharedRepositoryMark();
-                }
-                else
-                {
-                    mActionsListView.DataSourceList = null;
-                }
+                SetListView();
                 ShowHideEditPage(null);
             }
         }
@@ -171,17 +225,45 @@ namespace GingerWPF.BusinessFlowsLib
                         || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
                             || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
         private void listActions_ItemDropped(object sender, EventArgs e)
         {
             object droppedItem = ((DragInfo)sender).Data as object;
+
             if (droppedItem != null)
             {
-                ActionsFactory.AddActionsHandler(droppedItem, mContext);
+                int mouseIndex = -1;
+                int lastAddedIndex = -1;
+                Act actDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Act;
+
+                if (actDroppedOn != null)
+                {
+                    mouseIndex = ListView.DataSourceList.IndexOf(actDroppedOn);
+                }
+
+                lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
+
+                if (lastAddedIndex > mouseIndex)
+                {
+                    ListView.xListView.SelectedItems.Clear();
+                    for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
+                    {
+                        RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
+                        if (repoBaseItem != null)
+                        {
+                            ListView.xListView.SelectedItems.Add(repoBaseItem);
+                        }
+                    }
+                }
             }
         }
 
@@ -201,6 +283,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
             {
                 mActionBeenEdit.SaveBackup();
+                ShowHideEditPage(mActionBeenEdit);
             }
         }
 
@@ -209,7 +292,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mActionsListView.List.Items.CurrentPosition >= 1)
             {
                 mActionsListView.List.Items.MoveCurrentToPrevious();
-                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);                
+                ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
             }
             else
             {
@@ -264,6 +347,16 @@ namespace GingerWPF.BusinessFlowsLib
         private void xResetMenuItem_Click(object sender, RoutedEventArgs e)
         {
             mActionBeenEdit.Reset();
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
     }
 }

@@ -473,7 +473,7 @@ namespace Ginger.UserControlsLib.TextEditor
         void IDragDrop.DragEnter(DragInfo Info)
         {            
             Info.DragTarget = this;
-            Info.DragIcon = DragInfo.eDragIcon.Copy;
+            Info.DragIcon = DragInfo.eDragIcon.Add;
         }
 
         public void StartDrag(DragInfo Info)

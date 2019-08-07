@@ -7,6 +7,8 @@
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="ActivityPage">
 
@@ -21,7 +23,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30"></ColumnDefinition>
                 <ColumnDefinition Width="200*"></ColumnDefinition>
-                <ColumnDefinition Width="550"></ColumnDefinition>
+                <ColumnDefinition Width="580"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Column="0" ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}">
@@ -55,7 +57,7 @@
                                     <usercontrols:ImageMakerControl ImageType="SharedRepositoryItem" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Upload [Activity] to Shared Repository" />
+                                    <GingerCore:ucTextDicResource Text="Add [Activity] to Shared Repository" />
                                 </MenuItem.Header>
                             </MenuItem>
                         </MenuItem>
@@ -63,17 +65,17 @@
                 </StackPanel>
                 <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
                 <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                    <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run Activity"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                    <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run Activity"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Run [Activity]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xContinueRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xContinueRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}">
+                    <usercontrols:ucButton x:Name="xContinueRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xContinueRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Continue Run from this [Activity]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"/>
+                    <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                     <usercontrols:ucButton x:Name="xResetBtn" ButtonType="ImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageType="Reset" >
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset [Activity] Execution Details"/>
@@ -92,7 +94,7 @@
             <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Right"/>
         </Grid>
         
-        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
@@ -102,7 +104,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}"/>
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">

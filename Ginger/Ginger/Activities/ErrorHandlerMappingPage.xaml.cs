@@ -132,7 +132,7 @@ namespace Ginger.Activities
             
             winButtons.Add(closeBtn); winButtons.Add(okBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Activity-Error Handler Mapping", this, winButtons, false, string.Empty, CloseWinClicked);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, GingerDicser.GetTermResValue(eTermResKey.Activity) + "-Error Handler Mapping", this, winButtons, false, string.Empty, CloseWinClicked);
         }
         private void grdErrorHandler_RowChangedEvent(object sender, EventArgs e)
         {

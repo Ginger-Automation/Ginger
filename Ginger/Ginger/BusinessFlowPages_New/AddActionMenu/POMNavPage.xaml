@@ -6,6 +6,8 @@
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="POM"
       d:DesignHeight="500" d:DesignWidth="600"
       Title="POMNavAction">
 

@@ -224,7 +224,7 @@ namespace Ginger.UserControlsLib
         private static void OnCheckedPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)//2
         {            
             var control = (UCStoreTo)sender;
-            if (control != null && control.DataContext.GetType() == typeof(ActReturnValue))
+            if (control != null && control.DataContext != null && control.DataContext.GetType() == typeof(ActReturnValue))
                 control.OnCheckChanged((string)args.NewValue,"Set Value");
             else
                 control.OnCheckChanged((string)args.NewValue, "Get Value");            

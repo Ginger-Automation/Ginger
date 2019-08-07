@@ -98,6 +98,10 @@ namespace Amdocs.Ginger.Repository
             return s;
         }
 
+        public override string ToString()
+        {
+            return ItemName;
+        }
 
 
         // TypeName cache
@@ -370,8 +374,8 @@ namespace Amdocs.Ginger.Repository
                         {
                             IObservableList list = (IObservableList)PI.GetValue(this);                            
                             if (list != null)
-                            {
-                                RestoreList(mi.Name, list, isLocalBackup);
+                            {                          
+                                RestoreList(mi.Name, list, isLocalBackup);                     
                             }
                         }
                         else
@@ -382,8 +386,9 @@ namespace Amdocs.Ginger.Repository
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {// temp fix me 
+                        Reporter.ToLog(eLogLevel.DEBUG, "Undo- restoring values from back up", ex);
                     }
                 }
                 else if (mi.MemberType == MemberTypes.Field)
@@ -442,7 +447,17 @@ namespace Amdocs.Ginger.Repository
 
         private void RestoreList(string Name, IObservableList v, bool isLocalBackup = false)
         {
-            v.Clear();
+
+            try
+            {
+                v.Clear();
+            }
+            catch(Exception ex)
+            {
+                //This is Temporary fix- Inputvalues list throwing observable collection cannot be modified exception
+                Reporter.ToLog(eLogLevel.DEBUG, "Clearing list values for restoring from back up", ex);
+            }
+            
 
             object Backuplist;
             bool b;
@@ -879,7 +894,7 @@ namespace Amdocs.Ginger.Repository
                         // not RI no tracking...
                     }
                 }
-            }
+            }           
         }
 
         List<string> DirtyTrackingFields;

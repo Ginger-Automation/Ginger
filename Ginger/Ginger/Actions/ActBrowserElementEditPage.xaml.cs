@@ -46,7 +46,7 @@ namespace Ginger.Actions
 
             if (act.Platform == ePlatformType.NA)
             {
-                act.Platform = GetActivityPlatform();
+                act.Platform = GetActionPlatform();
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
 
@@ -80,10 +80,18 @@ namespace Ginger.Actions
             SetVisibleControlsForAction();
         }
 
-        private ePlatformType GetActivityPlatform()
+        private ePlatformType GetActionPlatform()
         {
-            string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform;
+            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
+            {
+                string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            }
+            else
+            {
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms[0].Platform;
+            }
             return platform;
         }
 

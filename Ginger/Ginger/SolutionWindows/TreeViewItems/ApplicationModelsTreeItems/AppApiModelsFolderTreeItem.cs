@@ -115,7 +115,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if(mAPIModelsPage == null)
                 mAPIModelsPage = new APIModelsPage(mAPIModelFolder);

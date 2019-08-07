@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Activities;
 using GingerCore;
@@ -46,6 +64,7 @@ namespace Ginger.BusinessFlowPages
                 xRunOptionCombo.IsEnabled = false;
                 xAutomationStatusCombo.IsEnabled = false;
                 xHandlerTypeCombo.IsEnabled = false;
+                xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
             }
         }
@@ -54,7 +73,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mActivity != activity)
             {
-                RemoveBindings();
+                ClearBindings();
                 mActivity = activity;
                 if (mActivity != null)
                 {
@@ -63,18 +82,19 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void RemoveBindings()
-        {
-            BindingOperations.ClearBinding(xRunOptionCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xActivityNameTxtBox, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xActivityDescriptionTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xExpectedTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xScreenTxt, TextBox.TextProperty);
-            BindingOperations.ClearBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xAutomationStatusCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty);
-            BindingOperations.ClearBinding(xHandlerTypeCombo, ComboBox.SelectedValueProperty);
-            BindingOperations.ClearBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty);
+        public void ClearBindings()
+        {            
+            BindingOperations.ClearAllBindings(xRunOptionCombo);
+            BindingOperations.ClearAllBindings(xActivityNameTxtBox);
+            BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
+            xTagsViewer.ClearBinding();
+            BindingOperations.ClearAllBindings(xExpectedTxt);
+            BindingOperations.ClearAllBindings(xScreenTxt);
+            BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xAutomationStatusCombo);
+            BindingOperations.ClearAllBindings(xMandatoryActivityCB);
+            BindingOperations.ClearAllBindings(xHandlerTypeCombo);
+            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
         }
 
         private void BindControls()

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
@@ -31,9 +49,14 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="mItem"> of type object and would successfully add an action with Act/ElementInfo/ApplicationModels type object is provided</param>
         /// <param name="mContext"> required to identify the currently selected Activity, Action is to be added to </param>
-        public static void AddActionsHandler(object mItem, Context mContext)
+        public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
+
+            if (mContext.Activity != null)
+            {
+                mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
+            }
 
             if (mItem is Act)
             {
@@ -48,17 +71,28 @@ namespace Ginger.BusinessFlowPages
             else if (mItem is ApplicationPOMModel)
             {
                 ApplicationPOMModel currentPOM = mItem as ApplicationPOMModel;
+                //required to show all the actions added as selected
+                int updatedTargetIndex = targetIndex;
                 foreach (ElementInfo elemInfo in currentPOM.MappedUIElements)
                 {
-                    HTMLElementInfo htmlElementInfo = elemInfo as HTMLElementInfo;
-                    instance = GeneratePOMElementRelatedAction(htmlElementInfo, mContext);
+                    instance = GeneratePOMElementRelatedAction(elemInfo, mContext);
                     if (instance != null)
                     {
                         instance.Active = true;
-                        mContext.BusinessFlow.AddAct(instance, true);
+                        if (updatedTargetIndex > -1)
+                        {
+                            mContext.Activity.Acts.Insert(updatedTargetIndex, instance);
+                            updatedTargetIndex++;
+                        }
+                        else
+                        {
+                            mContext.BusinessFlow.AddAct(instance, true);
+                        }
                     }
                 }
+                mContext.Activity.Acts.CurrentItem = instance;
                 instance = null;
+                targetIndex = updatedTargetIndex;
             }
             else if (mItem is ApplicationAPIModel || mItem is RepositoryFolder<ApplicationAPIModel>)
             {
@@ -79,9 +113,20 @@ namespace Ginger.BusinessFlowPages
 
             if (instance != null)
             {
-                mContext.BusinessFlow.AddAct(instance, true);
+                instance.Active = true;
+
+                if (targetIndex > -1)
+                {
+                    mContext.Activity.Acts.Insert(targetIndex, instance);
+                }
+                else
+                {
+                    mContext.BusinessFlow.AddAct(instance, true);
+                }
                 mContext.Activity.Acts.CurrentItem = instance;
             }
+
+            return targetIndex;
         }
 
         /// <summary>
@@ -177,11 +222,17 @@ namespace Ginger.BusinessFlowPages
         {
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+            string elementVal = string.Empty;
+            if(elementInfo.OptionalValuesObjectsList.Count > 0)
+            {
+                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+            }
+
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
             {
                 LocateBy = eLocateBy.POMElement,
                 LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                ElementValue = string.Empty,
+                ElementValue = elementVal,
                 AddPOMToAction = true,
                 POMGuid = elementInfo.ParentGuid.ToString(),
                 ElementGuid = elementInfo.Guid.ToString(),
@@ -197,10 +248,18 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
         /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow)
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null)
         {
             ActivitiesGroup parentGroup = null;
-            parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+            if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
+            {
+                parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
+            }
+            else
+            {
+                parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+            }
+
             if (parentGroup != null)
             {
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)
