@@ -181,6 +181,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             IRecord record = (IRecord)mDriver;            
             IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
 
+            if(!((bool)xIntegratePOM.IsChecked))
+            {
+                mPomModels = null;
+            }
+
             mRecordingMngr = new RecordingManager(mPomModels, mContext.BusinessFlow, mContext, record, platformInfo);
             mRecordingMngr.StartRecording();
         }
