@@ -319,8 +319,11 @@ namespace GingerCore.Actions
             newActUIElement.ElementLocateBy = this.LocateBy;
             newActUIElement.ElementLocateValue = this.LocateValue;
             newActUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Table;
+
             newActUIElement.ElementAction = GetTableElementActionType(this.ControlAction);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, this.ControlAction.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, this.Value);
+
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, this.LocateRowType);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, this.LocateRowType);
 
