@@ -62,7 +62,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
-            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument);
+            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems);
 
             mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
@@ -74,6 +74,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 UpdateAPITree();
             }
+        }
+
+        public void RefreshTreeItems(object sender, RoutedEventArgs e)
+        {
+            UpdateAPITree();
         }
 
         private void UpdateAPITree()
