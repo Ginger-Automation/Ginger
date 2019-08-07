@@ -2673,7 +2673,7 @@ namespace Ginger.Run
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
-                        ErrorInfo = "Function evealuation didn't resulted in True";
+                        ErrorInfo = "Function evaluation didn't resulted in True";
                         break;
                     case eOperator.GreaterThan:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))

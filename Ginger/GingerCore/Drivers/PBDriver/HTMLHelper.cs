@@ -1607,7 +1607,7 @@ namespace GingerCore.Drivers.PBDriver
                 x = getelementXCordinate(element) + x;
                 Reporter.ToLog(eLogLevel.DEBUG, "elementX::" + x);
                 y = getelementYCordinate(element) + y;
-                Reporter.ToLog(eLogLevel.DEBUG, "elementy::" + y);
+                Reporter.ToLog(eLogLevel.DEBUG, "elementY::" + y);
                 winAPI.SendRightClick(AEBrowser, x +"," + y );                
                 return true;
             }
