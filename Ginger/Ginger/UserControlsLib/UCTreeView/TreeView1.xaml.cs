@@ -131,7 +131,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
-        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler=null, RoutedEventHandler addHandler = null)
+        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler=null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null)
         {
             if (saveAllHandler != null)
             {
@@ -151,6 +151,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 xAddButton.Visibility = Visibility.Collapsed;
+            }
+
+            if(refreshHandler != null)
+            {
+                xRefreshButton.Visibility = Visibility.Visible;
+                xRefreshButton.Click += refreshHandler;
+            }
+            else
+            {
+                xRefreshButton.Visibility = Visibility.Collapsed;
             }
         }
 

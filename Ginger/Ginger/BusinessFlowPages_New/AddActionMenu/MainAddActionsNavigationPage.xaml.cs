@@ -56,7 +56,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             ToggleApplicatoinModels();
             xApplicationModelsPnl.Visibility = Visibility.Collapsed;
-            ToggleRecordLiveSpyAndExplorer();            
+            ToggleRecordLiveSpyAndExplorer();
+
+            if (mContext.Activity == null)
+            {
+                xApplicationModelsBtn.Visibility = Visibility.Collapsed;
+                xActionsLibraryItemBtn.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -69,6 +75,22 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     {
                         LoadActionFrame(null);
                     }
+
+                    if (e.PropertyName is nameof(mContext.Activity))
+                    {
+                        //LoadActionFrame(null);
+                        if (mContext.Activity == null)
+                        {
+                            xApplicationModelsBtn.Visibility = Visibility.Collapsed;
+                            xActionsLibraryItemBtn.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            xApplicationModelsBtn.Visibility = Visibility.Visible;
+                            xActionsLibraryItemBtn.Visibility = Visibility.Visible;
+                        }
+                    }
+
                     ToggleRecordLiveSpyAndExplorer();
                 }
 
