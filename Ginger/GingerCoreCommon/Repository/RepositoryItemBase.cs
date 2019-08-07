@@ -975,7 +975,7 @@ namespace Amdocs.Ginger.Repository
 
                     // for now we ignore list of Guids - like Agents.Tags as user cannot change the value, but if he add/remove it will be tracked
                     if (item is Guid || item is RepositoryItemKey) continue;
-                    throw new Exception("Error: trying to track object which is Serialzied in a list but is not RepositoryItemBase " + this.GetType().FullName + " " + item.ToString() );
+                    throw new Exception("Error: trying to track object which is Serialized in a list but is not RepositoryItemBase " + this.GetType().FullName + " " + item.ToString() );
                 }
             }
         }

@@ -462,7 +462,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from Jira TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from Jira TC Step Description/Expected", ex);
             }
         }
         public JiraTestSet GetTestSetData(JiraTestSet currentTS)
