@@ -1489,6 +1489,12 @@ namespace GingerWPF.BusinessFlowsLib
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
+
+        private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Ginger.Export.GingerToCSV.BrowseForFilename();
+            Ginger.Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter

@@ -503,8 +503,8 @@ namespace Ginger.Run
                     switch (RSA.RunAt)
                     {
                         case RunSetActionBase.eRunAt.DuringExecution:
-                            //if(RSA is RunSetActions.RunSetActionPublishToQC)
-                            //    RSA.PrepareDuringExecAction(Runners);
+                            if (RSA is RunSetActions.RunSetActionPublishToQC)
+                                RSA.PrepareDuringExecAction(Runners);
                             break;
 
                         case RunSetActionBase.eRunAt.ExecutionStart:

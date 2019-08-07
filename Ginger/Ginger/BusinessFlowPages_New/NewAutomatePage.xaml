@@ -246,6 +246,23 @@
                                     </MenuItem.Header>
                                 </MenuItem>
                             </MenuItem>
+
+                            <MenuItem x:Name="xExportMenuItem" Style="{StaticResource $MenuItemStyle}">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Export [BusinessFlow]" />
+                                </MenuItem.Header>
+                                <MenuItem x:Name="xExportToCSVMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToCSVMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="CSV" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to CSV" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
                 </StackPanel>

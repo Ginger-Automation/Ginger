@@ -1365,6 +1365,11 @@ namespace GingerCore
             }
         }
 
+        public ActivitiesGroup GetActivitiesGroupByName(string groupName)
+        {
+            return ActivitiesGroups.Where(x => x.Name == groupName).FirstOrDefault();
+        }
+
         public Tuple<ActivitiesGroup, ActivityIdentifiers> GetActivityGroupAndIdentifier(Activity activity)
         {
             ActivitiesGroup group = null; ;
@@ -1372,7 +1377,7 @@ namespace GingerCore
             group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
             if (group != null)
             {
-                activityIdent = group.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
+                activityIdent = group.GetActivityIdentifiers(activity);
             }
             return Tuple.Create(group, activityIdent);
         }
@@ -1390,46 +1395,114 @@ namespace GingerCore
             Activities.Remove(activityToDelete);
         }
 
-        public void MoveActivityUp(Activity activityToMove)
+        //public void MoveActivityUp(Activity activityToMove)
+        //{
+        //    int index = Activities.IndexOf(activityToMove);
+        //    if (index > 0 && Activities[index - 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+        //    {
+        //        //move Activity
+        //        Activities.Move(index, index - 1);
+
+        //        //update move in group
+        //        Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
+        //        if (group.Item1 != null && group.Item2 != null)
+        //        {
+        //            int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
+        //            if (idntIndex > 0)
+        //            {
+        //                group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex - 1);
+        //            }
+        //        }
+        //    }
+        //}
+
+        //public void MoveActivityDown(Activity activityToMove)
+        //{
+        //    int index = Activities.IndexOf(activityToMove);
+        //    if (index < (Activities.Count-1) && Activities[index + 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+        //    {
+        //        //move Activity
+        //        Activities.Move(index, index + 1);
+
+        //        //update move in group
+        //        Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
+        //        if (group.Item1 != null && group.Item2 != null)
+        //        {
+        //            int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
+        //            if (idntIndex < (group.Item1.ActivitiesIdentifiers.Count - 1))
+        //            {
+        //                group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + 1);
+        //            }
+        //        }
+        //    }
+        //}
+
+        public void MoveActivityInGroup(Activity activityToMove, int newIndx)
         {
-            int index = Activities.IndexOf(activityToMove);
-            if (index > 0 && Activities[index - 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            int currentIndx = Activities.IndexOf(activityToMove);
+            if (newIndx >= 0 && newIndx <= (Activities.Count-1) && Activities[newIndx].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
             {
-                //move Activity
-                Activities.Move(index, index - 1);
+                //move Activity in BF
+                Activities.Move(currentIndx, newIndx);
 
                 //update move in group
                 Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
                 if (group.Item1 != null && group.Item2 != null)
                 {
                     int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
-                    if (idntIndex > 0)
+                    if (idntIndex >= 0)
                     {
-                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex - 1);
+                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + (newIndx - currentIndx));
                     }
                 }
             }
         }
 
-        public void MoveActivityDown(Activity activityToMove)
+        public void MoveActivityBetweenGroups(Activity activityToMove, ActivitiesGroup targetGroup, int targetIndex=-1)
         {
-            int index = Activities.IndexOf(activityToMove);
-            if (index < (Activities.Count-1) && Activities[index + 1].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            if (targetGroup == null)
             {
-                //move Activity
-                Activities.Move(index, index + 1);
+                return;
+            }
 
-                //update move in group
-                Tuple<ActivitiesGroup, ActivityIdentifiers> group = GetActivityGroupAndIdentifier(activityToMove);
-                if (group.Item1 != null && group.Item2 != null)
-                {
-                    int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
-                    if (idntIndex < (group.Item1.ActivitiesIdentifiers.Count - 1))
+            //remove from first group
+            Tuple<ActivitiesGroup, ActivityIdentifiers> existingGroup = GetActivityGroupAndIdentifier(activityToMove);
+            if (existingGroup.Item1 != null && existingGroup.Item2 != null)
+            {
+                existingGroup.Item1.RemoveActivityFromGroup(activityToMove);
+                
+                //add to target group                               
+                if (targetIndex >= 0)
+                {                    
+                    //move in group
+                    Activity currentActivityInTargetIndx = Activities[targetIndex];
+                    int targetIndxInGroup = targetGroup.ActivitiesIdentifiers.IndexOf(targetGroup.GetActivityIdentifiers(currentActivityInTargetIndx));
+                    targetGroup.AddActivityToGroup(activityToMove, targetIndxInGroup);
+                    //move in BF
+                    if (targetIndex > Activities.IndexOf(activityToMove))
                     {
-                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + 1);
+                        targetIndex--;
                     }
+                    Activities.Move(Activities.IndexOf(activityToMove), targetIndex);                    
+                }
+                else
+                {                    
+                    int indxToMoveInBF = Activities.Count - 1;
+                    if (targetGroup.ActivitiesIdentifiers.Count > 0)
+                    {
+                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count-1].IdentifiedActivity) + 1;
+                    }
+                    //move in group
+                    targetGroup.AddActivityToGroup(activityToMove);
+                    //move in BF
+                    if (indxToMoveInBF > Activities.IndexOf(activityToMove))
+                    {
+                        indxToMoveInBF--;
+                    }
+                    Activities.Move(Activities.IndexOf(activityToMove), indxToMoveInBF);
                 }
             }
+
         }
 
     }

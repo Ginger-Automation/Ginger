@@ -18,10 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
-using GingerWPF.DragDropLib;
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -105,7 +103,7 @@ namespace GingerWPF.DragDropLib
         }
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
-        {
+        {            
             if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
             {
                 if (sender is UcListView)

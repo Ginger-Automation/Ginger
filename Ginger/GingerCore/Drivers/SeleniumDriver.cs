@@ -5431,7 +5431,14 @@ namespace GingerCore.Drivers
                     }
                     catch (Exception e)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
+                        if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e); 
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while recording", e);
+                        }
                     }
                 }
                 CurrentPageURL = string.Empty;
