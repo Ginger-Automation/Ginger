@@ -127,6 +127,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
                 mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+                mPOMPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
                 mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
             }
         }

@@ -89,6 +89,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                                                     + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
                 mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             }
+            mAPIPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
             mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
     }
