@@ -118,12 +118,21 @@ namespace Ginger.BusinessFlowPages
                     {
                         if (activityDroppedOn.ActivitiesGroupID != draggedActivity.ActivitiesGroupID)
                         {
-                            draggedActivity.ActivitiesGroupID = activityDroppedOn.ActivitiesGroupID;
-                            ListView.UpdateGrouping();
+                            //need to shift groups
+                            try
+                            {
+                                mContext.BusinessFlow.MoveActivityBetweenGroups(draggedActivity, mContext.BusinessFlow.GetActivitiesGroupByName(activityDroppedOn.ActivitiesGroupID), mContext.BusinessFlow.Activities.IndexOf(activityDroppedOn));
+                            }
+                            catch(Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while dragging Activity to other group", ex);
+                            }
+                            ListView.UpdateGrouping();                            
                         }
                         else
                         {
-                            DragDrop2.ShuffleControlsItems(draggedActivity, activityDroppedOn, ListView);
+                            //need to move in group
+                            mContext.BusinessFlow.MoveActivityInGroup(draggedActivity, mContext.BusinessFlow.Activities.IndexOf(activityDroppedOn));
                         }
                     }
                 }
