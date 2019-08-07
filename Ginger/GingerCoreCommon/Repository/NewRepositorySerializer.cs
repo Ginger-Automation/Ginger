@@ -670,23 +670,23 @@ namespace Amdocs.Ginger.Repository
                 if (targetObj == null)
                 {
                     obj = CreateObject(className);
+                    if (obj == null)
+                    {
+                        bool isHandled = CheckMissingClass(xdr, className);
+                        if (isHandled)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                        }
+                    }
                 }
                 else
                 {
                     obj = targetObj;
-                }
-                if(obj==null)
-                {
-                    bool isHandled = CheckMissingClass(xdr, className);
-                    if (isHandled)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
-                    }
-                }
+                }             
 
 
 
