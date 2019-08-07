@@ -669,21 +669,26 @@ namespace Amdocs.Ginger.Repository
 
                 if (targetObj == null)
                 {
-                    bool isHandled = CheckMissingClass(xdr, className);
-                    if(isHandled)
+                    obj = CreateObject(className);
+                    if (obj == null)
                     {
-                        return null;
+                        bool isHandled = CheckMissingClass(xdr, className);
+                        if (isHandled)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                        }
                     }
-                    else
-                    {
-                        obj = CreateObject(className);
-                    }
-                    
                 }
                 else
                 {
                     obj = targetObj;
-                }
+                }             
+
+
 
                 SetObjectSerialziedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
@@ -787,8 +792,9 @@ namespace Amdocs.Ginger.Repository
                 }
 
                 return obj;
-            }            
-            throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
+            }
+            return null;
+            //throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
 
         }
 
