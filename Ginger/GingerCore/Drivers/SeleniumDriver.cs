@@ -5433,7 +5433,7 @@ namespace GingerCore.Drivers
                     {
                         if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Error occurred while recording", e); 
+                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e); 
                         }
                         else
                         {
