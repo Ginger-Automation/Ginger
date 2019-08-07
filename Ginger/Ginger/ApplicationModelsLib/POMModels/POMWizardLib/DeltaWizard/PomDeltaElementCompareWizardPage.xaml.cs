@@ -81,7 +81,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 catch (Exception ex)
                 {
                     Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
-                    //Reporter.ToLog(eLogLevel.ERROR, "Error occured during POM Element update", ex);
+                    //Reporter.ToLog(eLogLevel.ERROR, "Error occurred during POM Element update", ex);
                     mWizard.mPomDeltaUtils.StopLearning();
                 }
                 finally

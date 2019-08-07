@@ -234,7 +234,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemNotification activitiesVarsDepInd = new ListItemNotification();            
             activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
             activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
             activitiesVarsDepInd.ImageSize = 14;
             activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
             activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
@@ -702,7 +702,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             if (activitiesGroup.Name.Contains("Optimized Activities"))
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "This is an automaic group created from Gherkin file and can not be modified");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "This is an automatic group created from Gherkin file and can not be modified");
                 return;
             }
             string newName = activitiesGroup.Name;

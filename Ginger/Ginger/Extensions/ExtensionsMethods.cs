@@ -130,7 +130,7 @@ namespace Ginger
         /// <param name="Field">Object field to bind</param>
         /// <param name="list">List of Observable items to display in the combo box</param>
         /// <param name="DisplayMemberPath">list item field to display</param>
-        /// <param name="SelectedValuePath">list item value to to return when selected</param>
+        /// <param name="SelectedValuePath">list item value to return when selected</param>
         public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath, BindingMode bindingMode = BindingMode.TwoWay)
         {
             ComboBox.ItemsSource = list;

@@ -636,7 +636,7 @@ namespace Amdocs.Ginger.Repository
 
                     if (counter > 100)
                     {
-                        throw new Exception("cannot find uniqe file after 100 tries");
+                        throw new Exception("cannot find unique file after 100 tries");
                     }
                 }
 
