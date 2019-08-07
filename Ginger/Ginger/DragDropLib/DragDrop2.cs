@@ -38,7 +38,7 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _startPoint = e.GetPosition(null);            
+            _startPoint = e.GetPosition(null);
         }
 
         /// <summary>
@@ -47,11 +47,18 @@ namespace GingerWPF.DragDropLib
         /// value = false : means "Do Not Drop"
         /// </summary>
         /// <param name="isDraggable"></param>
-        public static void SetDragIcon(bool isDraggable)
+        public static void SetDragIcon(bool isDraggable, bool multipleItems = false)
         {
-            if(isDraggable == true)
+            if (isDraggable == true)
             {
-                DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                if (multipleItems)
+                {
+                    DragInfo.DragIcon = DragInfo.eDragIcon.MultiAdd;
+                }
+                else
+                {
+                    DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                }
             }
             else
             {
@@ -68,9 +75,9 @@ namespace GingerWPF.DragDropLib
                 if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    DragInfo = new DragInfo();                    
+                    DragInfo = new DragInfo();
                     DragInfo.OriginalSource = e.OriginalSource;
-                    ((IDragDrop)sender).StartDrag(DragInfo);                    
+                    ((IDragDrop)sender).StartDrag(DragInfo);
                     // We start drag only of control put data in the drag data
                     if (DragInfo.Data != null)
                     {
@@ -90,8 +97,8 @@ namespace GingerWPF.DragDropLib
 
             DDW.SetHeader(DragInfo.Header);
             DDW.MoveToMousePosition();
-            DDW.Show();            
-            
+            DDW.Show();
+
             //TODO decide effects
             DragDropEffects de = DragDrop.DoDragDrop(DragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
 
@@ -106,7 +113,7 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
+            if (DragInfo.DragIcon == DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragInfo.eDragIcon.Move || DragInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
             {
                 if (sender is UcListView)
                 {

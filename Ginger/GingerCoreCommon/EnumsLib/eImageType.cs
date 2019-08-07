@@ -175,6 +175,7 @@ namespace Amdocs.Ginger.Common.Enums
         Copy,
         Cut,
         Paste,
+        WindowRestore,
         #endregion
 
         #region Items Images

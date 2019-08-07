@@ -44,7 +44,8 @@ namespace GingerWPF.DragDropLib
             DoNotDrop,
             Add,
             Move,
-            Unknown
+            Unknown,
+            MultiAdd
         }
 
         public bool DataIsAssignableToType(Type T)

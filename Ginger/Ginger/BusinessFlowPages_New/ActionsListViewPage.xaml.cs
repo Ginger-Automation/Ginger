@@ -219,11 +219,16 @@ namespace GingerWPF.BusinessFlowsLib
         // Drag Drop handlers
         private void listActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
-                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
-                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
-                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
-                            || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ObservableList<RepositoryItemBase>)))
+            {
+                //Drag
+                DragDrop2.SetDragIcon(true, true);
+            }
+            else if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
+               || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
+                   || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
+                       || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
+                           || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);
@@ -242,7 +247,6 @@ namespace GingerWPF.BusinessFlowsLib
             if (droppedItem != null)
             {
                 int mouseIndex = -1;
-                int lastAddedIndex = -1;
                 Act actDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Act;
 
                 if (actDroppedOn != null)
@@ -250,18 +254,48 @@ namespace GingerWPF.BusinessFlowsLib
                     mouseIndex = ListView.DataSourceList.IndexOf(actDroppedOn);
                 }
 
-                lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
-
-                if (lastAddedIndex > mouseIndex)
+                if (droppedItem is ObservableList<RepositoryItemBase>)
                 {
-                    ListView.xListView.SelectedItems.Clear();
-                    for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
+                    ObservableList<RepositoryItemBase> repoItemsList = droppedItem as ObservableList<RepositoryItemBase>;
+                    if (repoItemsList != null && repoItemsList.Count > 0)
                     {
-                        RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
-                        if (repoBaseItem != null)
+                        ListView.xListView.SelectedItems.Clear();
+                        int lastItemIndex = mouseIndex;
+                        foreach (RepositoryItemBase listItem in repoItemsList)
                         {
-                            ListView.xListView.SelectedItems.Add(repoBaseItem);
+                            ActionsFactory.AddActionsHandler(listItem, mContext, lastItemIndex);
+                            lastItemIndex++;
                         }
+
+                        for(int it = mouseIndex; it < lastItemIndex; it++)
+                        {
+                            RepositoryItemBase repoItemBase = ListView.DataSourceList[it] as RepositoryItemBase;
+                            ListView.xListView.SelectedItems.Add(repoItemBase);
+                        }
+                    }
+                }
+                else
+                {
+                    DroppedItemHandler(droppedItem, mouseIndex);
+                }
+            }
+        }
+
+        private void DroppedItemHandler(object droppedItem, int mouseIndex)
+        {
+            int lastAddedIndex = -1;
+
+            lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
+
+            if (lastAddedIndex > mouseIndex)
+            {
+                ListView.xListView.SelectedItems.Clear();
+                for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
+                {
+                    RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
+                    if (repoBaseItem != null)
+                    {
+                        ListView.xListView.SelectedItems.Add(repoBaseItem);
                     }
                 }
             }
