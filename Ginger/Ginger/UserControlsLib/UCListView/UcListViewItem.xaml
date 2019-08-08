@@ -13,7 +13,7 @@
         <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="xListItemGrid" Background="White" MouseLeftButtonDown="XListItemGrid_MouseLeftButtonDown">
+    <Grid x:Name="xListItemGrid" Background="White" MouseLeftButtonDown="XListItemGrid_MouseLeftButtonDown" MouseEnter="XListItemGrid_MouseEnter" MouseLeave="XListItemGrid_MouseLeave">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition x:Name="xExtraDetailsRow" Height="25"/>
@@ -105,13 +105,13 @@
         <Grid x:Name="xExtraDetailsGrid" Grid.Row="1" Grid.Column="4" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50*" MinWidth="50"/>
-                <ColumnDefinition x:Name="xItemOperationsClm" Width="175"/>
+                <ColumnDefinition x:Name="xItemOperationsClm" Width="0"/>
                 <!--to set width per need like for notifications-->
             </Grid.ColumnDefinitions>
 
             <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
 
-            <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right">
+            <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right" Visibility="Collapsed">
                 <StackPanel x:Name="xItemExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right"/>
 
                 <GridSplitter x:Name="xOperationsSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="0,4,0,4"/>

@@ -27,6 +27,7 @@ using Ginger.ReporterLib;
 using Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
@@ -109,6 +110,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
+            
 
             // Put back for Lazy load of BF.Acitvities
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field

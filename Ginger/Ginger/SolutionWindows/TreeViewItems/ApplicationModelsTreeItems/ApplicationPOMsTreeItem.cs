@@ -113,7 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
 
             if (mPOMModelsPage == null)

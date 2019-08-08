@@ -16,12 +16,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
     {
         public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder)
         {
-            throw new NotImplementedException();
+          
         }
 
         public void CreateCustomerLogo(object a, string t)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
@@ -106,7 +106,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void StartAgentDriver(IAgent agent)

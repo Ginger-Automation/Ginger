@@ -71,7 +71,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to QC/ALM", ex);
                 return false;
             }
         }
@@ -100,7 +100,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", ex);
                 return false;
             }
         }
@@ -248,24 +248,36 @@ namespace GingerCore.ALM.QCRestAPI
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     runStep.Actual = errors;
+                                                    runStep.ElementsField["status"] = "Failed";
+                                                    runStep.ElementsField["actual"] = errors;
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
+                                                    runStep.Status = "N/A";
+                                                    runStep.Actual = "NA";
                                                     runStep.ElementsField["status"] = "N/A";
                                                     runStep.ElementsField["actual"] = "NA";
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
+                                                    runStep.Status = "Passed";
+                                                    runStep.Actual = "Passed as expected";
                                                     runStep.ElementsField["status"] = "Passed";
                                                     runStep.ElementsField["actual"] = "Passed as expected";
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
+                                                    runStep.Status = "N/A";
+                                                    runStep.Actual = "Skipped";
                                                     runStep.ElementsField["status"] = "N/A";
                                                     runStep.ElementsField["actual"] = "Skipped";
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
+                                                    runStep.Status = "No Run";
+                                                    runStep.Actual = "Was not executed";
                                                     runStep.ElementsField["status"] = "No Run";
                                                     runStep.ElementsField["actual"] = "Was not executed";
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
+                                                    runStep.Status = "Not Completed";
+                                                    runStep.Actual = "Not Completed";
                                                     runStep.ElementsField["status"] = "Not Completed";
                                                     runStep.ElementsField["actual"] = "Not Completed";
                                                     break;
@@ -291,18 +303,29 @@ namespace GingerCore.ALM.QCRestAPI
                                     foreach (QCRunStep runStep in runSteps)
                                         //condition to avoid that extra element present in the runSteps
                                         if (runStep.ElementsField.Count > 0)
-                                        stepsStatuses.Add(runStep.ElementsField["status"].ToString());//removed runStep.Status which is null
+                                        stepsStatuses.Add(runStep.Status);//removed runStep.Status which is null
 
                                     //update the TC general status based on the activities status collection.                                
                                     if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                    {
                                         currentRun.Status = "Failed";
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count-1 || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                        currentRun.ElementsField["status"] = "Failed";
+                                    }
+                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                    {
                                         currentRun.Status = "No Run";
-                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count-1 || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                        currentRun.ElementsField["status"] = "No Run";
+                                    }
+                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                    {
+                                        currentRun.Status = "Passed";
                                         currentRun.ElementsField["status"] = "Passed";
+                                    }
                                     else
+                                    {
+                                        currentRun.Status = "Not Completed";
                                         currentRun.ElementsField["status"] = "Not Completed";
-
+                                    }
                                     QCItem runToUpdate = ConvertObjectValuesToQCItem(currentRun, ResourceType.TEST_RUN);
                                     ALMResponseData runDataForUpdate = QCRestAPIConnect.UpdateEntity(ResourceType.TEST_RUN, currentRun.Id, runToUpdate);
                                 }
@@ -806,7 +829,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             if (itemVals.GetType().GetProperty("TestOrder") != null && itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null) != null && !isUpdate)
             {
-                itemWithValues.Fields.Add("test-order", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
+                itemWithValues.Fields.Add("order-id", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
             }
             if (itemVals.GetType().GetProperty("TestId") != null && itemVals.GetType().GetProperty("TestId").GetValue(itemVals, null) != null && !isUpdate)
             {

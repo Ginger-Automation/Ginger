@@ -39,14 +39,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     {
         static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
-        public string ExecutionLogfolder { get; set; }        
-        DateTime mCurrentExecutionDateTime;                
+        public string ExecutionLogfolder { get; set; }
+        string mLogsFolderName;
+        DateTime mCurrentExecutionDateTime;
+        private eExecutedFrom ExecutedFrom;
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
         public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
-        ProjEnvironment mExecutionEnvironment = null;        
+        ProjEnvironment mExecutionEnvironment = null;
 
         public ProjEnvironment ExecutionEnvironment
         {

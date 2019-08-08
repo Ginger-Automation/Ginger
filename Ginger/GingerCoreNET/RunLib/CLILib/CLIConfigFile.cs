@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore;
 using GingerCoreNET.SourceControl;
 using System;
 
@@ -58,9 +59,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {               
                 sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+                {
+                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    int lastSlash = modifiedURI.LastIndexOf('/');
+                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    sConfig += "SourceControlUrl=" + modifiedURI + Environment.NewLine;
+                }
+                else
+                {
+                    sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
+                }
                 sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
-                sConfig += "SourceControlPassword=" + solution.SourceControl.SourceControlPass + Environment.NewLine;
+                sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass) + Environment.NewLine;
+                sConfig += "PasswordEncrypted=" + "Y" + Environment.NewLine;                
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
                     if (solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")

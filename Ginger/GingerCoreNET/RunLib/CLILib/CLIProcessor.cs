@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
             if (args[0].Contains("="))
             {
-                string[] arg1 = args[0].Split('=');
+                string[] arg1 = args[0].Split(new[]{ '='}, 2);
                 param = arg1[0].Trim();
                 value = arg1[1].Trim();                
             }

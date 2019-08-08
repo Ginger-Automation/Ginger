@@ -478,7 +478,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Business Flow Configuration Page tabs style", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Configuration Page tabs style", ex);
             }
         }
     }

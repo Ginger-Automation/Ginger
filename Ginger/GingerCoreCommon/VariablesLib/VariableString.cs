@@ -42,7 +42,13 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string InitialStringValue 
         { 
-            set { mInitialStringValue = value; Value = value; OnPropertyChanged("Formula"); } 
+            set
+            {
+                mInitialStringValue = value;
+                Value = value;
+                OnPropertyChanged("InitialStringValue");
+                OnPropertyChanged("Formula");
+            } 
             get { 
                 //TODO: cleanup later, quick and dirty Temp solution for converting scripts prior to v1.5 which had the value and no StringInitialValue
                 if (mInitialStringValue == null)
