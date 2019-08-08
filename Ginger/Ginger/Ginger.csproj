@@ -2220,8 +2220,10 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.25e6d9f0760d0121ac7a.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\main.620febfb342588060c0f.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.b4975819c8aaadde704a.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
