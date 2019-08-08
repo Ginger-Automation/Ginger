@@ -82,11 +82,11 @@ namespace Ginger.Actions.ActionConversion
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.SelectedForConversion), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 15, Header = "Description"  });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.SelectedForConversion), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.ContainingFolder), WidthWeight = 15, Header = "Relative File Path" });
-            
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 15, Header = "Description"  });
+                        
             xBusinessFlowGrid.SetAllColumnsDefaultView(defView);
             xBusinessFlowGrid.InitViewItems();
             xBusinessFlowGrid.SetTitleLightStyle = true;
@@ -95,7 +95,7 @@ namespace Ginger.Actions.ActionConversion
 
             xBusinessFlowGrid.DataSourceList = GetBusinessFlowItems();
             xBusinessFlowGrid.RowChangedEvent += grdGroups_RowChangedEvent;
-            xBusinessFlowGrid.Title = "Convert " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+            xBusinessFlowGrid.Title = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " to Convert";
             xBusinessFlowGrid.MarkUnMarkAllActive += MarkUnMarkAllActivities;
             xBusinessFlowGrid.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
             {
@@ -176,6 +176,10 @@ namespace Ginger.Actions.ActionConversion
                     if (items.Count == 1)
                     {
                         bf.SelectedForConversion = true;
+                    }
+                    else
+                    {
+                        bf.SelectedForConversion = false;
                     }
                 }                
             }

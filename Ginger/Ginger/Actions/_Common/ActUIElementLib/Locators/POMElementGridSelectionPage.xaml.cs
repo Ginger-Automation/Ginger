@@ -44,6 +44,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public event POMSelectionEventHandler POMSelectionEvent;
 
+        public bool ShowTitle { get; set; }
+
         /// <summary>
         /// This event is used to raise object
         /// </summary>
@@ -67,13 +69,23 @@ namespace Ginger.Actions._Common.ActUIElementLib
         /// <summary>
         /// Ctor for default settings
         /// </summary>
+        public POMElementGridSelectionPage()
+        {
+            InitializeComponent();
+            SetPOMGridView();
+        }
+
+        /// <summary>
+        /// Ctor for default settings
+        /// </summary>
         /// <param name="addContainingFolder"></param>
         /// <param name="height"></param>
         /// <param name="width"></param>
-        public POMElementGridSelectionPage(bool addContainingFolder, int height, int width)
+        public POMElementGridSelectionPage(bool addContainingFolder, int height, int width, bool showTitle)
         {
             this.Height = height;
             this.Width = width;
+            ShowTitle = showTitle;
             AddContainingFolderColumn = addContainingFolder;
             InitializeComponent();
             SetPOMGridView();
@@ -89,8 +101,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             view.GridColsView = new ObservableList<GridColView>();
             if (AddContainingFolderColumn)
             {
+                view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Path", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
                 view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-                view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Path", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true }); 
             }
             else
             {
@@ -102,6 +114,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             gridPOMListItems.InitViewItems();
             PomModels = new ObservableList<POMBindingObjectHelper>();
             gridPOMListItems.DataSourceList = PomModels;
+            gridPOMListItems.Title = "Selected POM's";
+            gridPOMListItems.ShowTitle = ShowTitle ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>

@@ -81,9 +81,10 @@ namespace Ginger.Actions.ActionConversion
         private void Init(WizardEventArgs WizardEventArgs)
         {
             DataContext = mWizard;
+            xRadSameActivity.IsChecked = true;
             SetTargetApplicationGridView();
 
-            mPOMControl = new POMElementGridSelectionPage(true, 220, 555);
+            mPOMControl = new POMElementGridSelectionPage(true, 220, 555, false);
             mPOMControl.POMSelectionEvent += POMSelectedEventHandler;
             xPOMUserControl.Content = mPOMControl;
         }
@@ -186,6 +187,24 @@ namespace Ginger.Actions.ActionConversion
             }
 
             return lstTA;
+        }
+
+        /// <summary>
+        /// This event is used to set the height and display contents based on its checked state
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void XRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.NewActivityChecked = (bool)xNewActivityRadioBtn.IsChecked;
+            if ((bool)xRadSameActivity.IsChecked)
+            {
+                ControlsViewRow.Height = new GridLength(0);                
+            }
+            else
+            {
+                ControlsViewRow.Height = new GridLength(230);
+            }
         }
     }
 }
