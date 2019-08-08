@@ -6559,7 +6559,7 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.GetItemCount:
                         try
                         {
-                            List<IWebElement> elements = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                            List<IWebElement> elements = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
                             if (elements != null)
                             {
                                 act.AddOrUpdateReturnParamActual("Elements Count", elements.Count.ToString());
