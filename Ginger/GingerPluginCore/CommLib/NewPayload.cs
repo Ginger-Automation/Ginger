@@ -78,6 +78,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte BoolTrue = 10;    // bool = true
         const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
         const byte JSONStruct = 12;    // Struct for fixed struct with simple propers like int, float not for dynamic values
+        const byte PayLoadType = 13;
+        
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
@@ -128,6 +130,12 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
+        public void Truncate()
+        {
+            int totalLen = GetDataLen() + 4;
+            Array.Resize(ref mBuffer, totalLen); 
+        }
+
         public string GetHexString()
         {
             //mBuffer to hex string write code here
@@ -145,7 +153,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public void ClosePackage()
         {
-            // Each packaet start with 4 bytes length
+            // Each packet start with 4 bytes length
             // then each type: 1 = String, 2 = Int, 3=Enum
             // data                        
             CheckBuffer(1);
@@ -430,6 +438,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
+        
+
         // 7 Add Bytes
         public void AddBytes(Byte[] bytes)
         {
@@ -572,6 +582,32 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 throw new InvalidOperationException("JSONStruct Parsing Error/wrong value type");
             }
         }
+
+
+        // 13 Add Payload
+        public void AddPayload(NewPayLoad item)
+        {
+            CheckBuffer(1 + item.PackageLen() + 4);
+            WriteValueType(PayLoadType);
+            WriteBytes(item.GetPackage());            
+        }
+
+        // 13 Read Payload
+        public NewPayLoad ReadPayload()
+        {                        
+            byte b = ReadValueType();
+
+            if (b == PayLoadType)
+            {
+                NewPayLoad pl = ReadPayLoad();
+                return pl;
+            }
+            else
+            {
+                throw new InvalidOperationException("ReadPayload Parsing Error/wrong value type");
+            }
+        }
+
 
 
         public void AddValueByObjectType(object obj)
@@ -821,7 +857,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         private bool VerifyPaylod()
         {
             int len = GetDataLen();
-            if (mBuffer.Length != len + 4) //                 
+            if (mBuffer.Length != len + 4 && mBuffer.Length != 1024) 
             {
                 return false;
             }
@@ -919,6 +955,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         string json = ReadString();                        
                         s += "jsonstruct= " + json + Environment.NewLine;
                         break;
+                    case PayLoadType:
+                        NewPayLoad payloadInPayload = ReadPayload();
+                        string payload = "PayloadInPayload, package len=" + payloadInPayload.PackageLen() + Environment.NewLine;                        
+                        string PayloadInPayloadDump = payloadInPayload.BufferInfo;
+                        payload += "Payload data" + Environment.NewLine + PayloadInPayloadDump + Environment.NewLine;
+                        s += payload;
+                        break;
+                        
                     default:
                         mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
@@ -1007,6 +1051,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 {
                     AddValue((bool)item);
                 }
+                else if (item is byte[])
+                {
+                    AddBytes((byte[])item);
+                }
+                else if (item is NewPayLoad)
+                {
+                    AddPayload((NewPayLoad)item);
+                }
 
                 // Add struct !!!!!!!!
 
@@ -1019,6 +1071,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             ClosePackage();
         }
+
+        
 
         public Guid GetGuid()
         {

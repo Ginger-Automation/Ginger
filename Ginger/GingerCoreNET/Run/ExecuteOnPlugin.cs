@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
@@ -191,10 +192,44 @@ namespace Amdocs.Ginger.CoreNET.Run
             ParseActionResult(RC, (Act)actPlugin);
         }
 
-
+        // TEMP needs a list and not here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public static string RemoteGridIP;
+        public static int RemoteGridPort;
 
         // Use for Actions which run without agent and are of the generic type ActPlugin - 
-        internal static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
+        public static void ExecuteActionOnRemoteGridPlugin(ActPlugIn actPlugin)
+        {
+            //Arrange  
+            GingerSocketClient2 mHubClient = new GingerSocketClient2();
+            mHubClient.Connect(RemoteGridIP, RemoteGridPort);
+            NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "a", "ccc");
+            if (fpl.IsErrorPayLoad())
+            {
+
+            }
+            else
+            {
+                string id = fpl.GetValueString();
+                string id2 = fpl.GetValueString();
+            }
+            NewPayLoad rc = mHubClient.SendRequestPayLoad(fpl);
+
+            Guid sessionID = rc.GetGuid();
+
+            //  TODO: reserve if session
+
+            NewPayLoad actionPayload = CreateActionPayload(actPlugin); 
+
+            NewPayLoad fpl3 = new NewPayLoad(SocketMessages.SendToNode, sessionID, actionPayload);
+            // fpl3.ClosePackage();
+            NewPayLoad rc4 = mHubClient.SendRequestPayLoad(fpl3); // Send to Ginger Grid which will send to Ginger Node to run the action
+            rc4.DumpToConsole();
+            ParseActionResult(rc4, actPlugin);
+        }
+
+
+            // Use for Actions which run without agent and are of the generic type ActPlugin - 
+        public static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
             try
             {

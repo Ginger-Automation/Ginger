@@ -487,8 +487,31 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(pl.Name, pl2.Name);
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void PayloadinPayload()
+        {
+            //Arrange            
+            NewPayLoad plin = new NewPayLoad("plin", "AAA", "BBB", "CCC");
 
-       
+            // Act
+            NewPayLoad pl = new NewPayLoad("master", "123", plin);
+            byte[] b = pl.GetPackage();
+            NewPayLoad pl2 = new NewPayLoad(b);
+
+            // Extract            
+            string v123 = pl2.GetValueString();
+            NewPayLoad plin2 = pl2.ReadPayload();            
+
+            string aaa = plin2.GetValueString();
+            string bbb = plin2.GetValueString();
+            string ccc = plin2.GetValueString();
+
+            //Assert
+            Assert.AreEqual("plin", plin2.Name);
+            Assert.AreEqual("AAA", aaa);            
+        }
+
 
 
     }
