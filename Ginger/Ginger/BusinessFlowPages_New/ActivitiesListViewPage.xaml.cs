@@ -18,22 +18,15 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Ginger.Activities;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -85,7 +78,12 @@ namespace Ginger.BusinessFlowPages
             xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
 
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
-            xActivitiesListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, false);
+            xActivitiesListView.List.SetValue(ScrollViewer.CanContentScrollProperty, false);
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                xActivitiesListView.IsDragDropCompatible = false;
+            }
         }
 
         private void SetListViewData()

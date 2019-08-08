@@ -108,7 +108,8 @@ namespace GingerWPF.BusinessFlowsLib
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mActionBeenEdit = null;
                 if (mActionEditPage != null)
-                {                   
+                {
+                    mActionEditPage.ClearPageBindings();
                     mActionEditPage.KeepAlive = false;
                     mActionEditPage = null;
                     //GC.Collect();
@@ -174,7 +175,12 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
 
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
-                mActionsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+                mActionsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
+
+                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    mActionsListView.IsDragDropCompatible = false;
+                }
             }
 
             if (mActivity != null)
