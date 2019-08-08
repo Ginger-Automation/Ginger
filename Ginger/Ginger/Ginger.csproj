@@ -4925,12 +4925,6 @@
     <Content Include="StaticDrivers\IE64BitDriver\IEDriverServer.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="EntityFramework.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="EntityFramework.SqlServer.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <!--<Content Include="Help\Documents\3. Supported Platforms\2. Mobile\Globe - Amdocs BEAT Ginger Automation_Globe.mp4" />-->
     <Content Include="StaticDrivers\GingerAgent.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

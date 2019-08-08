@@ -92,6 +92,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             catch(ObjectDisposedException ex)
             {
                 // ignore 
+                Console.WriteLine("DoStartServer ObjectDisposedException exception ignored " + ex.Message);
             }
             catch (Exception ex)
             {

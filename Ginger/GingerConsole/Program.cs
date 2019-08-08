@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.GingerConsole
         private static void InitWorkSpace()
         {
             GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();  
-            WorkSpace.Init(ws, "Program");
+            WorkSpace.Init(ws);
         }
 
         private static void ProcessArgs(string[] args)

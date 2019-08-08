@@ -130,6 +130,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     return; //Failed to perform execution perperations
                 }
+
+                mCLIHelper.SetTestArtifactsFolder();                
             }
 
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
