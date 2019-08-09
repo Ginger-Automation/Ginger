@@ -176,32 +176,31 @@ namespace GingerCore.Actions
             }
         }
 
-        private eLocateBy mLocateBy;
-
-        [IsSerializedForLocalRepository]
         public eLocateBy LocateBy
         {
-            get { return mLocateBy; }
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+            }
             set
             {
-                if (mLocateBy != value)
-                {
-                    mLocateBy = value;
-                    OnPropertyChanged(Fields.LocateBy);
-                    OnPropertyChanged(Fields.Details);
-                }
+                GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
+                OnPropertyChanged(Fields.LocateBy);
+                OnPropertyChanged(Fields.Details);
             }
         }
 
-
-        private string mLocateValue;
-        [IsSerializedForLocalRepository]
+     
+     
         public string LocateValue
         {
-            get { return mLocateValue; }
+            get
+            {
+                return GetOrCreateInputParam(Fields.LocateValue).Value;
+            }
             set
             {
-                mLocateValue = value;
+                GetOrCreateInputParam(Fields.LocateValue).Value = value;
                 OnPropertyChanged(Fields.LocateValue);
                 OnPropertyChanged(Fields.Details);
             }
@@ -321,8 +320,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
+       [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> InputValues { get; set; } =new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
@@ -696,6 +695,17 @@ namespace GingerCore.Actions
             return AIV;
         }
 
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        {
+
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+
+            TEnum result;
+       _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+         
+            return result;
+
+        }
 
         //YW - removed as it was causing problem - need to rethink better.
         //public ActInputValueEnum GetOrCreateEnumInputParam(string Param, object DefaultValue = null)
