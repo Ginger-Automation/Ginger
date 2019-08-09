@@ -1952,9 +1952,6 @@
     <Compile Include="Agents\DriverConfigurationParamEditWindow.xaml.cs">
       <DependentUpon>DriverConfigurationParamEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Agents\NewAgentPage.xaml.cs">
-      <DependentUpon>NewAgentPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Run\GingerRunnerConfigurationsPage.xaml.cs">
       <DependentUpon>GingerRunnerConfigurationsPage.xaml</DependentUpon>
     </Compile>
@@ -4551,10 +4548,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Agents\DriverConfigurationParamEditWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Agents\NewAgentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
