@@ -318,58 +318,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(loc.ToString(), Loc2);
         }
 
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void DumpTest()
-        //{
-        //    //Arrange
-        //    ActJavaElement act = new ActJavaElement();
-        //    act.LocateBy = eLocateBy.ByName;
-        //    act.LocateValue = "ABC";
-        //    act.Value = "123";
-        //    act.ControlAction = ActJavaElement.eControlAction.SetValue;            
-
-        //    PayLoad pl = act.Pack();
-        //    byte[] b = pl.GetPackage();
-        //    PayLoad pl2 = new PayLoad(b);            
-
-        //    //Act
-        //    pl2.DumpToConsole();
-
-        //    //Assert
-        //}
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void ActJavaElementAction()
-        //{
-        //    //Arrange
-        //    ActJavaElement act = new ActJavaElement();
-        //    act.WaitforIdle = ActJavaElement.eWaitForIdle.Medium;
-        //    act.LocateBy = eLocateBy.ByName;
-        //    act.LocateValue = "ABC";
-        //    act.Value = "123";
-        //    act.ControlAction = ActJavaElement.eControlAction.SetValue;
-
-
-        //    //Act
-        //    PayLoad pl = act.Pack();
-        //    byte[] b = pl.GetPackage();
-
-        //    PayLoad pl2 = new PayLoad(b);            
-        //    pl2.DumpToConsole();
-        //    string WaitForIdle = pl2.GetValueEnum();
-        //    string LocateBy = pl2.GetValueEnum();
-        //    string LocateValue = pl2.GetValueString();
-        //    string Value = pl2.GetValueString();
-        //    string ControlAction = pl2.GetValueEnum();
-
-        //    //Assert
-        //   Assert.AreEqual(act.LocateBy.ToString(), LocateBy);
-        //   Assert.AreEqual(act.LocateValue, LocateValue);
-        //   Assert.AreEqual(act.Value, Value);
-        //   Assert.AreEqual(act.ControlAction.ToString(), ControlAction);
-
-        //}
+       
+        
 
         [TestMethod]
         [Timeout(60000)]
