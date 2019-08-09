@@ -77,7 +77,7 @@ namespace amdocs.ginger.GingerCoreNET
             if (!b)
             {
                 Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
-                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspacae in Class cleanup");               
+                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspace in Class cleanup");               
             }
             mHoldBy = HoldBy;
 

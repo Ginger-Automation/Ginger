@@ -2487,7 +2487,7 @@ namespace Ginger.Reports.GingerExecutionReport
             string beatLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                beatLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@BeatLogo.png' style='padding-left:70px'/>";
+                beatLogo = "<img alt='Embedded Image' src='{ReportLevel}assets/img/@BeatLogo.png' height='50' style='padding-left:85px'/>";
             }
             else
             {
@@ -2505,7 +2505,7 @@ namespace Ginger.Reports.GingerExecutionReport
             string gingerLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                gingerLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@Ginger.png' style='float:right;padding-left:70px'/>";
+                gingerLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@Ginger_old.png' style='float:right;padding-left:70px'/>";
             }
             else
             {

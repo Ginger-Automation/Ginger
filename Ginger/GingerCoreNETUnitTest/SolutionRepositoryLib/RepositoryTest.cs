@@ -32,6 +32,7 @@ using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests
@@ -352,6 +353,24 @@ namespace UnitTests.NonUITests
             RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
+        [TestMethod]
+        
+        public void DSConditionClassSkipSerializeTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource having class "GingerCore.DataSource.ActDSConditon" serialized in xml
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+            string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml");
+              
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+
+            //Assert
+            Assert.AreEqual(2, businessFlow.Activities.Count, "BF Activities Count");
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count,"Activity Actions Count");
+
+        }
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]       
         //public void SaveLoadRunSetWithRunSetActionSendFreeEmailX2()
@@ -385,7 +404,7 @@ namespace UnitTests.NonUITests
         //    RunSetActionSendFreeEmail RAFE = new RunSetActionSendFreeEmail();
         //    RAFE.Email.MailTo = "meme";
         //    RSC.RunSetActions.Add(RAFE);
-            
+
 
         //    RSC.SaveToFile(FileName);
         //    //Act

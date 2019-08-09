@@ -128,6 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (totalExecuted * 100 / totalRunners).ToString());
             if (totalRunners != 0)
                 liteDbRunSet.PassRate = string.Format("{0:F1}", (totalPassed * 100 / totalRunners).ToString());
+            liteDbRunSet.Elapsed = liteDbRunSet.RunnersColl.Sum(a => a.Elapsed);
 
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
@@ -174,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             {
                                 string fileName = Path.GetFileName(screenshot);
                                 string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
-                                if (File.Exists(newScreenshotPath))
+                                if (File.Exists(screenshot))
                                 {
                                     System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
                                     newScreenShotsList.Add(fileName);

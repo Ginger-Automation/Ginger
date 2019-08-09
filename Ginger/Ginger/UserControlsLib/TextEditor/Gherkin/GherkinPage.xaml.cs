@@ -552,7 +552,7 @@ namespace Ginger.GherkinLib
                 Reporter.ToUser(eUserMsgKey.BusinessFlowUpdate, mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, "Updated");
             }
 
-            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(GherkinTextEditor.FileName) + " , Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
 
             //if(App.BusinessFlow == mBizFlow)
             //{
@@ -681,7 +681,7 @@ namespace Ginger.GherkinLib
         public bool Load(string FileName)
         {
             featureFileName = FileName;
-            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) + " , Target Business Flow: N/A", (Style)TryFindResource("@ucGridTitleLightStyle"));
+            GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) + " , Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)  + ": N/A", (Style)TryFindResource("@ucGridTitleLightStyle"));
             GherkinDcoumentEditor g = new GherkinDcoumentEditor();                        
             g.OptimizedSteps = mOptimizedSteps;
             g.OptimizedTags = mTags;
@@ -718,7 +718,7 @@ namespace Ginger.GherkinLib
                 BFName = mBizFlow.FileName;
                 isBFexists = true;
                 UpdateBFButton.Content = "Update "+ GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) +  " , Target Business Flow: " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
+                GherkinTextEditor.SetContentEditorTitleLabel(Path.GetFileName(FileName) +  " , Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + mBizFlow.ContainingFolder + "\\" + mBizFlow.Name, (Style)TryFindResource("@ucGridTitleLightStyle"));
             }
             else
             {

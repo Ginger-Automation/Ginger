@@ -86,7 +86,7 @@
 
         <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
 
-        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActivitisTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
@@ -104,7 +104,7 @@
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
                             <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variables (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
                 </TabItem.Header>

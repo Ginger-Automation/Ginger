@@ -10,11 +10,6 @@
       Title="WindowsExplorerNavPage">
 
     <Grid >
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="WindowComboboxRow" Height="Auto" />            
-        </Grid.RowDefinitions>
-
-        <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Width="Auto" Margin="3,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
-        
+        <Frame Name="xSelectedItemFrame" NavigationUIVisibility="Hidden" Margin="3,0,0,0" HorizontalAlignment="Stretch" Height="780" />
     </Grid>
 </Page>

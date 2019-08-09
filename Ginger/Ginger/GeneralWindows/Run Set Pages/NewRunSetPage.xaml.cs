@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
 using Ginger.AnalyzerLib;
 using Ginger.Functionalities;
@@ -366,6 +367,8 @@ namespace Ginger.Run
                 if (setAsRunning)
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
+                    xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
                     xStopRunsetBtn.Visibility = Visibility.Visible;
                     xContinueRunsetBtn.Visibility = Visibility.Collapsed;
@@ -374,13 +377,15 @@ namespace Ginger.Run
                 else
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Run;
+                    xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     xRunRunsetBtn.IsEnabled = true;
                     xStopRunsetBtn.Visibility = Visibility.Collapsed;
                     xContinueRunsetBtn.Visibility = Visibility.Visible;
                     xResetRunsetBtn.Visibility = Visibility.Visible;
                 }
 
-                xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                
             });
         }
 
@@ -1116,7 +1121,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking Run Set " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
             }
         }
 
@@ -2480,6 +2485,16 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while undoing changes", ex);
             }
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
     }
 }

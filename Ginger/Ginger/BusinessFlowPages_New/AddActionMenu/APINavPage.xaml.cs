@@ -62,7 +62,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
-            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument);
+            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems);
 
             mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
@@ -76,6 +76,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
+        public void RefreshTreeItems(object sender, RoutedEventArgs e)
+        {
+            UpdateAPITree();
+        }
+
         private void UpdateAPITree()
         {
             if (mContext.Activity != null)
@@ -84,6 +89,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                                                     + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
                 mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
             }
+            mAPIPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
             mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
     }

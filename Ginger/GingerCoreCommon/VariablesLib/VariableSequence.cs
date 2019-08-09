@@ -41,15 +41,15 @@ namespace GingerCore.Variables
 
         private int mMin;
         [IsSerializedForLocalRepository]
-        public int Min { set { mMin = value; OnPropertyChanged("Formula"); } get { return mMin; } }
+        public int Min { set { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } get { return mMin; } }
 
         private int mMax;
         [IsSerializedForLocalRepository]
-        public int Max { set { mMax = value; OnPropertyChanged("Formula"); } get { return mMax; } }
+        public int Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
 
         private int mInterval;
         [IsSerializedForLocalRepository]
-        public int Interval { set { mInterval = value; OnPropertyChanged("Formula"); } get { return mInterval; } }
+        public int Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval));  OnPropertyChanged("Formula"); } get { return mInterval; } }
 
         [IsSerializedForLocalRepository]
         public bool IsInteger { set; get; }

@@ -37,6 +37,8 @@ namespace GingerCore
         private static int PASSWORD_ITERATIONS = 3; // can be any number
         private static int KEY_SIZE = 128; // can be 192 or 256
 
+        private static readonly string ENCRYPTION_KEY = ExtraInfo.getInfo().ElementAt(4);
+
         public static string EncryptString(string strToEncrypt, ref bool result)
         {
             try
@@ -195,7 +197,7 @@ namespace GingerCore
             };
         }
 
-        public byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
+        public static byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
         {
             return rijndaelManaged.CreateEncryptor()
                 .TransformFinalBlock(plainBytes, 0, plainBytes.Length);
@@ -213,8 +215,12 @@ namespace GingerCore
         /// <param name="plainText">Plain text to encrypt</param>
         /// <param name="key">Secret key</param>
         /// <returns>Base64 encoded string</returns>
-        public String EncryptwithKey(String plainText, String key)
+        public static String EncryptwithKey(String plainText, String key = "")
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                key = ENCRYPTION_KEY;
+            }
             var plainBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
         }
@@ -225,8 +231,12 @@ namespace GingerCore
         /// <param name="encryptedText">Base64 Encoded String</param>
         /// <param name="key">Secret Key</param>
         /// <returns>Decrypted String</returns>
-        public static string DecryptwithKey(string encryptedText, string key)
+        public static string DecryptwithKey(string encryptedText, string key = "")
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                key = ENCRYPTION_KEY;
+            }
             var encryptedBytes = Convert.FromBase64String(encryptedText);
             return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(key)));
         }        

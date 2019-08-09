@@ -2232,7 +2232,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value Flow Control", ex);
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
@@ -2675,7 +2675,7 @@ namespace Ginger.Run
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
-                        ErrorInfo = "Function evealuation didn't resulted in True";
+                        ErrorInfo = "Function evaluation didn't resulted in True";
                         break;
                     case eOperator.GreaterThan:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
@@ -3503,7 +3503,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' Business Flow", CurrentBusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), CurrentBusinessFlow), ex);
             }
             finally
             {
@@ -4229,7 +4229,7 @@ namespace Ginger.Run
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value Flow Control", ex);
                                 FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
@@ -4308,7 +4308,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Business Flow Name not found - " + Name);
+                Reporter.ToLog(eLogLevel.ERROR, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name not found - " + Name);
                 return false;
             }
         }
