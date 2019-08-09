@@ -39,13 +39,13 @@ namespace UnitTests.NonUITests
         public static void ClassInitialize(TestContext TC)
         {
             RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
-            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(RepositoryXMLConverterTest));                   
+            WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            WorkSpace.Instance.ReleaseWorkspace(); 
+            
         }
 
         [TestInitialize]
@@ -100,8 +100,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(env.Name, "CMI IIS test server");
            Assert.AreEqual(env.Applications.Count, 2);
             //TODO: add more asserts
-    }
-
+        }
+      
 
 
     }

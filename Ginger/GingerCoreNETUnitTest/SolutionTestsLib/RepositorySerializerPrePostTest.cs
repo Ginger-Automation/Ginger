@@ -40,14 +40,14 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2(nameof(RepositorySerializerPrePostTest));            
+            WorkspaceHelper.CreateWorkspace2();            
             NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -180,7 +180,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("Action Timeout - default is 30 seconds", actionTimeoutParameter.Description, "ActionTimeout Description Validation");
         }
 
-
+     
 
 
     }

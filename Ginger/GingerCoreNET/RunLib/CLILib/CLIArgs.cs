@@ -142,6 +142,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     case "--autoRunWindow":
                         cliHelper.ShowAutoRunWindow = bool.Parse(arg.ArgValue);
                         break;
+                    case "--testArtifactsFolder":
+                        cliHelper.TestArtifactsFolder = arg.ArgValue;
+                        break;
                     default:
                         Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '-' prefix: '" + arg + "'");
                         throw new ArgumentException("Unknown argument: ", arg.ArgName);

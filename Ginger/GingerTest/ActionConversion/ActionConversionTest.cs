@@ -51,7 +51,7 @@ namespace GingerTest
             // Use helper !!!!!
 
             // Creating workspace
-            WorkSpace.Init(new WorkSpaceEventHandler(), nameof(ActionConversionTest));
+            WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR

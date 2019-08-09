@@ -1,0 +1,11 @@
+[
+  {
+    "ServiceId": "SeleniumChromeService",
+    "Description": null,
+    "IsSession": true,
+    "Interfaces": [
+      "IWebPlatform"
+    ],
+    "Actions": []
+  }
+]

@@ -23,15 +23,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ReporterLib\**" />
+    <EmbeddedResource Remove="ReporterLib\**" />
+    <None Remove="ReporterLib\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ReporterLib\" />
   </ItemGroup>
 
 </Project>
