@@ -3,6 +3,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Plugin.Core;
 using GingerCore.Actions.PlugIns;
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTests.RunTestslib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -85,17 +86,22 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void SendActionToRemoteGrid()
         {
             // Arrange
-            ActPlugIn actPlugIn = new ActPlugIn() { ServiceId = "DummyService", ActionId = "A1"};
+            ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "DummyService", ActionId = "A1"};
 
             //Act
-            ExecuteOnPlugin.RemoteGridIP = RemoteGridIP;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            ExecuteOnPlugin.RemoteGridPort = RemoteGridPort; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            ExecuteOnPlugin.ExecuteActionOnRemoteGridPlugin(actPlugIn);
+            GingerNodeProxy.RemoteGridIP = RemoteGridIP;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            GingerNodeProxy.RemoteGridPort = RemoteGridPort; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+            GingerNodeInfo gingerNodeInfo = new GingerNodeInfo() { };
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+
+            NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
+            NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
+            ExecuteOnPlugin.ParseActionResult(actionResult, actPlugin);
 
             //Assert
             Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
-            Assert.AreEqual("A1 Result", actPlugIn.ExInfo);
+            Assert.AreEqual("A1 Result", actPlugin.ExInfo);
             
         }
 
