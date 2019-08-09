@@ -32,15 +32,16 @@ using System.IO;
 
 namespace GingerTest
 {
-    [Ignore] // temp
     [TestClass]
     [Level1]
     public class ActionConversionTest
     {        
 
         static SolutionRepository mSolutionRepository;
-        static BusinessFlow mBF; 
+        static BusinessFlow mBF;
+        static ObservableList<BusinessFlow> mListBF;
         static string solutionName;
+        static string MAPPED_TA_FOR_CONVERSION = "MyDosApp";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
@@ -100,6 +101,53 @@ namespace GingerTest
             mBF.AddActivity(activity);
         }
 
+        private static void GetMultipleBFActGenElementActions()
+        {
+            mListBF = new ObservableList<BusinessFlow>();
+            BusinessFlow webBF = new BusinessFlow() { Name = "TestBFWebConversion", Active = true };
+            BusinessFlow winBF = new BusinessFlow() { Name = "TestBFWinConversion", Active = true };
+            BusinessFlow pbBF = new BusinessFlow() { Name = "TestBFPBConversion", Active = true };
+
+            Activity webActivity = new Activity();
+            webActivity.SelectedForConversion = true;
+            ActGenElement gen1 = new ActGenElement();
+            gen1.Active = true;
+            gen1.Description = "Set Value : first_name input";
+            gen1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
+            gen1.LocateValue = "//input[@name='first_name']";
+            gen1.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            webActivity.Acts.Add(gen1);
+
+            webBF.AddActivity(webActivity);
+            mListBF.Add(webBF);
+
+            Activity winActivity = new Activity();
+            winActivity.SelectedForConversion = true;
+            ActGenElement gen2 = new ActGenElement();
+            gen2.Active = true;
+            gen2.Description = "Set Value : last_name input";
+            gen2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
+            gen2.LocateValue = "//input[@name='last_name']";
+            gen2.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            winActivity.Acts.Add(gen2);
+
+            winBF.AddActivity(winActivity);
+            mListBF.Add(winBF);
+
+            Activity pbActivity = new Activity();
+            pbActivity.SelectedForConversion = true;
+            ActGenElement gen3 = new ActGenElement();
+            gen3.Active = true;
+            gen3.Description = "Set Value : email input";
+            gen3.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByRelXPath;
+            gen3.LocateValue = "//input[@name='email']";
+            gen3.GenElementAction = ActGenElement.eGenElementAction.SendKeys;
+            pbActivity.Acts.Add(gen3);
+
+            pbBF.AddActivity(pbActivity);
+            mListBF.Add(pbBF);
+        }
+
         private static void GetActivityWithActUIElementActions()
         {
             mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
@@ -144,9 +192,251 @@ namespace GingerTest
             utils.ConvertToActions(addNewActivity, mBF, lst, convertableTargetApplications, convertToPOMAction, poms);
         }
 
+        private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
+                                                                 bool convertToPOMAction = false, string selectedPOMObjectName = "")
+        {
+            ActionConversionUtils utils = new ActionConversionUtils();
+            ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
+            foreach (var bf in mListBF)
+            {
+                ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(bf.Activities.ToList());
+
+                foreach (ConvertableActionDetails cad in lst)
+                {
+                    cad.Selected = true;
+                    lstCad.Add(cad);
+                }
+            }
+            ObservableList<string> poms = new ObservableList<string>() { selectedPOMObjectName };
+                        
+            ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
+            foreach (var bf in mListBF)
+            {
+                foreach (var act in bf.Activities)
+                {
+                    ConvertableTargetApplicationDetails tas = new ConvertableTargetApplicationDetails();
+                    tas.SourceTargetApplicationName = act.TargetApplication;
+                    if (convertoSameTA)
+                    {
+                        tas.TargetTargetApplicationName = act.TargetApplication; 
+                    }
+                    else
+                    {
+                        tas.TargetTargetApplicationName = MAPPED_TA_FOR_CONVERSION;
+                    }
+                    convertableTargetApplications.Add(tas);
+                } 
+            }
+
+            utils.ConvertActionsOfMultipleBusinessFlows(addNewActivity, mListBF, lstCad, convertableTargetApplications, convertToPOMAction, poms);
+        }
+        
+        private static bool ValidateMultipleBFConversionInSameActivity(bool isTASame = true, string mapTA = "")
+        {
+            bool isValid = true;
+            foreach (BusinessFlow bf in mListBF)
+            {
+                foreach (var activity in bf.Activities)
+                {
+                    string targetType = ((IObsoleteAction)activity.Acts[0]).TargetAction().ToString();
+                    string convertedType = ((GingerCore.Actions.Act)activity.Acts[1]).ActClass;                    
+                    if (targetType != convertedType)
+                    {
+                        isValid = false;
+                        break;
+                    }
+
+                    string targetLocateType = ((GingerCore.Actions.Act)activity.Acts[0]).LocateBy.ToString();
+                    string convertedLocateType = ((GingerCore.Actions.Act)activity.Acts[1]).LocateBy.ToString();
+                    if (targetLocateType != convertedLocateType)
+                    {
+                        isValid = false;
+                        break;
+                    }
+
+                    string targetLocateValue = ((GingerCore.Actions.Act)activity.Acts[0]).LocateValue.ToString();
+                    string convertedLocateValue = ((GingerCore.Actions.Act)activity.Acts[1]).LocateValue.ToString();
+                    if (targetLocateValue != convertedLocateValue)
+                    {
+                        isValid = false;
+                        break;
+                    }
+
+                    if(!isTASame)
+                    {
+                        string actTA = activity.TargetApplication;
+                        if (mapTA != actTA)
+                        {
+                            isValid = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return isValid;
+        }
+
+        private static bool ValidateMultipleBFConversionInNewActivity(bool isTASame = true, string mapTA = "")
+        {
+            bool isValid = true;
+            foreach (BusinessFlow bf in mListBF)
+            {
+                Activity sourceActivity = bf.Activities[0];
+                Activity targetActivity = bf.Activities[1];
+                string targetType = ((IObsoleteAction)sourceActivity.Acts[0]).TargetAction().ToString();
+                string convertedType = ((GingerCore.Actions.Act)targetActivity.Acts[0]).ActClass;
+                if (targetType != convertedType)
+                {
+                    isValid = false;
+                    break;
+                }
+
+                string targetLocateType = ((GingerCore.Actions.Act)sourceActivity.Acts[0]).LocateBy.ToString();
+                string convertedLocateType = ((GingerCore.Actions.Act)targetActivity.Acts[0]).LocateBy.ToString();
+                if (targetLocateType != convertedLocateType)
+                {
+                    isValid = false;
+                    break;
+                }
+
+                string targetLocateValue = ((GingerCore.Actions.Act)sourceActivity.Acts[0]).LocateValue.ToString();
+                string convertedLocateValue = ((GingerCore.Actions.Act)targetActivity.Acts[0]).LocateValue.ToString();
+                if (targetLocateValue != convertedLocateValue)
+                {
+                    isValid = false;
+                    break;
+                }
+
+                if (!isTASame)
+                {
+                    string actTA = targetActivity.TargetApplication;
+                    if (mapTA != actTA)
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+            }
+
+            return isValid;
+        }
+
         [TestMethod]
         [Timeout(60000)]
-        public void ActionConversionToSameActivityTest()
+        public void MultipleBFActionConversionToSameActivityWithSameTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(false);
+                        
+            bool isValid = ValidateMultipleBFConversionInSameActivity();
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToSameActivityWithDiffTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(false, false, true, string.Empty);
+
+            bool isValid = ValidateMultipleBFConversionInSameActivity(false, MAPPED_TA_FOR_CONVERSION);
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToSameActivityWithPOMWithSameTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(false, convertToPOMAction: true, selectedPOMObjectName:string.Empty);
+
+            bool isValid = ValidateMultipleBFConversionInSameActivity();
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToSameActivityWithPOMWithDiffTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(false, false, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+
+            bool isValid = ValidateMultipleBFConversionInSameActivity(false, MAPPED_TA_FOR_CONVERSION);
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToNewActivityWithSameTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(true);
+
+            bool isValid = ValidateMultipleBFConversionInNewActivity();
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToNewActivityWithDiffTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(true, false);
+
+            bool isValid = ValidateMultipleBFConversionInNewActivity(false, MAPPED_TA_FOR_CONVERSION);
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToNewActivityWithPOMWithSameTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(true, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+
+            bool isValid = ValidateMultipleBFConversionInNewActivity();
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void MultipleBFActionConversionToNewActivityWithPOMWithDiffTATest()
+        {
+            GetMultipleBFActGenElementActions();
+
+            ExecuteActionConversionForMultipleBF(true, false, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+
+            bool isValid = ValidateMultipleBFConversionInNewActivity(false, MAPPED_TA_FOR_CONVERSION);
+
+            ////Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SingleBFActionConversionToSameActivityTest()
         {
             GetActivityWithActGenElementActions();
             
@@ -170,7 +460,7 @@ namespace GingerTest
 
         [TestMethod]
         [Timeout(60000)]
-        public void NoActionConversionToSameActivityTest()
+        public void SingleBFNoActionConversionToSameActivityTest()
         {
             GetActivityWithActUIElementActions();
             
@@ -183,7 +473,7 @@ namespace GingerTest
 
         [TestMethod]
         [Timeout(60000)]
-        public void ActionConversionToNewActivityTest()
+        public void SingleBFActionConversionToNewActivityTest()
         {
             GetActivityWithActGenElementActions();
             
@@ -210,7 +500,7 @@ namespace GingerTest
 
         [TestMethod]
         [Timeout(60000)]
-        public void NoActionConversionToNewActivityTest()
+        public void SingleBFNoActionConversionToNewActivityTest()
         {
             GetActivityWithActUIElementActions();
             
@@ -227,7 +517,7 @@ namespace GingerTest
 
         [TestMethod]
         [Timeout(60000)]
-        public void ActionConversionToSameActivityPOMActionTest()
+        public void SingleBFActionConversionToSameActivityPOMActionTest()
         {
             GetActivityWithActGenElementActions();
             
@@ -251,7 +541,7 @@ namespace GingerTest
 
         [TestMethod]
         [Timeout(60000)]
-        public void NoActionConversionToSameActivityPOMActionTest()
+        public void SingleBFNoActionConversionToSameActivityPOMActionTest()
         {
             GetActivityWithActUIElementActions();
             
