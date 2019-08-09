@@ -126,7 +126,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
 
             NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
                 ExecuteOnPlugin.ParseActionResult(actionResult, actPlugin);
