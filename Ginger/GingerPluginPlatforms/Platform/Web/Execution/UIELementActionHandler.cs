@@ -195,17 +195,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         break;
                     }
                 }
-
-            
-                ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), (string)platformAction.InputParams["ElementAction"]);
-
-
                 if (uiElement == null)
                 {
                     platformAction.error += "Element not found";
-                    // TODO: add all locators tried to search !!!!!!!!!!!!!!!
+            
                     return;
                 }
+
+                ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), (string)platformAction.InputParams["ElementAction"]);
+
+
+          
 
                 RunActionOnUIElement(uiElement, ElementType);
 

@@ -89,11 +89,13 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 switch (ElementAction)
                 {
                     case eControlAction.GotoURL:                    
-                        string GotoURLType;
+                        string GotoURLType=String.Empty;
 
-        
-                        GotoURLType = (string)InputParams["GotoURLType"];
+                        if (InputParams.ContainsKey("GotoURLType"))
+                        {
 
+                            GotoURLType = (string)InputParams["GotoURLType"];
+                        }
                         if (string.IsNullOrEmpty(GotoURLType))
                         {
                             GotoURLType = "Current";

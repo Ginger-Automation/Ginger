@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     public struct NodePlatformAction
     {
         public string Platform;
-       // public string ActionHandler;
+        public string ActionHandler;
         public string ActionType;
 
         // TODO: use List<NodeActionOutputValue> !!!!!!!!!!!!!!!!!

@@ -250,6 +250,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 {
                     actPlugin.Error += error;
                     actPlugin.Status = Execution.eRunStatus.Failed;
+                    return;
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();

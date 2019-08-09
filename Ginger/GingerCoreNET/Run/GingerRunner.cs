@@ -1555,7 +1555,7 @@ namespace Ginger.Run
 
 
 
-            ProcessInputValueForDriver(act);
+        
             // TODO: remove when we no longer use LocateValue in Action
 
           
@@ -1565,6 +1565,7 @@ namespace Ginger.Run
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
+            ProcessInputValueForDriver(act);
             ProcessReturnValueForDriver(act);
                                     
             
