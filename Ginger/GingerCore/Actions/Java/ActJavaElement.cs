@@ -209,9 +209,9 @@ namespace GingerCore.Actions.Java
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
 
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
-            if (Platform == ePlatformType.Java || Platfrom == ePlatformType.NA)
+            if (actionPlatform == ePlatformType.Java)
             {
                 return true;
             }
@@ -238,11 +238,15 @@ namespace GingerCore.Actions.Java
             convertedActUIElement.ElementAction = elmentActionType;
             
             convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, this.WaitforIdle.ToString());
-
+            
             if (elmentActionType.Equals(ActUIElement.eElementAction.GetControlProperty))
             {
                 string propertyName = GetPropertyName(this.ControlAction);
                 convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, propertyName);
+            }
+            else
+            {
+                convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
             }
 
             if (this.ReturnValues.Count > 0)

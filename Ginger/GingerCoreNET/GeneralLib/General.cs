@@ -326,23 +326,29 @@ namespace GingerCoreNET.GeneralLib
             return "";
         }
 
-        public static ProjEnvironment CreateDefaultEnvironment()
+        public static bool CreateDefaultEnvironment()
         {
-            ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
-
-            // Add all solution target app
-            foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
             {
-                EnvApplication EA = new EnvApplication();
-                EA.Name = AP.AppName;
-                EA.CoreProductName = AP.Core;
-                EA.CoreVersion = AP.CoreVersion;
-                EA.Active = true;
-                newEnv.Applications.Add(EA);
-            }
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
+                ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
 
-            return newEnv;
+                // Add all solution target app
+                foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
+                {
+                    EnvApplication EA = new EnvApplication();
+                    EA.Name = AP.AppName;
+                    EA.CoreProductName = AP.Core;
+                    EA.CoreVersion = AP.CoreVersion;
+                    EA.Active = true;
+                    newEnv.Applications.Add(EA);
+                }
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static void SetUniqueNameToRepoItem(ObservableList<RepositoryItemBase> itemsList, RepositoryItemBase item, string suffix = "")

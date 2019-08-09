@@ -1651,7 +1651,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			}
 			if(controlAction.equals("GetItemCount"))
 			{
-				GingerAgent.WriteLog("tetsing getitemcount");
+ 				GingerAgent.WriteLog("testing GetItemCount");
 				return GetItemCount(c);
 			}
 		    if(controlAction.equals("GetControlProperty"))

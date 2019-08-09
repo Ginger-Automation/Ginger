@@ -35,23 +35,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
-            if (System.IO.Directory.Exists(folderName) && isCleanFile)
+            try
             {
-                string[] files = Directory.GetFiles(folderName);
-                string[] dirs = Directory.GetDirectories(folderName);
-
-                foreach (string file in files)
+                if (System.IO.Directory.Exists(folderName) && isCleanFile)
                 {
-                    File.SetAttributes(file, FileAttributes.Normal);
-                    File.Delete(file);
-                }
+                    string[] files = Directory.GetFiles(folderName);
+                    string[] dirs = Directory.GetDirectories(folderName);
 
-                foreach (string dir in dirs)
-                {
-                    CleanDirectory(dir, isCleanFile);
-                }
+                    foreach (string file in files)
+                    {
+                        File.SetAttributes(file, FileAttributes.Normal);
+                        File.Delete(file);
+                    }
 
-                Directory.Delete(folderName, false);
+                    foreach (string dir in dirs)
+                    {
+                        CleanDirectory(dir, isCleanFile);
+                    }
+
+                    Directory.Delete(folderName, false);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Clean Execution Logger Folder", ex);
             }
         }
 
@@ -65,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                    CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+                   // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)

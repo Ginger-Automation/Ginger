@@ -74,7 +74,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Run Sets folder");
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to " + GingerDicser.GetTermResValue(eTermResKey.RunSets) + " folder");
                 throw new NotImplementedException();
             }
         }
@@ -89,7 +89,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return null;
         }

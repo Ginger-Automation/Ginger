@@ -213,6 +213,9 @@
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
+    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
     </Reference>
@@ -620,7 +623,6 @@
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentPageMappingHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\POMBindingObjectHelper.cs" />
     <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
@@ -929,9 +931,6 @@
     </Compile>
     <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
       <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowPages_New\GingerActionEditPage.xaml.cs">
-      <DependentUpon>GingerActionEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
@@ -2139,6 +2138,67 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\CustomerLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger_by_amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action-bog.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-groups.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group_hover.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-hover.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\amdocs%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\ginger%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\gray-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\gray-arrow-down%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\purple-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\purple-arrow-down%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set-hover%40x2.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-groups.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\amdocs.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-gray-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-gray.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\ginger.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\white-arrow-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\white-arrow.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\white-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\white-arrow-down%402x.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
@@ -2159,8 +2219,9 @@
     <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.eabf48cebb6d4fb19175.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.620febfb342588060c0f.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
@@ -3117,10 +3178,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowPages_New\GingerActionEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4933,14 +4990,13 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
   </Target>
-  <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" />
@@ -4949,6 +5005,7 @@
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

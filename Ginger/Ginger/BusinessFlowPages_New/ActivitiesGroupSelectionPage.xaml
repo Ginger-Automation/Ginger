@@ -5,15 +5,22 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="100" d:DesignWidth="400"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      h:GingerHelpProvider.HelpString="Activities Group"
+      d:DesignHeight="100" d:DesignWidth="500"
       Title="Select Activities Group">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <StackPanel x:Name="xGroupPanel" Margin="10" >
-            <Label Content="Group:" Style="{StaticResource $LabelStyle}" FontWeight="Bold"/>
+            <Label  Style="{StaticResource $LabelStyle}" FontWeight="Bold">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[ActivitiesGroup]:" />
+                </Label.Content>
+            </Label>
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="xGroupComboBox" AutomationProperties.AutomationId="Group AID" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" />
-                <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="ImageButton"  ButtonImageType="Add" ButtonFontImageSize="16" ToolTip="Add Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
+                <ComboBox x:Name="xGroupComboBox" AutomationProperties.AutomationId="Group AID" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,7,0,0" />
+                <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Add" ButtonFontImageSize="16" ButtonText="New Activities Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
             </StackPanel>
         </StackPanel>
     </Grid>

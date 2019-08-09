@@ -406,7 +406,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while saving Recent App-Agents Mapping for User Profile save", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while saving Recent App-Agents Mapping for User Profile save", ex);
             }
 
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);

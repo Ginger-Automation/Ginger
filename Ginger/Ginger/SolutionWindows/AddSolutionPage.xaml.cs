@@ -91,7 +91,7 @@ namespace Ginger.SolutionWindows
                 //check solution not already exist
                 if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
-                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
+                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");                    
                     mSolution.SaveSolution(false);
                 }
                 else
@@ -111,6 +111,10 @@ namespace Ginger.SolutionWindows
                 AddDeafultReportTemplate();
                 GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
+                mSolution.SetReportsConfigurations();
+
+                //Save again to keep all defualt configurations setup
+                mSolution.SaveSolution(false);
 
                 //show success message to user
                 Mouse.OverrideCursor = null;

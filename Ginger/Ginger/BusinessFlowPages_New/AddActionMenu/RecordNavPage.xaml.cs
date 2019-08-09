@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
@@ -62,7 +80,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 SetDriver();
                 SetRecordingControls();
             }
-            else if(e != null && e.PropertyName == nameof(Context.Activity))
+            else if(e != null && e.PropertyName == nameof(Context.Target))
             {
                 SetSelectedPOMsGridView();
                 mApplicationPOMSelectionPage = null;
@@ -74,30 +92,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xSelectedPOMsGrid.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 250, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            xSelectedPOMsGrid.btnAdd.Click -= BtnAdd_Click;
-            xSelectedPOMsGrid.btnAdd.Click += BtnAdd_Click;
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPOMModel.NameWithRelativePath), Header = "POM", AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             xSelectedPOMsGrid.SetAllColumnsDefaultView(view);
             xSelectedPOMsGrid.InitViewItems();
-            PomModels = new ObservableList<POMBindingObjectHelper>();
 
-            xSelectedPOMsGrid.DataSourceList = PomModels;
+            xSelectedPOMsGrid.btnAdd.Click -= BtnAdd_Click;
+            xSelectedPOMsGrid.btnAdd.Click += BtnAdd_Click;
+
+            xSelectedPOMsGrid.DataSourceList = mPomModels;
         }
-        
+
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
-        {            
-            //if (mApplicationPOMSelectionPage == null)
-            //{
-                ApplicationPOMsTreeItem appModelFolder;
-                RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
-                appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
-                mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
-                                                                                        SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, true,
-                                                                                                new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
-                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
-                                                                                                mContext.Activity.TargetApplication));
-                mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone; 
-            //}
+        {
+            ApplicationPOMsTreeItem appModelFolder;
+            RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+            appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
+            mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
+                                                                                    SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, true,
+                                                                                            new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
+                                                                                            nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
+                                                                                            mContext.Activity.TargetApplication));
+            mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
+
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
             AddSelectedPOM(selectedPOMs);
@@ -165,20 +181,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             IRecord record = (IRecord)mDriver;            
             IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
 
-            List<ApplicationPOMModel> applicationPOMs = null;
-            if (Convert.ToBoolean(xIntegratePOM.IsChecked))
+            if (xIntegratePOM.IsChecked == true)
             {
-                applicationPOMs = new List<ApplicationPOMModel>();
-                foreach (var pom in PomModels)
-                {
-                    if (pom.IsChecked)
-                    {
-                        applicationPOMs.Add(pom.ItemObject);
-                    }
-                } 
+                mRecordingMngr = new RecordingManager(mPomModels, mContext.BusinessFlow, mContext, record, platformInfo);
+            }
+            else
+            {
+                mRecordingMngr = new RecordingManager(null, mContext.BusinessFlow, mContext, record, platformInfo);
             }
 
-            mRecordingMngr = new RecordingManager(applicationPOMs, mContext.BusinessFlow, mContext, record, platformInfo);
             mRecordingMngr.StartRecording();
         }
 
@@ -221,7 +232,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             });
         }
 
-        ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();
+        ObservableList<ApplicationPOMModel> mPomModels = new ObservableList<ApplicationPOMModel>();
         
         private void MAppModelSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
@@ -234,36 +245,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 foreach (ApplicationPOMModel pom in selectedPOMs)
                 {
-                    if (!IsPOMAlreadyAdded(pom.ItemName))
+                    if (mPomModels.Contains(pom) == false)
                     {
-                        ApplicationPOMModel pomToAdd = (ApplicationPOMModel)pom.CreateCopy(false);
-                        PomModels.Add(new POMBindingObjectHelper() { IsChecked = true, ItemName = pomToAdd.ItemName, ContainingFolder = pom.ContainingFolder, ItemObject = pom });
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, @"""" + pom.ItemName + @""" POM is already added!");
+                        mPomModels.Add(pom);
                     }
                 }
-                xSelectedPOMsGrid.DataSourceList = PomModels;
             }
         }
 
-        private bool IsPOMAlreadyAdded(string itemName)
-        {
-            bool isPresent = false;
-            if(PomModels != null && PomModels.Count > 0)
-            {
-                foreach (var item in PomModels)
-                {
-                    if(item.ItemName == itemName)
-                    {
-                        isPresent = true;
-                        break;
-                    }
-                }
-            }
-            return isPresent;
-        }
+
 
         private void XIntegratePOM_Checked(object sender, RoutedEventArgs e)
         {

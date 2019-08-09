@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem>
+  <Header ItemGuid="759dfa3a-15d2-45ac-bb94-823fcd113905" ItemType="BusinessFlow" CreatedBy="deshpank" Created="201905020925" GingerVersion="3.3.0.0" Version="20" LastUpdateBy="JGHODKE" LastUpdate="201908070740" />
+  <BusinessFlow Guid="759dfa3a-15d2-45ac-bb94-823fcd113905" Name="DataSource_SkipWhereConditionsTest_Flow" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+    <Activities>
+      <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity With Where Conditions Serialized" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="021d044b-945a-4005-b5ce-73cd2782b381" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Web-App">
+        <Acts>
+          <ActDSTableElement Active="True" ByWhere="True" ControlAction="GetValue" Customized="True" Description="Data Source Action- With Where Condtions" DSName="GingerDataSource" DSTableName="DataSourceTestingStoreValue" Guid="d4c14e40-0ac9-4262-8fa4-19a42f0ecce6" LocateBy="NA" LocateRowValue="0" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" ValueExp="{DS Name=GingerDataSource DST=DataSourceTestingStoreValue ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL= IROW=Where COND=  [Path] = 'aaa' AND [Path] = 'aaa'}" WhereColSelector="ColTitle" WhereOperator="Equals" WhereProperty="Value" WindowsToCapture="OnlyActiveWindow">
+            <InputValues>
+              <ActInputValue Guid="e2869f9d-7b01-48a6-bb75-d6c84da86ea3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+            </InputValues>
+
+            <WhereConditions>
+              <GingerCore.DataSource.ActDSConditon>GingerCore.DataSource.ActDSConditon</GingerCore.DataSource.ActDSConditon>
+              <GingerCore.DataSource.ActDSConditon>GingerCore.DataSource.ActDSConditon</GingerCore.DataSource.ActDSConditon>
+            </WhereConditions>
+          </ActDSTableElement>
+        </Acts>
+      </Activity>
+      <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="New Activity" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="13020498-249c-4514-bb1b-4ddc29a64f2f" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Web-App">
+        <Acts>
+          <ActDummy Active="True" Description="Dummy Action" Guid="745c4a4f-1275-42be-84aa-44a41342a3b9" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+        </Acts>
+      </Activity>
+    </Activities>
+
+    <ActivitiesGroups>
+      <ActivitiesGroup Guid="18f247ef-aac9-4041-bec4-5de7a41972e0" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+        <ActivitiesIdentifiers>
+          <ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="021d044b-945a-4005-b5ce-73cd2782b381" ActivityName="Activity With Where Conditions Serialized" Guid="1e046376-4b76-4450-b368-2988e5e51c86" ParentGuid="00000000-0000-0000-0000-000000000000" />
+          <ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="13020498-249c-4514-bb1b-4ddc29a64f2f" ActivityName="New Activity" Guid="a1b9d6e4-8732-49e6-a34b-7e15d5bad768" ParentGuid="00000000-0000-0000-0000-000000000000" />
+        </ActivitiesIdentifiers>
+      </ActivitiesGroup>
+    </ActivitiesGroups>
+
+    <TargetApplications>
+      <TargetApplication AppName="Web-App" Guid="7c6034a5-07ca-4571-9e42-578c2cb15cbd" ParentGuid="00000000-0000-0000-0000-000000000000" />
+    </TargetApplications>
+  </BusinessFlow>
+</GingerRepositoryItem>

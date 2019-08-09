@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="fe72e8b3-5caf-4406-a71a-b279980d63fc" ItemType="BusinessFlow" CreatedBy="liranmes" Created="201906120811" GingerVersion="3.3.0.0" Version="47" LastUpdateBy="liranmes" LastUpdate="201906121300" />
+<BusinessFlow AlmData="DE-49387" ExternalID="DE-49386" Guid="fe72e8b3-5caf-4406-a71a-b279980d63fc" Name="Ginger Jira Integration Demo " ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Login Flow" ActivityName="Login" AutomationStatus="Development" Description="Login Desc" ErrorHandlerMappingType="AllAvailableHandlers" Guid="669e0a13-0167-4f4e-a4f0-47f25ecb4507" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="d7a0fc5b-f1b3-4190-8588-7acc99d64983" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" RunDescription="Dummy Action" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="7f3e91b0-886f-47a4-8062-e08cd06f002b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="3" Value="3" />
+</InputValues>
+</ActDummy>
+<ActDummy Active="True" Description="Dummy Action 2" Guid="380a63bc-c337-4cf7-89ce-3cb97dfcd960" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="5f910b71-7170-4b48-b430-fcd8cc477f81" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+
+<Variables>
+<VariableString Description="var " Guid="a1c514e4-e580-42da-9e59-ee32403ec685" InitialStringValue="23" MappedOutputType="None" Name="NewVar" ParentGuid="669e0a13-0167-4f4e-a4f0-47f25ecb4507" ParentName="Login" ParentType="Activity" Value="23" />
+</Variables>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Login Flow" ActivityName="Go To Cart" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="6f3e98e8-5d96-4c4d-8cf2-875dd4e4e266" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="85144486-f060-415b-8742-5226d14c1d36" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a0c1d8b1-d3ce-40b3-8735-106b8ccf140c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Payment Flow" ActivityName="Payment" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="0e5b5579-87a8-4be2-8c20-8c609a0c082b" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="aadf83fe-184c-4162-ac0f-9e1ec0b37b44" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a93a2b62-061e-4e23-9398-eac7a4421020" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+
+<Variables>
+<VariableString Guid="9e2b7434-31c9-4492-b38a-8281f7915393" InitialStringValue="23452" MappedOutputType="None" Name="NewVar" ParentGuid="0e5b5579-87a8-4be2-8c20-8c609a0c082b" ParentName="Payment" ParentType="Activity" Value="23452" />
+</Variables>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Payment Flow" ActivityName="Roll Back" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="99097834-639e-42ef-8eba-347534c2b04f" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="ca21dfca-867c-43e4-aa7a-3ef8c1e48c36" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" RunDescription="Dummy Action 2" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="dfb758c7-daad-410d-9706-c4c29fd6097c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="a0f2f14f-b4d7-4a24-b388-4bd8da252e57" mExpected="34" Operator="Equals" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActDummy>
+</Acts>
+
+<Variables>
+<VariableString Guid="484003ea-c9e1-44b0-9302-6a14834f7dbd" InitialStringValue="324" MappedOutputType="None" Name="NewVar" ParentGuid="99097834-639e-42ef-8eba-347534c2b04f" ParentName="Roll Back" ParentType="Activity" Value="324" />
+</Variables>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup ExternalID="DE-49384" ExternalID2="DE-49387***75370" Guid="2c786959-491e-4615-a3ee-5d013ee43711" Name="Login Flow" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityDescription="Login Desc" ActivityGuid="669e0a13-0167-4f4e-a4f0-47f25ecb4507" ActivityName="Login" Guid="2d759141-ea46-4d5f-a386-79ab8da684c8" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="6f3e98e8-5d96-4c4d-8cf2-875dd4e4e266" ActivityName="Go To Cart" Guid="85b98276-fdb4-4321-86cc-60e239a72ba1" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup ExternalID="DE-49385" ExternalID2="DE-49387***75371" Guid="7c64763d-3fc1-4486-94da-7d9403c6beaf" Name="Payment Flow" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="0e5b5579-87a8-4be2-8c20-8c609a0c082b" ActivityName="Payment" Guid="4134b994-6152-4248-b918-95ebea56c744" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="99097834-639e-42ef-8eba-347534c2b04f" ActivityName="Roll Back" Guid="4c3d9353-a6b4-41e6-870a-3fd9fd20d8fe" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="3f379b42-f172-4895-98e7-57b47cf8ed73" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
