@@ -157,6 +157,7 @@ namespace GingerCoreNET.RunLib
 
         public NewPayLoad ExecuteActionOnRemoteGridPlugin(NewPayLoad payload)
         {            
+            // Improve for speed keep connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find correct service/node, session !!!!!!!!!!!!!!
             GingerSocketClient2 mHubClient = new GingerSocketClient2();
             mHubClient.Connect(RemoteGridIP, RemoteGridPort);
             NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "a", "ccc");
@@ -180,6 +181,9 @@ namespace GingerCoreNET.RunLib
             NewPayLoad fpl3 = new NewPayLoad(SocketMessages.SendToNode, sessionID, payload);
             // fpl3.ClosePackage();
             NewPayLoad rc4 = mHubClient.SendRequestPayLoad(fpl3); // Send to Ginger Grid which will send to Ginger Node to run the action
+
+            mHubClient.CloseConnection();
+
             return rc4;
             // rc4.DumpToConsole();
             

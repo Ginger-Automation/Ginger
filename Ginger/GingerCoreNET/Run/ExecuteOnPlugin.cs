@@ -412,6 +412,8 @@ namespace Amdocs.Ginger.CoreNET.Run
             return payload;
         }
 
+
+        // TODO Remove from here
         private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
         {
             NewPayLoad PL = new NewPayLoad("POMPayload");

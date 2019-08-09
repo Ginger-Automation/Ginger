@@ -105,7 +105,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         }
 
-        [Ignore]   // use for when we knwo the remote grid, TODO: enhance the test to start GG on process and plugins then run the test
+        [Ignore]   // use for when we know the remote grid, TODO: enhance the test to start GG on process and plugins then run the test
         [TestMethod]        
         public void SendActionToRemoteGridOnProcess()
         {            
@@ -126,11 +126,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
 
             NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
-            //for (int i = 0; i < 100; i++)
-            //{
+            for (int i = 0; i < 100; i++)
+            {
                 NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
                 ExecuteOnPlugin.ParseActionResult(actionResult, actPlugin);
-            //}
+            }
 
             //Assert
             Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
