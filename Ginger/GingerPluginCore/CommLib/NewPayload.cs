@@ -67,13 +67,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte StringType = 1;    // string
         const byte IntType = 2;       // int
         const byte EnumValueType = 3;   // Any Enum value  - will write the ToString()
-        const byte StringUTF16Type = 4;  // string - which contains unicode chars - UTF16
+        const byte StringUTF16Type = 4;  // string - which contains Unicode chars - UTF16
         const byte ListStringType = 5;   // List<string>?
         const byte ListPayLoadType = 6;    // List<PayLoad>
         const byte BytesType = 7;    // Byte[]
         const byte GuidType = 8;    // GUID
 
-        // bool is special case we save one byte as the type include the value
+        // bool is special case we save one byte as the type include the value, (instead of havin one for type + one for value - hence saving byte on comm)
         const byte BoolFalse = 9;    // bool = false
         const byte BoolTrue = 10;    // bool = true
         const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
@@ -84,8 +84,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
-
-        //TODO: create the bytes 1024 buffer only if need on create, sometime we give the buffer so waste fix me !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
         byte[] mBuffer = new byte[1024];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
@@ -320,9 +319,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             Unknown = 0,   // default so need to be set
             SocketRequest = 1,
-            SocketResponse =2,
-            RequestPayload =3,
-            ResponsePayload =4,
+            SocketResponse = 2,
+            RequestPayload = 3,
+            ResponsePayload = 4,
             DriverRequest = 5 // for example attach Display
         }
 
@@ -473,13 +472,15 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }            
         }
 
+        
         // 11 add Struct        
         /// <summary>
         /// Add value to payload of type struct as byte array
         /// Use it for fixed array struct which contains values with fixed length like: int, float 
         /// Do not use for struct which contain pointers - like string
-        /// Very efficient on CPU/Memeory as it copy the data from memeory to the buffer
+        /// Very efficient on CPU/Memory as it copy the data from memory to the buffer
         /// Might not be supported cross platforms as it access memory directly
+        /// WARNING: Use struct only for C# to C# transfer, might not work with Java or other languages
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="structValue"></param>
@@ -553,8 +554,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// will convert the stuct to json and add it like string
         /// struct can include any item which is convertible using json including annotations
         /// use it for complex objects data with list, string which are more dynamic and doesn't have fixed length
-        /// Keep in mind it will convert any type to string represenataiton and then back on the other side
-        /// Supported cross platfomrs based on the json converter used
+        /// Keep in mind it will convert any type to string representation and then back on the other side
+        /// Supported cross platforms based on the json converter used
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="structValue"></param>
@@ -654,7 +655,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     return true;
                 //TODO: add other types
                 default:
-                    throw new InvalidOperationException("unhandled return type - " + bType);
+                    throw new InvalidOperationException("unhanded return type - " + bType);
             }
         }
 
@@ -807,7 +808,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             byte b = ReadValueType();           
             if (b == ListPayLoadType)
             {
-                int count = ReadInt(); // How many Payloads we have
+                int count = ReadInt(); // How many Payloads are in the list
                 for (int i = 0; i < count; i++)
                 {
                     NewPayLoad PL = ReadPayLoad();                    
@@ -834,8 +835,6 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
 
 
-
-
         /// <summary>
         /// Show the buffer with human readable text - translated based on payload data
         /// </summary>
@@ -845,7 +844,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             {
                 if(VerifyPaylod())
                 {                    
-                    return ToString2();
+                    return BufferToText();
                 }
                 else
                 {
@@ -868,13 +867,11 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             return true;
         }
 
-        //For Easy debugging and enable to see the payload we override toString
-        public string ToString2()
-        {
-            // make a copy so we don't mess the original
-            // NewPayLoad copy = new NewPayLoad(this.GetBytes());
 
-            //add try catch return buffer index safe
+        //For Easy debugging and enable to see the payload we override toString
+        public string BufferToText()
+        {            
+            //TODO: add try catch return buffer index safe
 
             string s = "Packet Dump: " + Environment.NewLine;
             int CurrentBufferIndex = mBufferIndex; // Keep the current index and restore later
@@ -977,8 +974,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public void DumpToConsole()
         {
-            String s = this.BufferInfo;
-            Console.WriteLine(s);
+            String text = this.BufferInfo;
+            Console.WriteLine(text);
         }
 
         public static NewPayLoad Error(String ErrorMessage)
@@ -1013,7 +1010,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        // Cretae a Payload with data in one line of code and Close the Package
+        // Create a Payload with data in one line of code and Close the Package
         // I.E.:  PayLoad p = new PayLoad("PLName", 123, "aaaa", "koko");
         public NewPayLoad(string Name, params object[] items)
         {
@@ -1060,13 +1057,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                     AddPayload((NewPayLoad)item);
                 }
 
-                // Add struct !!!!!!!!
+                //TODO: Add struct !!!!!!!!
 
 
                 //TODO: add all types...
                 else
                 {
-                    throw new InvalidOperationException("Unhandled PayLoad item type: " + item.GetType().Name + "  - " + item.ToString());
+                    throw new InvalidOperationException("Unhanded PayLoad item type: " + item.GetType().Name + "  - " + item.ToString());
                 }
             }
             ClosePackage();
