@@ -9,8 +9,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\mohdkhan\Source\Repos\Ginger-Automation\Ginger\Ginger\GingerPluginPlatforms\GingerPluginPlatforms.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Platform\Web\Elements\IButton.cs~RF198dba9.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="HelpProj.shfbproj" />
   </ItemGroup>
 
   <ItemGroup>

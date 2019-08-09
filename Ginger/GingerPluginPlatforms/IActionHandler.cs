@@ -25,6 +25,7 @@ namespace Ginger.Plugin
 {
     interface IActionHandler
     {
+         Dictionary<string, object> InputParams { get; set; }
         void ExecuteAction(ref NodePlatformAction platformAction);
         
     }

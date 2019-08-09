@@ -1,3 +1,5 @@
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCore.Actions;
 #region License
 /*
 Copyright © 2014-2019 European Support Limited
@@ -29,19 +31,24 @@ namespace GingerCore.Platforms
     /// </summary>
     public struct PlatformAction
     {        
-        public string ActionHandler { get; }
+
 
         public string ActionType { get; }
 
         public Dictionary<string, object> InputParams;
         
-        public PlatformAction(string actionHandler, string action)
+        public PlatformAction(IActPluginExecution Action)
         {            
-            ActionHandler = actionHandler;
-            ActionType = action;
+
+            ActionType = Action.GetName();
             InputParams = new Dictionary<string, object>();
         }
+        public PlatformAction(IActPluginExecution Action, Dictionary<string, object> InputParameters)
+        {
 
+            ActionType = Action.GetName();
+            InputParams = InputParameters;
+        }
 
     }
 }
