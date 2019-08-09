@@ -86,14 +86,14 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void SendActionToRemoteGrid()
         {
             // Arrange
-            ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "DummyService", ActionId = "A1"};
+            ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "DummyService", ActionId = "A1" };
 
             //Act
             GingerNodeProxy.RemoteGridIP = RemoteGridIP;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             GingerNodeProxy.RemoteGridPort = RemoteGridPort; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             GingerNodeInfo gingerNodeInfo = new GingerNodeInfo() { };
-            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);
 
             NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
             NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
@@ -102,6 +102,39 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Assert
             Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
             Assert.AreEqual("A1 Result", actPlugin.ExInfo);
+
+        }
+
+        [Ignore]   // use for when we knwo the remote grid, TODO: enhance the test to start GG on process and plugins then run the test
+        [TestMethod]        
+        public void SendActionToRemoteGridOnProcess()
+        {            
+            // TODO: start the service batch + plugin to connect, for now we use manual bat file for testing
+
+            // Arrange
+            ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "DummyService", ActionId = "Sum" };
+            actPlugin.GetOrCreateInputParam("a").Value = "4";
+            actPlugin.GetOrCreateInputParam("a").ParamType = typeof(int);
+            actPlugin.GetOrCreateInputParam("b").Value = "3";
+            actPlugin.GetOrCreateInputParam("b").ParamType = typeof(int);
+
+            //Act
+            GingerNodeProxy.RemoteGridIP = RemoteGridIP;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            GingerNodeProxy.RemoteGridPort = 15555; // RemoteGridPort; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            GingerNodeInfo gingerNodeInfo = new GingerNodeInfo() { };
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+
+            NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
+            //for (int i = 0; i < 100; i++)
+            //{
+                NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
+                ExecuteOnPlugin.ParseActionResult(actionResult, actPlugin);
+            //}
+
+            //Assert
+            Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
+            // Assert.AreEqual("A1 Result", actPlugin.ExInfo);
             
         }
 
