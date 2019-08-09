@@ -19,10 +19,8 @@ namespace Amdocs.Ginger.Repository
             {
                 // Load assembly on demand and cache
                 if (mAssembly == null)
-                {
-                    // mAssembly = Assembly.LoadFrom(FilePath);
+                {                    
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-
                     mAssembly = Assembly.LoadFrom(FilePath);
                 }
                 return mAssembly;

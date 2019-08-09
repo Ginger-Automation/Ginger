@@ -77,7 +77,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
         public string Name {get; set;}
-        
+
+        public static string PAYLOAD_PARSING_ERROR = "List PayLoad Parsing Error/wrong value type";
+
         /// Create new empty Payload with name 
         public PayLoad(string Name)
         {
@@ -555,7 +557,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             }
             else
             {
-                throw new Exception("List PayLoad Parsing Error/wrong value type");
+                throw new Exception(PAYLOAD_PARSING_ERROR);
             }
         }
 

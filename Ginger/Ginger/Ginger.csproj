@@ -213,6 +213,9 @@
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
+    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
     </Reference>
@@ -695,6 +698,7 @@
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlugInsWindows\PluginTextEditorHelper.cs" />
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
     <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
       <DependentUpon>UserMessageBox.xaml</DependentUpon>
@@ -2217,6 +2221,7 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\main.620febfb342588060c0f.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />

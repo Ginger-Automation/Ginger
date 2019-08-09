@@ -39,10 +39,10 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             if (missingVariables.Count>0)
             {
                 ItemValidationBase VA = CreateNewIssue(activity);
-                VA.IssueDescription = "Business Flow Variable/s: " + GetListNameString(missingVariables) + "  is/are missing";
+                VA.IssueDescription = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + ":" + GetListNameString(missingVariables) + "  is/are missing";
                 VA.mIssueType = eIssueType.MissingVariables;
                 VA.missingVariablesList = missingVariables;
-                VA.IssueResolution = "Missing Variable/s will be auto added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+                VA.IssueResolution = "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " will be auto added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 VA.Selected = true;
                 mIssuesList.Add(VA);
             }            

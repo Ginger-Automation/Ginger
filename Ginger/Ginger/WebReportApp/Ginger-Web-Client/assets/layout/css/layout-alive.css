@@ -1833,6 +1833,7 @@ body a {
   width: 248px;
   padding-right: 18px;
   padding-bottom: 120px;
+  white-space: nowrap;
 }
 .layout-wrapper .layout-sidebar.layout-sidebar-dark {
   background-color: #3E3438;

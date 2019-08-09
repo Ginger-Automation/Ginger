@@ -44,7 +44,7 @@ namespace Ginger.UserControlsLib
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Copy Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Copying item", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Copying item", ex);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Ginger.UserControlsLib
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Copy Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Copying item", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Copying item", ex);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Ginger.UserControlsLib
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Cut Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Cuting item", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Cutting item", ex);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Ginger.UserControlsLib
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Cut Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Cuting item", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Cutting item", ex);
             }
         }
 

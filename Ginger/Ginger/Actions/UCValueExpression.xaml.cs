@@ -56,7 +56,7 @@ namespace Ginger.Actions
         private void UCValueExpression_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // If the VE is in Grid, we call this function:
-            if (e.NewValue.GetType() == typeof(ValueExpression))
+            if (e.NewValue != null && e.NewValue.GetType() == typeof(ValueExpression))
             {
                 ValueExpression ve = (ValueExpression)e.NewValue;
                 Init(mContext, ve.Obj, ve.ObjAttr);

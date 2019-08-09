@@ -55,6 +55,13 @@ namespace Ginger.Actions
 
     public partial class ActionEditPage : Page
     {
+        //static int ActionEditNum = 0;
+        //static int LiveActionEditCounter = 0;
+        //~ActionEditPage()
+        //{
+        //    LiveActionEditCounter--;
+        //}
+
         private Act mAction;
         static public string sMultiLocatorVals = "";
         GenericWindow _pageGenericWin = null;
@@ -89,6 +96,9 @@ namespace Ginger.Actions
         {
             InitializeComponent();
 
+            //ActionEditNum++;
+            //LiveActionEditCounter++;
+
             mAction = act;
             if (editMode != General.eRIPageViewMode.View)
             {
@@ -116,6 +126,7 @@ namespace Ginger.Actions
             }
 
             EditMode = editMode;
+            mAction.PropertyChanged -= ActionPropertyChanged;
             mAction.PropertyChanged += ActionPropertyChanged;
             
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
@@ -203,20 +214,24 @@ namespace Ginger.Actions
 
             OutputValuesGrid.DataSourceList = mAction.ReturnValues;
             InputValuesGrid.DataSourceList = mAction.InputValues;
+            mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
             mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
 
             ShowHideRunStopButtons();
             UpdatePassFailImages();
 
-            mAction.PropertyChanged += ActPropertyChanged;
             if (mAction.ObjectLocatorConfigsNeeded == false)
                 ActionLocatorPanel.Visibility = System.Windows.Visibility.Collapsed;
 
             UpdateTabsVisual();
             UpdateHelpTab();
 
+            mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
             mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
+
+            mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+
             DataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
             if (EditMode == General.eRIPageViewMode.Automation)
@@ -244,6 +259,30 @@ namespace Ginger.Actions
             }
         }
 
+        public void StopEdit()
+        {
+            if (AFCP != null)
+            {
+                AFCP.FlowControlGrid.Grid.CommitEdit();
+                AFCP.FlowControlGrid.Grid.CancelEdit();
+            }
+            if (InputValuesGrid != null)
+            {
+                InputValuesGrid.Grid.CommitEdit();
+                InputValuesGrid.Grid.CancelEdit();
+            }
+            if (DataSourceConfigGrid != null)
+            {
+                DataSourceConfigGrid.Grid.CommitEdit();
+                DataSourceConfigGrid.Grid.CancelEdit();
+            }
+            if (OutputValuesGrid != null)
+            {
+                OutputValuesGrid.Grid.CommitEdit();
+                OutputValuesGrid.Grid.CancelEdit();
+            }            
+        }
+
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
@@ -269,10 +308,11 @@ namespace Ginger.Actions
                 OutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
         }
 
+        ActionFlowControlPage AFCP;
         private void LoadActionFlowcontrols(Act a)
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
-            ActionFlowControlPage AFCP;
+            
             if(EditMode == General.eRIPageViewMode.View)
             {
                 AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.View);
@@ -285,7 +325,7 @@ namespace Ginger.Actions
             {
                 AFCP = new ActionFlowControlPage(a, mActParentBusinessFlow, mActParentActivity);
             }
-            FlowControlFrame.Content = AFCP;
+            FlowControlFrame.SetContent(AFCP);
         }
         
         private void InputValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -589,7 +629,7 @@ namespace Ginger.Actions
                     }
 
                     // Load the page
-                    ActionPrivateConfigsFrame.Content = p;
+                    ActionPrivateConfigsFrame.SetContent(p);
                     ActionPrivateConfigsPanel.Visibility = System.Windows.Visibility.Visible;
                 }
             }
@@ -1132,7 +1172,7 @@ namespace Ginger.Actions
                     Grid.SetColumn(f, c);
                     f.HorizontalAlignment = HorizontalAlignment.Center;
                     f.VerticalAlignment = VerticalAlignment.Center;
-                    f.Content = p;
+                    f.SetContent(p);
                     ScreenShotsGrid.Children.Add(f);
 
                     c++;
@@ -1314,7 +1354,7 @@ namespace Ginger.Actions
         private void UpdateHelpTab()
         {
             ActDescriptionPage desPage = new ActDescriptionPage(mAction);
-            ActDescriptionFrm.Content = desPage;
+            ActDescriptionFrm.SetContent(desPage);
         }
 
         void SetTabOnOffSign(TabItem tab, bool indicatorToShow)
@@ -1576,19 +1616,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void ActPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == Act.Fields.Status)
-            {
-                PassImage.Dispatcher.Invoke(() =>
-                {
-                    UpdatePassFailImages();
-                    ShowHideRunStopButtons();
-                    xRunStatusExpander.IsExpanded = true;
-                });
-            }
-        }
-
         private void ShowHideRunSimulation()
         {
             if (mAction.SupportSimulation)
@@ -1602,6 +1629,15 @@ namespace Ginger.Actions
             if (e.PropertyName == Act.Fields.SupportSimulation)
             {
                 ShowHideRunSimulation();
+            }
+            else if (e.PropertyName == Act.Fields.Status)
+            {
+                PassImage.Dispatcher.Invoke(() =>
+                {
+                    UpdatePassFailImages();
+                    ShowHideRunStopButtons();
+                    xRunStatusExpander.IsExpanded = true;
+                });
             }
         }
 
@@ -1629,7 +1665,7 @@ namespace Ginger.Actions
             {
                 mAction.ActionLogConfig = new ActionLogConfig();
             }                        
-            ActionLogConfigFrame.Content = new ActionLogConfigPage(mAction.ActionLogConfig);
+            ActionLogConfigFrame.SetContent(new ActionLogConfigPage(mAction.ActionLogConfig));
             ActionLogConfigExpander.IsExpanded = true;
         }
 
@@ -1669,7 +1705,7 @@ namespace Ginger.Actions
             }
             else
             {
-                ActionLogConfigFrame.Content = null;
+                ActionLogConfigFrame.SetContent(null);
             }
         }
 
@@ -1705,6 +1741,61 @@ namespace Ginger.Actions
             {
                 ((ActReturnValue)OutputValuesGrid.Grid.SelectedItem).Expected = null;
             }
+        }
+
+        public void ClearPageBindings()
+        {
+            StopEdit();
+            BindingOperations.ClearAllBindings(txtDescription);
+            BindingOperations.ClearAllBindings(cboLocateBy);
+            BindingOperations.ClearAllBindings(comboWindowsToCapture);
+            BindingOperations.ClearAllBindings(txtLocateValue);
+            BindingOperations.ClearAllBindings(RTStatusLabel);
+            BindingOperations.ClearAllBindings(RTElapsedLabel);
+            BindingOperations.ClearAllBindings(RTErrorLabel);
+            BindingOperations.ClearAllBindings(RTExInfoLabel);
+            BindingOperations.ClearAllBindings(txtLocateValue);
+            BindingOperations.ClearAllBindings(TakeScreenShotCheckBox);
+            BindingOperations.ClearAllBindings(FailIgnoreCheckBox);
+            BindingOperations.ClearAllBindings(comboFinalStatus);
+            BindingOperations.ClearAllBindings(xWaittxtWait);
+            BindingOperations.ClearAllBindings(txtTimeout);
+            BindingOperations.ClearAllBindings(StatusLabel);
+            BindingOperations.ClearAllBindings(ErrorTextBlock);
+            BindingOperations.ClearAllBindings(ExtraInfoTextBlock);
+            BindingOperations.ClearAllBindings(EnableRetryMechanismCheckBox);
+            BindingOperations.ClearAllBindings(RetryMechanismIntervalTextBox);
+            BindingOperations.ClearAllBindings(RetryMechanismMaxRetriesTextBox);
+            BindingOperations.ClearAllBindings(AddOutDS);
+            BindingOperations.ClearAllBindings(cmbDataSourceName);
+            BindingOperations.ClearAllBindings(cmbDataSourceTableName);
+            BindingOperations.ClearAllBindings(dsOutputParamMapType);
+            BindingOperations.ClearAllBindings(EnableActionLogConfigCheckBox);
+            BindingOperations.ClearAllBindings(txtLocateValue);
+            TagsViewer.ClearBinding();
+            //this.ClearControlsBindings();
+            if (mAction != null)
+            {
+                mAction.PropertyChanged -= ActionPropertyChanged;
+                mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
+                mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
+                mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                mAction = null;
+            }
+            FlowControlFrame.NavigationService.RemoveBackEntry();
+            ActionPrivateConfigsFrame.NavigationService.RemoveBackEntry();
+            ActDescriptionFrm.NavigationService.RemoveBackEntry();
+            ActionLogConfigFrame.NavigationService.RemoveBackEntry();
+        }
+
+        private void xActionDetailsExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height = new GridLength(220);
+        }
+
+        private void xActionDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            ActionDetailsRow.Height= new GridLength(30);
         }
     }
 }

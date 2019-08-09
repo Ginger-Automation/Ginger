@@ -98,7 +98,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals);
 
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
-            mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM);
+            mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
 
             mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
@@ -111,10 +111,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
             {
-                if (mContext.Activity != null)
-                {
-                    UpdatePOMTree();
-                }
+                UpdatePOMTree();
             }
             if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
             {
@@ -126,9 +123,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             CollapseDetailsGrid();
 
-            mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
-            mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-            mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+            if (mContext.Activity != null)
+            {
+                mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
+                mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+                mPOMPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
+                mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+            }
         }
 
         private void MainTreeView_ItemSelected(object sender, SelectionTreeEventArgs e)
@@ -160,6 +161,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 CollapseDetailsGrid();
             }
+        }
+
+        public void RefreshTreeItems(object sender, RoutedEventArgs e)
+        {
+            UpdatePOMTree();
         }
 
         void CollapseDetailsGrid()

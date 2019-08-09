@@ -98,6 +98,10 @@ namespace Amdocs.Ginger.Repository
             return s;
         }
 
+        public override string ToString()
+        {
+            return ItemName;
+        }
 
 
         // TypeName cache
@@ -370,8 +374,8 @@ namespace Amdocs.Ginger.Repository
                         {
                             IObservableList list = (IObservableList)PI.GetValue(this);                            
                             if (list != null)
-                            {
-                                RestoreList(mi.Name, list, isLocalBackup);
+                            {                          
+                                RestoreList(mi.Name, list, isLocalBackup);                     
                             }
                         }
                         else
@@ -382,8 +386,9 @@ namespace Amdocs.Ginger.Repository
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {// temp fix me 
+                        Reporter.ToLog(eLogLevel.DEBUG, "Undo- restoring values from back up", ex);
                     }
                 }
                 else if (mi.MemberType == MemberTypes.Field)
@@ -442,7 +447,17 @@ namespace Amdocs.Ginger.Repository
 
         private void RestoreList(string Name, IObservableList v, bool isLocalBackup = false)
         {
-            v.Clear();
+
+            try
+            {
+                v.Clear();
+            }
+            catch(Exception ex)
+            {
+                //This is Temporary fix- Inputvalues list throwing observable collection cannot be modified exception
+                Reporter.ToLog(eLogLevel.DEBUG, "Clearing list values for restoring from back up", ex);
+            }
+            
 
             object Backuplist;
             bool b;
@@ -879,7 +894,7 @@ namespace Amdocs.Ginger.Repository
                         // not RI no tracking...
                     }
                 }
-            }
+            }           
         }
 
         List<string> DirtyTrackingFields;
@@ -960,7 +975,7 @@ namespace Amdocs.Ginger.Repository
 
                     // for now we ignore list of Guids - like Agents.Tags as user cannot change the value, but if he add/remove it will be tracked
                     if (item is Guid || item is RepositoryItemKey) continue;
-                    throw new Exception("Error: trying to track object which is Serialzied in a list but is not RepositoryItemBase " + this.GetType().FullName + " " + item.ToString() );
+                    throw new Exception("Error: trying to track object which is Serialized in a list but is not RepositoryItemBase " + this.GetType().FullName + " " + item.ToString() );
                 }
             }
         }

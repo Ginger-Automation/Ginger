@@ -45,7 +45,7 @@ namespace GingerWPF.UserControlsLib
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-            xTreeView.Background = (Brush)FindResource("$BackgroundColor_Gray");
+            xTreeView.Background = (Brush)FindResource("$BackgroundColor_LightGray");
 
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;

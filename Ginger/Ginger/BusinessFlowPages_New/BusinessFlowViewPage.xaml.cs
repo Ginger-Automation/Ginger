@@ -62,71 +62,134 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.BusinessFlow = mBusinessFlow;
             mPageViewMode = pageViewMode;
 
-            SetUIControlsContent();
-            BindControls();
+            SetUIView();
+            BindControlsToBusinessFlow();
         }
 
-        private void SetUIControlsContent()
+        private void SetUIView()
         {
-            //if (mPageViewMode != Ginger.General.eRIPageViewMode.Standalone)
-            //{
-            //    xAutomateBtn.Visibility = Visibility.Collapsed;
-            //    xAutomateSplitter.Visibility = Visibility.Collapsed;
-            //}
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.Standalone)
+            {
+                //xAutomateBtn.Visibility = Visibility.Collapsed;
+                //xAutomateSplitter.Visibility = Visibility.Collapsed;
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
 
-            mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, mPageViewMode);
-            mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            xActivitiesTabFrame.Content = mActivitiesPage;
+        private void BindControlsToBusinessFlow()
+        {
+            //General Info Section Bindings
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
+            mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
+            UpdateDescription();
 
-            mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, mPageViewMode);
-            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            xVariabelsTabFrame.Content = mVariabelsPage;
+            //Activities Tab Bindings      
+            mBusinessFlow.AttachActivitiesGroupsAndActivities();
+            mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
+            mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+            UpdateActivitiesTabHeader();
+            if (mActivitiesPage != null && xActivitisTab.IsSelected)
+            {
+                mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+            }
 
-            mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, mPageViewMode);
-            xConfigurationsTabFrame.Content = mConfigurationsPage;
+            //Variables Tab Bindings      
+            mBusinessFlow.Variables.CollectionChanged -= Variables_CollectionChanged;
+            mBusinessFlow.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateVariabelsTabHeader();
+            if (mVariabelsPage != null && xVariablesTab.IsSelected)
+            {
+                mVariabelsPage.UpdateParent(mBusinessFlow);
+            }
+
+            //Configurations Tab Bindings
+            if (mConfigurationsPage != null && xConfigurationsTab.IsSelected)
+            {
+                mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
+            }
+        }
+
+        TabItem mLastSelectedTab = null;
+        private void XItemsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Ginger.General.eRIPageViewMode childPagesMode;
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                childPagesMode = Ginger.General.eRIPageViewMode.View;
+            }
+            else
+            {
+                childPagesMode = Ginger.General.eRIPageViewMode.Child;
+            }
+            if (xItemsTabs.SelectedItem != mLastSelectedTab)
+            {
+                if (xActivitisTab.IsSelected == true)
+                {
+                    if (mActivitiesPage == null)
+                    {
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, childPagesMode);
+                        mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        xActivitiesTabFrame.SetContent(mActivitiesPage);
+                    }
+                    else
+                    {
+                        mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
+                }
+                else if (xVariablesTab.IsSelected == true)
+                {
+                    if (mVariabelsPage == null)
+                    {
+                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, childPagesMode);
+                        if (mVariabelsPage.ListView != null)
+                        {
+                            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        xVariabelsTabFrame.SetContent(mVariabelsPage);
+                    }
+                    else
+                    {
+                        mVariabelsPage.UpdateParent(mBusinessFlow);
+                    }
+                }
+                else if (xConfigurationsTab.IsSelected == true)
+                {
+                    if (mConfigurationsPage == null)
+                    {
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
+                        xConfigurationsTabFrame.SetContent(mConfigurationsPage);
+                    }
+                    else
+                    {
+                        mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
+                    }
+                }
+
+                mLastSelectedTab = (TabItem)xItemsTabs.SelectedItem;
+            }
+        }
+
+        private void ClearBusinessFlowBindings()
+        {
+            mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
+            mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
+            mBusinessFlow.Variables.CollectionChanged -= Variables_CollectionChanged;
         }
 
         public void UpdateBusinessFlow(BusinessFlow businessFlow)
         {
             if (mBusinessFlow != businessFlow)
             {
-                RemoveBindings();
+                ClearBusinessFlowBindings();
                 mBusinessFlow = businessFlow;
                 mContext.BusinessFlow = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
-                    BindControls();
+                    BindControlsToBusinessFlow();
                 }
             }
-        }
-
-        private void RemoveBindings()
-        {
-            mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
-            mBusinessFlow.Variables.CollectionChanged -= Variables_CollectionChanged;
-        }
-
-        private void BindControls()
-        {
-            //General Info Section Bindings
-            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-            mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
-            UpdateDescription();
-
-            //Activities Tab Bindings      
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
-            mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
-            UpdateActivitiesTabHeader();
-            mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
-
-            //Variables Tab Bindings            
-            mBusinessFlow.Variables.CollectionChanged += Variables_CollectionChanged;
-            UpdateVariabelsTabHeader();
-            mVariabelsPage.UpdateParent(mBusinessFlow);
-
-            //Configurations Tab Bindings
-            mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
         }
 
         private void mBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -144,15 +207,22 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (!string.IsNullOrEmpty(mBusinessFlow.Description))
                 {
-                    xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description);
+                    if (mBusinessFlow.Description.Length > 100)
+                    {
+                        xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description.Substring(0, 99) + "...");
+                    }
+                    else
+                    {
+                        xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description);
+                    }
                     xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mBusinessFlow.Tags));
                     xDescTextBlockHelper.AddLineBreak();
                 }
-                if (!string.IsNullOrEmpty(mBusinessFlow.RunDescription))
-                {
-                    xDescTextBlockHelper.AddText("Run Description: " + mBusinessFlow.RunDescription);
-                    xDescTextBlockHelper.AddLineBreak();
-                }
+                //if (!string.IsNullOrEmpty(mBusinessFlow.RunDescription))
+                //{
+                //    xDescTextBlockHelper.AddText("Run Description: " + mBusinessFlow.RunDescription);
+                //    xDescTextBlockHelper.AddLineBreak();
+                //}
                 xDescTextBlockHelper.AddText("Target/s: ");
                 foreach (TargetBase target in mBusinessFlow.TargetApplications)
                 {
@@ -193,6 +263,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutomate_Click(object sender, RoutedEventArgs e)
         {
+            if (mGenericWin != null)
+            {
+                mGenericWin.Close();
+            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
 

@@ -63,7 +63,7 @@ namespace GingerCore.ALM.RQM
 
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
             {
-                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " is missing ExternalID, cannot export RQM TestPlan execution results without External ID";
                 return false;
             }
 
@@ -519,7 +519,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 result = "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM", ex);
                 return false;
             }
 
@@ -555,7 +555,7 @@ namespace GingerCore.ALM.RQM
             else
             {
                 result = "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM, " + resultInfo.ErrorDesc;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to RQM/ALM, " + resultInfo.ErrorDesc);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to RQM/ALM, " + resultInfo.ErrorDesc);
                 return false;
             }
         }
