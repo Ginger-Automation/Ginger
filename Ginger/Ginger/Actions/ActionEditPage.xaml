@@ -11,7 +11,7 @@
       Title="Edit Action" 
       d:DesignWidth="1100"
       d:DesignHeight="800"
-      SizeChanged="Page_SizeChanged" Unloaded="Page_Unloaded">
+      SizeChanged="Page_SizeChanged">
 
     <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>

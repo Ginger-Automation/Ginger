@@ -4448,7 +4448,7 @@ namespace GingerCore.Drivers
             Act switchAct = new ActBrowserElement();
             switchAct.LocateBy = eLocateBy.ByTitle;
             ((ActBrowserElement)switchAct).ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
-            switchAct.Description = "Switch Window to Defult Window";
+            switchAct.Description = "Switch Window to Default Window";
             switchAct.LocateValue = Title;
             BusinessFlow.AddAct(switchAct, true);
             return true;
@@ -6559,7 +6559,7 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.GetItemCount:
                         try
                         {
-                            List<IWebElement> elements = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                            List<IWebElement> elements = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
                             if (elements != null)
                             {
                                 act.AddOrUpdateReturnParamActual("Elements Count", elements.Count.ToString());

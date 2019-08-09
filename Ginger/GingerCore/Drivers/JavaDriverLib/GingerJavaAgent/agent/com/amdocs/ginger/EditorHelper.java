@@ -237,7 +237,7 @@ public class EditorHelper {
 				try
 				{
 
-						GingerAgent.WriteLog("Getting Row numer iteration::");
+						GingerAgent.WriteLog("Getting Row number iteration::");
 						rowNum = getRowNum(CurrentTable, whereColSel, whereColTitle,whereProp, whereOper, whereColVal);	
 			
 				}
@@ -286,7 +286,7 @@ public class EditorHelper {
 				String colVal = cellLocator.get(nxtIndex + 1);
 				colNum = getColumnNum(CurrentTable, colBy, colVal);
 				if (colNum == -1)
-					return PayLoad.Error("Coloumn not found with " + colBy + " :"
+					return PayLoad.Error("Column not found with " + colBy + " :"
 							+ colVal);
 			}
 			

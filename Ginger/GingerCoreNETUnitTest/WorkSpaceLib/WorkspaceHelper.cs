@@ -12,13 +12,9 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
     public class WorkspaceHelper
     {
 
-        // static WorkspaceLocker workspaceLocker;
-
-        public static void CreateWorkspaceWithTempSolution(string workspaceLocker, string solutionFolderName)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder, workspaceLocker);
-            WorkSpace.Init(new WorkSpaceEventHandler(), workspaceLocker);
+        public static void CreateWorkspaceWithTempSolution(string solutionFolderName)
+        {            
+            WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
@@ -32,104 +28,52 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             
         }
 
-        //private static void LockWorkspace(string workspaceHolder)
-        //{
-
-
-        //    StartSession();
-
-        //    //lock (_locker)
-        //    //{
-        //    //    while (mWorkspaceHolder != null)
-        //    //    {
-        //    //        Thread.Sleep(100);
-        //    //    }
-        //    //    bool gotMutex = mMutex.WaitOne();  //Wait max 60 sec to get workspace - no WS test should take more than 60 seconds
-        //    //    if (gotMutex)
-        //    //    {
-        //    //        //Thread.Sleep(2000);
-        //    //        if (mWorkspaceHolder != null)
-        //    //        {
-        //    //            throw new Exception(" got Mutex but mWorkspaceHolder!= null and hold by: " + mWorkspaceHolder);
-        //    //        }
-        //    //        mWorkspaceHolder = workspaceHolder;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        throw new Exception("Cannot lock Workspace Mutex after 60 seconds");
-        //    //    }
-        //    //}
-
-        ////}
-
-        
-
-        //private static void LockWorkspace(string workspaceHolder)
-        //{
-        //    //check if null
-        //    workspaceLocker = new WorkspaceLocker(workspaceHolder);
-        //    // WorkspaceLocker.StartSession(workspaceHolder);
-        //}
-
-        //public static void ReleaseWorkspace()
-        //{
-        //    // WorkspaceLocker.EndSession();
-        //    workspaceLocker.ReleaseWorkspace();
-        //}
-
-        internal static void InitConsoleWorkspace(string workspaceLocker)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder, workspaceLocker);
+     
+        internal static void InitConsoleWorkspace()
+        {            
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
-            WorkSpace.Init(consoleWorkspaceEventHandler, workspaceLocker);
+            WorkSpace.Init(consoleWorkspaceEventHandler);
         }
 
-        internal static SolutionRepository CreateWorkspaceAndOpenSolution(string workspaceLocker, string path)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder, workspaceHolder);
+
+       
+
+        internal static SolutionRepository CreateWorkspaceAndOpenSolution(string path)
+        {         
             SolutionRepository solutionRepository;            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, workspaceLocker);
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             solutionRepository.Open(path);
             return solutionRepository;
         }
 
-        internal static void CreateWorkspace2(string holdBy)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder);
+        internal static void CreateWorkspace2()
+        {         
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, holdBy);
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
 
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
         }
 
-        internal static void CreateDummyWorkSpace(string workspaceLocker)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder);
+        internal static void CreateDummyWorkSpace()
+        {         
             DummyWorkSpace ws = new DummyWorkSpace();
-            WorkSpace.Init(ws, workspaceLocker);
+            WorkSpace.Init(ws);
             WorkSpace.Instance.RunningFromUnitTest = true;
         }
 
-        internal static void InitWS(string workspaceHolder)
-        {
-            // workspaceLocker = new WorkspaceLocker(workspaceHolder);
-            // LockWorkspace(workspaceHolder);
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, workspaceHolder);
-            WorkSpace.Instance.RunningFromUnitTest = true;
+        //internal static WorkSpace InitWS(string workspaceHolder)
+        //{         
+        //    WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+        //    WorkSpace.Init(WSEH, workspaceHolder);
+        //    ws.RunningFromUnitTest = true;
+        //    ws.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
 
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
-            
-        }
+        //    return ws;
+        //}
     }
 }

@@ -162,7 +162,7 @@ namespace Ginger.Actions.WebServices
             ProjectPropertiesGrid.VEGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new Amdocs.Ginger.Common.ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = ActSoapUiInputValue.Fields.Type, Header = type, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActSoapUiInputValue.Type), Header = type, WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = paramTitle, WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = valueTitle, WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)ProjectPropertiesGrid.controlGrid.Resources["VEGridValueExpressionButton"] });

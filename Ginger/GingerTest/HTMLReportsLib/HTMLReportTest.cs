@@ -54,8 +54,7 @@ namespace GingerTest
         [ClassCleanup]
         public static void ClassCleanup()
         {            
-            GingerAutomator.EndSession();
-            WorkSpace.Instance.ReleaseWorkspace();
+            GingerAutomator.EndSession();            
         }
 
         private static void CreateTestSolution()

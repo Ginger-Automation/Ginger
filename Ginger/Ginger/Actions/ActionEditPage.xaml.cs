@@ -1743,7 +1743,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        public void ClearPageBindings()
         {
             StopEdit();
             BindingOperations.ClearAllBindings(txtDescription);

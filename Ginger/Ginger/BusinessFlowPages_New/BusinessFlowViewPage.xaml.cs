@@ -68,11 +68,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIView()
         {
-            //if (mPageViewMode != Ginger.General.eRIPageViewMode.Standalone)
-            //{
-            //    xAutomateBtn.Visibility = Visibility.Collapsed;
-            //    xAutomateSplitter.Visibility = Visibility.Collapsed;
-            //}
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.Standalone)
+            {
+                //xAutomateBtn.Visibility = Visibility.Collapsed;
+                //xAutomateSplitter.Visibility = Visibility.Collapsed;
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void BindControlsToBusinessFlow()
@@ -262,6 +263,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutomate_Click(object sender, RoutedEventArgs e)
         {
+            if (mGenericWin != null)
+            {
+                mGenericWin.Close();
+            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
         }
 

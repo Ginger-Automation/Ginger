@@ -65,14 +65,14 @@ namespace UnitTests.NonUITests
             
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, nameof(NonDriverActionTest));
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         public static void AddApplicationAgent()
@@ -309,5 +309,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
             Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
         }
+        
+
     }
 }

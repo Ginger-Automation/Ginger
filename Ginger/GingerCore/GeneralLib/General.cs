@@ -399,7 +399,7 @@ namespace GingerCore
                         builder.Append(value);
                         builder.Append(" ");
                     }
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain characters like:" + "\n" + builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }

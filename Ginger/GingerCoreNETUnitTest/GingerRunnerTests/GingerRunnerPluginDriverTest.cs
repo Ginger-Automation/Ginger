@@ -30,27 +30,54 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
-namespace UnitTests.NonUITests.GingerRunnerTests
-{    
+namespace WorkspaceHold
+{        
+    [Ignore]
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
 
         static BusinessFlow mBusinessFlow;
         static GingerRunner mGingerRunner;
         static string mAppName = "Memo app";
 
         [ClassInitialize()]
-        public static void ClassInit(TestContext context)
+        public static void ClassInit(TestContext TestContext)
+        {
+            
+
+            mTestHelper.ClassInitialize(TestContext);
+
+           
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
         {            
+            mTestHelper.ClassCleanup();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            WorkSpace.LockWS();
+            Prep();
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+        private void Prep()
+        {
             // Create new solution
             mBusinessFlow = new BusinessFlow();
             mBusinessFlow.Activities = new ObservableList<Activity>();
             mBusinessFlow.Name = "MyDriver BF";
             mBusinessFlow.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.NA;             
+            p.PlatformType = ePlatformType.NA;
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
@@ -67,35 +94,39 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
             mGingerRunner.BusinessFlows.Add(mBusinessFlow);
 
-            WorkspaceHelper.CreateWorkspaceWithTempSolution(nameof(GingerRunnerPluginDriverTest), "sol1");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution("sol1");
 
             // Add the plugin to solution
-            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar +  "PluginDriverExample4");
+            string pluginFolder = TestResources.GetTestResourcesFolder(@"Plugins" + Path.DirectorySeparatorChar + "PluginDriverExample4");
             WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
-            
+
             Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {            
-            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-            WorkSpace.Instance.ReleaseWorkspace();
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            WorkSpace.RelWS();
+            mTestHelper.TestCleanup();
         }
+
 
         private void ResetBusinessFlow()
         {
+            mTestHelper.Log("Reset Business Flow");
             mBusinessFlow.Activities.Clear();
             mBusinessFlow.RunStatus = eRunStatus.Pending;
         }
 
 
+        
         [TestMethod] 
         public void PluginSay()
         {
-            Console.WriteLine(">>>>> test PluginSay <<<<<<<<<");
+            mTestHelper.Log("test PluginSay");
+            
             //Arrange
             ResetBusinessFlow();            
 
@@ -107,7 +138,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             a1.Acts.Add(act1);
 
             //Act            
+            mTestHelper.Log("Before Ginger Runner");
             mGingerRunner.RunRunner();
+            mGingerRunner.CloseAgents();
+            mTestHelper.Log("After Ginger Runner");
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, act1.Status);
@@ -118,8 +152,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-
-        [TestMethod]  [Timeout(300000)]
+        [Ignore]
+        [TestMethod]  [Timeout(6000)]
         public void MemoPluginSpeedTest()
         {
             // Reporter.ToConsole(eLogLevel.INFO, ">>>>> test MemoPluginSpeedTest <<<<<<<<<");
@@ -153,7 +187,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        
+      
 
 
     }

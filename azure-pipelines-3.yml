@@ -9,6 +9,8 @@ variables:
 
 steps:
 
+- script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerUtilsTest'
 
 - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
   displayName: 'Testing GingerCoreCommonTest'
@@ -33,3 +35,10 @@ steps:
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
 
+
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Artifacts
+# ------------------------------------------------------------------------------------------------------
+
+- task: PublishBuildArtifacts@1
+  condition: succeededOrFailed()
