@@ -400,15 +400,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActionsNew\ActionConfigPage.xaml.cs">
-      <DependentUpon>ActionConfigPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ActionsNew\ActionOutputPage.xaml.cs">
-      <DependentUpon>ActionOutputPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ActionsNew\NewAddActionPage.xaml.cs">
-      <DependentUpon>NewAddActionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Actions\ActAgentManipulationEditPage.xaml.cs">
       <DependentUpon>ActAgentManipulationEditPage.xaml</DependentUpon>
     </Compile>
@@ -2854,18 +2845,6 @@
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Page Include="ActionsNew\ActionConfigPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ActionsNew\ActionOutputPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ActionsNew\NewAddActionPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
