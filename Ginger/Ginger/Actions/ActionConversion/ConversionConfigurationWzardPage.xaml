@@ -71,8 +71,11 @@
                 <Label x:Name="POMSelectExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Foreground="{StaticResource $Color_DarkBlue}" Content="POM"/>
             </Expander.Header>
             <Expander.Content>
-                <!--<usercontrols:POMElementGridSelectionPage AddContainingFolderColumn="True" ShowTitle="True" />-->
-                <Frame x:Name="xPOMUserControl" Height="250" />                
+                <Frame x:Name="xPOMUserControl" Height="250">
+                    <Frame.Content>
+                        <usercontrols:POMElementGridSelectionPage x:Name="POMSelectionPage" ShowTitle="True" POMSelectionEvent="POMSelectedEventHandler" />
+                    </Frame.Content>
+                </Frame>
             </Expander.Content>
         </Expander>
     </Grid>

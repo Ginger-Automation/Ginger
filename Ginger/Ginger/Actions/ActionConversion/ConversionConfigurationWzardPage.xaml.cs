@@ -36,7 +36,6 @@ namespace Ginger.Actions.ActionConversion
     {
         ActionsConversionWizard mWizard;
         ObservableList<string> TargetAppList;
-        POMElementGridSelectionPage mPOMControl;
 
         /// <summary>
         /// Constructor for configuration page
@@ -83,10 +82,6 @@ namespace Ginger.Actions.ActionConversion
             DataContext = mWizard;
             xRadSameActivity.IsChecked = true;
             SetTargetApplicationGridView();
-
-            mPOMControl = new POMElementGridSelectionPage(true, 220, 555, false);
-            mPOMControl.POMSelectionEvent += POMSelectedEventHandler;
-            xPOMUserControl.Content = mPOMControl;
         }
 
         /// <summary>
