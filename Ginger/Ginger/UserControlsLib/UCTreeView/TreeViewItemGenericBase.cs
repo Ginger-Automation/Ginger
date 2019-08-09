@@ -390,30 +390,6 @@ namespace GingerWPF.TreeViewItemsLib
             }
         }
 
-        //public void DeteleAllTreeChid()
-        //{
-        //    List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-        //    childNodes.Reverse();
-        //    foreach (ITreeViewItem node in childNodes)
-        //    {
-        //        if (node == null) continue;
-        //        if (node.NodeObject() != null)
-        //        {
-        //            DeleteTreeItem(node.NodeObject(), true, false);
-        //        }
-        //        else if (node.IsExpandable())
-        //        {
-        //            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
-        //        }
-        //        else
-        //        {
-        //            if (Directory.Exists(((TreeViewItemBase)node).NodePath()))
-        //                Directory.Delete(((TreeViewItemBase)node).NodePath(), true);
-        //        }
-                
-        //    }
-        //}
-
         public void OpenTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(this.NodePath()))
