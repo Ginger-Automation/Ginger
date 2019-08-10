@@ -1553,16 +1553,19 @@ namespace Ginger.Run
 
             act.ValueExpression = VE;
 
+
+
+        
             // TODO: remove when we no longer use LocateValue in Action
-            if (!string.IsNullOrEmpty(act.LocateValue))
+
+          
+            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
             {
-                
+
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
-
             ProcessInputValueForDriver(act);
-
             ProcessReturnValueForDriver(act);
                                     
             
@@ -1781,10 +1784,22 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        IActPluginExecution PluginAction = (IActPluginExecution)act;
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
+
+                                        if (act is IActPluginExecution PluginAction)
+                                        {
+
+                                            Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                            ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                        }
+
+                                        else
+                                        {
+                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                            
+                                        }
                                     }
+
                                 }
                             }
                           

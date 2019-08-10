@@ -254,6 +254,8 @@ namespace Amdocs.Ginger.CoreNET.Run
                 if (!string.IsNullOrEmpty(error))
                 {
                     actPlugin.Error += error;
+                    actPlugin.Status = Execution.eRunStatus.Failed;
+                    return;
                 }
 
                 List<NewPayLoad> OutpuValues = RC.GetListPayLoad();
@@ -338,6 +340,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 {
                     p.AddValue(AP.ValueForDriver.ToString());
                 }
+
                 else
                 {
                     throw new Exception("Unknown param type to pack: " + AP.ParamType.FullName);
@@ -357,6 +360,8 @@ namespace Amdocs.Ginger.CoreNET.Run
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
                 ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
+
+
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
@@ -404,6 +409,14 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             PlatformAction platformAction = ACT.GetAsPlatformAction();
 
+            if (ACT is ActUIElement actUi)
+            {
+                if (actUi.LocateBy == eLocateBy.POMElement)
+                {
+                    AddPOMLocators(ref platformAction, ref actUi, agent.ProjEnvironment, agent.BusinessFlow);
+                }
+            }
+            
             // TODO: calculate VE ??!!            
 
             NewPayLoad payload = new NewPayLoad("RunPlatformAction");
@@ -413,33 +426,42 @@ namespace Amdocs.Ginger.CoreNET.Run
             // TODO: Process Valuefordriver!!!!
 
             return payload;
-        }
 
 
-        // TODO Remove from here
-        private static NewPayLoad GetPOMPayload(ref ActUIElement actUi, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
-        {
-            NewPayLoad PL = new NewPayLoad("POMPayload");
-           
-
-            string[] pOMandElementGUIDs = actUi.ElementLocateValue.ToString().Split('_');
-            Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-            if (currentPOM == null)
+            void AddPOMLocators(ref PlatformAction PlatformAction, ref ActUIElement UIElementAction, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
             {
-                actUi.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                return null;
-            }
+                Dictionary<string, string> Locators = null;
+                if (PlatformAction.InputParams.ContainsKey("Locators"))
+                {
+                    Locators = (Dictionary<string, string>)PlatformAction.InputParams["Locators"];
+                }
+                else
+                {
+                    Locators = new Dictionary<string, string>();
+                }
 
-            {
+
+                List<string> Frames = new List<string>();
+
+                string[] pOMandElementGUIDs = UIElementAction.ElementLocateValue.ToString().Split('_');
+                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
+                ApplicationPOMModel currentPOM = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                if (currentPOM == null)
+                {
+                    UIElementAction.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                    return;
+                }
+
+
+
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
                 ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
 
-                PL.AddValue(selectedPOMElement.ElementTypeEnum.ToString());
+
                 if (selectedPOMElement == null)
                 {
-                    actUi.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                    return null;
+                    UIElementAction.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                    return;
                 }
                 else
                 {
@@ -451,19 +473,18 @@ namespace Amdocs.Ginger.CoreNET.Run
                         string[] iframesPathes = selectedPOMElement.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
                         foreach (string iframePath in iframesPathes)
                         {
-                            NewPayLoad FieldPL = new NewPayLoad("Frame-Xpath", iframePath);
-                            switchframpayload.Add(FieldPL);
+                            Frames.Add(iframePath);
 
                         }
                     }
-                    PL.AddListPayLoad(switchframpayload);
+
 
 
                     //adding all locators from POM
-                    List<NewPayLoad> LocatorsPayload = new List<NewPayLoad>();
+
                     foreach (ElementLocator locator in selectedPOMElement.Locators.Where(x => x.Active == true).ToList())
                     {
-                        NewPayLoad LocatorPayload;
+
                         string locateValue;
                         if (locator.IsAutoLearned)
                         {
@@ -474,17 +495,23 @@ namespace Amdocs.Ginger.CoreNET.Run
                         {
                             ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
                             GingerCore.ValueExpression VE = new GingerCore.ValueExpression(projEnvironment, businessFlow);
-                            locateValue =  VE.Calculate(evaluatedLocator.LocateValue);
-                  
+                            locateValue = VE.Calculate(evaluatedLocator.LocateValue);
+
                         }
-                        LocatorPayload = new NewPayLoad("Locator", locator.LocateBy.ToString(), locateValue);
-                        LocatorsPayload.Add(LocatorPayload);
+                        Locators.Add(locator.LocateBy.ToString(), locateValue);
+
                     }
-                    PL.AddListPayLoad(LocatorsPayload);
+
                 }
-                PL.ClosePackage();
-                return PL;
             }
+
+
+        
+
+ 
+
+
+
         }
 
         internal static void FindNodeAndRunAction(ActPlugIn act)
