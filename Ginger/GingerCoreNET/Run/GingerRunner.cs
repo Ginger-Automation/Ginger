@@ -1795,27 +1795,8 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            GingerNodeInfo GNI = null;
-                            try
-                            {
-                                GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
-                                if (GNI != null)
-                                {                                    
-                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                string errorMessage = "";
-                                if (GNI == null)
-                                {
-                                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
-                                }
-                                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
-                                errorMessage += ex.Message;
-                                act.Error = errorMessage;
-                            }
+                            ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
+                            
                             break;                        
 
                         case eActionExecutorType.RunInSimulationMode:

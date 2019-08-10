@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
@@ -59,19 +58,18 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
 
-        internal static GingerNodeInfo GetGingerNodeInfo(string PluginId, string ServiceID, ObservableList<DriverConfigParam> DriverConfiguration = null)
+        internal static GingerNodeInfo GetGingerNodeInfo(string pluginId, string serviceID, ObservableList<DriverConfigParam> DriverConfiguration = null)
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
             bool DoStartSession = false;            
-            bool IsSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(PluginId, ServiceID);
+            bool isSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(pluginId, serviceID);
             GingerNodeInfo gingerNodeInfo;
-            string key = PluginId + "." + ServiceID;   
-
-            Console.WriteLine("Plugin Key:" + key);
-
-            if (IsSessionService)
+            string key = null;   
+            
+            if (isSessionService)
             {
+                key = pluginId + "." + serviceID;
                 bool found = SessionsNodes.TryGetValue(key, out gingerNodeInfo);
                 if (found)
                 {
@@ -86,19 +84,20 @@ namespace Amdocs.Ginger.CoreNET.Run
                 }
             }
 
+
             // !!!!!!!!!!!!!!!!!
             // Need to lock the grid until we get GNI
-            // temo for now we lock all
+            // temp for now we lock all
             // TODO: improve to do it but without StartService which might be long
             // for now it is working and safe
             lock (WorkSpace.Instance.LocalGingerGrid)
             {
-                gingerNodeInfo = GetGingerNode(ServiceID);
+                gingerNodeInfo = GetGingerNode(serviceID);
 
                 if (gingerNodeInfo == null)
                 {
                     // call plugin to start service and wait for ready
-                    WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceID);
+                    WorkSpace.Instance.PlugInsManager.StartService(pluginId, serviceID);
 
                     Stopwatch stopwatch = Stopwatch.StartNew();
                     while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
@@ -106,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                         //Todo: remove thread.sleep
 
                         Thread.Sleep(500);
-                        gingerNodeInfo = GetGingerNode(ServiceID);
+                        gingerNodeInfo = GetGingerNode(serviceID);
                     }
                     if (gingerNodeInfo == null)
                     {
@@ -116,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                 }
 
 
-                if (IsSessionService)
+                if (isSessionService)
                 {
                     DoStartSession = true;
                 }
@@ -126,10 +125,11 @@ namespace Amdocs.Ginger.CoreNET.Run
                 }
             }
 
-            // keep the proxy on agent
-            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid
 
-            Console.WriteLine("Checking for DoStartSession..");
+
+            // keep the proxy on agent
+            GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid !!!!!!!!!!!
+            
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
@@ -141,6 +141,9 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             return gingerNodeInfo;
         }
+
+      
+
         private static GingerNodeInfo GetGingerNode(string ServiceId)
         {
             // TODO: create round robin algorithm or something smarter
@@ -481,6 +484,31 @@ namespace Amdocs.Ginger.CoreNET.Run
                 }
                 PL.ClosePackage();
                 return PL;
+            }
+        }
+
+        internal static void FindNodeAndRunAction(ActPlugIn act)
+        {
+            GingerNodeInfo GNI = null;
+            try
+            {
+                GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
+                if (GNI != null)
+                {
+                    ExecuteActionOnPlugin((ActPlugIn)act, GNI);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                string errorMessage = "";
+                if (GNI == null)
+                {
+                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
+                }
+                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                errorMessage += ex.Message;
+                act.Error = errorMessage;
             }
         }
     }

@@ -107,8 +107,8 @@ namespace GingerCoreNET.RunLib
 
 
         // TEMP needs a list and not here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public static string RemoteGridIP;
-        public static int RemoteGridPort;
+        public static string RemoteGridIP = SocketHelper.GetLocalHostIP();
+        public static int RemoteGridPort = 15555;
 
         
 
