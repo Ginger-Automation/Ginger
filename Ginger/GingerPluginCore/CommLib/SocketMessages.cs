@@ -29,5 +29,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public const string Unregister = "Unregister";
 
         public const string ActionOutputValue = "O"; // Keep it short as used many times
+
+        public const string FindNode = "FindNode";
+
+        public const string SendToNode = "SendToNode";
+        
+
+
     }
 }

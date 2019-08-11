@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void ShowDebugConsole(bool visible = true)
         {
-            throw new NotImplementedException();
+            // Ignore
         }
 
         public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
