@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Run;
+using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Ginger.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
@@ -42,6 +44,12 @@ namespace Ginger.GingerGridLib
             ShowNodes();
             WorkSpace.Instance.PlugInsManager.PluginProcesses.CollectionChanged += PluginProcesses_CollectionChanged;
             ShowProcesses();
+            ShowRemoteServiceGrid();
+        }
+
+        private void ShowRemoteServiceGrid()
+        {
+            xRemoteServiceGrid.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
         }
 
         private void PluginProcesses_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -222,6 +230,10 @@ namespace Ginger.GingerGridLib
             mGingerGrid.NodeList.Clear();
         }
 
-
+        private void XAddRemoteGrid_Click(object sender, RoutedEventArgs e)
+        {
+            RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid 1",  Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
+        }
     }
 }

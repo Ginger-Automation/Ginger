@@ -20,20 +20,17 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
 using Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.DataSource;
 using GingerCore.Repository;
 using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 

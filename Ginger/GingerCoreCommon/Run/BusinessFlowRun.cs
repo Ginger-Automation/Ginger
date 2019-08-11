@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
-using GingerCore.Variables;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore.FlowControlLib;
+using GingerCore.Variables;
 
 namespace Ginger.Run
 {

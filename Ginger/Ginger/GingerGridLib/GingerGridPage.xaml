@@ -23,13 +23,20 @@
             <!--<Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>-->
             <UserControls:ucButton x:Name="xClearButton" ToolTip="Clear"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Delete" Click="xClearButton_Click"/>
             <UserControls:ucButton x:Name="xPingButton" ToolTip="Ping"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="Ping" Click="xPingButton_Click"/>
+            <UserControls:ucButton x:Name="xAddRemoteGrid" ToolTip="Add remote grid"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="Add" Click="XAddRemoteGrid_Click"/>
             <Label x:Name="StatusLabel">Status</Label>
         </StackPanel>
         
         
         <Grid x:Name="xServicesGrid" Grid.Row="2"/>
-        
-        <DataGrid x:Name="xProcessesDataGrid" Grid.Row="3" IsReadOnly="True"/>
 
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="xProcessesDataGrid" IsReadOnly="True"/>
+            <DataGrid x:Name="xRemoteServiceGrid" IsReadOnly="True" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </Page>
