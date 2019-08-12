@@ -36,6 +36,10 @@ namespace GingerCoreNET.RunLib
         bool mRecordingSocketTraffic = false;
 
         private bool mIsConnected = false;
+
+        bool isLocalGrid = true;
+
+
         // This is the socket connected or not - doesn't mean if the driver is started or closed
         public bool IsConnected
         {
@@ -45,9 +49,13 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        public GingerNodeProxy(GingerNodeInfo GNI)
+        public GingerNodeProxy(GingerNodeInfo GNI, bool RemoteGrid = false)
         {
             mGingerNodeInfo = GNI;
+            if (RemoteGrid)
+            {
+                isLocalGrid = false;
+            }
         }
 
         public void StartRecordingSocketTraffic()
@@ -97,11 +105,19 @@ namespace GingerCoreNET.RunLib
             return resultPayload;
         }
 
+
+        // TEMP needs a list and not here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public static string RemoteGridIP = SocketHelper.GetLocalHostIP();
+        public static int RemoteGridPort = 15555;
+
+        
+
+
         public NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
             if (!mRecordingSocketTraffic)
             {
-                return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+                return SendToNode(payload);                
             }
             else
             {
@@ -111,10 +127,8 @@ namespace GingerCoreNET.RunLib
                 Monitor.Add(gingerSocketLog);
 
                 Stopwatch st = Stopwatch.StartNew();
-
-                // if local grid use !!!!!!!!!!!!!!
-                NewPayLoad responsePayload = GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
-                // else use remote grid
+                
+                NewPayLoad responsePayload = SendToNode(payload);                
 
                 st.Stop();
 
@@ -128,6 +142,60 @@ namespace GingerCoreNET.RunLib
             }
 
         }
+
+        private NewPayLoad SendToNode(NewPayLoad payload)
+        {
+            if (isLocalGrid)
+            {
+                return GingerGrid.SendRequestPayLoad(mGingerNodeInfo.SessionID, payload);
+            }
+            else
+            {
+                return ExecuteActionOnRemoteGridPlugin(payload);
+            }
+        }
+
+
+        GingerSocketClient2 mHubClient;
+        public NewPayLoad ExecuteActionOnRemoteGridPlugin(NewPayLoad payload)
+        {            
+            // Improve for speed keep connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find correct service/node, session !!!!!!!!!!!!!!
+            if (mHubClient == null)
+            {
+                mHubClient = new GingerSocketClient2();
+                mHubClient.Connect(RemoteGridIP, RemoteGridPort);
+            }
+
+            
+            NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "a", "ccc");
+            if (fpl.IsErrorPayLoad())
+            {
+
+            }
+            else
+            {
+                string id = fpl.GetValueString();
+                string id2 = fpl.GetValueString();
+            }
+            NewPayLoad rc = mHubClient.SendRequestPayLoad(fpl);
+
+            Guid sessionID = rc.GetGuid();
+
+            //  TODO: reserve if session
+
+            // NewPayLoad actionPayload = CreateActionPayload(actPlugin);
+
+            NewPayLoad fpl3 = new NewPayLoad(SocketMessages.SendToNode, sessionID, payload);
+            // fpl3.ClosePackage();
+            NewPayLoad rc4 = mHubClient.SendRequestPayLoad(fpl3); // Send to Ginger Grid which will send to Ginger Node to run the action
+
+            mHubClient.CloseConnection();
+
+            return rc4;
+            // rc4.DumpToConsole();
+            
+        }
+
 
         public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
         {

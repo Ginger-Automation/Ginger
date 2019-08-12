@@ -190,6 +190,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(list.Count > 0, "list.Count > 0");
         }
 
+
+        [Ignore]  // Fail on mac with Git Forbidden
         [TestMethod]  [Timeout(60000)]
         public void GetOnlinePluginReleases()
         {
@@ -206,6 +208,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             Assert.IsTrue(releases.Count > 0, "list.Count > 0");
         }
 
+        [Ignore]  // Fail on mac with Git Forbidden
         [TestMethod]  [Timeout(60000)]
         public void InstallSeleniumPlugin_1_0()
         {
