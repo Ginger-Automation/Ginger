@@ -46,17 +46,10 @@ namespace Ginger.GingerGridLib
             ShowNodes();
             WorkSpace.Instance.PlugInsManager.PluginProcesses.CollectionChanged += PluginProcesses_CollectionChanged;
             ShowProcesses();
-            ShowRemoteServiceGrid();
+            InitRemoteServiceGrid();
         }
 
-        private void ShowRemoteServiceGrid()
-        {            
-            xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
-            xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
-
-            SetRemoteGridView();
-
-        }
+        
 
         private void PluginProcesses_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -236,12 +229,44 @@ namespace Ginger.GingerGridLib
             mGingerGrid.NodeList.Clear();
         }
 
+
+
+        ObservableList<RemoteServiceGrid> mRemoteServiceGrids;
+        private void InitRemoteServiceGrid()
+        {
+            mRemoteServiceGrids= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
+            xRemoteServiceGrid.btnSaveAllChanges.Click += BtnSaveAllChanges_Click;
+            xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Visible;
+            xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click; 
+            SetRemoteGridView();
+        }
+
+        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            AddRemoteGrid();
+        }
+
+        private void BtnSaveAllChanges_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
+            {
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(remoteServiceGrid);
+            }
+        }
+
         private void XAddRemoteGrid_Click(object sender, RoutedEventArgs e)
         {
+            AddRemoteGrid();
+        }
+
+        void AddRemoteGrid()
+        {
+            // TODO: createWizard
             RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid 1", Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
         }
-
 
         private void SetRemoteGridView()
         {
@@ -250,8 +275,9 @@ namespace Ginger.GingerGridLib
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Name), Header = "Name" });
-            // view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            // view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Host), Header = "Host" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.HostPort), Header = "Port" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Active), Header = "Active" });            
 
             xRemoteServiceGrid.SetAllColumnsDefaultView(view);
             xRemoteServiceGrid.InitViewItems();
@@ -259,3 +285,4 @@ namespace Ginger.GingerGridLib
 
         }
     }
+
