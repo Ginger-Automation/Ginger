@@ -17,9 +17,11 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Ginger.Drivers.CommunicationProtocol;
+using Ginger.UserControls;
 using GingerCoreNET.RunLib;
 using System;
 using System.Linq;
@@ -48,8 +50,12 @@ namespace Ginger.GingerGridLib
         }
 
         private void ShowRemoteServiceGrid()
-        {
-            xRemoteServiceGrid.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+        {            
+            xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
+
+            SetRemoteGridView();
+
         }
 
         private void PluginProcesses_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -232,8 +238,24 @@ namespace Ginger.GingerGridLib
 
         private void XAddRemoteGrid_Click(object sender, RoutedEventArgs e)
         {
-            RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid 1",  Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
+            RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid 1", Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
         }
+
+
+        private void SetRemoteGridView()
+        {
+            //# Default View
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Name), Header = "Name" });
+            // view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
+            // view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+
+            xRemoteServiceGrid.SetAllColumnsDefaultView(view);
+            xRemoteServiceGrid.InitViewItems();
+        }
+
+        }
     }
-}
