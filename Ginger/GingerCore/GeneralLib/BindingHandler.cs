@@ -51,7 +51,7 @@ namespace GingerCore.GeneralLib
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            //TODO: check perf impact + reuse existing binding on same obj.prop
             try
             {
                 Binding b = new Binding();
