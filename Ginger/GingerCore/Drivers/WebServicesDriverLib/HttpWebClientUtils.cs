@@ -85,8 +85,8 @@ namespace GingerCore.Actions.WebAPI
             //Headers
             AddHeadersToClient();
 
-            //SetAutoDecomression
-            SetAutoDecomression();
+            //SetAutoDecompression
+            SetAutoDecompression();
                         
             if (act.GetType() == typeof(ActWebAPISoap))
                 return RequestConstracotSOAP((ActWebAPISoap)act);
@@ -94,12 +94,15 @@ namespace GingerCore.Actions.WebAPI
                 return RequestConstractorREST((ActWebAPIRest)act);
         }
 
-        private void SetAutoDecomression()
+        private void SetAutoDecompression()
         {
-            var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
-            if(encodType != null)
+            if (mAct.HttpHeaders.Count() > 0)
             {
-                Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
+                if (encodType != null)
+                {
+                    Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                }
             }
         }
 
