@@ -84,11 +84,23 @@ namespace GingerCore.Actions.WebAPI
 
             //Headers
             AddHeadersToClient();
-            
+
+            //SetAutoDecomression
+            SetAutoDecomression();
+                        
             if (act.GetType() == typeof(ActWebAPISoap))
                 return RequestConstracotSOAP((ActWebAPISoap)act);
             else
                 return RequestConstractorREST((ActWebAPIRest)act);
+        }
+
+        private void SetAutoDecomression()
+        {
+            var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
+            if(encodType != null)
+            {
+                Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            }
         }
 
         private void AddHeadersToClient()
