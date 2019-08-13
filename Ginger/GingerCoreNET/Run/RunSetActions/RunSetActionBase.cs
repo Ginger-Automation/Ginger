@@ -220,7 +220,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name), ex);
                 Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
             finally
