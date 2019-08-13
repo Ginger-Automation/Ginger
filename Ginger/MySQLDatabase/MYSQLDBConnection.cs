@@ -1,6 +1,7 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
-using GingerCore;
+using Amdocs.Ginger.Plugin.Core.Reporter;
+
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace MySQLDatabase
         private DbConnection oConn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
-
+        private IReporter mReporter;
         public string Name => throw new NotImplementedException();
 
         public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -37,7 +38,7 @@ namespace MySQLDatabase
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, Connection String =" + connectConnectionString, ex);
+                mReporter.ToLog2(eLogLevel.ERROR, "DB connection failed, Connection String =" + connectConnectionString, ex);
                 throw (ex);
             }
             return false;
@@ -58,7 +59,7 @@ namespace MySQLDatabase
             {
                 connStr = ConnectionString.Replace("{USER}", User);
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = "";// EncryptionHandler.DecryptString(Password, ref res, false);
                 if (res == true)
                 { connStr = connStr.Replace("{PASS}", deCryptValue); }
                 else
@@ -70,7 +71,7 @@ namespace MySQLDatabase
                
                 connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = "";// EncryptionHandler.DecryptString(Password, ref res, false);
 
                 if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
                 else { connStr = connStr + "Password=" + Password + ";"; }
@@ -91,7 +92,7 @@ namespace MySQLDatabase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
             finally
@@ -149,7 +150,7 @@ namespace MySQLDatabase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
                 throw e;
             }
             finally
@@ -186,7 +187,7 @@ namespace MySQLDatabase
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
                     throw e;
                 }
                 finally
@@ -255,7 +256,7 @@ namespace MySQLDatabase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "", e);
                 throw (e);
             }
             finally
@@ -280,7 +281,7 @@ namespace MySQLDatabase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + this, e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to get table list for DB:" + this, e);
                 throw (e);
             }
             return rc;
@@ -312,7 +313,7 @@ namespace MySQLDatabase
                     catch (Exception e)
                     {
                         tran.Rollback();
-                        Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
+                        mReporter.ToLog2(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
                         throw e;
                     }
                 }
@@ -322,6 +323,11 @@ namespace MySQLDatabase
         public bool TestConnection()
         {
             throw new NotImplementedException();
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

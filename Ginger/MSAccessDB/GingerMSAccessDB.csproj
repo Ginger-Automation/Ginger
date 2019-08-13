@@ -47,14 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj">
-      <Project>{9d569b65-ec6c-4677-a59b-cf12c24b5eb0}</Project>
-      <Name>GingerCoreCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj">
-      <Project>{0c33c26a-5f96-4060-bb1b-583be9ee8478}</Project>
-      <Name>GingerCoreNET</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
       <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
       <Name>GingerPluginCore</Name>

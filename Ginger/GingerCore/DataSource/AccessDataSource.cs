@@ -36,7 +36,7 @@ namespace GingerCore.DataSource
 
         private string GetConnectionString(string sFilePath, string sMode = "Write")
         {
-            FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
+            FileFullPath = "";// Amdocs.Ginger.Repository.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
 
             string strAccessConn = "";
 
@@ -471,7 +471,7 @@ namespace GingerCore.DataSource
         {
             DataSourceBase ADC;
             ADC = new AccessDataSource();
-            ADC.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+            ADC.FileFullPath = "";// Amdocs.Ginger.Repository.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
         }
 

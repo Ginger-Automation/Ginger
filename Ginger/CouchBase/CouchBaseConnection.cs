@@ -1,14 +1,16 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using Couchbase;
 using Couchbase.Authentication;
 using Couchbase.Configuration.Client;
 using Couchbase.N1QL;
-using GingerCore;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace CouchBase
 {
@@ -22,7 +24,7 @@ namespace CouchBase
         string TNS = null;
         IQueryResult<dynamic> result = null;
         string bucketName = null;
-
+        private IReporter mReporter;
         public string Name => throw new NotImplementedException();
 
         string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -34,6 +36,11 @@ namespace CouchBase
             Password = parameters.FirstOrDefault(pair => pair.Key == "Password").Value;
             TNS = parameters.FirstOrDefault(pair => pair.Key == "TNS").Value;
         }
+        public List<string> GetKeyspaceList()
+        {
+            return null;
+        }
+        
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
             KeyvalParamatersList = parameters;
@@ -47,7 +54,7 @@ namespace CouchBase
                 });
                 bool res = false;
                 //TODO: need to decrypt the password in the Database->PassCalculated
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = null; //EncryptionHandler.DecryptString(Password, ref res, false);
                 if (res == true)
                 {
                     clusterCB.Authenticate(User, deCryptValue);
@@ -60,7 +67,7 @@ namespace CouchBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
                 return false;
             }
         }
@@ -82,7 +89,8 @@ namespace CouchBase
            
             for (int i = 0; i < result.Rows.Count; i++)
             {
-                list.Add(result.Rows[i]);
+                //FIXME!!!!!!!
+                //list.Add(result.Rows[i]);
                 //Act.ParseJSONToOutputValues(result.Rows[i].ToString(), i + 1);
             }
             DataTable dataTable = new DataTable();
@@ -121,7 +129,7 @@ namespace CouchBase
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed To Connect ConnectToBucket Method In GingerCouchBase DB", ex);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed To Connect ConnectToBucket Method In GingerCouchBase DB", ex);
                 return false;
             }
         }
@@ -141,8 +149,10 @@ namespace CouchBase
         public int GetRecordCount(string Query)
         {
             DoBeforeExecutionOperations(Query, true);
-            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
-            return int.Parse(result.Rows[0].ToString());
+            //FIXME!!!!!!!
+            // result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
+            // return int.Parse(result.Rows[0].ToString());
+            return 0;
         }
 
         public string GetSingleValue(string Table, string Column, string Where)
@@ -168,6 +178,11 @@ namespace CouchBase
         public bool TestConnection()
         {
             throw new NotImplementedException();
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

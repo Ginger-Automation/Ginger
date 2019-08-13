@@ -87,8 +87,6 @@ namespace GingerCore.Actions
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 liteDB.Execute(this, Query);
               
-
-                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {

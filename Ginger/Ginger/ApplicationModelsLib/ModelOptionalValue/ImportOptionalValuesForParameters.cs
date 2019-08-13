@@ -1609,8 +1609,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void ExecuteFreeSQL(string command)
         {
-            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-             // SQLResult = db.FreeSQL(command);
+            // TODO: Check if working fine
+            DataTable dataTable = db.FreeSQL(command);
+            //SQLResult = db.FreeSQL(command);
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {

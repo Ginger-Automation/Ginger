@@ -1,6 +1,6 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
-using GingerCore;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace PostgreSQL
         private DbConnection oConn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
-
+        private IReporter mReporter;
         public string Name => throw new NotImplementedException();
 
         public string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -35,7 +35,7 @@ namespace PostgreSQL
             {
                 connStr = ConnectionString.Replace("{USER}", User);
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = null; //EncryptionHandler.DecryptString(Password, ref res, false);
                 if (res == true)
                 { connStr = connStr.Replace("{PASS}", deCryptValue); }
                 else
@@ -47,7 +47,7 @@ namespace PostgreSQL
                
                 connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = null;// EncryptionHandler.DecryptString(Password, ref res, false);
                 string[] host = TNS.Split(':');
                 if (host.Length == 2)
                 {
@@ -81,7 +81,7 @@ namespace PostgreSQL
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
             finally
@@ -139,7 +139,7 @@ namespace PostgreSQL
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
                 throw e;
             }
             finally
@@ -176,7 +176,7 @@ namespace PostgreSQL
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
                     throw e;
                 }
                 finally
@@ -247,7 +247,7 @@ namespace PostgreSQL
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "", e);
                 //Reporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
                 throw (e);
             }
@@ -299,7 +299,7 @@ namespace PostgreSQL
                 catch (Exception e)
                 {
                     tran.Rollback();
-                    Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
                     throw e;
                 }
             }
@@ -309,6 +309,11 @@ namespace PostgreSQL
         public bool TestConnection()
         {
             throw new NotImplementedException();
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

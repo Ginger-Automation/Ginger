@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
         public NewRepositorySerializer RepositorySerializer { get { return mRepositorySerializer; } }
 
-        private string mSolutionFolderPath;
+        private  string mSolutionFolderPath;
         public string SolutionFolder { get { return mSolutionFolderPath; } }
         private List<RepositoryFolderBase> mSolutionRootFolders = new List<RepositoryFolderBase>();
         public List<RepositoryFolderBase> SolutionRootFolders

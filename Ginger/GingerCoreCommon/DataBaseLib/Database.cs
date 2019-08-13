@@ -336,8 +336,9 @@ namespace GingerCore.Environments
             {
                 case eDBTypes.MSAccess:
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    Assembly assembly = Assembly.LoadFrom(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
+                    Assembly assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
                     database = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
+                    //database.InitReporter()
                     database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
 
@@ -868,9 +869,7 @@ namespace GingerCore.Environments
             
             //return rc;
         }
-
-     
-
+       
         public override string ItemName
         {
             get

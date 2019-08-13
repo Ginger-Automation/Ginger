@@ -1,6 +1,7 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
-using GingerCore;
+using Amdocs.Ginger.Plugin.Core.Reporter;
+
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -22,7 +23,7 @@ namespace MongoDB
         string TNS = null;
         private DateTime LastConnectionUsedTime;
         string collectionName = "";
-
+        private IReporter mReporter;
         public string Name => throw new NotImplementedException();
 
         string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -247,7 +248,7 @@ namespace MongoDB
                     {
                         if (string.IsNullOrEmpty(HostPortDB[HostPortDB.Length - 1]))
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Database is not mentioned in the TNS/Host.");
+                            mReporter.ToLog2(eLogLevel.ERROR, "Database is not mentioned in the TNS/Host.");
                             return false;
                         }
 
@@ -261,7 +262,7 @@ namespace MongoDB
                         else
                         {
                             bool res = false;
-                            String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                            String deCryptValue = "";// EncryptionHandler.DecryptString(Password, ref res, false);
                             if (res == true)
                             {
                                 mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], User, deCryptValue);
@@ -298,7 +299,7 @@ namespace MongoDB
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Mongo DB", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to connect to Mongo DB", e);
                 return false;
             }
         }
@@ -372,6 +373,11 @@ namespace MongoDB
         public bool TestConnection()
         {
             throw new NotImplementedException();
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

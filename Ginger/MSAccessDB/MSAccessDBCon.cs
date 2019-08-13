@@ -1,5 +1,6 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,7 +16,7 @@ namespace MSAccessDB
         // private OleDbConnection conn = null;
         // SqlConnection sqlConnection;
         // private OdbcConnection conn;
-
+        private IReporter mReporter;
         private DbTransaction tran = null;
         // private DateTime LastConnectionUsedTime;
         // public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
@@ -255,7 +256,7 @@ namespace MSAccessDB
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "", e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "", e);
                     throw (e);
                 }
                 finally
@@ -346,7 +347,7 @@ namespace MSAccessDB
                     catch (Exception e)
                     {
                         tran.Rollback();
-                        Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
+                        mReporter.ToLog2(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
                         throw e;
                     }
                 }
@@ -379,7 +380,7 @@ namespace MSAccessDB
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
                     throw e;
                 }
                 finally
@@ -413,7 +414,7 @@ namespace MSAccessDB
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list " + e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Failed to get table list " + e);
                     throw (e);
                 }
             }
@@ -423,6 +424,11 @@ namespace MSAccessDB
         public bool OpenConnection(Dictionary<string, string> parameters)
         {
             return true;
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

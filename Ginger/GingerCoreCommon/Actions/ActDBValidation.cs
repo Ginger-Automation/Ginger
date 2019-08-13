@@ -60,30 +60,57 @@ namespace GingerCore.Actions
                 return mPlatforms;
             }
         }
-        public new static partial class Fields
+        //public new static partial class Fields
+        //{
+        //    public static string AppName = "AppName";
+        //    public static string DBName = "DBName";
+        //    public static string Keyspace = "Keyspace";
+        //    public static string Table = "Table";
+        //    public static string Column = "Column";
+        //    public static string Where = "Where";
+        //    public static string SQL = "SQL";
+        //    public static string DatabaseTye = "DatabaseTye";           
+        //    public static string CommitDB = "CommitDB";
+        //    public static string DBValidationType = "DBValidationType";
+        //    public static string QueryTypeRadioButton = "QueryTypeRadioButton";
+        //    public static string QueryFile = "QueryFile";
+        //    public static string ImportFile = "ImportFile";
+        //    public static string QueryParams = "QueryParams";
+        //}
+        public string ImportFile
         {
-            public static string AppName = "AppName";
-            public static string DBName = "DBName";
-            public static string Keyspace = "Keyspace";
-            public static string Table = "Table";
-            public static string Column = "Column";
-            public static string Where = "Where";
-            public static string SQL = "SQL";
-            public static string DatabaseTye = "DatabaseTye";           
-            public static string CommitDB = "CommitDB";
-            public static string DBValidationType = "DBValidationType";
-            public static string QueryTypeRadioButton = "QueryTypeRadioButton";
-            public static string QueryFile = "QueryFile";
-            public static string ImportFile = "ImportFile";
-            public static string QueryParams = "QueryParams";
+            get
+            {
+                return GetInputParamValue(nameof(ImportFile));
+            }
         }
-
+        public string QueryFile
+        {
+            get
+            {
+                return GetInputParamValue(nameof(QueryFile));
+            }
+        }
+        public string QueryTypeRadioButton
+        {
+            get
+            {
+                return GetInputParamValue(nameof(QueryTypeRadioButton));
+            }
+        }
+        public string CommitDB
+        {
+            get
+            {
+                return GetInputParamValue(nameof(CommitDB));
+            }
+        }
         [IsSerializedForLocalRepository]
         public string AppName { set; get; }
 
         public string mDBName;
         [IsSerializedForLocalRepository]
-        public string DBName { get { return mDBName; } set { mDBName = value; OnPropertyChanged(Fields.DBName); } }
+        public string DBName { get { return mDBName; } set { mDBName = value; OnPropertyChanged(nameof (DBName)); } }
 
         [IsSerializedForLocalRepository]
         public string Keyspace { set; get; }
@@ -174,7 +201,7 @@ namespace GingerCore.Actions
             get
             {
                 bool returnValue = true;
-                if (Boolean.TryParse((GetInputParamValue(ActDBValidation.Fields.CommitDB)), out returnValue))
+                if (Boolean.TryParse(CommitDB, out returnValue))
                 {
                     return returnValue;
                 }
@@ -219,76 +246,76 @@ namespace GingerCore.Actions
         {
             if (String.IsNullOrEmpty(GetInputParamValue("SQL")))
             {
-                AddOrUpdateInputParamValue("SQL",GetInputParamValue("Value"));
+                AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-           
+
             if (SetDBConnection() == false)
                 return;//Failed to find the DB in the Environment
-           
-            switch (DatabaseType)
+
+            //switch (DatabaseType)
+            //{
+            //    case eDatabaseTye.Relational:
+            //        {
+            switch (DBValidationType)
             {
-                case eDatabaseTye.Relational:
-                    {
-                        switch (DBValidationType)
-                        {
-                            case eDBValidationType.SimpleSQLOneValue:
-                                SimpleSQLOneValueHandler();
-                                break;
-
-                            case eDBValidationType.FreeSQL:
-                                FreeSQLHandler();
-                                break;
-
-                            case eDBValidationType.RecordCount:
-                                RecordCountHandler();
-                                break;
-                            case eDBValidationType.UpdateDB:
-                                UpdateSqlHndler();
-                                break;
-                            //TODO: add default and report error
-                            default:
-                                break;
-                        }
-                        
-                        if (!DB.KeepConnectionOpen)
-                        {
-                            DB.CloseConnection();
-                        }
-                    }
+                case eDBValidationType.SimpleSQLOneValue:
+                    SimpleSQLOneValueHandler();
                     break;
 
-                case eDatabaseTye.NoSQL:
-                    HandleNoSQLDBAction();
+                case eDBValidationType.FreeSQL:
+                    FreeSQLHandler();
                     break;
-                    //    //TODO: mark as assert calculator not found...
+
+                case eDBValidationType.RecordCount:
+                    RecordCountHandler();
+                    break;
+                case eDBValidationType.UpdateDB:
+                    UpdateSqlHndler();
+                    break;
+                //TODO: add default and report error
+                default:
+                    break;
+            }
+
+            if (!DB.KeepConnectionOpen)
+            {
+                DB.CloseConnection();
             }
         }
+                //    }
+                //    break;
 
-        private void HandleNoSQLDBAction()
-        {
-            // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //case eDatabaseTye.NoSQL:
+                //    HandleNoSQLDBAction();
+                //    break;
+                    //    //TODO: mark as assert calculator not found...
+           
 
-            //NoSqlBase.NoSqlBase NoSqlDriver = null;
+        //private void HandleNoSQLDBAction()
+        //{
+        //    // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            //switch(this.DB.DBType)
-            //{
-            //    case Database.eDBTypes.Cassandra:
-            //        NoSqlDriver= new GingerCassandra(DBValidationType,DB,this);
-            //        NoSqlDriver.PerformDBAction();
-                   
-            //        break;
-            //    case Database.eDBTypes.Couchbase:
-            //        NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-            //        NoSqlDriver.PerformDBAction();
+        //    //NoSqlBase.NoSqlBase NoSqlDriver = null;
 
-            //        break;
-            //    case Database.eDBTypes.MongoDb:
-            //        NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-            //        NoSqlDriver.PerformDBAction();
+        //    switch (this.DB.DBType)
+        //    {
+        //        case Database.eDBTypes.Cassandra:
+        //            //NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
+        //            //NoSqlDriver.PerformDBAction();
 
-            //        break;
-            //}
-        }
+        //            break;
+        //        case Database.eDBTypes.Couchbase:
+        //            NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+        //            NoSqlDriver.PerformDBAction();
+
+        //            break;
+        //        case Database.eDBTypes.MongoDb:
+        //            NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+        //            NoSqlDriver.PerformDBAction();
+
+        //            break;
+        //    }
+        //}
 
         private bool SetDBConnection()
         {
@@ -337,10 +364,10 @@ namespace GingerCore.Actions
             string SQL = string.Empty;
             try
             {
-                if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
+                if (QueryTypeRadioButton == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    string filePath = "bbb";  // amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    string filePath = "aa";// Amdocs.Ginger.Repository.SolutionRepository.ConvertSolutionRelativePath(QueryFile);  
 
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
@@ -387,10 +414,10 @@ namespace GingerCore.Actions
             string ErrorString = string.Empty;
             try
             {
-                if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
+                if (QueryTypeRadioButton == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     // FIXME: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    string filePath = "ccc"; // amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    string filePath = "aa";// Amdocs.Ginger.Repository.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();

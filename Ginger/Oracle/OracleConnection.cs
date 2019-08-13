@@ -1,6 +1,6 @@
-﻿using Amdocs.Ginger.Common;
+﻿
 using Amdocs.Ginger.Plugin.Core.Database;
-using GingerCore;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,7 +21,7 @@ namespace Oracle
         string User = null;
         string Password = null;
         string TNS = null;
-
+        private IReporter mReporter;
         public string Name => throw new NotImplementedException();
 
         string IDatabase.ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -41,7 +41,7 @@ namespace Oracle
             {
                 connStr = ConnectionString.Replace("{USER}", User);
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = null; //EncryptionHandler.DecryptString(Password, ref res, false);
                 if (res == true)
                 { connStr = connStr.Replace("{PASS}", deCryptValue); }
                 else
@@ -53,7 +53,7 @@ namespace Oracle
                
                 connStr = "Data Source=" + TNS + ";User Id=" + User + ";";
 
-                String deCryptValue = EncryptionHandler.DecryptString(Password, ref res, false);
+                String deCryptValue = null;// EncryptionHandler.DecryptString(Password, ref res, false);
 
                 if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
                 else { connStr = connStr + "Password=" + Password + ";"; }
@@ -112,7 +112,7 @@ namespace Oracle
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
+                mReporter.ToLog2(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw (e);
             }
             finally
@@ -168,7 +168,7 @@ namespace Oracle
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
+               mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + Query, e);
                 throw e;
             }
             finally
@@ -205,7 +205,7 @@ namespace Oracle
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Failed to execute query:" + sql, e);
                     throw e;
                 }
                 finally
@@ -276,8 +276,8 @@ namespace Oracle
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "", e);
-                //Reporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
+                mReporter.ToLog2(eLogLevel.ERROR, "", e);
+                //mReporter.ToUser(eUserMsgKey.DbTableError, "table columns", e.Message);
                 throw (e);
             }
             finally
@@ -327,7 +327,7 @@ namespace Oracle
                 catch (Exception e)
                 {
                     tran.Rollback();
-                    Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
+                    mReporter.ToLog2(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
                     throw e;
                 }
             }
@@ -337,6 +337,11 @@ namespace Oracle
         public bool TestConnection()
         {
             throw new NotImplementedException();
+        }
+
+        public void InitReporter(IReporter reporter)
+        {
+            mReporter = reporter;
         }
     }
 }

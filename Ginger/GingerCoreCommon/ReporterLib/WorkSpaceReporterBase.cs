@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Text;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 
 namespace Amdocs.Ginger.Common
 {
@@ -27,7 +28,7 @@ namespace Amdocs.Ginger.Common
     /// For GingerConsole, the message will apear in console
     /// For Unit Test there is no UI all goes to console with default response
     /// </summary>
-    public abstract class WorkSpaceReporterBase
+    public abstract class WorkSpaceReporterBase : IReporter
     {
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
                 
@@ -60,6 +61,11 @@ namespace Amdocs.Ginger.Common
 
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
 
-        public abstract void ToStatus(eStatusMsgType messageType, string statusText);        
+        public abstract void ToStatus(eStatusMsgType messageType, string statusText);
+
+        public void ToLog2(Plugin.Core.Reporter.eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
