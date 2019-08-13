@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.GingerConsole
             BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " List", BusinessFlowsList, false);
             EnvironmentsListMenuItem = new MenuItem(ConsoleKey.E, "Environments List", EnvironmentsList, false);
             RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) , RunBusinessFlow, false);
-            RunSetMenuItem = new MenuItem(ConsoleKey.S, "Run set", RunSet, false);
+            RunSetMenuItem = new MenuItem(ConsoleKey.S, GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSet, false);
 
             MenuItem SolutionMenu = new MenuItem(ConsoleKey.S, "Solution");
             SolutionMenu.SubItems.Add(OpenSolutionMenuItem);
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         private void RunSet()
         {
-            Console.WriteLine("Run Set Name?");
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Name?");
             string runSetName = Console.ReadLine();
             RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runSetName select x).SingleOrDefault();
             if (runSetConfig == null)
@@ -85,12 +85,12 @@ namespace Amdocs.Ginger.GingerConsole
 
         private void RunBusinessFlow()
         {
-            Console.WriteLine("Business Flow Name?");
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "Name?");
             string BizFlowName = Console.ReadLine();
             BusinessFlow businessFlow = (from x in SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == BizFlowName select x).SingleOrDefault();
             if (businessFlow == null)
             {
-                Console.WriteLine("Business Flow not found");
+                Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " not found");
                 return;
             }
             GingerRunner gingerRunner = new GingerRunner();            
@@ -98,14 +98,14 @@ namespace Amdocs.Ginger.GingerConsole
 
             Console.WriteLine("Execution Completed");
             Console.WriteLine("----------------------------");
-            Console.WriteLine("Business Flow: " + businessFlow.Name);
-            Console.WriteLine("Business Flow Description: " + businessFlow.Description);
-            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
-            Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Description: " + businessFlow.Description);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status: " + businessFlow.RunStatus);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.Activities) + " Count: " + businessFlow.Activities.Count);
             Console.WriteLine("----------------------------");
             foreach (Activity activity in businessFlow.Activities)
             {
-                Console.WriteLine("Activity: " + activity.ActivityName + " Status: " + activity.Status);
+                Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.Activity) + ": " + activity.ActivityName + " Status: " + activity.Status);
 
                 Console.WriteLine("Actions Found:" + activity.Acts.Count);
                 foreach (Act act in activity.Acts )

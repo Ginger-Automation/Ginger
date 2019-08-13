@@ -130,6 +130,11 @@ namespace Ginger.Actions.UserControls
 
         private void UCFlowControlAction_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (e.NewValue == null)
+            {
+                return;
+            }
+
             FC = (FlowControl)e.NewValue;
 
             if (mBfParentRunner != null)

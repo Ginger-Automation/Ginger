@@ -70,7 +70,7 @@ namespace Ginger.WindowExplorer.Mainframe
             return Childrens;
         }
 
-        public System.Windows.Controls.Page EditPage()
+        public System.Windows.Controls.Page EditPage(Context mContext)
         {
             return null;
         }

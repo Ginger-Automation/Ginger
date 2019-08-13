@@ -37,18 +37,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 if (mAction.GetInputParamValue(ActUIElement.Fields.ControlAction) == ActUIElement.eElementAction.Click.ToString())
                 {
-                    mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                 }
             }
             else
             {
                 if (mAction.ElementAction.ToString() == ActUIElement.eElementAction.Click.ToString())
                 {
-
-                    mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
+                    mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                 }
                 else
-                    mAction.AddOrUpdateInputParamValue(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.None.ToString());
+                    mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.None.ToString());
             }
             WaitforIdleComboBox.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle), typeof(ActUIElement.eWaitForIdle));
 

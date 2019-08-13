@@ -47,6 +47,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         private string mDescription = string.Empty;
         [IsSerializedForLocalRepository]
         public string Description

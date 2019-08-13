@@ -291,9 +291,9 @@ namespace GingerCore.Actions
         }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType actionPlatform)
         {
-            if (Platform == ePlatformType.Java || Platform == ePlatformType.NA)
+            if (actionPlatform == ePlatformType.Java)
             {
                 return true;
             }
@@ -319,8 +319,11 @@ namespace GingerCore.Actions
             newActUIElement.ElementLocateBy = this.LocateBy;
             newActUIElement.ElementLocateValue = this.LocateValue;
             newActUIElement.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.Table;
+
             newActUIElement.ElementAction = GetTableElementActionType(this.ControlAction);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, this.ControlAction.ToString());
+            newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ControlActionValue, this.Value);
+
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, this.LocateRowType);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, this.LocateRowType);
 

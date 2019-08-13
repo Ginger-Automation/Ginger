@@ -146,8 +146,7 @@ namespace GingerCore.ALM.JIRA
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            busFlow.AddActivity(stepActivity);
-                            tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);                            
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -463,7 +462,7 @@ namespace GingerCore.ALM.JIRA
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while pulling the parameters names from Jira TC Step Description/Expected", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from Jira TC Step Description/Expected", ex);
             }
         }
         public JiraTestSet GetTestSetData(JiraTestSet currentTS)
@@ -770,8 +769,7 @@ namespace GingerCore.ALM.JIRA
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
-                        tcActivsGroup.AddActivityToGroup(stepActivity);
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
                     }
 
                     //pull TC-Step parameters and add them to the Activity level

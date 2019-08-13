@@ -62,6 +62,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -236,7 +237,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
 
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
-            xAppsAgentsMappingFrame.Content = mApplicationAgentsMapPage;
+            xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
 
@@ -442,7 +443,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-                    xBusinessFlowNameTxtBlock.ToolTip = System.IO.Path.Combine(mBusinessFlow.ContainingFolder, mBusinessFlow.Name);
+                    xBusinessFlowNameTxtBlock.ToolTip = mBusinessFlow.ContainingFolder + "\\" + mBusinessFlow.Name;
 
                     if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
                     {
@@ -453,6 +454,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
+                        mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                         mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
                         xActivitiesListFrame.Content = mActivitiesPage;
                     }
@@ -514,9 +516,9 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ActivitiesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (mContext.Activity != null)
+            if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
@@ -528,8 +530,8 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity = mActivity;
             if (mActivity != null)
             {
-                mContext.Activity.PropertyChanged -= Activity_PropertyChanged;
-                mContext.Activity.PropertyChanged += Activity_PropertyChanged;
+                mActivity.PropertyChanged -= Activity_PropertyChanged;
+                mActivity.PropertyChanged += Activity_PropertyChanged;
             }
 
             UpdateContextWithActivityDependencies();
@@ -565,6 +567,7 @@ namespace GingerWPF.BusinessFlowsLib
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
+                        //GC.Collect();
                     }
                 }
                 else
@@ -576,7 +579,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xCurrentActivityLoadingIconPnl.Visibility = Visibility.Collapsed;
                 xCurrentActivityFrame.Visibility = Visibility.Visible;
-                xCurrentActivityFrame.Content = mActivityPage;
+                xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
 
@@ -653,7 +656,8 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
                     xStopRunBtn.Visibility = Visibility.Visible;
-
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
                     xEnvironmentComboBox.IsEnabled = false;
                     if (mApplicationAgentsMapPage != null)
                     {
@@ -664,6 +668,8 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         CollapseAddActionsPnl();
                     }
+                    xAddActionsBtn.Visibility = Visibility.Collapsed;
+                    xAddActionSectionSpliter.Visibility = Visibility.Collapsed;
 
                     if (mBusinessFlow != null)
                     {
@@ -682,6 +688,8 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ButtonText = "Run Flow";
                     xRunFlowBtn.ToolTip = "Reset & Run Flow";
                     xRunFlowBtn.IsEnabled = true;
+                    xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     xStopRunBtn.Visibility = Visibility.Collapsed;
 
                     xEnvironmentComboBox.IsEnabled = true;
@@ -689,6 +697,9 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mApplicationAgentsMapPage.MappingList.IsEnabled = true;
                     }
+
+                    xAddActionsBtn.Visibility = Visibility.Visible;
+                    xAddActionSectionSpliter.Visibility = Visibility.Visible;
 
                     if (mBusinessFlow != null)
                     {
@@ -700,9 +711,7 @@ namespace GingerWPF.BusinessFlowsLib
                             activity.Acts.SyncViewSelectedItemWithCurrentItem = true;
                         }
                     }
-                }
-
-                xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                }                
             });
         }
 
@@ -888,8 +897,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (activity.CurrentAgent != null)
+                {
+                    ((Agent)activity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 
@@ -933,10 +944,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
 
-                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
-                {
-                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
-                }
+               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -947,8 +955,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                //mExecutionIsInProgress = false;
-                //SetUIElementsBehaverDuringExecution();
+                if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
+                {
+                    ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                }
             }
         }
 
@@ -1024,12 +1034,11 @@ namespace GingerWPF.BusinessFlowsLib
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
             xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
-
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            
+            if(GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
             {
-                GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 xEnvironmentComboBox.SelectedIndex = 0;
-            }
+            }            
             else
             {
                 //select last used environment
@@ -1300,7 +1309,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " report", ex);
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }
@@ -1354,17 +1363,23 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (mBusinessFlow != null)
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                ScenariosGenerator SG = new ScenariosGenerator();
-                SG.CreateScenarios(mBusinessFlow);
-                int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
-                if (optCount > 0)
+                try
                 {
-                    cnt = cnt - optCount;
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    ScenariosGenerator SG = new ScenariosGenerator();
+                    SG.CreateScenarios(mBusinessFlow);
+                    int cnt = mBusinessFlow.ActivitiesGroups.Count;
+                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    if (optCount > 0)
+                    {
+                        cnt = cnt - optCount;
+                    }
+                    Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
                 }
-                Reporter.ToUser(eUserMsgKey.GherkinScenariosGenerated, cnt);
-                Mouse.OverrideCursor = null;
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                }
             }
         }
 
@@ -1446,13 +1461,13 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mSyncSelectedItemWithExecution = false;
                 xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Invisible;
-                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is not Synced with Execution Progress, Click to Sync it";
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists items selection not in sync with execution progress. Click to sync it";
             }
             else
             {
                 mSyncSelectedItemWithExecution = true;
                 xSelectedItemExecutionSyncBtn.ButtonImageType = eImageType.Visible;
-                xSelectedItemExecutionSyncBtn.ToolTip = "Lists Items Selection is Synced with Execution Progress, Click to Un-Sync it";
+                xSelectedItemExecutionSyncBtn.ToolTip = "Lists items selection in sync with execution progress. Click to un-sync it";
             }
 
             if (mBusinessFlow != null)
@@ -1463,6 +1478,22 @@ namespace GingerWPF.BusinessFlowsLib
                     activity.Acts.SyncViewSelectedItemWithCurrentItem = mSyncSelectedItemWithExecution;
                 }
             }
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+        }
+
+        private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Ginger.Export.GingerToCSV.BrowseForFilename();
+            Ginger.Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
         }
     }
 

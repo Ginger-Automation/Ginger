@@ -670,11 +670,25 @@ namespace Amdocs.Ginger.Repository
                 if (targetObj == null)
                 {
                     obj = CreateObject(className);
+                    if (obj == null)
+                    {
+                        bool isHandled = CheckMissingClass(xdr, className);
+                        if (isHandled)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                        }
+                    }
                 }
                 else
                 {
                     obj = targetObj;
-                }
+                }             
+
+
 
                 SetObjectSerialziedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
@@ -690,7 +704,7 @@ namespace Amdocs.Ginger.Repository
                     MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     if (mi==null)
-                    {                        
+                    {                     
                         throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
 
@@ -779,8 +793,8 @@ namespace Amdocs.Ginger.Repository
 
                 return obj;
             }
-            
-            throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
+            return null;
+            //throw new Exception("NewRepositorySerializer: Unable to create class object - " + name);
 
         }
 
@@ -925,21 +939,51 @@ namespace Amdocs.Ginger.Repository
                     }
                     else
                     {
-                        //TODO: handle other types of list, meanwhile Assume observable list
-                        IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
-                        //assign it to the relevant obj
+                        try
+                        {
 
-                        if (mi.MemberType == MemberTypes.Property)
-                        {
-                            ((PropertyInfo)mi).SetValue(obj, lst);                            
+                            object result = null;
+                            if (mi.MemberType == MemberTypes.Property)
+                            {
+                                result=((PropertyInfo)mi).GetValue(obj);
+                            }
+
+                            else
+                            {
+                                result = ((FieldInfo)mi).GetValue(obj);
+                            }
+                            IObservableList lst = null;
+                            if (result == null)
+                            {
+                                lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(elementType)));
+                            }
+                            else
+                            {
+                                lst = (IObservableList)result;
+                            }
+
+
+                            //TODO: handle other types of list, meanwhile Assume observable list
+
+                            //assign it to the relevant obj
+
+                            if (mi.MemberType == MemberTypes.Property)
+                            {
+                                ((PropertyInfo)mi).SetValue(obj, lst);
+                            }
+
+                            else
+                            {
+                                ((FieldInfo)mi).SetValue(obj, lst);
+                            }
+
+                            // Read the list from the xml
+                            xmlReadListOfObjects(obj, xdr, lst);
                         }
-                        else
+                        catch(Exception e)
                         {
-                            ((FieldInfo)mi).SetValue(obj, lst);                            
+
                         }
-                        
-                        // Read the list from the xml
-                        xmlReadListOfObjects(obj, xdr, lst);
                     }
                 }
             }
@@ -1240,7 +1284,32 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        private static bool CheckMissingClass(XmlReader xdr, string className)
+        {            
+            switch(className)
+            {
+                case "GingerCore.DataSource.ActDSConditon":
+                    MoveXdrToNextElement(xdr);
+                    return true;
 
+                default:
+                    return false;
+            }
+        }
+
+        private static void MoveXdrToNextElement(XmlReader xdr)
+        {
+            int level = xdr.Depth;
+            while (xdr.Depth == level)
+            {
+                xdr.Skip();
+            }
+
+            if (xdr.NodeType == XmlNodeType.EndElement)
+            {
+                xdr.ReadEndElement();
+            }
+        }
 
         //Prep if we want to switch enable JSON
         //public class JSonHelper

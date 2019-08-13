@@ -58,6 +58,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 cliHelper.SetSourceControlURL(dynamicExecution.SolutionDetails.SourceControlDetails.Url);
                 cliHelper.SetSourceControlUser(dynamicExecution.SolutionDetails.SourceControlDetails.User);
                 cliHelper.SetSourceControlPassword(dynamicExecution.SolutionDetails.SourceControlDetails.Password);
+                cliHelper.PasswordEncrypted(dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted);
                 if (string.IsNullOrEmpty(dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer) == false)
                 {
                     cliHelper.SourceControlProxyServer(dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer);

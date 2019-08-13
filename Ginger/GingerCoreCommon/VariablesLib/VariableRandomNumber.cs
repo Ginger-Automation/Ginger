@@ -39,19 +39,19 @@ namespace GingerCore.Variables
 
         private decimal mMin;
         [IsSerializedForLocalRepository]
-        public decimal Min { set { mMin = value; OnPropertyChanged("Formula"); } get { return mMin; } }
+        public decimal Min { set { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } get { return mMin; } }
 
         private decimal mMax;
         [IsSerializedForLocalRepository]
-        public decimal Max { set { mMax = value; OnPropertyChanged("Formula"); } get { return mMax; } }
+        public decimal Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
 
         private decimal mInterval;
         [IsSerializedForLocalRepository]
-        public decimal Interval { set { mInterval = value; OnPropertyChanged("Formula"); } get { return mInterval; } }
+        public decimal Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval));  OnPropertyChanged("Formula"); } get { return mInterval; } }
 
         private bool mIsInteger;
         [IsSerializedForLocalRepository]
-        public bool IsInteger { set { mIsInteger = value; OnPropertyChanged("Formula"); } get { return mIsInteger; } }        
+        public bool IsInteger { set { mIsInteger = value; OnPropertyChanged(nameof(this.IsInteger));  OnPropertyChanged("Formula"); } get { return mIsInteger; } }        
 
         public override string GetFormula()
         {

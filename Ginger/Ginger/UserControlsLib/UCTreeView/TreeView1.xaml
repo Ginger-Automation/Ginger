@@ -22,6 +22,7 @@
                 <Label x:Name="xTreeTitle" Content="Item Name" FontSize="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" />
             </StackPanel>
             <DockPanel x:Name="xTreeActionsIconsPnl" DockPanel.Dock="Right" Margin="10,0,0,0" MinWidth="50">
+                <usercontrols:ucButton x:Name="xRefreshButton" AutomationProperties.AutomationId="RefreshButton" ToolTip="Refresh Items" VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Right" ButtonType="CircleImageButton"  ButtonFontImageSize="14" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Refresh"  Visibility="Collapsed" Margin="-5,0,0,0"/>
                 <usercontrols:ucButton x:Name="xSaveAllButton" ToolTip="Save All Changed Items" VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Right" ButtonType="CircleImageButton" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16"  ButtonImageType="Save" Visibility="Collapsed" Margin="-5,0,0,0"></usercontrols:ucButton>
                 <usercontrols:ucButton x:Name="xAddButton" AutomationProperties.AutomationId="AddButton" ToolTip="Add Item" VerticalAlignment="Bottom" HorizontalAlignment="Right" DockPanel.Dock="Right" ButtonType="CircleImageButton"  ButtonFontImageSize="15" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Add"  Visibility="Collapsed" Margin="0,0,0,0"/>
             </DockPanel>

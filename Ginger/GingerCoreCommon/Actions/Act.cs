@@ -176,32 +176,47 @@ namespace GingerCore.Actions
             }
         }
 
-        private eLocateBy mLocateBy;
-
-        [IsSerializedForLocalRepository]
         public eLocateBy LocateBy
         {
-            get { return mLocateBy; }
+            get
+            {
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                }
+                else
+                {
+                    return eLocateBy.NA;
+                }
+            }
             set
             {
-                if (mLocateBy != value)
-                {
-                    mLocateBy = value;
-                    OnPropertyChanged(Fields.LocateBy);
-                    OnPropertyChanged(Fields.Details);
-                }
+                GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
+                OnPropertyChanged(Fields.LocateBy);
+                OnPropertyChanged(Fields.Details);
             }
         }
 
-
-        private string mLocateValue;
-        [IsSerializedForLocalRepository]
+     
+     
         public string LocateValue
         {
-            get { return mLocateValue; }
+            get
+            {
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    return GetOrCreateInputParam(Fields.LocateValue).Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
             set
             {
-                mLocateValue = value;
+                GetOrCreateInputParam(Fields.LocateValue).Value = value;
                 OnPropertyChanged(Fields.LocateValue);
                 OnPropertyChanged(Fields.Details);
             }
@@ -265,9 +280,19 @@ namespace GingerCore.Actions
         }
 
 
-        //private int? mTimeout; //timeout in secs
+        private int? mTimeout;
         [IsSerializedForLocalRepository]
-        public int? Timeout { get; set; } //timeout in secs
+        public int? Timeout {
+            get
+            {
+                return mTimeout;
+            }
+            set
+            {
+                mTimeout = value;
+                OnPropertyChanged(nameof(Timeout));
+            }
+            } //timeout in secs
 
         private bool mConfigOutputDS;
         [IsSerializedForLocalRepository]
@@ -293,14 +318,26 @@ namespace GingerCore.Actions
             set { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); }
         }
 
-        [IsSerializedForLocalRepository]
-        public eStatusConverterOptions StatusConverter { get; set; }
+        private eStatusConverterOptions mStatusConverter;
+       [IsSerializedForLocalRepository]
+        public eStatusConverterOptions StatusConverter
+        {
+            get
+            {
+                return mStatusConverter;
+            }
+            set
+            {
+                mStatusConverter = value;
+                OnPropertyChanged(nameof(StatusConverter));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
+       [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> InputValues { get; set; } =new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
@@ -505,7 +542,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("Value", value);
+              AddOrUpdateInputParamValue("Value", value);
             }
         }
 
@@ -674,6 +711,17 @@ namespace GingerCore.Actions
             return AIV;
         }
 
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        {
+
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+
+            TEnum result;
+       _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+         
+            return result;
+
+        }
 
         //YW - removed as it was causing problem - need to rethink better.
         //public ActInputValueEnum GetOrCreateEnumInputParam(string Param, object DefaultValue = null)
@@ -1592,7 +1640,7 @@ namespace GingerCore.Actions
                 // Show old LocateBy, LocateValue
                 // TODO: remove when locate by removed from here
                 ActionDetails AD = new ActionDetails();
-                if (this.LocateBy != eLocateBy.NA)
+                if (this.ObjectLocatorConfigsNeeded)                
                 {
                     AD.Info = this.LocateBy + "=" + this.LocateValue;
                 }

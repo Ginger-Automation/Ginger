@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
@@ -22,6 +40,8 @@ namespace Ginger.BusinessFlowPages
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+
+            xAddGroupBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New");
 
             xGroupComboBox.ItemsSource = mBusinessFlow.ActivitiesGroups;
             xGroupComboBox.DisplayMemberPath = nameof(ActivitiesGroup.Name);
@@ -63,7 +83,7 @@ namespace Ginger.BusinessFlowPages
             winButtons.Add(selectBtn);
 
             this.Height = 200;
-            this.Width = 400;
+            this.Width = 500;
 
             GingerCore.General.LoadGenericWindow(ref mPageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
             return mSelectedAG;

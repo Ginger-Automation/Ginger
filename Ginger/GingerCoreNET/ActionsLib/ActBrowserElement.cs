@@ -96,13 +96,16 @@ namespace GingerCore.Actions
             UrlPOM,
         }
 
-        [IsSerializedForLocalRepository]
+
         public eGotoURLType GotoURLRadioButton
         {
-            get { return gotoURLRadioButton; }
+            get {
+
+                return GetOrCreateInputParam<eGotoURLType>(Fields.GotoURLType);
+            }
             set
             {
-                gotoURLRadioButton = value;
+                GetOrCreateInputParam(Fields.GotoURLType).Value = value.ToString();
             }
         }
         private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
@@ -176,8 +179,20 @@ namespace GingerCore.Actions
         }
 
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction);
+            }
+            set
+            {
+                 AddOrUpdateInputParamValue(Fields.ControlAction, value.ToString());
+     
+                OnPropertyChanged(nameof(ControlAction));
+            }
+        }
 
         public override String ToString()
         {
@@ -284,9 +299,20 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
-            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
-            platformAction.InputParams.Add("URL", Value);
+            PlatformAction platformAction = new PlatformAction(this);
+
+
+
+
+            foreach (ActInputValue aiv in this.InputValues)
+            {
+                if (!platformAction.InputParams.ContainsKey(aiv.Param))
+                {
+                    platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
+                }
+            }
+     
+
             return platformAction;            
         }
 
