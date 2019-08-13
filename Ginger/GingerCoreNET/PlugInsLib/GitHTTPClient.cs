@@ -32,9 +32,11 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         {
             using (var client = new HttpClient())
             {
-                // Simulate a browser
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+                // Simulate a browser header                
+                //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);
+                client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");
                 
+
                 var result = client.GetAsync(url).Result;
 
                 if (result.IsSuccessStatusCode)
@@ -50,9 +52,13 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         }
 
         internal static T GetJSON<T>(string url)
-        {            
+        {
+            T t = default(T);            
             string packagesjson = GetResponseString(url).Result;
-
+            if (packagesjson.Contains("Error: Forbidden"))
+            {
+                return t;
+            }
             T list = JsonConvert.DeserializeObject<T>(packagesjson);
             return list;
         }

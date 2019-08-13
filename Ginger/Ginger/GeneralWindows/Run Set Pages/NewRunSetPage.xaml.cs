@@ -1121,7 +1121,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while checking " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " files change", ex);
             }
         }
 

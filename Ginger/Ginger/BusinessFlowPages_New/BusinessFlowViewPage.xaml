@@ -104,7 +104,7 @@
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
                             <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variabels (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variables (5)" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
                 </TabItem.Header>

@@ -284,7 +284,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemNotification actionsVarsDepInd = new ListItemNotification();
             actionsVarsDepInd.AutomationID = "actionsVarsDepInd";
             actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
             actionsVarsDepInd.ImageSize = 14;
             actionsVarsDepInd.BindingObject = mContext.Activity;
             actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);

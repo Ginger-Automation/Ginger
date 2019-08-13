@@ -69,7 +69,6 @@ namespace GingerTest
             SessionCount--;
             TestMutex.ReleaseMutex();
 
-
             if (SessionCount == 0)
             {
                 gingerAutomatorInstance.CloseGinger();                
@@ -91,7 +90,7 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerAutomator));
+                WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
                 
@@ -129,13 +128,16 @@ namespace GingerTest
             isReady = true;
         }
 
-        
+        internal void TakeScreenShot(string fileName)
+        {
+            // TODO:
+        }
+
         void CloseGinger()
         {
             // app.Shutdown(0);
             MainWindowPOM.Close();
-            Thread.Sleep(5000);
-            WorkSpace.Instance.ReleaseWorkspace();            
+            Thread.Sleep(5000);            
         }
 
 

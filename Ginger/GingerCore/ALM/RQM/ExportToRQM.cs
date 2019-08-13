@@ -63,7 +63,7 @@ namespace GingerCore.ALM.RQM
 
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
             {
-                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " is missing ExternalID, cannot export RQM TestPlan execution results without External ID";
                 return false;
             }
 

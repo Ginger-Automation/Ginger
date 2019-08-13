@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.Repository
             string releases = GitHTTPClient.GetResponseString(releasesURL).Result;
             if (releases == "Error: Forbidden")
             {
-                throw new IOException("Git API limit");
+                throw new IOException("Error: Forbidden - " + releases);
             }
             mReleases = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackageRelease>>(releases);
             

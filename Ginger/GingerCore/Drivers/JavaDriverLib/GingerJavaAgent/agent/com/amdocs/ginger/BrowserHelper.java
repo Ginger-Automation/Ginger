@@ -306,9 +306,9 @@ public class BrowserHelper
         Object rc = setJavascriptErrorsSuppressed(bSupress);
         
         if (rc!=null)
-        	return PayLoad.OK("Error Supress Passed");
+        	return PayLoad.OK("Error Suppress Passed");
         else
-        	return PayLoad.Error("Error Supress Failed");        
+        	return PayLoad.Error("Error Suppress Failed");        
     }
 
     public Object setJavascriptErrorsSuppressed(boolean bSupress)

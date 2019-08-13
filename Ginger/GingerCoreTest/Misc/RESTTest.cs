@@ -29,9 +29,33 @@ namespace UnitTest
     [TestClass]    
     public class RESTTest 
     {
+
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
+        [ClassInitialize()]
+        public static void ClassInit(TestContext TestContext)
+        {
+            mTestHelper.ClassInitialize(TestContext);
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            mTestHelper.ClassCleanup();
+        }
+
         [TestInitialize]
         public void TestInitialize()
         {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            mTestHelper.TestCleanup();
         }
 
         // Need to have our own REST server, so will not be dependent on David server

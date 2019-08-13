@@ -42,14 +42,14 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         public static void ClassInitialize(TestContext TC)
         {
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(nameof(SolutionRepositoryBasicSimpleTest), path);
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
             
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -196,5 +196,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             //Assert
             Assert.AreEqual(BF2.Name, BFOriginalName);  // Make sure we didn't get the one from mem                        
         }
+
+        
+
     }
 }

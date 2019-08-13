@@ -245,7 +245,7 @@ namespace Ginger
         {
             Console.WriteLine("Starting Ginger");
             Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            WorkSpace.Init(new WorkSpaceEventHandler(), "App");
+            WorkSpace.Init(new WorkSpaceEventHandler());
 
             // add additional classed from Ginger and GingerCore
             InitClassTypesDictionary();

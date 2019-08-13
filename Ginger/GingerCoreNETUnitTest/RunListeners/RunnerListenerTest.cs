@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
-    [Ignore] // temp
+    
     [Level2]
     [TestClass]
     public class RunnerListenerTest
@@ -55,13 +55,13 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Arrange
             BusinessFlow mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
-            mBF.Name = "BF TEst timeline events listener";
+            mBF.Name = "BF TEst time-line events listener";
             mBF.Active = true;
             Activity activitiy1 = new Activity() { Active = true};
             activitiy1.Active = true;
             mBF.Activities.Add(activitiy1);
 
-            ActDummy action1 = new ActDummy() { Description = "Dummay action 1", Active = true };
+            ActDummy action1 = new ActDummy() { Description = "Dummy action 1", Active = true };
             activitiy1.Acts.Add(action1);
             mGingerRunner.BusinessFlows.Add(mBF);
 

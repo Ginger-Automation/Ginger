@@ -21,13 +21,13 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         public static void ClassInitialize(TestContext TC)
         {
             string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution("AnalyzerTest", path);            
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
 
         }
 
-
+        
     }
 
 }

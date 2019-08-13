@@ -29,14 +29,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 
-// FIXME to use local html test page
+// FIXME to use local HTML test page
 
-namespace GingerCoreNETUnitTest.RunTestslib
+namespace WorkspaceHold
 {        
     [Level3]
     [TestClass]
     public class PluginAgentTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
         static GingerGrid mGingerGrid;
         
@@ -44,9 +46,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            // Create temp solution
-
-            WorkspaceHelper.InitWS(nameof(PluginAgentTest));
+            mTestHelper.ClassInitialize(TestContext);
             
 
             // Create temp solution
@@ -57,7 +57,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
                 Directory.Delete(path, true);
             }
             solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            solutionRepository.CreateRepository(path);     
+            solutionRepository.CreateRepository(path);
             WorkSpace.Instance.SolutionRepository = solutionRepository;
 
             // add Example4 Plugin to solution
@@ -65,34 +65,29 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.PlugInsManager.Init(solutionRepository);
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginPath);
 
-            // Start a Ginger Services grid
-            // int HubPort = SocketHelper.GetOpenPort();
-            mGingerGrid = WorkSpace.Instance.LocalGingerGrid; //new GingerGrid(HubPort);  
-            // mGingerGrid.Start();
+            mGingerGrid = WorkSpace.Instance.LocalGingerGrid;
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {
-            mGingerGrid.Stop();
-            WorkSpace.Instance.ReleaseWorkspace();
+        {                        
+            mTestHelper.ClassCleanup();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-
-
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestCleanup]
         public void TestCleanUp()
-        {
-
+        {            
+            mTestHelper.TestCleanup();
         }
 
-
-        // [Ignore] // FIXME fail on Linux !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        [Ignore] // Fail on Linux
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
@@ -101,19 +96,24 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Agent agent = new Agent() { Name = "agent 1" };            
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "Memo";
-            agent.ServiceId = "DictionaryService";            
+            agent.ServiceId = "DictionaryService";
 
             //Act
+            mTestHelper.Log("agent.StartDriver()");
             agent.StartDriver();
+
+            int count = mGingerGrid.NodeList.Count;
+
+            mTestHelper.Log("agent.Close();");
             agent.Close();
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
             //Assert
-            Assert.AreEqual(list.Count, 0);
+            Assert.AreEqual(0, list.Count);
+            Assert.AreEqual(1, count);
         }
 
-
-        
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void StartX3LocalDriverFromPlugin()
@@ -128,7 +128,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             a1.StartDriver();
             a2.StartDriver();
             a3.StartDriver();
-            
+
+            int count = mGingerGrid.NodeList.Count;
+
             a1.Close();
             a2.Close();
             a3.Close();
@@ -136,8 +138,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
             //Assert
-            Assert.AreEqual(list.Count, 0);
+            Assert.AreEqual(3, count);
+            Assert.AreEqual(0, list.Count);
         }
+
+
+      
 
 
         // FIXME and use when we have the selenium plugin working 

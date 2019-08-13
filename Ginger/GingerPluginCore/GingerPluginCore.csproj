@@ -22,4 +22,8 @@
     <Folder Include="PlugInsLib\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
+  </ItemGroup>
+
 </Project>

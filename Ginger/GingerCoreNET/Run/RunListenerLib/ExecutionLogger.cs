@@ -70,11 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             get { return mLogsFolder; }
         }
-
-        public string CurrentLoggerFolderName
-        {
-            get { return mLogsFolderName; }
-        }
+        
 
         public DateTime CurrentExecutionDateTime
         {
