@@ -81,6 +81,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(list.Count, 2);
         }
 
+        [Ignore]
         [TestMethod]
         // [Timeout(60000)]
         public void SendActionToRemoteGrid()
