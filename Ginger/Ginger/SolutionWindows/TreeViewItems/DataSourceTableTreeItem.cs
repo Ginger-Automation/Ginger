@@ -129,9 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                mTreeView.Tree.DeleteItemAndSelectParent(this);
-                DSDetails.DSTableList.Remove(DSTableDetails);
-                DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+                DeleteTreeItem();
             }            
         }
 
@@ -148,13 +146,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     }
                 }
             }
-            mTreeView.Tree.DeleteItemAndSelectParent(this);
-            DSDetails.DSTableList.Remove(DSTableDetails);
-            DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+            DeleteTreeItem();
             return true;
         }
 
-            private void ExportToExcel(object sender, RoutedEventArgs e)
+        public void DeleteTreeItem()
+        {
+            mTreeView.Tree.DeleteItemAndSelectParent(this);
+            DSDetails.DSTableList.Remove(DSTableDetails);
+            DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+        }
+
+
+        private void ExportToExcel(object sender, RoutedEventArgs e)
         {                      
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
             DSEE.ShowAsWindow();

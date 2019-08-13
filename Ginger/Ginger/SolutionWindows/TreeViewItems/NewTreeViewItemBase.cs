@@ -605,7 +605,7 @@ namespace GingerWPF.TreeViewItemsLib
             return stack;
         }
 
-        public override void DeleteAllTreeItems(Type typeOfFolder)
+        public override void DeleteAllTreeItems()
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
@@ -616,22 +616,23 @@ namespace GingerWPF.TreeViewItemsLib
                     if (node == null) continue;
                     if (node.NodeObject() != null)
                     {
-                        if (node.NodeObject() is RepositoryFolderBase==false)
+                        if (node.NodeObject() is RepositoryFolderBase)
                         {
-                            //if(node.GetType()== GingerCore.Common.Utility.)
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                        }
+                        else if(node.NodeObject() is RepositoryItemBase)
+                        {
                             ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
                         }
                         else
                         {
-                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception while deleting" + node.NodeObject());
                         }
                     }
                     else
                     {
                         if (Directory.Exists(this.NodePath()))
                         {
-                            //Directory.Delete(this.NodePath(), true);
-
                            String [] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
                             foreach(String path in DocFolderChildItems)
                             {

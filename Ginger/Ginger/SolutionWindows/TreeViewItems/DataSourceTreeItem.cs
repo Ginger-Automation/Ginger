@@ -300,6 +300,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
+                    base.DeleteTreeItem(DSDetails, true);
                 }
                 catch (Exception ex)
                 {
@@ -311,7 +312,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            base.DeleteTreeItem(DSDetails);
             DeleteDataSourceItems();
         }
 
@@ -328,7 +328,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     }
                 }
             }
-            base.DeleteTreeItem(DSDetails,true);
             DeleteDataSourceItems();
             return true;
         }

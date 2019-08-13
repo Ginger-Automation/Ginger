@@ -313,10 +313,10 @@ namespace GingerWPF.TreeViewItemsLib
             PostDeleteTreeItemHandler();
         }
 
-        public abstract void DeleteAllTreeItems(Type typeOfFolder);
+        public abstract void DeleteAllTreeItems();
         private void DeleteAllTreeItemsHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            DeleteAllTreeItems(this.GetType());
+            DeleteAllTreeItems();
             PostDeleteTreeItemHandler();
         }
 

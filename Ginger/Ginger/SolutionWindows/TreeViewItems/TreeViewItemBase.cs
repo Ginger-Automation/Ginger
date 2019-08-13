@@ -547,7 +547,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Reporter.ToUser(eUserMsgKey.MissingImplementation2);
         }
 
-        public override void DeleteAllTreeItems(Type typeOfFolder)
+        public override void DeleteAllTreeItems()
         {
             throw new NotImplementedException();
         }
