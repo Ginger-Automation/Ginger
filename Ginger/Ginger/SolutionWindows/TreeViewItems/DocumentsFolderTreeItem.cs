@@ -291,10 +291,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
             }
         }
-        //public override void DeleteAllTreeItems(Type typeOfFolder)
-        //{
-
-        //}
 
         public override ITreeViewItem AddSubFolder(Type typeOfFolder, string newFolderName, string newFolderPath)
         {
