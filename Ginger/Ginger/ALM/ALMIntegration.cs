@@ -414,7 +414,7 @@ namespace Ginger.ALM
         //Export Business Flow
         public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             Reporter.ToLog(eLogLevel.DEBUG, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore

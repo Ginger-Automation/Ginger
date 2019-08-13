@@ -16,15 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Run;
 using Ginger.Plugin.Platform.Web;
 using Ginger.Plugin.Platform.Web.Elements;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Platforms;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -43,10 +47,13 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         static IWebPlatform webPlatform;
         static GingerNodeProxy gingerNodeProxy;
         static Agent agent;
-
+        static GingerRunner mGR = null;
+        static BusinessFlow mBF;
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
+
             int port = SocketHelper.GetOpenPort();
 
             // gingerGrid = WorkSpace.Instance.LocalGingerGrid; // new GingerGrid(port); 
@@ -77,6 +84,30 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             // agent.StartDriver();
             gingerNodeProxy.StartDriver(agent.DriverConfiguration);
 
+
+
+
+            mGR = new GingerRunner();
+            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mBF = new BusinessFlow();
+            mBF.Activities = new ObservableList<Activity>();
+            mBF.Name = "BF Test Java Driver";
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "TestApp" });
+            Activity activity = new Activity();
+            activity.TargetApplication = "JavaTestApp";
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
+            mGR.CurrentBusinessFlow = mBF;
+
+
+            ApplicationAgent AA = new ApplicationAgent();
+            AA.AppName = "JavaTestApp";
+            AA.Agent = agent;
+
+            mGR.ApplicationAgents.Add(AA);
+            mGR.SetCurrentActivityAgent();
         }
 
 
@@ -123,15 +154,27 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             ActBrowserElement actBrowserElement = new ActBrowserElement();
             actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
-            actBrowserElement.Value = url;               
+            actBrowserElement.Value = url;
 
-            //Act            
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
+
+
+
+
+
+            mBF.CurrentActivity.Acts.Add(actBrowserElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actBrowserElement;
+
+            //ACT
+            mGR.RunAction(actBrowserElement, false);
+
+       
+
+
 
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
-            Assert.AreEqual("Navigated to: " + url, actBrowserElement.ExInfo, "ExInfo");            
-            Assert.AreEqual(1, actBrowserElement.ReturnValues.Count, "actBrowserElement.ReturnValues.Count");
+            Assert.IsTrue(actBrowserElement.ExInfo.Contains("Navigated to: " + url), "ExInfo");            
+           
         }
 
         //[Ignore] // Failing need GR + VE, Create test with GR
@@ -186,12 +229,19 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actUIElement.ElementLocateValue = "button1";
             actUIElement.ElementAction = ActUIElement.eElementAction.Click;
 
-            //Act            
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+
+
+            mBF.CurrentActivity.Acts.Add(actUIElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
+
+            //ACT
+            mGR.RunAction(actUIElement, false);
+
+       
 
             //Assert                        
             Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
-            Assert.AreEqual("UI Element Located using: ByID=button1", actUIElement.ExInfo, "ExInfo");
+            Assert.IsTrue(actUIElement.ExInfo.Contains("UI Element Located using: ByID=button1"), "ExInfo");
         }
 
 
@@ -207,9 +257,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actUIElement.ElementLocateValue = "wrongId";
             actUIElement.ElementAction = ActUIElement.eElementAction.Click;
 
-            //Act            
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
+            mBF.CurrentActivity.Acts.Add(actUIElement);
+            mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
 
+            //ACT
+            mGR.RunAction(actUIElement, false);
             //Assert                        
             Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
         }
@@ -231,12 +283,24 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             getTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
             getTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
             getTextBoxAction.ElementLocateValue = "user";
-            getTextBoxAction.ElementAction = ActUIElement.eElementAction.GetText;            
+            getTextBoxAction.ElementAction = ActUIElement.eElementAction.GetText;
 
-            //Act            
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, setTextBoxAction);
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, getTextBoxAction);
+
+
+            mBF.CurrentActivity.Acts.Add(setTextBoxAction);
+
+            mBF.CurrentActivity.Acts.Add(getTextBoxAction);
+
+
+            //ACT
+            mBF.CurrentActivity.Acts.CurrentItem = setTextBoxAction;
+            mGR.RunAction(setTextBoxAction, false);
+            mBF.CurrentActivity.Acts.CurrentItem = getTextBoxAction;
+            mGR.RunAction(getTextBoxAction, false);
             string textBoxValue = getTextBoxAction.GetReturnParam("Actual");
+
+
+
 
 
             //Assert                        

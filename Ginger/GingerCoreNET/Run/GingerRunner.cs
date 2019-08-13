@@ -1553,16 +1553,19 @@ namespace Ginger.Run
 
             act.ValueExpression = VE;
 
+
+
+        
             // TODO: remove when we no longer use LocateValue in Action
-            if (!string.IsNullOrEmpty(act.LocateValue))
+
+          
+            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
             {
-                
+
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
-
             ProcessInputValueForDriver(act);
-
             ProcessReturnValueForDriver(act);
                                     
             
@@ -1781,10 +1784,22 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        IActPluginExecution PluginAction = (IActPluginExecution)act;
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
+
+                                        if (act is IActPluginExecution PluginAction)
+                                        {
+
+                                            Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                            ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                        }
+
+                                        else
+                                        {
+                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                            
+                                        }
                                     }
+
                                 }
                             }
                           
@@ -1795,27 +1810,8 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            GingerNodeInfo GNI = null;
-                            try
-                            {
-                                GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
-                                if (GNI != null)
-                                {                                    
-                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                string errorMessage = "";
-                                if (GNI == null)
-                                {
-                                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
-                                }
-                                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
-                                errorMessage += ex.Message;
-                                act.Error = errorMessage;
-                            }
+                            ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
+                            
                             break;                        
 
                         case eActionExecutorType.RunInSimulationMode:
