@@ -167,16 +167,7 @@ namespace GingerCoreNET.RunLib
             }
 
             
-            NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "a", "ccc");
-            if (fpl.IsErrorPayLoad())
-            {
-
-            }
-            else
-            {
-                string id = fpl.GetValueString();
-                string id2 = fpl.GetValueString();
-            }
+            NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "MathService", "ccc");           
             NewPayLoad rc = mHubClient.SendRequestPayLoad(fpl);
 
             Guid sessionID = rc.GetGuid();

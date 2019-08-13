@@ -117,19 +117,24 @@ namespace GingerCoreNET.RunLib
                     // Change to reserve node
                 case SocketMessages.FindNode:  // Find node which match criteria, used for remote grid
                     string ServiceID = p.GetValueString();
-                    Guid guid = NodeList[0].SessionID;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!! TEMP TODO: find based on criteria
+
+                    // !!! find first or use better algorithm
+                    GingerNodeInfo gingerNodeInfo1 = (from x in NodeList where x.ServiceId == ServiceID select x).FirstOrDefault();
+
                     // Reserve
-                    NewPayLoad RC2 = new NewPayLoad("NodeInfo", guid);
+                    // TODO: lock !!!!!!!!!!!!!!!!!!!!
+                    gingerNodeInfo1.Status = GingerNodeInfo.eStatus.Reserved; // TODO: release !!!!!!!!!!!!!!!!
+                    NewPayLoad RC2 = new NewPayLoad("NodeInfo", gingerNodeInfo1.SessionID);
                     gingerSocketInfo.Response = RC2;
                     break;
                 case SocketMessages.SendToNode:  // Send action to Node, used when Grid is remote
                     Guid SessionID2 = p.GetGuid();
                     GingerNodeInfo gingerNodeInfo = (from x in NodeList where x.SessionID == SessionID2 select x).SingleOrDefault();
-
                     NewPayLoad actionPayload = p.ReadPayload();
-                    NewPayLoad rc222 = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
-                    rc222.Truncate();                    
-                    gingerSocketInfo.Response = rc222;
+                    NewPayLoad remoteNodeActionResponce = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
+                    remoteNodeActionResponce.Truncate();                    
+                    gingerSocketInfo.Response = remoteNodeActionResponce;
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;  //TODO: in case of session to do not release
                     break;
                 default:
                     throw new Exception("GingerSocketServerMessageHandler: Unknown Message type: " + p.Name);
