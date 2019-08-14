@@ -297,10 +297,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (File.Exists(DSDetails.FileFullPath))
             {
+                base.DeleteTreeItem(DSDetails, true);
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
-                    base.DeleteTreeItem(DSDetails, true);
                 }
                 catch (Exception ex)
                 {
