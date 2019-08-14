@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
@@ -61,6 +62,8 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", @"~\SharedRepository\Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared "), PropertyNameForFileName: nameof(VariableBase.Name));
 
             SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", @"~\RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
+
+            SR.AddItemInfo<RemoteServiceGrid>("*.Ginger.RemoteServiceGrid.xml", @"~\RemoteServiceGrid", true, "RemoteServiceGrid", PropertyNameForFileName: nameof(RemoteServiceGrid.Name));
 
             return SR;
         }

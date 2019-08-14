@@ -180,7 +180,15 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                }
+                else
+                {
+                    return eLocateBy.NA;
+                }
             }
             set
             {
@@ -196,7 +204,15 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(Fields.LocateValue).Value;
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    return GetOrCreateInputParam(Fields.LocateValue).Value;
+                }
+                else
+                {
+                    return null;
+                }
             }
             set
             {
@@ -1624,7 +1640,7 @@ namespace GingerCore.Actions
                 // Show old LocateBy, LocateValue
                 // TODO: remove when locate by removed from here
                 ActionDetails AD = new ActionDetails();
-                if (this.LocateBy != eLocateBy.NA)
+                if (this.ObjectLocatorConfigsNeeded)                
                 {
                     AD.Info = this.LocateBy + "=" + this.LocateValue;
                 }
