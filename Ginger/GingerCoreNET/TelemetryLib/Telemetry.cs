@@ -130,8 +130,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             get
             {
                 if (mTelemetryFolder == null)
-                {
-                    mTelemetryFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "amdocs", "Ginger", "Telemetry");
+                {                    
+                    mTelemetryFolder = Path.Combine(General.LocalUserApplicationDataFolderPath, "Telemetry");
                     if (!Directory.Exists(mTelemetryFolder))
                     {
                         Directory.CreateDirectory(mTelemetryFolder);
