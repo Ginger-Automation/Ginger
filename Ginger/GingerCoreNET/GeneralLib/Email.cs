@@ -351,6 +351,7 @@ namespace GingerCore.GeneralLib
             }
             catch (Exception ex)
             {
+                Console.WriteLine("mail error:"+ ex.ToString());
                 if (ex.Message.Contains("Mailbox unavailable"))
                 {
                     Event = "Failed: Please provide correct FROM email address";
@@ -367,6 +368,8 @@ namespace GingerCore.GeneralLib
                 {
                     Event = "Failed: " + ex.Message;
                 }
+                Console.WriteLine("mail error message:" + Event);
+
                 return false;
             }
         }

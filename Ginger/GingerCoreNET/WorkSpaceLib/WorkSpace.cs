@@ -235,7 +235,9 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
+                Console.WriteLine("copying from web report from:"+ clientAppFolderPath);
                 string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
+                Console.WriteLine("copying to web report from:" + userAppFolder);
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");

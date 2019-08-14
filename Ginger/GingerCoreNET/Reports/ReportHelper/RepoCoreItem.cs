@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void CreateCustomerLogo(object a, string t)
         {
-            operationHandlerObj.CreateCustomerLogo(a, t);
+            //operationHandlerObj.CreateCustomerLogo(a, t);
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
