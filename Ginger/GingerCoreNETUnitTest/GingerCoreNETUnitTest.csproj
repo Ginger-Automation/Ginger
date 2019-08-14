@@ -389,9 +389,6 @@
     <None Update="TestResources\Solutions\EmailWebReport\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\EmailWebReport\ExecutionResults\LiteDbData.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\Solutions\EmailWebReport\Ginger.Solution.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
