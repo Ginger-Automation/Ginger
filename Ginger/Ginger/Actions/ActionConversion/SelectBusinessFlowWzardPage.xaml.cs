@@ -68,7 +68,7 @@ namespace Ginger.Actions.ActionConversion
         {
             foreach (var businessFlow in mWizard.ListOfBusinessFlow)
             {
-                if (businessFlow.SelectedForConversion)
+                if (businessFlow.Selected)
                 {
                     foreach (var act in businessFlow.Activities)
                     {
@@ -78,13 +78,16 @@ namespace Ginger.Actions.ActionConversion
             } 
         }
 
+        /// <summary>
+        /// This method sets the gridview to display the selected businessflows
+        /// </summary>
         private void SetGridsView()
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.SelectedForConversion), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.ContainingFolder), WidthWeight = 15, Header = "Relative File Path" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Selected), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.ContainingFolder), WidthWeight = 15, Header = "Folder" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 15, Header = "Name" });
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 15, Header = "Description"  });
                         
             xBusinessFlowGrid.SetAllColumnsDefaultView(defView);
@@ -93,7 +96,7 @@ namespace Ginger.Actions.ActionConversion
             xBusinessFlowGrid.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
             xBusinessFlowGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddBusinessFlow));
 
-            xBusinessFlowGrid.DataSourceList = GetBusinessFlowItems();
+            xBusinessFlowGrid.DataSourceList = SetDefaultSelectedBusinessFlows();
             xBusinessFlowGrid.RowChangedEvent += grdGroups_RowChangedEvent;
             xBusinessFlowGrid.Title = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " to Convert";
             xBusinessFlowGrid.MarkUnMarkAllActive += MarkUnMarkAllActivities;
@@ -101,6 +104,19 @@ namespace Ginger.Actions.ActionConversion
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+        }
+        
+        /// <summary>
+        /// This method by default selects the businessflows to convert
+        /// </summary>
+        /// <returns></returns>
+        private IObservableList SetDefaultSelectedBusinessFlows()
+        {
+            foreach (BusinessFlow bf in mWizard.ListOfBusinessFlow)
+            {
+                bf.Selected = true;
+            }
+            return mWizard.ListOfBusinessFlow;
         }
 
         /// <summary>
@@ -129,13 +145,10 @@ namespace Ginger.Actions.ActionConversion
         private void AddSelectedBF(List<object> selectedBFs)
         {
             if (selectedBFs != null && selectedBFs.Count > 0)
-            {
-                if (mWizard.ListOfBusinessFlow == null)
-                {
-                    mWizard.ListOfBusinessFlow = new ObservableList<BusinessFlow>();
-                }
+            {                
                 foreach (var bf in selectedBFs)
                 {
+                    ((BusinessFlow)bf).Selected = true;
                     mWizard.ListOfBusinessFlow.Add((BusinessFlow)bf);
                 } 
             }
@@ -150,42 +163,7 @@ namespace Ginger.Actions.ActionConversion
         {
             AddSelectedBF(e.SelectedItems);
         }
-
-        /// <summary>
-        /// This method will get the list of BusinessFlow
-        /// </summary>
-        /// <returns></returns>
-        private ObservableList<BusinessFlow> GetBusinessFlowItems()
-        {
-            if (mWizard.ListOfBusinessFlow == null)
-            {
-                mWizard.ListOfBusinessFlow = new ObservableList<BusinessFlow>(); 
-            }
-
-            if (mWizard.BusinessFlowFolder.GetType().Equals(typeof(GingerCore.BusinessFlow)))
-            {
-                mWizard.ListOfBusinessFlow.Add((GingerCore.BusinessFlow)mWizard.BusinessFlowFolder);
-            }
-            else
-            {
-                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)mWizard.BusinessFlowFolder).GetFolderItemsRecursive();
-                foreach (var bf in items)
-                {
-                    mWizard.ListOfBusinessFlow.Add(bf);
-
-                    if (items.Count == 1)
-                    {
-                        bf.SelectedForConversion = true;
-                    }
-                    else
-                    {
-                        bf.SelectedForConversion = false;
-                    }
-                }                
-            }
-            return mWizard.ListOfBusinessFlow;
-        }
-
+        
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
             if (mWizard.Context.BusinessFlow != null)
@@ -198,7 +176,7 @@ namespace Ginger.Actions.ActionConversion
         {
             foreach (BusinessFlow bf in xBusinessFlowGrid.DataSourceList)
             {
-                bf.SelectedForConversion = businessFlowStatus;
+                bf.Selected = businessFlowStatus;
             }
         }
     }

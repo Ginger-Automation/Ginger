@@ -425,6 +425,9 @@
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
+      <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
@@ -492,8 +495,8 @@
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\POMElementGridSelectionPage.xaml.cs">
-      <DependentUpon>POMElementGridSelectionPage.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
+      <DependentUpon>POMsSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
       <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
@@ -2813,6 +2816,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionConversion\ConversionStatusReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2829,7 +2836,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\POMElementGridSelectionPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

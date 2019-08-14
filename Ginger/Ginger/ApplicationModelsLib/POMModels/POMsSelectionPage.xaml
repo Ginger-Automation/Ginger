@@ -1,4 +1,4 @@
-<Page x:Class="Ginger.Actions._Common.ActUIElementLib.POMElementGridSelectionPage"
+<Page x:Class="Ginger.ApplicationModelsLib.POMModels.POMsSelectionPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       d:DesignHeight="30" d:DesignWidth="380"
-	Title="POMElementGridSelectionPage">
+	Title="POMsSelectionPage">
 
     <Grid x:Name="xPOMGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>

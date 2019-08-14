@@ -30,17 +30,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Ginger.Actions._Common.ActUIElementLib
+namespace Ginger.ApplicationModelsLib.POMModels
 {
     /// <summary>
-    /// Interaction logic for POMElementGridSelectionPage.xaml
+    /// Interaction logic for POMsSelectionPage.xaml
     /// </summary>
-    public partial class POMElementGridSelectionPage : Page
+    public partial class POMsSelectionPage : Page
     {
         public ObservableList<POMBindingObjectHelper> PomModels = new ObservableList<POMBindingObjectHelper>();
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
 
-        public delegate void POMSelectionEventHandler(object sender, string guid);
+        public delegate void POMSelectionEventHandler(object sender, Guid guid);
 
         public event POMSelectionEventHandler POMSelectionEvent;
 
@@ -49,7 +49,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         /// <summary>
         /// This event is used to raise object
         /// </summary>
-        public void POMSelectedEvent(string guid)
+        public void POMSelectedEvent(Guid guid)
         {
             if (POMSelectionEvent != null)
             {
@@ -60,7 +60,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         /// <summary>
         /// Ctor for default settings
         /// </summary>
-        public POMElementGridSelectionPage()
+        public POMsSelectionPage()
         {
             InitializeComponent();
             SetPOMGridView();            
@@ -131,7 +131,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     {
                         ApplicationPOMModel pomToAdd = (ApplicationPOMModel)pom.CreateCopy(false);
                         PomModels.Add(new POMBindingObjectHelper() { IsChecked = true, ItemName = pomToAdd.ItemName, ContainingFolder = pom.ContainingFolder, ItemObject = pom });
-                        POMSelectedEvent(Convert.ToString(pom.Guid));
+                        POMSelectedEvent(pom.Guid);
                     }
                     else
                     {

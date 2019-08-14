@@ -65,7 +65,7 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// This methos will set the selected POMs to the wizard object 
         /// </summary>
-        private void POMSelectedEventHandler(object sender, string guid)
+        private void POMSelectedEventHandler(object sender, Guid guid)
         {
             if (mWizard.SelectedPOMs != null)
             {
@@ -119,15 +119,15 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="e"></param>
         private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == TargetApplicationExpander.Name)
+            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == xTargetApplicationExpander.Name)
             {
-                ControlsViewRow.Height = new GridLength(230);
-                ControlsViewRow.MaxHeight = Double.PositiveInfinity;
+                xControlsViewRow.Height = new GridLength(230);
+                xControlsViewRow.MaxHeight = Double.PositiveInfinity;
             }
             else
             {
-                POMControlsViewRow.Height = new GridLength(270);
-                POMControlsViewRow.MaxHeight = Double.PositiveInfinity;
+                xPOMControlsViewRow.Height = new GridLength(270);
+                xPOMControlsViewRow.MaxHeight = Double.PositiveInfinity;
             }
         }
 
@@ -138,15 +138,15 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="e"></param>
         private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
-            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == TargetApplicationExpander.Name)
+            if (Convert.ToString(((System.Windows.FrameworkElement)sender).Name) == xTargetApplicationExpander.Name)
             {
-                ControlsViewRow.Height = new GridLength(35);
-                ControlsViewRow.MaxHeight = 35;
+                xControlsViewRow.Height = new GridLength(35);
+                xControlsViewRow.MaxHeight = 35;
             }
             else
             {
-                POMControlsViewRow.Height = new GridLength(35);
-                POMControlsViewRow.MaxHeight = 35;
+                xPOMControlsViewRow.Height = new GridLength(35);
+                xPOMControlsViewRow.MaxHeight = 35;
             }
         }
         
@@ -171,7 +171,7 @@ namespace Ginger.Actions.ActionConversion
             }
             else
             {
-                foreach (var targetBase in mWizard.ListOfBusinessFlow.Where(x => x.SelectedForConversion).SelectMany(y => y.TargetApplications))
+                foreach (var targetBase in mWizard.ListOfBusinessFlow.Where(x => x.Selected).SelectMany(y => y.TargetApplications))
                 {
                     if (!TargetAppList.Contains(targetBase.ItemName))
                     {
@@ -194,11 +194,11 @@ namespace Ginger.Actions.ActionConversion
             mWizard.NewActivityChecked = (bool)xNewActivityRadioBtn.IsChecked;
             if ((bool)xRadSameActivity.IsChecked)
             {
-                ControlsViewRow.Height = new GridLength(0);                
+                xControlsViewRow.Height = new GridLength(0);                
             }
             else
             {
-                ControlsViewRow.Height = new GridLength(230);
+                xControlsViewRow.Height = new GridLength(230);
             }
         }
     }

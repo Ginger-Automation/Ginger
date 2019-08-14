@@ -88,7 +88,7 @@ namespace Ginger.Actions.ActionConversion
             }
             else
             {
-                lstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.SelectedForConversion).SelectMany(y => y.Activities).Where(z => z.SelectedForConversion).ToList();
+                lstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.Active).SelectMany(y => y.Activities).Where(z => z.Active).ToList();
             }
 
             if (lstSelectedActivities.Count != 0)

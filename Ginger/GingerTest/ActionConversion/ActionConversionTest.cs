@@ -15,20 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerTestHelper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using GingerCore.Actions;
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Actions.Common;
-using System;
-using Amdocs.Ginger.Repository;
-using GingerWPF.WorkSpaceLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
+using System.Linq;
 
 namespace GingerTest
 {
@@ -169,11 +169,11 @@ namespace GingerTest
         }
 
         private static void ExecuteActionConversion(bool addNewActivity, bool isDefaultTargetApp, string strTargetApp,
-                                                    bool convertToPOMAction = false, string selectedPOMObjectName = "")
+                                                    bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
-            ObservableList<string> poms = new ObservableList<string>() { selectedPOMObjectName };
+            ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
             foreach (var item in lst)
             {
                 item.Selected = true;
@@ -187,14 +187,23 @@ namespace GingerTest
                 tas.SourceTargetApplicationName = act.TargetApplication;
                 tas.TargetTargetApplicationName = act.TargetApplication;
                 convertableTargetApplications.Add(tas);
-
             }
-            utils.ConvertToActions(addNewActivity, mBF, lst, convertableTargetApplications, convertToPOMAction, poms);
+
+            BusinessFlowConversionStatus statusLst = new BusinessFlowConversionStatus()
+            {
+                ConversionStatus = eConversionStatus.Pending,
+                BusinessFlow = mBF,
+                ActivitiesCount = mBF.Activities.Count,
+                CurrentActivityIndex = 0
+            };
+
+            utils.ConvertToActions(addNewActivity, statusLst, lst, convertableTargetApplications, convertToPOMAction, poms);
         }
 
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
-                                                                 bool convertToPOMAction = false, string selectedPOMObjectName = "")
+                                                                 bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
+            ObservableList<BusinessFlowConversionStatus> ListOfBusinessFlow = new ObservableList<BusinessFlowConversionStatus>();
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
             foreach (var bf in mListBF)
@@ -206,8 +215,15 @@ namespace GingerTest
                     cad.Selected = true;
                     lstCad.Add(cad);
                 }
+
+                BusinessFlowConversionStatus flowConversion = new BusinessFlowConversionStatus();
+                flowConversion.BusinessFlow = bf;
+                flowConversion.ActivitiesCount = bf.Activities.Count;
+                flowConversion.CurrentActivityIndex = 0;
+                flowConversion.ConversionStatus = eConversionStatus.Pending;
+                ListOfBusinessFlow.Add(flowConversion);
             }
-            ObservableList<string> poms = new ObservableList<string>() { selectedPOMObjectName };
+            ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
                         
             ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
             foreach (var bf in mListBF)
@@ -228,7 +244,8 @@ namespace GingerTest
                 } 
             }
 
-            utils.ConvertActionsOfMultipleBusinessFlows(addNewActivity, mListBF, lstCad, convertableTargetApplications, convertToPOMAction, poms);
+            utils.ListOfBusinessFlow = ListOfBusinessFlow;
+            utils.ConvertActionsOfMultipleBusinessFlows(addNewActivity, lstCad, convertableTargetApplications, convertToPOMAction, poms);
         }
         
         private static bool ValidateMultipleBFConversionInSameActivity(bool isTASame = true, string mapTA = "")
@@ -342,7 +359,7 @@ namespace GingerTest
         {
             GetMultipleBFActGenElementActions();
 
-            ExecuteActionConversionForMultipleBF(false, false, true, string.Empty);
+            ExecuteActionConversionForMultipleBF(false, false, true, default(Guid));
 
             bool isValid = ValidateMultipleBFConversionInSameActivity(false, MAPPED_TA_FOR_CONVERSION);
 
@@ -356,7 +373,7 @@ namespace GingerTest
         {
             GetMultipleBFActGenElementActions();
 
-            ExecuteActionConversionForMultipleBF(false, convertToPOMAction: true, selectedPOMObjectName:string.Empty);
+            ExecuteActionConversionForMultipleBF(false, convertToPOMAction: true, selectedPOM: default(Guid));
 
             bool isValid = ValidateMultipleBFConversionInSameActivity();
 
@@ -370,7 +387,7 @@ namespace GingerTest
         {
             GetMultipleBFActGenElementActions();
 
-            ExecuteActionConversionForMultipleBF(false, false, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+            ExecuteActionConversionForMultipleBF(false, false, convertToPOMAction: true, selectedPOM: default(Guid));
 
             bool isValid = ValidateMultipleBFConversionInSameActivity(false, MAPPED_TA_FOR_CONVERSION);
 
@@ -412,7 +429,7 @@ namespace GingerTest
         {
             GetMultipleBFActGenElementActions();
 
-            ExecuteActionConversionForMultipleBF(true, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+            ExecuteActionConversionForMultipleBF(true, convertToPOMAction: true, selectedPOM: default(Guid));
 
             bool isValid = ValidateMultipleBFConversionInNewActivity();
 
@@ -426,7 +443,7 @@ namespace GingerTest
         {
             GetMultipleBFActGenElementActions();
 
-            ExecuteActionConversionForMultipleBF(true, false, convertToPOMAction: true, selectedPOMObjectName: string.Empty);
+            ExecuteActionConversionForMultipleBF(true, false, convertToPOMAction: true, selectedPOM: default(Guid));
 
             bool isValid = ValidateMultipleBFConversionInNewActivity(false, MAPPED_TA_FOR_CONVERSION);
 

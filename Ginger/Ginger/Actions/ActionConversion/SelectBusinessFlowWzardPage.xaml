@@ -13,7 +13,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Ginger:ucGrid x:Name="xBusinessFlowGrid" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed">
             <Ginger:ucGrid.Title>
-                <GingerCore:ucTextDicResource Text="List of [BusinessFlow]"/>
+                <GingerCore:ucTextDicResource Text="[BusinessFlows] to Convert"/>
             </Ginger:ucGrid.Title>
         </Ginger:ucGrid>
     </Grid>

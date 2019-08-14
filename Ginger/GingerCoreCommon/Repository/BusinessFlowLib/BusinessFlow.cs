@@ -86,38 +86,17 @@ namespace GingerCore
             Selenium,   // From Selenium Import
             Gherkin     // From Gherking Feature file
         }
-
-        public static partial class Fields
+        
+        bool mSelected;
+        public bool Selected
         {
-            public static string Active = "Active";
-            public static string Mandatory = "Mandatory";
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string RunDescription = "RunDescription";
-            public static string Status = "Status";
-            public static string Activities = "Activities";
-            public static string Variables = "Variables";
-            public static string RunStatus = "RunStatus";
-            public static string Elapsed = "ElapsedSecs";
-            public static string Platforms = "Platforms";
-            public static string EnableActivitiesVariablesDependenciesControl = "EnableActivitiesVariablesDependenciesControl";
-            public static string ActivitiesGroups = "ActivitiesGroups";
-            public static string AutomationPrecentage = "AutomationPrecentage";
-            public static string ExternalID = "ExternalID";
-            public static string PublishStatus = "PublishStatus";
-            public static string Source = "Source";
-        }
-
-        bool mSelectedForConversion;
-        public bool SelectedForConversion
-        {
-            get { return mSelectedForConversion; }
+            get { return mSelected; }
             set
             {
-                if (mSelectedForConversion != value)
+                if (mSelected != value)
                 {
-                    mSelectedForConversion = value;
-                    OnPropertyChanged(nameof(SelectedForConversion));
+                    mSelected = value;
+                    OnPropertyChanged(nameof(Selected));
                 }
             }
         }

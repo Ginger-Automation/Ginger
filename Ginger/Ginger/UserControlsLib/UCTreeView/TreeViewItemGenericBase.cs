@@ -353,8 +353,22 @@ namespace GingerWPF.TreeViewItemsLib
         }
 
         private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
-        {
-            WizardWindow.ShowWizard(new ActionsConversionWizard(new Context(), ((ITreeViewItem)this).NodeObject(), ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow), 900, 700);
+        {            
+            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
+            if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
+            {
+                lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
+            }
+            else
+            {
+                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+                foreach (var bf in items)
+                {
+                    lst.Add(bf);
+                } 
+            }
+
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700);
         }
 
         public abstract bool RenameTreeFolder(string originalName, string newFolderName, string newPath);
