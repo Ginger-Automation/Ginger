@@ -201,10 +201,11 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             NewPayLoad p = CreateActionPayload(actPlugin);
 
-            // TODO: loop over all remote grid
-            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
-            string remoteGridHost = remoteServiceGrid.Host;
-            int RemoteGridPort = remoteServiceGrid.HostPort;
+
+            string serviceID = actPlugin.ServiceId;
+            RemoteServiceGrid remoteServiceGrid = FindRemoteGrid(actPlugin.ServiceId);
+
+            
 
             // Temp !!!!!!!!!!!!!!!!! change to get GingerNodePorxy for Remeote grid
             GingerNodeInfo gingerNodeInfo = new GingerNodeInfo();
@@ -212,7 +213,18 @@ namespace Amdocs.Ginger.CoreNET.Run
             NewPayLoad RC = gingerNodeProxy.RunAction(p);
         }
 
-            // Use for Actions which run without agent and are of the generic type ActPlugin - 
+        private static RemoteServiceGrid FindRemoteGrid(string serviceId)
+        {
+            // !!!!
+
+            // TODO: loop over all remote grid !!!!!!!!!!!!!!!
+            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
+            string remoteGridHost = remoteServiceGrid.Host;
+            int RemoteGridPort = remoteServiceGrid.HostPort;
+            return remoteServiceGrid;
+        }
+
+        // Use for Actions which run without agent and are of the generic type ActPlugin - 
         public static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
             try
@@ -518,10 +530,10 @@ namespace Amdocs.Ginger.CoreNET.Run
             }                       
         }
 
-
-
+        
+        
         internal static void FindNodeAndRunAction(ActPlugIn act)
-        {
+        {            
             // If we have remove grid then we go for remote run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             if (remoteServiceGrids.Count > 0)
