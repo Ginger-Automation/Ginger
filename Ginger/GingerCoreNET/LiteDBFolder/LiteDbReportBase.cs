@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             if(o is Amdocs.Ginger.Repository.RepositoryItemBase && (o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId != null)
             {
-                LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 if (o.GetType().FullName.Contains("Actions"))
                 {
                     var actionData = liteDbManager.GetActionsLiteData();

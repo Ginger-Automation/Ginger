@@ -28,7 +28,7 @@
                 <Label Content="Execution Logger Results Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
                 <Label  Style="{StaticResource @LabelStyle}">Folder Path:</Label>
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
-                    <TextBox x:Name="FolderTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" TextChanged="FolderTextBox_TextChanged" ></TextBox>
+                    <TextBox x:Name="FolderTextBox" Width="500" Style="{StaticResource @TextBoxStyle}"></TextBox>
                     <Button x:Name="SelectFolderButton" Click="SelectFolderButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center" Content="Select"/>
                 </StackPanel>
                 <Label Style="{StaticResource @LabelStyle}" FontSize="10">* Target folder must exist, i.e.: 'c:/Ginger/Execution Results/'</Label>

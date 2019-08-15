@@ -60,8 +60,22 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool ExecutionLoggerConfigurationIsEnabled { get; set; }
 
+        string mExecutionLoggerConfigurationExecResultsFolder;
         [IsSerializedForLocalRepository]
-        public string ExecutionLoggerConfigurationExecResultsFolder { get; set; }
+        public string ExecutionLoggerConfigurationExecResultsFolder
+        {
+            get
+            {
+                return mExecutionLoggerConfigurationExecResultsFolder;
+            }
+            set
+            {
+                mExecutionLoggerConfigurationExecResultsFolder = value;
+                OnPropertyChanged(nameof(ExecutionLoggerConfigurationExecResultsFolder));
+            }
+        }
+
+        public string CalculatedLoggerFolder { get; set; }
 
         [IsSerializedForLocalRepository]
         public long ExecutionLoggerConfigurationMaximalFolderSize { get; set; }

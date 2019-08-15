@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public LiteDBRepository()
         {
-            liteDbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder));
+            liteDbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
         }
 
         public override void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false)
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActionToLiteDb(GingerCore.Actions.Act action, Context context, eExecutedFrom executedFrom)
         {
             bool isActExsits = false;
-            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             LiteDbAction liteDbAction = new LiteDbAction();
             liteDbAction.SetReportData(GetActionReportData(action, context, executedFrom));
             liteDbAction.Seq = ++this.actionSeq;

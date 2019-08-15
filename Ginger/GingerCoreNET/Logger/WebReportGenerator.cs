@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     return lightDbRunSet;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = null;
                 if (!string.IsNullOrEmpty(runSetGuid))
