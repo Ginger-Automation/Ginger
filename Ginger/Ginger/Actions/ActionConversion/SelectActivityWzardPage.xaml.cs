@@ -64,7 +64,8 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
             xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
-
+            xGrdGroups.btnMarkAll.ToolTip = "Mark All As Active";
+            xGrdGroups.SetBtnImage(xGrdGroups.btnMarkAll, "@CheckAllColumn_16x16.png");
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
             xGrdGroups.DataSourceList = lst;

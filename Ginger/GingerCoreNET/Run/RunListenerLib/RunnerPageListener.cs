@@ -68,12 +68,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateStat.Invoke(this, null);
         }
 
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             UpdateStat.Invoke(this, null);
         }
 
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             UpdateStat.Invoke(this, null);
         }
