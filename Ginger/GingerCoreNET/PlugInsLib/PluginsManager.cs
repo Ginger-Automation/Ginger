@@ -236,18 +236,21 @@ namespace Amdocs.Ginger.Repository
         }
 
         public ObservableList<OnlinePluginPackage> GetOnlinePluginsIndex()
-        {
+        {            
             // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
 
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
+            Reporter.ToLog(eLogLevel.INFO, "Getting Plugins list from " + url);
+
             ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
+            Reporter.ToLog(eLogLevel.INFO, "Online Plugins count=" + list.Count);
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
             {                
                 PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
                 if (pluginPackage != null)
-                {
+                {                    
                     onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;
                     onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
                 }
@@ -312,32 +315,47 @@ namespace Amdocs.Ginger.Repository
                 ObservableList<OnlinePluginPackage> OnlinePlugins = null;
                 foreach (PluginPackage SolutionPlugin in mPluginPackages)
                 {
+                    Reporter.ToLog(eLogLevel.INFO, "Check PluginId: " + SolutionPlugin.PluginId);
+                    Reporter.ToLog(eLogLevel.INFO, "Check Plugin folder: " + SolutionPlugin.Folder);
                     if (Directory.Exists(SolutionPlugin.Folder))
                     {
+                        Reporter.ToLog(eLogLevel.INFO, "Plugin folder exist so no need to download");
                         continue;   // Plugin folder exist so no need to download
                     }
-                    //TODO: Make it work for linux environments  !!!! 
-                    if (SolutionPlugin.Folder.Contains("AppData\\Roaming"))
+
+                    if (isPrivatePlugin(SolutionPlugin))
                     {
-                        if (OnlinePlugins == null)
-                        {
-                            OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
-                        }
-
-                        OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
-                        if (OnlinePlugin == null)
-                        {
-                            continue;
-                        }
-
-                        OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
-
-                        if (OPR != null)
-                        {
-                            OnlinePlugin.InstallPluginPackage(OPR);
-                        }
-                        
+                        Reporter.ToLog(eLogLevel.INFO, "Private plugin folder no need to download");
+                        continue;   // this is private plugin located on the developer machine will not be able to download from online
                     }
+                    
+                    if (OnlinePlugins == null)
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Getting online plugins index");
+                        OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
+                    }
+
+
+                    OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+                    if (OnlinePlugin == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Plugin not found in online!");
+                        continue;
+                    }
+
+                    Reporter.ToLog(eLogLevel.INFO, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
+                    OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+
+                    if (OPR != null)
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Plugin version found starting install");
+                        OnlinePlugin.InstallPluginPackage(OPR);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Plugin version not found cannot install!");
+                    }
+                                            
                 }
             }
             finally
@@ -345,6 +363,21 @@ namespace Amdocs.Ginger.Repository
                 WorkSpace.Instance.PlugInsManager.BackgroudDownloadInprogress = false;
                 Reporter.HideStatusMessage();
             }
+        }
+
+        private bool isPrivatePlugin(PluginPackage solutionPlugin)
+        {
+            // Plugin is considered private when the folder is not in LocalUserApplicationDataFolderPath
+            // It means developer added the plugin using folder and not install from online
+            if (solutionPlugin.Folder.StartsWith(Common.GeneralLib.General.LocalUserApplicationDataFolderPath))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            
         }
     }
 }
