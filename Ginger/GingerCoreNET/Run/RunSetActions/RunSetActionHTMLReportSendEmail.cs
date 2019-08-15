@@ -439,19 +439,18 @@ namespace Ginger.Run.RunSetActions
             mVE.Value = MailHost;
             Email.SMTPMailHost = mVE.ValueCalculated;
             mVE.Value = MailUser;
-            Email.SMTPUser = mVE.ValueCalculated;
-            Console.WriteLine("before sending mail");
+            Email.SMTPUser = mVE.ValueCalculated;            
             Email.Body = emailReadyHtml;
             emailReadyHtml = string.Empty;
             bool isSuccess=false;
             try
             {
                 isSuccess = Email.Send();
-                Console.WriteLine("after sending mail,result is ="+ isSuccess);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("email error:"+ex.ToString());
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to send mail", ex);
+                isSuccess = false;
             }
             if (isSuccess == false)
             {
