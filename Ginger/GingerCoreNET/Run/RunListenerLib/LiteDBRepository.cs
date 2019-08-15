@@ -65,7 +65,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
-            return new LiteDbAction();
+            //return new LiteDbAction();
+            return GetActionReportData(action, context, executedFrom);//Returning ActionReport so we will get execution info on the console
         }
 
         private object MapActionToLiteDb(GingerCore.Actions.Act action, Context context, eExecutedFrom executedFrom)
@@ -127,7 +128,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false)
         {
-            return new LiteDbActivity();
+            //return new LiteDbActivity();
+            return GetActivityReportData(activity, context, offlineMode);//Returning ActivityReport so we will get execution info on the console
         }
 
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
@@ -167,7 +169,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
         {
-            return new LiteDbActivityGroup();
+            //return new LiteDbActivityGroup();
+            return GetAGReportData(activityGroup, businessFlow);//Returning ActivityGroupReport so we will get execution info on the console
         }
 
         private object MapAcgToLiteDb(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
@@ -267,7 +270,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 context.BusinessFlow.LiteDbId = BFR._id;
             }
             this.lastBfStatus = context.BusinessFlow.RunStatus;
-            return BFR;
+
+            //return BFR;
+            return GetBFReportData(context.BusinessFlow, context.Environment);//Returning BusinessFlowReport so we will get execution info on the console
         }
 
         private void ClearSeq()
@@ -288,7 +293,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
-
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
             runner.BusinessFlowsColl.AddRange(liteDbBFList);

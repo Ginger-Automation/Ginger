@@ -168,8 +168,8 @@ namespace GingerWPF.BusinessFlowsLib
                     ExecutionLoggerManager.RunSetReport.SetDataForAutomateTab();
                     if (!isAutoRunSetExists)
                     {
-                        mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad);
-                        mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner);
+                        mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
+                        mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
                         mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
                         isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                         return;
