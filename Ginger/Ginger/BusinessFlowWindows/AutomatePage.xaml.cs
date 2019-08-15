@@ -185,7 +185,7 @@ namespace Ginger
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
             if (filterData.Count > 0)
             {
-                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "GingerExecutionResults.db"));
                 dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
             }
         }
