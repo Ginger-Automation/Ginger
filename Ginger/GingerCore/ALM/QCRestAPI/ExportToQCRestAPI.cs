@@ -86,11 +86,12 @@ namespace GingerCore.ALM.QCRestAPI
                 if (mappedTestSet == null) //##create new Test Set in QC
                 {
                     testSet = CreateNewTestSet(businessFlow, uploadPath, testSetFields);
-                    CreateNewTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields);
+                    CreateNewTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields, true);
                 }
                 else //##update existing test set
                 {
                     testSet = UpdateExistingTestSet(businessFlow, mappedTestSet, uploadPath, testSetFields);
+                    CreateNewTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields, false);
                     UpdateTestInstances(businessFlow, existingActivitiesGroups, testSet, testInstanceFields);
                 }
 
@@ -531,45 +532,82 @@ namespace GingerCore.ALM.QCRestAPI
                 return false;
         }
 
-        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields)
+        private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields, bool createNewAll = true)
         {
             int counter = 1;
-            foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
+            if (createNewAll)
             {
-                if (existingActivitiesGroups.Contains(ag) == false && string.IsNullOrEmpty(ag.ExternalID) == false && ImportFromQCRest.GetQCTest(ag.ExternalID) != null)
+                foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
-                    QCTestInstance testInstance = new QCTestInstance
+                    if (existingActivitiesGroups.Contains(ag) == false && string.IsNullOrEmpty(ag.ExternalID) == false && ImportFromQCRest.GetQCTest(ag.ExternalID) != null)
                     {
-                        TestId = ag.ExternalID,
-                        CycleId = testSet.Id,
-                        TestOrder = counter++.ToString(),
-                    };
-
-                    //set item fields for test instances
-                    foreach (ExternalItemFieldBase field in testInstancesFields)
-                    {
-                        if ((field.ToUpdate || field.Mandatory) && ((field.ExternalID != "test-id") && (field.ExternalID != "cycle-id") && (field.ExternalID != "order-id") && (field.ExternalID != "test-order")))
-                        {
-                            if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
-                                testInstance.ElementsField[field.ExternalID] = field.SelectedValue;
-                            else
-                                try { testInstance.ElementsField[field.ID] = "NA"; }
-                                catch { }
-                        }
-                    }
-
-                    testInstance.ElementsField["subtype-id"] = "hp.qc.test-instance.MANUAL";
-                    QCItem item = ConvertObjectValuesToQCItem(testInstance, ResourceType.TEST_CYCLE);
-                    ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CYCLE, item);
-
-                    if (response.IsSucceed)
-                    {
-                        ag.ExternalID2 = response.IdCreated; //the test case instance ID in the test set- used for exporting the execution details
+                        CreateNewTestInstance(ag, testSet, testInstancesFields, counter);
                     }
                 }
             }
-        }
+            else
+            {
+                QCTestInstanceColl testInstances = ImportFromQCRest.ImportTestSetInstanceData(testSet);
+                ObservableList<ActivitiesGroup> existingActivitiesGroupsList = new ObservableList<ActivitiesGroup>();
+                
+                //skip already existing instances
+                foreach (QCTestInstance testInstance in testInstances)
+                {
+                    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                    if (ag != null)
+                    {
+                        existingActivitiesGroupsList.Add(ag);
+                    }
+                }
 
+                foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
+                {
+                    if (existingActivitiesGroupsList.Contains(ag) == false)
+                    {
+                        CreateNewTestInstance(ag, testSet, testInstancesFields, counter);
+                    }
+                    else
+                    {
+                        counter++;//increment for skiped instances
+                    }
+                }
+
+            }
+        }
+        private static bool CreateNewTestInstance(ActivitiesGroup ag, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields, int counter)
+        {
+            //Create instance
+            QCTestInstance testInstance = new QCTestInstance
+            {
+                TestId = ag.ExternalID,
+                CycleId = testSet.Id,
+                TestOrder = counter.ToString(),
+            };
+
+            //set item fields for test instances
+            foreach (ExternalItemFieldBase field in testInstancesFields)
+            {
+                if ((field.ToUpdate || field.Mandatory) && ((field.ExternalID != "test-id") && (field.ExternalID != "cycle-id") && (field.ExternalID != "order-id") && (field.ExternalID != "test-order")))
+                {
+                    if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
+                        testInstance.ElementsField[field.ExternalID] = field.SelectedValue;
+                    else
+                        try { testInstance.ElementsField[field.ID] = "NA"; }
+                        catch { }
+                }
+            }
+
+            testInstance.ElementsField["subtype-id"] = "hp.qc.test-instance.MANUAL";
+            QCItem item = ConvertObjectValuesToQCItem(testInstance, ResourceType.TEST_CYCLE);
+            ALMResponseData response = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_CYCLE, item);
+
+            if (response.IsSucceed)
+            {
+                ag.ExternalID2 = response.IdCreated; //the test case instance ID in the test set- used for exporting the execution details
+            }
+            return true;
+
+        }
         private static void UpdateTestSteps(QCTestCase test, ActivitiesGroup activitiesGroup, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields)
         {
             QCTestCaseStepsColl testCaseDesignStep = QCRestAPIConnect.GetTestCasesSteps(new List<string> { test.Id });

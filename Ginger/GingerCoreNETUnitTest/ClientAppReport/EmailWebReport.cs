@@ -89,7 +89,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             Reporter.ToLog(eLogLevel.INFO, "json report data is : ");            
             Reporter.ToLog(eLogLevel.INFO, jsDataStr);
 
-            // TODO: FIXME get vesion from Ginger !!!!!!!!!!!!!!!!!!!!!!
+            // TODO: FIXME get version from Ginger !!!!!!!!!!!!!!!!!!!!!!
             // Assert.IsTrue(isFileExists && jsDataStr.StartsWith("window.runsetData={\"GingerVersion\":\"3.3.6.1\""));
             Reporter.ToLog(eLogLevel.INFO, "<<<<<<<<<<CheckJsDataFromFile end>>>>>>>>>>>>");
         }

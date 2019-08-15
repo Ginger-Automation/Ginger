@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
@@ -195,10 +196,35 @@ namespace Amdocs.Ginger.CoreNET.Run
             ParseActionResult(RC, (Act)actPlugin);
         }
 
-      
+
+        public static void ExecuteActionOnRemotePlugin(ActPlugIn actPlugin)
+        {
+            NewPayLoad p = CreateActionPayload(actPlugin);
 
 
-            // Use for Actions which run without agent and are of the generic type ActPlugin - 
+            string serviceID = actPlugin.ServiceId;
+            RemoteServiceGrid remoteServiceGrid = FindRemoteGrid(actPlugin.ServiceId);
+
+            
+
+            // Temp !!!!!!!!!!!!!!!!! change to get GingerNodePorxy for Remeote grid
+            GingerNodeInfo gingerNodeInfo = new GingerNodeInfo();
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+            NewPayLoad RC = gingerNodeProxy.RunAction(p);
+        }
+
+        private static RemoteServiceGrid FindRemoteGrid(string serviceId)
+        {
+            // !!!!
+
+            // TODO: loop over all remote grid !!!!!!!!!!!!!!!
+            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
+            string remoteGridHost = remoteServiceGrid.Host;
+            int RemoteGridPort = remoteServiceGrid.HostPort;
+            return remoteServiceGrid;
+        }
+
+        // Use for Actions which run without agent and are of the generic type ActPlugin - 
         public static void ExecuteActionOnPlugin(ActPlugIn actPlugin, GingerNodeInfo gingerNodeInfo)
         {
             try
@@ -360,8 +386,6 @@ namespace Amdocs.Ginger.CoreNET.Run
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
                 ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
-
-
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
@@ -503,39 +527,42 @@ namespace Amdocs.Ginger.CoreNET.Run
                     }
 
                 }
-            }
-
-
-        
-
- 
-
-
-
+            }                       
         }
 
+        
+        
         internal static void FindNodeAndRunAction(ActPlugIn act)
-        {
-            GingerNodeInfo GNI = null;
-            try
-            {
-                GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
-                if (GNI != null)
-                {
-                    ExecuteActionOnPlugin((ActPlugIn)act, GNI);
-                }
+        {            
+            // If we have remove grid then we go for remote run
+            ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            if (remoteServiceGrids.Count > 0)
+            {                
+                ExecuteActionOnRemotePlugin(act);
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                string errorMessage = "";
-                if (GNI == null)
+                GingerNodeInfo GNI = null;
+                try
                 {
-                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
+                    GNI = GetGingerNodeInfoForPluginAction((ActPlugIn)act);
+                    if (GNI != null)
+                    {
+                        ExecuteActionOnPlugin((ActPlugIn)act, GNI);
+                    }
                 }
-                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
-                errorMessage += ex.Message;
-                act.Error = errorMessage;
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    string errorMessage = "";
+                    if (GNI == null)
+                    {
+                        errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
+                    }
+                    errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
+                    errorMessage += ex.Message;
+                    act.Error = errorMessage;
+                }
             }
         }
     }

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -24,6 +23,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -38,10 +38,8 @@ namespace Ginger.GeneralLib
     {        
         GenericWindow _pageGenericWin;
         Exception mException;
-
         bool _ShowingFull;
-
-        string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
 
         public static void ShowError(Exception ex)
         {
