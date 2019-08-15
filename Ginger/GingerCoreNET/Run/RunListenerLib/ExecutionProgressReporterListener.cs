@@ -43,12 +43,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         /// </summary>
         BusinessFlow mBusinessFlow;
        
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
         }
 
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", gingerRunner.Name, new GingerReport());
         }
@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                     stringBuilder.Append(propFullName).Append("= ").Append(propValue).AppendLine();
                                 }
                             }
-                            catch (Exception) { }                            
+                            catch (Exception) { }
                         }
                     }
                     catch (Exception) { }                  
