@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             Reset();
         }
