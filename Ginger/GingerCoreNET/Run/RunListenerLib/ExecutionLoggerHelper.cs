@@ -18,12 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -95,9 +93,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
                     {
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
-                        System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
+                        Directory.CreateDirectory(logsFolder);
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                     }
                 }
             }
