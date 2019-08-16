@@ -10,6 +10,8 @@ namespace Amdocs.Ginger.CoreNET
     public enum eConversionSaveStatus
     {
         Saved,
-        Pending
+        Saving,
+        Pending,
+        Failed
     }
 }

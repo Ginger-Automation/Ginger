@@ -60,6 +60,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (mSaveStatus != value)
                 {
                     mSaveStatus = value;
+                    SetSaveStatusIcon();
                     OnPropertyChanged(nameof(SaveStatus));
                 }
             }
@@ -82,6 +83,23 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        eImageType mSaveStatusIcon = eImageType.Pending;
+        public eImageType SaveStatusIcon
+        {
+            get
+            {
+                return mSaveStatusIcon;
+            }
+            set
+            {
+                if (mSaveStatusIcon != value)
+                {
+                    mSaveStatusIcon = value;
+                    OnPropertyChanged(nameof(SaveStatusIcon));
+                }
+            }
+        }
+
         /// <summary>
         /// This method is used to set the status icon
         /// </summary>
@@ -100,6 +118,31 @@ namespace Amdocs.Ginger.CoreNET
                     break;
                 case eConversionStatus.Running:
                     StatusIcon = eImageType.Running;
+                    break;
+                case eConversionStatus.Failed:
+                    StatusIcon = eImageType.Failed;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// This method is used to set the save status icon
+        /// </summary>
+        private void SetSaveStatusIcon()
+        {
+            switch (mSaveStatus)
+            {
+                case eConversionSaveStatus.Pending:
+                    SaveStatusIcon = eImageType.Pending;
+                    break;
+                case eConversionSaveStatus.Saved:
+                    SaveStatusIcon = eImageType.Passed;
+                    break;                
+                case eConversionSaveStatus.Saving:
+                    SaveStatusIcon = eImageType.Running;
+                    break;
+                case eConversionSaveStatus.Failed:
+                    SaveStatusIcon = eImageType.Failed;
                     break;
             }
         }

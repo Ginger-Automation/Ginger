@@ -409,7 +409,7 @@ namespace Amdocs.Ginger.CoreNET
                         foreach (Act act in convertibleActivity.Acts)
                         {
                             if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                                (act.Active))
+                                (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                             {
                                 isPresent = true;
                                 break;

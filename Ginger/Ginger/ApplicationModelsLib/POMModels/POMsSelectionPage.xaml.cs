@@ -74,7 +74,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             gridPOMListItems.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Path", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Folder", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             gridPOMListItems.btnAdd.Click -= BtnAdd_Click;
             gridPOMListItems.btnAdd.Click += BtnAdd_Click;

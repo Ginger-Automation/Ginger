@@ -12,6 +12,7 @@ namespace Amdocs.Ginger.CoreNET
         Pending,
         Running,
         Stopped,
-        Finish
+        Finish,
+        Failed
     }
 }

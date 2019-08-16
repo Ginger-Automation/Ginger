@@ -96,8 +96,24 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.RelativeFilePath), WidthWeight = 20, ReadOnly = true, Header = "Folder" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.BusinessFlowName), WidthWeight = 25, ReadOnly = true, Header = "Name" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.StatusIcon), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"], ReadOnly = true, Header = "Conversion Status" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.SaveStatus), WidthWeight = 10, ReadOnly = true, Header = "Save Status" });
+                view.GridColsView.Add(new GridColView()
+                {
+                    Field = nameof(BusinessFlowConversionStatus.StatusIcon),
+                    WidthWeight = 15,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"],
+                    ReadOnly = true,
+                    Header = "Conversion Status"
+                });
+                view.GridColsView.Add(new GridColView()
+                {
+                    Field = nameof(BusinessFlowConversionStatus.SaveStatusIcon),
+                    WidthWeight = 15,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestSaveStatusIconTemplate"],
+                    ReadOnly = true,
+                    Header = "Save Status"
+                });
 
                 xBusinessFlowGrid.SetAllColumnsDefaultView(view);
                 xBusinessFlowGrid.InitViewItems();
@@ -170,6 +186,7 @@ namespace Ginger.Actions.ActionConversion
                 mWizard.ProcessStarted();
                 SetButtonsVisibility(false);
                 GetSelectedBusinessFlows();
+                xBusinessFlowGrid.DataSourceList = GetBusinessFlowList();
                 mWizard.ProcessConversion(ListOfBusinessFlow, true);
                 mWizard.ProcessEnded();
             });
@@ -183,7 +200,7 @@ namespace Ginger.Actions.ActionConversion
             SelectedBusinessFlow = new List<string>();
             foreach (var bfs in ListOfBusinessFlow)
             {
-                if(bfs.IsSelected)
+                if (bfs.IsSelected)
                 {
                     SelectedBusinessFlow.Add(bfs.BusinessFlowName);
                 }
@@ -199,31 +216,31 @@ namespace Ginger.Actions.ActionConversion
         {
             Dispatcher.Invoke(() =>
             {
-                try
+
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
+                mWizard.ProcessStarted();
+
+                foreach (BusinessFlowConversionStatus bf in xBusinessFlowGrid.DataSourceList)
                 {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-                    mWizard.ProcessStarted();
-
-                    foreach (var bf in ListOfBusinessFlow)
+                    try
                     {
                         if (bf.IsSelected)
                         {
+                            bf.SaveStatus = eConversionSaveStatus.Saving;
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
                             bf.SaveStatus = eConversionSaveStatus.Saved;
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        bf.SaveStatus = eConversionSaveStatus.Failed;
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
+                    }
+                }
 
-                    mWizard.ProcessEnded();
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
-                }
-                finally
-                {
-                    Mouse.OverrideCursor = null;
-                }
+                mWizard.ProcessEnded();
+                Mouse.OverrideCursor = null;
             });
         }
 

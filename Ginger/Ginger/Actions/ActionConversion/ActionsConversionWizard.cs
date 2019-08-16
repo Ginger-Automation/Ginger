@@ -129,6 +129,8 @@ namespace Ginger.Actions.ActionConversion
                         if (bf.IsSelected)
                         {
                             bf.BusinessFlow.RestoreFromBackup(true);
+                            bf.ConversionStatus = eConversionStatus.Pending;
+                            bf.SaveStatus = eConversionSaveStatus.Pending;
                             selectedLst.Add(bf);
                         }
                     }
@@ -175,7 +177,10 @@ namespace Ginger.Actions.ActionConversion
 
                 await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(NewActivityChecked, ActionToBeConverted, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
 
-                mReportPage.SetButtonsVisibility(true);
+                if (ConversionType == eActionConversionType.MultipleBusinessFlow)
+                {
+                    mReportPage.SetButtonsVisibility(true); 
+                }
             }
             catch (Exception ex)
             {

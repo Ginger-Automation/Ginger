@@ -16,7 +16,10 @@
             <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
 
             <DataTemplate  x:Key="xTestStatusIconTemplate">
-                <usercontrols:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding ConversionStatus}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                <usercontrols:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding ConversionStatus}" SetAsFontImageWithSize="16"  Width="16" Height="16" />                
+            </DataTemplate>
+            <DataTemplate  x:Key="xTestSaveStatusIconTemplate">
+                <usercontrols:ImageMakerControl x:Name="xSaveStatusIconImageMakerControl" ImageType="{Binding SaveStatusIcon}" ImageToolTip="{Binding SaveStatus}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
             </DataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>
