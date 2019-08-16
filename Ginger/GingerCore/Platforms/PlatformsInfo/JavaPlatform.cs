@@ -303,6 +303,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
                     break;
             }
             return javaPlatformElementActionslist;

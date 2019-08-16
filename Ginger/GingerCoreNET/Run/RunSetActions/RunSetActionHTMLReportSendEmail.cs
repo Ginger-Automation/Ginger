@@ -182,14 +182,14 @@ namespace Ginger.Run.RunSetActions
             string runSetFolder = string.Empty;
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
-                runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;                
+                runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
             }
             else
             {
                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
                     GingerRunner gr = new GingerRunner();
-                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();                    
+                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                 }
 
             }
@@ -381,22 +381,30 @@ namespace Ginger.Run.RunSetActions
                     AlternateView alternativeView = AlternateView.CreateAlternateViewFromString(emailReadyHtml, null, MediaTypeNames.Text.Html);
                     alternativeView.ContentId = "htmlView";
                     alternativeView.TransferEncoding = TransferEncoding.SevenBit;
-                    alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(TemplatesFolder + @"\assets\\img\@BeatLogo.png"), "beat"));
-                    alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(TemplatesFolder + @"\assets\\img\@Ginger.png"), "ginger"));
-                    alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + @"\CustomerLogo.png"), "customer"));
+                    string beatLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@BeatLogo.png");
+                    string gingerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
+                    string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
+
+
+                    if (File.Exists(beatLogoPath))
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(beatLogoPath), "beat"));
+                    if (File.Exists(gingerLogoPath))
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(gingerLogoPath), "ginger"));
+                    if (File.Exists(customerLogoPath))
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(customerLogoPath), "customer"));
                     if (!string.IsNullOrEmpty(Comments))
                     {
                         alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(TemplatesFolder + @"\assets\\img\comments-icon.jpg"), "comment"));
                     }
                     if (IsExecutionStatistic)
                     {
-                        if (File.Exists(Path.Combine(tempFolder, "GingerRunner" + reportTimeStamp+".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, "GingerRunner" + reportTimeStamp + ".jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg"), "gingerRunner" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Action" + reportTimeStamp+".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, "Action" + reportTimeStamp + ".jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action" + reportTimeStamp + ".jpeg"), "Action" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Activity" + reportTimeStamp+".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, "Activity" + reportTimeStamp + ".jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg"), "Activity" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Businessflow" + reportTimeStamp+".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, "Businessflow" + reportTimeStamp + ".jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg"), "Businessflow" + reportTimeStamp));
                     }
                     Email.alternateView = alternativeView;
@@ -431,11 +439,19 @@ namespace Ginger.Run.RunSetActions
             mVE.Value = MailHost;
             Email.SMTPMailHost = mVE.ValueCalculated;
             mVE.Value = MailUser;
-            Email.SMTPUser = mVE.ValueCalculated;
+            Email.SMTPUser = mVE.ValueCalculated;            
             Email.Body = emailReadyHtml;
             emailReadyHtml = string.Empty;
-            bool isSuccess;
-            isSuccess = Email.Send();
+            bool isSuccess=false;
+            try
+            {
+                isSuccess = Email.Send();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to send mail", ex);
+                isSuccess = false;
+            }
             if (isSuccess == false)
             {
                 Errors = Email.Event;

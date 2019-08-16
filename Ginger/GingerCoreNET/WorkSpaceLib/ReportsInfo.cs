@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Path.GetTempFileName()) + "Ginger_Email_Reports");
+                return Path.Combine(Path.GetDirectoryName(Path.GetTempFileName()), "Ginger_Email_Reports");
             }
         }
     }

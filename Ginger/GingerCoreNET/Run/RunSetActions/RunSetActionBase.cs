@@ -216,11 +216,15 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name) + Environment.NewLine
+                                                                + "Details:" + Environment.NewLine
+                                                                + string.Format("Status= {0}", Status) + Environment.NewLine
+                                                                + string.Format("Errors= {0}", Errors) + Environment.NewLine
+                                                                + string.Format("Elapsed= {0}", Elapsed));
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name), ex);
                 Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
             finally
