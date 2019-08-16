@@ -331,17 +331,17 @@ namespace GingerCore.Environments
         
         void LoadDBAssembly()
         {
-            if (database != null) return;  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
+            if (database != null) { };  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
             switch (DBType)
             {
                 case eDBTypes.MSAccess:
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     Assembly assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
                     database = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
-                    //database.InitReporter()
+                    //database.InitReporter();
                     database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
-
+               
                 // TODO: add the rest DBs
                 case eDBTypes.Cassandra:
                     break;

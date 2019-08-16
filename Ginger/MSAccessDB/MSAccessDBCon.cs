@@ -30,6 +30,7 @@ namespace MSAccessDB
         {
             try
             {
+                CheckConnectionString(ConnectionString);
                 using (OleDbConnection conn = new OleDbConnection(ConnectionString))
                 {                    
                     conn.Open();
@@ -67,11 +68,22 @@ namespace MSAccessDB
             //    conn?.Dispose();
             //}
         }
+        private void CheckConnectionString(string connectionString)
+        {
+            ConnectionString = connectionString;
+            if (string.IsNullOrEmpty(connectionString))
+            {
 
+            }
+            if (!ConnectionString.Contains("Provider=Microsoft.ACE.OLEDB.12.0;Data Source="))
+            {
+                ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + ConnectionString + ";";
+            }
+        }
         public DataTable DBQuery(string Query)
         {
             DataTable results = new DataTable();
-
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 OleDbCommand cmd = new OleDbCommand(Query, conn);
@@ -196,6 +208,7 @@ namespace MSAccessDB
         {
             string sql = "SELECT {0} FROM {1} WHERE {2}";
             sql = String.Format(sql, Column, Table, Where);
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 conn.Open();
@@ -233,6 +246,7 @@ namespace MSAccessDB
 
         public List<string> GetTablesColumns(string table)
         {
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 conn.Open();
@@ -320,7 +334,7 @@ namespace MSAccessDB
         public string RunUpdateCommand(string updateCmd, bool commit = true)
         {
             string result = "";
-
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 using (DbCommand command = conn.CreateCommand())
@@ -358,9 +372,9 @@ namespace MSAccessDB
         public int GetRecordCount(string Query)
         {
             string sql = "SELECT COUNT(1) FROM " + Query;
-
             String rc = null;
             DbDataReader reader = null;
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 try
@@ -395,6 +409,7 @@ namespace MSAccessDB
         public List<string> GetTablesList(string Name = null)
         {
             List<string> tables = new List<string>();
+            CheckConnectionString(ConnectionString);
             using (OleDbConnection conn = new OleDbConnection(ConnectionString))
             {
                 try

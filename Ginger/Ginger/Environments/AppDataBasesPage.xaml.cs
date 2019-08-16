@@ -167,7 +167,10 @@ namespace Ginger.Environments
                     db.Pass = scSB.Password;
                     db.ConnectionString = scSB.ConnectionString;
                 }
-
+                if (!string.IsNullOrEmpty(db.TNS) && string.IsNullOrEmpty(db.ConnectionString))
+                {
+                    db.ConnectionString = db.TNS;
+                }
                 // db.CloseConnection();
                 if (db.TestConnection() == true)
                 {

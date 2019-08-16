@@ -81,7 +81,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerCouchBase", "CouchBas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPostgreSQL", "PostgreSQL\GingerPostgreSQL.csproj", "{D9278C96-7750-45FF-8304-607B85AC06FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerOracle", "Oracle\GingerOracle.csproj", "{350B5A70-69A8-433B-8510-AFEAD47BD449}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerOracleDB", "GingerOracleDB\GingerOracleDB.csproj", "{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,12 +282,12 @@ Global
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9278C96-7750-45FF-8304-607B85AC06FB}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.Release|Any CPU.Build.0 = Release|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{350B5A70-69A8-433B-8510-AFEAD47BD449}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
