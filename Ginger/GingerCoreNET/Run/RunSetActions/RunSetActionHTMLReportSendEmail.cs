@@ -256,10 +256,10 @@ namespace Ginger.Run.RunSetActions
                     CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
                     WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                     // TODO: check multi run on same machine/user
-                    Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder=" + exist deleting folder);
+                    Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
                     if (Directory.Exists(runSetFolder))
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder");
+                        Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
                         Directory.Delete(runSetFolder, true);
                     }
                 }
