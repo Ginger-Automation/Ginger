@@ -42,5 +42,10 @@ namespace GingerUtils.OSLib
 
             return LocalHostIP;
         }
+
+        public void InitSmtpAuthenticationManager()
+        {
+            // Mail server support GSSAPI, NTLM and LOGIN, GSSAPI and NTLM can't work well on Linux, but on windows all works so nothing to do here      
+        }
     }
 }
