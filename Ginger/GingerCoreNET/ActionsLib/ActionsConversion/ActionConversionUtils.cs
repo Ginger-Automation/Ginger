@@ -143,7 +143,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                int activityIndex = businessFlowStatus.CurrentActivityCurrentActionIndex;
+                int activityIndex = 0;
                 for (; activityIndex < businessFlowStatus.BusinessFlow.Activities.Count(); activityIndex++)
                 {                    
                     businessFlowStatus.CurrentActivityCurrentActionIndex = activityIndex;
@@ -182,9 +182,9 @@ namespace Amdocs.Ginger.CoreNET
         private void ConvertSelectedActionsFromActivity(bool addNewActivity, BusinessFlowConversionStatus businessFlowStatus, ObservableList<ConvertableActionDetails> actionsToBeConverted,
                                                         bool convertToPOMAction, ObservableList<Guid> selectedPOMObjectName, Activity currentActivity)
         {
-            int actionIndex = businessFlowStatus.CurrentActivityCurrentActionIndex;
+            int actionIndex = 0;
             for(; actionIndex < currentActivity.Acts.Count(); actionIndex++)
-            {
+            {                
                 businessFlowStatus.CurrentActivityCurrentActionIndex = actionIndex;
                 Act act = (Act)currentActivity.Acts[actionIndex];
                 if (!mStopConversion)
@@ -193,8 +193,8 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if (act.Active && act is IObsoleteAction &&
                                                 actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
-                                                                          a.Selected &&
-                                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                                                                            a.Selected &&
+                                                                            a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                         {
                             // get the index of the action that is being converted 
                             int selectedActIndex = currentActivity.Acts.IndexOf(act);
@@ -238,7 +238,7 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     break;
-                }
+                }                 
             }
         }
 
@@ -351,36 +351,39 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
                 {
-                    foreach (Act act in convertibleActivity.Acts)
+                    if (convertibleActivity.Active)
                     {
-                        if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
-                                                (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
+                        foreach (Act act in convertibleActivity.Acts)
                         {
-                            ConvertableActionDetails existingConvertibleActionType = lst.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
-                            if (existingConvertibleActionType == null)
+                            if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
+                                                    (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                             {
-                                ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
-                                newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
-                                newConvertibleActionType.SourceActionType = act.GetType();
-                                newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
-                                if (newConvertibleActionType.TargetActionType == null)
-                                    continue;
-                                newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
-                                newConvertibleActionType.ActionCount = 1;
-                                newConvertibleActionType.Actions.Add(act);
-                                newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
-                                lst.Add(newConvertibleActionType);
-                            }
-                            else
-                            {
-                                if (!existingConvertibleActionType.Actions.Contains(act))
+                                ConvertableActionDetails existingConvertibleActionType = lst.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                                if (existingConvertibleActionType == null)
                                 {
-                                    existingConvertibleActionType.ActionCount++;
-                                    existingConvertibleActionType.Actions.Add(act);
-                                    existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                    ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                    newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
+                                    newConvertibleActionType.SourceActionType = act.GetType();
+                                    newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
+                                    if (newConvertibleActionType.TargetActionType == null)
+                                        continue;
+                                    newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
+                                    newConvertibleActionType.ActionCount = 1;
+                                    newConvertibleActionType.Actions.Add(act);
+                                    newConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                    lst.Add(newConvertibleActionType);
+                                }
+                                else
+                                {
+                                    if (!existingConvertibleActionType.Actions.Contains(act))
+                                    {
+                                        existingConvertibleActionType.ActionCount++;
+                                        existingConvertibleActionType.Actions.Add(act);
+                                        existingConvertibleActionType.ActivityList.Add(convertibleActivity.ActivityName);
+                                    }
                                 }
                             }
-                        }
+                        } 
                     }
                 }
             }
