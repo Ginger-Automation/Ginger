@@ -121,7 +121,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mActivitiesGroupFolder.IsRootFolder)
                 { 
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
                 }
                 else
                 { 
