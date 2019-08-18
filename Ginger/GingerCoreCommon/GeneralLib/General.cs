@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 if (mAppDataFolder == null)
                 {                    
                     string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    appDataFolder = Path.Combine(appDataFolder, "amdocs", "ginger");
+                    appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
 
                     if (!Directory.Exists(appDataFolder))
                     {
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             get
             {
-                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Log", "Ginger_Log.txt");
+                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
             }
         }
 
