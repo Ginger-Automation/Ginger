@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ginger Report</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link id="theme-css" rel="stylesheet" type="text/css" href="assets/theme/theme-alive.css">
+    <link id="layout-css" rel="stylesheet" type="text/css" href="assets/layout/css/layout-alive.css">
+
+<link rel="stylesheet" href="styles.c77db239a1dbff874057.css"></head>
+<body>
+    <app-root>
+      <div class="splash-screen">
+          <div class="splash-screen-bars"></div>
+      </div>
+    </app-root>
+
+<script>
+    window.onload= LoadSVG; 
+
+    function LoadSVG() {
+        var timer = setInterval(LoadSVG, 1);
+        var svg = document.getElementsByTagName('svg');
+        if(svg[0]!=null)// to check first element is loaded or not
+        {
+            clearInterval(timer);
+            for(var i=0; i<svg.length; i++)
+            {
+                var textElement = svg[i].getElementsByTagName('text')[0];
+                textElement.setAttribute("x", '50%');
+                textElement.setAttribute("y", '50%');
+                textElement.setAttribute("text-anchor","middle");
+            }
+            
+        }
+    }
+
+</script>
+    
+<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script><script type="text/javascript" src="polyfills.df76418418e1f9a7a012.js"></script><script type="text/javascript" src="scripts.9aa141af6e0119c2bcf8.js"></script><script type="text/javascript" src="main.9b63ef3d5bd934e6c786.js"></script></body>
+</html>

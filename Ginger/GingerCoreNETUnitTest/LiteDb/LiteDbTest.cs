@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.LiteDb
         [TestInitialize]
         public void InitTest()
         {
-            dbConector = new LiteDbConnector("LiteDbData.db");
+            dbConector = new LiteDbConnector("GingerExecutionResults.db");
             var mapper = dbConector.GetMapper<GingerBusinessFlow>();
             mapper.DbRef(x => x.ActivitiesGroupColl, "acGrColl");
         }

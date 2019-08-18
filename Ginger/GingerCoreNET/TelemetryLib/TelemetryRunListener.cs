@@ -106,7 +106,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             WorkSpace.Instance.Telemetry.Add("businessflowend", new { Guid = businessFlow.Guid, Elapsed = businessFlow.Elapsed, Status = businessFlow.RunStatus.ToString() });
         }
         
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             WorkSpace.Instance.Telemetry.Add("runnerrunend", new { Guid = gingerRunner.Guid, Elapsed = gingerRunner.Elapsed, Status = gingerRunner.Status });
         }
