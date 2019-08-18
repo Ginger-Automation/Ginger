@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 try
                 {
                     screenShotCountPerAction++;
-                    string imagesFolderName = executionLogFolder + "LiteDBImages";
+                    string imagesFolderName = Path.Combine(executionLogFolder,"LiteDBImages");
                     if (!System.IO.Directory.Exists(imagesFolderName))
                     {
                         System.IO.Directory.CreateDirectory(imagesFolderName);
@@ -257,7 +257,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
-                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
+                    context.BusinessFlow.ExecutionFullLogFolder = Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder);
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
