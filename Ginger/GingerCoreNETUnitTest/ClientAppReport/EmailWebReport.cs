@@ -34,7 +34,6 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             mTempFolder = TestResources.GetTempFolder("CLI Tests");
             mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "EmailWebReport");
             Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
-            RunFlow();
         }
         #endregion
 
@@ -67,6 +66,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         [TestMethod]
         public void TestNewReportExecData()
         {
+            RunFlow();
             string clientAppFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data", "executiondata.js");
             bool isFileExists = File.Exists(clientAppFilePath);
             string jsDataStr = string.Empty;
@@ -78,6 +78,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         [TestMethod]
         public void TestNewReportFolderCreation()
         {
+            RunFlow();
             string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
             Assert.IsTrue(Directory.Exists(clientAppFolderPath));
         }
