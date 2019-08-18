@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
@@ -29,7 +27,6 @@ using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using LiteDB;
 using Newtonsoft.Json;
@@ -320,6 +317,8 @@ namespace Ginger.Run
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
+            Object BFR = mExecutionLogger.SetReportBusinessFlow(mContext, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
+
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -331,8 +330,7 @@ namespace Ginger.Run
             }
 
             if (!offlineMode)
-            {
-                Object BFR = mExecutionLogger.SetReportBusinessFlow(mContext, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
+            {                
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, BFR);
             }
         }
@@ -386,9 +384,10 @@ namespace Ginger.Run
         // fix
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
+            object AR = mExecutionLogger.SetReportActivity(activity, mContext, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
+
             if (!offlineMode)
-            {
-                object AR = mExecutionLogger.SetReportActivity(activity, mContext, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
+            {               
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, AR);
             }
         }
@@ -469,8 +468,10 @@ namespace Ginger.Run
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
                 //ActionReport AR = new ActionReport(action, mContext);                
                 mContext.Activity = mCurrentActivity; //!!!!
+                Object AR = null;
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
-                {                    
+                {
+                    AR = mExecutionLogger.SetReportAction(action, mContext, this.ExecutedFrom, offlineMode);
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)
                     //
@@ -541,9 +542,7 @@ namespace Ginger.Run
                 }
 
                 if (!offlineMode)
-                {
-                    Object AR = null;
-                    AR = mExecutionLogger.SetReportAction(action, mContext, this.ExecutedFrom, offlineMode);
+                {                    
                     ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", action.Description, AR);
                 }
             }
