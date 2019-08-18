@@ -138,11 +138,8 @@ namespace Amdocs.Ginger.GingerConsole
 
         private static void ProcessArgs(string[] args)
         {
-            Console.WriteLine("ProcessArgs start");
-            InitWorkSpace();     
-            Console.WriteLine("InitWorkspace start");
+            InitWorkSpace();                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
-            Console.WriteLine("InitWorkspace end");
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(args);
         }

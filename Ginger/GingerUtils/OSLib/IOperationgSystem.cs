@@ -8,8 +8,9 @@ namespace GingerUtils.OSLib
     public interface IOperationgSystem
     {
         string UserAgent { get; }
-
         Process Dotnet(string cmd);
         string GetFirstLocalHostIPAddress();
+
+        void InitSmtpAuthenticationManager();
     }
 }

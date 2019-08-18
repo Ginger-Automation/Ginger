@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -43,8 +42,8 @@ namespace Ginger.GeneralLib
         eLogShowLevel mLogLevel { get; set; }
         string mLogText;
         TextBlockHelper mTextBlockHelper;
-        GenericWindow mPageGenericWin;
-        string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        GenericWindow mPageGenericWin;        
+        string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
 
         /// <summary>
         /// Log Details Page

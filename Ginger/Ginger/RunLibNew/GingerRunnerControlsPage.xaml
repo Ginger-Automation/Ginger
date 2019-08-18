@@ -50,7 +50,7 @@
                 </Button>
                 <usercontrols:ucButton x:Name="StopButton" ToolTip="Stop execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="StopButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
                 
-                <usercontrols:ucButton x:Name="RunActionButton" ToolTip="Run selected Action" ButtonType="RoundTextAndImageButton" ButtonText="Run Action" ButtonImageType="Play"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="RunActionButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="RunActionButton" ToolTip="Run selected Action" ButtonType="RoundTextAndImageButton" ButtonText="Run Action" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="RunActionButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
 
                 <usercontrols:ucButton x:Name="RunButton" ToolTip="Run selected Action" ButtonType="RoundTextAndImageButton" ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="RunButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
 
