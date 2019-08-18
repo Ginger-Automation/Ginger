@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
@@ -136,9 +137,9 @@ namespace Amdocs.Ginger.GingerConsole
         }
 
         private static void ProcessArgs(string[] args)
-        {                       
-            InitWorkSpace();                              
-            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), null);
+        {
+            InitWorkSpace();                 
+            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(args);
         }

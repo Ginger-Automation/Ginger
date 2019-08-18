@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         private LiteDbConnector dbConnector;
         public LiteDbManager(String dbFolderName = "")
         {
-            dbConnector = new LiteDbConnector(Path.Combine(dbFolderName, "LiteDbData.db")); // Set data to ExecutionResults folder name
+            dbConnector = new LiteDbConnector(Path.Combine(dbFolderName, "GingerExecutionResults.db")); // Set data to ExecutionResults folder name
             InitMappers();
         }
         public void InitMappers()

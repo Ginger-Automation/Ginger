@@ -502,6 +502,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Is Checked")]
             IsChecked,
 
+            [EnumValueDescription("Get selected node child Items")]
+            GetSelectedNodeChildItems,
+
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
             [EnumValueDescription("Simple Click")]

@@ -141,7 +141,7 @@ namespace Ginger.Run
                             else
                                 mExecutionsHistoryList.Add(runSetReport);
                         }
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
 
                         var runSetDataColl = rsLiteColl.FindAll();
@@ -184,7 +184,7 @@ namespace Ginger.Run
                         List<LiteDbRunSet> filterData = null;
                         filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetReport.GUID).ToList();
                         
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                         break;
                     }
