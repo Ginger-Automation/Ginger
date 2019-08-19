@@ -289,7 +289,7 @@ namespace Ginger.SolutionGeneral
                     LoggerConfigurations.IsSelected = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign +   "ExecutionResults";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
@@ -298,7 +298,7 @@ namespace Ginger.SolutionGeneral
                     HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
                     HTMLReportsConfiguration.IsSelected = true;
                     HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
-                    HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
+                    HTMLReportsConfiguration.HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports";
                     HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                     HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
                 }
