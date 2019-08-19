@@ -419,13 +419,13 @@ namespace Ginger.Run.RunSetActions
                     }
                     if (IsExecutionStatistic)
                     {
-                        if (File.Exists(Path.Combine(tempFolder, "GingerRunner" + reportTimeStamp + ".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder,$"GingerRunner{reportTimeStamp}.jpeg")), "gingerRunner" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Action" + reportTimeStamp + ".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")), "Action" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Activity" + reportTimeStamp + ".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")),"Activity" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Businessflow" + reportTimeStamp + ".jpeg")))
+                        if (File.Exists(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")), "Businessflow" + reportTimeStamp));
                     }
                     Email.alternateView = alternativeView;
@@ -1154,17 +1154,23 @@ namespace Ginger.Run.RunSetActions
         }
         public byte[] GetImageStream(string path)
         {
+            byte[] arr=new byte[0];
             if (!File.Exists(path))
             {
                 return null;
             }
-
-            System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-            byte[] arr;
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                arr = ms.ToArray();
+                System.Drawing.Image img = System.Drawing.Image.FromFile(path);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    arr = ms.ToArray();
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
             return arr;
         }
