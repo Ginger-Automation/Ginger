@@ -66,9 +66,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             if (!offlineMode)
                 executionLogFolder = ExecutionLogfolder;
             ActionReport AR = GetActionReportData(action, context, executedFrom);
-            if (System.IO.Directory.Exists(executionLogFolder + action.ExecutionLogFolder))
+            if (System.IO.Directory.Exists(Path.Combine(executionLogFolder,action.ExecutionLogFolder)))
             {
-                this.SaveObjToReporsitory(AR, executionLogFolder + action.ExecutionLogFolder + @"\Action.txt");
+                this.SaveObjToReporsitory(AR, Path.Combine(executionLogFolder,action.ExecutionLogFolder,"Action.txt"));
 
                 // Save screenShots
                 int screenShotCountPerAction = 0;
@@ -79,12 +79,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         screenShotCountPerAction++;
                         if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            System.IO.File.Copy(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png", true);
+                            System.IO.File.Copy(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"), true);
                         }
                         else
                         {
-                            System.IO.File.Move(action.ScreenShots[s], executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
-                            action.ScreenShots[s] = executionLogFolder + action.ExecutionLogFolder + @"\ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png";
+                            System.IO.File.Move(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"));
+                            action.ScreenShots[s] = Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
                         }
                     }
                     catch (Exception ex)
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + executionLogFolder + action.ExecutionLogFolder);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create ExecutionLogger JSON file for the Action :" + action.Description + " because directory not exists :" + Path.Combine(executionLogFolder,action.ExecutionLogFolder));
             }
             return AR;
         }
@@ -109,10 +109,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (offlineMode)
                     // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, activity.ExecutionLogFolder + @"\Activity.txt");
+                    SaveObjToReporsitory(AR, Path.Combine(activity.ExecutionLogFolder,"Activity.txt"));
                 else
                     // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, ExecutionLogfolder + activity.ExecutionLogFolder + @"\Activity.txt");
+                    SaveObjToReporsitory(AR, Path.Combine(ExecutionLogfolder,activity.ExecutionLogFolder,"Activity.txt"));
             }
             return AR; 
         }
@@ -123,13 +123,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             //AGR.ReportMapper(activityGroup, businessFlow, ExecutionLogfolder);
             if (offlineMode && activityGroup.ExecutionLogFolder != null)
             {
-                SaveObjToReporsitory(AGR, activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", true);
-                File.AppendAllText(activityGroup.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
+                SaveObjToReporsitory(AGR, Path.Combine(activityGroup.ExecutionLogFolder,"ActivityGroups.txt"), true);
+                File.AppendAllText(Path.Combine(activityGroup.ExecutionLogFolder,"ActivityGroups.txt"), Environment.NewLine);
             }
             else if (ExecutionLogfolder != null && businessFlow.ExecutionLogFolder != null)
             {
-                SaveObjToReporsitory(AGR, ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", true);
-                File.AppendAllText(ExecutionLogfolder + businessFlow.ExecutionLogFolder + @"\ActivityGroups.txt", Environment.NewLine);
+                SaveObjToReporsitory(AGR, Path.Combine(ExecutionLogfolder,businessFlow.ExecutionLogFolder,"ActivityGroups.txt"), true);
+                File.AppendAllText(Path.Combine(ExecutionLogfolder,businessFlow.ExecutionLogFolder,"ActivityGroups.txt"), Environment.NewLine);
             }
             return AGR;
         }
@@ -150,14 +150,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     {
                         context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
-                    SaveObjToReporsitory(BFR, context.BusinessFlow.ExecutionFullLogFolder + @"\BusinessFlow.txt");
+                    SaveObjToReporsitory(BFR, Path.Combine(context.BusinessFlow.ExecutionFullLogFolder,"BusinessFlow.txt"));
 
                 }
                 else
                 {
                     // use Path.cOmbine
-                    SaveObjToReporsitory(BFR, ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder + @"\BusinessFlow.txt");
-                    context.BusinessFlow.ExecutionFullLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
+                    SaveObjToReporsitory(BFR, Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder,"BusinessFlow.txt"));
+                    context.BusinessFlow.ExecutionFullLogFolder = Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder);
                 }
                 if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                 {
@@ -171,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             base.SetReportRunner(gingerRunner, gingerReport,  gingerData,  mContext, filename, runnerCount);
-            SaveObjToReporsitory(gingerReport, gingerReport.LogFolder + @"\Ginger.txt");
+            SaveObjToReporsitory(gingerReport, Path.Combine(gingerReport.LogFolder,"Ginger.txt"));
         }
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
@@ -179,11 +179,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             base.SetReportRunSet(runSetReport, logFolder);
             if (logFolder == null)
             {
-                SaveObjToReporsitory(runSetReport, runSetReport.LogFolder + @"\RunSet.txt");
+                SaveObjToReporsitory(runSetReport, Path.Combine(runSetReport.LogFolder,"RunSet.txt"));
             }
             else
             {
-                SaveObjToReporsitory(runSetReport, logFolder + @"\RunSet.txt");
+                SaveObjToReporsitory(runSetReport, Path.Combine(logFolder,"RunSet.txt"));
             }
         }
 
@@ -200,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
             if (!offline)
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder + "\\" + executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss"));
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder,executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
             else
                 ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
             DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(ExecutionLoggerManager.RunSetReport.LogFolder, maxFolderSize);

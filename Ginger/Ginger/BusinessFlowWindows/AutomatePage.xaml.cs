@@ -179,7 +179,7 @@ namespace Ginger
 
         private void DeleteRunSetBFRefData()
         {
-            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
@@ -193,7 +193,7 @@ namespace Ginger
         private bool AutoRunSetDocumentExistsInLiteDB()
         {
             bool isExist = false;
-            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
@@ -1604,7 +1604,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
@@ -1649,7 +1649,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
 
             if (Directory.Exists(exec_folder))
             {
