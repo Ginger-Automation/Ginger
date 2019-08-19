@@ -51,7 +51,7 @@ namespace GingerCore.GeneralLib
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            //TODO: check perf impact + reuse existing binding on same obj.prop
             try
             {
                 Binding b = new Binding();
@@ -107,6 +107,27 @@ namespace GingerCore.GeneralLib
     }
 
     #region Binding Convertors
+
+    public class LongStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                return long.Parse(value.ToString());
+            }
+            catch(Exception ex)
+            {
+                return 0;
+            }
+        }
+    }
+
     public class StringVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

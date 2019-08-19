@@ -21,10 +21,10 @@
         </div>
         <div id="navbar" class="navbar navbar-default">
             <div class="navbar-container" id="navbar-container">
-                <div class="navbar-header pull-left">
+                <div class="navbar-header pull-left" style="margin-top:10px">
                     {beat_logo}
                 </div>
-                <div style="float:left;display:block;width:40%">
+                <div style="float:left;display:block;width:47%">
                     {ginger_logo}
                 </div>
                 <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
@@ -135,7 +135,7 @@
                                             <div class="row">
                                                 <div class="percentSpace" style="position:relative;left:30%;width:70%">
                                                     <div class="col-xs-6">
-                                                        <div style='height: 150px; float:left' id="passContainer">                                                            
+                                                        <div style='height: 150px; float:left' id="passContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -145,7 +145,7 @@
                                                                 CreateChart(PassStat, 'passContainer', 'Passed', {TotalPass}, {PassPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="failContainer">                                                           
+                                                        <div style='height: 150px; float:left' id="failContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -155,7 +155,7 @@
                                                                 CreateChart(failStat, 'failContainer', 'Failed', {TotalFail},  {FailPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="stoppedContainer">                                                        
+                                                        <div style='height: 150px; float:left' id="stoppedContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -165,7 +165,7 @@
                                                                 CreateChart(StopStat, 'stoppedContainer', 'Stopped', {TotalStopped}, {StoppedPercent} );
                                                             </script>
                                                         </div>
-                                                        <div style='height: 150px; float:left' id="otherContainer">                                                          
+                                                        <div style='height: 150px; float:left' id="otherContainer">
                                                             <script type="text/jsx"
                                                                     data-presets="es2017,react,stage-0"
                                                                     data-plugins="transform-decorators-legacy">
@@ -213,7 +213,7 @@
             </a>
         </div>
 
-        <!-- basic scripts -->      
+        <!-- basic scripts -->
         <!-- The Modal -->
         <div id="myModal" class="modal">
             <span class="close">&times;</span>
@@ -242,7 +242,7 @@
                 modal.style.display = "none";
             }
 
-             function getQueryStringParameterByName(name, url) {
+            function getQueryStringParameterByName(name, url) {
                 if (!url) url = window.location.href;
                 name = name.replace(/[\[\]]/g, "\\$&");
                 var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -256,18 +256,14 @@
                 var folderName = getQueryStringParameterByName('Parent_ActivitiesGroup_Folder_Name');
                 var Name = getQueryStringParameterByName('Parent_ActivitiesGroup_Name');
                 var ActivitiesGroupCalledAsRoot = getQueryStringParameterByName('ActivitiesGroupCalledAsRoot');
-                if (folderName == null || Name == null || ActivitiesGroupCalledAsRoot == null || folderName == '' || Name == '')
-                {
+                if (folderName == null || Name == null || ActivitiesGroupCalledAsRoot == null || folderName == '' || Name == '') {
 
                 }
-                else
-                {
-                    if (ActivitiesGroupCalledAsRoot == 'true')
-                    {
+                else {
+                    if (ActivitiesGroupCalledAsRoot == 'true') {
                         document.getElementById("activitiesGroupLink").outerHTML = "<a href='.\/..\/ActivityGroupReport.html'>" + Name + " </a><i class='ace-icon fa fa-angle-double-right clsc1'></i>";
                     }
-                    else
-                    {
+                    else {
                         document.getElementById("activitiesGroupLink").outerHTML = "<a href='.\/..\/ActivityGroups\/" + folderName + "\/ActivityGroupReport.html'>" + Name + " </a><i class='ace-icon fa fa-angle-double-right clsc1'></i>";
                     }
                 }

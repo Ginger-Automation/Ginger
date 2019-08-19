@@ -179,13 +179,13 @@ namespace Ginger
 
         private void DeleteRunSetBFRefData()
         {
-            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
             if (filterData.Count > 0)
             {
-                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "GingerExecutionResults.db"));
                 dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
             }
         }
@@ -193,7 +193,7 @@ namespace Ginger
         private bool AutoRunSetDocumentExistsInLiteDB()
         {
             bool isExist = false;
-            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder);
+            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
             List<LiteDbRunSet> filterData = null;
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
@@ -1604,7 +1604,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
@@ -1649,7 +1649,7 @@ namespace Ginger
             }
             HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName);
+            string exec_folder = mRunner.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
 
             if (Directory.Exists(exec_folder))
             {
@@ -1686,7 +1686,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " report", ex);
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }

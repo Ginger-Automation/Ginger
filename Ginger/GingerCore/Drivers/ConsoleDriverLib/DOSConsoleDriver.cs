@@ -185,8 +185,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 case ActConsoleCommand.eConsoleCommand.IsFileExist:      
                     return "dir " + GetParameterizedCommand(act);                   
                 default:                    
-                    Reporter.ToLog(eLogLevel.DEBUG, "Unkonwn Console command");
-                    ErrorMessageFromDriver = "Unkonwn Console command";
+                    Reporter.ToLog(eLogLevel.DEBUG, "Unknown Console command");
+                    ErrorMessageFromDriver = "Unknown Console command";
                     return "Error - unknown command";                    
             }
         }

@@ -63,7 +63,7 @@ namespace Ginger.BusinessFlowFolder
             UpdateBusinessFlow(businessFlow);
             if (editMode == General.eRIPageViewMode.Automation)
             {                
-                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Activity", FloatingContinueRunActivityButton_Click, 4);
+                grdActivities.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), FloatingContinueRunActivityButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@RunAction_20x20.png", "Run Selected Action", RunActionButton_Click, 4);
                 grdActivities.AddFloatingImageButton("@Run2_20x20.png", "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity), RunFloatingButtonClicked, 4); 
             }                        
@@ -152,9 +152,14 @@ namespace Ginger.BusinessFlowFolder
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
                  || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActivities_ItemDropped(object sender, EventArgs e)

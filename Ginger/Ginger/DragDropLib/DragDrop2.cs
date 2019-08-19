@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.DragDropLib;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControlsLib.UCListView;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GingerWPF.DragDropLib
 {
@@ -28,6 +30,7 @@ namespace GingerWPF.DragDropLib
         private static Point _startPoint;
         private static bool IsDragging;
         public static DragInfo DragInfo;
+        private static Point _DroppedPoint;
 
         private static DragDropWindow DDW = new DragDropWindow();
 
@@ -36,7 +39,23 @@ namespace GingerWPF.DragDropLib
             _startPoint = e.GetPosition(null);            
         }
 
-      
+        /// <summary>
+        /// SetDragIcon to set an appropriate Icon for Drag Drop events
+        /// value = true : allows item to be dropped/added on the target region with "+" icon
+        /// value = false : means "Do Not Drop"
+        /// </summary>
+        /// <param name="isDraggable"></param>
+        public static void SetDragIcon(bool isDraggable)
+        {
+            if(isDraggable == true)
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+            }
+            else
+            {
+                DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+            }
+        }
 
         public static void DragSource_PreviewMouseMove(object sender, MouseEventArgs e)
         {
@@ -73,21 +92,66 @@ namespace GingerWPF.DragDropLib
             
             //TODO decide effects
             DragDropEffects de = DragDrop.DoDragDrop(DragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
-            
+
+            ResetDragDrop();
+        }
+
+        public static void ResetDragDrop()
+        {
             IsDragging = false;
             DDW.Hide();
         }
-        
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
-        {
-            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Copy || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
+        {            
+            if (DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragDropLib.DragInfo.eDragIcon.Move)
             {
-                ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                if (sender is UcListView)
+                {
+                    _DroppedPoint = e.GetPosition(sender as UcListView);
+                }
+                try
+                {
+                    ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                }
+                catch(Exception ex)
+                {
+                    ResetDragDrop();
+                }
             }
         }
 
-      
+        public static void ShuffleControlsItems(RepositoryItemBase draggedItem, RepositoryItemBase itemDroppedOver, UcListView xUCListView)
+        {
+            int newIndex = xUCListView.DataSourceList.IndexOf(itemDroppedOver);
+            int oldIndex = xUCListView.DataSourceList.IndexOf(draggedItem);
+
+            xUCListView.DataSourceList.Move(oldIndex, newIndex);
+        }
+
+        public static object GetRepositoryItemHit(UcListView xUCListView)
+        {
+            if (_DroppedPoint != null)
+            {
+                HitTestResult htResult = VisualTreeHelper.HitTest(xUCListView, _DroppedPoint);
+
+                if (htResult != null)
+                {
+                    FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
+                    if (fwElem != null)
+                    {
+                        if (fwElem.DataContext != null && fwElem.DataContext is RepositoryItemBase)
+                        {
+                            return fwElem.DataContext;
+                        }
+                    }
+                }
+
+            }
+
+            return null;
+        }
+
         private static void DragTarget_DragEnter(object sender, DragEventArgs e)
         {
              DragInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;

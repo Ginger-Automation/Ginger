@@ -76,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mRusSetsExecutionsPage == null)
             {
@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private string GetExecutionResultsFolder()
         {
             if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
-                return new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                return new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             else
                 return string.Empty;
         }

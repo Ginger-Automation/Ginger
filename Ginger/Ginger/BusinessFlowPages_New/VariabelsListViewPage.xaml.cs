@@ -1,8 +1,27 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -99,49 +118,120 @@ namespace Ginger.BusinessFlowPages
                 mVarBeenEdit = variabelToEdit;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mVarBeenEdit, nameof(VariableBase.Name));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
-                BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
-                BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                                
+                bool showAsReadOnly = false;
+                if (mPageViewMode == General.eRIPageViewMode.View)
+                {
+                    showAsReadOnly = true;
+                    xEditAndValueChangeOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xEditAndValueChangeOperationsPnl.Visibility = Visibility.Visible;
+                    BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
+                    mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
+                    mVarBeenEdit.SaveBackup();
+                }
 
-                mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
                 if (mVariabelsParent is Solution)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.Global);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global);
                 }
                 else if (mVariabelsParent is BusinessFlow)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.BusinessFlow);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.BusinessFlow);
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, false, VariableEditPage.eEditMode.Activity);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Activity);
                 }                
-                xMainFrame.Content = mVariabelEditPage;
+                xMainFrame.SetContent(mVariabelEditPage);
             }
             else
             {
                 xBackToListGrid.Visibility = Visibility.Collapsed;
                 mVariabelEditPage = null;
-                xMainFrame.Content = mVariabelsListView;
+                xMainFrame.SetContent(mVariabelsListView);
             }
         }
 
+        //private void ClearListViewBindings()
+        //{
+        //    if (mVariabelListHelper != null)
+        //    {
+        //        mVariabelListHelper.VariabelListItemEvent -= MVariabelListItemInfo_VariabelListItemEvent;
+        //        mVariabelListHelper = null;
+        //    }
+
+        //    if (mVariabelsListView != null)
+        //    {
+        //        mVariabelsListView.PreviewDragItem -= ListVars_PreviewDragItem;
+        //        mVariabelsListView.ItemDropped -= ListVars_ItemDropped;
+        //        mVariabelsListView.List.MouseDoubleClick -= VariabelsListView_MouseDoubleClick;
+        //        mVariabelsListView.ClearBindings();
+        //        mVariabelsListView.DataSourceList = null;
+        //        mVariabelsListView = null;
+        //    }
+        //}
+
+        //public void ClearBindings()
+        //{
+        //    xMainFrame.Content = null;
+        //    xMainFrame.NavigationService.RemoveBackEntry();
+
+        //    ClearListViewBindings();
+
+        //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
+        //    BindingOperations.ClearAllBindings(xResetValueBtn);
+        //    BindingOperations.ClearAllBindings(xAutoValueBtn);
+        //    this.ClearControlsBindings();            
+        //}
+
         private void SetListView()
         {
-            mVariabelsListView = new UcListView();
-            mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-            mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
+            if (mVariabelsListView == null)
+            {
+                mVariabelsListView = new UcListView();
+                mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
+                mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
 
-            mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
-            mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
-            mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
+                mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
+                mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
+                mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
-            mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
-            mVariabelsListView.DataSourceList = GetVariablesList();
+                mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
+                
+                mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;
+                mVariabelsListView.ItemDropped += ListVars_ItemDropped;
 
-            mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;
-            mVariabelsListView.ItemDropped += ListVars_ItemDropped;
+                mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
 
-            mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
+                mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
+
+                if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    mVariabelsListView.IsDragDropCompatible = false;
+                }
+            }
+
+            if (mVariabelsParent != null)
+            {
+                mVariabelListHelper.VariablesParent = mVariabelsParent;
+                mVariabelListHelper.VariablesLevel = mVariablesLevel;
+                mVariabelListHelper.Variables = GetVariablesList(); 
+                mVariabelsListView.DataSourceList = GetVariablesList();
+                if (mVariablesLevel != eVariablesLevel.Solution)
+                {
+                    SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
+                }
+            }
+            else
+            {
+                mVariabelListHelper.VariablesParent = null;
+                mVariabelListHelper.Variables = null;
+                mVariabelsListView.DataSourceList = null;
+            }
         }
 
         private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
@@ -167,20 +257,8 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsParent != parent)
             {
                 mVariabelsParent = parent;
-                mVariablesLevel = GetVariablesLevel();
-                if (mVariabelsParent != null)
-                {
-                    mVariabelListHelper.VariablesParent = mVariabelsParent;
-                    mVariabelListHelper.VariablesLevel = mVariablesLevel;
-                    mVariabelListHelper.Variables = GetVariablesList();
-                    mVariabelsListView.DataSourceList = GetVariablesList();
-                }
-                else
-                {
-                    mVariabelListHelper.VariablesParent = null;
-                    mVariabelListHelper.Variables = null;
-                    mVariabelsListView.DataSourceList = null;
-                }
+                mVariablesLevel = GetVariablesLevel();                
+                SetListView();                
                 ShowHideEditPage(null);
             }
         }
@@ -190,25 +268,49 @@ namespace Ginger.BusinessFlowPages
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
         private void ListVars_ItemDropped(object sender, EventArgs e)
         {
-            VariableBase a = (VariableBase)((DragInfo)sender).Data;
-            VariableBase instance = (VariableBase)a.CreateInstance(true);
-            GetVariablesList().Add(instance);
+            object droppedItem = ((DragInfo)sender).Data as object;
 
-            int selectedActIndex = -1;
-            if (GetVariablesList().CurrentItem != null)
+            if (droppedItem != null)
             {
-                selectedActIndex = GetVariablesList().IndexOf((VariableBase)GetVariablesList().CurrentItem);
-            }
-            if (selectedActIndex >= 0)
-            {
-                GetVariablesList().Move(GetVariablesList().Count - 1, selectedActIndex + 1);
+                VariableBase droppedAtVar = DragDrop2.GetRepositoryItemHit(ListView) as VariableBase;
+
+                VariableBase varDropped = droppedItem as VariableBase;
+
+                VariableBase instance = (VariableBase)varDropped.CreateInstance(true);
+
+                if (droppedAtVar != null)
+                {
+                    int targetIndex = GetVariablesList().IndexOf(droppedAtVar);
+
+                    GetVariablesList().Insert(targetIndex, instance);
+                    ListView.xListView.SelectedItem = instance;
+                }
+                else
+                {
+                    GetVariablesList().Add(instance);
+
+                    int selectedActIndex = -1;
+                    if (GetVariablesList().CurrentItem != null)
+                    {
+                        selectedActIndex = GetVariablesList().IndexOf((VariableBase)GetVariablesList().CurrentItem);
+                    }
+                    if (selectedActIndex >= 0)
+                    {
+                        GetVariablesList().Move(GetVariablesList().Count - 1, selectedActIndex + 1);
+                    }
+                }
             }
         }
 

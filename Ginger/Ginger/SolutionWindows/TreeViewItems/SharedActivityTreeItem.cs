@@ -70,11 +70,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActivityEditPage == null)
             {
-                mActivityEditPage = new GingerWPF.BusinessFlowsLib.ActivityPage(mActivity, new Amdocs.Ginger.Common.Context(), General.eRIPageViewMode.SharedReposiotry);
+                mActivityEditPage = new GingerWPF.BusinessFlowsLib.ActivityPage(mActivity, new Amdocs.Ginger.Common.Context() { Activity = mActivity }, General.eRIPageViewMode.SharedReposiotry);
             }
             return mActivityEditPage;
         }

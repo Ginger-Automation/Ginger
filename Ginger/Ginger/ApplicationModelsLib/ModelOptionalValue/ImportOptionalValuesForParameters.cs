@@ -1479,7 +1479,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method will export the parameters to DataSource
         /// </summary>
         /// <param name="parameters"></param>
-        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName)
+        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, DataSourceBase mDSDetails, string tableName)
         {
             try
             {

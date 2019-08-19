@@ -52,7 +52,7 @@
   
   <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
@@ -61,11 +61,19 @@
   <ItemGroup>
     <Folder Include="TestResources\Conversion\" />
     <Folder Include="TestResources\Solutions\CLI\" />
+    <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\HTMLReportTemplate\" />
+    <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\ReportTemplates\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Reports\NewHTMLReportTest.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -306,6 +314,9 @@
     <None Update="TestResources\Reports\PassedAction.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Repository\DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Repository\Windows.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -371,6 +382,21 @@
     </None>
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EmailWebReport\BusinessFlows\Jira Demo.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EmailWebReport\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EmailWebReport\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EmailWebReport\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\ReportWebApp\ExecutionResults\LiteDbData.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

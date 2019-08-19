@@ -134,13 +134,23 @@ namespace Ginger.BusinessFlowWindows
 
         public void SetTargetApplications()
         {
-            mBusinessFlow.TargetApplications.Clear();
-
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms)
+            //mBusinessFlow.TargetApplications.Clear();
+            //remove deleted
+            for(int indx=0;indx< mBusinessFlow.TargetApplications.Count;indx++)
             {
-                TargetApplication tt = new TargetApplication();
-                if (TA.Selected)
+                if (mApplicationsPlatforms.Where(x=>x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name).FirstOrDefault() == null)
                 {
+                    mBusinessFlow.TargetApplications.RemoveAt(indx);
+                    indx--;
+                }
+            }
+
+            //add new
+            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x=>x.Selected).ToList())
+            {                
+                if (mBusinessFlow.TargetApplications.Where(x=>x.Name == TA.AppName).FirstOrDefault() == null)
+                {
+                    TargetApplication tt = new TargetApplication();
                     tt.AppName = TA.AppName;
                     tt.Selected = true;
                     mBusinessFlow.TargetApplications.Add(tt);

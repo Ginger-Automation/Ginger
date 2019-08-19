@@ -1911,10 +1911,17 @@ public void RemoveCustomView(string viewName)
         {
             Info.DragTarget = this;
 
-            EventHandler handler = PreviewDragItem;
-            if (handler != null)
+            if (Info.DragTarget == Info.DragSource)
             {
-                handler(Info, new EventArgs());
+                Info.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+            }
+            else
+            {
+                EventHandler handler = PreviewDragItem;
+                if (handler != null)
+                {
+                    handler(Info, new EventArgs());
+                }
             }
         }
 
