@@ -65,18 +65,7 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public Email Email = new Email();
 
-        ValueExpression mValueExpression = null;
-        ValueExpression mVE
-        {
-            get
-            {
-                if (mValueExpression == null)
-                {
-                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                }
-                return mValueExpression;
-            }
-        }
+        ValueExpression mValueExpression = null;        
 
         //User can attach several templates to the email
         // attach template + RI
@@ -166,7 +155,7 @@ namespace Ginger.Run.RunSetActions
         {
 
             Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email Staring execute");
-
+            mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             string calculatedName = string.Empty;
             //Make sure we clear in case use open the edit page twice
@@ -217,9 +206,9 @@ namespace Ginger.Run.RunSetActions
                     Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                     return;
                 }
-                mVE.Value = Bodytext;
+                mValueExpression.Value = Bodytext;
                 emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
-                emailReadyHtml += mVE.ValueCalculated;
+                emailReadyHtml += mValueExpression.ValueCalculated;
             }
             else
             {
@@ -272,8 +261,8 @@ namespace Ginger.Run.RunSetActions
                     //attach simple file
                     if (r.AttachmentType == EmailAttachment.eAttachmentType.File)
                     {
-                        mVE.Value = r.Name;
-                        calculatedName = mVE.ValueCalculated;
+                        mValueExpression.Value = r.Name;
+                        calculatedName = mValueExpression.ValueCalculated;
                         if (System.IO.File.Exists(calculatedName))
                         {
                             String TargetFileName = string.Empty;
@@ -307,8 +296,8 @@ namespace Ginger.Run.RunSetActions
                         if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-                            mVE.Value = rReport.ExtraInformation;
-                            extraInformationCalculated = mVE.ValueCalculated;
+                            mValueExpression.Value = rReport.ExtraInformation;
+                            extraInformationCalculated = mValueExpression.ValueCalculated;
                             if (!string.IsNullOrEmpty(rReport.SelectedHTMLReportTemplateID.ToString()))
                             {
                                 if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
@@ -448,18 +437,18 @@ namespace Ginger.Run.RunSetActions
                 }
             }
             Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Preparing email");
-            mVE.Value = MailFrom;
-            Email.MailFrom = mVE.ValueCalculated;
-            mVE.Value = MailTo;
-            Email.MailTo = mVE.ValueCalculated;
-            mVE.Value = MailCC;
-            Email.MailCC = mVE.ValueCalculated;
-            mVE.Value = Subject; 
-            Email.Subject = mVE.ValueCalculated;
-            mVE.Value = MailHost;
-            Email.SMTPMailHost = mVE.ValueCalculated;
-            mVE.Value = MailUser;
-            Email.SMTPUser = mVE.ValueCalculated;            
+            mValueExpression.Value = MailFrom;
+            Email.MailFrom = mValueExpression.ValueCalculated;
+            mValueExpression.Value = MailTo;
+            Email.MailTo = mValueExpression.ValueCalculated;
+            mValueExpression.Value = MailCC;
+            Email.MailCC = mValueExpression.ValueCalculated;
+            mValueExpression.Value = Subject; 
+            Email.Subject = mValueExpression.ValueCalculated;
+            mValueExpression.Value = MailHost;
+            Email.SMTPMailHost = mValueExpression.ValueCalculated;
+            mValueExpression.Value = MailUser;
+            Email.SMTPUser = mValueExpression.ValueCalculated;            
             Email.Body = emailReadyHtml;
             emailReadyHtml = string.Empty;
             bool isSuccess=false;
@@ -930,8 +919,8 @@ namespace Ginger.Run.RunSetActions
             }
             if (!string.IsNullOrEmpty(Comments))
             {
-                mVE.Value = Comments;
-                ReportHTML = ReportHTML.Replace("{COMMENT}", "<img src='cid:comment'/>" + mVE.ValueCalculated);
+                mValueExpression.Value = Comments;
+                ReportHTML = ReportHTML.Replace("{COMMENT}", "<img src='cid:comment'/>" + mValueExpression.ValueCalculated);
             }
             else
             {
