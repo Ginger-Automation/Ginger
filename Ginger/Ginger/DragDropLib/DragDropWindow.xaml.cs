@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GingerWPF.DragDropLib
@@ -36,7 +39,7 @@ namespace GingerWPF.DragDropLib
 
         public void SetHeader(string Header)
         {
-            HeaderLabel.Content = Header;
+            xHeaderTextBlock.Text = Header;
         }
 
         internal void MoveToMousePosition()
@@ -66,21 +69,28 @@ namespace GingerWPF.DragDropLib
 
         internal void SetDragIcon(DragInfo.eDragIcon eDragIcon)
         {
-            string ImageFile = "DoNotDrop.png";
             switch (eDragIcon)
             {
                 case DragInfo.eDragIcon.Unknown:
-                    ImageFile = "DoNotDrop.png";
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Red);
+                    xDragOperationImage.ImageType = eImageType.Blocked;
                     break;
-                case DragInfo.eDragIcon.Copy:
-                    ImageFile = "DragInsert.png"; 
+
+                case DragInfo.eDragIcon.Add:
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
+                    xDragOperationImage.ImageType = eImageType.PlusSquare;
                     break;
+
                 case DragInfo.eDragIcon.DoNotDrop:
-                    ImageFile = "DoNotDrop.png";
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Red);
+                    xDragOperationImage.ImageType = eImageType.Blocked;
+                    break;
+
+                case DragInfo.eDragIcon.Move:
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
+                    xDragOperationImage.ImageType = eImageType.MoveUpDown;
                     break;
             }
-
-            DragIconImage.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/DragDrop/" + ImageFile));
         }
     }
 }

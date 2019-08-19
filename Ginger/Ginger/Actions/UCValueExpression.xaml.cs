@@ -56,7 +56,7 @@ namespace Ginger.Actions
         private void UCValueExpression_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // If the VE is in Grid, we call this function:
-            if (e.NewValue.GetType() == typeof(ValueExpression))
+            if (e.NewValue != null && e.NewValue.GetType() == typeof(ValueExpression))
             {
                 ValueExpression ve = (ValueExpression)e.NewValue;
                 Init(mContext, ve.Obj, ve.ObjAttr);
@@ -120,7 +120,7 @@ namespace Ginger.Actions
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
-            this.AttrName = ActInputValue.Fields.Value;
+            this.AttrName = nameof(ActInputValue.Value);
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
 

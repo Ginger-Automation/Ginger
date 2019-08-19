@@ -276,10 +276,50 @@ namespace GingerCore
                 return eStatus.NotStarted;
             }
         }
-
+        
         private eDriverType mDriverType;
         [IsSerializedForLocalRepository]
-        public eDriverType DriverType { get { return mDriverType; } set { if (mDriverType != value) { mDriverType = value; OnPropertyChanged(nameof(DriverType)); } } }
+        public eDriverType DriverType
+        {
+            get
+            {
+                return mDriverType;
+            }
+            set
+            {
+                if (mDriverType != value)
+                {
+                    mDriverType = value;
+                    OnPropertyChanged(nameof(DriverType));
+                }
+            }
+        }
+
+        /// <summary>
+        /// This method is used to check if the paltform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSupportRecording()
+        {
+            bool isSupport = false;
+            switch (DriverType)
+            {
+                case eDriverType.SeleniumFireFox:
+                case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumIE:
+                case eDriverType.SeleniumRemoteWebDriver:
+                case eDriverType.SeleniumEdge:
+                case eDriverType.ASCF:
+                case eDriverType.MobileAppiumAndroid:
+                case eDriverType.MobileAppiumIOS:
+                case eDriverType.MobileAppiumAndroidBrowser:
+                case eDriverType.MobileAppiumIOSBrowser:
+                case eDriverType.JavaDriver:
+                    isSupport = true;
+                    break;
+            }
+            return isSupport;
+        }
 
         private string mNotes;
         [IsSerializedForLocalRepository]
@@ -330,6 +370,8 @@ namespace GingerCore
 
         public void StartDriver()
         {
+            WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = AgentType.ToString(), DriverType = DriverType.ToString() });
+
             // if plugin 
             if (AgentType == eAgentType.Service)
             {
@@ -745,8 +787,6 @@ namespace GingerCore
                 if (mPlatform != null)
                 {
                     return mPlatform.Value;
-
-
                 }
                 else
                 {

@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Ginger.BusinessFlowPages;
 
 namespace Ginger.Repository
 {
@@ -41,24 +42,21 @@ namespace Ginger.Repository
     public partial class ActionsRepositoryPage : Page
     {
         readonly RepositoryFolder<Act> mActionsFolder;
-        BusinessFlow mBusinessFlow;
-        Context mContext = new Context();
+        Context mContext;
 
-        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, BusinessFlow businessFlow)
+        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, Context context)
         {
             InitializeComponent();
 
             mActionsFolder = actionsFolder;
-            mBusinessFlow = businessFlow;
-            mContext.BusinessFlow = mBusinessFlow;
+            mContext = context;
+
             SetActionsGridView();
             SetGridAndTreeData();
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)
         {
-            mBusinessFlow = bf;
-            mContext.BusinessFlow = mBusinessFlow;
             xActionsGrid.ClearFilters();
         }
 
@@ -79,8 +77,13 @@ namespace Ginger.Repository
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
@@ -127,24 +130,18 @@ namespace Ginger.Repository
         
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {            
+            if (mContext.BusinessFlow == null)
+            {
+                return;
+            }
+
             if (xActionsGrid.Grid.SelectedItems != null && xActionsGrid.Grid.SelectedItems.Count > 0)
             {
                 foreach (Act selectedItem in xActionsGrid.Grid.SelectedItems)
                 {
-                    mBusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
-                }
-                
-                int selectedActIndex = -1;
-                ObservableList<IAct> actsList = mBusinessFlow.CurrentActivity.Acts;
-                if (actsList.CurrentItem != null)
-                {
-                    selectedActIndex = actsList.IndexOf((Act)actsList.CurrentItem);
-                }
-                if (selectedActIndex >= 0)
-                {
-                    actsList.Move(actsList.Count - 1, selectedActIndex + 1);
-
-                }
+                    ActionsFactory.AddActionsHandler(selectedItem, mContext);
+                    //mContext.BusinessFlow.AddAct((Act)selectedItem.CreateInstance(true));
+                }                
             }
             else
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);                      
@@ -155,7 +152,7 @@ namespace Ginger.Repository
             if (xActionsGrid.CurrentItem != null)
             {
                 Act a = (Act)xActionsGrid.CurrentItem;
-                ActionEditPage actedit = new ActionEditPage(a, General.RepositoryItemPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
+                ActionEditPage actedit = new ActionEditPage(a, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);             
             }
             else

@@ -178,13 +178,15 @@ namespace GingerCore.Variables
             }
         }
         public abstract string GetFormula();
-        public abstract string VariableType();
+        public abstract string VariableType { get; }
         public abstract void ResetValue();
         public abstract void GenerateAutoValue();
         public virtual eImageType Image { get { return eImageType.Variable; } }
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
 
+        public abstract bool SupportResetValue { get; }
+        public abstract bool SupportAutoValue { get; }
 
         //all below used to describe the variable owner in a specific Business Flow
         [IsSerializedForLocalRepository]
@@ -317,6 +319,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "GetListOfUsedVariables - " + ex.Message);
                     value = null;
                 } 
                 
@@ -388,15 +391,27 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used variables", ex); 
+                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used " + GingerDicser.GetTermResValue(eTermResKey.Variables), ex); 
                         } 
                     }
                 }
             }
         }
 
+        string mLinkedVariableName;
         [IsSerializedForLocalRepository]
-        public string LinkedVariableName { get; set; }
+        public string LinkedVariableName
+        {
+            get
+            {
+                return mLinkedVariableName;
+            }
+            set
+            {
+                mLinkedVariableName = value;
+                OnPropertyChanged(nameof(this.LinkedVariableName));
+            }
+        }
 
         public override string ItemName
         {

@@ -487,10 +487,10 @@ namespace Ginger.Actions.WebServices
             GridViewDef FormDataView = new GridViewDef("FormData");
             FormDataView.GridColsView = new ObservableList<GridColView>();
 
-            FormDataView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Key", WidthWeight = 100 });
+            FormDataView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Key", WidthWeight = 100 });
             List<ComboEnumItem> valueTypes = GingerCore.General.GetEnumValuesForCombo(typeof(WebAPIKeyBodyValues.eValueType));
-            FormDataView.GridColsView.Add(new GridColView() { Field = WebAPIKeyBodyValues.Fields.ValueType, Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
-            FormDataView.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Value/File Path", WidthWeight = 100 });
+            FormDataView.GridColsView.Add(new GridColView() { Field = nameof(WebAPIKeyBodyValues.ValueType), Header = "Value Type", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = valueTypes });
+            FormDataView.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value/File Path", WidthWeight = 100 });
             FormDataView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.controlGrid.Resources["VEGridValueExpressionButton"] });
             FormDataView.GridColsView.Add(new GridColView() { Field = "Browse", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.controlGrid.Resources["BrowseValueFilesButton"] });
 
@@ -498,7 +498,7 @@ namespace Ginger.Actions.WebServices
             GridViewDef UrlEncodedView = new GridViewDef("UrlEncoded");
             UrlEncodedView.GridColsView = new ObservableList<GridColView>();
             ObservableList<GridColView> UrlViewCols = new ObservableList<GridColView>();
-            UrlEncodedView.GridColsView.Add(new GridColView() { Field = WebAPIKeyBodyValues.Fields.ValueType, Visible = false });
+            UrlEncodedView.GridColsView.Add(new GridColView() { Field = nameof(WebAPIKeyBodyValues.ValueType), Visible = false });
             UrlEncodedView.GridColsView.Add(new GridColView() { Field = "Browse", Visible = false });
 
             FormDataGrid.SetAllColumnsDefaultView(FormDataView);
@@ -528,7 +528,7 @@ namespace Ginger.Actions.WebServices
         private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)FormDataGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 

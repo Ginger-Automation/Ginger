@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
+using GingerCore.DataSource;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
 using System;
@@ -398,7 +399,7 @@ namespace GingerCore
                         builder.Append(value);
                         builder.Append(" ");
                     }
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain charaters like:" + "\n" + builder.ToString());
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain characters like:" + "\n" + builder.ToString());
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
             }
@@ -986,7 +987,24 @@ namespace GingerCore
                 ObservableList.Add(o);
             return ObservableList;
         }
-        
+
+        /// <summary>
+        /// Finds a parent of a given control/item on the visual tree.
+        /// </summary>
+        /// <typeparam name="T">Type of Parent</typeparam>
+        /// <param name="child">Child whose parent is queried</param>
+        /// <returns>Returns the first parent item that matched the type (T), if no match found then it will return null</returns>
+        public static T TryFindParent<T>(DependencyObject child)
+        where T : DependencyObject
+        {
+            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            if (parentObject == null) return null;
+            T parent = parentObject as T;
+            if (parent != null)
+                return parent;
+            else
+                return TryFindParent<T>(parentObject);
+        }
     }
 }
 

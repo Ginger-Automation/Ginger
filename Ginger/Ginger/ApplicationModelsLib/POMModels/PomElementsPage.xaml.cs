@@ -26,6 +26,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
@@ -147,9 +148,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PasteElementEvent(PasteItemEventArgs EventArgs)
         {
-            ElementInfo copiedElement = (ElementInfo)EventArgs.RepositoryItemBaseObject;
+            ElementInfo copiedElement = (ElementInfo)EventArgs.Item;
             copiedElement.IsAutoLearned = false;
-            foreach(ElementLocator locator in copiedElement.Locators)
+            foreach (ElementLocator locator in copiedElement.Locators)
             {
                 locator.IsAutoLearned = false;
             }
@@ -157,8 +158,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PasteLocatorEvent(PasteItemEventArgs EventArgs)
         {
-            ElementLocator copiedLocator = (ElementLocator)EventArgs.RepositoryItemBaseObject;
-            copiedLocator.IsAutoLearned = false;            
+            ElementLocator copiedLocator = (ElementLocator)EventArgs.Item;
+            copiedLocator.IsAutoLearned = false;
         }
 
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -320,7 +321,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while exporting POM optional Values to Data Source", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting POM optional Values to Data Source", ex);
             }
         }
 
@@ -470,7 +471,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xLocatorsGrid.InitViewItems();
 
             xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            xLocatorsGrid.AddToolbarTool(eImageType.Play, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
             xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
             xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
 

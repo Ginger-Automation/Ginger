@@ -96,7 +96,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mVariablesRepositoryPage == null)
             {
@@ -121,7 +121,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mVariablesFolder.IsRootFolder)
                 { 
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false, allowDeleteAllItems: true);
                 }
                 else
                 { 

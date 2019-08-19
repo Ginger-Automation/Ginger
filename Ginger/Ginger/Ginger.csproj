@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -154,17 +154,17 @@
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.13.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.13.1\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=3.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.2.1\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.2.1\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=3.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.3.2.1\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.3.1.0\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=3.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.3.2.1\lib\netstandard2.0\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
@@ -213,6 +213,9 @@
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
+    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
     </Reference>
@@ -334,8 +337,8 @@
     <Reference Include="System.Text.Encoding.CodePages, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Encoding.CodePages.4.5.1\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Thread, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Thread.4.3.0\lib\net46\System.Threading.Thread.dll</HintPath>
@@ -397,15 +400,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActionsNew\ActionConfigPage.xaml.cs">
-      <DependentUpon>ActionConfigPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ActionsNew\ActionOutputPage.xaml.cs">
-      <DependentUpon>ActionOutputPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ActionsNew\NewAddActionPage.xaml.cs">
-      <DependentUpon>NewAddActionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Actions\ActAgentManipulationEditPage.xaml.cs">
       <DependentUpon>ActAgentManipulationEditPage.xaml</DependentUpon>
     </Compile>
@@ -597,6 +591,59 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml.cs">
+      <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
+      <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsFactory.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
+      <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml.cs">
+      <DependentUpon>APINavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml.cs">
+      <DependentUpon>LiveSpyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml.cs">
+      <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
+      <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentPageMappingHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
+      <DependentUpon>POMNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml.cs">
+      <DependentUpon>RecordNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
+      <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowExplorerCommon.cs" />
+    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
+      <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
+      <DependentUpon>AddActivityConfigsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml.cs">
+      <DependentUpon>AddActivityDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityWizard.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
+      <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListViewHelper.cs" />
+    <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
+      <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
     <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
@@ -633,12 +680,16 @@
     <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
     <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
     <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
+    <Compile Include="GeneralWindows\VersionAndNewsPage.xaml.cs">
+      <DependentUpon>VersionAndNewsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlugInsWindows\PluginTextEditorHelper.cs" />
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
     <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
       <DependentUpon>UserMessageBox.xaml</DependentUpon>
@@ -667,8 +718,31 @@
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ClipboardOperations\ClipboardOperationsHandler.cs" />
+    <Compile Include="UserControlsLib\ClipboardOperations\IClipboardOperations.cs" />
+    <Compile Include="UserControlsLib\ClipboardOperations\PasteItemEventArgs.cs" />
+    <Compile Include="UserControlsLib\UcColorPickerList.xaml.cs">
+      <DependentUpon>UcColorPickerList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCDataGridView\ucDataGrid.xaml.cs">
       <DependentUpon>ucDataGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UcItemExecutionStatus.xaml.cs">
+      <DependentUpon>UcItemExecutionStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCListView\IListViewHelper.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemGroupOperation.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemNotification.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemOperation.cs" />
+    <Compile Include="UserControlsLib\UCListView\ListItemUniqueIdentifier.cs" />
+    <Compile Include="UserControlsLib\UCListView\UcListViewItem.xaml.cs">
+      <DependentUpon>UcListViewItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCListView\UcListView.xaml.cs">
+      <DependentUpon>UcListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
+      <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
@@ -828,8 +902,26 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml.cs">
+    <Compile Include="BusinessFlowPages_New\ActionsListViewPage.xaml.cs">
+      <DependentUpon>ActionsListViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivityPage.xaml.cs">
+      <DependentUpon>ActivityPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\ActivityVariablesPage.xaml.cs">
+      <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\NewAutomatePage.xaml.cs">
+      <DependentUpon>NewAutomatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\BusinessFlowConfigurationsPage.xaml.cs">
+      <DependentUpon>BusinessFlowConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
+      <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
@@ -1851,9 +1943,6 @@
     <Compile Include="Agents\DriverConfigurationParamEditWindow.xaml.cs">
       <DependentUpon>DriverConfigurationParamEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Agents\NewAgentPage.xaml.cs">
-      <DependentUpon>NewAgentPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Run\GingerRunnerConfigurationsPage.xaml.cs">
       <DependentUpon>GingerRunnerConfigurationsPage.xaml</DependentUpon>
     </Compile>
@@ -2028,6 +2117,7 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
@@ -2036,6 +2126,67 @@
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\CustomerLogo.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger.png" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\Ginger_by_amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action-bog.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\action.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-groups.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-group_hover.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity-hover.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\activity.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\amdocs%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\amdocs.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\flow.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\ginger%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\gray-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\gray-arrow-down%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\purple-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\purple-arrow-down%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set-hover%40x2.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\run-set.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner-big.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner-hover%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\runner.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\action.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-group.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-groups.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\activity.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\amdocs.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-gray-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow-gray.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\arrow.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\flow.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\ginger.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\run-set.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner-big.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner-hover.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\runner.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\white-arrow-down.svg" />
+    <Content Include="WebReportApp\Ginger-Web-Client\assets\images\SVG\white-arrow.svg" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\white-arrow%402x.png" />
+    <Resource Include="WebReportApp\Ginger-Web-Client\assets\images\white-arrow-down%402x.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\css\layout-alive.css" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-300.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-700.svg" />
@@ -2056,8 +2207,9 @@
     <Content Include="WebReportApp\Ginger-Web-Client\index.html" />
     <Resource Include="WebReportApp\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif" />
     <Resource Include="WebReportApp\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif" />
-    <Content Include="WebReportApp\Ginger-Web-Client\main.eabf48cebb6d4fb19175.js" />
     <Resource Include="WebReportApp\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.620febfb342588060c0f.js" />
+    <Content Include="WebReportApp\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
     <Content Include="WebReportApp\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
     <Content Include="WebReportApp\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
@@ -2693,18 +2845,6 @@
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Page Include="ActionsNew\ActionConfigPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ActionsNew\ActionOutputPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ActionsNew\NewAddActionPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2933,9 +3073,93 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowsLibNew\BusinessFlowDiagramPage.xaml">
+    <Page Include="BusinessFlowPages_New\ActionsListViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\ActivityVariablesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BusinessFlowPages_New\NewAutomatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\BusinessFlowConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="BusinessFlowPages_New\VariabelsListViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>
@@ -2984,6 +3208,10 @@
     <Page Include="GeneralLib\TestWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GeneralWindows\VersionAndNewsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PluginsLibNew\LocalPluginsPage.xaml">
       <SubType>Designer</SubType>
@@ -3042,6 +3270,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TimeLineLib\TimeLinePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UcColorPickerList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3176,6 +3408,22 @@
     <Page Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinTargetFolder.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UcItemExecutionStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCListView\UcListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCListView\UcListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCWindowsGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\VisualFlow\FlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4282,10 +4530,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Agents\NewAgentPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Run\GingerRunnerConfigurationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4599,7 +4843,6 @@
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
-    <Folder Include="TelemertryLib\" />
     <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
     <Folder Include="WindowExplorer\InternalBrowser\" />
@@ -4653,12 +4896,6 @@
     <Content Include="DLLs\Open3270.dll" />
     <Content Include="StaticDrivers\IE64BitDriver\IEDriverServer.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="EntityFramework.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="EntityFramework.SqlServer.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <!--<Content Include="Help\Documents\3. Supported Platforms\2. Mobile\Globe - Amdocs BEAT Ginger Automation_Globe.mp4" />-->
     <Content Include="StaticDrivers\GingerAgent.jar">
@@ -4715,8 +4952,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -4725,22 +4962,22 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
-  <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.17134\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /e /y  "$(ProjectDir)WebReportApp" "Reports\"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.75.0.3770.90\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

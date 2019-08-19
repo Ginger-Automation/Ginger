@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="5fded7fb-92ff-4aae-8054-33cda8535950" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="201907040501" GingerVersion="3.3.0.0" Version="25" LastUpdateBy="JGHODKE" LastUpdate="201907151325" />
+<BusinessFlow Guid="5fded7fb-92ff-4aae-8054-33cda8535950" Name="BF_MissingVariableTest" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Initialize Variables" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="6b7c0f83-bfee-4b3c-acfc-30d6739d54a6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Web-App">
+<Acts>
+<ActSetVariableValue Active="True" Description="Set Variable Action" Guid="70f637a2-de28-4e8a-8515-ef62c0b705ca" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="username" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="ac3b5796-7a17-4c79-bf5e-3c0cdcd6af39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="Jinendra" Value="Jinendra" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="Web-App" Guid="f26255b4-0edd-4e54-9d62-45ae882648a0" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Guid="b118f2e7-aac6-42b9-8399-e8ddb5fdb008" MappedOutputType="None" Name="username" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

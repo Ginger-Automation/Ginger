@@ -40,9 +40,6 @@ namespace GingerCore.Activities
             Activities
         }
 
-
-    
-
         private executionLoggerStatus _executionLoggerStatus = executionLoggerStatus.NotStartedYet;
 
         public executionLoggerStatus ExecutionLoggerStatus
@@ -51,19 +48,6 @@ namespace GingerCore.Activities
             set { _executionLoggerStatus = value; }
         }
 
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string ActivitiesIdentifiers = "ActivitiesIdentifiers";
-            public static string Elapsed = "ElapsedSecs";
-            public static string AutomationPrecentage = "AutomationPrecentage";
-            public static string RefreshfromALMOption = "RefreshfromALMOption";
-            public static string RunStatus = "RunStatus";
-            public static string TestSuiteTitle = "TestSuiteTitle";
-            public static string TestSuiteId = "TestSuiteId";
-        }
-        
         public ActivitiesGroup()
         {
         }
@@ -83,7 +67,7 @@ namespace GingerCore.Activities
                         if (aIdent.IdentifiedActivity != null)
                             aIdent.IdentifiedActivity.ActivitiesGroupID = mName;
 
-                    OnPropertyChanged(Fields.Name);
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -98,7 +82,7 @@ namespace GingerCore.Activities
                 if (mDescription != value)
                 {
                     mDescription = value;
-                    OnPropertyChanged(Fields.Description);
+                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
@@ -133,14 +117,24 @@ namespace GingerCore.Activities
 
         public override string GetNameForFileName() { return Name; }
 
-        public void AddActivityToGroup(Activity activity)
+        public void AddActivityToGroup(Activity activity, int insertIndx=-1)
         {
             if (activity == null)
+            {
                 return;
+            }
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
             activity.ActivitiesGroupID = this.Name;
-            this.ActivitiesIdentifiers.Add(actIdents);
+
+            if (insertIndx >= 0)
+            {
+                this.ActivitiesIdentifiers.Insert(insertIndx, actIdents);
+            }
+            else
+            {
+                this.ActivitiesIdentifiers.Add(actIdents);
+            }
         }
 
         public bool CheckActivityInGroup(Activity activity)
@@ -172,24 +166,25 @@ namespace GingerCore.Activities
         public string ExternalID2 { get; set; } // used to store the actual TC ID when importing it from QC in case the TC type is linked TC
 
 
-        public string AutomationPrecentage 
-        { 
+        public string AutomationPrecentage
+        {
             get
             {
                 foreach (ActivityIdentifiers actIdent in ActivitiesIdentifiers)
                 {
-                   ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
-                } List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x=>x.ActivityAutomationStatus ==
-                                                                              eActivityAutomationStatus.Automated).ToList();
+                    ((ActivityIdentifiers)actIdent).RefreshActivityIdentifiers();
+                }
+                List<ActivityIdentifiers> automatedActsInGroup = ActivitiesIdentifiers.Where(x => x.ActivityAutomationStatus ==
+                                                                            eActivityAutomationStatus.Automated).ToList();
                 double automatedActsPrecanteg;
                 if (automatedActsInGroup == null || automatedActsInGroup.Count == 0)
                 {
-                    automatedActsPrecanteg=0;
+                    automatedActsPrecanteg = 0;
                 }
                 else
                 {
                     automatedActsPrecanteg = ((double)automatedActsInGroup.Count / (double)ActivitiesIdentifiers.Count);
-                    automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg *100);                    
+                    automatedActsPrecanteg = Math.Floor(automatedActsPrecanteg * 100);
                 }
 
                 return automatedActsPrecanteg.ToString() + "%";
@@ -238,7 +233,6 @@ namespace GingerCore.Activities
                         ((BusinessFlow)hostItem).SetUniqueActivitiesGroupName(newInstance);
                         ((BusinessFlow)hostItem).ActivitiesGroups.Insert(originalIndex, newInstance);
                         ((BusinessFlow)hostItem).AttachActivitiesGroupsAndActivities();
-                        ((BusinessFlow)hostItem).UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
                     }
                     break;
                 case eItemParts.Activities:
@@ -292,7 +286,7 @@ namespace GingerCore.Activities
                 if (mElapsed != value)
                 {
                     mElapsed = value;
-                    OnPropertyChanged(Fields.Elapsed);
+                    OnPropertyChanged(nameof(Elapsed));
                 }
             }
         }
@@ -344,7 +338,7 @@ namespace GingerCore.Activities
                 if (mRunStatus != value)
                 {
                     mRunStatus = value;
-                    OnPropertyChanged(Fields.RunStatus);
+                    OnPropertyChanged(nameof(RunStatus));
                 }
             }
         }
@@ -364,5 +358,40 @@ namespace GingerCore.Activities
                 return nameof(this.Name);
             }
         }
+
+        //private string mGroupColor;
+        //[IsSerializedForLocalRepository]
+        //public string GroupColor
+        //{
+        //    get { return mGroupColor; }
+        //    set
+        //    {
+        //        if (mGroupColor != value)
+        //        {
+        //            mGroupColor = value;
+
+        //            foreach (ActivityIdentifiers aIdent in ActivitiesIdentifiers)
+        //                if (aIdent.IdentifiedActivity != null)
+        //                    aIdent.IdentifiedActivity.ActivitiesGroupColor = mGroupColor;
+
+        //            OnPropertyChanged(nameof(GroupColor));
+        //        }
+        //    }
+        //}
+
+        public void ChangeName(string newName)
+        {
+            Name = newName;
+            foreach(ActivityIdentifiers activityIdent in ActivitiesIdentifiers)
+            {
+                activityIdent.IdentifiedActivity.ActivitiesGroupID = newName;
+            }
+        }
+
+        public ActivityIdentifiers GetActivityIdentifiers(Activity activity)
+        {
+            return ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
+        }
+
     }
 }

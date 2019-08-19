@@ -116,8 +116,7 @@ namespace GingerCore
         ProjEnvironment Env;
         bool bUpdate;
         string updateValue;
-        bool bDone;
-        string DSName;
+        bool bDone;        
 
 
         public bool DecryptFlag { get; set; } = false;
@@ -714,7 +713,26 @@ namespace GingerCore
                         {
                             Markasdone = true;
                         }
-                        mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
+                        if (litedbquery.Contains("update"))
+                        {
+                            if (litedbquery.Contains("where"))
+                            {
+                                string[] querysplit = litedbquery.Split(new[] { "where" }, StringSplitOptions.None);
+                                char[] split = { ' ' };
+                                string[] token1 = querysplit[0].Split(new[] { "=" }, StringSplitOptions.None);
+
+                                litedbquery = token1[0] + "=\"" + updateValue + "\" where " + querysplit[1];
+                            }
+                            else
+                            {
+                                litedbquery = litedbquery.Replace("\"\"", "\"" + updateValue + "\"");
+                            }
+                            liteDB.GetResult(litedbquery);
+                        }
+                        else
+                        {
+                            mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
+                        }
                     }
                 }
                 catch (Exception e)

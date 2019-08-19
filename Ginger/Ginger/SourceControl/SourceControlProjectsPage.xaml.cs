@@ -405,7 +405,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error Occured :", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred :", ex);
             }
             finally
             {

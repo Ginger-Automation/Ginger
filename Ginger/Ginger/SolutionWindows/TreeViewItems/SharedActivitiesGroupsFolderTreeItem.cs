@@ -81,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to Activities Group folder");
+                Reporter.ToLog(eLogLevel.ERROR, "Error unknown item added to " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " folder");
                 throw new NotImplementedException();
             }
         }
@@ -96,11 +96,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActivitiesGroupsRepositoryPage == null)
             {
-                mActivitiesGroupsRepositoryPage = new ActivitiesGroupsRepositoryPage(mActivitiesGroupFolder);
+                mActivitiesGroupsRepositoryPage = new ActivitiesGroupsRepositoryPage(mActivitiesGroupFolder, null);
             }
             return mActivitiesGroupsRepositoryPage;
         }
@@ -121,7 +121,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (mActivitiesGroupFolder.IsRootFolder)
                 { 
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
                 }
                 else
                 { 

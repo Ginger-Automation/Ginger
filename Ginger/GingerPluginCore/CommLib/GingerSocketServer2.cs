@@ -92,6 +92,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             catch(ObjectDisposedException ex)
             {
                 // ignore 
+                Console.WriteLine("DoStartServer ObjectDisposedException exception ignored " + ex.Message);
             }
             catch (Exception ex)
             {
@@ -103,7 +104,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         {
             isClosing = true;
             allDone.Reset();
-            mServerSocketlistener.Close();
+            if (mServerSocketlistener != null)
+            {
+                mServerSocketlistener.Close();
+            }
              
             //TODO: send message to all clients of shut down
         }

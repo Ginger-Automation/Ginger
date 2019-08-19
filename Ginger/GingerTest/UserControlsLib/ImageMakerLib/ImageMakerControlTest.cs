@@ -61,55 +61,55 @@ namespace GingerTest
           
         }
 
-        private static Action EmptyDelegate = delegate () { };
-        [Level3]
-        [TestMethod]  [Timeout(60000)]
-        [Ignore]
-        public void ImageMakerControlsVisualTest1_50()
-        {
-            //// Arrange
-            //bool IsEquel2 = false;
-            //Page1 p1 = new Page1();
-            //p1.ShowIcons(1, 50);
-            //p1.StopSpinners();
+        //private static Action EmptyDelegate = delegate () { };
+        //[Level3]
+        //[TestMethod]  [Timeout(60000)]
+        //[Ignore]
+        //public void ImageMakerControlsVisualTest1_50()
+        //{
+        //    //// Arrange
+        //    //bool IsEquel2 = false;
+        //    //Page1 p1 = new Page1();
+        //    //p1.ShowIcons(1, 50);
+        //    //p1.StopSpinners();
 
-            //// Act            
-            //TestWindow TW = new TestWindow(p1);
-            //TW.Show();
+        //    //// Act            
+        //    //TestWindow TW = new TestWindow(p1);
+        //    //TW.Show();
             
-            //TW.Activate();            
-            ////mGingerWPFAutomator.SleepWithDoEvents(200);
+        //    //TW.Activate();            
+        //    ////mGingerWPFAutomator.SleepWithDoEvents(200);
             
-            //IsEquel2 = VisualCompare.IsVisualEquel(p1, "ImageMakerControlsVisualTest1_50");
+        //    //IsEquel2 = VisualCompare.IsVisualEquel(p1, "ImageMakerControlsVisualTest1_50");
 
-            //TW.Close();
+        //    //TW.Close();
 
-            ////Assert
-            //Assert.IsTrue(IsEquel2);
-        }
+        //    ////Assert
+        //    //Assert.IsTrue(IsEquel2);
+        //}
 
 
-        [Level3]
-        [TestMethod]  [Timeout(60000)]
-        [Ignore]
-        public void ImageMakerControlsVisualTest51_100()
-        {
-            //// Arrange
-            //bool IsEquel2 = false;            
-            //Page1 p1 = new Page1();
-            //p1.ShowIcons(51, 100);
-            //p1.StopSpinners();
+        //[Level3]
+        //[TestMethod]  [Timeout(60000)]
+        //[Ignore]
+        //public void ImageMakerControlsVisualTest51_100()
+        //{
+        //    //// Arrange
+        //    //bool IsEquel2 = false;            
+        //    //Page1 p1 = new Page1();
+        //    //p1.ShowIcons(51, 100);
+        //    //p1.StopSpinners();
 
-            //// Act
-            //TestWindow TW = new TestWindow(p1);
-            //TW.Show();
-            ////mGingerWPFAutomator.SleepWithDoEvents(200);                
-            //IsEquel2 = VisualCompare.IsVisualEquel(p1, "ImageMakerControlsVisualTest51_100");            
-            //TW.Close();
+        //    //// Act
+        //    //TestWindow TW = new TestWindow(p1);
+        //    //TW.Show();
+        //    ////mGingerWPFAutomator.SleepWithDoEvents(200);                
+        //    //IsEquel2 = VisualCompare.IsVisualEquel(p1, "ImageMakerControlsVisualTest51_100");            
+        //    //TW.Close();
 
-            ////Assert
-            //Assert.IsTrue(IsEquel2);
-        }
+        //    ////Assert
+        //    //Assert.IsTrue(IsEquel2);
+        //}
 
 
        

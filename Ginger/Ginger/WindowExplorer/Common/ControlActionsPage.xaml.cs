@@ -17,10 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions;
+using Ginger.BusinessFlowPages;
 using Ginger.Reports;
 using Ginger.UserControls;
 using GingerCore;
@@ -166,13 +165,9 @@ namespace Ginger.WindowExplorer
                 return;
             }
 
-            Act act = (Act)((Act)(mActions.CurrentItem)).CreateCopy();
-            SetActionDetails(act);
-            act.Context = mContext;
-            mContext.BusinessFlow.AddAct(act, true);
-           
-            ActionEditPage AEP = new ActionEditPage(act);
-            AEP.ShowAsWindow();
+            Act selectedAct = mActions.CurrentItem as Act;
+            SetActionDetails(selectedAct);
+            ActionsFactory.AddActionsHandler(selectedAct, mContext);
         }
 
         private Act SetActionDetails(Act act)
@@ -185,7 +180,11 @@ namespace Ginger.WindowExplorer
             {
                 foreach (ActInputValue iv in mActInputValues)
                 {
-                    act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                    if(iv.Value != null)
+                    {
+                        act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                    }
+                    
                 }
             }
 
@@ -196,7 +195,8 @@ namespace Ginger.WindowExplorer
                 //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;                                        
+                actUI.ElementLocateValue = EL.LocateValue;
+                actUI.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, act.Value);
                 act = actUI;
             }
             else

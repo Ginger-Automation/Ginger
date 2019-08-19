@@ -16,27 +16,29 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
-{
+{    
     [TestClass]
     [Level1]
     public class SolutionTest 
-    {
+    {        
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
+            WorkspaceHelper.CreateWorkspace2();                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
 
@@ -94,5 +96,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
+
+        
+
     }
 }

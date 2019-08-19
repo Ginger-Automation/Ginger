@@ -27,6 +27,8 @@ using GingerCore.Repository;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.ASCF
 {
     public class ActASCFBrowserElement : Act
@@ -98,6 +100,6 @@ namespace GingerCore.Actions.ASCF
                 }
             }
 
-            public override System.Drawing.Image Image { get { return Resources.ASCF16x16; } }
+            public override eImageType Image { get { return eImageType.Globe; } }
         }
 }

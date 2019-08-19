@@ -125,7 +125,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mDataSourcesPage == null)
             {
@@ -145,7 +145,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Data Source", allowCopyItems: false, allowSaveAll: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Data Source", allowCopyItems: false, allowSaveAll: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Data Source", allowCopyItems: false, allowSaveAll: false, allowCutItems: false, allowPaste: false);
 

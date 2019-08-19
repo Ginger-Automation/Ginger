@@ -17,13 +17,16 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -34,7 +37,7 @@ namespace Ginger.BusinessFlowWindows
     {
         SingleItemTreeViewExplorerPage mBusFlowsPage;
         AutomatePage mAutomatePage;
-        
+        NewAutomatePage mNewAutomatePage;
 
         public BusinessFlowsAutomatePage()
         {
@@ -49,12 +52,33 @@ namespace Ginger.BusinessFlowWindows
         private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
-            {                
-                if (mAutomatePage == null)
+            {
+                try
                 {
-                    mAutomatePage = new AutomatePage((BusinessFlow)args.Object);                       
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Automate Page...");
+                    if (WorkSpace.Instance.BetaFeatures.ShowOldAutomate)
+                    {
+                        if (mAutomatePage == null)
+                        {
+                            mAutomatePage = new AutomatePage((BusinessFlow)args.Object);
+                        }
+                        xContentFrame.Content = mAutomatePage;
+                    }
+                    else
+                    {
+                        if (mNewAutomatePage == null)
+                        {
+                            mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                        }
+                        xContentFrame.Content = mNewAutomatePage;
+                    }
                 }
-                xContentFrame.Content = mAutomatePage;                                
+                finally
+                {
+                    Mouse.OverrideCursor = null;
+                    Reporter.HideStatusMessage();
+                }
             }
             else if (args.EventType == AutomateEventArgs.eEventType.ShowBusinessFlowsList)
             {

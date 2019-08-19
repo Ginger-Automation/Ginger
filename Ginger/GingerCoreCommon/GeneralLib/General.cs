@@ -17,34 +17,32 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using Amdocs.Ginger.Repository;
-using System.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
     {
 
-
+        static string mAppDataFolder = null;
         public static string LocalUserApplicationDataFolderPath
         {
             get
             {
-                //TODO: check where it goes - not roaming,.,
-                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                appDataFolder = Path.Combine(appDataFolder, @"Amdocs\Ginger");    // Linux !!!!!!!!!!!!!!!!!!!!!!!!
+                if (mAppDataFolder == null)
+                {                    
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
 
-                if (!Directory.Exists(appDataFolder))
-                {
-                    Directory.CreateDirectory(appDataFolder);
+                    if (!Directory.Exists(appDataFolder))
+                    {
+                        Directory.CreateDirectory(appDataFolder);
+                    }
+                    mAppDataFolder = appDataFolder;
                 }
-
-                return appDataFolder;
+                return mAppDataFolder;
             }
         }
 
@@ -52,7 +50,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             get
             {
-                string workingFolder = Path.Combine(LocalUserApplicationDataFolderPath, @"\WorkingFolder");
+                string workingFolder = Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder");
 
                 if (!Directory.Exists(workingFolder))
                 {
@@ -62,6 +60,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return workingFolder;
             }
         }
+
+        public static string GingerLogFile
+        {
+            get
+            {
+                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
+            }
+        }
+
 
 
 
@@ -157,6 +164,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return Convert.ToBase64String(byteImage); //Get Base64
             }
         }
+
+
 
         public static string TimeConvert(string s)
         {

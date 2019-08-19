@@ -49,7 +49,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eLogLevel.ERROR, "Refresh uiElement failed - " + uiElement.GetType().Name, ex); 
             }
 
         }
@@ -130,7 +130,7 @@ namespace Ginger
         /// <param name="Field">Object field to bind</param>
         /// <param name="list">List of Observable items to display in the combo box</param>
         /// <param name="DisplayMemberPath">list item field to display</param>
-        /// <param name="SelectedValuePath">list item value to to return when selected</param>
+        /// <param name="SelectedValuePath">list item value to return when selected</param>
         public static void BindControl<T>(this ComboBox ComboBox, Object obj, string Field, ObservableList<T> list, string DisplayMemberPath, string SelectedValuePath, BindingMode bindingMode = BindingMode.TwoWay)
         {
             ComboBox.ItemsSource = list;
@@ -210,7 +210,7 @@ namespace Ginger
 
         public static void BindControl(this TextBox TextBox, ActInputValue AIV)
         {
-            TextBox.BindControl(AIV, ActInputValue.Fields.Value);
+            TextBox.BindControl(AIV, nameof(ActInputValue.Value));
         }
 
 
@@ -302,7 +302,7 @@ namespace Ginger
         // ------------------------------------------------------------
         // Frame
         // ------------------------------------------------------------
-        public static void SetContent(this Frame Frame, Page Page)
+        public static void SetContent(this Frame Frame, UIElement uiElemnt)
         {
             // Clear history first
             if (!Frame.CanGoBack && !Frame.CanGoForward)
@@ -316,11 +316,11 @@ namespace Ginger
                 while (entry != null)
                 {
                     entry = Frame.RemoveBackEntry();
-                }
+                }                
             }
 
             // Set the frame content
-            Frame.Content = Page;
+            Frame.Content = uiElemnt;
         }
 
         // ------------------------------------------------------------
@@ -436,5 +436,31 @@ namespace Ginger
             return null;
         }
 
+        public static void ClearControlsBindings(this DependencyObject dependencyObject)
+        {
+            foreach (DependencyObject element in dependencyObject.EnumerateVisualDescendents())
+            {
+                BindingOperations.ClearAllBindings(element);
+            }
+        }
+        public static IEnumerable<DependencyObject> EnumerateVisualDescendents(this DependencyObject dependencyObject)
+        {
+            yield return dependencyObject;
+
+            foreach (DependencyObject child in dependencyObject.EnumerateVisualChildren())
+            {
+                foreach (DependencyObject descendent in child.EnumerateVisualDescendents())
+                {
+                    yield return descendent;
+                }
+            }
+        }
+        public static IEnumerable<DependencyObject> EnumerateVisualChildren(this DependencyObject dependencyObject)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
+            {
+                yield return VisualTreeHelper.GetChild(dependencyObject, i);
+            }
+        }
     }
 }

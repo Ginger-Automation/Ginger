@@ -166,8 +166,7 @@ namespace GingerCore.ALM.RQM
                         if (toAddStepActivity)
                         {
                             // not in group- need to add it
-                            busFlow.AddActivity(stepActivity);
-                            tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);                            
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -330,7 +329,7 @@ namespace GingerCore.ALM.RQM
                             if (repoActivsGroup != null)
                             {
                                 tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
-                                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+                                busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
                                 busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
                                 busFlow.AttachActivitiesGroupsAndActivities();
                                 continue;
@@ -340,7 +339,7 @@ namespace GingerCore.ALM.RQM
                                 tcActivsGroup = new ActivitiesGroup();
                                 tcActivsGroup.Name = tc.Name;
                                 tcActivsGroup.ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID + "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID;
-                                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+                                busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
                             }
 
                             // get BTS IDs if exists (ID per step)
@@ -404,8 +403,7 @@ namespace GingerCore.ALM.RQM
                                 if (toAddStepActivity)
                                 {
                                     // not in group- need to add it
-                                    busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
-                                    tcActivsGroup.AddActivityToGroup(stepActivity);
+                                    busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                                    
                                 }
 
                                 //pull TC-Step parameters and add them to the Activity level
@@ -616,8 +614,7 @@ namespace GingerCore.ALM.RQM
                         if (toAddStepActivity)
                         {
                             // not in group- need to add it
-                            busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
-                            tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                            
                         }
 
                         //pull TC-Step parameters and add them to the Activity level

@@ -55,7 +55,7 @@ namespace Ginger.Activities
             mBusinessFlow.SaveBackup();            
 
             mBusinessFlow.AttachActivitiesGroupsAndActivities();
-            mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
+            //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
 
             SetGridsView();
             SetGroupsGridData();
@@ -67,11 +67,12 @@ namespace Ginger.Activities
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
 
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Name, Header="Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.Description, Header = "Description", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Name), Header="Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.Description), Header = "Description", WidthWeight = 40 });
+            //defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.GroupColor), Header = "Group Color", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["xGroupColorDataTemp"] });
             if (mBusinessFlow.ActivitiesGroups.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
-                defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.TestSuiteTitle, Header = "Test Suite Name", WidthWeight = 40 });
-            defView.GridColsView.Add(new GridColView() { Field = ActivitiesGroup.Fields.AutomationPrecentage, Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly=true });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.TestSuiteTitle), Header = "Test Suite Name", WidthWeight = 40 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ActivitiesGroup.AutomationPrecentage), Header = "Automation %", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly=true });
             grdGroups.SetAllColumnsDefaultView(defView);
             grdGroups.InitViewItems();
 
@@ -89,9 +90,9 @@ namespace Ginger.Activities
             GridViewDef defView2 = new GridViewDef(GridViewDef.DefaultViewName);
             defView2.GridColsView = new ObservableList<GridColView>();
 
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityName, Header = "Name", WidthWeight = 40, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityDescription, Header = "Description", WidthWeight = 40, ReadOnly = true });
-            defView2.GridColsView.Add(new GridColView() { Field = ActivityIdentifiers.Fields.ActivityAutomationStatus, Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityName), Header = "Name", WidthWeight = 40, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 40, ReadOnly = true });
+            defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
             grdActivities.SetAllColumnsDefaultView(defView2);
             grdActivities.InitViewItems();
 
@@ -168,7 +169,8 @@ namespace Ginger.Activities
 
         private void UpdateActivitiesAfterGroupRemoved(object sender, RoutedEventArgs e)
         {
-            mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
+            //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
+            mBusinessFlow.AttachActivitiesGroupsAndActivities();
         }
 
         private void AddActivityToGroup(object sender, RoutedEventArgs e)
@@ -180,15 +182,16 @@ namespace Ginger.Activities
             {
                 ActivitiesGroupsActivitiesSelectionPage actsSlecPage = new ActivitiesGroupsActivitiesSelectionPage(mBusinessFlow, selectedGroup);
                 actsSlecPage.ShowAsWindow();
-                selectedGroup.OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+                selectedGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
             }            
         }
 
         private void UpdateRemovedActivities(object sender, RoutedEventArgs e)
         {
-            mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
+            //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
+            mBusinessFlow.AttachActivitiesGroupsAndActivities();
             if ((ActivitiesGroup)grdGroups.Grid.SelectedItem != null)
-                ((ActivitiesGroup)grdGroups.Grid.SelectedItem).OnPropertyChanged(ActivitiesGroup.Fields.AutomationPrecentage);
+                ((ActivitiesGroup)grdGroups.Grid.SelectedItem).OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -229,8 +232,13 @@ namespace Ginger.Activities
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 

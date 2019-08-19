@@ -27,17 +27,18 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
     [TestClass]
     public class ValueExpressionRefrenceTest
-    {
+    {        
+
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            WorkspaceHelper.InitConsoleWorkspace("ValueExpressionRefrenceTest");
+            WorkspaceHelper.InitConsoleWorkspace();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -67,6 +68,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             }
         }
 
+      
 
     }
 }

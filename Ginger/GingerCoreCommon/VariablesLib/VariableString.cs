@@ -42,7 +42,13 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string InitialStringValue 
         { 
-            set { mInitialStringValue = value; Value = value; OnPropertyChanged("Formula"); } 
+            set
+            {
+                mInitialStringValue = value;
+                Value = value;
+                OnPropertyChanged("InitialStringValue");
+                OnPropertyChanged("Formula");
+            } 
             get { 
                 //TODO: cleanup later, quick and dirty Temp solution for converting scripts prior to v1.5 which had the value and no StringInitialValue
                 if (mInitialStringValue == null)
@@ -68,8 +74,11 @@ namespace GingerCore.Variables
             //NA
         }
 
-        public override eImageType Image { get { return eImageType.Variable; } }
-        public override string VariableType() { return "String"; }
+        public override eImageType Image { get { return eImageType.Label; } }
+        public override string VariableType
+        {
+            get { return "String"; }
+        }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
@@ -81,5 +90,9 @@ namespace GingerCore.Variables
         }
 
         public override bool SupportSetValue { get { return true; } }
+
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

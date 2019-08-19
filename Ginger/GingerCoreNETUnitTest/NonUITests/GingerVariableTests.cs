@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -32,16 +33,24 @@ using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
 {
+
     [TestClass]
     [Level1]
     public class GingerVariableTests
     {
+
+        // static WorkspaceLocker mWorkspaceLocker = new WorkspaceLocker("GingerVariableTests");
+
         static BusinessFlow mBF;
         static GingerRunner mGR;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
+            string solutionfolder = TestResources.GetTempFolder("GingerVariableTests");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution(solutionfolder);            
+
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
@@ -66,6 +75,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+        }
+
+        [ClassCleanup()]
+        public static void ClassCleanup()
+        {
+            
         }
 
 
@@ -97,6 +112,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.RunRunner();
 
             //Assert
+            
+            Assert.AreEqual(eRunStatus.Passed, actSetVariableValue.Status);
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual(newValue, v1.Value );
@@ -275,6 +292,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
             Assert.AreEqual("Jupiter", v1.Value);
         }
+
+
+        
 
 
     }

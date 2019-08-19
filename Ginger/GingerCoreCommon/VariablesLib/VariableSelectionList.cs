@@ -33,9 +33,12 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableSelectionListPage"; } }
 
-        public override eImageType Image { get { return eImageType.VariableList; } }
+        public override eImageType Image { get { return eImageType.MinusSquare; } }
 
-        public override string VariableType() { return "Selection List"; }
+        public override string VariableType
+        {
+            get { return "Selection List"; }
+        }
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
@@ -48,7 +51,7 @@ namespace GingerCore.Variables
 
         [IsSerializedForLocalRepository]
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
-       
+
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
 
         private string mValue;
@@ -124,5 +127,8 @@ namespace GingerCore.Variables
             return supportedOperations;
         }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

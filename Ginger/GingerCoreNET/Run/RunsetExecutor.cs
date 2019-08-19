@@ -37,7 +37,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.IO;
 
 namespace Ginger.Run
 {
@@ -165,7 +165,7 @@ namespace Ginger.Run
             }
 
             //Load the biz flows     
-            runner.BusinessFlows.Clear();
+            ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
@@ -225,9 +225,11 @@ namespace Ginger.Run
                     }
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;
-                    runner.BusinessFlows.Add(BFCopy);
+                    runnerFlows.Add(BFCopy);
                 }
             }
+
+            runner.BusinessFlows = runnerFlows;
         }
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
@@ -276,7 +278,7 @@ namespace Ginger.Run
             if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
-                Runners[0].ExecutionLoggerManager.RunSetStart(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
+                Runners[0].ExecutionLoggerManager.RunSetStart(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
                 int gingerIndex = 0;
                 while (Runners.Count > gingerIndex)
@@ -334,7 +336,7 @@ namespace Ginger.Run
                 mStopRun = false;
 
                 //configure Runners for run
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configuring {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 ConfigureAllRunnersForExecution();
 
                 //Process all pre execution Run Set Operations
@@ -462,7 +464,7 @@ namespace Ginger.Run
                     {
                         runSetReportName = ExecutionLoggerManager.defaultRunTabLogName;
                     }
-                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss"));                    
+                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(Path.Combine(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder,runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmss")));                    
                 }
             }
         }
@@ -501,8 +503,8 @@ namespace Ginger.Run
                     switch (RSA.RunAt)
                     {
                         case RunSetActionBase.eRunAt.DuringExecution:
-                            //if(RSA is RunSetActions.RunSetActionPublishToQC)
-                            //    RSA.PrepareDuringExecAction(Runners);
+                            if (RSA is RunSetActions.RunSetActionPublishToQC)
+                                RSA.PrepareDuringExecAction(Runners);
                             break;
 
                         case RunSetActionBase.eRunAt.ExecutionStart:

@@ -42,11 +42,11 @@ namespace Ginger.Actions
     public partial class ActionsPage : Page
     {
         Activity mCurrentActivity;        
-        public General.RepositoryItemPageViewMode EditMode { get; set; }
+        public General.eRIPageViewMode EditMode { get; set; }
         BusinessFlow mBusinessFlow;
         Context mContext;
 
-        public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation, Context context=null)
+        public ActionsPage(Activity activity=null, BusinessFlow businessFlow=null, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, Context context=null)
         {
             InitializeComponent();            
             EditMode = editMode;
@@ -70,7 +70,7 @@ namespace Ginger.Actions
             }
             else
             {
-                EditMode = General.RepositoryItemPageViewMode.Automation;
+                EditMode = General.eRIPageViewMode.Automation;
                 grdActions.AddToolbarTool("@Split_16x16.png", "Split to " + GingerDicser.GetTermResValue(eTermResKey.Activities), new RoutedEventHandler(Split));
                 grdActions.AddToolbarTool(eImageType.Reset, "Reset Run Details", new RoutedEventHandler(ResetAction));
                 grdActions.AddFloatingImageButton("@ContinueFlow_16x16.png", "Continue Run Action", FloatingContinueRunActionButton_Click, 4);
@@ -81,7 +81,7 @@ namespace Ginger.Actions
                                    
             SetGridRowStyle();
             //Todo : need to see how to use local Editmode property
-            if (editMode == General.RepositoryItemPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
             }
@@ -148,11 +148,16 @@ namespace Ginger.Actions
         // Drag Drop handlers
         private void grdActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))            
+            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = GingerWPF.DragDropLib.DragInfo.eDragIcon.Copy;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActions_ItemDropped(object sender, EventArgs e)
@@ -327,7 +332,7 @@ namespace Ginger.Actions
             //# Default View
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();          
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 2.5, MaxWidth = 20 });            
+            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Image, Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });            
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.SharedRepoInstanceImage), Header = "S.R.", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.Active, WidthWeight = 2.5, MaxWidth=50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = Act.Fields.BreakPoint, Header="B. Point", WidthWeight = 2.5, MaxWidth = 55, StyleType = GridColView.eGridColStyleType.CheckBox });            

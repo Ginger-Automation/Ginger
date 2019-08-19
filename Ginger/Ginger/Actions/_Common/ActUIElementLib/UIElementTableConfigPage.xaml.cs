@@ -60,20 +60,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             eBaseWindow = BaseWindow.ActEditPage;
             mAct = Act;
-            mAct.Description = "UI Element Table";
             mPlatform = Platform;
-          
 
             InitializeComponent();
             ShowTableControlActionConfigPage(mPlatform);           
         }
       
-        public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, ActUIElement Act = null)
+        public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, Context context)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
             mAct = new ActUIElement();
+            mAct.Context = context;
             mAct.Description = "UI Element Table";
-            string targetApp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+            string targetApp = context?.BusinessFlow.CurrentActivity.TargetApplication;
             mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
             if (ElementInfo.ElementType.Contains("JEditor"))
@@ -266,6 +265,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));
                 TableActionFieldBinding();
             }
+            if(mAct.ElementAction == ActUIElement.eElementAction.TableAction)
+            {
+                RowLabelPanel.Visibility = Visibility.Collapsed;
+                RowSelectorPanel.Visibility = Visibility.Collapsed;
+                RowSelectorValuePanel.Visibility = Visibility.Collapsed;
+                WhereColumnValue.Visibility = Visibility.Collapsed;
+                ColumnLabelPanel.Visibility = Visibility.Collapsed;
+                cmbColSelectorValuePanel.Visibility = Visibility.Collapsed;
+                cmbColumnValuePanel.Visibility = Visibility.Collapsed;
+                WherePanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void SetDescriptionDetails()
@@ -276,10 +286,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 TextBlockHelper TBH = new TextBlockHelper(txtDescription);
 
                 TBH.AddText("Select the grid cell located by ");
-                TBH.AddUnderLineText(cmbColSelectorValue.ComboBox.SelectedItem.ToString());
+                TBH.AddUnderLineText(cmbColSelectorValue.ComboBox.SelectedItem?.ToString());
                 TBH.AddText(" ");
                 if (cmbColumnValue.ComboBox.SelectedIndex != -1)
-                    TBH.AddBoldText(cmbColumnValue.ComboBox.SelectedItem.ToString());
+                    TBH.AddBoldText(cmbColumnValue.ComboBox.SelectedItem?.ToString());
                 else
                     TBH.AddBoldText(cmbColumnValue.ComboBox.Text);
                 TBH.AddText(" and ");
@@ -287,7 +297,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     TBH.AddUnderLineText(" row number ");
                     if (RowSelectorValue.ComboBox.SelectedIndex != -1)
-                        TBH.AddBoldText(RowSelectorValue.ComboBox.SelectedItem.ToString());
+                        TBH.AddBoldText(RowSelectorValue.ComboBox.SelectedItem?.ToString());
                     else
                         TBH.AddBoldText(RowSelectorValue.ComboBox.Text);
                 }
@@ -299,16 +309,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 else if (Where.IsChecked == true)
                 {
                     TBH.AddText(" the row located by a cell in ");
-                    TBH.AddUnderLineText(WhereColumn.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereColumn.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
                     if (WhereColumnTitle.ComboBox.SelectedIndex != -1)
-                        TBH.AddBoldText(WhereColumnTitle.ComboBox.SelectedItem.ToString());
+                        TBH.AddBoldText(WhereColumnTitle.ComboBox.SelectedItem?.ToString());
                     else
                         TBH.AddBoldText(WhereColumnTitle.ComboBox.Text);
                     TBH.AddText(" having control property ");
-                    TBH.AddUnderLineText(WhereProperty.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereProperty.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
-                    TBH.AddUnderLineText(WhereOperator.ComboBox.SelectedItem.ToString());
+                    TBH.AddUnderLineText(WhereOperator.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
                     TBH.AddBoldText(WhereColumnValue.ValueTextBox.Text);
                 }
@@ -321,7 +331,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void WhereColumnTitle_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
         private void WhereColumn_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -378,7 +387,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
-                UpdateRelatedActions();
                 SetDescriptionDetails();
             }
         }
@@ -394,7 +402,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereDataRow.Height = new GridLength(0);
             }
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
 
@@ -414,7 +421,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereDataRow.Height = new GridLength(0);
             }
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
 
@@ -424,7 +430,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             WherePanel.Visibility = Visibility.Collapsed;
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
             WhereDataRow.Height = new GridLength(0);
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
 
@@ -434,7 +439,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             WherePanel.Visibility = Visibility.Visible;
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
             WhereDataRow.Height = new GridLength(100);       
-                UpdateRelatedActions();
                 SetDescriptionDetails();           
         }
 
@@ -455,27 +459,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
             
             SetDescriptionDetails();
-            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
-            {
-                UpdateRelatedActions();
-            }
         }
 
         private void WhereProperty_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
 
         private void WhereOperator_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateRelatedActions();
             SetDescriptionDetails();
         }
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {           
-            UpdateRelatedActions();
             SetDescriptionDetails();          
 
             Page setControlActionValuePage = GetControlActionValue();
@@ -523,121 +520,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
        
-        private void UpdateRelatedActions()
-        {
-           string previousSelectedControlAction = null;
-           
-            if (mActions != null)
-            {
-                if (mActions.CurrentItem != null)
-                    if (mActions.CurrentItem is ActUIElement)
-                        previousSelectedControlAction = ((ActUIElement)mActions.CurrentItem).GetOrCreateInputParam(ActUIElement.Fields.ControlAction).ToString();
-
-                mActions.Clear();
-            }
-
-            if (cmbColSelectorValue.ComboBox.SelectedIndex != -1)
-
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ((ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString());
-
-            string description = "";
-            string rowVal = "";
-            string colVal = "";
-
-            if (RowNum.IsChecked == true)
-            {
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
-                if (RowSelectorValue != null)
-                {
-                    if (RowSelectorValue.ComboBox.SelectedIndex != -1)
-                        rowVal = RowSelectorValue.ComboBox.SelectedItem.ToString();
-                    else
-                        rowVal = RowSelectorValue.ComboBox.Text;
-                    description = " on Row:" + rowVal;
-                }
-            }
-            else if (AnyRow.IsChecked == true)
-            {
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Any Row");
-                description = " on Random Row";
-            }
-            else if (BySelectedRow.IsChecked == true)
-            {
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "By Selected Row");
-                description = " on Selected Row";
-            }
-            else if (Where.IsChecked == true)
-            {
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Where");
-                description = " on Row with condition";
-            }
-
-            if (cmbColumnValue != null)
-            {
-                if (cmbColumnValue.ComboBox.SelectedIndex != -1)
-                    colVal = cmbColumnValue.ComboBox.SelectedValue.ToString();
-                else
-                    colVal = cmbColumnValue.ComboBox.Text;
-                description = description + " and Column:" + colVal;
-            }
-
-            if (eBaseWindow.Equals(BaseWindow.WindowExplorer) && cmbColSelectorValue.ComboBox.SelectedIndex != -1 && WhereColumn != null && WhereColumn.ComboBox.SelectedIndex != -1 && RowSelectorValue != null
-                && WhereProperty != null && WhereProperty.ComboBox.SelectedIndex != -1 && WhereOperator != null && WhereOperator.ComboBox.SelectedIndex != -1)
-            {               
-                List<string> descriptionString = new List<string>();
-                descriptionString.Add("Get Value of Cell: ");
-                descriptionString.Add("Set Value of Cell: ");
-                descriptionString.Add("Type Value in Cell: ");
-                descriptionString.Add("Click Cell: ");
-                descriptionString.Add("WinClick Cell: ");
-                descriptionString.Add("Get Selected Cell from Column: ");
-                
-                ActUIElement actObj = (ActUIElement)mAct.CreateCopy();                
-                actObj.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.SetValue.ToString());
-                actObj.Description = "Set Value of Cell: " + description;
-                actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actObj.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                mActions.Add(actObj);
-
-
-                ActUIElement actObj1 = (ActUIElement)mAct.CreateCopy();                
-                actObj1.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.GetValue.ToString());
-                actObj1.Description = "Get Value of Cell: " + description;
-                actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actObj1.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                mActions.Add(actObj1);
-
-
-                ActUIElement actObj2 = (ActUIElement)mAct.CreateCopy();                
-                actObj2.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.Click.ToString());
-                actObj2.Description = "Click Cell: " + description;
-                actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-                actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-                actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-                actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-                actObj2.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-                mActions.Add(actObj2);
-
-            }
-            if (previousSelectedControlAction != null)
-            {
-                if (mActions != null)
-                    foreach (ActUIElement act in mActions)
-                        if (act.GetOrCreateInputParam(ActUIElement.Fields.ControlAction).ToString() == previousSelectedControlAction)
-                        {
-                            mActions.CurrentItem = act;
-                            break;
-                        }
-            }
-            if (mActions != null && mActions.CurrentItem == null && mActions.Count > 0)
-                mActions.CurrentItem = mActions[0];
-        }
+        
 
         private void RestoreOriginalActions()
         {

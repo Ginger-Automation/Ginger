@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,15 +28,15 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
-namespace UnitTests.NonUITests.GingerRunnerTests
+namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
 {
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
     {        
-        static GingerRunner mGR;
 
-        Mutex mGingerMutex = new Mutex();
+        static GingerRunner mGR;
+        
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -52,20 +50,19 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
 
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
-            AutoLogProxy.Init("UT Build");            
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });            
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            mGingerMutex.WaitOne();
+            
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            mGingerMutex.ReleaseMutex();
+            
         }
 
 

@@ -16,9 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace GingerCore.Platforms
 {
@@ -138,6 +142,32 @@ namespace GingerCore.Platforms
         {
             get { return Agent; }
             set { Agent = (Agent)value; }
+        }
+
+        public List<IAgent> PossibleAgents
+        {
+            get
+            {
+                List<IAgent> possibleAgents = new List<IAgent>();
+
+                //find out the target application platform
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                if (ap != null)
+                {
+                    ePlatformType appPlatform = ap.Platform;
+
+                    //get the solution Agents which match to this platform                     
+                    List<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == appPlatform || x.ServiceId == AppName).ToList();
+                    if (agents != null)
+                    {
+                        foreach(IAgent agent in agents)
+                        {
+                            possibleAgents.Add(agent);
+                        }                        
+                    }
+                }
+                return possibleAgents;
+            }
         }
     }
 }

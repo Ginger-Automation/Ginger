@@ -42,28 +42,28 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileTransferActionComboBox, ComboBox.TextProperty, mAct, "FileTransferAction");
             
              GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PCPath);
-             PCPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PCPath), ActInputValue.Fields.Value);
+             PCPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PCPath),nameof( ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UnixPath, TextBox.TextProperty, mAct, ActFileTransfer.Fields.UnixPath);
-            UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UnixPath), ActInputValue.Fields.Value);
+            UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UnixPath), nameof (ActInputValue.Value));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserName, TextBox.TextProperty, mAct, ActFileTransfer.Fields.UserName);
-            UserName.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UserName), ActInputValue.Fields.Value);
+            UserName.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UserName), nameof(ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Password, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Password);
-            Password.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Password), ActInputValue.Fields.Value);
+            Password.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Password),nameof( ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PrivateKey, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PrivateKey);
-            PrivateKey.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKey), ActInputValue.Fields.Value);
+            PrivateKey.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKey), nameof (ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeyPassPhrase, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PrivateKeyPassPhrase);
-            KeyPassPhrase.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKeyPassPhrase), ActInputValue.Fields.Value);
+            KeyPassPhrase.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKeyPassPhrase), nameof(ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Port, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Port);
-            Port.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Port), ActInputValue.Fields.Value);
+            Port.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Port), nameof(ActInputValue.Value));
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Host, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Host);
-            Host.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Host), ActInputValue.Fields.Value);
+            Host.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Host), nameof(ActInputValue.Value));
         }
 
         private void BrowsePCPathButton_Click(object sender, RoutedEventArgs e)

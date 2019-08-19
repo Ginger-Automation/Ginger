@@ -67,7 +67,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             ProjEnvironment.SaveBackup();//to mark the env as changed
             ProjEnvironment.StartDirtyTracking();
@@ -94,13 +94,34 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);            
         }
 
-        private void Delete(object sender, RoutedEventArgs e)
+        private void DeleteEnvTreeItems()
         {
             ProjEnvironment.Applications.Remove(EnvApplication);
             ProjEnvironment.SaveBackup();//to mark the env as changed
         }
+            private void Delete(object sender, RoutedEventArgs e)
+        {
+            DeleteEnvTreeItems();
+        }
 
-        private void Duplicate(object sender, RoutedEventArgs e)
+        public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
+        {
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
+            {
+                if (!deleteWithoutAsking)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            DeleteEnvTreeItems();
+            return true;
+        }
+
+            private void Duplicate(object sender, RoutedEventArgs e)
         {
             EnvApplication copy = (EnvApplication)EnvApplication.CreateCopy();
             copy.Name = copy.Name + "_copy";

@@ -41,15 +41,15 @@ namespace GingerCore.Variables
 
         private int mMin;
         [IsSerializedForLocalRepository]
-        public int Min { set { mMin = value; OnPropertyChanged("Formula"); } get { return mMin; } }
+        public int Min { set { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } get { return mMin; } }
 
         private int mMax;
         [IsSerializedForLocalRepository]
-        public int Max { set { mMax = value; OnPropertyChanged("Formula"); } get { return mMax; } }
+        public int Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
 
         private int mInterval;
         [IsSerializedForLocalRepository]
-        public int Interval { set { mInterval = value; OnPropertyChanged("Formula"); } get { return mInterval; } }
+        public int Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval));  OnPropertyChanged("Formula"); } get { return mInterval; } }
 
         [IsSerializedForLocalRepository]
         public bool IsInteger { set; get; }
@@ -81,8 +81,11 @@ namespace GingerCore.Variables
             Value = val.ToString();
         }
     
-        public override eImageType Image { get { return eImageType.Sequence; } }
-        public override string VariableType() { return "Sequence"; }
+        public override eImageType Image { get { return eImageType.SequentialExecution; } }
+        public override string VariableType
+        {
+            get { return "Sequence"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
@@ -92,5 +95,9 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
+
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return true; } }
     }
 }

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
@@ -28,6 +29,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
+using Ginger.GeneralWindows;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
@@ -43,7 +45,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -61,7 +62,28 @@ namespace Ginger
         {
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
+            xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
+
+            Telemetry.eventHandler += TelemetryEventHandler;
             GingerCore.General.DoEvents();
+        }
+
+        private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
+        {
+            this.Dispatcher.Invoke(() => 
+            {
+                xVersionAndNewsIcon.ToolTip = Telemetry.VersionAndNewsInfo + ", click for details";
+                xVersionAndNewsIcon.Visibility = Visibility.Visible;
+            });
+            
+            
+        }
+
+        private void XVersionAndNewsIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
+            VersionAndNewsPage versionAndNewsPage = new VersionAndNewsPage();
+            versionAndNewsPage.ShowAsWindow();
         }
 
         public void Init()
@@ -343,35 +365,12 @@ namespace Ginger
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
-            
-            if (WorkSpace.Instance.SolutionRepository != null)
-            {
-                WorkSpace.Instance.CloseAllRunningAgents();
-                WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
-                WorkSpace.Instance.SolutionRepository.StopAllRepositoryFolderWatchers();
-            }
+
+
+            WorkSpace.Instance.Close();
+
             GingerCore.General.CleanDirectory(GingerCore.Actions.Act.ScreenshotTempFolder, true);
 
-            if (! WorkSpace.Instance.RunningInExecutionMode)
-            {
-                WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Closed;
-                WorkSpace.Instance.UserProfile.SaveUserProfile();
-                WorkSpace.Instance.AppSolutionAutoSave.CleanAutoSaveFolders();
-
-                
-                WorkSpace.Instance.AppSolutionAutoSave.SolutionAutoSaveEnd();
-                try
-                {
-                    //TODO: no need to to log if running from comamnd line
-                    AutoLogProxy.LogAppClosed();
-                }
-                catch
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to write ExecutionLog.LogAppClosed() into the autlog folder.");
-                }
-            }
-
-            WorkSpace.Instance.LocalGingerGrid.Stop();
 
             CW.Close();
         }
@@ -526,13 +525,9 @@ namespace Ginger
         }
 
         private void btnAbout_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("btnAbout_Click");
-
+        {            
             AboutPage AP = new AboutPage();
             AP.ShowAsWindow();
-
-            AutoLogProxy.UserOperationEnd();
         }
 
         private void ViewSolutionFiles_Click(object sender, RoutedEventArgs e)
@@ -556,20 +551,13 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
-
-            AutoLogProxy.UserOperationStart("btnSourceControlCheckIn_Click");
-
-            App.CheckIn( WorkSpace.Instance.Solution.Folder);
-
-            AutoLogProxy.UserOperationEnd();
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;            
+            App.CheckIn( WorkSpace.Instance.Solution.Folder);            
         }
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
-
-            AutoLogProxy.UserOperationStart("btnSourceControlGetLatest_Click");
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.Folder))
@@ -579,28 +567,21 @@ namespace Ginger
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
-
-            AutoLogProxy.UserOperationEnd();
+            
         }
 
         private void AnalyzerButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutoLogProxy.UserOperationStart("MainWindow.AnalyzerButton_Click");
+        {            
             AnalyzerPage AP = new AnalyzerPage();
             AP.Init( WorkSpace.Instance.Solution);
-            AP.ShowAsWindow();
-            AutoLogProxy.UserOperationEnd();
+            AP.ShowAsWindow();            
         }
 
         private void ResolveSourceControlConflicts(eResolveConflictsSide side)
-        {
-            AutoLogProxy.UserOperationStart("ResolveConflictsBtn_Click");
-
+        {            
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
             SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl,  WorkSpace.Instance.Solution.Folder, side);
             Reporter.HideStatusMessage();
-
-            AutoLogProxy.UserOperationEnd();
         }
 
         private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)
@@ -665,8 +646,8 @@ namespace Ginger
         }
 
         private void ShowGingerLog()
-        {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        {            
+            string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
             if (System.IO.File.Exists(mLogFilePath))
             {
                 Process.Start(mLogFilePath);
@@ -686,8 +667,8 @@ namespace Ginger
         }
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
-        {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        {            
+            string mLogFilePath = Path.Combine(Amdocs.Ginger.Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs" , "Ginger_Log.txt");
             string folder = System.IO.Path.GetDirectoryName(mLogFilePath);
             if (System.IO.Directory.Exists(folder))
             {
@@ -1033,5 +1014,7 @@ namespace Ginger
                     xSplashGrid.Visibility = Visibility.Collapsed;
                 });
         }
+
+        
     }
 }

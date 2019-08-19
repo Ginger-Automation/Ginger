@@ -48,7 +48,7 @@ namespace Ginger.Variables
         private eVariablesLevel mVariablesLevel;
         private object mVariablesParentObj;
        
-        readonly General.RepositoryItemPageViewMode mEditMode;
+        readonly General.eRIPageViewMode mEditMode;
         Context mContext = new Context();
 
         public eVariablesLevel VariablesLevel
@@ -62,7 +62,7 @@ namespace Ginger.Variables
         /// </summary>
         /// <param name="variablesLevel">Type of Variables parent object</param>
         /// <param name="variablesParentObj">Actual Variables parent object, if not provided then the Current Business Flow / Activity will be used</param>       
-        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, Context context, General.RepositoryItemPageViewMode editMode = General.RepositoryItemPageViewMode.Automation)
+        public VariablesPage(eVariablesLevel variablesLevel, object variablesParentObj, Context context, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation)
         {
             InitializeComponent();
 
@@ -73,7 +73,7 @@ namespace Ginger.Variables
             SetVariablesParentObj(variablesParentObj);                      
             SetVariablesGridView();            
 
-            if (mEditMode == General.RepositoryItemPageViewMode.View)
+            if (mEditMode == General.eRIPageViewMode.View)
             {
                 grdVariables.ShowToolsBar = Visibility.Collapsed;
                 grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
@@ -86,8 +86,13 @@ namespace Ginger.Variables
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
@@ -181,7 +186,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.BusinessFlow:
-                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
+                        if (mEditMode != General.eRIPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((BusinessFlow)mVariablesParentObj).Name + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -190,7 +195,7 @@ namespace Ginger.Variables
                         break;
 
                     case eVariablesLevel.Activity:
-                        if (mEditMode != General.RepositoryItemPageViewMode.Automation)
+                        if (mEditMode != General.eRIPageViewMode.Automation)
                             grdVariables.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
                         else
                             grdVariables.Title = "'" + ((Activity)mVariablesParentObj).ActivityName + "' - " + GingerDicser.GetTermResValue(eTermResKey.Variables);
@@ -391,7 +396,7 @@ namespace Ginger.Variables
         
         private void AddVar(object sender, RoutedEventArgs e)
         {
-            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, mVariablesParentObj,mContext);
+            AddVariablePage addVarPage = new AddVariablePage(mVariablesLevel, (RepositoryItemBase)mVariablesParentObj,mContext);
             addVarPage.ShowAsWindow();
 
             RefreshGrid(sender, e);
@@ -413,7 +418,7 @@ namespace Ginger.Variables
 
         private void RefreshVariablesNames()
         {
-            if (mEditMode != General.RepositoryItemPageViewMode.Automation
+            if (mEditMode != General.eRIPageViewMode.Automation
                 && mVariablesLevel == eVariablesLevel.Activity && mVariablesParentObj != null)
             {
                 ((Activity)mVariablesParentObj).RefreshVariablesNames();
@@ -443,45 +448,57 @@ namespace Ginger.Variables
         {
             if (variable == null) return;
 
-            switch (mVariablesLevel)
+            Reporter.ToStatus(eStatusMsgKey.RenameItem, null, variable.NameBeforeEdit,variable.Name);
+            try
             {
-                case eVariablesLevel.Solution:
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    foreach(BusinessFlow bfl in allBF)
-                    {
-                        bfl.SetUniqueVariableName(variable);
-                        foreach (Activity activity in bfl.Activities)
+                switch (mVariablesLevel)
+                {
+                    case eVariablesLevel.Solution:
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        foreach (BusinessFlow bfl in allBF)
+                        {
+                            bfl.SetUniqueVariableName(variable);
+                            foreach (Activity activity in bfl.Activities)
+                                foreach (Act action in activity.Acts)
+                                {
+                                    bool changedwasDone = false;
+                                    VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
+                                }
+                        }
+                        break;
+
+                    case eVariablesLevel.BusinessFlow:
+                        BusinessFlow bf = (BusinessFlow)mVariablesParentObj;
+                        bf.SetUniqueVariableName(variable);
+                        foreach (Activity activity in bf.Activities)
                             foreach (Act action in activity.Acts)
                             {
                                 bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name,ref changedwasDone);                                
+                                VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
                             }
-                    }
-                    break;
+                        break;
 
-                case eVariablesLevel.BusinessFlow:
-                    BusinessFlow bf = (BusinessFlow)mVariablesParentObj;
-                    bf.SetUniqueVariableName(variable);
-                    foreach (Activity activity in bf.Activities)
-                        foreach (Act action in activity.Acts)
+                    case eVariablesLevel.Activity:
+                        Activity activ = (Activity)mVariablesParentObj;
+                        activ.SetUniqueVariableName(variable);
+                        foreach (Act action in activ.Acts)
                         {
                             bool changedwasDone = false;
-                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);                            
+                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
                         }
-                    break;
+                        break;
+                }
 
-                case eVariablesLevel.Activity:
-                    Activity activ = (Activity)mVariablesParentObj;
-                    activ.SetUniqueVariableName(variable);
-                    foreach (Act action in activ.Acts)
-                    {
-                        bool changedwasDone = false;
-                        VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                    }
-                    break;
+                variable.NameBeforeEdit = variable.Name;
             }
-
-            variable.NameBeforeEdit = variable.Name;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while renaming variable name", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }

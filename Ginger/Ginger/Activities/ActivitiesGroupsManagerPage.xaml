@@ -7,14 +7,20 @@
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       Height="500" Width="600"
-      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Activity Group"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrolslib="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Activity Group"
 	Title="ActivitiesGroupsManagerPage">
 
-    <Grid>
+    <Grid x:Name="xPageGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="250*"/>
             <RowDefinition Height="250*"/>
         </Grid.RowDefinitions>
+        <Grid.Resources>
+            <DataTemplate x:Key="xGroupColorDataTemp">
+                <usercontrolslib:UcColorPickerList SelectedColor="{Binding GroupColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DataTemplate>
+        </Grid.Resources>
 
         <Ginger:ucGrid x:Name="grdGroups" Grid.Row="0" Margin="0,0,0,10" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed">
             <Ginger:ucGrid.Title>

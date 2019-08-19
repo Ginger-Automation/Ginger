@@ -57,7 +57,7 @@ namespace Ginger.AnalyzerLib
         GenericWindow _pageGenericWin = null;
 
         ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
-
+       
         private Solution mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
@@ -76,7 +76,7 @@ namespace Ginger.AnalyzerLib
         {
             get { return (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()); }
         }
-
+       
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
 
@@ -88,7 +88,7 @@ namespace Ginger.AnalyzerLib
 
             AnalyzerItemsGrid.DataSourceList = mIssues;
 
-            mIssues.CollectionChanged += MIssues_CollectionChanged;
+            mIssues.CollectionChanged += MIssues_CollectionChanged; 
         }
         
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -143,7 +143,8 @@ namespace Ginger.AnalyzerLib
             if (mAnalyzeDoneOnce == false)
             {
                 await Analyze();
-            }             
+            }
+           
         }
 
         private async void RerunButton_Click(object sender, RoutedEventArgs e)
@@ -153,7 +154,8 @@ namespace Ginger.AnalyzerLib
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
                 return;
             }
-
+            mIssues.CollectionChanged -= MIssues_CollectionChanged;
+            mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
@@ -762,7 +764,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                ActionEditPage actedit = new ActionEditPage(actionIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
+                ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //actedit.ap = null;
@@ -774,7 +776,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.mActivity;
                 //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                ActivityEditPage ActivityEdit = new ActivityEditPage(ActivityIssue, General.RepositoryItemPageViewMode.ChildWithSave, currentAnalyzeActivity.mBusinessFlow);
+                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.mBusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //ActivityEdit.ap = null;

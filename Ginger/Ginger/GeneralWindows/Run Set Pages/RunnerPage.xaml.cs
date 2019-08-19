@@ -364,7 +364,7 @@ namespace Ginger.Run
         {
             try
             {
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
 
@@ -714,7 +714,7 @@ namespace Ginger.Run
         }
         private void xConfigButton_Click(object sender, RoutedEventArgs e)
         {
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageContext.RunTab);
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mRunner, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
 
             UpdateRunnerInfo();

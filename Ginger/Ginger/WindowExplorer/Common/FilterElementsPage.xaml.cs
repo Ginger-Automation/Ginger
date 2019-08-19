@@ -23,6 +23,7 @@ using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 
 namespace Ginger.WindowExplorer.Common
 {
@@ -34,8 +35,9 @@ namespace Ginger.WindowExplorer.Common
         ObservableList<UIElementFilter> CheckedFilteringCreteriaList;
         GenericWindow _GenWin;
         WindowExplorerPage mWindowExlorerPage;
+        WindowsExplorerNavPage mWindowsExplorerNavPage;
 
-        public FilterElementsPage(ObservableList<UIElementFilter> filteringCriteriaList, ObservableList<UIElementFilter> checkedFilteringCreteriaList, /*RoutedEventHandler elementSearchEvent,*/ WindowExplorerPage windowExlorerPage)
+        public FilterElementsPage(ObservableList<UIElementFilter> filteringCriteriaList, ObservableList<UIElementFilter> checkedFilteringCreteriaList, /*RoutedEventHandler elementSearchEvent,*/ WindowExplorerPage windowExlorerPage = null, WindowsExplorerNavPage windowsExplorerNavPage = null)
         {
             InitializeComponent();
             SetControlsGridView();
@@ -43,6 +45,7 @@ namespace Ginger.WindowExplorer.Common
             CheckedFilteringCreteriaList = checkedFilteringCreteriaList;
             SetCheckedValues();
             mWindowExlorerPage = windowExlorerPage;
+            mWindowsExplorerNavPage = windowsExplorerNavPage;
         }
 
         private void SetCheckedValues()
@@ -79,7 +82,14 @@ namespace Ginger.WindowExplorer.Common
 
         private async void DoSearch(object sender, RoutedEventArgs e)
         {
-            mWindowExlorerPage.DoSearchControls();
+            if (mWindowExlorerPage != null)
+            {
+                mWindowExlorerPage.DoSearchControls();
+            }
+            else if (mWindowsExplorerNavPage != null)
+            {
+                mWindowsExplorerNavPage.DoSearchControls();
+            }
             //bool isSearched = await Task.Run(() => mWindowExlorerPage.DoSearchControls());
             _GenWin.Close();
             //int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;

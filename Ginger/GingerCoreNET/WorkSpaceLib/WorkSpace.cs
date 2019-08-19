@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -51,37 +52,87 @@ namespace amdocs.ginger.GingerCoreNET
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace 
-    {
-        static readonly object _locker = new object();
-
+    {        
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
             get
             {                
-                return mWorkSpace;
+                return mWorkSpace;                
             }
         }
 
+        static bool lockit;
+
+        public static void LockWS()
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
+            
+            Task.Factory.StartNew(() =>
+            {
+                lock (WorkSpace.Instance)
+                {                    
+                    lockit = true;
+                    while (lockit)  // TODO: add timeout max 60 seconds
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+        }
+
+        public static void RelWS()
+        {
+            lockit = false;
+            Reporter.ToLog(eLogLevel.DEBUG, "Workspace released");
+        }
+
+
         public static void Init(IWorkSpaceEventHandler WSEH)
         {
-            // TOOD: uncomment after unit tests fixed to lock workspace
-            //if (mWorkSpace != null)
-            //{
-            //    throw new Exception("Workspace was already initialized, if running from unit test make sure to release workspacae in Class cleanup");
-            //}
-
-            mWorkSpace = new WorkSpace();
+            mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
             mWorkSpace.InitLocalGrid();
-            
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
+      
+        public void CloseWorkspace()
+        {
+            try
+            {
+                CloseSolution();
+                LocalGingerGrid.Stop();
+                Close();             
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "ReleaseWorkspace error - " + ex.Message, ex);
+            }            
+        }
+
 
         public void Close()
         {
-            mWorkSpace = null;
+            AppSolutionAutoSave.SolutionAutoSaveStop();
+            if (SolutionRepository != null)
+            {
+                CloseAllRunningAgents();
+                PlugInsManager.CloseAllRunningPluginProcesses();
+                SolutionRepository.StopAllRepositoryFolderWatchers();
+            }
+            
+            if (!RunningInExecutionMode)
+            {
+                UserProfile.GingerStatus = eGingerStatus.Closed;
+                UserProfile.SaveUserProfile();
+                AppSolutionAutoSave.CleanAutoSaveFolders();
+            }
+
+            WorkSpace.Instance.LocalGingerGrid.Stop();
+            WorkSpace.Instance.Telemetry.SessionEnd();
+            mWorkSpace = null;            
         }
 
         private void InitLocalGrid()
@@ -152,7 +203,7 @@ namespace amdocs.ginger.GingerCoreNET
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
             
-            if (BetaFeatures.ShowDebugConsole)
+            if (BetaFeatures.ShowDebugConsole && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 EventHandler.ShowDebugConsole(true);                
                 BetaFeatures.DisplayStatus();
@@ -175,10 +226,7 @@ namespace amdocs.ginger.GingerCoreNET
             
             Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
-            
-            Reporter.ToLog(eLogLevel.DEBUG, "Init the Centralized Auto Log");
-            AutoLogProxy.Init(ApplicationInfo.ApplicationVersionWithInfo);
-            AutoLogProxy.LogAppOpened();
+                        
             CheckWebReportFolder();
         }
 
@@ -187,7 +235,9 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying from web report from: "+ clientAppFolderPath);
                 string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying to web report from: " + userAppFolder);
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
@@ -198,7 +248,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, "CheckWebReportFolder Error: " + ex.Message, ex);
             }
         }
 
@@ -210,7 +260,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-
+               Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
 
@@ -219,7 +269,7 @@ namespace amdocs.ginger.GingerCoreNET
            // FIX Message not shown !!!!!!!!!!!
 
             Reporter.ToStatus(eStatusMsgKey.GingerLoadingInfo, text);
-            Console.WriteLine("Loading Info: " + text);
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Info: " + text);
         }
 
         private void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
@@ -235,7 +285,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // happen when we close Ginger from unit tests
                 if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException)
                 {
-                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    Reporter.ToLog(eLogLevel.DEBUG, "StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
                     return;
                 }
             }
@@ -319,9 +369,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;
+                Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
-
+                
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -450,16 +500,16 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             //Reset values
-            mPluginsManager = null;
+            mPluginsManager = new PluginsManager();
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;
 
             EventHandler.SolutionClosed();
-        }        
+        }
 
         public UserProfile UserProfile { get; set; }
-       
+
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
@@ -639,6 +689,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        
         bool mLoadingSolution;
         public bool LoadingSolution
         {
@@ -656,6 +707,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public Telemetry Telemetry { get; internal set; }
+        public string TestArtifactsFolder { get; internal set; }
     }
 }

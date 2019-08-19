@@ -44,9 +44,21 @@ namespace GingerCore.Variables
             Hours
         }
 
+        private eTimerUnit mTimerUnit;
         
         [IsSerializedForLocalRepository]
-        public eTimerUnit TimerUnit { get; set; }
+        public eTimerUnit TimerUnit
+        {
+            get
+            {
+                return mTimerUnit;
+            }
+            set
+            {
+                mTimerUnit = value;
+                OnPropertyChanged(nameof(this.TimerUnit));
+            }
+        }
 
         public override string VariableEditPage { get { return  "VariableTimerPage"; } }
 
@@ -169,7 +181,10 @@ namespace GingerCore.Variables
 
         public override eImageType Image { get { return eImageType.Timer; } }
         public override bool SupportSetValue { get { return false; } }
-        public override string VariableType() { return "Timer"; }
+        public override string VariableType
+        {
+            get { return "Timer"; }
+        }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
@@ -181,5 +196,8 @@ namespace GingerCore.Variables
             return supportedOperations;
         }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

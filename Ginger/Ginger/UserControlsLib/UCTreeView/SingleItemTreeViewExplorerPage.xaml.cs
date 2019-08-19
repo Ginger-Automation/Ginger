@@ -23,6 +23,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GingerWPF.UserControlsLib
 {
@@ -44,7 +45,8 @@ namespace GingerWPF.UserControlsLib
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-            
+            xTreeView.Background = (Brush)FindResource("$BackgroundColor_LightGray");
+
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
             r.IsExpanded = true;
 
@@ -55,6 +57,7 @@ namespace GingerWPF.UserControlsLib
 
             if(treeItemDoubleClickHandler != null)
             {
+                xTreeView.Tree.ItemDoubleClick -= treeItemDoubleClickHandler;
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
             }                
         }       

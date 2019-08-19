@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,20 +32,22 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [TestClass]
     public class RepositorySerializerPrePostTest
     {
+        
+
         NewRepositorySerializer RS = new NewRepositorySerializer();
         
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("RepositorySerializerPrePostTest");            
+            WorkspaceHelper.CreateWorkspace2();            
             NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
 
@@ -178,7 +180,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("Action Timeout - default is 30 seconds", actionTimeoutParameter.Description, "ActionTimeout Description Validation");
         }
 
-
+     
 
 
     }

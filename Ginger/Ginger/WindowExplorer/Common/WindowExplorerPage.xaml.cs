@@ -104,7 +104,7 @@ namespace Ginger.WindowExplorer
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if ((((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
+            if (((Agent)ApplicationAgent.Agent).Driver != null && (((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
                 _GenWin.Close();
@@ -140,13 +140,32 @@ namespace Ginger.WindowExplorer
 
             InitControlPropertiesGridView();
             ControlPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
-            
+
             UpdateWindowsList();
 
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
-            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
+            if(mAction==null)
+            {
+                StepstoUpdateActionRow.Height = new GridLength(0);
+            }
+
+            ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
+        }
+
+        /// <summary>
+        /// This method will set the explorer page to be fit in new right panel
+        /// </summary>
+        /// <param name="windowExplorerDriver"></param>
+        public void SetDriver(IWindowExplorer windowExplorerDriver)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                RecordingButton.Visibility = Visibility.Collapsed;
+                mWindowExplorerDriver = windowExplorerDriver;
+                UpdateWindowsList();
+            });
         }
 
         private void RefreshControlProperties(object sender, RoutedEventArgs e)
@@ -160,36 +179,39 @@ namespace Ginger.WindowExplorer
         {
             try
             {
-                List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
-                WindowsComboBox.ItemsSource = list;
-                WindowsComboBox.DisplayMemberPath = "WinInfo";
-
-                AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
-
-                if (ActiveWindow != null)
+                if (mWindowExplorerDriver != null)
                 {
-                    foreach (AppWindow w in list)
+                    List<AppWindow> list = mWindowExplorerDriver.GetAppWindows();
+                    WindowsComboBox.ItemsSource = list;
+                    WindowsComboBox.DisplayMemberPath = "WinInfo";
+
+                    AppWindow ActiveWindow = mWindowExplorerDriver.GetActiveWindow();
+
+                    if (ActiveWindow != null)
                     {
-                        if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                        foreach (AppWindow w in list)
                         {
-                            WindowsComboBox.SelectedValue = w;
-                            return;
+                            if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
+                            {
+                                WindowsComboBox.SelectedValue = w;
+                                return;
+                            }
                         }
                     }
-                }
 
-                //TODO: If no selection then select the first if only one window exist in list
-                if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
-                {
-                    if (WindowsComboBox.Items.Count == 1)
+                    //TODO: If no selection then select the first if only one window exist in list
+                    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
-                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                    }
+                        if (WindowsComboBox.Items.Count == 1)
+                        {
+                            WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
+                        }
+                    } 
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while performing Update Window Explorer List", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while performing Update Window Explorer List", ex);
             }
             
         }
@@ -323,35 +345,35 @@ namespace Ginger.WindowExplorer
 
             RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
                         
-            if (RefreshWindowsButtonFlag)
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
-            else
-                ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
+            //if (RefreshWindowsButtonFlag)
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
+            //else
+            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
 
 
             AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
-            if (AddSwitchWindowActionButtonFlag)
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
-            else
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
-                AddSwitchWindowActionButton.Content = image;
-            }
+            //if (AddSwitchWindowActionButtonFlag)
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
+            //else
+            //{
+            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
+            //    AddSwitchWindowActionButton.Content = image;
+            //}
 
             WindowsComboBox.IsEnabled = WindowsComboBoxFlag;
-            if (WindowsComboBoxFlag)
-            {
-                WindowsComboBox.Foreground = Brushes.Orange;
-            }
-            else
-            {
-                WindowsComboBox.Foreground = Brushes.Gray;
-            }
+            //if (WindowsComboBoxFlag)
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Orange;
+            //}
+            //else
+            //{
+            //    WindowsComboBox.Foreground = Brushes.Gray;
+            //}
 
             ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
             if (ControlsViewsExpanderFlag)
@@ -652,7 +674,11 @@ namespace Ginger.WindowExplorer
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
                         ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                        if (mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                        if (mPlatform.PlatformType() == ePlatformType.Web)
+                        {
+                            list = mPlatform.GetPlatformElementActions(EI);
+                        }
+                        else if(mPlatform.PlatformType() ==ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo)))
                         {
                             list = mPlatform.GetPlatformElementActions(EI);
                         }
@@ -669,7 +695,7 @@ namespace Ginger.WindowExplorer
                         }
                         else                        
                         {
-                            Page DataPage = mCurrentControlTreeViewItem.EditPage();
+                            Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                             actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
                             CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                         }

@@ -32,6 +32,7 @@ using System.Windows.Automation;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -107,7 +108,7 @@ namespace GingerCore.Actions
          
         }
         
-        public override System.Drawing.Image Image { get { return Resources.Vbs16x16; } }
+        public override eImageType Image { get { return eImageType.MousePointer; } }
 
         public override void Execute()
         {
@@ -169,7 +170,7 @@ namespace GingerCore.Actions
 
                     }
 
-                    result = GetSubPositions(MainWinImage, Image.FromFile(locatorImgFilePath));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(locatorImgFilePath));
 
 
                     if (result.Count <= 0)
@@ -190,7 +191,7 @@ namespace GingerCore.Actions
                         continue;
                     MainWinImage = GetWindowBitmap(w);
                     if (File.Exists(locatorImgFilePath) && MainWinImage != null)
-                        result = GetSubPositions(MainWinImage, Image.FromFile(locatorImgFilePath));
+                        result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(locatorImgFilePath));
                     else
                         continue;
                     if (result.Count > 0)
@@ -212,7 +213,7 @@ namespace GingerCore.Actions
                 {
                     WinAPIAutomation.ShowWindow(targetWin);
                     MainWinImage = GetWindowBitmap(targetWin);
-                    result = GetSubPositions(MainWinImage, Image.FromFile(locatorImgFilePath));
+                    result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(locatorImgFilePath));
                     if (result.Count <= 0)
                     {
                         this.Error = "Image is not found in the current window";

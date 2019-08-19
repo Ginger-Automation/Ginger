@@ -34,6 +34,8 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
         public string URL { get; set; }
 
+        public string CurrentPackage { get; set; }
+
         /// Calculated - if exist on machine: "Installed", if seelcted for solution and exits, if not exist on file system then...
         private string mStatus;
         public string Status
@@ -100,7 +102,7 @@ namespace Amdocs.Ginger.Repository
             string releases = GitHTTPClient.GetResponseString(releasesURL).Result;
             if (releases == "Error: Forbidden")
             {
-                throw new IOException("Git API limit");
+                throw new IOException("Error: Forbidden - " + releases);
             }
             mReleases = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackageRelease>>(releases);
             

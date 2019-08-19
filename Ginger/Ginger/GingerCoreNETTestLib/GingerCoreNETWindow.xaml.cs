@@ -26,7 +26,6 @@ using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
 using GingerCoreNET.RosLynLib;
-using GingerWPF.WorkSpaceLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,22 +73,9 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Get All BFs", Action = () => GetBFs() });
             Actions.Add(new MyAction() { Name = "Get All BFs + keep refs", Action = () => GetBFsKeepRef() });
             Actions.Add(new MyAction() { Name = "Get All BFs and Drill down", Action = () => GetAllBFsandDrilldown() });
-            Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });
-            Actions.Add(new MyAction() { Name = "Get All BFs and Copy", Action = () => GetBFsAndCopy() });
-            Actions.Add(new MyAction() { Name = "Create 100 Big BFs", Action = () => Create100BigBFs() });
-            Actions.Add(new MyAction() { Name = "Clear " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Cache", Action = () => ClearBusinessFlowsCache() });
-            Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });
-            Actions.Add(new MyAction() { Name = "Start Ginger Grid", Action = () => StartGingerGrid() });
-            Actions.Add(new MyAction() { Name = "List Ginger Grid Nodes", Action = () => ListGingerGridNodes() });
-            Actions.Add(new MyAction() { Name = "Open GingerGrid Window", Action = () => OpenGingerGridWindows() });
-            Actions.Add(new MyAction() { Name = "Run Goto URL On all Nodes", Action = () => RunGotoURLOnallNodes() });
-            Actions.Add(new MyAction() { Name = "Run Selenium Actions", Action = () => RunSeleniumActions() });
-            Actions.Add(new MyAction() { Name = "List Plugins", Action = () => ListPlugins() });
-            Actions.Add(new MyAction() { Name = "Run C# Code", Action = () => RunCShrapCode() });
-            Actions.Add(new MyAction() { Name = "Run Selenium Driver Core Plugin", Action = () => RunSeleniumDriverCorePlugin() });
-            Actions.Add(new MyAction() { Name = "Open Applications", Action = () => OpenApplciations() });
-            Actions.Add(new MyAction() { Name = "Open BF With Old Actions", Action = () => OpenBFWithOldActions() });
-            Actions.Add(new MyAction() { Name = "Run Action", Action = () => RunAction() });
+            Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });                        
+            Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });                        
+            Actions.Add(new MyAction() { Name = "Run C# Code", Action = () => RunCShrapCode() });            
             Actions.Add(new MyAction() { Name = "Repository Item Base Report", Action = () => RepositoryItemBaseReport() });
             Actions.Add(new MyAction() { Name = "Test crash on non UI thread", Action = () => TestCrash() });
             Actions.Add(new MyAction() { Name = "LongPath Test", Action = () => LongPathTest() });
@@ -135,33 +121,7 @@ namespace Ginger.GingerCoreNETTestLib
         {
             Reporter.ToLog(eLogLevel.ERROR, "Test Reporter Error!");
         }
-
-        private void RunAction()
-        {
-            //GingerCoreNET.Drivers.CommonActionsLib.ActUIElement GCNETAct = new GingerCoreNET.Drivers.CommonActionsLib.ActUIElement();
-            
-            //WorkSpace.Init(WSEH);  // We can use GingerWPF Event handler or cretae our own            
-            //WorkSpace.Instance.OpenSolution(@"C:\SVN\GingerSolutions\Ginger-Demo\Ginger Demo");            
-            //WorkSpace.Instance.GingerRunner.RunAction(GCNETAct);
-        }
-
-        private void OpenBFWithOldActions()
-        {
-        }
-
-        WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-        private void OpenApplciations()
-        {
-            //// Just to show we can open windows from Ginger WPF
-            //WorkSpace.Init(WSEH);  // We can use GingerWPF Event handler or cretae our own            
-            //WorkSpace.Instance.SolutionRepository = SolutionRepository.GetSolutionRepository(@"C:\SVN\GingerSolutions\Ginger-Demo\Ginger Demo",null);
-            //GingerWPF.MainWindow w = new GingerWPF.MainWindow();
-            //w.Show();
-        }
-
-        private void RunSeleniumDriverCorePlugin()
-        {
-        }
+       
 
         Action<Object> GridDoubleClick = null;
 
@@ -173,9 +133,6 @@ namespace Ginger.GingerCoreNETTestLib
             }
         }
 
-        private void OpenGingerGridWindows()
-        {
-        }
 
         private void RunCShrapCode()
         {
@@ -183,35 +140,7 @@ namespace Ginger.GingerCoreNETTestLib
             SCT.runcode();
         }
 
-        private void ListPlugins()
-        {
-        }
         
-        private void RunGotoURLOnallNodes()
-        {
-        }
-
-        private void RunSeleniumActions()
-        {
-        }
-
-        private void ListGingerGridNodes()
-        {
-            //if (mGingerGrid != null)
-            //{
-            //    MainDataGrid.ItemsSource = mGingerGrid.NodeList;
-            //}
-        }
-        
-        private void StartGingerGrid()
-        {
-            //mGingerGrid = new GingerGrid(15001);
-            //mGingerGrid.Start();
-        }
-
-        private void Create100BigBFs()
-        {
-        }
 
         private static Random random = new Random((int)DateTime.Now.Ticks);
         private string GetRandomString()
@@ -233,9 +162,7 @@ namespace Ginger.GingerCoreNETTestLib
             return builder.ToString();
         }
 
-        private void GetBFsAndCopy()
-        {
-        }
+        
 
         private void GetAllBFsandSave()
         {
@@ -279,9 +206,7 @@ namespace Ginger.GingerCoreNETTestLib
             Log("BFs count=" + BFs.Count);
         }
 
-        private void ClearBusinessFlowsCache()
-        {
-        }
+        
 
         private void GetAllFiles()
         {

@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -127,6 +128,10 @@ namespace GingerCore.Actions
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
                         uIElementTypeAssigned = true;                        
+                        break;
+                    case eGenElementAction.AsyncSelectFromDropDownByIndex:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
+                        NewActUIElement.ElementType = eElementType.ComboBox;
                         break;
                     case eGenElementAction.KeyboardInput:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SendKeys;
@@ -484,7 +489,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override System.Drawing.Image Image { get { return Resources.ActLink; } }  // TODO: make me dynamic based on elem type
+        public override eImageType Image { get { return eImageType.Screen; } }  // TODO: make me dynamic based on elem type
         
         public override ActionDetails Details
         {            

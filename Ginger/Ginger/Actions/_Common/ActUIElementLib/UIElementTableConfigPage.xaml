@@ -11,11 +11,11 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="MainGrid">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="subElementTypeRow" Height="65"/>  
-                <RowDefinition x:Name="OperationTypeRow" Height="40"/>
-                <RowDefinition x:Name="ColumnType" Height="50"/>
-                <RowDefinition x:Name="RowType" Height="100"/>
-                <RowDefinition x:Name="WhereDataRow" Height="80"/>
+                <RowDefinition x:Name="subElementTypeRow" Height="65*"/>  
+                <RowDefinition x:Name="OperationTypeRow" Height="40*"/>
+                <RowDefinition x:Name="ColumnType" Height="50*"/>
+                <RowDefinition x:Name="RowType" Height="100*"/>
+                <RowDefinition x:Name="WhereDataRow" Height="80*"/>
                 <RowDefinition x:Name="DescriptionType" Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>

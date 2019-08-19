@@ -13,7 +13,11 @@
         <Label Content="Summary" HorizontalAlignment="Center" FontSize="25" VerticalAlignment="Top" />
         <Label Content="Feature File will be created under:" FontSize="15" HorizontalAlignment="Left" Margin="0,50,0,0"  VerticalAlignment="Top"/>
         <Label x:Name="TargetFeatureFolderLabel" Content ="Feature File Path" HorizontalAlignment="Left" Margin="0,80,0,0"  VerticalAlignment="Top" />
-        <Label Content="Business Flow will be created under:" FontSize="15" HorizontalAlignment="Left" Margin="0,110,0,0" Height="45" VerticalAlignment="Top"/>
+        <Label FontSize="15" HorizontalAlignment="Left" Margin="0,110,0,0" Height="45" VerticalAlignment="Top">
+            <Label.Content>
+                <GingerCore:ucTextDicResource Text="[BusinessFlow] will be created under:"></GingerCore:ucTextDicResource>
+            </Label.Content>
+        </Label>
         <Label x:Name="TargetBFFolderLabel" HorizontalAlignment="Left" Height="45" Margin="0,140,0,0" VerticalAlignment="Top">
             <Label.Content>
                 <GingerCore:ucTextDicResource Text="[BusinessFlow] path"/>

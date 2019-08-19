@@ -1,20 +1,13 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Logger;
-using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
-using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.ClientAppReport
 {
-    
+
     [TestClass]
     public class WebReportTest
     {
@@ -23,13 +16,13 @@ namespace GingerCoreNETUnitTest.ClientAppReport
         public static void ClassInitialize(TestContext TestContext)
         {
             string reportWebAppSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "ReportWebApp");
-            WorkspaceHelper.CreateWorkspaceAndOpenSolution("WebReportTest" , reportWebAppSolutionFolder);                     
+            WorkspaceHelper.CreateWorkspaceAndOpenSolution(reportWebAppSolutionFolder);                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkspaceHelper.ReleaseWorkspace();
+            
         }
 
 
@@ -54,7 +47,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             
         }
 
-
+        
 
     }
 }

@@ -39,7 +39,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string Password 
         {
-            set { mPassword = value; Value = value; OnPropertyChanged("Formula"); }
+            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
             get { return mPassword; } 
         }
         
@@ -59,7 +59,10 @@ namespace GingerCore.Variables
         }
 
         public override eImageType Image { get { return eImageType.Password; } }
-        public override string VariableType() { return "PasswordString"; }
+        public override string VariableType
+        {
+            get { return "PasswordString"; }
+        }
         public override bool SupportSetValue { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
@@ -67,5 +70,8 @@ namespace GingerCore.Variables
             throw new System.NotImplementedException();
         }
 
+        public override bool SupportResetValue { get { return true; } }
+
+        public override bool SupportAutoValue { get { return false; } }
     }
 }

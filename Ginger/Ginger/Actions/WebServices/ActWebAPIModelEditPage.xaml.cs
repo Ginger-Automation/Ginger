@@ -177,7 +177,7 @@ namespace Ginger.Actions.WebServices
         private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             EnhancedActInputValue AIV = (EnhancedActInputValue)APIModelParamsValueUCGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 
@@ -208,7 +208,10 @@ namespace Ginger.Actions.WebServices
             {
                 RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
                 AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
-                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single);
+                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, 
+                                                                                                    new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
+                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
+                                                                                                                Convert.ToString(AAMB.TargetApplicationKey)));
             }
             List<object> selectedList = apiModelPage.ShowAsWindow();
 

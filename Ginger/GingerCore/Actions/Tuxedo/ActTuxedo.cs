@@ -28,6 +28,8 @@ using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Enums;
+
 namespace GingerCore.Actions.Tuxedo
 {
     public class ActTuxedo : ActWithoutDriver
@@ -112,9 +114,8 @@ namespace GingerCore.Actions.Tuxedo
                 return "Tuxedo UD File";
             }
         }
-        
-        
-        public override System.Drawing.Image Image { get { return Resources.console16x16; } }
+
+        public override eImageType Image { get { return eImageType.Suitcase; } }
 
         private bool FTPConnect()
         {

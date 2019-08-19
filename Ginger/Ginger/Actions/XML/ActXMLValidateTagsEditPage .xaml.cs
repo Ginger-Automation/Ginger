@@ -40,7 +40,7 @@ namespace Ginger.Actions.XML
             this.mAct = (ActXMLTagValidation)act;
 
             //// Bind Controls
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , ActInputValue.Fields.Value);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox , TextBox.TextProperty, mAct.InputFile , nameof(ActInputValue.Value));
       
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
 
@@ -64,8 +64,8 @@ namespace Ginger.Actions.XML
              GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
              view.GridColsView = new ObservableList<GridColView>();
 
-             view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Param, Header = "Path", WidthWeight = 150 });
-             view.GridColsView.Add(new GridColView() { Field = ActInputValue.Fields.Value, Header = "Attribute", WidthWeight = 150 });
+             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 });
+             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 });
 
              DynamicParametersGrid.SetAllColumnsDefaultView(view);
             DynamicParametersGrid.InitViewItems();
@@ -76,7 +76,7 @@ namespace Ginger.Actions.XML
          private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
          {
              ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, ActInputValue.Fields.Value, Context.GetAsContext(mAct.Context));
+             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
              VEEW.ShowAsWindow();
          }
 

@@ -105,10 +105,11 @@ namespace Ginger.Repository
             bool Remote = agent.Remote;
 
             DriverBase Driver = null;
-            agent.mIsStarting = true;
-            agent.OnPropertyChanged(Fields.Status);
             try
             {
+                agent.mIsStarting = true;
+                agent.OnPropertyChanged(Fields.Status);
+
                 try
                 {
                     if (Remote)
@@ -559,8 +560,11 @@ namespace Ginger.Repository
         {
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder); 
+            }
             CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
-           
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 

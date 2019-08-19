@@ -43,7 +43,7 @@ namespace Ginger.Actions.UserControls
         Activity mActParentActivity=null;
         Act mAction = null;
         GingerRunner mBfParentRunner = null;
-        General.RepositoryItemPageViewMode mEditMode;
+        General.eRIPageViewMode mEditMode;
 
         public UCFlowControlAction()
         {
@@ -80,15 +80,15 @@ namespace Ginger.Actions.UserControls
         }
 
         private static DependencyProperty repositoryItemModeProperty =
-            DependencyProperty.Register("mEditMode", typeof(General.RepositoryItemPageViewMode), typeof(UCFlowControlAction), new PropertyMetadata(OnRepositoryItemModePropertyChanged));
+            DependencyProperty.Register("mEditMode", typeof(General.eRIPageViewMode), typeof(UCFlowControlAction), new PropertyMetadata(OnRepositoryItemModePropertyChanged));
         private static void OnRepositoryItemModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
-                control.OnRepositoryItemModeChanged((General.RepositoryItemPageViewMode)args.NewValue);
+                control.OnRepositoryItemModeChanged((General.eRIPageViewMode)args.NewValue);
         }
 
-        private void OnRepositoryItemModeChanged(General.RepositoryItemPageViewMode editMode)
+        private void OnRepositoryItemModeChanged(General.eRIPageViewMode editMode)
         {
             mEditMode= editMode;
         }
@@ -130,6 +130,11 @@ namespace Ginger.Actions.UserControls
 
         private void UCFlowControlAction_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (e.NewValue == null)
+            {
+                return;
+            }
+
             FC = (FlowControl)e.NewValue;
 
             if (mBfParentRunner != null)
@@ -288,7 +293,7 @@ namespace Ginger.Actions.UserControls
 
                     case eFlowControlAction.GoToActivity:
                         {
-                            if (mEditMode != General.RepositoryItemPageViewMode.SharedReposiotry)
+                            if (mEditMode != General.eRIPageViewMode.SharedReposiotry)
                             {
                                 foreach (Activity a in mActParentBusinessFlow.Activities)
                                 {

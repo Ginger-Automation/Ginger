@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -54,7 +53,7 @@ namespace Ginger
     /// <summary>
     /// Interaction logic for ucGrid.xaml
     /// </summary>
-    public partial class ucGrid : UserControl, IDragDrop
+    public partial class ucGrid : UserControl, IDragDrop, IClipboardOperations
     {
         #region ##### Control Objects
         private IObservableList mObjList;
@@ -76,6 +75,9 @@ namespace Ginger
 
         public delegate void SelectedItemChangedHandler(object selectedItem);
         public event SelectedItemChangedHandler SelectedItemChanged;
+
+        public event PasteItemEventHandler PasteItemEvent;
+
         public void OnSelectedItemChangedEvent(object selectedItem)
         {
             SelectedItemChangedHandler handler = SelectedItemChanged;
@@ -219,8 +221,7 @@ namespace Ginger
             return false;
         }
 
-        public static ObservableList<RepositoryItemBase> mCopiedorCutItems = new ObservableList<RepositoryItemBase>();
-        public static IObservableList mCutSourceList = null;
+
 
 
         /// <summary>
@@ -310,17 +311,7 @@ namespace Ginger
             return sb.ToString().ToUpper();
         }
 
-        public event PasteItemEventHandler PasteItemEvent;
-        public delegate void PasteItemEventHandler(PasteItemEventArgs EventArgs);
-
-        public void OnPasteItemEvent(PasteItemEventArgs.eEventType evType, RepositoryItemBase repositoryItemBaseObj)
-        {
-            PasteItemEventHandler handler = PasteItemEvent;
-            if (handler != null)
-            {
-                handler(new PasteItemEventArgs(evType, repositoryItemBaseObj));
-            }
-        }
+       
 
 
         public ucGrid()
@@ -554,12 +545,12 @@ namespace Ginger
         }
         public bool EnableTagsPanel
         {
-            get { return TagsViewer.TagsStackPanl.IsEnabled; }
-            set { TagsViewer.TagsStackPanl.IsEnabled = value;
+            get { return TagsViewer.xTagsStackPanl.IsEnabled; }
+            set { TagsViewer.xTagsStackPanl.IsEnabled = value;
                 if(value == true)
-                    TagsViewer.AddTagBtn1.Visibility = Visibility.Visible;
+                    TagsViewer.xAddTagBtn.Visibility = Visibility.Visible;
                 else
-                    TagsViewer.AddTagBtn1.Visibility = Visibility.Collapsed;
+                    TagsViewer.xAddTagBtn.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -768,18 +759,17 @@ namespace Ginger
         }
         private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
-            CopyItems();
+            ClipboardOperationsHandler.CopySelectedItems(this);
         }
         private void btnCut_Click(object sender, RoutedEventArgs e)
         {
-            CutItems();
-        }
-
-        
+            ClipboardOperationsHandler.CutSelectedItems(this);
+        }        
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
-            PasteItems();
+            ClipboardOperationsHandler.PasteItems(this);
         }
+
         private void btnSaveAllChanges_Click(object sender, RoutedEventArgs e)
         {
             ///Do Not implement as this is up to the page to hook the click event
@@ -1921,10 +1911,17 @@ public void RemoveCustomView(string viewName)
         {
             Info.DragTarget = this;
 
-            EventHandler handler = PreviewDragItem;
-            if (handler != null)
+            if (Info.DragTarget == Info.DragSource)
             {
-                handler(Info, new EventArgs());
+                Info.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+            }
+            else
+            {
+                EventHandler handler = PreviewDragItem;
+                if (handler != null)
+                {
+                    handler(Info, new EventArgs());
+                }
             }
         }
 
@@ -1944,163 +1941,8 @@ public void RemoveCustomView(string viewName)
                 handler(Info, new EventArgs());
             }
             // TODO: if in same grid then do move, 
-        }
+        }        
 
-        public void CopyItems()
-        {
-            try
-            {
-                mCutSourceList = null;
-                mCopiedorCutItems.Clear();
-                foreach (RepositoryItemBase item in Grid.SelectedItems)
-                    mCopiedorCutItems.Add(item);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-            }
-        }
-
-        public void CutItems()
-        {
-            try
-            {
-                mCutSourceList = this.DataSourceList;
-                mCopiedorCutItems.Clear();
-                foreach (RepositoryItemBase item in Grid.SelectedItems)
-                    mCopiedorCutItems.Add(item);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed");
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-            }
-        }
-
-        public void PasteItems()
-        {
-            try
-            {
-                if (mCutSourceList != null)
-                {
-                    //CUT
-                    //first remove from cut source
-                    foreach (RepositoryItemBase item in mCopiedorCutItems)
-                    {
-                        if (DataSourceList.Contains(item))//cut & paste on same grid
-                        {
-                            //move item
-                            grdMain.SelectedIndex = MoveItemAfterCurrent(item);
-                        }
-                        else
-                        {
-                            //set unique name
-                            SetItemUniqueName(item, string.Empty);
-                            //paste on target
-                            AddItemAfterCurrent(item);
-                            //clear from source
-                            mCutSourceList.Remove(item);
-                        }
-                    }
-
-                    //clear so will be past only once
-                    mCutSourceList = null;
-                    mCopiedorCutItems.Clear();
-                }
-                else
-                {
-                    //COPY
-                    //paste on target
-                    foreach (RepositoryItemBase item in mCopiedorCutItems)
-                    {
-                        RepositoryItemBase copiedItem = item.CreateCopy();
-                        //set unique name
-                        SetItemUniqueName(copiedItem, "_Copy");
-                        //Trigger event for changing sub classes fields
-                        OnPasteItemEvent(PasteItemEventArgs.eEventType.PasteCopiedItem, copiedItem);
-                        //add                        
-                        AddItemAfterCurrent(copiedItem);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                mCutSourceList = null;
-                mCopiedorCutItems.Clear();
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied items type is correct." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
-            }
-        }
-
-        public void SetItemUniqueName(RepositoryItemBase item, string suffix="_Copy")
-        {
-            string originalName = item.ItemName;
-            bool nameUnique = false;
-            int counter = 0;
-            while (nameUnique == false)
-            {
-                nameUnique = true;
-                foreach (RepositoryItemBase t in DataSourceList)
-                    if (t.ItemName == item.ItemName)
-                    {
-                        nameUnique = false;
-                        break;
-                    }
-                if (nameUnique)
-                    break;
-                else
-                {
-                    if (counter == 0)
-                    {
-                        item.ItemName = originalName + suffix;
-                        counter = 2;
-                    }
-                    else
-                    {
-                        item.ItemName = originalName + suffix + counter;
-                        counter++;
-                    }
-                }
-            }
-        }
-
-        public void AddItemAfterCurrent(RepositoryItemBase item)
-        {
-            //adding the new item after current selected item
-            int currentIndex = -1;
-            if (DataSourceList.CurrentItem != null)
-                currentIndex = DataSourceList.IndexOf(DataSourceList.CurrentItem);
-
-
-            DataSourceList.Insert(currentIndex + 1, item);
-            
-            grdMain.SelectedIndex = currentIndex + 1;
-            DataSourceList.CurrentItem = item;
-        }
-
-        public int MoveItemAfterCurrent(RepositoryItemBase item)
-        {
-            int itemIndex = DataSourceList.IndexOf(item);
-            int currentIndex = DataSourceList.IndexOf(DataSourceList.CurrentItem);
-
-            if (currentIndex >= 0)
-            {
-                if (itemIndex < currentIndex)
-                {
-                    DataSourceList.Move(itemIndex, currentIndex);
-                    return currentIndex;
-                }
-                else
-                {
-                    DataSourceList.Move(itemIndex, currentIndex + 1);
-                    return currentIndex + 1;
-                }
-            }
-            else
-            {
-                return itemIndex;
-            }
-        }
 
         public void SetTitleStyle(Style titleStyle)
         {
@@ -2275,23 +2117,40 @@ public void RemoveCustomView(string viewName)
 
             return validationRes;
         }
-    }
 
-    public class PasteItemEventArgs
-    {
-        public enum eEventType
+        public ObservableList<RepositoryItemBase> GetSelectedItems()
         {
-            PasteCopiedItem,
-            PasteCutedItem,
+            ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
+            foreach (object selectedItem in grdMain.SelectedItems)
+            {
+                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+            }
+            return selectedItemsList;
         }
 
-        public eEventType EventType;
-        public RepositoryItemBase RepositoryItemBaseObject;
-
-        public PasteItemEventArgs(eEventType eventType, RepositoryItemBase repositoryItemBaseObjectObject)
+        public IObservableList GetSourceItemsAsIList()
         {
-            this.EventType = eventType;
-            this.RepositoryItemBaseObject = repositoryItemBaseObjectObject;
+            return DataSourceList;
         }
-    }
+
+        public ObservableList<RepositoryItemBase> GetSourceItemsAsList()
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (RepositoryItemBase item in mObjList)
+            {
+                list.Add(item);
+            }
+            return list;
+        }
+
+        public void OnPasteItemEvent(PasteItemEventArgs.ePasteType pasteType, RepositoryItemBase item)
+        {
+            PasteItemEvent?.Invoke(new PasteItemEventArgs(pasteType, item));
+        }
+
+        public void SetSelectedIndex(int index)
+        {
+            grdMain.SelectedIndex = index;
+        }
+    }  
 }

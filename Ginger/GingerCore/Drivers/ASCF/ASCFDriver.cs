@@ -1054,7 +1054,7 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-
+        
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
             StartRecord();
@@ -1065,6 +1065,11 @@ namespace GingerCore.Drivers.ASCF
             GetRecording();
             Send("StopRecording", NA, NA, NA, NA, false);
             //TODO: check RC            
+        }
+
+        void Amdocs.Ginger.Plugin.Core.IRecord.ResetRecordingEventHandler()
+        {
+            RecordingEvent = null;
         }
 
         public override void StartRecording()

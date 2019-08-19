@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
@@ -46,7 +47,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             // TODO: Console.SetOut
             Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.0.0.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
+            Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -127,6 +128,7 @@ namespace Amdocs.Ginger.GingerConsole
             Console.Out.Flush();            
             Thread.Sleep(5000);
         }
+        
 
         private static void InitWorkSpace()
         {
@@ -135,9 +137,9 @@ namespace Amdocs.Ginger.GingerConsole
         }
 
         private static void ProcessArgs(string[] args)
-        {                       
-            InitWorkSpace();                              
-            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), null);
+        {
+            InitWorkSpace();                 
+            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(args);
         }

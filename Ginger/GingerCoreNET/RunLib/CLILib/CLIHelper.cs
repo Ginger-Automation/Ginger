@@ -36,9 +36,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     public class CLIHelper : INotifyPropertyChanged
-    {
-        static readonly string ENCRYPTION_KEY = "D3^hdfr7%ws4Kb56=Qt";//????? !!!!!!!!!!!!!!!!!!!
-
+    {        
         public string Solution;
         public string Env;
         public string Runset;
@@ -90,6 +88,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
+
+        string mTestArtifactsFolder;
+        public string TestArtifactsFolder
+        {
+            get
+            {
+                return mTestArtifactsFolder;
+            }
+            set
+            {
+                mTestArtifactsFolder = value;
+                OnPropertyChanged(nameof(TestArtifactsFolder));
+            }
+        }
+
 
         RunsetExecutor mRunsetExecutor;
         //UserProfile WorkSpace.Instance.UserProfile;
@@ -169,6 +182,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        internal void SetTestArtifactsFolder()
+        {
+            if (!string.IsNullOrEmpty(mTestArtifactsFolder))
+            {
+                WorkSpace.Instance.TestArtifactsFolder = mTestArtifactsFolder;
+            }
+        }
+
         private void SetDebugLevel()
         {            
             Reporter.AppLoggingLevel = AppLoggingLevel;
@@ -244,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlPassword(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");//we should not show the password in log
             WorkSpace.Instance.UserProfile.SourceControlPass = value;
             sourceControlPass = value;
         }
@@ -255,7 +276,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
             if (value == "Y")
             {
-                pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, ENCRYPTION_KEY);
+                try
+                {
+                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
+                }
             }
 
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
@@ -264,6 +292,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
 
             WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
+            sourceControlPass = pswd;
         }
 
         internal void SourceControlProxyPort(string value)

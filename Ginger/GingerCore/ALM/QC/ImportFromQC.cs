@@ -386,8 +386,7 @@ namespace GingerCore.ALM.QC
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            busFlow.AddActivity(stepActivity);
-                            tcActivsGroup.AddActivityToGroup(stepActivity);
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);                            
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -639,7 +638,7 @@ namespace GingerCore.ALM.QC
                     tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
                     tcActivsGroup.Description = tc.Description;
                 }
-                busFlow.InsertActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
+                busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
                 //Add the TC steps as Activities if not already on the Activities group
                 foreach (QCTSTestStep step in tc.Steps)
@@ -679,8 +678,7 @@ namespace GingerCore.ALM.QC
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
-                        tcActivsGroup.AddActivityToGroup(stepActivity);
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
@@ -930,8 +928,7 @@ namespace GingerCore.ALM.QC
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.InsertActivity(stepActivity, startGroupActsIndxInBf++);
-                        tcActivsGroup.AddActivityToGroup(stepActivity);
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
                     }
 
                     //pull TC-Step parameters and add them to the Activity level

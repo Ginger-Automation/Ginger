@@ -58,13 +58,14 @@ namespace Ginger.Actions.ActionConversion
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.SelectedForConversion, WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = Activity.Fields.ActivityName, WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.SelectedForConversion), WidthWeight = 2.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 15, Header = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activity) });
             xGrdGroups.SetAllColumnsDefaultView(defView);
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
             xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
-
+            xGrdGroups.btnMarkAll.ToolTip = "Mark All As Active";
+            xGrdGroups.SetBtnImage(xGrdGroups.btnMarkAll, "@CheckAllColumn_16x16.png");
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
