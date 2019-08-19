@@ -86,8 +86,13 @@ namespace Ginger.Variables
         {
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
             }
         }
 
@@ -488,7 +493,7 @@ namespace Ginger.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while renaming variable name", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while renaming variable name", ex);
             }
             finally
             {

@@ -152,6 +152,8 @@ namespace Ginger.Actions.ActionConversion
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
             xGridConvertibleActions.SetTitleLightStyle = true;
+            xGridConvertibleActions.btnMarkAll.ToolTip = "Mark All As Active";
+            xGridConvertibleActions.SetBtnImage(xGridConvertibleActions.btnMarkAll, "@CheckAllColumn_16x16.png");
             xGridConvertibleActions.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
             xGridConvertibleActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
             xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()

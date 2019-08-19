@@ -384,58 +384,58 @@ namespace GingerCoreCommonTest.Repository
         }
 
         //FIXME
-        //[TestMethod]
-        //public void DeleteMRIsSubFolder()
-        //{
-        //    //Arrange            
-        //    //add new sub folder with new bf's to be deleted
-        //    RepositoryFolder<MyRepositoryItem> MRIRF = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
-        //    RepositoryFolder<MyRepositoryItem> folderToDelete = (RepositoryFolder<MyRepositoryItem>)MRIRF.AddSubFolder("DeleteSubFolder_FolderForDelete");
-        //    MyRepositoryItem MRI1 = new MyRepositoryItem("DeleteSubFolder_MRI1");
-        //    folderToDelete.AddRepositoryItem(MRI1);
-        //    MyRepositoryItem MRI2 = new MyRepositoryItem("DeleteSubFolder_MRI2");
-        //    folderToDelete.AddRepositoryItem(MRI2);
-        //    //add new sub-sub folder with new bf's to be deleted
-        //    RepositoryFolder<MyRepositoryItem> subfolderToDelete = (RepositoryFolder<MyRepositoryItem>)folderToDelete.AddSubFolder("DeleteSubFolder_subfolderToDelete");
-        //    MyRepositoryItem MRI3 = new MyRepositoryItem("DeleteSubFolder_MRI3");
-        //    subfolderToDelete.AddRepositoryItem(MRI3);
+        [TestMethod]
+        public void DeleteMRIsSubFolder()
+        {
+            //Arrange            
+            //add new sub folder with new bf's to be deleted
+            RepositoryFolder<MyRepositoryItem> MRIRF = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
+            RepositoryFolder<MyRepositoryItem> folderToDelete = (RepositoryFolder<MyRepositoryItem>)MRIRF.AddSubFolder("DeleteSubFolder_FolderForDelete");
+            MyRepositoryItem MRI1 = new MyRepositoryItem("DeleteSubFolder_MRI1");
+            folderToDelete.AddRepositoryItem(MRI1);
+            MyRepositoryItem MRI2 = new MyRepositoryItem("DeleteSubFolder_MRI2");
+            folderToDelete.AddRepositoryItem(MRI2);
+            //add new sub-sub folder with new bf's to be deleted
+            RepositoryFolder<MyRepositoryItem> subfolderToDelete = (RepositoryFolder<MyRepositoryItem>)folderToDelete.AddSubFolder("DeleteSubFolder_subfolderToDelete");
+            MyRepositoryItem MRI3 = new MyRepositoryItem("DeleteSubFolder_MRI3");
+            subfolderToDelete.AddRepositoryItem(MRI3);
 
-        //    //Act  
-        //    mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
+            //Act  
+            mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
 
-        //    //Assert
-        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Directory not exist");
-        //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
-        //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
-        //}
+            //Assert
+            Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false, "Verify Directory not exist");
+            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
+            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
+        }
 
 
         //FIXME
-        //[TestMethod]
-        //public void DeleteBfsSubFolderWithAllItemsLoaded()
-        //{
-        //    //Arrange       
-        //    ObservableList<MyRepositoryItem> MRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
-        //    //add new sub folder with new bf's to be deleted
-        //    RepositoryFolder<MyRepositoryItem> MRIRF = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
-        //    RepositoryFolder<MyRepositoryItem> folderToDelete = (RepositoryFolder<MyRepositoryItem>)MRIRF.AddSubFolder("DeleteSubFolder_FolderForDelete");
-        //    MyRepositoryItem MRI1 = new MyRepositoryItem("DeleteSubFolder_MRI1");
-        //    folderToDelete.AddRepositoryItem(MRI1);
-        //    MyRepositoryItem MRI2 = new MyRepositoryItem("DeleteSubFolder_MRI2");
-        //    folderToDelete.AddRepositoryItem(MRI2);
-        //    //add new sub-sub folder with new MRI's to be deleted
-        //    RepositoryFolder<MyRepositoryItem> subfolderToDelete = (RepositoryFolder<MyRepositoryItem>)folderToDelete.AddSubFolder("DeleteSubFolder_subfolderToDelete");
-        //    MyRepositoryItem MRI3 = new MyRepositoryItem("DeleteSubFolder_MRI3");
-        //    subfolderToDelete.AddRepositoryItem(MRI3);
+        [TestMethod]
+        public void DeleteBfsSubFolderWithAllItemsLoaded()
+        {
+            //Arrange       
+            ObservableList<MyRepositoryItem> MRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
+            //add new sub folder with new bf's to be deleted
+            RepositoryFolder<MyRepositoryItem> MRIRF = mSolutionRepository.GetRepositoryItemRootFolder<MyRepositoryItem>();
+            RepositoryFolder<MyRepositoryItem> folderToDelete = (RepositoryFolder<MyRepositoryItem>)MRIRF.AddSubFolder("DeleteSubFolder_FolderForDelete");
+            MyRepositoryItem MRI1 = new MyRepositoryItem("DeleteSubFolder_MRI1");
+            folderToDelete.AddRepositoryItem(MRI1);
+            MyRepositoryItem MRI2 = new MyRepositoryItem("DeleteSubFolder_MRI2");
+            folderToDelete.AddRepositoryItem(MRI2);
+            //add new sub-sub folder with new MRI's to be deleted
+            RepositoryFolder<MyRepositoryItem> subfolderToDelete = (RepositoryFolder<MyRepositoryItem>)folderToDelete.AddSubFolder("DeleteSubFolder_subfolderToDelete");
+            MyRepositoryItem MRI3 = new MyRepositoryItem("DeleteSubFolder_MRI3");
+            subfolderToDelete.AddRepositoryItem(MRI3);
 
-        //    //Act  
-        //    mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
+            //Act  
+            mSolutionRepository.DeleteRepositoryItemFolder(folderToDelete);
 
-        //    //Assert
-        //    Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false);
-        //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
-        //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
-        //}
+            //Assert
+            Assert.IsTrue(Directory.Exists(folderToDelete.FolderFullPath) == false);
+            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI1.Guid)), null, "make sure all deleted folder items were removed from cache");
+            Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
+        }
 
         //FIXME
 

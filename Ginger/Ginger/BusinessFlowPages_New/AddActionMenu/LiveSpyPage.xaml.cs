@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -7,6 +25,7 @@ using Ginger.UserControls;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -120,7 +139,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 xStatusTextBlock.Text = "Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key";
                 xStatusTextBlock.Visibility = Visibility.Visible;
-
+                xStatusTextBlock.Foreground = (Brush)FindResource("$HighlightColor_Purple");
                 xStopSpyingBtn.Visibility = Visibility.Visible;
             }
             else
@@ -161,12 +180,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
                     xStatusTextBlock.Text = "Element been identified, please wait...";
+                    xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                     GingerCore.General.DoEvents();
                     mSpyElement = xWindowSelectionUC.mWindowExplorerDriver.GetControlFromMousePosition();
                     if (mSpyElement != null)
                     {
                         xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                         xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
+                        xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
                         GingerCore.General.DoEvents();
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
                         ShowCurrentControlInfo();
@@ -174,6 +195,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     else
                     {
                         xStatusTextBlock.Text = "Failed to identify the element.";
+                        xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
                         GingerCore.General.DoEvents();
                     }
                 }
@@ -275,7 +297,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     ObservableList<Act> list = new ObservableList<Act>();
                     ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                    if (xWindowSelectionUC.mPlatform.PlatformType() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+
+                    ePlatformType mPlatformType = xWindowSelectionUC.mPlatform.PlatformType();
+
+                    // if platform is web or
+                    // platform is java and element info type is javaelementinfo 
+                    if (mPlatformType == ePlatformType.Web || (mPlatformType == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo))))
                     {
                         list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }
@@ -292,7 +319,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        Page DataPage = mCurrentControlTreeViewItem.EditPage();
+
+                        Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                         actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
                         CAP = new ControlActionsPage(xWindowSelectionUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                     }

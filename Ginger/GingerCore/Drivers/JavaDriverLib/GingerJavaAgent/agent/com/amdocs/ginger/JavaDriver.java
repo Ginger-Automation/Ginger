@@ -89,6 +89,7 @@ import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -1523,6 +1524,11 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				GingerAgent.WriteLog("Inside GetAllValues");
 				return GetAllValues(c);
 			}
+			if(controlAction.equals("GetSelectedNodeChildItems"))
+			{
+				return GetTreeNodeChilds(c);			
+				
+			}
 			if (controlAction.equals("Click"))
 			{	
 			    GingerAgent.WriteLog("Coordinates = " + Value);
@@ -1651,7 +1657,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			}
 			if(controlAction.equals("GetItemCount"))
 			{
-				GingerAgent.WriteLog("tetsing getitemcount");
+ 				GingerAgent.WriteLog("testing GetItemCount");
 				return GetItemCount(c);
 			}
 		    if(controlAction.equals("GetControlProperty"))
@@ -1741,7 +1747,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 	{
 			
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
-		
+				
 		TreePath matchingNodePath=null;
 		TreePath parentNodePath=null;
 		int row =0;
@@ -1751,8 +1757,8 @@ private PayLoad TypeKeys(Component c,String Value) {
 		{
 			node=nodes.get(i);
 			tree.expandRow(row);	
-			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
-
+			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);		
+						
 			if(matchingNodePath==null)
 			{
 				searchResult.append("Node: "+ node +" was not found");
@@ -1769,21 +1775,8 @@ private PayLoad TypeKeys(Component c,String Value) {
 			}
 			
 			Object matchingNode= matchingNodePath.getLastPathComponent();
-			String nodeText="";
-		
-	
-			if(matchingNode.getClass().getName().contains("uif"))
-			{			
-				nodeText=mASCFHelper.GetNodeText(matchingNode);
-			}
-			else if(matchingNode instanceof DefaultMutableTreeNode)
-			{
-				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
-			}
-			else
-			{
-				nodeText = matchingNode.toString();
-			}
+			
+			String nodeText=GetTreeNodeText(matchingNode);
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
@@ -1802,7 +1795,24 @@ private PayLoad TypeKeys(Component c,String Value) {
 
 	}
 
-	
+	private String GetTreeNodeText(Object node)
+	{
+		String nodeText="";
+		if(node.getClass().getName().contains("uif"))
+		{			
+			nodeText=mASCFHelper.GetNodeText(node);
+		}
+		else if(node instanceof DefaultMutableTreeNode)
+		{
+			nodeText=(String)((DefaultMutableTreeNode)node).getUserObject();
+		}
+		else
+		{
+			nodeText = node.toString();
+		}
+		return nodeText;
+		
+	}
 	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
 	{
 		if(controlAction.equals("IsEnabled") || controlAction.equals("IsVisible"))
@@ -2602,7 +2612,7 @@ private PayLoad GetComponentState(Component c)
 		GingerAgent.WriteLog("Inside GetComponentValue");
 		PayLoad Response = new PayLoad("ComponentValue");
 		List<String> val = GetComboBoxValues(c);
-		GingerAgent.WriteLog("val: " +val);
+		GingerAgent.WriteLog("val: " +val);	
 		Response.AddValue(val);		
 		Response.ClosePackage();
 		return Response;
@@ -3820,6 +3830,45 @@ private PayLoad SetComponentFocus(Component c)
 			return CompValue;
 		}
 	}	
+	
+	private PayLoad GetTreeNodeChilds(Component comp)
+	{
+		JTree treeComponent= ((JTree) comp);
+		Object node=treeComponent.getLastSelectedPathComponent();
+		
+
+		if (node != null) 
+		{
+			TreeModel treeModel= treeComponent.getModel();
+			if(treeModel!=null)
+			{
+				int childCount = treeComponent.getModel().getChildCount(node);			
+				Object childNode = null;
+				List<String> childNodes = new ArrayList<String>();
+				
+				for (int i = 0; i < childCount; i++) 
+				{
+					childNode = treeModel.getChild(node, i);
+					childNodes.add(GetTreeNodeText(childNode));
+
+				}
+
+				PayLoad Response = new PayLoad("ComponentValue");
+				Response.AddValue(childNodes);
+				Response.ClosePackage();
+				return Response;
+			}
+			else
+			{
+				return PayLoad.Error("Failed to get child items for node");
+			}
+			
+		} 
+		else 
+		{
+			return PayLoad.Error("No noode is selected, please select the node");
+		}
+	}
 
 			
 	private String GetCompState(Component comp) {

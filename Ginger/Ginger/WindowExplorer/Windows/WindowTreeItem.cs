@@ -56,7 +56,7 @@ namespace Ginger.Drivers.Windows
         }
 
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             //TODO: create Edit page for Window, with action of Swithc Window
             return null;

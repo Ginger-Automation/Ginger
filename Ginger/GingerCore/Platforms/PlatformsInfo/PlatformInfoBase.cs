@@ -185,7 +185,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Unknown:
                     foreach (ActUIElement.eElementAction item in Enum.GetValues(typeof(ActUIElement.eElementAction)))
                     {
-                        list.Add(item);
+                        if (!item.Equals(ActUIElement.eElementAction.Unknown))
+                        {
+                            list.Add(item);
+                        }
                     }
 
                     break;
@@ -193,8 +196,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eElementAction.Click);
                     break;
                 case eElementType.TextBox:
-                    list.Add(ActUIElement.eElementAction.SetText);
-                    list.Add(ActUIElement.eElementAction.GetText);
+                    list.Add(ActUIElement.eElementAction.SetValue);
+                    list.Add(ActUIElement.eElementAction.GetValue);
                     break;
                 case eElementType.ComboBox:
                     list.Add(ActUIElement.eElementAction.SetText);

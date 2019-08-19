@@ -117,7 +117,7 @@ namespace GingerCore.Activities
 
         public override string GetNameForFileName() { return Name; }
 
-        public void AddActivityToGroup(Activity activity)
+        public void AddActivityToGroup(Activity activity, int insertIndx=-1)
         {
             if (activity == null)
             {
@@ -126,8 +126,15 @@ namespace GingerCore.Activities
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
             activity.ActivitiesGroupID = this.Name;
-            //activity.ActivitiesGroupColor = this.GroupColor;
-            this.ActivitiesIdentifiers.Add(actIdents);
+
+            if (insertIndx >= 0)
+            {
+                this.ActivitiesIdentifiers.Insert(insertIndx, actIdents);
+            }
+            else
+            {
+                this.ActivitiesIdentifiers.Add(actIdents);
+            }
         }
 
         public bool CheckActivityInGroup(Activity activity)
@@ -380,5 +387,11 @@ namespace GingerCore.Activities
                 activityIdent.IdentifiedActivity.ActivitiesGroupID = newName;
             }
         }
+
+        public ActivityIdentifiers GetActivityIdentifiers(Activity activity)
+        {
+            return ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
+        }
+
     }
 }

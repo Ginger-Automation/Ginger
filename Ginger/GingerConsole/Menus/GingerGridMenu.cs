@@ -102,19 +102,15 @@ namespace Amdocs.Ginger.GingerConsole
             Console.WriteLine("Ginger Grid Hub List");
         }
 
+
+        ServiceGridTracker serviceGridTracker;
         void NodeList()
         {
             Console.WriteLine("Ginger Grid Hub List");
-            PrintGridInfo();
+            serviceGridTracker = new ServiceGridTracker(WorkSpace.Instance.LocalGingerGrid);
 
-            // Hook chnaged event for auto updates
-            // We print the grid info when something changed
-            //mGingerGrid.NodeList.CollectionChanged += List_CollectionChanged;
-            WorkSpace.Instance.LocalGingerGrid.NodeList.CollectionChanged += List_CollectionChanged;
-
-            // Wait for user 
+            // Wait for user to press any key
             Console.WriteLine("List will refresh automatically when list changed, Press any key to exit");
-
             while (!Console.KeyAvailable)
             {
                 Thread.Sleep(500);
@@ -122,30 +118,8 @@ namespace Amdocs.Ginger.GingerConsole
             Console.Read();
         }
 
-        void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            PrintGridInfo();
-        }
-
-        void PrintGridInfo()
-        {
-            Console.WriteLine("Ginger Grid Info last update: " + DateTime.Now);
-            Console.WriteLine("Ginger Node Count=" + WorkSpace.Instance.LocalGingerGrid.NodeList.Count);
-            Console.WriteLine("========================================================================================");
-            Console.WriteLine("| # | Name       | Service ID          | Host      | OS       | IP          | Status   |");
-            Console.WriteLine("========================================================================================");
-            int i = 0;
-            foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
-            {
-                i++;
-                if (i > 2)
-                {
-                    Console.WriteLine("----------------------------------------------------------");
-                }
-                Console.WriteLine("| " + i + " | " + GNI.Name + " | " + GNI.ServiceId + " | " + GNI.Host + " | " + GNI.OS + " | " + GNI.IP + " | " + GNI.Status + " |");
-            }
-            Console.WriteLine("========================================================================================");
-        }
+        
+      
 
     }
 }

@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
 using System;
@@ -7,6 +25,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -18,11 +37,13 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
+        // TODO: Remove  browserNewPath
         public WebReportGenerator(string browserNewPath)
         {
             this.browserPath = browserNewPath;
         }
 
+        // TODO: Make this function to just generate the report folder !!!
         public LiteDbRunSet RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
@@ -50,18 +71,20 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ex)
             {
-                Console.WriteLine("RunNewHtmlReport error " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :"+ex.ToString());
             }
             return lightDbRunSet;
         }
 
+
+        // TODO: Remove from here as this class is WebReportGenerator - not viewer
         private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldDisplayReport)
         {
             bool response = false;
 
             try
             {
-                json = $"window.runsetData={json}";
+                json = $"window.runsetData={json};";
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
                 pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
@@ -83,11 +106,14 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ec)
             {
-
+                // TODO:  at lease log exception !!!
             }
             return response;
         }
-        
+
+        // param name clientAppFolderPath ??
+        // have method to delete assets - it is called from 2 places 
+        // call the method DeleteReportAssetsFolder and delete Execution_Data and screenshot 
         public void DeleteFoldersData(string clientAppFolderPath)
         {
             DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
@@ -98,6 +124,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
         }
 
         //TODO move it to utils class
+        // Create test class
+
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
@@ -109,6 +137,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (totalExecuted * 100 / totalRunners).ToString());
             if (totalRunners != 0)
                 liteDbRunSet.PassRate = string.Format("{0:F1}", (totalPassed * 100 / totalRunners).ToString());
+            liteDbRunSet.Elapsed = liteDbRunSet.RunnersColl.Sum(a => a.Elapsed);
 
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
@@ -155,8 +184,11 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             {
                                 string fileName = Path.GetFileName(screenshot);
                                 string newScreenshotPath = Path.Combine(imageFolderPath, fileName);
-                                System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
-                                newScreenShotsList.Add(fileName);
+                                if (File.Exists(screenshot))
+                                {
+                                    System.IO.File.Copy(screenshot, newScreenshotPath, true); //TODO - Replace with the real location under Ginger installation
+                                    newScreenShotsList.Add(fileName);
+                                }
                             }
                             liteDbAction.ScreenShots = newScreenShotsList;
                         }

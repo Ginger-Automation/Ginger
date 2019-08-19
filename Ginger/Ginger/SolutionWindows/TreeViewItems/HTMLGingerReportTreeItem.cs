@@ -68,7 +68,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {   
             //TODO: to load page only once            
             mHTMLReportTemplatePage = new HTMLReportTemplatePage(HTMLReportConfiguration);

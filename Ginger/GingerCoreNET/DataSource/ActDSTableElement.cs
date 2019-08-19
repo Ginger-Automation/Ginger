@@ -206,7 +206,7 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string ValueUC { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository]
         public ObservableList<ActDSConditon> WhereConditions { get;
             set; }
 
@@ -395,16 +395,16 @@ namespace GingerCore.Actions
 
         public void UpdateDSConditionColumns(List<string> mColName)
         {
-            if(WhereConditions==null)
+            if (WhereConditions == null)
             {
                 WhereConditions = new ObservableList<ActDSConditon>();
             }
-            foreach(ActDSConditon ADSC in WhereConditions)
+            foreach (ActDSConditon ADSC in WhereConditions)
             {
                 ADSC.PossibleColumnValues = mColName;
                 if (!mColName.Contains(ADSC.wTableColumn))
                     ADSC.wTableColumn = mColName[0];
             }            
         }
-    }
+        }
 }

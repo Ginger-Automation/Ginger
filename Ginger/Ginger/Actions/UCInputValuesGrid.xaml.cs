@@ -52,6 +52,7 @@ namespace Ginger.Actions
         /// <param name="valueForDriverTitle">Sets the ValueForDriver(Calculated Value) Title</param>
         public void Init(Context context, ObservableList<ActInputValue> dataSource, string gridTitle = "Input Values", string paramTitle = "Parameter Name", string valueTitle = "Parameter Value", string valueForDriverTitle = "Calculated Parameter Value")
         {
+            mContext = context;
             DataSource = dataSource;
             SetVEGrid(gridTitle, paramTitle, valueTitle,  valueForDriverTitle);
         }

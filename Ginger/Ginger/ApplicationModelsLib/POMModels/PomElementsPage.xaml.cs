@@ -321,7 +321,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while exporting POM optional Values to Data Source", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting POM optional Values to Data Source", ex);
             }
         }
 

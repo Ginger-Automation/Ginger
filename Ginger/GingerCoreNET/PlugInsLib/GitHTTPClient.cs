@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,15 +31,14 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         public static async Task<string> GetResponseString(string url)
         {
+            Reporter.ToLog(eLogLevel.INFO, "GitHTTPClient url= " + url);
             using (var client = new HttpClient())
-            {
+            {                
                 // Simulate a browser header                
                 //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);
-                client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");
-                
-
+                client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");             
                 var result = client.GetAsync(url).Result;
-
+                Reporter.ToLog(eLogLevel.INFO, "result= " + result);
                 if (result.IsSuccessStatusCode)
                 {
                     var json = await result.Content.ReadAsStringAsync();
@@ -53,14 +53,24 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         internal static T GetJSON<T>(string url)
         {
-            T t = default(T);            
-            string packagesjson = GetResponseString(url).Result;
-            if (packagesjson.Contains("Error: Forbidden"))
+            Reporter.ToLog(eLogLevel.INFO, "Git GetJSON");
+            try
             {
-                return t;
+                T t = default(T);                
+                string packagesjson = GetResponseString(url).Result;                
+                if (packagesjson.Contains("Error: Forbidden"))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Git returned error Forbidden:" + url);                    
+                    return t;
+                }
+                T obj = JsonConvert.DeserializeObject<T>(packagesjson);
+                return obj;
             }
-            T list = JsonConvert.DeserializeObject<T>(packagesjson);
-            return list;
+            catch(Exception ex)
+            {                
+                Reporter.ToLog(eLogLevel.ERROR, "Git Get JSON error", ex);
+                return default(T);
+            }
         }
     }
 }

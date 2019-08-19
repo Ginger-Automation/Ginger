@@ -185,7 +185,7 @@ namespace Ginger
             filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
             if (filterData.Count > 0)
             {
-                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "LiteDbData.db"));
+                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationExecResultsFolder, "GingerExecutionResults.db"));
                 dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
             }
         }
@@ -1687,7 +1687,7 @@ namespace Ginger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full business flow report", ex);
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to generate offline full " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " report", ex);
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to generate the report for the '" + mBusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", please execute it fully first.");
                 }
             }

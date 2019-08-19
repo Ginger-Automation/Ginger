@@ -137,7 +137,7 @@ namespace Ginger.Environments
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while renaming DBName", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while renaming DBName", ex);
             }
             finally
             {

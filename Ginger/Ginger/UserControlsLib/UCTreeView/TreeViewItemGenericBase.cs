@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
@@ -27,6 +28,7 @@ using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -224,6 +226,11 @@ namespace GingerWPF.TreeViewItemsLib
                 TreeViewUtils.AddMenuItem(CM, "Save All", SaveAllTreeFolderItemsHandler, null, "@SaveAll_16x16.png");
                 mTreeView.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAllTreeFolderItemsHandler);
             }
+            if (allowDeleteAllItems)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Delete All Items", DeleteAllTreeItemsHandler, null, "@Trash_16x16.png");
+                mTreeView.AddToolbarTool("@Trash_16x16.png", "Delete All Items", DeleteAllTreeItemsHandler);
+            }
             if (allowAddSubFolder)
             {
                 TreeViewUtils.AddMenuItem(CM, "Add Sub Folder", AddSubTreeFolderHandler, null, "@AddFolder_16x16.png");
@@ -315,6 +322,13 @@ namespace GingerWPF.TreeViewItemsLib
         private void DeleteTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             DeleteTreeFolder();
+            PostDeleteTreeItemHandler();
+        }
+
+        public abstract void DeleteAllTreeItems();
+        private void DeleteAllTreeItemsHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DeleteAllTreeItems();
             PostDeleteTreeItemHandler();
         }
 

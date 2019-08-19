@@ -146,6 +146,11 @@ namespace Ginger.WindowExplorer
             SetDetailsExpanderDesign(false, null);
             SetActionsTabDesign(false);
 
+            if(mAction==null)
+            {
+                StepstoUpdateActionRow.Height = new GridLength(0);
+            }
+
             ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");            
         }
 
@@ -206,7 +211,7 @@ namespace Ginger.WindowExplorer
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while performing Update Window Explorer List", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while performing Update Window Explorer List", ex);
             }
             
         }
@@ -690,7 +695,7 @@ namespace Ginger.WindowExplorer
                         }
                         else                        
                         {
-                            Page DataPage = mCurrentControlTreeViewItem.EditPage();
+                            Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                             actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
                             CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
                         }

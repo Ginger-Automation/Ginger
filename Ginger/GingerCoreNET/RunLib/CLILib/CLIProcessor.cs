@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore;
+using GingerCoreNET.RunLib;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
             if (args[0].Contains("="))
             {
-                string[] arg1 = args[0].Split('=');
+                string[] arg1 = args[0].Split(new[]{ '='}, 2);
                 param = arg1[0].Trim();
                 value = arg1[1].Trim();                
             }
@@ -105,7 +106,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
                     mCLIHandler = new CLIExcel();
                     PerformLoadAndExecution(value);
+                    break;                
+                case "--servicegrid":
+                    int port = 15555;
+                    Console.WriteLine("Starting Ginger Grid at port: " + port);
+                    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
+                    gingerGrid.Start();
+
+                    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+
+                    Console.ReadKey();
                     break;
+
             }
         }
 
