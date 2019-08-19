@@ -107,6 +107,27 @@ namespace GingerCore.GeneralLib
     }
 
     #region Binding Convertors
+
+    public class LongStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                return long.Parse(value.ToString());
+            }
+            catch(Exception ex)
+            {
+                return 0;
+            }
+        }
+    }
+
     public class StringVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

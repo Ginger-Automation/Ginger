@@ -303,7 +303,7 @@ namespace Ginger.SolutionGeneral
                     HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
                 }
 
-
+                LoggerConfigurations.CalculatedLoggerFolder = LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
                 ExecutionLoggerConfiguration executionLoggerConfiguration = this.LoggerConfigurations;
 

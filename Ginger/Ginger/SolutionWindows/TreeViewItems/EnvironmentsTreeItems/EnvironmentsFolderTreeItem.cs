@@ -112,7 +112,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Environment", AddItemHandler, null, eImageType.Add);
             if (mProjEnvironmentFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowRefresh: false);
 
