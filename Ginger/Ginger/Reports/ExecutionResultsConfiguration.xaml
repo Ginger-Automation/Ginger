@@ -34,7 +34,7 @@
                 <Label Style="{StaticResource @LabelStyle}" FontSize="10">* Target folder must exist, i.e.: 'c:/Ginger/Execution Results/'</Label>
                 <Label  Style="{StaticResource @LabelStyle}">Folder Maximal Size (Must be in MB):</Label>
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
-                    <TextBox x:Name="SizeTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" TextChanged="SizeTextBox_TextChanged" ></TextBox>
+                    <TextBox x:Name="SizeTextBox" Width="500" Style="{StaticResource @TextBoxStyle}"  ></TextBox>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

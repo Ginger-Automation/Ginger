@@ -77,8 +77,20 @@ namespace Ginger.Reports
 
         public string CalculatedLoggerFolder { get; set; }
 
+        long mExecutionLoggerConfigurationMaximalFolderSize;
         [IsSerializedForLocalRepository]
-        public long ExecutionLoggerConfigurationMaximalFolderSize { get; set; }
+        public long ExecutionLoggerConfigurationMaximalFolderSize
+        {
+            get
+            {
+                return mExecutionLoggerConfigurationMaximalFolderSize;
+            }
+            set
+            {                
+                mExecutionLoggerConfigurationMaximalFolderSize = value;
+                OnPropertyChanged(nameof(ExecutionLoggerConfigurationMaximalFolderSize));
+            }
+        }
 
         public string ExecutionLoggerConfigurationHTMLReportsFolder { get; set; }
 

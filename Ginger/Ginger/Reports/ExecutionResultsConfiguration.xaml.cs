@@ -65,7 +65,8 @@ namespace Ginger.Reports
         private void SetControls()
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
+
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 ExecutionResultFolderPnl.IsEnabled = true;
@@ -117,18 +118,6 @@ namespace Ginger.Reports
             }
         }
 
-        private void SizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            try
-            {
-                _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = (long)Convert.ToInt32(SizeTextBox.Text.ToString());
-            }
-            catch
-            {
-                _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize = 0;
-            }
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize));
-        }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
