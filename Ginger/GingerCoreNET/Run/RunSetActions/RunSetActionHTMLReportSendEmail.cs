@@ -186,7 +186,6 @@ namespace Ginger.Run.RunSetActions
 
             // !!!!!!!!!!!!!!!!!!! Linux
             TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
-            //TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
 
             Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 

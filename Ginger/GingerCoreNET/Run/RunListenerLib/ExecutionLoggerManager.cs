@@ -707,7 +707,7 @@ namespace Ginger.Run
                     }
                     runner.SetBFOfflineData(bf, this, reportpath);
                     mBusinessFlowCounter++;
-                    runner.ExecutionLogFolder = Path.Combine(runner.ExecutionLogFolder,mBusinessFlowCounter + " " + folderNameNormalazing(bf.Name));
+                    runner.ExecutionLogFolder = Path.Combine(logFolderPath, mBusinessFlowCounter + " " + folderNameNormalazing(bf.Name));
                     counter++;
                 }
                 RunnerRunEnd(meventtime, runner, logFolderPath, runnerCount, true);
