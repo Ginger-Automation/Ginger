@@ -27,6 +27,7 @@ using GingerCoreNET.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -604,5 +605,45 @@ namespace GingerWPF.TreeViewItemsLib
             return stack;
         }
 
+        public override void DeleteAllTreeItems()
+        {
+            if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+                childNodes.Reverse();
+                foreach (ITreeViewItem node in childNodes)
+                {
+                    if (node == null) continue;
+                    if (node.NodeObject() != null)
+                    {
+                        if (node.NodeObject() is RepositoryFolderBase)
+                        {
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                        }
+                        else if(node.NodeObject() is RepositoryItemBase)
+                        {
+                            ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception while deleting" + node.NodeObject());
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.Exists(this.NodePath()))
+                        {
+                           String [] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
+                            foreach(String path in DocFolderChildItems)
+                            {
+                                Directory.Delete(path, true);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+        }    
     }
 }

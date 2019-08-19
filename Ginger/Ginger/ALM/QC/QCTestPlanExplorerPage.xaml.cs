@@ -70,7 +70,15 @@ namespace Ginger.ALM.QC
         }
 
         private void selectBtn_Clicked(object sender, RoutedEventArgs e)
-        {            
+        {
+            if (xCreateBusinessFlowFolder.IsChecked == true)
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = true;
+            }
+            else
+            {
+                QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = false;
+            }
             genWin.Close();
         }
 

@@ -26,7 +26,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public static void ClassInitialize(TestContext TestContext)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, "RecordingManagerTest");
+            WorkSpace.Init(WSEH);
         }
 
         [TestInitialize]

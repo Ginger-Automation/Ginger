@@ -18,10 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
-using GingerWPF.DragDropLib;
 using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 

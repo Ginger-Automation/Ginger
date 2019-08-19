@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="80"/>
-            <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35" />
+            <RowDefinition x:Name="ControlDetailsRow" Height="650" MinHeight="35" MaxHeight="35" />
         </Grid.RowDefinitions>
 
         <userControl:UCWindowsGrid x:Name="xWindowSelectionUC" Margin="5, 10, 5, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
@@ -41,13 +41,13 @@
             <Expander.Content>
                 <TabControl x:Name="xControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
                     <TabItem x:Name="xGeneralTab" Header="General" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
-                        <Frame x:Name="ControlFrame"/>
+                        <Frame x:Name="ControlFrame" NavigationUIVisibility="Hidden"/>
                     </TabItem>
                     <TabItem x:Name="xPropertiesTab" Header="Properties" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
                         <Ginger:ucGrid x:Name="xControlPropertiesGrid" Title="Control Properties" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed"  />
                     </TabItem>
                     <TabItem x:Name="xActionsTab" Header="Actions" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
-                        <Frame x:Name="ControlActionsFrame"/>
+                        <Frame x:Name="ControlActionsFrame" NavigationUIVisibility="Hidden" />
                     </TabItem>
                 </TabControl>
             </Expander.Content>

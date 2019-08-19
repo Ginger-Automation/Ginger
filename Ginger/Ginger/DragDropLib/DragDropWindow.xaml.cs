@@ -39,7 +39,7 @@ namespace GingerWPF.DragDropLib
 
         public void SetHeader(string Header)
         {
-            HeaderLabel.Content = Header;
+            xHeaderTextBlock.Text = Header;
         }
 
         internal void MoveToMousePosition()
@@ -72,13 +72,15 @@ namespace GingerWPF.DragDropLib
             switch (eDragIcon)
             {
                 case DragInfo.eDragIcon.Unknown:
-                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Orange);
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Red);
                     xDragOperationImage.ImageType = eImageType.Blocked;
                     break;
+
                 case DragInfo.eDragIcon.Add:
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
                     xDragOperationImage.ImageType = eImageType.PlusSquare;
                     break;
+
                 case DragInfo.eDragIcon.DoNotDrop:
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Red);
                     xDragOperationImage.ImageType = eImageType.Blocked;
@@ -86,7 +88,7 @@ namespace GingerWPF.DragDropLib
 
                 case DragInfo.eDragIcon.Move:
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
-                    xDragOperationImage.ImageType = eImageType.MoveUp;
+                    xDragOperationImage.ImageType = eImageType.MoveUpDown;
                     break;
 
                 case DragInfo.eDragIcon.MultiAdd:

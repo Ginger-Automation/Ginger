@@ -32,13 +32,13 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2("SolutionTest");                     
+            WorkspaceHelper.CreateWorkspace2();                     
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -96,5 +96,8 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(loadSol.Name, createSol.Name);
            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
+
+        
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -7,62 +8,87 @@ using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
 {
     // Generic platform plugin tester
-    [Ignore]  // getting stuck
+    
+    [Ignore]  // Fail on Linux with permission denied, on Mac get stuck
     [TestClass]
     [Level3]
     public class WebPlatformPluginTest
     {
-        
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
         static GingerGrid GG;
         static Agent agent;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {            
+        {
+            mTestHelper.ClassInitialize(TestContext);
+
+            mTestHelper.Log("Creating temp solution");
             // Init workspace
-            WorkspaceHelper.CreateDummyWorkSpace(nameof(WebPlatformPluginTest));            
+            string solutionFolder = TestResources.GetTempFolder("WebPlatformPluginTest");
+            WorkspaceHelper.CreateWorkspaceWithTempSolution(solutionFolder);
 
-            // Strat GG
-            // GG = new GingerGrid(15001);  // Get free port !!!!!!!!!
 
-            // start the plugin to register in LocalGrid !!!!!! I ran it on the 2nd visual studio while running the test and the next loop wait for it
+            // To debug SeleniumPlugin start the plugin from VS to register to LocalGrid             
+            string pluginFolder = TestResources.GetTestResourcesFolder("Plugins" + Path.DirectorySeparatorChar + "SeleniumPlugin");
+            WorkSpace.Instance.PlugInsManager.Init(WorkSpace.Instance.SolutionRepository);
+            mTestHelper.Log("Adding SeleniumPlugin from: " + pluginFolder);
+            WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
             // Start Agent
-            GingerGrid GG = WorkSpace.Instance.LocalGingerGrid;
-            while (GG.NodeList.Count == 0)
-            {
-                Thread.Sleep(100);
-            }
+            
             agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "SeleniumPlugin";
             agent.ServiceId = "SeleniumChromeService";
+            mTestHelper.Log("StartDriver SeleniumPlugin SeleniumChromeService");
             agent.StartDriver();
 
+            GingerGrid GG = WorkSpace.Instance.LocalGingerGrid;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            mTestHelper.Log("Waiting for node to connect");
+            while (GG.NodeList.Count == 0 && stopwatch.ElapsedMilliseconds < 10000)   // wait max 10 seconds
+            {
+                mTestHelper.Log("GG.NodeList.Count == 0");
+                Thread.Sleep(100);
+            }
+
+            if (GG.NodeList.Count == 0)
+            {
+                throw new Exception ("GG.NodeList.Count == 0");
+            }
+
+            mTestHelper.Log("Done Waiting");
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            agent.Close();
+            mTestHelper.ClassCleanup();
         }
 
 
         [TestInitialize]
         public void TestInitialize()
         {
-
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
         [TestMethod]        
@@ -80,53 +106,54 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
 
         [TestMethod]
-        public void SetTextBoxText()
+        public void SetTextBoxTextx10()
         {
             // Arrange
             // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
-            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
-            ActUIElement actUIElementFake = new ActUIElement() { LocateBy =  Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType =  Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction =  ActUIElement.eElementAction.SetText , Value = "hello"};            
-
-            // Act
+            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };            
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
+            // Act
+            ActUIElement actUIElementFake = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText};
             for (int i = 0; i < 10; i++)
             {
                 actUIElementFake.Value = "#" + i;
                 ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
+                Assert.IsTrue(string.IsNullOrEmpty(actUIElementFake.Error), "no Error #" +  i);
             }
 
             // Assert
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error));
             
+
         }
 
         [TestMethod]
         public void SetGetTextBoxText()
         {
-            // Arrange
-            // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
+            // Arrange            
             ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
-            ActUIElement actUIElement = new ActUIElement() { LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText, Value = "hello" };
-            ActUIElement actUIElement2 = new ActUIElement() { LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID, LocateValue = "u_0_c", ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox, ElementAction = ActUIElement.eElementAction.GetText };
+            ActUIElement setTextBoxAction = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText, Value = "hello" };
+            ActUIElement getTextBoxAction = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.GetText };
             
-
             // Act
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
-
             
-            actUIElement.Value = "12345";
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement);
-            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElement2);
+            setTextBoxAction.Value = "12345";
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, setTextBoxAction);
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, getTextBoxAction);
 
 
             // Assert
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error));
-            Assert.AreEqual("Value", actUIElement2.ReturnValues[0].Param);
-            Assert.AreEqual("hello", actUIElement2.ReturnValues[0].Actual);
+            Assert.IsTrue(string.IsNullOrEmpty(setTextBoxAction.Error));
+            Assert.IsTrue(string.IsNullOrEmpty(getTextBoxAction.Error));
+            Assert.AreEqual("Actual", getTextBoxAction.ReturnValues[0].Param);
+            Assert.AreEqual("12345", getTextBoxAction.ReturnValues[0].Actual);
 
         }
 
+      
 
     }
 }

@@ -336,7 +336,7 @@ namespace Ginger.Run
                 mStopRun = false;
 
                 //configure Runners for run
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configurating {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Configuring {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 ConfigureAllRunnersForExecution();
 
                 //Process all pre execution Run Set Operations
@@ -503,8 +503,8 @@ namespace Ginger.Run
                     switch (RSA.RunAt)
                     {
                         case RunSetActionBase.eRunAt.DuringExecution:
-                            //if(RSA is RunSetActions.RunSetActionPublishToQC)
-                            //    RSA.PrepareDuringExecAction(Runners);
+                            if (RSA is RunSetActions.RunSetActionPublishToQC)
+                                RSA.PrepareDuringExecAction(Runners);
                             break;
 
                         case RunSetActionBase.eRunAt.ExecutionStart:

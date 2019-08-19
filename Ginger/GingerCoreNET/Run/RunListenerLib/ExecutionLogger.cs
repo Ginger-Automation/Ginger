@@ -41,14 +41,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
-        DateTime mCurrentExecutionDateTime;        
+        DateTime mCurrentExecutionDateTime;
         private eExecutedFrom ExecutedFrom;
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
         public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
-        ProjEnvironment mExecutionEnvironment = null;        
+        ProjEnvironment mExecutionEnvironment = null;
 
         public ProjEnvironment ExecutionEnvironment
         {
@@ -70,11 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             get { return mLogsFolder; }
         }
-
-        public string CurrentLoggerFolderName
-        {
-            get { return mLogsFolderName; }
-        }
+        
 
         public DateTime CurrentExecutionDateTime
         {
@@ -117,6 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal ActionReport GetActionReportData(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ActionReport AR = new ActionReport(action, context);
+            AR.Seq = context.Activity.ExecutionLogActionCounter;
             if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
             {
                 if (mVE == null)
@@ -131,6 +128,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal ActivityReport GetActivityReportData(Activity activity, Context context, bool offlineMode)
         {
             ActivityReport AR = new ActivityReport(activity);
+            AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
             AR.VariablesBeforeExec = activity.VariablesBeforeExec;
 
             if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
@@ -148,6 +146,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
         {
             ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, businessFlow);
+            AGR.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
             AGR.ExecutionLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
             return AGR;
         }
@@ -156,6 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
             BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
             BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
+            BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
             if (!string.IsNullOrEmpty(businessFlow.RunDescription))
             {
                 if (mVE == null)

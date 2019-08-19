@@ -150,11 +150,15 @@ namespace Ginger.Actions
             }
             //Binding            
             txtDescription.BindControl(mAction, Act.Fields.Description);
-            //List<eLocateBy> locateByList = act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList();
-            //cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
-            cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());
+
+            if (mAction.ObjectLocatorConfigsNeeded)
+            {
+                //List<eLocateBy> locateByList = act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList();
+                //cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
+                cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());             
+                txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
+            }
             comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
-            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
 
             //Run Details binding
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
@@ -164,7 +168,13 @@ namespace Ginger.Actions
 
             //TODO: add tooltip on class level 
             //TODO: Add BindToolTip or use BindControl and supply DependecyProperty
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+
+
+            // !!!!!!!!!!!!!!!!!!!!!???????????????????????????????????
+            if (mAction.ObjectLocatorConfigsNeeded)
+            {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+            }
             // TODO: create BindControl for 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
@@ -186,8 +196,12 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
-            txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
-            txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
+            // Why we bind twice??
+            if (mAction.ObjectLocatorConfigsNeeded)
+            {
+                txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
+                txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
+            }
 
             SwitchingInputValueBoxAndGrid(mAction);
             LoadActionInfoPage(mAction);
@@ -1743,7 +1757,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        public void ClearPageBindings()
         {
             StopEdit();
             BindingOperations.ClearAllBindings(txtDescription);
@@ -1773,7 +1787,7 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(EnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(txtLocateValue);
             TagsViewer.ClearBinding();
-            this.ClearControlsBindings();
+            //this.ClearControlsBindings();
             if (mAction != null)
             {
                 mAction.PropertyChanged -= ActionPropertyChanged;

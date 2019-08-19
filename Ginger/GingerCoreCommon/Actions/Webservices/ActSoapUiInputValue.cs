@@ -22,10 +22,7 @@ namespace GingerCore.Actions.WebServices
 {
     public class ActSoapUiInputValue : ActInputValue
     {
-        public static new partial class Fields
-        {
-            public static string Type = "Type";
-        }
+       
         public enum ePropertyType
         {
             System,

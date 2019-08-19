@@ -234,7 +234,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemNotification activitiesVarsDepInd = new ListItemNotification();            
             activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
             activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabeled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
             activitiesVarsDepInd.ImageSize = 14;
             activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
             activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
@@ -374,6 +374,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
             extraOperationsList.Add(pasterAfterCurrent);
 
+            ListItemOperation moveToOtherGroup = new ListItemOperation();
+            moveToOtherGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            moveToOtherGroup.AutomationID = "moveToOtherGroup";
+            moveToOtherGroup.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveUpDown;
+            moveToOtherGroup.Header = "Move to Other Group";
+            moveToOtherGroup.ToolTip = "Move to Other Group";
+            moveToOtherGroup.OperationHandler = MoveToOtherGroupHandler;
+            extraOperationsList.Add(moveToOtherGroup);
 
             ListItemOperation addToSR = new ListItemOperation();
             addToSR.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
@@ -612,6 +620,25 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
+
+        private void MoveToOtherGroupHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            ActivitiesGroup targetGroup = (new ActivitiesGroupSelectionPage(mContext.BusinessFlow)).ShowAsWindow();
+            if (targetGroup != null)
+            {
+                try
+                {
+                    mContext.BusinessFlow.MoveActivityBetweenGroups(mActivity, targetGroup);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error occured while dragging Activity to other group", ex);
+                }
+                ListView.UpdateGrouping();
+            }
+        }
+
         private void ActivitiesVarsHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
@@ -643,15 +670,23 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void MoveUpHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ExpandItemOnLoad = true;
-            mContext.BusinessFlow.MoveActivityUp(mActivity);
+            int index = mContext.BusinessFlow.Activities.IndexOf(mActivity);
+            if (index > 0 && mContext.BusinessFlow.Activities[index - 1].ActivitiesGroupID == mActivity.ActivitiesGroupID)
+            {
+                ExpandItemOnLoad = true;
+                mContext.BusinessFlow.MoveActivityInGroup(mActivity, index - 1);
+            }
         }
 
         private void MoveDownHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ExpandItemOnLoad = true;
-            mContext.BusinessFlow.MoveActivityDown(mActivity);
+            int index = mContext.BusinessFlow.Activities.IndexOf(mActivity);
+            if (index < (mContext.BusinessFlow.Activities.Count - 1) && mContext.BusinessFlow.Activities[index + 1].ActivitiesGroupID == mActivity.ActivitiesGroupID)
+            {
+                ExpandItemOnLoad = true;
+                mContext.BusinessFlow.MoveActivityInGroup(mActivity, index+1);
+            }
         }
 
         private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)
@@ -667,7 +702,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             if (activitiesGroup.Name.Contains("Optimized Activities"))
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "This is an automaic group created from Gherkin file and can not be modified");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "This is an automatic group created from Gherkin file and can not be modified");
                 return;
             }
             string newName = activitiesGroup.Name;

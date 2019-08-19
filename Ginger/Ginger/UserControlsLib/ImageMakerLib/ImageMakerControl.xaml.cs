@@ -410,6 +410,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.MoveDown:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowDown);
                     break;
+                case eImageType.MoveUpDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsV);
+                    break;
                 case eImageType.Reorder:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Reorder);
                     break;

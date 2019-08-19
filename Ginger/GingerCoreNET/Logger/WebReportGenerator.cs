@@ -37,11 +37,13 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
+        // TODO: Remove  browserNewPath
         public WebReportGenerator(string browserNewPath)
         {
             this.browserPath = browserNewPath;
         }
 
+        // TODO: Make this function to just generate the report folder !!!
         public LiteDbRunSet RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
@@ -74,6 +76,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
             return lightDbRunSet;
         }
 
+
+        // TODO: Remove from here as this class is WebReportGenerator - not viewer
         private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldDisplayReport)
         {
             bool response = false;
@@ -102,11 +106,14 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ec)
             {
-
+                // TODO:  at lease log exception !!!
             }
             return response;
         }
-        
+
+        // param name clientAppFolderPath ??
+        // have method to delete assets - it is called from 2 places 
+        // call the method DeleteReportAssetsFolder and delete Execution_Data and screenshot 
         public void DeleteFoldersData(string clientAppFolderPath)
         {
             DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
@@ -117,6 +124,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
         }
 
         //TODO move it to utils class
+        // Create test class
+
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
@@ -128,6 +137,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (totalExecuted * 100 / totalRunners).ToString());
             if (totalRunners != 0)
                 liteDbRunSet.PassRate = string.Format("{0:F1}", (totalPassed * 100 / totalRunners).ToString());
+            liteDbRunSet.Elapsed = liteDbRunSet.RunnersColl.Sum(a => a.Elapsed);
 
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {

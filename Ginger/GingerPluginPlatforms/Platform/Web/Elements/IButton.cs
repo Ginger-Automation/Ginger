@@ -23,9 +23,17 @@ using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
-    public interface IButton : IGingerWebElement, IGetValue, IClick
+    /// <summary>
+    /// Exposes the Functionality of a button
+    /// </summary>
+    public interface IButton:IGingerWebElement,IGetValue,IClick
     {
-        void Submit(); // !!!???
+
+        /// <summary>
+        /// Submits a Button
+        /// </summary>
+
+        void Submit();
        
     }
 }

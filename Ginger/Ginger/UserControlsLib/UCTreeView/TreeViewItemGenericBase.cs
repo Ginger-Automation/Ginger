@@ -16,14 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -184,7 +187,7 @@ namespace GingerWPF.TreeViewItemsLib
         }
 
         
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true)
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false)
         {
             if (allowRefresh)
             {
@@ -215,6 +218,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Save All", SaveAllTreeFolderItemsHandler, null, "@SaveAll_16x16.png");
                 mTreeView.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAllTreeFolderItemsHandler);
+            }
+            if (allowDeleteAllItems)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Delete All Items", DeleteAllTreeItemsHandler, null, "@Trash_16x16.png");
+                mTreeView.AddToolbarTool("@Trash_16x16.png", "Delete All Items", DeleteAllTreeItemsHandler);
             }
             if (allowAddSubFolder)
             {
@@ -302,6 +310,13 @@ namespace GingerWPF.TreeViewItemsLib
         private void DeleteTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             DeleteTreeFolder();
+            PostDeleteTreeItemHandler();
+        }
+
+        public abstract void DeleteAllTreeItems();
+        private void DeleteAllTreeItemsHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DeleteAllTreeItems();
             PostDeleteTreeItemHandler();
         }
 

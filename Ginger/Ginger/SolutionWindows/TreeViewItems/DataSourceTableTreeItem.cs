@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -128,11 +129,34 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, DSTableDetails.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                mTreeView.Tree.DeleteItemAndSelectParent(this);
-                DSDetails.DSTableList.Remove(DSTableDetails);
-                DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+                DeleteTreeItem();
             }            
         }
+
+        public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
+        {
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
+            {
+                if (!deleteWithoutAsking)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            DeleteTreeItem();
+            return true;
+        }
+
+        public void DeleteTreeItem()
+        {
+            mTreeView.Tree.DeleteItemAndSelectParent(this);
+            DSDetails.DSTableList.Remove(DSTableDetails);
+            DSTableDetails.DSC.DeleteTable(DSTableDetails.Name);
+        }
+
 
         private void ExportToExcel(object sender, RoutedEventArgs e)
         {                      

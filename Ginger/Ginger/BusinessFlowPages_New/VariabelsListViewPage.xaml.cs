@@ -207,7 +207,12 @@ namespace Ginger.BusinessFlowPages
 
                 mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
 
-                mVariabelsListView.xListView.SetValue(ScrollViewer.CanContentScrollProperty, true);
+                mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
+
+                if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                {
+                    mVariabelsListView.IsDragDropCompatible = false;
+                }
             }
 
             if (mVariabelsParent != null)

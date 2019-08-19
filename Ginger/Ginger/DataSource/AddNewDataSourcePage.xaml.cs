@@ -73,7 +73,12 @@ namespace Ginger.DataSource
             if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString() && mDSDetails.GetType() != typeof(AccessDataSource))               
                 mDSDetails = new AccessDataSource();
             if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString())
+            {
                 mFileType = "mdb";
+                mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
+                FilePathTextBox.Text = mDSDetails.FilePath;
+                DSName.Text = "GingerDataSource";
+            }
             if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString() && mDSDetails.GetType() != typeof(GingerLiteDB))
             {
                 mDSDetails = new GingerLiteDB();
@@ -84,6 +89,7 @@ namespace Ginger.DataSource
                 mFileType = "db";
                 mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\LiteDB.db";
                 FilePathTextBox.Text = mDSDetails.FilePath;
+                DSName.Text = "LiteDB";
             }
 
         }
@@ -96,7 +102,7 @@ namespace Ginger.DataSource
 
             mDSDetails.FilePath = FilePathTextBox.Text;
             mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.Instance.Solution.Folder);
-
+            mDSDetails.Name = DSName.Text;
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
             { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
 
@@ -106,8 +112,15 @@ namespace Ginger.DataSource
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
-                if(ds.FilePath == mDSDetails.FilePath)
-                { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim()); return; }
+            {
+                ds.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+                if (ds.FileFullPath.Trim() == mDSDetails.FileFullPath.Trim())
+                {
+                    Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim());
+                    return;
+                }
+            }
+             
             
             okClicked = true;           
             
@@ -194,7 +207,7 @@ namespace Ginger.DataSource
             FileBrowseButton.IsEnabled = false;
             DSName.IsEnabled = false;
 
-            DSTypeComboBox.SelectedItem = DataSourceBase.eDSType.MSAccess;
+            DSTypeComboBox.SelectedValue = DataSourceBase.eDSType.MSAccess;
             DSName.Text = "GingerDataSource";            
             FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
             
@@ -211,7 +224,7 @@ namespace Ginger.DataSource
             FileBrowseButton.IsEnabled = true;
             
 
-            DSTypeComboBox.SelectedItem = DataSourceBase.eDSType.MSAccess;
+            DSTypeComboBox.SelectedValue = DataSourceBase.eDSType.MSAccess;
             DSName.Text = "";
             FilePathTextBox.Text = "";
             
