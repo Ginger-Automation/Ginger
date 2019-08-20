@@ -185,7 +185,7 @@ namespace Ginger.Run.RunSetActions
             tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
 
             // !!!!!!!!!!!!!!!!!!! Linux
-            TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
+            TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
 
             Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 
@@ -414,36 +414,36 @@ namespace Ginger.Run.RunSetActions
                         alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(customerLogoPath), "customer"));
                     if (!string.IsNullOrEmpty(Comments))
                     {
-                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(TemplatesFolder + @"\assets\\img\comments-icon.jpg"), "comment"));
+                        alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(TemplatesFolder, "assets", "img", "comments-icon.jpg")), "comment"));
                     }
                     if (IsExecutionStatistic)
                     {
-                        if (File.Exists(Path.Combine(tempFolder, "GingerRunner" + reportTimeStamp + ".jpeg")))
-                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg"), "gingerRunner" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Action" + reportTimeStamp + ".jpeg")))
-                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Action" + reportTimeStamp + ".jpeg"), "Action" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Activity" + reportTimeStamp + ".jpeg")))
-                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg"), "Activity" + reportTimeStamp));
-                        if (File.Exists(Path.Combine(tempFolder, "Businessflow" + reportTimeStamp + ".jpeg")))
-                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg"), "Businessflow" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder,$"GingerRunner{reportTimeStamp}.jpeg")), "gingerRunner" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")), "Action" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")),"Activity" + reportTimeStamp));
+                        if (File.Exists(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")))
+                            alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")), "Businessflow" + reportTimeStamp));
                     }
                     Email.alternateView = alternativeView;
                 }
                 else
                 {
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\@BeatLogo.png", "beat"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\@Ginger.png", "ginger"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + @"\CustomerLogo.png", "customer"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder,"assets","img","BeatLogo.png"), "beat"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "Ginger.png"), "ginger"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder,"CustomerLogo.png") + @"\CustomerLogo.png", "customer"));
                     if (!string.IsNullOrEmpty(Comments))
                     {
                         Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\comments-icon.jpg", "comment"));
                     }
                     if (IsExecutionStatistic)
                     {
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\GingerRunner" + reportTimeStamp + ".jpeg", "gingerRunner" + reportTimeStamp));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Action" + reportTimeStamp + ".jpeg", "Action" + reportTimeStamp));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Activity" + reportTimeStamp + ".jpeg", "Activity" + reportTimeStamp));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(tempFolder + "\\Businessflow" + reportTimeStamp + ".jpeg", "Businessflow" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg"), "gingerRunner" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg"), "Action" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg"), "Activity" + reportTimeStamp));
+                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg"), "Businessflow" + reportTimeStamp));
                     }
                 }
             }
@@ -1153,17 +1153,23 @@ namespace Ginger.Run.RunSetActions
         }
         public byte[] GetImageStream(string path)
         {
+            byte[] arr=new byte[0];
             if (!File.Exists(path))
             {
                 return null;
             }
-
-            System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-            byte[] arr;
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                arr = ms.ToArray();
+                System.Drawing.Image img = System.Drawing.Image.FromFile(path);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    arr = ms.ToArray();
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
             return arr;
         }
