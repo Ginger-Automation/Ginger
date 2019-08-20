@@ -356,7 +356,7 @@ namespace Ginger.Actions
         {
             if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
             // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
-
+            
             if (mAction.ValueConfigsNeeded == false)
             {
                 this.Dispatcher.Invoke(() =>
@@ -366,16 +366,24 @@ namespace Ginger.Actions
                 return;
             }
 
+            //TODO: Remove all if else and handle it dynamically based on if Input value grid is needed or not
+            int minimumInputValuesToHideGrid = 1;
+            if(mAction.ObjectLocatorConfigsNeeded)
+            {
+                //For actions with locator config needed, Locate by , locate value is also added to input value                
+                minimumInputValuesToHideGrid = 3;
+            }
+
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && 
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && 
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
             {
-                if (a.InputValues.Count > 1)
+                if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
                     ValueGridPanel.Visibility = Visibility.Visible;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                 }
-                else if (a.InputValues.Count == 1)
+                else if (a.InputValues.Count == minimumInputValuesToHideGrid)
                 {
                     ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
                     ValueGridPanel.Visibility = Visibility.Collapsed;
