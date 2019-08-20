@@ -26,6 +26,7 @@ using Ginger.UserControls;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,19 +72,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// </summary>
         private void SetPOMGridView()
         {
-            gridPOMListItems.SetTitleLightStyle = true;
+            xGridPOMListItems.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Folder", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            gridPOMListItems.btnAdd.Click -= BtnAdd_Click;
-            gridPOMListItems.btnAdd.Click += BtnAdd_Click;
-            gridPOMListItems.SetAllColumnsDefaultView(view);
-            gridPOMListItems.InitViewItems();
+            xGridPOMListItems.btnAdd.Click -= BtnAdd_Click;
+            xGridPOMListItems.btnAdd.Click += BtnAdd_Click;
+            xGridPOMListItems.SetAllColumnsDefaultView(view);
+            xGridPOMListItems.InitViewItems();
             PomModels = new ObservableList<POMBindingObjectHelper>();
-            gridPOMListItems.DataSourceList = PomModels;
-            gridPOMListItems.Title = "Selected POM's";
-            gridPOMListItems.ShowTitle = ShowTitle ? Visibility.Visible : Visibility.Collapsed;
+            xGridPOMListItems.DataSourceList = PomModels;
+            xGridPOMListItems.Title = "Selected POM's";
+            xGridPOMListItems.ShowTitle = ShowTitle ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
@@ -129,16 +130,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     if (!IsPOMAlreadyAdded(pom.ItemName))
                     {
-                        ApplicationPOMModel pomToAdd = (ApplicationPOMModel)pom.CreateCopy(false);
-                        PomModels.Add(new POMBindingObjectHelper() { IsChecked = true, ItemName = pomToAdd.ItemName, ContainingFolder = pom.ContainingFolder, ItemObject = pom });
+                        PomModels.Add(new POMBindingObjectHelper() { IsChecked = true, ItemName = pom.ItemName, ContainingFolder = pom.ContainingFolder, ItemObject = pom });
                         POMSelectedEvent(pom.Guid);
                     }
                     else
                     {
-                        MessageBox.Show(@"""" + pom.ItemName + @""" POM is already added!", "Alert Message");
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, @"""" + pom.ItemName + @""" POM is already added!");
                     }                    
                 }
-                gridPOMListItems.DataSourceList = PomModels;                
+                xGridPOMListItems.DataSourceList = PomModels;                
             }
         }
 
@@ -149,16 +149,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// <returns></returns>
         private bool IsPOMAlreadyAdded(string itemName)
         {
-            bool isPresent = false;
+            bool isPresent = false;            
             if (PomModels != null && PomModels.Count > 0)
             {
-                foreach (var item in PomModels)
+                var obj = PomModels.Where(x => x.ItemName == itemName).FirstOrDefault();
+                if (obj != null)
                 {
-                    if (item.ItemName == itemName)
-                    {
-                        isPresent = true;
-                        break;
-                    }
+                    isPresent = !string.IsNullOrEmpty(Convert.ToString(obj.ItemName)); 
                 }
             }
             return isPresent;

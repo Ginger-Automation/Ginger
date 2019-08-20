@@ -26,6 +26,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -81,7 +82,7 @@ namespace Ginger.Actions.ActionConversion
                 AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage); 
             }
         }
-
+        
         /// <summary>
         /// This is finish method which does the finish the wizard functionality
         /// </summary>
@@ -89,17 +90,15 @@ namespace Ginger.Actions.ActionConversion
         {
             if (ConversionType == eActionConversionType.SingleBusinessFlow)
             {
-                ObservableList<BusinessFlowConversionStatus> lst = new ObservableList<BusinessFlowConversionStatus>()
+                ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>()
                 {
-                    new BusinessFlowConversionStatus() {
+                    new BusinessFlowToConvert() {
                         ConversionStatus = eConversionStatus.Pending,
-                        BusinessFlow = ListOfBusinessFlow[0],
-                        ActivitiesCount = ListOfBusinessFlow[0].Activities.Count,
-                        CurrentActivityIndex = 0
+                        BusinessFlow = ListOfBusinessFlow[0]
                     }
                 };
                 
-                ConverToActions(lst);
+                BusinessFlowsActionsConversion(lst);
             }
         }
 
@@ -116,14 +115,14 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         /// <param name="lst"></param>
         /// <param name="isReConvert"></param>
-        public async void ProcessConversion(ObservableList<BusinessFlowConversionStatus> lst, bool isReConvert)
+        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            ProcessStarted();
             try
             {
                 if (isReConvert)
                 {
-                    ObservableList<BusinessFlowConversionStatus> selectedLst = new ObservableList<BusinessFlowConversionStatus>();
+                    ObservableList<BusinessFlowToConvert> selectedLst = new ObservableList<BusinessFlowToConvert>();
                     foreach (var bf in lst)
                     {
                         if (bf.IsSelected)
@@ -143,7 +142,7 @@ namespace Ginger.Actions.ActionConversion
 
                 if (mConversionUtils.ListOfBusinessFlow.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ContinueConversion(NewActivityChecked, ActionToBeConverted, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -153,7 +152,7 @@ namespace Ginger.Actions.ActionConversion
             }
             finally
             {
-                Mouse.OverrideCursor = null;
+                ProcessEnded();
             }
         }
 
@@ -161,13 +160,12 @@ namespace Ginger.Actions.ActionConversion
         /// This method is used to convert the actions
         /// </summary>
         /// <param name="lst"></param>
-        public async void ConverToActions(ObservableList<BusinessFlowConversionStatus> lst)
+        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
         {
             try
             {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                
-                // create a new converted activity                
+                ProcessStarted();
+
                 mConversionUtils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
                 mConversionUtils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
                 mConversionUtils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
@@ -175,11 +173,12 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
                 mConversionUtils.ListOfBusinessFlow = lst;
 
-                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(NewActivityChecked, ActionToBeConverted, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
 
                 if (ConversionType == eActionConversionType.MultipleBusinessFlow)
                 {
-                    mReportPage.SetButtonsVisibility(true); 
+                    mReportPage.SetButtonsVisibility(true);
+                    ProcessEnded();
                 }
             }
             catch (Exception ex)
@@ -189,8 +188,7 @@ namespace Ginger.Actions.ActionConversion
             }
             finally
             {
-                Reporter.HideStatusMessage();
-                Mouse.OverrideCursor = null;
+                Reporter.HideStatusMessage();               
             }
         }
 

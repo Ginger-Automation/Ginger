@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.ALM.QC;
 using Ginger.BusinessFlowWindows;
@@ -138,9 +139,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
                 if (mBusFlowsFolder.IsRootFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowActionConversion: true);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false);
                 else
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false, allowActionConversion: true);
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
+
+                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, "@Connection_32x32.png");
                 AddSourceControlOptions(mContextMenu, false, false);
 
                 MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import");
@@ -160,6 +163,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
         }
 
+        private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
+            if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
+            {
+                lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
+            }
+            else
+            {
+                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+                foreach (var bf in items)
+                {
+                    lst.Add(bf);
+                }
+            }
+
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700);
+        }
 
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
         {

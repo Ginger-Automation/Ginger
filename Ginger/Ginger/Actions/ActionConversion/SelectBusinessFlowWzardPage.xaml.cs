@@ -75,7 +75,7 @@ namespace Ginger.Actions.ActionConversion
                         act.SelectedForConversion = true;
                     } 
                 }
-            } 
+            }
         }
 
         /// <summary>

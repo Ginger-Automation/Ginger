@@ -47,7 +47,7 @@
         </StackPanel>
 
         <Expander x:Name="xTargetApplicationExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="10,5,10,0"  ExpandDirection="Down" IsExpanded="True" 
-                  Style="{StaticResource @MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" 
+                  Style="{StaticResource $MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" 
                   Collapsed="ControlsViewsExpander_Collapsed" Visibility="{Binding ElementName=xNewActivityRadioBtn, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
             <Expander.Header>
                 <Label x:Name="xTargetApplicationExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Margin="0,-2,0,0" Foreground="{StaticResource $Color_DarkBlue}" Content="Override Target Application"/>
@@ -66,7 +66,7 @@
         </CheckBox>
 
         <Expander x:Name="xPOMSelectExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Margin="10,3,10,0"  ExpandDirection="Down" IsExpanded="True"                   
-                  Style="{StaticResource @MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed"
+                  Style="{StaticResource $MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed"
                   Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
             <Expander.Header>
                 <Label x:Name="xPOMSelectExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Foreground="{StaticResource $Color_DarkBlue}" Content="POM"/>

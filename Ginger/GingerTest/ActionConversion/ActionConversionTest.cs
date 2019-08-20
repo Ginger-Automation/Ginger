@@ -29,6 +29,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace GingerTest
 {
@@ -189,21 +190,19 @@ namespace GingerTest
                 convertableTargetApplications.Add(tas);
             }
 
-            BusinessFlowConversionStatus statusLst = new BusinessFlowConversionStatus()
+            BusinessFlowToConvert statusLst = new BusinessFlowToConvert()
             {
                 ConversionStatus = eConversionStatus.Pending,
-                BusinessFlow = mBF,
-                ActivitiesCount = mBF.Activities.Count,
-                CurrentActivityIndex = 0
+                BusinessFlow = mBF
             };
 
-            utils.ConvertToActions(addNewActivity, statusLst, lst, convertableTargetApplications, convertToPOMAction, poms);
+            utils.ConvertToActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
         }
 
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
                                                                  bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ObservableList<BusinessFlowConversionStatus> ListOfBusinessFlow = new ObservableList<BusinessFlowConversionStatus>();
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
             foreach (var bf in mListBF)
@@ -216,10 +215,8 @@ namespace GingerTest
                     lstCad.Add(cad);
                 }
 
-                BusinessFlowConversionStatus flowConversion = new BusinessFlowConversionStatus();
+                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                 flowConversion.BusinessFlow = bf;
-                flowConversion.ActivitiesCount = bf.Activities.Count;
-                flowConversion.CurrentActivityIndex = 0;
                 flowConversion.ConversionStatus = eConversionStatus.Pending;
                 ListOfBusinessFlow.Add(flowConversion);
             }
@@ -245,7 +242,7 @@ namespace GingerTest
             }
 
             utils.ListOfBusinessFlow = ListOfBusinessFlow;
-            utils.ConvertActionsOfMultipleBusinessFlows(addNewActivity, lstCad, convertableTargetApplications, convertToPOMAction, poms);
+            utils.ConvertActionsOfMultipleBusinessFlows(lstCad, addNewActivity, convertableTargetApplications, convertToPOMAction, poms);
         }
         
         private static bool ValidateMultipleBFConversionInSameActivity(bool isTASame = true, string mapTA = "")

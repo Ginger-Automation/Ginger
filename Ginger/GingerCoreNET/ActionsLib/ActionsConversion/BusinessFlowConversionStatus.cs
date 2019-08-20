@@ -8,8 +8,31 @@ namespace Amdocs.Ginger.CoreNET
     /// <summary>
     /// This class is used to hold the wrapper for businessflow conversion status
     /// </summary>
-    public class BusinessFlowConversionStatus : INotifyPropertyChanged
+    public class BusinessFlowToConvert : INotifyPropertyChanged
     {
+        /// <summary>
+        /// This enum is used to hold the status for conversion
+        /// </summary>
+        public enum eConversionStatus
+        {
+            Pending,
+            Running,
+            Stopped,
+            Finish,
+            Failed
+        }
+
+        /// <summary>
+        /// This enum is used to hold the save status for the converted businessflows
+        /// </summary>
+        public enum eConversionSaveStatus
+        {
+            Saved,
+            Saving,
+            Pending,
+            Failed
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         BusinessFlow mBusinessFlow;
@@ -165,19 +188,7 @@ namespace Amdocs.Ginger.CoreNET
         public string RelativeFilePath { get; set; }
 
         public string BusinessFlowName { get; set; }
-
-        public int ActivitiesCount { get; set; }
-
-        public int ConvertedActivitiesCount { get; set; }
-
-        public int CurrentActivityIndex { get; set; }
-
-        public int CurrentActivityActionsCount { get; set; }
-
-        public int CurrentActivityConvertedActionsCount { get; set; }
-
-        public int CurrentActivityCurrentActionIndex { get; set; }
-
+        
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

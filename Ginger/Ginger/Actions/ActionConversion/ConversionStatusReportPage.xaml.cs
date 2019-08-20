@@ -24,9 +24,12 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -36,8 +39,7 @@ namespace Ginger.Actions.ActionConversion
     public partial class ConversionStatusReportPage : Page, IWizardPage
     {
         ActionsConversionWizard mWizard;
-        public ObservableList<BusinessFlowConversionStatus> ListOfBusinessFlow = null;
-        List<string> SelectedBusinessFlow = new List<string>();
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
 
         /// <summary>
         /// Constructor for configuration page
@@ -72,12 +74,10 @@ namespace Ginger.Actions.ActionConversion
         {
             Dispatcher.Invoke(() =>
             {
-                mWizard.ProcessStarted();
                 DataContext = mWizard;
                 SetBusinessFlowConversionStatusGridView();
                 SetButtonsVisibility(false);
-                mWizard.ConverToActions(ListOfBusinessFlow);
-                mWizard.ProcessEnded();
+                mWizard.BusinessFlowsActionsConversion(ListOfBusinessFlow);
             });
         }
 
@@ -93,12 +93,12 @@ namespace Ginger.Actions.ActionConversion
                 GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
                 view.GridColsView = new ObservableList<GridColView>();
 
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.RelativeFilePath), WidthWeight = 20, ReadOnly = true, Header = "Folder" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowConversionStatus.BusinessFlowName), WidthWeight = 25, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 20, ReadOnly = true, Header = "Folder" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, ReadOnly = true, Header = "Name" });
                 view.GridColsView.Add(new GridColView()
                 {
-                    Field = nameof(BusinessFlowConversionStatus.StatusIcon),
+                    Field = nameof(BusinessFlowToConvert.StatusIcon),
                     WidthWeight = 15,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"],
@@ -107,7 +107,7 @@ namespace Ginger.Actions.ActionConversion
                 });
                 view.GridColsView.Add(new GridColView()
                 {
-                    Field = nameof(BusinessFlowConversionStatus.SaveStatusIcon),
+                    Field = nameof(BusinessFlowToConvert.SaveStatusIcon),
                     WidthWeight = 15,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestSaveStatusIconTemplate"],
@@ -128,18 +128,16 @@ namespace Ginger.Actions.ActionConversion
         /// This method is used to get the businessFlowList
         /// </summary>
         /// <returns></returns>
-        private ObservableList<BusinessFlowConversionStatus> GetBusinessFlowList()
+        private ObservableList<BusinessFlowToConvert> GetBusinessFlowList()
         {
-            ListOfBusinessFlow = new ObservableList<BusinessFlowConversionStatus>();
+            ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
             foreach (BusinessFlow bf in mWizard.ListOfBusinessFlow)
             {
-                if (bf.Selected && (SelectedBusinessFlow == null || SelectedBusinessFlow.Count == 0 || SelectedBusinessFlow.Contains(bf.Name)))
+                if (bf.Selected)
                 {
                     BusinessFlow destinationBf = new BusinessFlow();
-                    BusinessFlowConversionStatus flowConversion = new BusinessFlowConversionStatus();
+                    BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                     flowConversion.BusinessFlow = bf;
-                    flowConversion.ActivitiesCount = bf.Activities.Count;
-                    flowConversion.CurrentActivityIndex = 0;
                     flowConversion.ConversionStatus = eConversionStatus.Pending;
                     ListOfBusinessFlow.Add(flowConversion);
                 }
@@ -167,10 +165,8 @@ namespace Ginger.Actions.ActionConversion
         {
             Dispatcher.Invoke(() =>
             {
-                mWizard.ProcessStarted();
                 SetButtonsVisibility(false);
                 mWizard.ProcessConversion(ListOfBusinessFlow, false);
-                mWizard.ProcessEnded();
             });
         }
 
@@ -183,28 +179,29 @@ namespace Ginger.Actions.ActionConversion
         {
             Dispatcher.Invoke(() =>
             {
-                mWizard.ProcessStarted();
                 SetButtonsVisibility(false);
-                GetSelectedBusinessFlows();
-                xBusinessFlowGrid.DataSourceList = GetBusinessFlowList();
-                mWizard.ProcessConversion(ListOfBusinessFlow, true);
-                mWizard.ProcessEnded();
+                ObservableList<BusinessFlowToConvert> lst = GetListToReConvert(ListOfBusinessFlow);
+                mWizard.ProcessConversion(lst, true);
             });
         }
 
         /// <summary>
-        /// This method will get the names of selected businessflows
+        /// This method is used to get the businessFlowList to reconvert
         /// </summary>
-        private void GetSelectedBusinessFlows()
+        /// <param name="listOfBusinessFlow"></param>
+        /// <returns></returns>
+        private ObservableList<BusinessFlowToConvert> GetListToReConvert(ObservableList<BusinessFlowToConvert> listOfBusinessFlow)
         {
-            SelectedBusinessFlow = new List<string>();
-            foreach (var bfs in ListOfBusinessFlow)
+            ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
+            foreach (BusinessFlowToConvert bf in listOfBusinessFlow)
             {
-                if (bfs.IsSelected)
+                if (bf.IsSelected)
                 {
-                    SelectedBusinessFlow.Add(bfs.BusinessFlowName);
+                    bf.ConversionStatus = eConversionStatus.Pending;
+                    lst.Add(bf);
                 }
             }
+            return lst;
         }
 
         /// <summary>
@@ -212,16 +209,13 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SaveButtonClicked(object sender, RoutedEventArgs e)
+        private async void SaveButtonClicked(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            mWizard.ProcessStarted();
+
+            await Task.Run(() =>
             {
-
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
-                mWizard.ProcessStarted();
-
-                foreach (BusinessFlowConversionStatus bf in xBusinessFlowGrid.DataSourceList)
+                foreach (BusinessFlowToConvert bf in xBusinessFlowGrid.DataSourceList)
                 {
                     try
                     {
@@ -238,17 +232,16 @@ namespace Ginger.Actions.ActionConversion
                         Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
                     }
                 }
-
-                mWizard.ProcessEnded();
-                Mouse.OverrideCursor = null;
             });
+
+            mWizard.ProcessEnded();
         }
 
         private void MarkUnMarkAllActions(bool status)
         {
             Dispatcher.Invoke(() =>
             {
-                foreach (BusinessFlowConversionStatus bf in xBusinessFlowGrid.DataSourceList)
+                foreach (BusinessFlowToConvert bf in xBusinessFlowGrid.DataSourceList)
                 {
                     bf.IsSelected = status;
                 }

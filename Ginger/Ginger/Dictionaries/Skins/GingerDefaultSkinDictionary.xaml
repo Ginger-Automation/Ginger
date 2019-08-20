@@ -2884,7 +2884,7 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
 
-    <Style TargetType="Expander" x:Key="@MenuExpanderTransparentStyle" >
+    <Style TargetType="Expander" x:Key="$MenuExpanderTransparentStyle" >
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
