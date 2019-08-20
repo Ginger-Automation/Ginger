@@ -418,7 +418,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                 }
             }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
+            else if ((mAction.ElementAction == ActUIElement.eElementAction.Click)|| (mAction.ElementAction == ActUIElement.eElementAction.AsyncClick)|| (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick))
             {
                 if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                 {
