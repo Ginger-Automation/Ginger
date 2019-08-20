@@ -98,17 +98,19 @@ namespace Amdocs.Ginger.GingerConsole
         private void CreatePluginServicesinfojson()
         {
             Console.WriteLine("!!! Obsolete !!! - Plugin Package Services json is automatically created - no need to generate");
-            //Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
-            //string folder = Console.ReadLine();
-            //if (System.IO.Directory.Exists(folder))
-            //{
-            //    PluginPackage p = new PluginPackage(folder);
-            //    p.CreateServicesInfo();
-            //}
-            //else
-            //{
-            //    Console.WriteLine("folder not found");
-            //}
+            Console.WriteLine("BUT it must be packed in plugin package");
+            Console.WriteLine("Use Create Plugin package feature which will zip it");
+            Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
+            string folder = Console.ReadLine();
+            if (System.IO.Directory.Exists(folder))
+            {
+                PluginPackage p = new PluginPackage(folder);
+                p.CreateServicesInfo();
+            }
+            else
+            {
+                Console.WriteLine("folder not found");
+            }
         }
 
        

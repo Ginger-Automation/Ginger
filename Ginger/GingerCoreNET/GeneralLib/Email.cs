@@ -174,6 +174,7 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public string SMTPPass { get { return mSMTPPass; } set { if (mSMTPPass != value) { mSMTPPass = value; OnPropertyChanged(nameof(SMTPPass)); } } }
 
+        // TODO: why we serialize? is it error report? check/fix
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
 

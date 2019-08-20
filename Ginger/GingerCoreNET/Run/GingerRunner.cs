@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -4017,8 +4018,11 @@ namespace Ginger.Run
                         BFES.ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true);
                         BFES.ExecutionBFFlowControls = BF.BFFlowControls;
                         BFES.BusinessFlow = BF;
-                        BFES.Selected = true;                        
-                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
+                        BFES.Selected = true;
+                        if (ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder != null && BF.ExecutionFullLogFolder != null)
+                        {
+                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder, BF.ExecutionLogFolder);
+                        }
 
                         BFESs.Add(BFES);
                     }
@@ -4478,7 +4482,8 @@ namespace Ginger.Run
                             continue;
                         }
                         activity.ExecutionLogActionCounter++;
-                        action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
+                        action.ExecutionLogFolder = Path.Combine(activity.ExecutionLogFolder, activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description));
+
                         if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
