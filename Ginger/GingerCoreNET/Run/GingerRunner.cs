@@ -1560,7 +1560,7 @@ namespace Ginger.Run
             // TODO: remove when we no longer use LocateValue in Action
 
           
-            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
+            if (!string.IsNullOrEmpty(act.GetInputParamValue(Act.Fields.LocateValue)))
             {
 
                 VE.Value = act.LocateValue;

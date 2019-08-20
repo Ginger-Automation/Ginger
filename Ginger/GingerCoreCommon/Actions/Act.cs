@@ -192,9 +192,13 @@ namespace GingerCore.Actions
             }
             set
             {
-                GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
-                OnPropertyChanged(Fields.LocateBy);
-                OnPropertyChanged(Fields.Details);
+                if(this.ObjectLocatorConfigsNeeded)
+                {
+                    GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
+                    OnPropertyChanged(Fields.LocateBy);
+                    OnPropertyChanged(Fields.Details);
+                }
+                
             }
         }
 
