@@ -1788,6 +1788,7 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(EnableRetryMechanismCheckBox);
             BindingOperations.ClearAllBindings(RetryMechanismIntervalTextBox);
             BindingOperations.ClearAllBindings(RetryMechanismMaxRetriesTextBox);
+            AddOutDS.Unchecked -= AddOutDS_Unchecked;
             BindingOperations.ClearAllBindings(AddOutDS);
             BindingOperations.ClearAllBindings(cmbDataSourceName);
             BindingOperations.ClearAllBindings(cmbDataSourceTableName);
