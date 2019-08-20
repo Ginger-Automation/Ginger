@@ -90,6 +90,7 @@ namespace GingerTest
             mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
 
             Activity activity = new Activity();
+            activity.Active = true;
             activity.SelectedForConversion = true;
             ActGenElement gen1 = new ActGenElement();
             gen1.Active = true;
@@ -110,6 +111,7 @@ namespace GingerTest
             BusinessFlow pbBF = new BusinessFlow() { Name = "TestBFPBConversion", Active = true };
 
             Activity webActivity = new Activity();
+            webActivity.Active = true;
             webActivity.SelectedForConversion = true;
             ActGenElement gen1 = new ActGenElement();
             gen1.Active = true;
@@ -123,6 +125,7 @@ namespace GingerTest
             mListBF.Add(webBF);
 
             Activity winActivity = new Activity();
+            winActivity.Active = true;
             winActivity.SelectedForConversion = true;
             ActGenElement gen2 = new ActGenElement();
             gen2.Active = true;
@@ -136,6 +139,7 @@ namespace GingerTest
             mListBF.Add(winBF);
 
             Activity pbActivity = new Activity();
+            pbActivity.Active = true;
             pbActivity.SelectedForConversion = true;
             ActGenElement gen3 = new ActGenElement();
             gen3.Active = true;
@@ -261,7 +265,7 @@ namespace GingerTest
                     }
 
                     string targetLocateType = ((GingerCore.Actions.Act)activity.Acts[0]).LocateBy.ToString();
-                    string convertedLocateType = ((GingerCore.Actions.Act)activity.Acts[1]).LocateBy.ToString();
+                    string convertedLocateType = ((GingerCore.Actions.Common.ActUIElement)activity.Acts[1]).ElementLocateBy.ToString();
                     if (targetLocateType != convertedLocateType)
                     {
                         isValid = false;
@@ -269,7 +273,7 @@ namespace GingerTest
                     }
 
                     string targetLocateValue = ((GingerCore.Actions.Act)activity.Acts[0]).LocateValue.ToString();
-                    string convertedLocateValue = ((GingerCore.Actions.Act)activity.Acts[1]).LocateValue.ToString();
+                    string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)activity.Acts[1]).ElementLocateValue.ToString();
                     if (targetLocateValue != convertedLocateValue)
                     {
                         isValid = false;
@@ -307,7 +311,7 @@ namespace GingerTest
                 }
 
                 string targetLocateType = ((GingerCore.Actions.Act)sourceActivity.Acts[0]).LocateBy.ToString();
-                string convertedLocateType = ((GingerCore.Actions.Act)targetActivity.Acts[0]).LocateBy.ToString();
+                string convertedLocateType = ((GingerCore.Actions.Common.ActUIElement)targetActivity.Acts[0]).ElementLocateBy.ToString();
                 if (targetLocateType != convertedLocateType)
                 {
                     isValid = false;
@@ -315,7 +319,7 @@ namespace GingerTest
                 }
 
                 string targetLocateValue = ((GingerCore.Actions.Act)sourceActivity.Acts[0]).LocateValue.ToString();
-                string convertedLocateValue = ((GingerCore.Actions.Act)targetActivity.Acts[0]).LocateValue.ToString();
+                string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)targetActivity.Acts[0]).ElementLocateValue.ToString();
                 if (targetLocateValue != convertedLocateValue)
                 {
                     isValid = false;
@@ -460,10 +464,10 @@ namespace GingerTest
             string convertedType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).ActClass;
 
             string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
-            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString();
 
             string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
-            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString();
 
             ////Assert
             Assert.AreEqual(mBF.Activities.Count(), 1);
@@ -500,10 +504,10 @@ namespace GingerTest
             string convertedType = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).ActClass;
 
             string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
-            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[1].Acts[0]).ElementLocateBy.ToString();
 
             string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
-            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[1].Acts[0]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[1].Acts[0]).ElementLocateValue.ToString();
 
             ////Assert
             Assert.AreEqual(mBF.Activities.Count(), 2);
@@ -541,10 +545,10 @@ namespace GingerTest
             string convertedType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).ActClass;
 
             string targetLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateBy.ToString();
-            string convertedLocateType = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateBy.ToString();
+            string convertedLocateType = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString();
 
             string targetLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[0]).LocateValue.ToString();
-            string convertedLocateValue = ((GingerCore.Actions.Act)mBF.Activities[0].Acts[1]).LocateValue.ToString();
+            string convertedLocateValue = ((GingerCore.Actions.Common.ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString();
 
             ////Assert
             Assert.AreEqual(mBF.Activities.Count(), 1);
