@@ -81,9 +81,10 @@ namespace Ginger.Run.RunSetActions
 
         private void RunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod ==Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB
+                && this.ActionEditPageFrame.Content.GetType() == typeof(RunSetActionHTMLReportSendEmailEditPage))
             {
-                Reporter.ToUser(eUserMsgKey.ActionNotImplemented, "not supported on Lite Db");
+                Reporter.ToUser(eUserMsgKey.ActionNotImplemented, "this operation isn't supported with Lite Db option");
                 return;
             }
             mRunSetAction.SolutionFolder = WorkSpace.Instance.Solution.Folder;
