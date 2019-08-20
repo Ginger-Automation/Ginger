@@ -607,8 +607,26 @@ namespace GingerCore.Repository
                         }
                         else
                         {
-                            //TODO: handle other types of list, meanwhile Assume observable list
-                            IObservableList lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
+
+                            object result = null;
+                            if (mi.MemberType == MemberTypes.Property)
+                            {
+                                result = ((PropertyInfo)mi).GetValue(obj);
+                            }
+                            else
+                            {
+                                result = ((FieldInfo)mi).GetValue(obj);
+                            }
+                            IObservableList lst = null;
+                            if (result == null)
+                            {
+                                lst = (IObservableList)Activator.CreateInstance((typeof(ObservableList<>).MakeGenericType(t)));
+                            }
+                            else
+                            {
+                                lst = (IObservableList)result;                 
+                                
+                            }
                             //assign it to the relevant obj
                             pi.SetValue(obj, lst);
                             // Read the list from the xml
