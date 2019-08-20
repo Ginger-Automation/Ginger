@@ -385,18 +385,24 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == minimumInputValuesToHideGrid)
                 {
-                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
-                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    if (inputValue!=null)
+                    {                      
+                        ValueUC.Init(mContext, inputValue, nameof(ActInputValue.Value));
+                        ValueUC.ValueTextBox.Text = inputValue.Value;
+                        ValueLabel.Content = inputValue.Param;
+                    }                    
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.Value = "";
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
             else if (a.GetType() == typeof(ActGenElement))
