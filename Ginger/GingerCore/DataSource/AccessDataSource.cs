@@ -230,11 +230,12 @@ namespace GingerCore.DataSource
         public override bool ExporttoExcel(string TableName,string sExcelPath, String sSheetName)
         {
             DataTable dsTable = GetQueryOutput("select * from " + TableName);
+            bool result;
             lock(thisObj)
             {
-                ExportDSToExcel(dsTable, sExcelPath, sSheetName);
+                result = ExportDSToExcel(dsTable, sExcelPath, sSheetName);
             }
-            return true;
+            return result;
         }
 
         public override bool IsTableExist(string TableName)
