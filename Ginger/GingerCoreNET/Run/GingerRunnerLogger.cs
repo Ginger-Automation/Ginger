@@ -31,7 +31,6 @@ namespace Ginger.Run
     public class GingerRunnerLogger
     {
         string fileName; 
-
         public GingerRunnerLogger(string loggerFile)
         {
             this.fileName = loggerFile;
