@@ -24,6 +24,11 @@ using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
+using GingerCore.Platforms;
+using System.Xml;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -110,6 +115,8 @@ namespace GingerCore.Actions.WebServices
             return list;
         }
 
+        
+
         public ApplicationAPIUtils.eNetworkCredentials NetworkCredentialsRadioButton
         {
             get
@@ -169,6 +176,152 @@ namespace GingerCore.Actions.WebServices
             {
                 AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, value.ToString());
             }
+        }
+
+
+
+
+        public static bool ParseNodesToReturnParams(ActWebAPIBase mAct,string ResponseMessage)
+        {
+            bool XMLResponseCanBeParsed = false;
+            XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
+
+            Reporter.ToLog(eLogLevel.DEBUG, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed);
+
+            if (XMLResponseCanBeParsed && mAct.GetType() == typeof(ActWebAPISoap))
+            {
+                return ParseXMLNodesToReturnParams(mAct, ResponseMessage);
+            }
+            else if (mAct.GetType() == typeof(ActWebAPIRest))
+            {
+                if (string.IsNullOrEmpty(ResponseMessage))
+                {
+                    return false;
+                }
+
+                string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
+                bool jsonParsinFailed = false;
+
+                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
+                {
+                    if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
+                        jsonParsinFailed = true;//will try XML parsing instead
+                    else
+                        return true;
+                }
+
+                if (XMLResponseCanBeParsed && (
+                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
+                {
+                    return ParseXMLNodesToReturnParams(mAct, ResponseMessage);
+                }
+            }
+
+            return false;
+        }
+
+        private static bool XMLStringCanBeParsed(string responseMessage)
+        {
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(responseMessage);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return false;
+            }
+        }
+
+
+
+        private static bool ParseXMLNodesToReturnParams(ActWebAPIBase mAct, string ResponseMessage)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(ResponseMessage);
+
+                if (mAct.UseLegacyJSONParsing)
+                {
+                    List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
+                    outputTagsList = General.GetXMLNodesItems(doc, true);
+                    foreach (General.XmlNodeItem outputItem in outputTagsList)
+                    {
+                        mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                    }
+                }
+                else
+                {
+                    XMLDocExtended XDE = new XMLDocExtended(doc);
+                    foreach (XMLDocExtended XDN in XDE.GetEndingNodes())
+                    {
+                        mAct.AddOrUpdateReturnParamActualWithPath(XDN.LocalName, XDN.Value, XDN.XPathWithoutNamspaces);
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        private static bool ParseJsonNodesToReturnParams(ActWebAPIBase mAct, string ResponseMessage)
+        {
+            XmlDocument doc = null;
+
+            try
+            {
+                var JsonCheck = JToken.Parse(ResponseMessage);
+            }
+            catch (JsonReaderException)
+            {
+                return false;
+            }
+
+            if (mAct.UseLegacyJSONParsing)
+            {
+
+                if (((ResponseMessage[0] == '[') && (ResponseMessage[ResponseMessage.Length - 1] == ']')))
+                {
+                    doc = JsonConvert.DeserializeXmlNode("{\"root\":" + ResponseMessage + "}", "root");
+                }
+                else
+                {
+                    try
+                    {
+                        doc = JsonConvert.DeserializeXmlNode(ResponseMessage, "root");
+                    }
+                    catch
+                    {
+                        doc = JsonConvert.DeserializeXmlNode(General.CorrectJSON(ResponseMessage), "root");
+                    }
+
+                }
+
+                List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
+                outputTagsList = General.GetXMLNodesItems(doc, true);
+                foreach (General.XmlNodeItem outputItem in outputTagsList)
+                {
+                    mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
+                }
+            }
+            else
+            {
+                try
+                {
+                    mAct.ParseJSONToOutputValues(ResponseMessage, 1);
+                }
+                catch
+                {
+                    mAct.ParseJSONToOutputValues(General.CorrectJSON(ResponseMessage), 1);
+                }
+            }
+            return true;
         }
     }
 }

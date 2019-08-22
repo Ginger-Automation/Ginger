@@ -6,5 +6,7 @@ namespace Ginger.Plugin.Platform.WebService
 {
     public class GingerHttpResponseMessage
     {
+
+        public string Resposne;
     }
 }

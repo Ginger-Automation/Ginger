@@ -28,10 +28,49 @@ namespace Ginger.Plugin.Platform.WebService.Execution
 
 
         }
+        IRestClient RestClient = null;
+        IWebServicePlatform Platformservice;
+    
 
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
-            throw new NotImplementedException();
+            Platformservice = (IWebServicePlatform)service;
+            RestClient = Platformservice.RestClient;
+
+            try
+            {
+                GingerHttpRequestMessage Request = GetRequest(platformAction);
+
+                GingerHttpResponseMessage Response = RestClient.PerformGetOperation(Request);
+                platformAction.Output.Add("Response", Response.Resposne);
+
+            }
+
+            catch (Exception ex)
+            {
+                platformAction.addError(ex.Message);
+            }
+
+        }
+
+        private GingerHttpRequestMessage GetRequest(NodePlatformAction platformAction)
+        {
+            GingerHttpRequestMessage Request = new GingerHttpRequestMessage();
+
+            Request.URL = new Uri(platformAction.InputParams["EndPointURL"].ToString());
+            Request.Method = platformAction.InputParams["RequestType"].ToString();
+
+            Request.BodyString= platformAction.InputParams.ContainsKey("RequestBody")? platformAction.InputParams["RequestBody"].ToString():"";
+
+          if (platformAction.InputParams["Headers"] is Newtonsoft.Json.Linq.JObject JsonObj)
+            {
+                foreach(Newtonsoft.Json.Linq.JProperty Jt in JsonObj.Children())
+                {
+                    Request.Headers.Add(new KeyValuePair<string, string>(Jt.Name, Jt.Value.ToString()));
+                }
+            }
+
+            return Request;
         }
     }
 }

@@ -497,9 +497,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                             XmlDocument xmlDoc1 = new XmlDocument();
                             xmlDoc1.LoadXml(kpr.Value[2]);
 
-                            List<GingerCore.General.XmlNodeItem> outputTagsList1 = new List<GingerCore.General.XmlNodeItem>();
+                            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList1 = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
                             outputTagsList1 = General.GetXMLNodesItems(xmlDoc1);
-                            foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList1)
+                            foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList1)
                             {
                                 act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
                             }
@@ -669,9 +669,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
                 try
                 {
-                    List<GingerCore.General.XmlNodeItem> outputList = new List<GingerCore.General.XmlNodeItem>();
-                    outputList = GingerCore.General.GetXMLNodesItems(xmlReqDoc);
-                    foreach (GingerCore.General.XmlNodeItem outputItem in outputList)
+                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                    outputList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlReqDoc);
+                    foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputList)
                     {
                         mActWebService.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
                     }

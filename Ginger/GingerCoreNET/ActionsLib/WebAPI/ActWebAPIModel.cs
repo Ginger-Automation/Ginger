@@ -25,10 +25,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.GeneralLib;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCore.Platforms;
 
 namespace GingerCore.Actions.WebServices.WebAPI
 {
-    public class ActWebAPIModel : Act
+    public class ActWebAPIModel : Act, IActPluginExecution
     {
         public override String ActionType
         {
@@ -111,6 +113,16 @@ namespace GingerCore.Actions.WebServices.WebAPI
                     actReturnValue.ExpectedCalculated = actReturnValue.ExpectedCalculated.Replace(("{AppModelParam Name = " + param.PlaceHolder + "}"), param.ExecutionValue);
                 }
             }
+        }
+
+        public PlatformAction GetAsPlatformAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetName()
+        {
+            return "ActWebAPIModel";
         }
     }
 }
