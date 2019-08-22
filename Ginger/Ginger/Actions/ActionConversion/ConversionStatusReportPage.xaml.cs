@@ -23,6 +23,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -128,7 +129,6 @@ namespace Ginger.Actions.ActionConversion
             //{
             //    if (bf.Selected)
             //    {
-            //        BusinessFlow destinationBf = new BusinessFlow();
             //        BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
             //        flowConversion.BusinessFlow = bf;
             //        flowConversion.ConversionStatus = eConversionStatus.Pending;
@@ -190,7 +190,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 if (bf.IsSelected)
                 {
-                    //bf.ConversionStatus = eConversionStatus.Pending;
+                    bf.ConversionStatus = eConversionStatus.Pending;
                     lst.Add(bf);
                 }
             }
@@ -214,14 +214,14 @@ namespace Ginger.Actions.ActionConversion
                     {
                         if (bf.IsSelected)
                         {
-                            //bf.SaveStatus = eConversionSaveStatus.Saving;
+                            bf.SaveStatus = eConversionSaveStatus.Saving;
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                            //bf.SaveStatus = eConversionSaveStatus.Saved;
+                            bf.SaveStatus = eConversionSaveStatus.Saved;
                         }
                     }
                     catch (Exception ex)
                     {
-                        //bf.SaveStatus = eConversionSaveStatus.Failed;
+                        bf.SaveStatus = eConversionSaveStatus.Failed;
                         Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
                     }
                 }

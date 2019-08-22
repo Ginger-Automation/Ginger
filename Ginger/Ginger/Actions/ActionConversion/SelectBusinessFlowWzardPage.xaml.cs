@@ -1,11 +1,14 @@
 ﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
- Licensed under the Apache License, Version 2.0 (the "License")
+
+Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
- http://www.apache.org/licenses/LICENSE-2.0 
- Unless required by applicable law or agreed to in writing, software
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 See the License for the specific language governing permissions and 
@@ -18,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -34,18 +38,18 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class SelectBusinessFlowWzardPage : Page, IWizardPage
     {
-        WizardEventArgs mWizard;
+        ActionsConversionWizard mWizard;
         public object BusinessFlowFolder { get; set; }
         SingleItemTreeViewSelectionPage mBFSelectionPage = null;
         ObservableList<BusinessFlow> ListOfBusinessFlow = null;
-        Context Context = null;
+        Context mContext = null;
 
         public SelectBusinessFlowWzardPage(ObservableList<BusinessFlow> listOfBusinessFlow, Context context)
         {
             InitializeComponent();
 
             ListOfBusinessFlow = listOfBusinessFlow;
-            Context = context;
+            mContext = context;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -53,9 +57,29 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = WizardEventArgs;
+                    mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
                     SetGridsView();
                     break;
+                case EventType.LeavingForNextPage:
+                    SetActivitiesSelected();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// This method is used to set the acitvities for selected to conversion
+        /// </summary>
+        private void SetActivitiesSelected()
+        {
+            foreach (var businessFlow in ListOfBusinessFlow)
+            {
+                if (businessFlow.Selected)
+                {
+                    foreach (var act in businessFlow.Activities)
+                    {
+                        act.SelectedForConversion = true;
+                    }
+                }
             }
         }
 
@@ -142,14 +166,14 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="e"></param>
         private void MBFSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
-             AddSelectedBF(e.SelectedItems);
+            AddSelectedBF(e.SelectedItems);
         }
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
-            if (Context.BusinessFlow != null)
+            if (mContext.BusinessFlow != null)
             {
-                Context.BusinessFlow.CurrentActivity = (Activity)xBusinessFlowGrid.CurrentItem;
+                mContext.BusinessFlow.CurrentActivity = (Activity)xBusinessFlowGrid.CurrentItem;
             }
         }
 

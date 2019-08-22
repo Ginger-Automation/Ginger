@@ -32,6 +32,7 @@ namespace Ginger.Actions.ApiActionsConversion
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
         public ObservableList<BusinessFlow> ListOfBusinessFlow = null;
+        ConversionStatusReportPage mReportPage = null;
 
         public ApiActionsConversionWizard(Context context)
         {
@@ -40,6 +41,9 @@ namespace Ginger.Actions.ApiActionsConversion
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
             AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
+
+            mReportPage = new ConversionStatusReportPage();
+            AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
         }
         
         public override void Finish()
