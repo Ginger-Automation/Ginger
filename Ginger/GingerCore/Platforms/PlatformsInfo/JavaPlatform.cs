@@ -29,6 +29,10 @@ namespace GingerCore.Platforms.PlatformsInfo
 {
     public class JavaPlatform : PlatformInfoBase
     {
+
+
+        private List<eElementType> mJavaPlatformElementActionslist { get; set; } = null;
+
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
         {
             throw new NotImplementedException();
@@ -327,16 +331,13 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<eElementType> GetPlatformUIElementsType()
         {
-            List<eElementType> javaPlatformElementTypelist = base.GetPlatformUIElementsType();
-
-            //Why below condition is needed ? 
-            if (javaPlatformElementTypelist == null || !javaPlatformElementTypelist.Exists( e => e == eElementType.EditorPane))
+            if(mJavaPlatformElementActionslist==null)
             {
-                javaPlatformElementTypelist.Add(eElementType.EditorPane);
+                mJavaPlatformElementActionslist = base.GetPlatformUIElementsType();
+                mJavaPlatformElementActionslist.Add(eElementType.EditorPane);
+                mJavaPlatformElementActionslist.Add(eElementType.TreeView);
             }
-            javaPlatformElementTypelist.Add(eElementType.TreeView);
-
-            return javaPlatformElementTypelist;
+            return mJavaPlatformElementActionslist;
         }
 
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)

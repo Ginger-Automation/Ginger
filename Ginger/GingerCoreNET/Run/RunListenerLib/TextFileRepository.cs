@@ -170,8 +170,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
-            base.SetReportRunner(gingerRunner, gingerReport,  gingerData,  mContext, filename, runnerCount);
-            SaveObjToReporsitory(gingerReport, Path.Combine(gingerReport.LogFolder,"Ginger.txt"));
+            if (gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled)
+            {
+                base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
+                SaveObjToReporsitory(gingerReport, Path.Combine(gingerReport.LogFolder, "Ginger.txt"));
+            }
         }
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
