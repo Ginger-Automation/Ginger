@@ -351,7 +351,7 @@ namespace GingerCoreCommonTest.VariableTests
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Run until we hit all numbers or 3 seconds
-            while (!IsAllHit(numbers) && stopwatch.ElapsedMilliseconds < 3000)
+            while (!CheckHits(numbers) && stopwatch.ElapsedMilliseconds < 3000)
             {
                 variableRandomNumber.GenerateAutoValue();
                 int num1 = int.Parse(variableRandomNumber.Value);
@@ -367,17 +367,7 @@ namespace GingerCoreCommonTest.VariableTests
             }            
         }
 
-        private bool IsAllHit(int[] a)
-        {            
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (a[i] == 0 )
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        
 
         [TestMethod]  [Timeout(60000)]
         public void RandomStringVar_Digit_5_8()
