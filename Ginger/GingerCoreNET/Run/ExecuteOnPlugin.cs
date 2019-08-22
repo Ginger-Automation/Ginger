@@ -28,6 +28,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Actions.WebServices;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
@@ -199,16 +200,26 @@ namespace Amdocs.Ginger.CoreNET.Run
             
             ParseActionResult(RC, (Act)actPlugin);
 
+            ActWebAPIBase WebAPiAction = null;
             if (actPlugin is ActWebAPIBase ActWebApi)
             {
+                WebAPiAction = ActWebApi;
+            }
+            else if (actPlugin is ActWebAPIModel ActWebApiModel)
+            {
+                WebAPiAction = ActWebApiModel.WebApiAction;
+            }
+            if (WebAPiAction != null)
+            {
+
                 string ResponseMessage = string.Empty;
 
-                ResponseMessage = ActWebApi.ReturnValues.Where(x => x.Param == "Response").FirstOrDefault().Actual;
-                ActWebAPIBase.ParseNodesToReturnParams(ActWebApi, ResponseMessage);
-
-
-
+                ResponseMessage = WebAPiAction.ReturnValues.Where(x => x.Param == "Response").FirstOrDefault().Actual;
+                ActWebAPIBase.ParseNodesToReturnParams(WebAPiAction, ResponseMessage);
             }
+
+
+            
 
         }
 

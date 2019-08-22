@@ -2,6 +2,9 @@
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService.Execution
@@ -30,7 +33,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
         }
         IRestClient RestClient = null;
         IWebServicePlatform Platformservice;
-    
+
 
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
@@ -60,17 +63,55 @@ namespace Ginger.Plugin.Platform.WebService.Execution
             Request.URL = new Uri(platformAction.InputParams["EndPointURL"].ToString());
             Request.Method = platformAction.InputParams["RequestType"].ToString();
 
-            Request.BodyString= platformAction.InputParams.ContainsKey("RequestBody")? platformAction.InputParams["RequestBody"].ToString():"";
+            Request.BodyString = platformAction.InputParams.ContainsKey("RequestBody") ? platformAction.InputParams["RequestBody"].ToString() : "";
+            Request.ContentType = platformAction.InputParams.ContainsKey("ContentType") ? platformAction.InputParams["ContentType"].ToString() : "";
 
-          if (platformAction.InputParams["Headers"] is Newtonsoft.Json.Linq.JObject JsonObj)
+     
+
+                if (platformAction.InputParams["Headers"] is Newtonsoft.Json.Linq.JObject JsonObj)
             {
-                foreach(Newtonsoft.Json.Linq.JProperty Jt in JsonObj.Children())
+                foreach (Newtonsoft.Json.Linq.JProperty Jt in JsonObj.Children())
                 {
                     Request.Headers.Add(new KeyValuePair<string, string>(Jt.Name, Jt.Value.ToString()));
                 }
             }
 
+            if (platformAction.InputParams["RequestKeyValues"] is Newtonsoft.Json.Linq.JArray RObj)
+            {
+                Request.RequestKeyValues = new List<RestAPIKeyBodyValues>();
+                foreach (Newtonsoft.Json.Linq.JToken Jt in RObj.Children())
+                {
+
+
+                    RestAPIKeyBodyValues RKV = new RestAPIKeyBodyValues();
+
+                    if (Jt["ValueType"].ToString() == "1")
+                    {
+                        RKV.ValueType = RestAPIKeyBodyValues.eValueType.File;
+
+                        Byte[] FileBytes = (Byte[])Jt["FileBytes"];
+                        string Path = Jt["Value"].ToString();
+                        RKV.Filename  = System.IO.Path.GetFileName(Path);
+                       
+
+
+                        ByteArrayContent fileContent = new ByteArrayContent(FileBytes);
+                        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                        RKV.Content = fileContent;
+                    }
+                    RKV.Value = Jt["Value"].ToString();
+                    RKV.Param = Jt["Param"].ToString();
+
+
+
+                    Request.RequestKeyValues.Add(RKV);
+                }
+            }
+
             return Request;
         }
+
+
+
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService
 {
-    public class RestAPIKeyBodyValues
+    public struct RestAPIKeyBodyValues
     {
 
         public enum eValueType

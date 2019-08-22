@@ -23,6 +23,8 @@ using GingerCore.Platforms;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using static GingerCore.Actions.WebAPIKeyBodyValues;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -82,8 +84,28 @@ namespace GingerCore.Actions.WebServices
 
             }
             platformAction.InputParams.Add("Headers", sHttpHeaders);
+            List<WebAPiKeyValue> WebAPiKeyValues = new List<WebAPiKeyValue>();
 
 
+            foreach (WebAPIKeyBodyValues WKBV in this.RequestKeyValues)
+            {
+
+
+                WebAPiKeyValue wakv = new WebAPiKeyValue();
+
+                wakv.Param = WKBV.Param;
+                wakv.Value = WKBV.ValueForDriver;
+                wakv.ValueType = WKBV.ValueType;
+
+                if (WKBV.ValueType==WebAPIKeyBodyValues.eValueType.File)
+                {
+                    wakv.FileBytes= File.ReadAllBytes(WKBV.ValueForDriver);
+
+                }
+
+                WebAPiKeyValues.Add(wakv);
+            }
+            platformAction.InputParams.Add("RequestKeyValues", WebAPiKeyValues);
 
 
             return platformAction;
@@ -93,5 +115,18 @@ namespace GingerCore.Actions.WebServices
         {
             return "ActWebAPIRest";
         }
+
+
+
+        public struct WebAPiKeyValue
+        {
+            public eValueType ValueType;
+            public byte[] FileBytes;
+            public string Param;
+            public string Value;
+        }
     }
+
+
+ 
 }
