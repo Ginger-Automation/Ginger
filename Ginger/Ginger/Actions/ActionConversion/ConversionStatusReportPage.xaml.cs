@@ -132,7 +132,6 @@ namespace Ginger.Actions.ActionConversion
             {
                 if (bf.Selected)
                 {
-                    BusinessFlow destinationBf = new BusinessFlow();
                     BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                     flowConversion.BusinessFlow = bf;
                     flowConversion.ConversionStatus = eConversionStatus.Pending;
