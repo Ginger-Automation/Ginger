@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.GeneralLib;
+
 namespace GingerCore.Actions.WebServices.WebAPI
 {
     public class ActWebAPIModel : Act

@@ -487,7 +487,6 @@
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
@@ -560,9 +559,6 @@
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIBase.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIRest.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPISoap.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
