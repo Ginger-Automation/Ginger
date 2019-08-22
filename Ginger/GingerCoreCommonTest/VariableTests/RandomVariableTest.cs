@@ -350,8 +350,8 @@ namespace GingerCoreCommonTest.VariableTests
             //Act
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            // Run until we hit all numbers or 3 seconds
-            while (!CheckHits(numbers) && stopwatch.ElapsedMilliseconds < 3000)
+            // Run until we hit all numbers or 10 seconds
+            while (!CheckHits(numbers) && stopwatch.ElapsedMilliseconds < 10000)
             {
                 variableRandomNumber.GenerateAutoValue();
                 int num1 = int.Parse(variableRandomNumber.Value);
@@ -364,7 +364,7 @@ namespace GingerCoreCommonTest.VariableTests
             for (int i = 0; i < 20; i++)
             {                
                 Assert.IsTrue(numbers[i] > 0, "Hit count a[i]>0 i=" + i);                
-            }            
+            }                        
         }
 
         
