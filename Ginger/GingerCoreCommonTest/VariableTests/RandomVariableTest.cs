@@ -333,39 +333,51 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(num1 >= 1.5M && num1 <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");            
         }
 
-        //[Ignore]
-        //[TestMethod]  [Timeout(60000)]
-        //public void Random_Check_Hit_All_Numbers()
-        //{
-        //    //Arrange
-        //    // array to keep hits per number [0]-21, [1]-22 etc..
-        //    int[] a = new int[20];
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void Random_Check_Hit_All_Numbers()
+        {
+            //Arrange
+            // array to keep hits per number [0]-21, [1]-22 etc..
+            int[] numbers = new int[20];
 
-        //    VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-        //    variableRandomNumber.Min = decimal.Parse("21");  
-        //    variableRandomNumber.Max = decimal.Parse("40");
-        //    variableRandomNumber.IsInteger = true;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
+            variableRandomNumber.Min = decimal.Parse("21");
+            variableRandomNumber.Max = decimal.Parse("40");
+            variableRandomNumber.IsInteger = true;
 
-        //    //Act
-        //    for (int i = 0; i < 200;i++)
-        //    {
-        //        variableRandomNumber.GenerateAutoValue();
-        //        int num1 = int.Parse(variableRandomNumber.Value);
-        //        a[num1 - 21]++;
-        //    }
-                
-        //    //Assert        
+            //Act
 
-        //    // We check that each number was hit at least 2 times, and not more than 20 - should be more or less fare distribution 
-        //    //TODO: calculate STD instead distance from 30 on avaergae should be small
-        //    for (int i=0;i<20;i++)
-        //    {
-        //        //TODO: fix rnd algo - fair range should be >=4 <=16 -- or calc range that 1 in 1000 might fail = run 1000 tests and check distribution
-        //        Assert.IsTrue(a[i] >= 0, "a[i]>=2");
-        //        Assert.IsTrue(a[i] <= 18, "a[i]<=22");
-        //    }
-            
-        //}
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            // Run until we hit all numbers or 3 seconds
+            while (!IsAllHit(numbers) && stopwatch.ElapsedMilliseconds < 3000)
+            {
+                variableRandomNumber.GenerateAutoValue();
+                int num1 = int.Parse(variableRandomNumber.Value);
+                numbers[num1 - 21]++;
+            }
+
+            //Assert        
+
+            // We check that each number was hit            
+            for (int i = 0; i < 20; i++)
+            {                
+                Assert.IsTrue(numbers[i] > 0, "Hit count a[i]>0 i=" + i);                
+            }            
+        }
+
+        private bool IsAllHit(int[] a)
+        {            
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] == 0 )
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         [TestMethod]  [Timeout(60000)]
         public void RandomStringVar_Digit_5_8()
