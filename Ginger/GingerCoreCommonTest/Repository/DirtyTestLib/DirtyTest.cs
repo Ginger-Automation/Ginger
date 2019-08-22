@@ -31,14 +31,14 @@ namespace GingerCoreCommonTest.Repository
     public class DirtyTest
     {
         static TestHelper mTestHelper = new TestHelper();
-        public TestContext TestContext { get; set; }
+        public TestContext TestContext { get; set; }        
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
-
-            NewRepositorySerializer.AddClass(nameof(MyComplextRepositoryItem), typeof(MyComplextRepositoryItem));
+            
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(MyComplextRepositoryItem).Assembly);
         }
 
         [ClassCleanup]
