@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -36,6 +37,8 @@ namespace GingerCoreCommonTest.Repository
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
+
+            NewRepositorySerializer.AddClass(nameof(MyComplextRepositoryItem), typeof(MyComplextRepositoryItem));
         }
 
         [ClassCleanup]
@@ -169,22 +172,22 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was removed");            
         }
 
-        //[Ignore]  // Need repsoitory serializer to work
-        //[TestMethod]  [Timeout(60000)]
-        //public void CopyItem()
-        //{
-        //    //Arrange
-        //    MyComplextRepositoryItem item = new MyComplextRepositoryItem();            
-        //    item.Name = "abc";            
-        //    item.StartDirtyTracking();
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void CopyItemIsDirty()
+        {
+            //Arrange
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
+            item.Name = "abc";
+            item.StartDirtyTracking();
 
-        //    //Act                        
-        //    MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();
-        //    item2.StartDirtyTracking();
+            //Act                        
+            MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();            
 
-        //    //Assert  
-        //    Assert.AreEqual(eDirtyStatus.Modified, item2.DirtyStatus, "item dirty status changed to modified since it is a copy");
-        //}
+            //Assert  
+            Assert.AreEqual(eDirtyStatus.Modified, item2.DirtyStatus, "item dirty status changed to modified since it is a copy");
+        }
 
 
         [TestMethod]  [Timeout(60000)]
