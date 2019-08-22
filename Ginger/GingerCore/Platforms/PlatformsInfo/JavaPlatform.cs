@@ -338,7 +338,6 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             javaElements.Add(eElementType.EditorPane);
             javaElements.Add(eElementType.TreeView);
-            javaElements.Add(eElementType.Widgets);
             return javaElements;
         }
 

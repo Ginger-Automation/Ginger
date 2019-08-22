@@ -579,8 +579,7 @@ namespace Amdocs.Ginger.Common.UIElement
             //HTML Elements
             Div,
             Span,
-            Form,
-            Widgets
+            Form
         }
 
     

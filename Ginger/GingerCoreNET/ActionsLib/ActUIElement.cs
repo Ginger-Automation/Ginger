@@ -114,6 +114,7 @@ namespace GingerCore.Actions.Common
 
             //used for Java
             public static string WaitforIdle = "WaitforIdle";
+            public static string WidgetsElement = "WidgetsElement";
 
             //used for TableElementAction
             public static string ControlAction = "ControlAction";
