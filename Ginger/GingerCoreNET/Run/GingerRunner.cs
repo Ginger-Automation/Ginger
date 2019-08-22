@@ -4021,7 +4021,7 @@ namespace Ginger.Run
                         BFES.Selected = true;
                         if (ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder != null && BF.ExecutionFullLogFolder != null)
                         {
-                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder, BF.ExecutionLogFolder);
+                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder,string.IsNullOrEmpty(BF.ExecutionLogFolder)?string.Empty: BF.ExecutionLogFolder);
                         }
 
                         BFESs.Add(BFES);
