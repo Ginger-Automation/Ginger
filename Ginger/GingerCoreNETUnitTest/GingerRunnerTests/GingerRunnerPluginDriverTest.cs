@@ -32,7 +32,7 @@ using System.IO;
 
 namespace WorkspaceHold
 {        
-    [Ignore]
+
     [TestClass]
     [Level1]
     public class GingerRunnerPluginDriverTest
@@ -47,29 +47,34 @@ namespace WorkspaceHold
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
-        {
-            
-
+        {            
             mTestHelper.ClassInitialize(TestContext);
-
-           
+            Prep();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
+        {                        
+            WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
             mTestHelper.ClassCleanup();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            WorkSpace.LockWS();
-            Prep();
+            //WorkSpace.LockWS();
+            
             mTestHelper.TestInitialize(TestContext);
         }
 
-        private void Prep()
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            //WorkSpace.RelWS();
+            mTestHelper.TestCleanup();
+        }
+
+        static  void Prep()
         {
             // Create new solution
             mBusinessFlow = new BusinessFlow();
@@ -105,12 +110,7 @@ namespace WorkspaceHold
             Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-            WorkSpace.RelWS();
-            mTestHelper.TestCleanup();
-        }
+        
 
 
         private void ResetBusinessFlow()
@@ -140,7 +140,7 @@ namespace WorkspaceHold
             //Act            
             mTestHelper.Log("Before Ginger Runner");
             mGingerRunner.RunRunner();
-            mGingerRunner.CloseAgents();
+            // mGingerRunner.CloseAgents();
             mTestHelper.Log("After Ginger Runner");
 
             //Assert
@@ -152,7 +152,7 @@ namespace WorkspaceHold
         }
 
 
-        [Ignore]
+        
         [TestMethod]  [Timeout(6000)]
         public void MemoPluginSpeedTest()
         {
@@ -164,7 +164,7 @@ namespace WorkspaceHold
             Activity activitiy1 = new Activity() { Active = true, TargetApplication = mAppName };
             mBusinessFlow.Activities.Add(activitiy1);
 
-            int count = 10;
+            int count = 100;
 
             for (int i = 0; i < count; i++)
             {                
