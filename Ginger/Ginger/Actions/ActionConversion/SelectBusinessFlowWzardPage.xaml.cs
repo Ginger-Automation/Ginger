@@ -142,7 +142,7 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="e"></param>
         private void MBFSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
-            AddSelectedBF(e.SelectedItems);
+             AddSelectedBF(e.SelectedItems);
         }
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
