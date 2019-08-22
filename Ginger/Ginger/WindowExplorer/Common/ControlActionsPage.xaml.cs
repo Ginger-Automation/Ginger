@@ -196,7 +196,16 @@ namespace Ginger.WindowExplorer
                 ActUIElement actUI = (ActUIElement)act;
                 actUI.ElementLocateBy = EL.LocateBy;
                 actUI.ElementLocateValue = EL.LocateValue;
-                actUI.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, act.Value);
+                //TODO: Remove below  if once one of the field from Value and Value to select is removed
+                if (actUI.ElementAction == ActUIElement.eElementAction.Click 
+                    || actUI.ElementAction == ActUIElement.eElementAction.Select 
+                    || actUI.ElementAction == ActUIElement.eElementAction.GetControlProperty
+                    || actUI.ElementAction == ActUIElement.eElementAction.AsyncSelect
+                    || actUI.ElementAction == ActUIElement.eElementAction.SelectByIndex)
+                {
+                    actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
+                }
+                
                 act = actUI;
             }
             else

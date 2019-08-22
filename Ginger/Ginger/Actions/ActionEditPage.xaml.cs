@@ -356,7 +356,7 @@ namespace Ginger.Actions
         {
             if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
             // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
-
+            
             if (mAction.ValueConfigsNeeded == false)
             {
                 this.Dispatcher.Invoke(() =>
@@ -366,29 +366,43 @@ namespace Ginger.Actions
                 return;
             }
 
+            //TODO: Remove all if else and handle it dynamically based on if Input value grid is needed or not
+            int minimumInputValuesToHideGrid = 1;
+            if(mAction.ObjectLocatorConfigsNeeded)
+            {
+                //For actions with locator config needed, Locate by , locate value is also added to input value                
+                minimumInputValuesToHideGrid = 3;
+            }
+
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) && 
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) && 
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
             {
-                if (a.InputValues.Count > 1)
+                if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
                     ValueGridPanel.Visibility = Visibility.Visible;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                 }
-                else if (a.InputValues.Count == 1)
+                else if (a.InputValues.Count == minimumInputValuesToHideGrid)
                 {
-                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
-                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    if (inputValue!=null)
+                    {                      
+                        ValueUC.Init(mContext, inputValue, nameof(ActInputValue.Value));
+                        ValueUC.ValueTextBox.Text = inputValue.Value;
+                        ValueLabel.Content = inputValue.Param;
+                    }                    
                 }
                 else
                 {
                     ValueGridPanel.Visibility = Visibility.Collapsed;
                     ValueBoxPanel.Visibility = Visibility.Visible;
                     a.Value = "";
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
             else if (a.GetType() == typeof(ActGenElement))
@@ -1780,6 +1794,7 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(EnableRetryMechanismCheckBox);
             BindingOperations.ClearAllBindings(RetryMechanismIntervalTextBox);
             BindingOperations.ClearAllBindings(RetryMechanismMaxRetriesTextBox);
+            AddOutDS.Unchecked -= AddOutDS_Unchecked;
             BindingOperations.ClearAllBindings(AddOutDS);
             BindingOperations.ClearAllBindings(cmbDataSourceName);
             BindingOperations.ClearAllBindings(cmbDataSourceTableName);
