@@ -122,7 +122,8 @@ namespace WorkspaceHold
 
 
         
-        [TestMethod] 
+        [TestMethod]
+        [Timeout(60000)]
         public void PluginSay()
         {
             mTestHelper.Log("test PluginSay");
@@ -156,7 +157,8 @@ namespace WorkspaceHold
 
 
         
-        [TestMethod]  [Timeout(6000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void MemoPluginSpeedTest()
         {
             // Reporter.ToConsole(eLogLevel.INFO, ">>>>> test MemoPluginSpeedTest <<<<<<<<<");
