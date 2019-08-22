@@ -423,6 +423,9 @@
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
+      <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -715,6 +718,9 @@
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml.cs">
+      <DependentUpon>SelectBusinessFlowWzardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -744,6 +750,7 @@
     <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
       <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ApiActionsConversion\ApiActionsConversionWizard.cs" />
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -2117,6 +2124,7 @@
     <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Resource Include="Actions\ApiActionsConversion\ApiActionsConversionIntro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
@@ -2849,6 +2857,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionConversion\ConversionStatusReportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Actions\ActionConversion\SelectActionWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3268,6 +3280,10 @@
     <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TimeLineLib\TimeLinePage.xaml">
       <SubType>Designer</SubType>

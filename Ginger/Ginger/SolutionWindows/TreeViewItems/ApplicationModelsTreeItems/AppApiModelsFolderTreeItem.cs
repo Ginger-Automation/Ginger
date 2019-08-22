@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.Actions.ApiActionsConversion;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -142,7 +141,19 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
 
+            TreeViewUtils.AddMenuItem(mContextMenu, "Convert Webservices Actions", WebServiceActionsConversionHandler, null, "@Connection_32x32.png");
+
             AddSourceControlOptions(mContextMenu);
+        }
+
+        /// <summary>
+        /// This event is used to handle the WebService Conversion Handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
+        {            
+            WizardWindow.ShowWizard(new ApiActionsConversionWizard(new Context()), 900, 700);
         }
 
         private void AddSoapAPIModel(object sender, RoutedEventArgs e)

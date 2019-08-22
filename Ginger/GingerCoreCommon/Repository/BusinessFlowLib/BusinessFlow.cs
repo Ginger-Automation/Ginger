@@ -87,6 +87,20 @@ namespace GingerCore
             Gherkin     // From Gherking Feature file
         }
 
+        bool mSelected;
+        public bool Selected
+        {
+            get { return mSelected; }
+            set
+            {
+                if (mSelected != value)
+                {
+                    mSelected = value;
+                    OnPropertyChanged(nameof(Selected));
+                }
+            }
+        }
+
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
