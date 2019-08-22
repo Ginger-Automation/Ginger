@@ -7,7 +7,8 @@ using System.Text;
 namespace Ginger.Plugin.Platform.WebService
 {
     [GingerInterface("IWebServicePlatform", "WebService Platform driver")]
-    interface IWebServicePlatform: IPlatformService
+    public interface IWebServicePlatform: IPlatformService
     {
+        IRestClient RestClient { get; set; }
     }
 }
