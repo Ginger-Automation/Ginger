@@ -40,11 +40,16 @@ namespace Ginger.Actions.ActionConversion
     {
         ActionsConversionWizard mWizard;
         public object BusinessFlowFolder { get; set; }
-        SingleItemTreeViewSelectionPage mBFSelectionPage = null;        
+        SingleItemTreeViewSelectionPage mBFSelectionPage = null;
+        ObservableList<BusinessFlow> ListOfBusinessFlow = null;
+        Context mContext = null;
 
-        public SelectBusinessFlowWzardPage()
+        public SelectBusinessFlowWzardPage(ObservableList<BusinessFlow> listOfBusinessFlow, Context context)
         {
             InitializeComponent();
+
+            ListOfBusinessFlow = listOfBusinessFlow;
+            mContext = context;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -66,7 +71,7 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         private void SetActivitiesSelected()
         {
-            foreach (var businessFlow in mWizard.ListOfBusinessFlow)
+            foreach (var businessFlow in ListOfBusinessFlow)
             {
                 if (businessFlow.Selected)
                 {
@@ -112,11 +117,11 @@ namespace Ginger.Actions.ActionConversion
         /// <returns></returns>
         private IObservableList SetDefaultSelectedBusinessFlows()
         {
-            foreach (BusinessFlow bf in mWizard.ListOfBusinessFlow)
+            foreach (BusinessFlow bf in ListOfBusinessFlow)
             {
                 bf.Selected = true;
             }
-            return mWizard.ListOfBusinessFlow;
+            return ListOfBusinessFlow;
         }
 
         /// <summary>
@@ -149,7 +154,7 @@ namespace Ginger.Actions.ActionConversion
                 foreach (var bf in selectedBFs)
                 {
                     ((BusinessFlow)bf).Selected = true;
-                    mWizard.ListOfBusinessFlow.Add((BusinessFlow)bf);
+                    ListOfBusinessFlow.Add((BusinessFlow)bf);
                 } 
             }
         }
@@ -166,9 +171,9 @@ namespace Ginger.Actions.ActionConversion
         
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
-            if (mWizard.Context.BusinessFlow != null)
+            if (mContext.BusinessFlow != null)
             {
-                mWizard.Context.BusinessFlow.CurrentActivity = (Activity)xBusinessFlowGrid.CurrentItem;
+                mContext.BusinessFlow.CurrentActivity = (Activity)xBusinessFlowGrid.CurrentItem;
             }
         }
 
