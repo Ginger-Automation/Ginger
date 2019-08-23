@@ -495,7 +495,7 @@ public class PayLoad {
         	return "Err - not an Enum";
         }
     }
-	public HashMap GetParamHashMap(List<PayLoad> paramList)
+	public HashMap GetInputValues(List<PayLoad> paramList)
     {
     	String paramKey = "";
     	String paramValue = "";
@@ -514,7 +514,7 @@ public class PayLoad {
     	return hm;
     }
     
-    public String GetParamValue(HashMap paramList, String value)
+    public String GetInputParamValue(HashMap paramList, String value)
     {
     	String pValue = "";
     	Iterator it = paramList.entrySet().iterator();

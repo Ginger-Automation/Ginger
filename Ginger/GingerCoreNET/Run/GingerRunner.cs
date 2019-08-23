@@ -1559,7 +1559,7 @@ namespace Ginger.Run
             // TODO: remove when we no longer use LocateValue in Action
 
           
-            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
+            if (!string.IsNullOrEmpty(act.GetInputParamValue(Act.Fields.LocateValue)))
             {
 
                 VE.Value = act.LocateValue;
@@ -4020,7 +4020,7 @@ namespace Ginger.Run
                         BFES.Selected = true;
                         if (ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder != null && BF.ExecutionFullLogFolder != null)
                         {
-                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder, BF.ExecutionLogFolder);
+                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder,string.IsNullOrEmpty(BF.ExecutionLogFolder)?string.Empty: BF.ExecutionLogFolder);
                         }
 
                         BFESs.Add(BFES);
