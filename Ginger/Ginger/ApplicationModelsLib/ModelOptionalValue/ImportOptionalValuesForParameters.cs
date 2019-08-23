@@ -1050,7 +1050,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return IsExportSuccess;
         }
 
-        private bool ExportToExcel(DataTable table, string sFilePath, string sSheetName = "")
+        private bool ExportToExcel(DataTable table, string sFilePath, string sSheetName)
         {
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }

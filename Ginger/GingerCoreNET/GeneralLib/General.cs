@@ -389,28 +389,36 @@ namespace GingerCoreNET.GeneralLib
         /// <param name="filePath"></param>
         /// <param name="sheetName"></param>
         /// <returns></returns>
-        public static bool ExportToExcel(System.Data.DataTable dataTable, string filePath, string sheetName = "")
+        public static bool ExportToExcel(System.Data.DataTable dataTable, string filePath, string sheetName)
         {
-            using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
+            try
             {
-                if (File.Exists(filePath))
+                using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
                 {
-                    using (var stream = File.OpenRead(filePath))
+                    if (File.Exists(filePath))
                     {
-                        xlPackage.Load(stream);
+                        using (var stream = File.OpenRead(filePath))
+                        {
+                            xlPackage.Load(stream);
+                        }
+                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
+                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        File.WriteAllBytes(filePath, xlPackage.GetAsByteArray());
                     }
-                    var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
-                    ws.Cells["A1"].LoadFromDataTable(dataTable, true);
-                    File.WriteAllBytes(filePath, xlPackage.GetAsByteArray());
+                    else
+                    {
+                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
+                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        xlPackage.SaveAs(new FileInfo(filePath));
+                    }
                 }
-                else
-                {
-                    var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
-                    ws.Cells["A1"].LoadFromDataTable(dataTable, true);
-                    xlPackage.SaveAs(new FileInfo(filePath));
-                }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred while exporting to excel", ex);
+                return false;
+            }
         }
     }
 }

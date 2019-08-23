@@ -354,7 +354,7 @@ namespace GingerCore.DataSource
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, e.Message + Environment.NewLine + e.InnerException);
             }
         }
-        private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName="")
+        private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName)
         {
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
