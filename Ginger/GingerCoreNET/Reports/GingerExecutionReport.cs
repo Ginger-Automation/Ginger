@@ -2896,7 +2896,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
 
             //FIXME hard coded
-            string htmlfile =Path.Combine(TemplatesFolder,HTMLFileName);
+            string htmlfile = Path.Combine(TemplatesFolder, HTMLFileName);
             string HTML = System.IO.File.ReadAllText(htmlfile);
             return HTML;
         }
