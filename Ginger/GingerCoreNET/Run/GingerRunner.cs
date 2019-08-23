@@ -2587,7 +2587,7 @@ namespace Ginger.Run
                 if (string.IsNullOrEmpty(ARC.Actual) && !string.IsNullOrEmpty(ARC.ExpectedCalculated) && ARC.Operator != eOperator.Evaluate)
                 {
                     ARC.Status = ActReturnValue.eStatus.Failed;
-                    ErrorInfo = "Actual or Expected is empty.";
+                    return "Actual or Expected is empty.";
                 }
 
                 bool? status = null;
