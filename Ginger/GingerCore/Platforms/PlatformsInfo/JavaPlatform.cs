@@ -29,6 +29,10 @@ namespace GingerCore.Platforms.PlatformsInfo
 {
     public class JavaPlatform : PlatformInfoBase
     {
+
+
+        private List<eElementType> mJavaPlatformElementActionslist { get; set; } = null;
+
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
         {
             throw new NotImplementedException();
@@ -327,18 +331,13 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<eElementType> GetPlatformUIElementsType()
         {
-            List<eElementType> javaPlatformElementTypelist = base.GetPlatformUIElementsType();
-
-            return javaPlatformElementTypelist.Union(GetJavaSpecificElementType()).ToList();
-        }
-
-        private List<eElementType> GetJavaSpecificElementType()
-        {
-            List<eElementType> javaElements = new List<eElementType>();
-
-            javaElements.Add(eElementType.EditorPane);
-            javaElements.Add(eElementType.TreeView);
-            return javaElements;
+            if(mJavaPlatformElementActionslist==null)
+            {
+                mJavaPlatformElementActionslist = base.GetPlatformUIElementsType();
+                mJavaPlatformElementActionslist.Add(eElementType.EditorPane);
+                mJavaPlatformElementActionslist.Add(eElementType.TreeView);
+            }
+            return mJavaPlatformElementActionslist;
         }
 
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)

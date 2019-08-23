@@ -909,11 +909,7 @@ namespace GingerCore.Actions.Common
 
         public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
-            PayLoad PL = new PayLoad("UIElementAction");
-            PL.AddValue(this.ElementLocateBy.ToString());
-            PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
-            PL.AddValue(this.ElementType.ToString());
-            PL.AddValue(this.ElementAction.ToString());
+            PayLoad PL = new PayLoad("UIElementAction");           
             // Make it generic function in Act.cs to be used by other actions
             List<PayLoad> PLParams = new List<PayLoad>();
             foreach (ActInputValue AIV in this.InputValues)
