@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
 
         [Ignore]
         [TestMethod]
-         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects 
+         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects causin exception
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -76,8 +76,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             //Assert
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
-
-        // [Ignore] // Fail on all platforms need to find user folder somwhow...
+        
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
@@ -88,18 +87,9 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
 
             //Act
             string userProfileFilePath = UserProfile.UserProfileFilePath;
-            // if windows            
-            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            //{                
 
-            //}
-            //else  // Linux /Mac
-            //{
-            //    expected = Path.Combine(UserAppDataFolder, "Amdocs", "Ginger", "Ginger.UserProfile.xml");
-            //}
 
             //Assert
-
             Assert.AreEqual(expected, userProfileFilePath, "UserProfileFilePath");   
         }
 
