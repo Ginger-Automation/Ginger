@@ -274,10 +274,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 default:
-                    pageContent = GetDefaultPageContent();
+                    pageContent = null;
                     break;
             }
-
+            if (pageContent == null)
+            {
+                pageContent = GetDefaultPageContent();
+            }
+            
             return pageContent;
         }
 
@@ -367,6 +371,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 case eElementAction.Click:
+                case eElementAction.AsyncClick:
+                case eElementAction.DoubleClick:
                     if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                     {
                         possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
