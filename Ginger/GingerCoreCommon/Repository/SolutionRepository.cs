@@ -102,6 +102,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public static Dictionary<Guid, Type> DirtyRepositoryItems = new Dictionary<Guid, Type>();
         #region Public Functions         
         // ------------------------------------------------------------------------------------------------
         // All Public function to use across

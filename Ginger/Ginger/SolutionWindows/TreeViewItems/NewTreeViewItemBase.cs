@@ -38,6 +38,7 @@ namespace GingerWPF.TreeViewItemsLib
     {
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
+       
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
             if (item is RepositoryItemBase)
@@ -204,6 +205,21 @@ namespace GingerWPF.TreeViewItemsLib
 
         public override void SaveAllTreeFolderItems()
         {
+            //GetAllDirtyItems only
+            foreach (KeyValuePair<Guid, Type> dirtyRepositoryItem in SolutionRepository.DirtyRepositoryItems)
+            {
+                Type type = dirtyRepositoryItem.Value;//type
+
+                MethodInfo method = typeof(SolutionRepository).GetMethod("GetRepositoryItemByGuid");
+                MethodInfo generic = method.MakeGenericMethod(type);
+
+                var returnValue = generic.Invoke(WorkSpace.Instance.SolutionRepository, new object[] { dirtyRepositoryItem.Key });
+                //need to check for solution.xml
+                //RepositoryItemBase RI = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<typeof(name)>(tmepObj.guid);
+
+            }
+            ///////
+
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
 
             int itemsSavedCount = 0;

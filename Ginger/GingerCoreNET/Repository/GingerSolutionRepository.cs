@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -65,6 +66,8 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", SolutionRepository.cSolutionRootFolderSign + "RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
 
             SR.AddItemInfo<RemoteServiceGrid>("*.Ginger.RemoteServiceGrid.xml", SolutionRepository.cSolutionRootFolderSign + "RemoteServiceGrid", true, "RemoteServiceGrid", PropertyNameForFileName: nameof(RemoteServiceGrid.Name));
+
+            //SR.AddItemInfo<Solution>("*.Ginger.Solution.xml", SolutionRepository.cSolutionRootFolderSign + "Solution", true, "Solution", PropertyNameForFileName: nameof(Solution.Name));
 
             return SR;
         }
