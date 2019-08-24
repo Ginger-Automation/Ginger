@@ -1634,7 +1634,6 @@
     <Compile Include="Reports\ReportTemplatesPage.xaml.cs">
       <DependentUpon>ReportTemplatesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\RTFtoPDF.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionEditPage.xaml.cs">
       <DependentUpon>RunSetActionEditPage.xaml</DependentUpon>
     </Compile>
