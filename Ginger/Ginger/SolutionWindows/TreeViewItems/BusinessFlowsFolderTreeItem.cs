@@ -22,13 +22,11 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
-using Ginger.ALM.QC;
 using Ginger.BusinessFlowWindows;
 using Ginger.GherkinLib;
 using Ginger.Import;
 using Ginger.Imports.QTP;
 using Ginger.Imports.UFT;
-using Ginger.Repository;
 using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerCore.Platforms;
@@ -143,7 +141,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 else
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, "@Connection_32x32.png");
+                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
                 AddSourceControlOptions(mContextMenu, false, false);
 
                 MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import");

@@ -16,19 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions.ActionConversion;
 using Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;

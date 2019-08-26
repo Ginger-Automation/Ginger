@@ -6,33 +6,33 @@ using System.Drawing;
 namespace Amdocs.Ginger.CoreNET
 {
     /// <summary>
+    /// This enum is used to hold the status for conversion
+    /// </summary>
+    public enum eConversionStatus
+    {
+        Pending,
+        Running,
+        Stopped,
+        Finish,
+        Failed
+    }
+
+    /// <summary>
+    /// This enum is used to hold the save status for the converted businessflows
+    /// </summary>
+    public enum eConversionSaveStatus
+    {
+        Saved,
+        Saving,
+        Pending,
+        Failed
+    }
+
+    /// <summary>
     /// This class is used to hold the wrapper for businessflow conversion status
     /// </summary>
     public class BusinessFlowToConvert : INotifyPropertyChanged
-    {
-        /// <summary>
-        /// This enum is used to hold the status for conversion
-        /// </summary>
-        public enum eConversionStatus
-        {
-            Pending,
-            Running,
-            Stopped,
-            Finish,
-            Failed
-        }
-
-        /// <summary>
-        /// This enum is used to hold the save status for the converted businessflows
-        /// </summary>
-        public enum eConversionSaveStatus
-        {
-            Saved,
-            Saving,
-            Pending,
-            Failed
-        }
-
+    {     
         public event PropertyChangedEventHandler PropertyChanged;
 
         BusinessFlow mBusinessFlow;
@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET
                     mBusinessFlow = value;
                     RelativeFilePath = value.ContainingFolder;
                     BusinessFlowName = value.Name;
-                    IsSelected = value.Selected;
+                    Description = value.Description;
                     OnPropertyChanged(nameof(BusinessFlow));
                 }
             }
@@ -188,7 +188,9 @@ namespace Amdocs.Ginger.CoreNET
         public string RelativeFilePath { get; set; }
 
         public string BusinessFlowName { get; set; }
-        
+
+        public string Description { get; set; }
+
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

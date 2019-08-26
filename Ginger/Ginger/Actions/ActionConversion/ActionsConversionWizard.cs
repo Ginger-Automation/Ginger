@@ -23,10 +23,7 @@ using GingerCore;
 using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -40,7 +37,7 @@ namespace Ginger.Actions.ActionConversion
 
         public bool NewActivityChecked { get; set; }
 
-        public ObservableList<BusinessFlow> ListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
         public enum eActionConversionType
@@ -59,7 +56,7 @@ namespace Ginger.Actions.ActionConversion
         {
             Context = context;
             ConversionType = conversionType;
-            ListOfBusinessFlow = businessFlows;
+            ListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);
             
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
@@ -78,27 +75,36 @@ namespace Ginger.Actions.ActionConversion
 
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
             {
-                mReportPage = new ConversionStatusReportPage();
+                mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
                 AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage); 
             }
         }
-        
+
+        /// <summary>
+        /// This method is used to ge the businessflows to convert
+        /// </summary>
+        /// <param name="businessFlows"></param>
+        /// <returns></returns>
+        private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
+        {
+            ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
+            foreach (BusinessFlow bf in businessFlows)
+            {
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+                flowToConvert.BusinessFlow = bf;
+                lst.Add(flowToConvert);
+            }
+            return lst;
+        }
+
         /// <summary>
         /// This is finish method which does the finish the wizard functionality
         /// </summary>
         public override void Finish()
         {
             if (ConversionType == eActionConversionType.SingleBusinessFlow)
-            {
-                ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>()
-                {
-                    new BusinessFlowToConvert() {
-                        ConversionStatus = eConversionStatus.Pending,
-                        BusinessFlow = ListOfBusinessFlow[0]
-                    }
-                };
-                
-                BusinessFlowsActionsConversion(lst);
+            {               
+                BusinessFlowsActionsConversion(ListOfBusinessFlow);
             }
         }
 
@@ -167,7 +173,7 @@ namespace Ginger.Actions.ActionConversion
                 ProcessStarted();
 
                 mConversionUtils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
-                mConversionUtils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
+                mConversionUtils.ActUIElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
                 mConversionUtils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
                 mConversionUtils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);

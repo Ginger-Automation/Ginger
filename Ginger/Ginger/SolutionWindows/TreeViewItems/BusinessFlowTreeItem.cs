@@ -107,7 +107,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
-                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, "@Connection_32x32.png");                
+                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);                
                 AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);

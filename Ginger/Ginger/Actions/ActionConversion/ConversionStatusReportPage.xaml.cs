@@ -20,13 +20,11 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
-using GingerCore;
 using GingerWPF.WizardLib;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -41,9 +39,11 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// Constructor for configuration page
         /// </summary>
-        public ConversionStatusReportPage()
+        public ConversionStatusReportPage(ObservableList<BusinessFlowToConvert> listOfBusinessFlow)
         {
             InitializeComponent();
+
+            ListOfBusinessFlow = listOfBusinessFlow;
         }
 
         /// <summary>
@@ -118,6 +118,7 @@ namespace Ginger.Actions.ActionConversion
                 xBusinessFlowGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
                 xBusinessFlowGrid.DataSourceList = GetBusinessFlowList();
                 xBusinessFlowGrid.ShowTitle = Visibility.Collapsed;
+                xBusinessFlowGrid.ActiveStatus = false;
             });
         }
 
@@ -128,12 +129,13 @@ namespace Ginger.Actions.ActionConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowList()
         {
             ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlow bf in mWizard.ListOfBusinessFlow)
+            foreach (BusinessFlowToConvert bf in mWizard.ListOfBusinessFlow)
             {
-                if (bf.Selected)
+                if (bf.IsSelected)
                 {
                     BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
-                    flowConversion.BusinessFlow = bf;
+                    flowConversion.BusinessFlow = bf.BusinessFlow;
+                    flowConversion.IsSelected = true;
                     flowConversion.ConversionStatus = eConversionStatus.Pending;
                     ListOfBusinessFlow.Add(flowConversion);
                 }

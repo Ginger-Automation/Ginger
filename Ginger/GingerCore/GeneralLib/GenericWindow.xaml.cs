@@ -53,10 +53,13 @@ namespace Ginger
         private bool OwnerWindowClosing = false;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool mainWindowParent = true)
         {
-            InitializeComponent();   
-            this.Owner = Owner;
+            InitializeComponent();
+            if (mainWindowParent)
+            {
+                this.Owner = Owner; 
+            }
             if (this.Owner != null)
             {
                 this.Owner.Closing += Owner_Closing;
@@ -314,7 +317,8 @@ namespace Ginger
 
 
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
+                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", 
+                                        RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false, bool mainWindowParent = true)
         {
             //GenericWindow win = null;
             genWindow = null;
@@ -331,7 +335,7 @@ namespace Ginger
                 {
                     winStyle = windowStyle;
                 }
-                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler);
+                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler, mainWindowParent: mainWindowParent);
                 genWindow.Title = windowPage.Title;
                 if (startupLocationWithOffset)
                 {

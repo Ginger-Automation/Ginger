@@ -110,6 +110,7 @@ namespace Ginger.Actions.ActionConversion
             xTargetApplication.InitViewItems();
             xTargetApplication.DataSourceList = mWizard.ConvertableTargetApplications;
             xTargetApplication.ShowTitle = Visibility.Collapsed;
+            xTargetApplication.ActiveStatus = false;
         }
         
         /// <summary>
@@ -171,7 +172,7 @@ namespace Ginger.Actions.ActionConversion
             }
             else
             {
-                foreach (var targetBase in mWizard.ListOfBusinessFlow.Where(x => x.Selected).SelectMany(y => y.TargetApplications))
+                foreach (var targetBase in mWizard.ListOfBusinessFlow.Where(x => x.IsSelected).SelectMany(y => y.BusinessFlow.TargetApplications))
                 {
                     if (!TargetAppList.Contains(targetBase.ItemName))
                     {

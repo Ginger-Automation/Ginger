@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -45,6 +44,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public event POMSelectionEventHandler POMSelectionEvent;
 
+        ITreeViewItem mItemTypeRootNode;
         public bool ShowTitle { get; set; }
 
         /// <summary>
@@ -99,13 +99,29 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 ApplicationPOMsTreeItem appModelFolder;
                 RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
                 appModelFolder = new ApplicationPOMsTreeItem(repositoryFolder);
+                mItemTypeRootNode = appModelFolder;
                 mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, appModelFolder,
-                                                                                        SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+                                                                                   SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+
+                mItemTypeRootNode.SetTools(mApplicationPOMSelectionPage.xTreeView);
+                mApplicationPOMSelectionPage.xTreeView.SetTopToolBarTools(appModelFolder.SaveAllTreeFolderItemsHandler, appModelFolder.AddPOM, RefreshTreeItems);
+
                 mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
             }
 
-            List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
+            List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow(mainWindowParent: false);
             AddSelectedPOM(selectedPOMs);
+        }
+
+        public void RefreshTreeItems(object sender, RoutedEventArgs e)
+        {
+            UpdatePOMTree();
+        }
+
+        private void UpdatePOMTree()
+        {
+            mApplicationPOMSelectionPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
+            mApplicationPOMSelectionPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
 
         /// <summary>
