@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
@@ -176,6 +177,38 @@ namespace GingerCore.Actions
             SetAlertBoxText,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript
+        }
+
+        //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 
+        //But still for Switch frame , intialize browser etc the locate by and locate value is binded with Act.cs LocateBy and LocateValue fields
+        //We override this field to ignore ObjectConfigNeeded check only for this action
+        //Need to remove all of this once restructring Act.cs
+        public override eLocateBy LocateBy
+        {
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                OnPropertyChanged(Act.Fields.LocateBy);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
+
+        public override string LocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Act.Fields.LocateValue).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                OnPropertyChanged(Act.Fields.LocateValue);
+                OnPropertyChanged(Act.Fields.Details);
+            }
         }
 
 
