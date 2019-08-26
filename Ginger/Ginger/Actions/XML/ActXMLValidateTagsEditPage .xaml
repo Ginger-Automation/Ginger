@@ -28,13 +28,13 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2">
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="196">Take Request from FilePath</Label>
-            <CheckBox x:Name="ReqisFromFile" VerticalAlignment="Center" Margin="10,0,0,0" Grid.Column="1"/>
+            <CheckBox x:Name="ReqisFromFile" VerticalAlignment="Center" Margin="10,0,0,0" Grid.Column="1" Checked="RequestFromFileChecked" Unchecked="RequestFromFileUnChecked" />
         </StackPanel>
 
         <Label x:Name="FileContent" Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="2">Template File Content</Label>
         <Actions:UCValueExpression x:Name="XMLFileTextBox" ToolTip="Excel file full/relative path" Grid.Column="1"  Grid.Row="2"/>
 
-        <Button x:Name="BrowseFileButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Click="BrowseButton_Click" Grid.Column="2" Grid.Row="2"/>
+        <Button x:Name="BrowseFileButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Click="BrowseButton_Click" Visibility="Collapsed" Grid.Column="2" Grid.Row="2"/>
         
         <Ginger:ucGrid x:Name="DynamicParametersGrid" Title="Dynamic Parameters" Grid.Row="3" Grid.ColumnSpan="3" />
 
