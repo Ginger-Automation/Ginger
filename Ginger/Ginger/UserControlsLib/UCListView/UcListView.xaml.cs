@@ -708,7 +708,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (Info.DragSource == Info.DragTarget)
             {
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Move;
+                DragDrop2.mDragInfo.DragIcon = DragInfo.eDragIcon.Move;
             }
             else
             {

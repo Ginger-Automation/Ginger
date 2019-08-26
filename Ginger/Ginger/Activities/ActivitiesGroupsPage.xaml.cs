@@ -138,7 +138,7 @@ namespace Ginger.Activities
 
         private void grdActivitiesGroups_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            if (DragDrop2.mDragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

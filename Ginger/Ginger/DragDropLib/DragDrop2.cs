@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using System;
@@ -29,7 +30,7 @@ namespace GingerWPF.DragDropLib
     {
         private static Point _startPoint;
         private static bool IsDragging;
-        public static DragInfo DragInfo;
+        public static DragInfo mDragInfo;
         private static Point _DroppedPoint;
 
         private static DragDropWindow DDW = new DragDropWindow();
@@ -51,16 +52,16 @@ namespace GingerWPF.DragDropLib
             {
                 if (multipleItems)
                 {
-                    DragInfo.DragIcon = DragInfo.eDragIcon.MultiAdd;
+                    mDragInfo.DragIcon = DragInfo.eDragIcon.MultiAdd;
                 }
                 else
                 {
-                    DragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                    mDragInfo.DragIcon = DragInfo.eDragIcon.Add;
                 }
             }
             else
             {
-                DragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                mDragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
             }
         }
 
@@ -73,11 +74,11 @@ namespace GingerWPF.DragDropLib
                 if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    DragInfo = new DragInfo();
-                    DragInfo.OriginalSource = e.OriginalSource;
-                    ((IDragDrop)sender).StartDrag(DragInfo);
+                    mDragInfo = new DragInfo();
+                    mDragInfo.OriginalSource = e.OriginalSource;
+                    ((IDragDrop)sender).StartDrag(mDragInfo);
                     // We start drag only of control put data in the drag data
-                    if (DragInfo.Data != null)
+                    if (mDragInfo.Data != null)
                     {
                         StartDrag(e);
                     }
@@ -88,17 +89,17 @@ namespace GingerWPF.DragDropLib
 
         private static void StartDrag(MouseEventArgs e)
         {
-            if (DragInfo.Header == null) return;
+            if (mDragInfo.Header == null) return;
             IsDragging = true;
-            DataObject data = new DataObject("Header", DragInfo.Header);
+            DataObject data = new DataObject("Header", mDragInfo.Header);
             var v = e.OriginalSource; // The UI element that was clicked can be sub element in grid for example            
 
-            DDW.SetHeader(DragInfo.Header);
+            DDW.SetHeader(mDragInfo.Header);
             DDW.MoveToMousePosition();
             DDW.Show();
 
             //TODO decide effects
-            DragDropEffects de = DragDrop.DoDragDrop(DragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
+            DragDropEffects de = DragDrop.DoDragDrop(mDragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
 
             ResetDragDrop();
         }
@@ -111,17 +112,44 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (DragInfo.DragIcon == DragInfo.eDragIcon.Add || DragInfo.DragIcon == DragInfo.eDragIcon.Move || DragInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
+            if (mDragInfo.DragIcon == DragInfo.eDragIcon.Add || mDragInfo.DragIcon == DragInfo.eDragIcon.Move || mDragInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
             {
-                if (sender is UcListView)
-                {
-                    _DroppedPoint = e.GetPosition(sender as UcListView);
-                }
                 try
                 {
-                    ((IDragDrop)DragInfo.DragTarget).Drop(DragInfo);
+                    if (sender is UcListView)
+                    {
+                        _DroppedPoint = e.GetPosition(sender as UcListView);
+                    }
+
+                    object droppedItem = mDragInfo.Data;
+                    if (droppedItem is ObservableList<RepositoryItemBase>)
+                    {
+                        ObservableList<RepositoryItemBase> repoItemsList = droppedItem as ObservableList<RepositoryItemBase>;
+                        if (repoItemsList != null && repoItemsList.Count > 0)
+                        {
+                            foreach (RepositoryItemBase listItem in repoItemsList)
+                            {
+                                DragInfo newDragInfo = new DragInfo()
+                                {
+                                    DragIcon = mDragInfo.DragIcon,
+                                    DragSource = mDragInfo.DragSource,
+                                    DragTarget = mDragInfo.DragTarget,
+                                    Header = mDragInfo.Header,
+                                    OriginalSource = mDragInfo.OriginalSource,
+                                    Data = listItem
+                                };
+
+                                ((IDragDrop)mDragInfo.DragTarget).Drop(newDragInfo);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ((IDragDrop)mDragInfo.DragTarget).Drop(mDragInfo);
+                    }
+
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ResetDragDrop();
                 }
@@ -161,26 +189,26 @@ namespace GingerWPF.DragDropLib
 
         private static void DragTarget_DragEnter(object sender, DragEventArgs e)
         {
-             DragInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;
-             ((IDragDrop)sender).DragEnter(DragInfo);             
-             DDW.SetDragIcon(DragInfo.DragIcon);
+            mDragInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;
+            ((IDragDrop)sender).DragEnter(mDragInfo);
+            DDW.SetDragIcon(mDragInfo.DragIcon);
         }
-    
+
 
         private static void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
             DDW.MoveToMousePosition();
-            e.Handled = true;                     
+            e.Handled = true;
         }
 
 
         // TODO: add param if allow Drag/Drop or both, based on it hook the events
         public static void HookEventHandlers(UIElement DragDropControl)
         {
-            DragDropControl.PreviewMouseLeftButtonDown += DragSource_PreviewMouseLeftButtonDown; 
-            DragDropControl.PreviewMouseMove += DragSource_PreviewMouseMove; 
-            DragDropControl.Drop += DragSource_Drop; 
-            DragDropControl.DragEnter += DragTarget_DragEnter; 
+            DragDropControl.PreviewMouseLeftButtonDown += DragSource_PreviewMouseLeftButtonDown;
+            DragDropControl.PreviewMouseMove += DragSource_PreviewMouseMove;
+            DragDropControl.Drop += DragSource_Drop;
+            DragDropControl.DragEnter += DragTarget_DragEnter;
             DragDropControl.GiveFeedback += DragSource_GiveFeedback;
         }
 

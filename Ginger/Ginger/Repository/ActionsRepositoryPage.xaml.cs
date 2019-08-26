@@ -75,7 +75,7 @@ namespace Ginger.Repository
 
         private void grdActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act)))
+            if (DragDrop2.mDragInfo.DataIsAssignableToType(typeof(Act)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

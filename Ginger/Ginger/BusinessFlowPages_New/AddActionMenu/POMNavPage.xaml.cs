@@ -25,6 +25,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowPages_New.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
@@ -42,7 +43,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for POMNavAction.xaml
     /// </summary>
-    public partial class POMNavPage : Page
+    public partial class POMNavPage : Page, INavPanelPage
     {
         public PomElementsPage mappedUIElementsPage;
         ApplicationPOMModel mPOM;
@@ -109,13 +110,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (this.IsVisible && MainAddActionsNavigationPage.isPanelExpanded)
             {
-                UpdatePOMTree();
-            }
-            if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
-            {
-                mAgent = mContext.Agent;
+                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                {
+                    UpdatePOMTree();
+                }
+                if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
+                {
+                    mAgent = mContext.Agent;
+                }
             }
         }
 
@@ -248,6 +252,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 return false;
             }
+        }
+
+        public void ReLoadPageItems()
+        {
+            UpdatePOMTree();
+            mAgent = mContext.Agent;
         }
     }
 }

@@ -1899,7 +1899,12 @@ public void RemoveCustomView(string viewName)
                 if (selectedItemsCount > 1)
                 {
                     Info.Data = this.GetSelectedItems();
-                    Info.Header = row.Item.ToString().Substring(0, 6) + ".. + " + (selectedItemsCount-1);
+                    int identityTextLength = row.Item.ToString().ToCharArray().Length;
+                    if(identityTextLength > 16)
+                    {
+                        identityTextLength = 16;
+                    }
+                    Info.Header = row.Item.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount-1);
                 }
                 else
                 {
