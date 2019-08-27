@@ -142,9 +142,9 @@ namespace GingerCore.Actions.JSON
 
             XmlNode root = doc.DocumentElement;
 
-            List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
-            outputTagsList = GingerCore.General.GetXMLNodesItems(doc);
-            foreach (General.XmlNodeItem outputItem in outputTagsList)
+            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+            outputTagsList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(doc);
+            foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
             {
                 foreach (ActInputValue aiv in DynamicElements)
                 {                    

@@ -85,7 +85,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
         
-        byte[] mBuffer = new byte[1024];  // start with initial buffer of 1024, will grow if needed
+        byte[] mBuffer = new byte[4096];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
         public string Name {get; set;}
