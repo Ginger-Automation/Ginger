@@ -18,9 +18,15 @@ limitations under the License.
 
 using GingerCore.Helpers;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCore.Platforms;
+using Amdocs.Ginger.Repository;
+using System;
+using System.Collections.Generic;
+
 namespace GingerCore.Actions.WebServices
 {
-    public class ActWebAPISoap : ActWebAPIBase
+    public class ActWebAPISoap : ActWebAPIBase, IActPluginExecution
     {
         public override string ActionDescription { get { return "WebAPI SOAP Action"; } }
         public override string ActionUserDescription { get { return "Performs SOAP action"; } }
@@ -34,6 +40,58 @@ namespace GingerCore.Actions.WebServices
             TBH.AddText("Use this action in case you want to perform  a SOAP Action.");
             TBH.AddLineBreak();
             TBH.AddText("Enter End Point URL, SOAP Action, File location/Request Body, select security level and authorization if required.");
+        }
+
+        public PlatformAction GetAsPlatformAction()
+        {
+            PlatformAction platformAction = new PlatformAction(this);
+
+
+            string SoapAction = this.GetInputParamCalculatedValue(Fields.SOAPAction);
+
+            foreach (ActInputValue aiv in this.InputValues)
+            {
+
+                string ValueforDriver = aiv.ValueForDriver;
+                if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
+                {
+                    platformAction.InputParams.Add(aiv.Param, ValueforDriver);
+                }
+            }
+            if (platformAction.InputParams.ContainsKey("RequestBody"))
+            {
+                platformAction.InputParams["RequestBody"] = GetCalulatedRequestBodyString();
+
+            }
+            else
+            {
+                platformAction.InputParams.Add("RequestBody", GetCalulatedRequestBodyString());
+            }
+
+            Dictionary<string, string> sHttpHeaders = new Dictionary<string, string>();
+
+            sHttpHeaders.Add("SOAPAction", SoapAction);
+            foreach (ActInputValue header in this.HttpHeaders)
+            {
+
+
+                sHttpHeaders.Add(header.Param, header.ValueForDriver);
+
+            }
+
+            platformAction.InputParams.Add("Headers", sHttpHeaders);
+     
+
+
+           
+
+
+            return platformAction;
+        }
+
+        public string GetName()
+        {
+            return "ActWebAPISoap";
         }
 
         public new static partial class Fields
