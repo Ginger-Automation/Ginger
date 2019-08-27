@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -49,24 +50,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string Args = string.Empty;
-            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-            {
-                Args += "--sourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
-                Args += "--sourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
-                Args += "--sourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
-                Args += "--sourceControlPassword=" + solution.SourceControl.SourceControlPass + Environment.NewLine;
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
-                {
-                    Args += "--sourceControlProxyServer=" + solution.SourceControl.SourceControlProxyAddress.ToString() + Environment.NewLine;
-                    Args += "--sourceControlProxyPort=" + solution.SourceControl.SourceControlProxyPort.ToString() + Environment.NewLine;
-                }
-            }
             Args += string.Format("--solution {0}", solution.Folder);
             Args += string.Format(" --runset {0}", runsetExecutor.RunSetConfig.Name);
             Args += string.Format(" --environment {0}", runsetExecutor.RunsetExecutionEnvironment.Name);
             Args += string.Format(" --runAnalyzer {0}", cliHelper.RunAnalyzer.ToString());
             Args += string.Format(" --showAutoRunWindow {0}", cliHelper.ShowAutoRunWindow.ToString());
-
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
+            {
+                Args += string.Format(" --sourceControlType {0}" , solution.SourceControl.GetSourceControlType.ToString());
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+                {
+                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    int lastSlash = modifiedURI.LastIndexOf('/');
+                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    Args += string.Format(" --sourceControlUrl {0}", modifiedURI);
+                }
+                else
+                {
+                    Args += string.Format(" --sourceControlUrl {0}", solution.SourceControl.SourceControlURL);
+                }
+                Args += string.Format(" --sourceControlUser {0}" , solution.SourceControl.SourceControlUser);
+                Args += string.Format(" --sourceControlPassword {0}" , EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass));
+                Args += string.Format(" --sourceControlPasswordEncrypted {0}" , "Y");
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                {
+                    Args += string.Format(" --sourceControlProxyServer {0}" , solution.SourceControl.SourceControlProxyAddress.ToString());
+                    Args += string.Format(" --sourceControlProxyPort {0}" , solution.SourceControl.SourceControlProxyPort.ToString());
+                }
+            }
             return Args;
         }
 
@@ -86,8 +97,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             // - SeekOrigin -- split keep -
 
             foreach(Arg arg in argsList)
-            {             
-                
+            {                             
                 switch (arg.ArgName)
                 {
                     case "--sourceControlType":
@@ -153,7 +163,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public List<Arg> SplitArgs(string sArgs)
         {
             List<Arg> args = new List<Arg>();            
-            string[] argsList = sArgs.Split('-');
+            string[] argsList = sArgs.Split('-');//sArgs.Split(new[] { "--" }, StringSplitOptions.RemoveEmptyEntries);
 
             string parampref = "";
             foreach (string argval in argsList)

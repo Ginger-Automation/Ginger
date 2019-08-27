@@ -40,10 +40,22 @@ namespace GingerCore.Variables
 
         private string mValueList;
         [IsSerializedForLocalRepository]
-        public string ValueList { set { mValueList = value; OnPropertyChanged("Formula"); } get { return mValueList; } }
-        
+        public string ValueList { set { mValueList = value; OnPropertyChanged(nameof(this.ValueList)); OnPropertyChanged("Formula"); } get { return mValueList; } }
+
+        private bool mRandomOrder;
         [IsSerializedForLocalRepository]
-        public bool RandomOrder { set; get; }
+        public bool RandomOrder
+        {
+            set
+            {
+                mRandomOrder = value;
+                OnPropertyChanged(nameof(this.RandomOrder));
+            }
+            get
+            {
+                return mRandomOrder;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public int CurrentValueIndex { set; get; }

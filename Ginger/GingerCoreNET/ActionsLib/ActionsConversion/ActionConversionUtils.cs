@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +112,7 @@ namespace Amdocs.Ginger.CoreNET
                                     Act newAct = ((IObsoleteAction)act).GetNewAction();
                                     if (newAct != null)
                                     {
+                                        newAct.Platform = ((IObsoleteAction)act).GetTargetPlatform();
                                         if (convertToPOMAction && newAct.GetType().Name == ActUIElementClassName)
                                         {
                                             newAct = GetMappedElementFromPOMForAction(newAct, selectedPOMObjectName);
@@ -228,8 +230,10 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (Activity convertibleActivity in lstSelectedActivities)
                 {
+                    ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == convertibleActivity.TargetApplication select x.Platform).FirstOrDefault();
                     foreach (Act act in convertibleActivity.Acts)
                     {
+                        act.Platform = activityPlatform;
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                                                 (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                         {
@@ -283,8 +287,10 @@ namespace Amdocs.Ginger.CoreNET
                     if (convertibleActivity.Active)
                     {
                         bool isPresent = false;
+                        ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == convertibleActivity.TargetApplication select x.Platform).FirstOrDefault();
                         foreach (Act act in convertibleActivity.Acts)
                         {
+                            act.Platform = activityPlatform;
                             if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                                 (act.Active))
                             {

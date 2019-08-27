@@ -698,8 +698,8 @@ namespace Ginger.Reports.GingerExecutionReport
         }
 
         public void CreateGingerLevelReport(GingerReport gr, string ReportLevel, bool calledAsRoot = false, Tuple<Tuple<string, string>, Tuple<string, string>> nextPrevGingerName = null)
-        {
-            string currentHTMLReportsFolder = HTMLReportMainFolder + @"\" + ExtensionMethods.folderNameNormalazing(gr.Seq + " " + gr.Name) + @"\";
+        {           
+            string currentHTMLReportsFolder = HTMLReportMainFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(gr.Seq + " " + gr.Name) + Path.DirectorySeparatorChar;
             System.IO.Directory.CreateDirectory(currentHTMLReportsFolder);
 
             string lastseq = string.Empty;
@@ -1488,7 +1488,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if (currentTemplate.ReportLowerLevelToShow != HTMLReportConfiguration.ReportsLevel.ActivityGroupLevel.ToString())
                     {
-                        HTMLReportMainFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
+                        HTMLReportMainFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
 
                         string prevActivitiesGroupSeq = string.Empty;
                         string nextActivitiesGroupSeq = string.Empty;
@@ -1504,17 +1504,17 @@ namespace Ginger.Reports.GingerExecutionReport
                             nextActivitiesGroupName = BusinessFlowReport.ActivitiesGroupReports[BusinessFlowReport.ActivitiesGroupReports.FindIndex(x => x.GUID == ag.GUID) + 1].Name;
                             nextActivitiesGroupSeq = BusinessFlowReport.ActivitiesGroupReports[BusinessFlowReport.ActivitiesGroupReports.FindIndex(x => x.GUID == ag.GUID) + 1].Seq.ToString();
                         }
-
+                        
                         CreateActivityGroupLevelReport(ag, BusinessFlowReport, currentHTMLReportsFolder, ReportLevel + "../../", true, new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>(prevActivitiesGroupSeq, prevActivitiesGroupName), new Tuple<string, string>(nextActivitiesGroupSeq, nextActivitiesGroupName)));
 
                         try
                         {
-                            BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault().TempReportFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
+                            BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault().TempReportFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
                         }
                         catch { }
                         foreach (ActivityReport ac in BusinessFlowReport.Activities.Where(x => ag.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(x.SourceGuid)).OrderBy(x => x.Seq))
-                        {
-                            CreateActivityLevelReport(ac, currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name), ReportLevel + "../");
+                        {                            
+                            CreateActivityLevelReport(ac, currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name), ReportLevel + "../");
                         }
                     }
                 }
@@ -1546,8 +1546,8 @@ namespace Ginger.Reports.GingerExecutionReport
                 GingerLogo = string.Empty;
             }
             else
-            {
-                currentHTMLReportsFolder = currentHTMLReportsFolder + @"\ActivityGroups\" + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name);
+            {                
+                currentHTMLReportsFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar +"ActivityGroups" + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name);
             }
             System.IO.Directory.CreateDirectory(currentHTMLReportsFolder);
 
@@ -1894,7 +1894,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                currentHTMLReportsFolder = currentHTMLReportsFolder + @"\" + ExtensionMethods.folderNameNormalazing(ActivityReport.Seq + " " + ActivityReport.ActivityName);
+                currentHTMLReportsFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ActivityReport.Seq + " " + ActivityReport.ActivityName);
             }
             System.IO.Directory.CreateDirectory(currentHTMLReportsFolder);
 
@@ -2487,7 +2487,7 @@ namespace Ginger.Reports.GingerExecutionReport
             string beatLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                beatLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@BeatLogo.png' style='padding-left:70px'/>";
+                beatLogo = "<img alt='Embedded Image' src='{ReportLevel}assets/img/@BeatLogo.png' height='50' style='padding-left:85px'/>";
             }
             else
             {
@@ -2505,7 +2505,7 @@ namespace Ginger.Reports.GingerExecutionReport
             string gingerLogo = string.Empty;
             if (!currentTemplate.UseLocalStoredStyling)
             {
-                gingerLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@Ginger.png' style='float:right;padding-left:70px'/>";
+                gingerLogo = "<img alt='Embedded Image' width='274px' height='74px' src='{ReportLevel}assets/img/@Ginger_old.png' style='float:right;padding-left:70px'/>";
             }
             else
             {
@@ -2896,7 +2896,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
 
             //FIXME hard coded
-            string htmlfile = TemplatesFolder + HTMLFileName;
+            string htmlfile = Path.Combine(TemplatesFolder, HTMLFileName);
             string HTML = System.IO.File.ReadAllText(htmlfile);
             return HTML;
         }

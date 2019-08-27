@@ -126,7 +126,7 @@ namespace Ginger.Reports
             BFES.BusinessFlow = BF;
             BFES.Selected = true;
             if(GR!=null)
-            BFES.BusinessFlowExecLoggerFolder = GR.ExecutionLoggerManager.ExecutionLogfolder + "\\" + BF.ExecutionLogFolder;
+            BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder,BF.ExecutionLogFolder);
 
             if (mBFESs!=null)  mBFESs.Clear();
             mBFESs.Add(BFES);

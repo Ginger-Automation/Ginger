@@ -16,26 +16,21 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Activities;
-using Ginger.Reports.GingerExecutionReport;
-using GingerCore.FlowControlLib;
-using Ginger.Reports;
-using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
+
+
+    // TODO: split each report class to its own file !!!
+
     public class LiteDbReportBase
     {
         public int Seq { get; set; }
@@ -86,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             if(o is Amdocs.Ginger.Repository.RepositoryItemBase && (o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId != null)
             {
-                LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 if (o.GetType().FullName.Contains("Actions"))
                 {
                     var actionData = liteDbManager.GetActionsLiteData();

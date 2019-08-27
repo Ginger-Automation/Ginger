@@ -98,7 +98,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mDataSourcePage == null)
             {
@@ -137,11 +137,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
 
-            if (DSDetails.DSType == DataSourceBase.eDSType.MSAccess)
-            {
-                TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
-                TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
-            }
+            TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
+            TV.AddToolbarTool("@Export_16x16.png", "Export to Excel", new RoutedEventHandler(ExportToExcel));
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Import from Excel", AddNewTableFromExcel, null, eImageType.ExcelFile);
             AddSourceControlOptions(mContextMenu);
         }
@@ -293,26 +291,46 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     dsTable.DataTable.RejectChanges();
             }
         }
-
-        private void Delete(object sender, RoutedEventArgs e)
-        {            
-            base.DeleteTreeItem(DSDetails);            
+        private void DeleteDataSourceItems()
+        {
             if (File.Exists(DSDetails.FileFullPath))
             {
+                base.DeleteTreeItem(DSDetails, true);
                 try
                 {
                     File.Delete(DSDetails.FileFullPath);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Error while deleting Data Source File", ex);
-                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);                    
+                    Reporter.ToUser(eUserMsgKey.DeleteDSFileError, DSDetails.FileFullPath);
                 }
             }
-                
         }
 
-        private void CommitAll(object sender, RoutedEventArgs e)
+        private void Delete(object sender, RoutedEventArgs e)
+        {
+            DeleteDataSourceItems();
+        }
+
+        public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
+        {
+            var repoItem = item as RepositoryItemBase;
+            if (repoItem != null)
+            {
+                if (!deleteWithoutAsking)
+                {
+                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
+                        return false;
+                    }
+                }
+            }
+            DeleteDataSourceItems();
+            return true;
+        }
+
+                private void CommitAll(object sender, RoutedEventArgs e)
         {
             SaveTreeItem(DSDetails);            
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);

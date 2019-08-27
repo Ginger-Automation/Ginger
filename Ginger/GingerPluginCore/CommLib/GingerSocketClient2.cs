@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             return mGingerSocketInfo.SendRequest(pl);
         }
 
-        // After connect is succesful/fail we get callback
+        // After connect is successful/fail we get callback
         private void ConnectCallback(IAsyncResult ar)
         {
             try

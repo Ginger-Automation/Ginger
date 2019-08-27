@@ -162,7 +162,7 @@ namespace GingerCore.ALM.JIRA.Bll
             if (resultFlag)
                 result = "Export has been finished successfully";
             else
-                result = "Error Has been Happend while export to ALM";
+                result = "Error Has been Happened while export to ALM";
             return resultFlag;
         }
 

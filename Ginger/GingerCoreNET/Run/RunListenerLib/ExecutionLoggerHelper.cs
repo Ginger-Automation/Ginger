@@ -18,12 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -35,23 +33,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
-            if (System.IO.Directory.Exists(folderName) && isCleanFile)
+            try
             {
-                string[] files = Directory.GetFiles(folderName);
-                string[] dirs = Directory.GetDirectories(folderName);
-
-                foreach (string file in files)
+                if (System.IO.Directory.Exists(folderName) && isCleanFile)
                 {
-                    File.SetAttributes(file, FileAttributes.Normal);
-                    File.Delete(file);
-                }
+                    string[] files = Directory.GetFiles(folderName);
+                    string[] dirs = Directory.GetDirectories(folderName);
 
-                foreach (string dir in dirs)
-                {
-                    CleanDirectory(dir, isCleanFile);
-                }
+                    foreach (string file in files)
+                    {
+                        File.SetAttributes(file, FileAttributes.Normal);
+                        File.Delete(file);
+                    }
 
-                Directory.Delete(folderName, false);
+                    foreach (string dir in dirs)
+                    {
+                        CleanDirectory(dir, isCleanFile);
+                    }
+
+                    Directory.Delete(folderName, false);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Clean Execution Logger Folder", ex);
             }
         }
 
@@ -65,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                    CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+                   // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)
@@ -88,9 +93,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
                     {
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
-                        System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
+                        Directory.CreateDirectory(logsFolder);
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                     }
                 }
             }

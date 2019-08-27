@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1061,7 +1062,14 @@ namespace Ginger.Run
                 UpdateDSReturnValues(act);
 
                 // Add time stamp 
-                act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo;
+                if (!string.IsNullOrEmpty(act.ExInfo))
+                {
+                    act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo; 
+                }
+                else
+                {
+                    act.ExInfo = DateTime.Now.ToString();
+                }
                 ProcessScreenShot(act, ActionExecutorType);
                 mErrorHandlerExecuted = false;
 
@@ -1546,16 +1554,19 @@ namespace Ginger.Run
 
             act.ValueExpression = VE;
 
+
+
+        
             // TODO: remove when we no longer use LocateValue in Action
-            if (!string.IsNullOrEmpty(act.LocateValue))
+
+          
+            if (!string.IsNullOrEmpty(act.GetInputParamValue(Act.Fields.LocateValue)))
             {
-                
+
                 VE.Value = act.LocateValue;
                 act.LocateValueCalculated = VE.ValueCalculated;
             }
-
             ProcessInputValueForDriver(act);
-
             ProcessReturnValueForDriver(act);
                                     
             
@@ -1774,10 +1785,22 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        IActPluginExecution PluginAction = (IActPluginExecution)act;
-                                        Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;                                        
-                                        ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);                                        
+
+                                        if (act is IActPluginExecution PluginAction)
+                                        {
+
+                                            Agent PluginAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                                            ExecuteOnPlugin.ExecutePlugInActionOnAgent(PluginAgent, PluginAction);
+                                        }
+
+                                        else
+                                        {
+                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                            
+                                        }
                                     }
+
                                 }
                             }
                           
@@ -1788,27 +1811,8 @@ namespace Ginger.Run
                             break;
 
                         case eActionExecutorType.RunOnPlugIn:
-                            GingerNodeInfo GNI = null;
-                            try
-                            {
-                                GNI =ExecuteOnPlugin.GetGingerNodeInfoForPluginAction((ActPlugIn)act);
-                                if (GNI != null)
-                                {                                    
-                                    ExecuteOnPlugin.ExecuteActionOnPlugin((ActPlugIn)act, GNI);
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                string errorMessage = "";
-                                if (GNI == null)
-                                {
-                                    errorMessage += "Cannot find GingerNodeInfo in service grid for: " + ((ActPlugIn)act).PluginId + ", Service " + ((ActPlugIn)act).ServiceId + Environment.NewLine;
-                                }
-                                errorMessage += "Error while executing Plugin Service action " + Environment.NewLine;
-                                errorMessage += ex.Message;
-                                act.Error = errorMessage;
-                            }
+                            ExecuteOnPlugin.FindNodeAndRunAction((ActPlugIn)act);
+                            
                             break;                        
 
                         case eActionExecutorType.RunInSimulationMode:
@@ -2165,7 +2169,7 @@ namespace Ginger.Run
                                 }
                                 catch (Exception ex)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value Flow Control", ex);
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 }
                                 break;
@@ -2608,7 +2612,7 @@ namespace Ginger.Run
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
-                        ErrorInfo = "Function evealuation didn't resulted in True";
+                        ErrorInfo = "Function evaluation didn't resulted in True";
                         break;
                     case eOperator.GreaterThan:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
@@ -3436,7 +3440,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' Business Flow", CurrentBusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred during the execution of the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), CurrentBusinessFlow), ex);
             }
             finally
             {
@@ -4014,8 +4018,11 @@ namespace Ginger.Run
                         BFES.ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true);
                         BFES.ExecutionBFFlowControls = BF.BFFlowControls;
                         BFES.BusinessFlow = BF;
-                        BFES.Selected = true;                        
-                        BFES.BusinessFlowExecLoggerFolder = this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder + BF.ExecutionLogFolder;
+                        BFES.Selected = true;
+                        if (ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder != null && BF.ExecutionFullLogFolder != null)
+                        {
+                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder,string.IsNullOrEmpty(BF.ExecutionLogFolder)?string.Empty: BF.ExecutionLogFolder);
+                        }
 
                         BFESs.Add(BFES);
                     }
@@ -4149,7 +4156,7 @@ namespace Ginger.Run
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set Variable Value Flow Control", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to do Set " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value Flow Control", ex);
                                 FC.Status = eStatus.Action_Execution_Failed;
                             }
                             break;
@@ -4228,7 +4235,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Business Flow Name not found - " + Name);
+                Reporter.ToLog(eLogLevel.ERROR, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name not found - " + Name);
                 return false;
             }
         }
@@ -4475,7 +4482,8 @@ namespace Ginger.Run
                             continue;
                         }
                         activity.ExecutionLogActionCounter++;
-                        action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description);
+                        action.ExecutionLogFolder = Path.Combine(activity.ExecutionLogFolder, activity.ExecutionLogActionCounter + " " + Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(action.Description));
+
                         if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                         {
                             System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);

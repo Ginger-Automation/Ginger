@@ -646,8 +646,8 @@ namespace Ginger
         }
 
         private void ShowGingerLog()
-        {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        {            
+            string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
             if (System.IO.File.Exists(mLogFilePath))
             {
                 Process.Start(mLogFilePath);
@@ -667,8 +667,8 @@ namespace Ginger
         }
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
-        {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        {            
+            string mLogFilePath = Path.Combine(Amdocs.Ginger.Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs" , "Ginger_Log.txt");
             string folder = System.IO.Path.GetDirectoryName(mLogFilePath);
             if (System.IO.Directory.Exists(folder))
             {

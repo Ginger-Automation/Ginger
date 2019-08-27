@@ -36,21 +36,29 @@ namespace Amdocs.Ginger.Plugin.Core
         {
             ClosedAllNodes();
         }
-       
+
 
         // Being called from the plugin, ref will be zero DO NOT DELELTE
         public void Listen()
         {
             Console.WriteLine(mNodes.Count + " Node(s) Connected succesfully");
             int i = 0;
-            foreach(GingerNode gingerNode in mNodes)
+            foreach (GingerNode gingerNode in mNodes)
             {
                 i++;
                 Console.WriteLine("Node #" + i + " " + gingerNode.Info);
             }
 
             Console.WriteLine("Press any key to close");
-            Console.ReadKey();
+
+            if (Console.IsInputRedirected)
+            {
+                Console.Read();
+            }
+            else
+            {
+                Console.ReadKey();
+            }
         }
 
         public void ClosedAllNodes()
@@ -98,7 +106,7 @@ namespace Amdocs.Ginger.Plugin.Core
         public void StartNode(string name, object gingerServiceObject)
         {
             GingerNode gingerNode = new GingerNode(gingerServiceObject);
-            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15001);   // !!!!!!!!!!!!!!!! Get free port, but prefer 15001 if free            
+            gingerNode.StartGingerNode(name, SocketHelper.GetLocalHostIP(), 15004);   // !!!!!!!!!!!!!!!! Get free port, but prefer 15001 if free            
             CheckAddGingerNode(gingerNode);
         }
 

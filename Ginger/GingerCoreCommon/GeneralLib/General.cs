@@ -26,20 +26,23 @@ namespace Amdocs.Ginger.Common.GeneralLib
     public static class General
     {
 
-
+        static string mAppDataFolder = null;
         public static string LocalUserApplicationDataFolderPath
         {
             get
-            {                
-                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                appDataFolder = Path.Combine(appDataFolder, "Amdocs" + Path.DirectorySeparatorChar + "Ginger");    
+            {
+                if (mAppDataFolder == null)
+                {                    
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
 
-                if (!Directory.Exists(appDataFolder))
-                {
-                    Directory.CreateDirectory(appDataFolder);
+                    if (!Directory.Exists(appDataFolder))
+                    {
+                        Directory.CreateDirectory(appDataFolder);
+                    }
+                    mAppDataFolder = appDataFolder;
                 }
-
-                return appDataFolder;
+                return mAppDataFolder;
             }
         }
 
@@ -47,7 +50,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             get
             {
-                string workingFolder = Path.Combine(LocalUserApplicationDataFolderPath, @"\WorkingFolder");
+                string workingFolder = Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder");
 
                 if (!Directory.Exists(workingFolder))
                 {
@@ -57,6 +60,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return workingFolder;
             }
         }
+
+        public static string GingerLogFile
+        {
+            get
+            {
+                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
+            }
+        }
+
 
 
 

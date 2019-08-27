@@ -148,9 +148,14 @@ namespace Ginger.Repository
             if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup))
                 || DragDrop2.DragInfo.DataIsAssignableToType(typeof(CollectionViewGroup)))
             {
-                // OK to drop                         
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Copy;
-            }            
+                // OK to drop
+                DragDrop2.SetDragIcon(true);
+            }
+            else
+            {
+                // Do Not Drop
+                DragDrop2.SetDragIcon(false);
+            }
         }
 
         private void grdActivitiesGroupsRepository_ItemDropped(object sender, EventArgs e)
@@ -187,7 +192,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to drop Activities Group into Sahred Repository", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to drop " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " into Shared Repository", ex);
             }
         }
 

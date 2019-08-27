@@ -70,7 +70,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             ePlatformType platform;            
-            if ((Context.GetAsContext(mAction.Context)).BusinessFlow != null)
+            if (mAction.Context != null && (Context.GetAsContext(mAction.Context)).BusinessFlow != null)
             {
                 string targetapp = (Context.GetAsContext(mAction.Context)).BusinessFlow.CurrentActivity.TargetApplication;
                 platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
@@ -418,17 +418,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                 }
             }
-            else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
+            else if ((mAction.ElementAction == ActUIElement.eElementAction.Click)|| (mAction.ElementAction == ActUIElement.eElementAction.AsyncClick)|| (mAction.ElementAction == ActUIElement.eElementAction.DoubleClick))
             {
-                if (mAction.ElementType == eElementType.MenuItem)
+                if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
                 {
                     elementList.Add(new ElementConfigControl()
                     {
                         Title = "Value",
                         BindedString = ActUIElement.Fields.ValueToSelect,
                         ControlType = eElementType.TextBox,
-                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) }
+                        PossibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
+                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) }
                     });
                 }
             }

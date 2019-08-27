@@ -326,8 +326,32 @@ namespace Ginger.ALM.Repository
                             return false;
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
                             matchingTC = null;
+                        else
+                        {
+                            if (String.IsNullOrEmpty(testPlanUploadPath))
+                            {
+                                //testPlanUploadPath = "";
+                                string parentId = matchingTC.ElementsField["parent-id"].ToString();
+
+                                QCTestFolder testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderById(parentId);
+                                string revrsePath = testPlanFolder.Name + "/";
+
+                                string testPlanRootFolderId = QCRestAPIConnect.QcRestClient.GetTestPlanRootFolder().Id;
+                                while (testPlanFolder.Id != testPlanRootFolderId)
+                                {
+                                    testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderById(testPlanFolder.ParentId);
+                                    revrsePath = revrsePath + testPlanFolder.Name + "/";
+                                }
+                                revrsePath = revrsePath.Substring(0, revrsePath.Length - 1);
+                                string[] str = revrsePath.Split('/');
+                                Array.Reverse(str);
+                                testPlanUploadPath = string.Join("\\",str);
+                            }
+                        }
                     }
                 }
+                
+                //if user selected No and want to create new testplans to selected folder path
                 if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
                 {
                     //get the QC Test Plan path to upload the activities group to

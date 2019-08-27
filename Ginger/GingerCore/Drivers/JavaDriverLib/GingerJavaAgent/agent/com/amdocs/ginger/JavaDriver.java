@@ -89,6 +89,7 @@ import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.jsoup.nodes.Element;
@@ -306,7 +307,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "" + LocateValue + ","
 						+ "" + Value);
 			
-				PayLoad plrc= HandleElementAction(LocateBy, LocateValue, ControlAction, Value, "", "", "");
+				PayLoad plrc= HandleElementAction(LocateBy, LocateValue, ControlAction, Value,"", "");
 			return plrc;			
 		}		
 		if(CommandType.UnitTest.toString().equals(PL.Name))
@@ -862,42 +863,44 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 	
 	private PayLoad HandleUIElementAction(PayLoad PL)
 	{
-		String LocateBy = PL.GetValueString();
-		String LocateValue = PL.GetValueString();
-		String ElementType = PL.GetValueString();
-		String ControlAction = PL.GetValueString();		
+	
 				
-		HashMap pm = PL.GetParamHashMap(PL.GetListPayLoad());
+		HashMap inputValues = PL.GetInputValues(PL.GetListPayLoad());
+		
+		String LocateBy = PL.GetInputParamValue(inputValues, "ElementLocateBy");
+		String LocateValue = PL.GetInputParamValue(inputValues, "ElementLocateValue");
+		String ElementType = PL.GetInputParamValue(inputValues, "ElementType");
+		String ControlAction = PL.GetInputParamValue(inputValues, "ElementAction");	
 		
 		GingerAgent.WriteLog("ProcessCommand 'ElementAction': "  
 				+ " LocateBy = " + LocateBy + ","
 				+ " LocateValue = " + LocateValue + "," 
 				+ " ElementType" + ElementType + "," 
 				+ " ControlAction" + ControlAction + ","
-				+ " HashMap = " + pm);			
+				+ " HashMap = " + inputValues);			
 		if (ElementType.equalsIgnoreCase("Table"))
 		{
 			GingerAgent.WriteLog("Inside Table");	
 
 			List<String> CellLocator = new ArrayList<String>();
-			String TableElementAction = PL.GetParamValue(pm, "ControlAction");
-			CellLocator.add(PL.GetParamValue(pm, "LocateRowType"));	
-			if (PL.GetParamValue(pm, "LocateRowType").equalsIgnoreCase("Row Number"))
+			String TableElementAction = PL.GetInputParamValue(inputValues, "ControlAction");
+			CellLocator.add(PL.GetInputParamValue(inputValues, "LocateRowType"));	
+			if (PL.GetInputParamValue(inputValues, "LocateRowType").equalsIgnoreCase("Row Number"))
 			{
-				CellLocator.add(PL.GetParamValue(pm, "LocateRowValue"));					
+				CellLocator.add(PL.GetInputParamValue(inputValues, "LocateRowValue"));					
 			}
-			else if (PL.GetParamValue(pm, "LocateRowType").equalsIgnoreCase("Where"))
+			else if (PL.GetInputParamValue(inputValues, "LocateRowType").equalsIgnoreCase("Where"))
 			{
-				CellLocator.add(PL.GetParamValue(pm, "WhereColSelector"));	
-				CellLocator.add(PL.GetParamValue(pm, "WhereColumnTitle"));	
-				CellLocator.add(PL.GetParamValue(pm, "WhereProperty"));	
-				CellLocator.add(PL.GetParamValue(pm, "WhereOperator"));
-				CellLocator.add(PL.GetParamValue(pm, "WhereColumnValue"));	
+				CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColSelector"));	
+				CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColumnTitle"));	
+				CellLocator.add(PL.GetInputParamValue(inputValues, "WhereProperty"));	
+				CellLocator.add(PL.GetInputParamValue(inputValues, "WhereOperator"));
+				CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColumnValue"));	
 			}
-			CellLocator.add(PL.GetParamValue(pm, "ColSelectorValue"));	 
-			CellLocator.add(PL.GetParamValue(pm, "LocateColTitle"));	
+			CellLocator.add(PL.GetInputParamValue(inputValues, "ColSelectorValue"));	 
+			CellLocator.add(PL.GetInputParamValue(inputValues, "LocateColTitle"));	
 			
-			mValue = PL.GetParamValue(pm, "ControlActionValue");
+			mValue = PL.GetInputParamValue(inputValues, "ControlActionValue");
 			GingerAgent.WriteLog(CellLocator.toString());				
 			PayLoad plrc = HandleTableActions(LocateBy, LocateValue, CellLocator, TableElementAction, mValue);
 			return plrc;
@@ -938,29 +941,29 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			else if (ControlAction.equalsIgnoreCase("JEditorPaneElementAction"))
 			{
 				GingerAgent.WriteLog("Inside JEditorPaneElementAction");
-				String SubElementType = PL.GetParamValue(pm, "SubElementType");
+				String SubElementType = PL.GetInputParamValue(inputValues, "SubElementType");
 				GingerAgent.WriteLog("SubElementType = "+ SubElementType);
 				
 				
 				List<String> CellLocator = new ArrayList<String>();
-				String TableElementAction = PL.GetParamValue(pm, "ControlAction");
-				CellLocator.add(PL.GetParamValue(pm, "LocateRowType"));	
-				if (PL.GetParamValue(pm, "LocateRowType").equalsIgnoreCase("Row Number"))
+				String TableElementAction = PL.GetInputParamValue(inputValues, "ControlAction");
+				CellLocator.add(PL.GetInputParamValue(inputValues, "LocateRowType"));	
+				if (PL.GetInputParamValue(inputValues, "LocateRowType").equalsIgnoreCase("Row Number"))
 				{
-					CellLocator.add(PL.GetParamValue(pm, "LocateRowValue"));					
+					CellLocator.add(PL.GetInputParamValue(inputValues, "LocateRowValue"));					
 				}
-				else if (PL.GetParamValue(pm, "LocateRowType").equalsIgnoreCase("Where"))
+				else if (PL.GetInputParamValue(inputValues, "LocateRowType").equalsIgnoreCase("Where"))
 				{
-					CellLocator.add(PL.GetParamValue(pm, "WhereColSelector"));	
-					CellLocator.add(PL.GetParamValue(pm, "WhereColumnTitle"));	
-					CellLocator.add(PL.GetParamValue(pm, "WhereProperty"));	
-					CellLocator.add(PL.GetParamValue(pm, "WhereOperator"));
-					CellLocator.add(PL.GetParamValue(pm, "WhereColumnValue"));	
+					CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColSelector"));	
+					CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColumnTitle"));	
+					CellLocator.add(PL.GetInputParamValue(inputValues, "WhereProperty"));	
+					CellLocator.add(PL.GetInputParamValue(inputValues, "WhereOperator"));
+					CellLocator.add(PL.GetInputParamValue(inputValues, "WhereColumnValue"));	
 				}
-				CellLocator.add(PL.GetParamValue(pm, "ColSelectorValue"));	 
-				CellLocator.add(PL.GetParamValue(pm, "LocateColTitle"));	
+				CellLocator.add(PL.GetInputParamValue(inputValues, "ColSelectorValue"));	 
+				CellLocator.add(PL.GetInputParamValue(inputValues, "LocateColTitle"));	
 
-				mValue = PL.GetParamValue(pm, "ControlActionValue");
+				mValue = PL.GetInputParamValue(inputValues, "ControlActionValue");
 				GingerAgent.WriteLog(CellLocator.toString());
 
 				if (SubElementType.equalsIgnoreCase("HTMLTable"))
@@ -983,14 +986,14 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 					+ " ElementType =" + ElementType + ","
 					+ " LocateValue = " + LocateValue + " ControlAction" + ControlAction ) ;
 			
-				mValue=PL.GetParamValue(pm, "Value");	
-				mWaitForIdle = PL.GetParamValue(pm, "WaitforIdle");
-				mValueToSelect = PL.GetParamValue(pm, "ValueToSelect");
-				mXCoordinate = PL.GetParamValue(pm, "XCoordinate");
-				mYCoordinate = PL.GetParamValue(pm, "YCoordinate");
-				mLocateColTitle = PL.GetParamValue(pm, "LocateColTitle");
-				mLocateRowType = PL.GetParamValue(pm, "LocateRowType");
-				mLocateRowValue = PL.GetParamValue(pm, "LocateRowValue");
+				mValue=PL.GetInputParamValue(inputValues, "Value");	
+				mWaitForIdle = PL.GetInputParamValue(inputValues, "WaitforIdle");
+				mValueToSelect = PL.GetInputParamValue(inputValues, "ValueToSelect");
+				mXCoordinate = PL.GetInputParamValue(inputValues, "XCoordinate");
+				mYCoordinate = PL.GetInputParamValue(inputValues, "YCoordinate");
+				mLocateColTitle = PL.GetInputParamValue(inputValues, "LocateColTitle");
+				mLocateRowType = PL.GetInputParamValue(inputValues, "LocateRowType");
+				mLocateRowValue = PL.GetInputParamValue(inputValues, "LocateRowValue");
 				
 			GingerAgent.WriteLog("ProcessCommand 'ElementAction': "  
 						+ "Wait for Idle = " + mWaitForIdle + ","
@@ -1026,7 +1029,21 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				return HandleDialogAction(LocateBy, LocateValue, ControlAction, mValue);
 			}
 
-			PayLoad plrc = HandleElementAction(LocateBy, LocateValue, ControlAction, mValue, mValueToSelect, mXCoordinate, mYCoordinate);
+			//TODO: Few actions sending value in value and few in value to select.
+			//Ugly fix to override value with value to select
+			//Need to remove and retrieve value or value select based on what is expected for specific action
+			if(ControlAction.equalsIgnoreCase("Click")|| ControlAction.equalsIgnoreCase("Select")||
+					ControlAction.equalsIgnoreCase("GetControlProperty")
+					||ControlAction.equalsIgnoreCase("AsyncSelect")
+					||ControlAction.equalsIgnoreCase("SelectByIndex"))
+			{
+				if(mValueToSelect!=null && !mValueToSelect.isEmpty())
+				{
+					mValue= mValueToSelect;
+				}				
+			}
+			
+			PayLoad plrc = HandleElementAction(LocateBy, LocateValue, ControlAction, mValue, mXCoordinate, mYCoordinate);
 			return plrc;
 
 		}
@@ -1464,12 +1481,12 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 	}
 	
 private PayLoad HandleElementAction(String locateBy, String locateValue,
-			String controlAction, String Value, String ValueToSelect, String XCoordinate, String YCoordinate) 
+			String controlAction, String Value, String XCoordinate, String YCoordinate) 
 	{	
 
 		Component c=null;		
 			//If the action is for IsEnabled or IsVisible property then no need of sync		
-			if (IsImplicitSyncRequired(controlAction, Value, ValueToSelect)) 
+			if (IsImplicitSyncRequired(controlAction, Value)) 
 			{
 				c = FindElementWithImplicitSync(locateBy, locateValue);
 			} 
@@ -1482,8 +1499,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		if (c!= null)
 		{			
 			GingerAgent.WriteLog("Element Found - " + locateValue);	
-			GingerAgent.WriteLog("Control Action - " + controlAction);
-			GingerAgent.WriteLog("Value To Select - " + ValueToSelect);
+			GingerAgent.WriteLog("Control Action - " + controlAction);			
 			GingerAgent.WriteLog("Value - " + Value);
 			GingerAgent.WriteLog("XCoordinate - " + XCoordinate);
 			GingerAgent.WriteLog("YCoordinate - " + YCoordinate);		
@@ -1522,6 +1538,11 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			{
 				GingerAgent.WriteLog("Inside GetAllValues");
 				return GetAllValues(c);
+			}
+			if(controlAction.equals("GetSelectedNodeChildItems"))
+			{
+				return GetTreeNodeChilds(c);			
+				
 			}
 			if (controlAction.equals("Click"))
 			{	
@@ -1607,33 +1628,18 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 				return ToggleComponentValue(c);
 			}
 			if(controlAction.equals("Select"))
-			{
-				if(ValueToSelect != null && !ValueToSelect.isEmpty())
-				{
-					Value = ValueToSelect;
-				}
+			{				
 				return SetComponentSelected(c,Value,mCommandTimeout);
 			}
 			if(controlAction.equals("AsyncSelect"))
 			{
-				if(ValueToSelect != null && !ValueToSelect.isEmpty())
-				{
-					Value = ValueToSelect;
-				}
 				return SetComponentSelected(c,Value,-1);
 			}
 			if(controlAction.equals("SelectByIndex"))
 			{
-				int index;
-				if(ValueToSelect != null && !ValueToSelect.isEmpty())
-				{
-					index = Integer.parseInt(ValueToSelect);
-				}
-				else 
-					index=Integer.parseInt(Value);
+				int index=Integer.parseInt(Value);
 				
 				GingerAgent.WriteLog("Value: " + Value);
-				GingerAgent.WriteLog("ValueToSelect: " + ValueToSelect);
 				GingerAgent.WriteLog("Index: " + index);
 				
 				
@@ -1651,17 +1657,12 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			}
 			if(controlAction.equals("GetItemCount"))
 			{
-				GingerAgent.WriteLog("tetsing getitemcount");
+ 				GingerAgent.WriteLog("testing GetItemCount");
 				return GetItemCount(c);
 			}
-		    if(controlAction.equals("GetControlProperty"))
-			{
-		    	if(ValueToSelect != null && !ValueToSelect.isEmpty())
-				{
-		    		return getControlProperty(c, ValueToSelect);
-				}
-				else  
-					return getControlProperty(c, Value);
+			if(controlAction.equals("GetControlProperty"))
+			{		    	
+				return getControlProperty(c, Value);
 			}			
 		    if(controlAction.equals("IsEnabled") || controlAction.equals("IsVisible") || controlAction.equals("GetName") || controlAction.equals("IsMandatory"))
 			{
@@ -1741,7 +1742,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 	{
 			
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
-		
+				
 		TreePath matchingNodePath=null;
 		TreePath parentNodePath=null;
 		int row =0;
@@ -1751,8 +1752,8 @@ private PayLoad TypeKeys(Component c,String Value) {
 		{
 			node=nodes.get(i);
 			tree.expandRow(row);	
-			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);
-
+			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);		
+						
 			if(matchingNodePath==null)
 			{
 				searchResult.append("Node: "+ node +" was not found");
@@ -1769,21 +1770,8 @@ private PayLoad TypeKeys(Component c,String Value) {
 			}
 			
 			Object matchingNode= matchingNodePath.getLastPathComponent();
-			String nodeText="";
-		
-	
-			if(matchingNode.getClass().getName().contains("uif"))
-			{			
-				nodeText=mASCFHelper.GetNodeText(matchingNode);
-			}
-			else if(matchingNode instanceof DefaultMutableTreeNode)
-			{
-				nodeText=(String)((DefaultMutableTreeNode)matchingNode).getUserObject();
-			}
-			else
-			{
-				nodeText = matchingNode.toString();
-			}
+			
+			String nodeText=GetTreeNodeText(matchingNode);
 		
 			if(node.equalsIgnoreCase(nodeText)) 
 			{			
@@ -1802,8 +1790,25 @@ private PayLoad TypeKeys(Component c,String Value) {
 
 	}
 
-	
-	private Boolean IsImplicitSyncRequired(String controlAction, String Value, String ValueToSelect)
+	private String GetTreeNodeText(Object node)
+	{
+		String nodeText="";
+		if(node.getClass().getName().contains("uif"))
+		{			
+			nodeText=mASCFHelper.GetNodeText(node);
+		}
+		else if(node instanceof DefaultMutableTreeNode)
+		{
+			nodeText=(String)((DefaultMutableTreeNode)node).getUserObject();
+		}
+		else
+		{
+			nodeText = node.toString();
+		}
+		return nodeText;
+		
+	}
+	private Boolean IsImplicitSyncRequired(String controlAction, String Value)
 	{
 		if(controlAction.equals("IsEnabled") || controlAction.equals("IsVisible"))
 		{
@@ -1817,14 +1822,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 				{
 					return false;
 				}
-			}
-			else if(ValueToSelect!=null)
-			{
-				if( ValueToSelect.equals("ISENABLED") || ValueToSelect.equals("ISVISIBLE")|| ValueToSelect.equals("VISIBLE")|| ValueToSelect.equals("ENABLED"))
-				{
-					return false;
-				}
-			}
+			}		
 		}
 		return true;
 	}
@@ -2602,7 +2600,7 @@ private PayLoad GetComponentState(Component c)
 		GingerAgent.WriteLog("Inside GetComponentValue");
 		PayLoad Response = new PayLoad("ComponentValue");
 		List<String> val = GetComboBoxValues(c);
-		GingerAgent.WriteLog("val: " +val);
+		GingerAgent.WriteLog("val: " +val);	
 		Response.AddValue(val);		
 		Response.ClosePackage();
 		return Response;
@@ -3820,6 +3818,45 @@ private PayLoad SetComponentFocus(Component c)
 			return CompValue;
 		}
 	}	
+	
+	private PayLoad GetTreeNodeChilds(Component comp)
+	{
+		JTree treeComponent= ((JTree) comp);
+		Object node=treeComponent.getLastSelectedPathComponent();
+		
+
+		if (node != null) 
+		{
+			TreeModel treeModel= treeComponent.getModel();
+			if(treeModel!=null)
+			{
+				int childCount = treeComponent.getModel().getChildCount(node);			
+				Object childNode = null;
+				List<String> childNodes = new ArrayList<String>();
+				
+				for (int i = 0; i < childCount; i++) 
+				{
+					childNode = treeModel.getChild(node, i);
+					childNodes.add(GetTreeNodeText(childNode));
+
+				}
+
+				PayLoad Response = new PayLoad("ComponentValue");
+				Response.AddValue(childNodes);
+				Response.ClosePackage();
+				return Response;
+			}
+			else
+			{
+				return PayLoad.Error("Failed to get child items for node");
+			}
+			
+		} 
+		else 
+		{
+			return PayLoad.Error("No noode is selected, please select the node");
+		}
+	}
 
 			
 	private String GetCompState(Component comp) {

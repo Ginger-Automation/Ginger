@@ -56,11 +56,7 @@ namespace Amdocs.Ginger.Repository
 
         ~RepositoryFolder()
         {
-            if (mFileWatcher != null)
-            {
-                mFileWatcher.EnableRaisingEvents = false;
-                mFileWatcher.Dispose();
-            }
+            DisposeFileWatcher();
         }
 
         string mDisplayName = string.Empty;
@@ -80,6 +76,11 @@ namespace Amdocs.Ginger.Repository
                     OnPropertyChanged(nameof(DisplayName));
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return DisplayName;
         }
 
         public string FolderName
@@ -240,6 +241,7 @@ namespace Amdocs.Ginger.Repository
             {
                 foreach (RepositoryFolder<T> sf in mSubFoldersCache)
                 {
+                    sf.DisposeFileWatcher();
                     sf.DeleteFolderCacheItemsRecursive();
                 }
             }
@@ -731,6 +733,7 @@ namespace Amdocs.Ginger.Repository
                 if (Directory.Exists(PathHelper.GetLongPath(subfolder.FolderFullPath)))
                 {
                     PauseFileWatcher();
+                    subfolder.DisposeFileWatcher();
                     Directory.Delete(PathHelper.GetLongPath(subfolder.FolderFullPath), true);
                     ResumeFileWatcher();
                 }
@@ -944,6 +947,19 @@ namespace Amdocs.Ginger.Repository
             // move the item to target cache
 
 
+        }
+
+        /// <summary>
+        /// This method is used to dispose filewatcher object when deleting any folder or unloading solution
+        /// </summary>
+        private void DisposeFileWatcher()
+        {
+            if (mFileWatcher != null)
+            {
+                mFileWatcher.EnableRaisingEvents = false;
+                mFileWatcher.Dispose();
+                mFileWatcher = null;
+            }
         }
     }
 }

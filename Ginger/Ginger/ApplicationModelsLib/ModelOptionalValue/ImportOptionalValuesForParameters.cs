@@ -1047,149 +1047,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             return IsExportSuccess;
         }
 
-        private bool ExportToExcel(DataTable table, string sFilePath, string sSheetName = "")
+        private bool ExportToExcel(DataTable table, string sFilePath, string sSheetName)
         {
-            try
-            {
-                SpreadsheetDocument workbook;
-
-                if (sSheetName == "")
-                    sSheetName = table.TableName;
-
-                if (File.Exists(sFilePath))
-                {
-                    File.Delete(sFilePath);
-                }
-                                
-                workbook = SpreadsheetDocument.Create(sFilePath, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-                WorkbookPart workbookPart = workbook.AddWorkbookPart();
-                workbook.WorkbookPart.Workbook = new Workbook();
-                workbook.WorkbookPart.Workbook.Sheets = new Sheets();
-                                                
-                if (workbook.WorkbookPart.WorkbookStylesPart == null)
-                {
-                    WorkbookStylesPart stylePart = workbook.WorkbookPart.AddNewPart<WorkbookStylesPart>();
-                    stylePart.Stylesheet = GenerateStylesheet();
-                    stylePart.Stylesheet.Save(); 
-                }
-
-                uint sheetId = 1;
-                var sheetPart = workbook.WorkbookPart.AddNewPart<WorksheetPart>();
-                var sheetData = new SheetData();
-                sheetPart.Worksheet = new Worksheet(sheetData);
-                Sheets sheets = workbook.WorkbookPart.Workbook.GetFirstChild<Sheets>();
-                
-                string relationshipId = workbook.WorkbookPart.GetIdOfPart(sheetPart);
-
-                Sheet oSheet = sheets.Elements<Sheet>().Where(s => s.Name == sSheetName).FirstOrDefault();
-                if (oSheet != null)
-                {
-                    sSheetName += "_" + sheets.Elements<Sheet>().Count();
-                }
-
-                if (sheets.Elements<Sheet>().Count() > 0)
-                {
-                    sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
-                }
-
-                Sheet sheet = new Sheet() { Id = relationshipId, SheetId = sheetId, Name = sSheetName };                
-                sheets.Append(sheet);
-                
-                Row headerRow = new Row();
-                List<string> columns = new List<string>();
-                int indx = 0;
-                foreach (DataColumn column in table.Columns)
-                {
-                    columns.Add(column.ColumnName);
-                    headerRow.AppendChild(GetCell(column.ColumnName, CellValues.String, 2));
-                    indx++;
-                }
-                sheetData.AppendChild(headerRow);
-                
-                foreach (DataRow dsrow in table.Rows)
-                {
-                    Row newRow = new Row();          
-                    foreach (String col in columns)
-                    {
-                        newRow.AppendChild(GetCell(Convert.ToString(dsrow[col]), CellValues.String, 1));
-                    }
-                    sheetData.AppendChild(newRow);
-                }
-                workbook.Close();
-                return true;
-            }
-            catch(Exception ex)
-            {
-                if (ShowMessage)
-                    Reporter.ToUser(eUserMsgKey.ExportFailed, "Excel File", ex.Message.ToString());
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// This method is used to Get the new cell
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="dataType"></param>
-        /// <param name="styleIndex"></param>
-        /// <returns></returns>
-        private Cell GetCell(string value, CellValues dataType, uint styleIndex = 0)
-        {
-            Cell cl = new Cell()
-            {
-                DataType = new EnumValue<CellValues>(dataType),
-                StyleIndex = styleIndex
-            };
-
-            long lng;
-            string val = value;
-            if (long.TryParse(value, out lng))
-            {
-                cl.DataType = CellValues.Number;
-            }
-            cl.CellValue = new CellValue(val);
-            
-            return cl;
-        }
-
-        /// <summary>
-        /// This method is used to add the stylesheets to the workbook
-        /// </summary>
-        /// <returns></returns>
-        private Stylesheet GenerateStylesheet()
-        {
-            Stylesheet styleSheet = null;
-
-            Fonts fonts = new Fonts(
-                new Font( // Index 0 - default
-                    new FontSize { Val = 11 }
-
-                ),
-                new Font( // Index 1 - header
-                    new FontSize { Val = 11 },
-                    new Bold()
-
-                ));
-
-            Fills fills = new Fills(
-                    new Fill(new PatternFill { PatternType = PatternValues.None }), // Index 0 - default
-                    new Fill(new PatternFill { PatternType = PatternValues.None })
-                );
-
-            Borders borders = new Borders(
-                    new Border(), // index 0 default
-                    new Border()
-                );
-
-            CellFormats cellFormats = new CellFormats(
-                    new CellFormat(), // default
-                    new CellFormat { FontId = 0 }, // body
-                    new CellFormat { FontId = 1 } // header
-                );
-
-            styleSheet = new Stylesheet(fonts, fills, borders, cellFormats);
-
-            return styleSheet;
+            return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 
         /// <summary>
@@ -1476,7 +1336,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method will export the parameters to DataSource
         /// </summary>
         /// <param name="parameters"></param>
-        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, AccessDataSource mDSDetails, string tableName)
+        public void ExportSelectedParametersToDataSouce(List<AppParameters> parameters, DataSourceBase mDSDetails, string tableName)
         {
             try
             {

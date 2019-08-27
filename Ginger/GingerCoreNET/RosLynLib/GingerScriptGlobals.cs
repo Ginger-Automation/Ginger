@@ -174,10 +174,10 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             Console.WriteLine("Execution Completed");
             Console.WriteLine("----------------------------");
             Console.WriteLine("Elapsed: " + businessFlow.Elapsed);
-            Console.WriteLine("Business Flow: " + businessFlow.Name);
-            Console.WriteLine("Business Flow Description: " + businessFlow.Description);
-            Console.WriteLine("Business Flow Status: " + businessFlow.RunStatus);
-            Console.WriteLine("Activities Count: " + businessFlow.Activities.Count);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Description: " + businessFlow.Description);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Status: " + businessFlow.RunStatus);
+            Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.Activities) + " Count: " + businessFlow.Activities.Count);
             Console.WriteLine("----------------------------");
         }
 

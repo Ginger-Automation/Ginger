@@ -197,7 +197,7 @@ namespace Ginger.ALM.Repository
             bool exportRes = false;
 
             string res = string.Empty;
-            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, "Selected Activities Groups");
+            Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, "Selected " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
             exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
 
             if (exportRes)

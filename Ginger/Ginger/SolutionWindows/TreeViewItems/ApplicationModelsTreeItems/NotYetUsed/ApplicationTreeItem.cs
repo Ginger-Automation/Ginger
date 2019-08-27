@@ -67,7 +67,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mApplicationEditPage == null)
             {

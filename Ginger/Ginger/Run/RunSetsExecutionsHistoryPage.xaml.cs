@@ -117,7 +117,7 @@ namespace Ginger.Run
             await Task.Run(() => {
                 if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
                 {
-                    mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                    mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                     //pull all RunSets JSON files from it
                     string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
                     try
@@ -141,7 +141,7 @@ namespace Ginger.Run
                             else
                                 mExecutionsHistoryList.Add(runSetReport);
                         }
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
 
                         var runSetDataColl = rsLiteColl.FindAll();
@@ -179,12 +179,12 @@ namespace Ginger.Run
                 {
                     if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                     {
-                        LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                        LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                         var result = dbManager.GetRunSetLiteData();
                         List<LiteDbRunSet> filterData = null;
                         filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetReport.GUID).ToList();
                         
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "LiteDbData.db"));
+                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                         break;
                     }
@@ -247,7 +247,7 @@ namespace Ginger.Run
         {
             if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(executionLoggerHelper.GetLoggerDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder));
+                Process.Start(executionLoggerHelper.GetLoggerDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
             }
             else
                 return;

@@ -20,6 +20,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
@@ -66,15 +67,14 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
-            mActivity.SaveBackup();
 
-            SetUIControlsContent();
-            BindControls();
+            SetUIView();
+            BindControlsToActivity();
         }
 
-        private void SetUIControlsContent()
-        {            
-            if(mPageViewMode != Ginger.General.eRIPageViewMode.Automation)
+        private void SetUIView()
+        {
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.Automation)
             {
                 xOperationsPnl.Visibility = Visibility.Collapsed;
             }
@@ -82,7 +82,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
-                xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;                
+                xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
             }
 
             if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
@@ -91,19 +91,115 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             xRunBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.Activity, "Run");
+        }
 
-            mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
-            mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
-            mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
-            xActionsTabFrame.Content = mActionsPage;
+        private void BindControlsToActivity()
+        {
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.View)
+            {
+                mActivity.SaveBackup();
+            }
 
-            mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
-            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
-            xVariabelsTabFrame.Content = mVariabelsPage;
+            //General Info Section Bindings
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mActivity, nameof(Activity.ActivityName));
+            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mActivity, nameof(Activity.ActivityName));
+            mActivity.PropertyChanged -= mActivity_PropertyChanged;
+            mActivity.PropertyChanged += mActivity_PropertyChanged;
+            UpdateDescription();
+            xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
 
-            mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
-            xConfigurationsFrame.Content = mConfigurationsPage;
+            //Actions Tab Bindings    
+            mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
+            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
+            UpdateActionsTabHeader();
+            if (mActionsPage != null && xActionsTab.IsSelected)
+            {
+                mActionsPage.UpdateActivity(mActivity);
+            }
+
+            //Variables Tab Bindings   
+            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
+            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
+            UpdateVariabelsTabHeader();
+            if (mVariabelsPage != null && xVariablesTab.IsSelected)
+            {
+                mVariabelsPage.UpdateParent(mActivity);
+            }
+
+            //Configurations Tab Bindings
+            if (mConfigurationsPage != null && xConfigurationsTab.IsSelected)
+            {
+                mConfigurationsPage.UpdateActivity(mActivity);
+            }
+        }
+
+        public void UpdateActivity(Activity activity)
+        {
+            if (mActivity != activity)
+            {
+                ClearActivityBindings();
+                mActivity = activity;
+                if (mActivity != null)
+                {
+                    BindControlsToActivity();
+                }
+            }
+        }
+
+        TabItem mLastSelectedTab = null;
+        private void XItemsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xItemsTabs.SelectedItem != mLastSelectedTab)
+            {
+                if (xActionsTab.IsSelected == true)
+                {
+                    if (mActionsPage == null)
+                    {
+                        mActionsPage = new ActionsListViewPage(mActivity, mContext, mPageViewMode);
+                        if (mActionsPage.ListView != null)
+                        {
+                            mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
+                        mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
+                        xActionsTabFrame.SetContent(mActionsPage);
+                    }
+                    else
+                    {
+                        mActionsPage.UpdateActivity(mActivity);
+                    }
+                }
+                else if (xVariablesTab.IsSelected == true)
+                {
+                    if (mVariabelsPage == null)
+                    {
+                        mVariabelsPage = new VariabelsListViewPage(mActivity, mContext, mPageViewMode);
+                        if (mVariabelsPage.ListView != null)
+                        {
+                            mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
+                        }
+                        xVariabelsTabFrame.SetContent(mVariabelsPage);
+                    }
+                    else
+                    {
+                        mVariabelsPage.UpdateParent(mActivity);
+                    }
+                }
+                else if (xConfigurationsTab.IsSelected == true)
+                {
+                    if (mConfigurationsPage == null)
+                    {
+                        mConfigurationsPage = new ActivityConfigurationsPage(mActivity, mContext, mPageViewMode);
+                        xConfigurationsFrame.SetContent(mConfigurationsPage);
+                    }
+                    else
+                    {
+                        mConfigurationsPage.UpdateActivity(mActivity);
+                    }
+                }
+
+                mLastSelectedTab = (TabItem)xItemsTabs.SelectedItem;
+            }
         }
 
         private void MActionsPage_ShiftToActionsListEvent(object sender, RoutedEventArgs e)
@@ -122,51 +218,61 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public void UpdateActivity(Activity activity)
-        {
-            if (mActivity != activity)
-            {
-                RemoveBindings();
-                mActivity = activity;
-                if (mActivity != null)
-                {
-                    mActivity.SaveBackup();
-                    BindControls();
-                }
-            }
-        }
 
-        private void RemoveBindings()
+        private void ClearActivityBindings()
         {
+            mActivity.PropertyChanged -= mActivity_PropertyChanged;
             mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
-            BindingOperations.ClearBinding(xNameTextBlock, TextBlock.TextProperty);
-                  
+            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View)
+            {
+                mActivity.ClearBackup();
+            }
         }
 
-        private void BindControls()
-        {
-            //General Info Section Bindings
-            BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mActivity, nameof(Activity.ActivityName));
-            mActivity.PropertyChanged += mActivity_PropertyChanged;
-            UpdateDescription();
-            xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
+        //public void ClearBindings()
+        //{
+        //    //clean Tabs
+        //    xActionsTabFrame.Content = null;
+        //    xActionsTabFrame.NavigationService.RemoveBackEntry();
+        //    xVariabelsTabFrame.Content = null;
+        //    xVariabelsTabFrame.NavigationService.RemoveBackEntry();
+        //    xConfigurationsFrame.Content = null;
+        //    xConfigurationsFrame.NavigationService.RemoveBackEntry();
 
-            //Actions Tab Bindings            
-            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
-            UpdateActionsTabHeader();
-            mActionsPage.UpdateActivity(mActivity);
+        //    if (mActivity != null)
+        //    {
+        //        ClearActivityBindings();
+        //    }
 
-            //Variables Tab Bindings            
-            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
-            UpdateVariabelsTabHeader();
-            mVariabelsPage.UpdateParent(mActivity);
+        //    this.ClearControlsBindings();
+        //    BindingOperations.ClearAllBindings(xNameTextBlock);
 
-            //Configurations Tab Bindings
-            mConfigurationsPage.UpdateActivity(mActivity);
-        }
+        //    if (mActionsPage != null)
+        //    {
+        //        mActionsPage.ShiftToActionEditEvent -= MActionsPage_ShiftToActionEditEvent;
+        //        mActionsPage.ShiftToActionsListEvent -= MActionsPage_ShiftToActionsListEvent;
+        //        mActionsPage.ClearBindings();
+        //        mActionsPage.KeepAlive = false;
+        //        mActionsPage = null;
+        //    }
 
+        //    if (mVariabelsPage != null)
+        //    {
+        //        mVariabelsPage.ClearBindings();
+        //        mVariabelsPage.KeepAlive = false;
+        //        mVariabelsPage = null;
+        //    }
+
+        //    if (mConfigurationsPage != null)
+        //    {
+        //        mConfigurationsPage.ClearBindings();
+        //        mConfigurationsPage.KeepAlive = false;
+        //        mConfigurationsPage = null;
+        //    }
+        //}
+       
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             UpdateDescription();
@@ -176,37 +282,39 @@ namespace GingerWPF.BusinessFlowsLib
         {
             this.Dispatcher.Invoke(() =>
             {
-            xDescriptionTextBlock.Text = string.Empty;
-            TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
-                if (mActivity != null)
-                {
-                    //Application info
-                    if (!string.IsNullOrEmpty(mActivity.Description))
+                xDescriptionTextBlock.Text = string.Empty;
+                TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                    if (mActivity != null)
                     {
-                        xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
-                        xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
-                        xDescTextBlockHelper.AddLineBreak();
+                        //Application info
+                        if (!string.IsNullOrEmpty(mActivity.Description))
+                        {
+                            if (mActivity.Description.Length > 100)
+                            {
+                                xDescTextBlockHelper.AddText("Description: " + mActivity.Description.Substring(0,99) + "...");
+                            }
+                            else
+                            {
+                                xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                            }
+                            xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
+                            xDescTextBlockHelper.AddLineBreak();
+                        }
+                        //if (!string.IsNullOrEmpty(mActivity.RunDescription))
+                        //{
+                        //    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
+                        //    xDescTextBlockHelper.AddLineBreak();
+                        //}
+                        if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+                        {
+                            xDescTextBlockHelper.AddText("Parent Group: " + mActivity.ActivitiesGroupID);
+                            xDescTextBlockHelper.AddLineBreak();
+                        }
+                        xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
                     }
-                    if (!string.IsNullOrEmpty(mActivity.RunDescription))
-                    {
-                        xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
-                        xDescTextBlockHelper.AddLineBreak();
-                    }
-                    if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-                    {
-                        xDescTextBlockHelper.AddText("Group: " + mActivity.ActivitiesGroupID);
-                        xDescTextBlockHelper.AddLineBreak();
-                    }
-                    xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
-                }
             });
         
-        }
-
-        private void xSaveBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-
         }
 
         private void xUploadToShareRepoMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -356,7 +464,6 @@ namespace GingerWPF.BusinessFlowsLib
             mGenericWin.Close();
         }
 
-
         private void UndoBtn_Click(object sender, RoutedEventArgs e)
         {
             UndoChangesAndClose();
@@ -387,6 +494,16 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActivity.SaveBackup();
             }
+        }
+
+        private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+        }
+
+        private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
     }
 }

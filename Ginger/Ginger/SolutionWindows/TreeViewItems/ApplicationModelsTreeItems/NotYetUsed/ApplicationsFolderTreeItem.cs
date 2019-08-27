@@ -59,7 +59,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             return null;
         }
@@ -73,7 +73,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder:false);
+            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder:false, allowDeleteAllItems: true);
             AddSourceControlOptions(mContextMenu, false, false);
         }
     }

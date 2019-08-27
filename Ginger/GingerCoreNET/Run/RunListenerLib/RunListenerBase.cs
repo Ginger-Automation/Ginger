@@ -59,12 +59,12 @@ namespace Amdocs.Ginger.Run
         #endregion General
 
         #region Runner
-        public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
 
         }
 
-        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        public virtual void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
 
         }

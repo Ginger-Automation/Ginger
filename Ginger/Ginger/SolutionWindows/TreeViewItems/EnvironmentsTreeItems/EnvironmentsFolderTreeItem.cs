@@ -93,7 +93,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
             return true;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mEnvsListPage == null)
                 mEnvsListPage = new EnvsListPage(mProjEnvironmentFolder);
@@ -112,7 +112,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Environment", AddItemHandler, null, eImageType.Add);
             if (mProjEnvironmentFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowRefresh: false);
 

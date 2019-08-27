@@ -163,7 +163,6 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-
         public override string ItemName { get { return this.ElementName; } set { this.ElementName = value; } }
 
         private string mElementName = null;
@@ -564,6 +563,7 @@ namespace Amdocs.Ginger.Common.UIElement
             MenuItem,
             [EnumValueDescription("Menu Bar")]
             MenuBar,
+            [EnumValueDescription("Tree View")]
             TreeView,
             Window,
             HyperLink,

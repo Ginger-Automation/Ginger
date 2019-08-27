@@ -66,7 +66,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void LockWS()
         {
-            Console.WriteLine("Lock Workspace");
+            Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
             
             Task.Factory.StartNew(() =>
             {
@@ -84,7 +84,7 @@ namespace amdocs.ginger.GingerCoreNET
         public static void RelWS()
         {
             lockit = false;
-            Console.WriteLine("Workspace released");
+            Reporter.ToLog(eLogLevel.DEBUG, "Workspace released");
         }
 
 
@@ -108,7 +108,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ReleaseWorkspace error - " + ex.Message);
+                Reporter.ToLog(eLogLevel.DEBUG, "ReleaseWorkspace error - " + ex.Message, ex);
             }            
         }
 
@@ -235,7 +235,9 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying from web report from: "+ clientAppFolderPath);
                 string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying to web report from: " + userAppFolder);
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
@@ -246,7 +248,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-                Console.WriteLine("CheckWebReportFolder error - " + ex.Message);
+                Reporter.ToLog(eLogLevel.DEBUG, "CheckWebReportFolder Error: " + ex.Message, ex);
             }
         }
 
@@ -258,7 +260,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-                Console.WriteLine("TryFolderDelete error - " + ex.Message);
+               Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
 
@@ -267,7 +269,7 @@ namespace amdocs.ginger.GingerCoreNET
            // FIX Message not shown !!!!!!!!!!!
 
             Reporter.ToStatus(eStatusMsgKey.GingerLoadingInfo, text);
-            Console.WriteLine("Loading Info: " + text);
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Info: " + text);
         }
 
         private void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
@@ -283,7 +285,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // happen when we close Ginger from unit tests
                 if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException)
                 {
-                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    Reporter.ToLog(eLogLevel.DEBUG, "StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
                     return;
                 }
             }

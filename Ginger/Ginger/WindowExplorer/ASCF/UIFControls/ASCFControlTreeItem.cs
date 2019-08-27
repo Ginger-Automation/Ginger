@@ -66,7 +66,7 @@ namespace Ginger.Actions.Locators.ASCF
             return false;
         }
 
-        Page ITreeViewItem.EditPage()
+        Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {            
             if (mASCFControlInfoPage == null)
             {
