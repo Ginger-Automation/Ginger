@@ -7,7 +7,7 @@ namespace Ginger.Plugin.Platform.WebService
     public interface IRestClient
     {
 
-        GingerHttpResponseMessage PerformGetOperation(GingerHttpRequestMessage GingerRequestMessageRequestMessage);
+        GingerHttpResponseMessage PerformHttpOperation(GingerHttpRequestMessage GingerRequestMessageRequestMessage);
 
     }
 }

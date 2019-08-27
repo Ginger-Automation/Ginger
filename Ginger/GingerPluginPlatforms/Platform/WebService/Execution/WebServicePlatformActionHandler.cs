@@ -45,7 +45,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
             {
                 GingerHttpRequestMessage Request = GetRequest(platformAction);
 
-                GingerHttpResponseMessage Response = RestClient.PerformGetOperation(Request);
+                GingerHttpResponseMessage Response = RestClient.PerformHttpOperation(Request);
                 platformAction.Output.Add("Header: Status Code ", Response.StatusCode.ToString());
 
                 foreach(var RespHeader in Response.Headers)
