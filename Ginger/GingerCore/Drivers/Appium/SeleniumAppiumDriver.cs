@@ -982,6 +982,22 @@ namespace GingerCore.Drivers.Appium
                     case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
                         Driver.LaunchApp();
                         break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+
+                       
+                            string[] arr = act.ValueForDriver.Split(',');
+                            int x1 = Int32.Parse(arr[0]);
+                        int y1 = Int32.Parse( arr[1]);
+                        int x2 = Int32.Parse( arr[2]);
+                        int y2 = Int32.Parse( arr[3]);
+                        ITouchAction swipe;
+
+                        swipe = BuildDragAction(Driver, x1, y1,x2,y2, 1000);
+                        swipe.Perform();
+
+                    
+                        break;
                     default:
                         throw new Exception("Action unknown/Not Implemented in Driver: '" + this.GetType().ToString() + "'");
                 }
