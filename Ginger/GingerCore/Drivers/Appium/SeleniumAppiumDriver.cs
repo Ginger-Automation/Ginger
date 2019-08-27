@@ -658,6 +658,12 @@ namespace GingerCore.Drivers.Appium
                     GenElementHandler((ActGenElement)act);
                     return;
                 }
+
+                if (ActType == typeof(ActSmartSync))
+                {
+                    mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
+                    return;
+                }
                 if (ActType == typeof(ActScreenShot))
                 {
                     TakeScreenShot(act);
