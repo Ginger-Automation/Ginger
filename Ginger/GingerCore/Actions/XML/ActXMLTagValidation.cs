@@ -151,7 +151,7 @@ namespace GingerCore.Actions.XML
                     FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
                 }
                 
-                if (FilePath.EndsWith(".XML")||FilePath.EndsWith(".JSON"))
+                if (FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) ||FilePath.EndsWith(".JSON",StringComparison.OrdinalIgnoreCase))
                 {
                     docTxt = System.IO.File.ReadAllText(FilePath);
                 }
@@ -163,7 +163,7 @@ namespace GingerCore.Actions.XML
             }
             else
             {
-                if (!FilePath.EndsWith(".XML") && !FilePath.EndsWith(".JSON"))
+                if (!FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) && !FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))
                 {
                     docTxt = InputFile.ValueForDriver.ToString();
                 }
