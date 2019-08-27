@@ -468,6 +468,7 @@
     <Compile Include="Actions\ActDemoPageEditPage.xaml.cs">
       <DependentUpon>ActDemoPageEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ApiActionsConversion\ApiActionConversionUtils.cs" />
     <Compile Include="Actions\RobotFramework\ActRobotEditPage.xaml.cs">
       <DependentUpon>ActRobotEditPage.xaml</DependentUpon>
     </Compile>

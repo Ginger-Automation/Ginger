@@ -301,14 +301,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             act.ExInfo = actWebAPI.ExInfo;
         }
 
-        private ActWebAPIRest CreateActWebAPIREST(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
+        public ActWebAPIRest CreateActWebAPIREST(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
         {
             ActWebAPIRest actWebAPIBase = new ActWebAPIRest();
             FillAPIBaseFields(AAMB, actWebAPIBase, ActWebAPIModel);
             return actWebAPIBase;
         }
 
-        private ActWebAPISoap CreateActWebAPISOAP(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
+        public ActWebAPISoap CreateActWebAPISOAP(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
         {
             ActWebAPISoap actWebAPISoap = new ActWebAPISoap();
             FillAPIBaseFields(AAMB, actWebAPISoap, ActWebAPIModel);

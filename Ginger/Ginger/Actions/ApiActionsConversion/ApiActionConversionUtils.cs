@@ -1,10 +1,13 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.WebServices;
+using GingerCore.Actions.WebServices.WebAPI;
+using GingerCore.Drivers.WebServicesDriverLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
 {
@@ -14,15 +17,16 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
     public class ApiActionConversionUtils
     {
         /// <summary>
-        /// This method is used to add the actions
+        /// This method is used to convert the legacy service actions to api actions from the businessflows provided
         /// </summary>
         /// <param name="businessFlows"></param>
-        public void ConvertToApiActionsFromBusinessFlow(ObservableList<BusinessFlow> businessFlows)
+        public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlow> businessFlows)
         {
             try
-            {
+            {                
                 foreach (var bf in businessFlows)
                 {
+                    WebServicesDriver driver = new WebServicesDriver(bf);
                     for (int intIndex = 0; intIndex < bf.Activities.Count(); intIndex++)
                     {
                         Activity activity = bf.Activities[intIndex];
@@ -39,17 +43,36 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             {
                                 try
                                 {
-                                    if (act.Active)
+                                    if (act.Active && act.GetType() == typeof(ActWebAPIModel))
                                     {
                                         // get the index of the action that is being converted 
                                         int selectedActIndex = currentActivity.Acts.IndexOf(act);
 
-                                        // convert the old action
-                                        Act newAct = null; //= ((IObsoleteAction)act).GetNewAction();
-                                        if (newAct != null)
+                                        //pull pointed API Model
+                                        ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                                        if (AAMB == null)
                                         {
-                                            newAct.Platform = ((IObsoleteAction)act).GetTargetPlatform();
-                                            currentActivity.Acts.Insert(selectedActIndex + 1, newAct);
+                                            act.Error = "Failed to find the pointed API Model";
+                                            act.ExInfo = string.Format("API Model with the GUID '{0}' was not found", ((ActWebAPIModel)act).APImodelGUID);
+                                            return;
+                                        }
+
+                                        //init matching real WebAPI Action
+                                        ActWebAPIBase actWebAPI = null;
+                                        if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                                        {
+                                            actWebAPI = driver.CreateActWebAPIREST((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                                        }
+                                        else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                                        {
+                                            actWebAPI = driver.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                                        }
+
+                                        // convert the old action
+                                        if (actWebAPI != null)
+                                        {
+                                            actWebAPI.Platform = ((IObsoleteAction)act).GetTargetPlatform();
+                                            currentActivity.Acts.Insert(selectedActIndex + 1, actWebAPI);
                                             currentActivity.Acts.Remove(act);
                                         }
                                     }
@@ -61,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             }
                             currentActivity.TargetApplication = activity.TargetApplication;
                         }
-                    } 
+                    }
                 }
             }
             catch (Exception ex)

@@ -54,6 +54,6 @@ namespace Ginger.Actions.ApiActionsConversion
         public override void Cancel()
         {
             base.Cancel();
-        }
+        }        
     }
 }
