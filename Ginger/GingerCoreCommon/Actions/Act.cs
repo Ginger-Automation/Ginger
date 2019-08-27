@@ -176,7 +176,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public eLocateBy LocateBy
+        public virtual eLocateBy LocateBy
         {
             get
             {
@@ -192,15 +192,17 @@ namespace GingerCore.Actions
             }
             set
             {
-                GetOrCreateInputParam(Fields.LocateBy).Value = value.ToString();
-                OnPropertyChanged(Fields.LocateBy);
-                OnPropertyChanged(Fields.Details);
+                if(this.ObjectLocatorConfigsNeeded)
+                {
+                    AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                    OnPropertyChanged(Fields.LocateBy);
+                    OnPropertyChanged(Fields.Details);
+                }                
             }
         }
-
      
      
-        public string LocateValue
+        public virtual string LocateValue
         {
             get
             {
@@ -216,9 +218,12 @@ namespace GingerCore.Actions
             }
             set
             {
-                GetOrCreateInputParam(Fields.LocateValue).Value = value;
-                OnPropertyChanged(Fields.LocateValue);
-                OnPropertyChanged(Fields.Details);
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                    OnPropertyChanged(Fields.LocateValue);
+                    OnPropertyChanged(Fields.Details);
+                }
             }
         }
 
