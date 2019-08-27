@@ -38,6 +38,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
             Platformservice = (IWebServicePlatform)service;
+ 
             RestClient = Platformservice.RestClient;
 
             try
@@ -45,6 +46,13 @@ namespace Ginger.Plugin.Platform.WebService.Execution
                 GingerHttpRequestMessage Request = GetRequest(platformAction);
 
                 GingerHttpResponseMessage Response = RestClient.PerformGetOperation(Request);
+                platformAction.Output.Add("Header: Status Code ", Response.StatusCode.ToString());
+
+                foreach(var RespHeader in Response.Headers)
+                {
+                    platformAction.Output.Add("Header: " + RespHeader.Key,RespHeader.Value);
+                }
+
                 platformAction.Output.Add("Response", Response.Resposne);
 
             }
@@ -61,10 +69,52 @@ namespace Ginger.Plugin.Platform.WebService.Execution
             GingerHttpRequestMessage Request = new GingerHttpRequestMessage();
 
             Request.URL = new Uri(platformAction.InputParams["EndPointURL"].ToString());
-            Request.Method = platformAction.InputParams["RequestType"].ToString();
 
+            if (platformAction.ActionType == "ActWebAPISoap")
+            {
+                Request.Method = "POST";
+                Request.ContentType = "XML";
+            }
+            else
+            {
+                Request.Method = platformAction.InputParams["RequestType"].ToString();
+                Request.ContentType = platformAction.InputParams.ContainsKey("ContentType") ? platformAction.InputParams["ContentType"].ToString() : "";
+
+                if (platformAction.InputParams["RequestKeyValues"] is Newtonsoft.Json.Linq.JArray RObj)
+                {
+                    Request.RequestKeyValues = new List<RestAPIKeyBodyValues>();
+                    foreach (Newtonsoft.Json.Linq.JToken Jt in RObj.Children())
+                    {
+
+
+                        RestAPIKeyBodyValues RKV = new RestAPIKeyBodyValues();
+
+                        if (Jt["ValueType"].ToString() == "1")
+                        {
+                            RKV.ValueType = RestAPIKeyBodyValues.eValueType.File;
+
+                            Byte[] FileBytes = (Byte[])Jt["FileBytes"];
+                            string Path = Jt["Value"].ToString();
+                            RKV.Filename = System.IO.Path.GetFileName(Path);
+
+
+
+                            ByteArrayContent fileContent = new ByteArrayContent(FileBytes);
+                            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+                            RKV.Content = fileContent;
+                        }
+                        RKV.Value = Jt["Value"].ToString();
+                        RKV.Param = Jt["Param"].ToString();
+
+
+
+                        Request.RequestKeyValues.Add(RKV);
+                    }
+                }
+
+            }
             Request.BodyString = platformAction.InputParams.ContainsKey("RequestBody") ? platformAction.InputParams["RequestBody"].ToString() : "";
-            Request.ContentType = platformAction.InputParams.ContainsKey("ContentType") ? platformAction.InputParams["ContentType"].ToString() : "";
+         
 
      
 
@@ -76,37 +126,6 @@ namespace Ginger.Plugin.Platform.WebService.Execution
                 }
             }
 
-            if (platformAction.InputParams["RequestKeyValues"] is Newtonsoft.Json.Linq.JArray RObj)
-            {
-                Request.RequestKeyValues = new List<RestAPIKeyBodyValues>();
-                foreach (Newtonsoft.Json.Linq.JToken Jt in RObj.Children())
-                {
-
-
-                    RestAPIKeyBodyValues RKV = new RestAPIKeyBodyValues();
-
-                    if (Jt["ValueType"].ToString() == "1")
-                    {
-                        RKV.ValueType = RestAPIKeyBodyValues.eValueType.File;
-
-                        Byte[] FileBytes = (Byte[])Jt["FileBytes"];
-                        string Path = Jt["Value"].ToString();
-                        RKV.Filename  = System.IO.Path.GetFileName(Path);
-                       
-
-
-                        ByteArrayContent fileContent = new ByteArrayContent(FileBytes);
-                        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
-                        RKV.Content = fileContent;
-                    }
-                    RKV.Value = Jt["Value"].ToString();
-                    RKV.Param = Jt["Param"].ToString();
-
-
-
-                    Request.RequestKeyValues.Add(RKV);
-                }
-            }
 
             return Request;
         }

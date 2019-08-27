@@ -32,6 +32,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using GingerCore.Actions.WebServices.WebAPI;
 using amdocs.ginger.GingerCoreNET;
 using System.Linq;
+using System.IO;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -118,7 +119,7 @@ namespace GingerCore.Actions.WebServices
             return list;
         }
 
-        
+
 
         public ApplicationAPIUtils.eNetworkCredentials NetworkCredentialsRadioButton
         {
@@ -158,7 +159,7 @@ namespace GingerCore.Actions.WebServices
                 return "ActWebAPI";
             }
         }
-        
+
         public bool UseLegacyJSONParsing
         {
             get
@@ -184,7 +185,7 @@ namespace GingerCore.Actions.WebServices
 
 
 
-        public static bool ParseNodesToReturnParams(ActWebAPIBase mAct,string ResponseMessage)
+        public static bool ParseNodesToReturnParams(ActWebAPIBase mAct, string ResponseMessage)
         {
             bool XMLResponseCanBeParsed = false;
             XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
@@ -327,7 +328,56 @@ namespace GingerCore.Actions.WebServices
             return true;
         }
 
+        internal string GetCalulatedRequestBodyString()
+        {
+            string RequestBodyType = GetInputParamCalculatedValue(Fields.RequestBodyTypeRadioButton);
+            string RequestBody = string.Empty;
+            if (RequestBodyType == ApplicationAPIUtils.eRequestBodyType.FreeText.ToString())
+            {
+                RequestBody = GetInputParamCalculatedValue(Fields.RequestBody);
+                if (string.IsNullOrEmpty(RequestBody))
+                {
+
+                    return null;
+                }
+            }
+            else if (RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString())
+            {
+                if (!string.IsNullOrEmpty(GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString()))
+                {
 
 
+
+                    string FileContent = string.Empty;
+                    string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
+           
+                    string TemplateFileNameFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName);
+
+                    FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
+
+                    using (StreamReader reader = new StreamReader(ReqStream))
+                    {
+                        RequestBody = reader.ReadToEnd();
+                    }
+
+
+
+
+                }
+                if (string.IsNullOrEmpty(RequestBody))
+                { 
+                    
+                    return null;
+                }
+            }
+
+                foreach (ActInputValue AIV in DynamicElements)
+                {
+                    string NewValue = AIV.ValueForDriver;
+                    RequestBody = RequestBody.Replace(AIV.Param, NewValue);
+                }
+                return RequestBody;
+            }
+
+        }
     }
-}

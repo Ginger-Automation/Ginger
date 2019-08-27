@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using static GingerCore.Actions.WebAPIKeyBodyValues;
+using System.Linq;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -73,6 +74,12 @@ namespace GingerCore.Actions.WebServices
                 }
             }
 
+            if (platformAction.InputParams.ContainsKey("RequestBody"))
+            {
+                platformAction.InputParams["RequestBody"] = GetCalulatedRequestBodyString();
+
+            }
+
 
             Dictionary<string, string> sHttpHeaders = new Dictionary<string, string>();
 
@@ -114,6 +121,13 @@ namespace GingerCore.Actions.WebServices
         public string GetName()
         {
             return "ActWebAPIRest";
+        }
+
+
+
+        public ActWebAPIRest()
+        {
+
         }
 
 
