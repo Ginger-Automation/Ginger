@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -58,6 +59,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         [UserConfiguredDefault("22")]
         [UserConfiguredDescription("Port")]
         public int Port { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Maximum time(in seconds) to wait for SSH Client connection")]
+        public int SSHConnectionTimeout { get; set; }
 
         public SshClient UnixClient;
         public SftpClient UnixFTPClient;
@@ -115,7 +121,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port.ToString()) || string.IsNullOrEmpty(UserName))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "One of Settings of Agent is Empty ");
-                    throw new Exception("One of Settings of Agent is Empty ");    
+                    throw new Exception("One of Settings of Agent is Empty ");
                 }
                 if (Password == null)
                     Password = "";
@@ -145,10 +151,14 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             )
                    );
                 }
-
+                connectionInfo.Timeout = new TimeSpan(0, 0, SSHConnectionTimeout);
                 UnixClient = new SshClient(connectionInfo);
 
-                UnixClient.Connect();
+                Task.Run(() =>
+                {
+                    UnixClient.Connect();
+                }).ConfigureAwait(false);
+               
 
                 if (UnixClient.IsConnected)
                 {
