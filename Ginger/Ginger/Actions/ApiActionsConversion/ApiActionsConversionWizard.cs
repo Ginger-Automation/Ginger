@@ -80,7 +80,6 @@ namespace Ginger.Actions.ApiActionsConversion
         /// </summary>
         public override void Finish()
         {
-            BusinessFlowsActionsConversion(ListOfBusinessFlow);
         }
 
         /// <summary>
