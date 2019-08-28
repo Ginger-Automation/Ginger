@@ -528,7 +528,7 @@ namespace GingerCore
                 CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
             }
         }
-
+        
         public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
             if (activity == null)
@@ -1198,11 +1198,26 @@ namespace GingerCore
             // if nothing was changed and we are in lazy load then no added activities, so safe to ignore, saving time/perf
             if (Activities.LazyLoad) return;
 
+
+            //Remove dyamically added activities from groups identifies
+            foreach (var activitiesGroup in ActivitiesGroups)
+            {
+                for(int index=0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
+                {
+                    if(activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
+                    {
+                        activitiesGroup.ActivitiesIdentifiers.RemoveAt(index);
+                        index--;
+                    }
+                }
+            }
+
+            //Remove dynamically added activities from Business flow
             for (int i = 0; i < Activities.Count; i++)
             {
                 if (Activities[i].AddDynamicly)
                 {
-                    Activities.RemoveAt(i);
+                    Activities.RemoveAt(i);                   
                     i--;
                 }
             }
