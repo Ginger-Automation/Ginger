@@ -43,6 +43,7 @@ namespace UnitTests.NonUITests
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
+        string Separator = Path.DirectorySeparatorChar.ToString();
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -318,7 +319,7 @@ namespace UnitTests.NonUITests
             ActXMLTagValidation action = new ActXMLTagValidation();
             action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
             action.ReqisFromFile = true;
-            action.InputFile.Value = TestResources.GetTestResourcesFile(@"XML\book.xml");
+            action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
             ActInputValue AIV = new ActInputValue();
             AIV.FilePath = "/catalog/book[2]";
             AIV.Value = "publisher";
@@ -342,7 +343,7 @@ namespace UnitTests.NonUITests
             ActXMLTagValidation action = new ActXMLTagValidation();
             action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
             action.ReqisFromFile = false;
-            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML\book.xml"));
+            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
             action.InputFile.Value = xmlFileContent;
             action.Active = true;
 
@@ -360,7 +361,7 @@ namespace UnitTests.NonUITests
             ActXMLTagValidation action = new ActXMLTagValidation();
             action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
             action.ReqisFromFile = false;
-            action.InputFile.Value = TestResources.GetTestResourcesFile(@"XML\book.xml");
+            action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
             ActInputValue AIV = new ActInputValue();
             AIV.FilePath = "/catalog/book[2]";
             AIV.Value = "publisher";
@@ -384,7 +385,7 @@ namespace UnitTests.NonUITests
             ActXMLTagValidation action = new ActXMLTagValidation();
             action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
             action.ReqisFromFile = true;
-            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML\book.xml"));
+            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
             action.InputFile.Value = xmlFileContent;
             action.Active = true;
 
