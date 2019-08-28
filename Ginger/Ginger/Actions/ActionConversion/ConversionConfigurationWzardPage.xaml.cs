@@ -79,6 +79,7 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="WizardEventArgs"></param>
         private void Init(WizardEventArgs WizardEventArgs)
         {
+            xPOMSelectionPage.OwnerWindow = (Window)mWizard.mWizardWindow;
             DataContext = mWizard;
             xRadSameActivity.IsChecked = true;
             SetTargetApplicationGridView();

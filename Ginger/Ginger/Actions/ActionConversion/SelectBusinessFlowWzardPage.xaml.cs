@@ -141,7 +141,7 @@ namespace Ginger.Actions.ActionConversion
                                                                                         SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 mBFSelectionPage.SelectionDone += MBFSelectionPage_SelectionDone;
             }
-            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(mainWindowParent: false);
+            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)mWizard.mWizardWindow));
             AddSelectedBF(selectedBFs);
         }
 

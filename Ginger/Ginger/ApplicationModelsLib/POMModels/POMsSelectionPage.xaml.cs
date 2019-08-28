@@ -44,6 +44,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public event POMSelectionEventHandler POMSelectionEvent;
 
+        public Window OwnerWindow { get; set; }
+
         ITreeViewItem mItemTypeRootNode;
         public bool ShowTitle { get; set; }
 
@@ -109,7 +111,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
             }
 
-            List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow(mainWindowParent: false);
+            List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow(ownerWindow: OwnerWindow);
             AddSelectedPOM(selectedPOMs);
         }
 
