@@ -27,6 +27,8 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Actions.WebServices;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
@@ -192,8 +194,33 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             // Send the payload to the service
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+
+
+
             
             ParseActionResult(RC, (Act)actPlugin);
+
+            ActWebAPIBase WebAPiAction = null;
+            if (actPlugin is ActWebAPIBase ActWebApi)
+            {
+                WebAPiAction = ActWebApi;
+            }
+            else if (actPlugin is ActWebAPIModel ActWebApiModel)
+            {
+                WebAPiAction = ActWebApiModel.WebApiAction;
+            }
+            if (WebAPiAction != null)
+            {
+
+                string ResponseMessage = string.Empty;
+
+                ResponseMessage = WebAPiAction.ReturnValues.Where(x => x.Param == "Response").FirstOrDefault().Actual;
+                ActWebAPIBase.ParseNodesToReturnParams(WebAPiAction, ResponseMessage);
+            }
+
+
+            
+
         }
 
 
@@ -271,6 +298,8 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
+      
+            
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
@@ -311,6 +340,8 @@ namespace Amdocs.Ginger.CoreNET.Run
 
                 }
             }
+
+
             else
             {
                 // The RC is not OK when we faced some unexpected exception 

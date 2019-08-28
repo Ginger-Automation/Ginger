@@ -1560,7 +1560,7 @@ namespace Ginger.Run
             // TODO: remove when we no longer use LocateValue in Action
 
           
-            if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue(Act.Fields.LocateValue)))
+            if (!string.IsNullOrEmpty(act.GetInputParamValue(Act.Fields.LocateValue)))
             {
 
                 VE.Value = act.LocateValue;
@@ -2413,8 +2413,11 @@ namespace Ginger.Run
                 sharedActivityInstance.AddDynamicly = true;
                 sharedActivityInstance.VariablesDependencies = CurrentBusinessFlow.CurrentActivity.VariablesDependencies;                
                 CurrentBusinessFlow.SetActivityTargetApplication(sharedActivityInstance);
+                                
 
-                CurrentBusinessFlow.AddActivity(sharedActivityInstance, CurrentBusinessFlow.ActivitiesGroups.Where(x=>x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault());
+                int index= CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
+                ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
                   
@@ -4021,7 +4024,7 @@ namespace Ginger.Run
                         BFES.Selected = true;
                         if (ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder != null && BF.ExecutionFullLogFolder != null)
                         {
-                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder, BF.ExecutionLogFolder);
+                            BFES.BusinessFlowExecLoggerFolder = System.IO.Path.Combine(this.ExecutionLoggerManager.mExecutionLogger.ExecutionLogfolder,string.IsNullOrEmpty(BF.ExecutionLogFolder)?string.Empty: BF.ExecutionLogFolder);
                         }
 
                         BFESs.Add(BFES);

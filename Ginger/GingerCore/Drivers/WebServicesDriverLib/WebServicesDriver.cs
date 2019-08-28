@@ -236,7 +236,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 mActWebAPI = (ActWebAPIBase)act;
                 HandleWebApiRequest((ActWebAPIBase)act);
             }
-            else if (act is ActWebAPIModel)
+            else if (act is ActWebAPIModel ActWAPIM)
             {
                 if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
@@ -256,11 +256,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 ActWebAPIBase actWebAPI = null;
                 if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
                 {
-                    actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                    actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
                 }
                 else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                 {
-                    actWebAPI = CreateActWebAPISOAP((ApplicationAPIModel)AAMB, (ActWebAPIModel)act);
+                    actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
                 }
 
                 if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug)
@@ -315,91 +315,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return actWebAPISoap;
         }
 
-        private void FillAPIBaseFields(ApplicationAPIModel AAMB, ActWebAPIBase actWebAPIBase, ActWebAPIModel actWebAPIModel)
-        {
-            ApplicationAPIModel AAMBDuplicate = SetAPIModelData(AAMB, actWebAPIModel);
-
-            //Initializing Act Properties
-            actWebAPIBase.AddNewReturnParams = actWebAPIModel.AddNewReturnParams;
-            actWebAPIBase.SolutionFolder = actWebAPIModel.SolutionFolder;
-            actWebAPIBase.SupportSimulation = actWebAPIModel.SupportSimulation;
-            actWebAPIBase.AddOrUpdateInputParamValue(nameof(ActWebAPIBase.UseLegacyJSONParsing), "False");
-            actWebAPIBase.Description = actWebAPIModel.Description;
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.RequestType, AAMBDuplicate.RequestType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, AAMBDuplicate.ReqHttpVersion.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, AAMBDuplicate.ResponseContentType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.CookieMode, AAMBDuplicate.CookieMode.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, AAMBDuplicate.ContentType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPISoap.Fields.SOAPAction, AAMBDuplicate.SOAPAction);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.EndPointURL, AAMBDuplicate.EndpointURL);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, AAMBDuplicate.NetworkCredentials.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLUser, AAMBDuplicate.URLUser);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, AAMBDuplicate.URLDomain);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLPass, AAMBDuplicate.URLPass);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, AAMBDuplicate.DoNotFailActionOnBadRespose.ToString());
-            actWebAPIBase.HttpHeaders = ConvertAPIModelKeyValueToActInputValues(AAMBDuplicate.HttpHeaders, actWebAPIModel);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, AAMBDuplicate.RequestBodyType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.RequestBody, AAMBDuplicate.RequestBody);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, AAMBDuplicate.CertificateType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificatePath, AAMBDuplicate.CertificatePath);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.ImportCetificateFile, AAMBDuplicate.ImportCetificateFile.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificatePassword, AAMBDuplicate.CertificatePassword);
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, AAMBDuplicate.SecurityType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, AAMBDuplicate.AuthorizationType.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser, AAMBDuplicate.TemplateFileNameFileBrowser.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthUsername, AAMBDuplicate.AuthUsername.ToString());
-            actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthPassword, AAMBDuplicate.AuthPassword.ToString());
-            
-            actWebAPIBase.ReturnValues = actWebAPIModel.ReturnValues;
-        }
-
-        private ApplicationAPIModel SetAPIModelData(ApplicationAPIModel AAMB, ActWebAPIModel actWebAPIModel)
-        {
-            WorkSpace.Instance.RefreshGlobalAppModelParams(AAMB);
-            //Duplicate Model for not changing on cache
-            ApplicationAPIModel AAMBDuplicate = (ApplicationAPIModel)AAMB.CreateCopy(false);
-
-            //Set model params with actual execution value
-            foreach (AppModelParameter modelParam in AAMBDuplicate.AppModelParameters)
-                SetExecutionValue(modelParam, actWebAPIModel);
-
-            foreach (GlobalAppModelParameter globalParam in AAMBDuplicate.GlobalAppModelParameters)
-                SetExecutionValue(globalParam, actWebAPIModel);
-
-            actWebAPIModel.ActAppModelParameters = AAMBDuplicate.MergedParamsList;
-
-            //Replace Placeholders with Execution Values
-            AAMBDuplicate.SetModelConfigsWithExecutionData();
-            return AAMBDuplicate;
-        }
-
-        private void SetExecutionValue<T>(T param, ActWebAPIModel actWebAPIModel)
-        {
-            AppModelParameter p = param as AppModelParameter;
-            EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.Where(x => x.ParamGuid == p.Guid).FirstOrDefault();
-            if (enhanceInput != null)
-                p.ExecutionValue = enhanceInput.ValueForDriver;
-            else
-                p.ExecutionValue = p.GetDefaultValue();
-
-            if (p is GlobalAppModelParameter && p.ExecutionValue.Equals(GlobalAppModelParameter.CURRENT_VALUE))
-                p.ExecutionValue = ((GlobalAppModelParameter)p).CurrentValue;
-        }
+       
         
-        private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
-        {
-            ObservableList<ActInputValue> GingerCoreHttpHeaders = new ObservableList<ActInputValue>();
-
-            if (GingerCoreNETHttpHeaders != null)
-                foreach (APIModelKeyValue AMKV in GingerCoreNETHttpHeaders)
-                {
-                    ActInputValue AIV = new ActInputValue();
-                    AIV.Param = AMKV.Param;
-                    AIV.ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue); 
-                    GingerCoreHttpHeaders.Add(AIV);
-                }
-            return GingerCoreHttpHeaders;
-        }
 
         private void HandleWebApiRequest(ActWebAPIBase act)
         {
@@ -497,9 +414,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                             XmlDocument xmlDoc1 = new XmlDocument();
                             xmlDoc1.LoadXml(kpr.Value[2]);
 
-                            List<GingerCore.General.XmlNodeItem> outputTagsList1 = new List<GingerCore.General.XmlNodeItem>();
+                            List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputTagsList1 = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
                             outputTagsList1 = General.GetXMLNodesItems(xmlDoc1);
-                            foreach (GingerCore.General.XmlNodeItem outputItem in outputTagsList1)
+                            foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList1)
                             {
                                 act.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
                             }
@@ -669,9 +586,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
                 try
                 {
-                    List<GingerCore.General.XmlNodeItem> outputList = new List<GingerCore.General.XmlNodeItem>();
-                    outputList = GingerCore.General.GetXMLNodesItems(xmlReqDoc);
-                    foreach (GingerCore.General.XmlNodeItem outputItem in outputList)
+                    List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem> outputList = new List<Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem>();
+                    outputList = Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlReqDoc);
+                    foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputList)
                     {
                         mActWebService.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
                     }
