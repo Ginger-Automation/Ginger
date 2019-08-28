@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
 using Ginger.Actions.ActionConversion;
 using Ginger.WizardLib;
 using GingerCore;
@@ -26,34 +29,147 @@ using GingerWPF.WizardLib;
 
 namespace Ginger.Actions.ApiActionsConversion
 {
+    /// <summary>
+    /// This class is used to ApiActionsConversionWizard 
+    /// </summary>
     public class ApiActionsConversionWizard : WizardBase
     {
         public override string Title { get { return "Convert Webservices Actions"; } }
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
-        public ObservableList<BusinessFlow> ListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         ConversionStatusReportPage mReportPage = null;
+        ApiActionConversionUtils mConversionUtils = new ApiActionConversionUtils();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context"></param>
         public ApiActionsConversionWizard(Context context)
         {
             Context = context;
-            ListOfBusinessFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
             AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
 
-            mReportPage = new ConversionStatusReportPage();
+            mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
             AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
         }
-        
+
+        /// <summary>
+        /// This method is used to ge the businessflows to convert
+        /// </summary>
+        /// <param name="businessFlows"></param>
+        /// <returns></returns>
+        private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert()
+        {
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList <BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
+            foreach (BusinessFlow bf in businessFlows)
+            {
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+                flowToConvert.BusinessFlow = bf;
+                lst.Add(flowToConvert);
+            }
+            return lst;
+        }
+
+        /// <summary>
+        /// This is finish method which does the finish the wizard functionality
+        /// </summary>
         public override void Finish()
         {
-            
+            BusinessFlowsActionsConversion(ListOfBusinessFlow);
         }
-        
+
+        /// <summary>
+        /// This method is used to Stop the conversion process in between conversion process
+        /// </summary>
+        public void StopConversion()
+        {
+            //mConversionUtils.StopConversion();
+        }
+
+        /// <summary>
+        /// This method is used to convert the action in case of Continue & Re-Convert
+        /// </summary>
+        /// <param name="lst"></param>
+        /// <param name="isReConvert"></param>
+        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
+        {
+            ProcessStarted();
+            try
+            {
+                ObservableList<BusinessFlowToConvert> flowsToConvert = new ObservableList<BusinessFlowToConvert>();
+                if (isReConvert)
+                {
+                    ObservableList<BusinessFlowToConvert> selectedLst = new ObservableList<BusinessFlowToConvert>();
+                    foreach (var bf in lst)
+                    {
+                        if (bf.IsSelected)
+                        {
+                            bf.BusinessFlow.RestoreFromBackup(true);
+                            bf.ConversionStatus = eConversionStatus.Pending;
+                            bf.SaveStatus = eConversionSaveStatus.Pending;
+                            flowsToConvert.Add(bf);
+                        }
+                    }
+                }
+                else
+                {
+                    flowsToConvert = ListOfBusinessFlow;
+                }
+
+                if (flowsToConvert.Count > 0)
+                {
+                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert));
+                }
+                mReportPage.SetButtonsVisibility(true);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+            }
+            finally
+            {
+                ProcessEnded();
+            }
+        }
+
+        /// <summary>
+        /// This method is used to convert the actions
+        /// </summary>
+        /// <param name="lst"></param>
+        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
+        {
+            try
+            {
+                ProcessStarted();
+
+                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst));
+
+                mReportPage.SetButtonsVisibility(true);
+
+                ProcessEnded();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+        }
+
+        /// <summary>
+        /// This method is used to cancle the wizard
+        /// </summary>
         public override void Cancel()
         {
             base.Cancel();
-        }        
+        }
     }
 }

@@ -20,23 +20,24 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// This method is used to convert the legacy service actions to api actions from the businessflows provided
         /// </summary>
         /// <param name="businessFlows"></param>
-        public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlow> businessFlows)
+        public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlowToConvert> businessFlows)
         {
             try
             {                
                 foreach (var bf in businessFlows)
                 {
-                    WebServicesDriver driver = new WebServicesDriver(bf);
-                    for (int intIndex = 0; intIndex < bf.Activities.Count(); intIndex++)
+                    bf.ConversionStatus = eConversionStatus.Pending;
+                    WebServicesDriver driver = new WebServicesDriver(bf.BusinessFlow);
+                    for (int intIndex = 0; intIndex < bf.BusinessFlow.Activities.Count(); intIndex++)
                     {
-                        Activity activity = bf.Activities[intIndex];
-                        if (activity != null && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                        Activity activity = bf.BusinessFlow.Activities[intIndex];
+                        if (activity != null && activity.Active)
                         {
                             Activity currentActivity;
                             currentActivity = new Activity() { Active = true };
                             currentActivity = (Activity)activity.CreateCopy(false);
                             currentActivity.ActivityName = "New - " + activity.ActivityName;
-                            bf.Activities.Insert(intIndex + 1, currentActivity);
+                            bf.BusinessFlow.Activities.Insert(intIndex + 1, currentActivity);
                             activity.Active = false;
                             intIndex++;
                             foreach (Act act in currentActivity.Acts.ToList())
@@ -85,6 +86,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             currentActivity.TargetApplication = activity.TargetApplication;
                         }
                     }
+                    bf.ConversionStatus = eConversionStatus.Finish;
                 }
             }
             catch (Exception ex)
