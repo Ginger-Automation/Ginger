@@ -300,21 +300,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             act.Error = actWebAPI.Error;
             act.ExInfo = actWebAPI.ExInfo;
         }
-
-        public ActWebAPIRest CreateActWebAPIREST(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
-        {
-            ActWebAPIRest actWebAPIBase = new ActWebAPIRest();
-            FillAPIBaseFields(AAMB, actWebAPIBase, ActWebAPIModel);
-            return actWebAPIBase;
-        }
-
-        public ActWebAPISoap CreateActWebAPISOAP(ApplicationAPIModel AAMB, ActWebAPIModel ActWebAPIModel)
-        {
-            ActWebAPISoap actWebAPISoap = new ActWebAPISoap();
-            FillAPIBaseFields(AAMB, actWebAPISoap, ActWebAPIModel);
-            return actWebAPISoap;
-        }
-
+        
        
         
 
