@@ -907,9 +907,14 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ActUIElement actUIElement)
         {
-            PayLoad PL = new PayLoad("UIElementAction");           
+            string payLoadName = @"UIElementAction";
+            if (Convert.ToBoolean(actUIElement.GetInputParamValue(Fields.WidgetsElement)))
+            {
+                payLoadName = @"WidgetsUIElementAction";
+            }
+            PayLoad PL = new PayLoad(payLoadName);           
             // Make it generic function in Act.cs to be used by other actions
             List<PayLoad> PLParams = new List<PayLoad>();
             foreach (ActInputValue AIV in this.InputValues)

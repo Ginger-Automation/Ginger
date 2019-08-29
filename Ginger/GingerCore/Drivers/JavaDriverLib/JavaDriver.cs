@@ -370,7 +370,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad HandleActUIElement(ActUIElement act)
         {
-            PayLoad PL = act.GetPayLoad();
+            PayLoad PL = act.GetPayLoad(act);
             PayLoad response = Send(PL);
             if (!response.IsErrorPayLoad() && !response.IsOK())
             {

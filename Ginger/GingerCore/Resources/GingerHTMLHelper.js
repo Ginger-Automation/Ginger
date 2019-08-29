@@ -118,6 +118,16 @@ function define_GingerLib() {
             var txt = PayLoad.GetValueString();
             return GingerLib.Echo(txt);
         }
+        else if (Command === "WidgetsUIElementAction")
+        {
+           var list = PayLoad.GetListPayLoad();
+           var inputValues = PayLoad.GetInputValues(list);
+           var ElementAction = inputValues["ElementAction"];
+           var ElementLocateBy = inputValues["ElementLocateBy"];
+           var ElementLocateValue = inputValues["ElementLocateValue"];
+           var Value = inputValues["Value"];
+           return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);
+        }
         else if (Command == "HTMLElementAction") {
             var ControlAction = PayLoad.GetValueString();
             var LocateBy = PayLoad.GetValueString();
