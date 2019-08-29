@@ -419,12 +419,18 @@
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
+      <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml.cs">
+      <DependentUpon>SelectBusinessFlowWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
@@ -482,6 +488,10 @@
     </Compile>
     <Compile Include="Actions\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMBindingObjectHelper.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
+      <DependentUpon>POMsSelectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
       <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
@@ -2844,6 +2854,10 @@
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Actions\ActionConversion\ConversionStatusReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2852,7 +2866,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

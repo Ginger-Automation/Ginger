@@ -16,22 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Environments;
 using GingerWPF.WizardLib;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -88,8 +80,17 @@ namespace Ginger.Actions.ActionConversion
             // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
             mWizard.ActionToBeConverted.Clear();
 
+            List<Activity> lstSelectedActivities = null;
             // fetching list of selected convertible activities from the first grid
-            List<Activity> lstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
+            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+            {
+                lstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList(); 
+            }
+            else
+            {
+                lstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.IsSelected).SelectMany(y => y.BusinessFlow.Activities).Where(z => z.Active).ToList();
+            }
+
             if (lstSelectedActivities.Count != 0)
             {
                 ActionConversionUtils utils = new ActionConversionUtils();
@@ -139,8 +140,15 @@ namespace Ginger.Actions.ActionConversion
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Selected), Header = "Select", WidthWeight = 3.5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
+            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+            {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) }); 
+            }
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
+            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow)
+            {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.ActionCount), WidthWeight = 15, Header = "Actions Count" });
+            }
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
             xGridConvertibleActions.SetTitleLightStyle = true;
@@ -152,6 +160,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+            xGridConvertibleActions.ActiveStatus = true;
         }
 
         private void MarkUnMarkAllActions(bool ActiveStatus)

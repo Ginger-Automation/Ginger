@@ -832,7 +832,7 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;
-            //ActivitiesGroupColor = null;
+            AutomationStatus = eActivityAutomationStatus.Automated;
         }
 
         public ObservableList<VariableBase> GetVariables()
