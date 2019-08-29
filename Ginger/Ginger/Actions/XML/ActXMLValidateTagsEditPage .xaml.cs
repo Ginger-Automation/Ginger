@@ -59,15 +59,29 @@ namespace Ginger.Actions.XML
             mAct.DynamicElements.Add(AIV);
         }
 
-         private void SetGridView()
+        private void RequestFromFileChecked(object sender, RoutedEventArgs e)
+        {
+            FileContent.Content = "Template File Path";
+            BrowseFileButton.Visibility = Visibility.Visible;
+        }
+
+        private void RequestFromFileUnChecked(object sender, RoutedEventArgs e)
+        {
+
+            FileContent.Content = "Template File Content";
+            BrowseFileButton.Visibility = Visibility.Collapsed;
+
+        }
+
+        private void SetGridView()
          {
              GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
              view.GridColsView = new ObservableList<GridColView>();
 
              view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Path", WidthWeight = 150 });
              view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Attribute", WidthWeight = 150 });
-
-             DynamicParametersGrid.SetAllColumnsDefaultView(view);
+           
+            DynamicParametersGrid.SetAllColumnsDefaultView(view);
             DynamicParametersGrid.InitViewItems();
 
             DynamicParametersGrid.DataSourceList = mAct.DynamicElements ;
