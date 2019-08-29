@@ -16,17 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -101,7 +97,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Containing Folder", OpenTreeItemFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Containing Folder", OpenTreeItemFolderHandler);
-            }
+            }            
         }
 
         public abstract bool SaveTreeItem(object item, bool saveOnlyIfDirty = false);
@@ -353,6 +349,8 @@ namespace GingerWPF.TreeViewItemsLib
                 }
             }
         }
+
+        
 
         public abstract bool RenameTreeFolder(string originalName, string newFolderName, string newPath);
         private void RenameTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
