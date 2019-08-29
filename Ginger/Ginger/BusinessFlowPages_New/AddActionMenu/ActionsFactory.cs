@@ -248,7 +248,7 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
         /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int activityIndex = -1)
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex=-1)
         {
             ActivitiesGroup parentGroup = null;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
@@ -266,16 +266,8 @@ namespace Ginger.BusinessFlowPages
                 {
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
-                    businessFlow.SetActivityTargetApplication(activityIns);
-
-                    if (activityIndex != -1)
-                    {
-                        businessFlow.AddActivity(activityIns, parentGroup, activityIndex);
-                    }
-                    else
-                    {
-                        businessFlow.AddActivity(activityIns, parentGroup);
-                    }
+                    businessFlow.SetActivityTargetApplication(activityIns);                    
+                    businessFlow.AddActivity(activityIns, parentGroup,insertIndex);
                     //mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
             }

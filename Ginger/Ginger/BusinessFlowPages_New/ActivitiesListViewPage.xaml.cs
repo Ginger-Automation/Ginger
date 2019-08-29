@@ -169,7 +169,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     string activityGroupID = null;
                     int activityIndex = -1;
-                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
+                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;                     
 
                     if (activityDroppedOn != null)
                     {
@@ -180,7 +180,6 @@ namespace Ginger.BusinessFlowPages
                     List<Activity> list = new List<Activity>();
                     list.Add((Activity)droppedItem);
                     ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex);
-
                     if (activityIndex != -1)
                     {
                         ListView.xListView.SelectedIndex = activityIndex;
