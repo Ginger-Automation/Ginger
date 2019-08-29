@@ -2,9 +2,11 @@
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -64,10 +66,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public void DownloadSolution(string v)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {
@@ -87,6 +86,16 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public Type GetDriverType(IAgent agent)
         {
             throw new NotImplementedException();
+        }
+
+        public bool GetLatest(string path, SourceControlBase SourceControl)
+        {
+          return  SourceControlIntegration.GetLatest(path, SourceControl);
+        }
+
+        public SourceControlBase GetNewSVnRepo()
+        {
+            throw new PlatformNotSupportedException("SVN Repositories are not supported yet on Ginger CLI");
         }
 
         public void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf)

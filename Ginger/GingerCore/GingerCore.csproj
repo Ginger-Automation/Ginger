@@ -734,7 +734,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\GITSourceControl.cs" />
     <Compile Include="SourceControl\SVNSourceControl.cs" />
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>

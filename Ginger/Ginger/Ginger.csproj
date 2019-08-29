@@ -1260,7 +1260,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>

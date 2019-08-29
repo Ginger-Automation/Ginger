@@ -20,43 +20,24 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using Amdocs.Ginger.IO;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Media.Imaging;
+
 
 namespace Ginger.SourceControl
 {
-    class SourceControlIntegration
+    public class SourceControlIntegration
     {
         public static bool BusyInProcessWhileDownloading = false;
 
 
         public static bool conflictFlag =false;
-        public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context,  bool ignoreSuccessMessage)
-        {
-            string error = string.Empty;
-            bool res = false;
-
-            res = SourceControl.TestConnection(ref error);
-            if (res)
-            {
-                if (!ignoreSuccessMessage)
-                    Reporter.ToUser(eUserMsgKey.SourceControlConnSucss);
-                return true;
-            }
-            else
-            {
-                if (error.Contains("remote has never connected"))
-                    Reporter.ToUser(eUserMsgKey.SourceControlRemoteCannotBeAccessed, error);
-                else
-                    Reporter.ToUser(eUserMsgKey.SourceControlConnFaild, error);
-                return false;
-            }
-        }
+ 
 
 
         public static bool AddFile( SourceControlBase SourceControl, string path)
@@ -166,33 +147,16 @@ namespace Ginger.SourceControl
         }
 
         
-#warning UI
+
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
             List<string> conflictsPaths = new List<string>();
-            bool result = true;
-            bool conflictHandled = false;
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
 
-                foreach (string cPath in conflictsPaths)
-                {
-                    ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if( WorkSpace.Instance.RunningInExecutionMode == true)
-                        SourceControlIntegration.ResolveConflicts(SourceControl, cPath, eResolveConflictsSide.Server);
-                    else
-                        resConfPage.ShowAsWindow();
-                    result = resConfPage.IsResolved;
-
-                    if (!result)
-                    {
-                        Reporter.ToUser(eUserMsgKey.SourceControlGetLatestConflictHandledFailed);
-                        return false;
-                    }
-                    conflictHandled = true;
-                }
-                if (!conflictHandled)
+     
+                if (conflictsPaths.Count>0)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
                     return false;
@@ -201,7 +165,7 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        internal static string GetLockOwner(SourceControlBase SourceControl, string path)
+        public static string GetLockOwner(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
             return SourceControl.GetLockOwner(path, ref error);
@@ -220,7 +184,7 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        internal static void Lock(SourceControlBase SourceControl, string path, string lockComment)
+        public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
         {
             string error = string.Empty;
             if (!SourceControl.Lock(path, lockComment, ref error))
@@ -233,7 +197,7 @@ namespace Ginger.SourceControl
             }
         }
 
-        internal static void UnLock(SourceControlBase SourceControl, string path)
+        public static void UnLock(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
             if (!SourceControl.UnLock(path, ref error))
@@ -271,48 +235,14 @@ namespace Ginger.SourceControl
             return SourceControl.GetInfo(path, ref  error);
         }
 
-        internal static SourceControlItemInfoDetails GetRepositoryInfo(SourceControlBase sourceControl)
+        public static SourceControlItemInfoDetails GetRepositoryInfo(SourceControlBase sourceControl)
         {
             string error = string.Empty;
             return sourceControl.GetRepositoryInfo(ref error);
         }
 
 
-#warning UI
-        internal static BitmapImage GetItemSourceControlImage(string FileName,ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
-        {
 
-            if ( WorkSpace.Instance.Solution.SourceControl == null || FileName == null)
-            {
-                return null;
-            }
-
-            SourceControlFileInfo.eRepositoryItemStatus RIS = SourceControlIntegration.GetFileStatus( WorkSpace.Instance.Solution.SourceControl, FileName,  WorkSpace.Instance.Solution.ShowIndicationkForLockedItems);
-            ItemSourceControlStatus = RIS;
-            BitmapImage img = null;
-            switch (RIS)
-            {
-                case SourceControlFileInfo.eRepositoryItemStatus.New:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemAdded_10x10.png"));
-                    break;
-                case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemChange_10x10.png"));
-                    break;
-                case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemDeleted_10x10.png"));
-                    break;
-                case SourceControlFileInfo.eRepositoryItemStatus.Equel:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemUnchanged_10x10.png"));
-                    break;
-                case SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Red_10x10.png"));
-                    break;
-                case SourceControlFileInfo.eRepositoryItemStatus.LockedByMe:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Yellow_10x10.png"));
-                    break;
-            }
-            return img;
-        }
 
 
         public static SourceControlBase.eSourceControlType CheckForSolutionSourceControlType(string SolutionFolder, ref string ReposiytoryRootFolder )
@@ -343,8 +273,8 @@ namespace Ginger.SourceControl
             }
             return SourceControlBase.eSourceControlType.None;
         }
-#warning UI
-        internal static eImageType GetFileImage(string path)
+
+        public static eImageType GetFileImage(string path)
         {
             eImageType SCImage = eImageType.Null;
             if (WorkSpace.Instance.SourceControl == null)
@@ -377,5 +307,103 @@ namespace Ginger.SourceControl
             }
             return SCImage;
         }
+
+
+        public static void DownloadSolution(string SolutionFolder)
+        {
+            SourceControlBase mSourceControl;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                mSourceControl = new GITSourceControl();
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+            }
+            else
+            {
+                mSourceControl =  RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+            }
+
+            if (mSourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                mSourceControl.SolutionFolder = SolutionFolder;
+
+                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.supressMessage = true;
+            }
+
+            if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
+            {
+                Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
+            }
+            if (SolutionFolder.EndsWith("\\"))
+            {
+                SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
+            }
+
+            SolutionInfo sol = new SolutionInfo();
+            sol.LocalFolder = SolutionFolder;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+            {
+                sol.ExistInLocaly = true;
+            }
+            else
+            {
+                sol.ExistInLocaly = false;
+            }
+
+            sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf("\\") + 1);
+
+            if (sol == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
+                return;
+            }
+
+            string ProjectURI = string.Empty;
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+            }
+            else
+            {
+                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+            }
+            bool getProjectResult = true;
+            getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
+            if (getProjectResult != true)
+            {
+                return;
+            }
+
+            if (sol.ExistInLocaly == true)
+            {
+                mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+
+
+                RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+         
+            }
+            else
+            {
+                getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+            }
+        }
+
+
     }
 }

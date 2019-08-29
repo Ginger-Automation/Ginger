@@ -14,7 +14,27 @@ namespace Ginger.SourceControl
 {
     public class SourceControlUI
     {
+        public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context, bool ignoreSuccessMessage)
+        {
+            string error = string.Empty;
+            bool res = false;
 
+            res = SourceControl.TestConnection(ref error);
+            if (res)
+            {
+                if (!ignoreSuccessMessage)
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnSucss);
+                return true;
+            }
+            else
+            {
+                if (error.Contains("remote has never connected"))
+                    Reporter.ToUser(eUserMsgKey.SourceControlRemoteCannotBeAccessed, error);
+                else
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnFaild, error);
+                return false;
+            }
+        }
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
@@ -47,6 +67,42 @@ namespace Ginger.SourceControl
                 }
             }
             return true;
+        }
+
+
+        internal static BitmapImage GetItemSourceControlImage(string FileName, ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
+        {
+
+            if (WorkSpace.Instance.Solution.SourceControl == null || FileName == null)
+            {
+                return null;
+            }
+
+            SourceControlFileInfo.eRepositoryItemStatus RIS = SourceControlIntegration.GetFileStatus(WorkSpace.Instance.Solution.SourceControl, FileName, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems);
+            ItemSourceControlStatus = RIS;
+            BitmapImage img = null;
+            switch (RIS)
+            {
+                case SourceControlFileInfo.eRepositoryItemStatus.New:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemAdded_10x10.png"));
+                    break;
+                case SourceControlFileInfo.eRepositoryItemStatus.Modified:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemChange_10x10.png"));
+                    break;
+                case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemDeleted_10x10.png"));
+                    break;
+                case SourceControlFileInfo.eRepositoryItemStatus.Equel:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemUnchanged_10x10.png"));
+                    break;
+                case SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Red_10x10.png"));
+                    break;
+                case SourceControlFileInfo.eRepositoryItemStatus.LockedByMe:
+                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Yellow_10x10.png"));
+                    break;
+            }
+            return img;
         }
     }
 }
