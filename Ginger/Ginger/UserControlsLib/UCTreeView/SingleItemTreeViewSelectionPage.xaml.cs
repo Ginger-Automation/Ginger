@@ -116,7 +116,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTipLabel.Visibility = Visibility.Collapsed;             
         }        
 
-        public List<object> ShowAsWindow(string windowTitle="", eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        public List<object> ShowAsWindow(string windowTitle="", Window ownerWindow = null, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             bOpenasWindow = true;
             ObservableList<Button> winButtons = new ObservableList<Button>();
@@ -128,8 +128,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (windowTitle == string.Empty)            
                 windowTitle = mitemTypeName + " Selection";
-            GenericWindow.LoadGenericWindow(ref mPageGenericWin, App.MainWindow, windowStyle, windowTitle, this, winButtons, true, "Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
 
+            if (ownerWindow == null)
+            {
+                ownerWindow = App.MainWindow;
+            }
+              
+            GenericWindow.LoadGenericWindow(ref mPageGenericWin, ownerWindow, windowStyle, windowTitle, this, winButtons, true, "Close", CloseWinClicked,
+                                                    startupLocationWithOffset: startupLocationWithOffset);
+            
             return mSelectedItems;
         }
 
