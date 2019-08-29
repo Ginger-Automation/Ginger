@@ -131,15 +131,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (ownerWindow == null)
             {
-                GenericWindow.LoadGenericWindow(ref mPageGenericWin, App.MainWindow, windowStyle, windowTitle, this, winButtons, true, "Close", CloseWinClicked,
-                                                    startupLocationWithOffset: startupLocationWithOffset); 
+                ownerWindow = App.MainWindow;
             }
-            else
-            {
-                GenericWindow.LoadGenericWindow(ref mPageGenericWin, ownerWindow, windowStyle, windowTitle, this, winButtons, true, "Close", CloseWinClicked,
+              
+            GenericWindow.LoadGenericWindow(ref mPageGenericWin, ownerWindow, windowStyle, windowTitle, this, winButtons, true, "Close", CloseWinClicked,
                                                     startupLocationWithOffset: startupLocationWithOffset);
-            }
-
+            
             return mSelectedItems;
         }
 
