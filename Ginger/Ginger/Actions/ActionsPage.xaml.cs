@@ -148,7 +148,7 @@ namespace Ginger.Actions
         // Drag Drop handlers
         private void grdActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.mDragInfo.DataIsAssignableToType(typeof(Act)))
+            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(Act)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

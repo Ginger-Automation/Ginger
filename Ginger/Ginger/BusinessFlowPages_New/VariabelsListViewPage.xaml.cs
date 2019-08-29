@@ -266,10 +266,17 @@ namespace Ginger.BusinessFlowPages
         // Drag Drop handlers
         private void ListVars_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.mDragInfo.DataIsAssignableToType(typeof(VariableBase)))
+            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(VariableBase), true))
             {
+                if(DragDrop2.dragInfo.Data is ObservableList<RepositoryItemBase>)
+                {
+                    DragDrop2.SetDragIcon(true, true);
+                }
+                else
+                {
+                    DragDrop2.SetDragIcon(true);
+                }
                 // OK to drop
-                DragDrop2.SetDragIcon(true);
             }
             else
             {

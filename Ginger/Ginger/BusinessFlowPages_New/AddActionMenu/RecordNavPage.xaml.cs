@@ -24,7 +24,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
-using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore.Platforms.PlatformsInfo;

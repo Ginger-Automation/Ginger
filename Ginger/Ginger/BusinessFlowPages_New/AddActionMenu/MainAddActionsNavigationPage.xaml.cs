@@ -21,7 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;

@@ -20,7 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.Help;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;

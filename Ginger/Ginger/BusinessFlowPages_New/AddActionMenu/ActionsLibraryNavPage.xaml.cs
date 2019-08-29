@@ -25,7 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
-using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;

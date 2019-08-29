@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.BusinessFlowPages;
-using Ginger.BusinessFlowPages_New.AddActionMenu;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.WindowExplorer;
 using GingerCore.Platforms;
 using GingerCoreNET;
