@@ -36,101 +36,110 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
       
         [TestMethod]
-        public void Contains()
+        public void OutputValueContainsTest()
         {
             ARC.SimulatedActual = "Test Contains";
             ARC.Expected = "Test";            
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Contains;
             act.ActReturnValues.Add(ARC);                
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
       
         [TestMethod]
-        public void DoesNotContains()
+        public void OutputValueDoesNotContainsTest()
         {
             ARC.SimulatedActual = "Test Contains";
             ARC.Expected = "ABC";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.DoesNotContains;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
        
         [TestMethod]
-        public void Equals()
+        public void OutputValueEqualsTest()
         {
             ARC.SimulatedActual = "Test";
             ARC.Expected = "Test";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
        
         [TestMethod]
-        public void Evaluate()
+        public void OutputValueEvaluateTest()
         {
             ARC.SimulatedActual = "Test";
             ARC.Expected = "{CS Exp=@\"Test\".Contains(@\"Test\")}";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Evaluate;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
        
         [TestMethod]
-        public void GreateThan()
+        public void OutputValueGreateThanTest()
         {
             ARC.SimulatedActual = "10";
             ARC.Expected = "9";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.GreaterThan;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
      
         [TestMethod]
-        public void GreaterThanEquals()
+        public void OutputValueGreaterThanEqualsTest()
         {
             ARC.SimulatedActual = "10";
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.GreaterThanEquals;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
        
         [TestMethod]
-        public void LessThan()
+        public void OutputValueLessThanTest()
         {
             ARC.SimulatedActual = "9";
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.LessThan;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
        
         [TestMethod]
-        public void LessThanEquals()
+        public void OutputValueLessThanEqualsTest()
         {
             ARC.SimulatedActual = "10";
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.LessThanEquals;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
         
         [TestMethod]
-        public void NotEquals()
+        public void OutputValueNotEqualsTest()
         {
             ARC.SimulatedActual = "10";
             ARC.Expected = "9";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.NotEquals;
             act.ActReturnValues.Add(ARC);
             mGingerRunner.RunRunner();
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
 
