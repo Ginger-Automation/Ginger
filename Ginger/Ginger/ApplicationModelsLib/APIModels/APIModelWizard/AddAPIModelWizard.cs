@@ -60,6 +60,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public ObservableList<ApplicationAPIModel> AAMList { get; set; }
 
+        public ObservableList<APIModelsDelta> AAMDeltaList { get; set; }
+
         public bool IsParsingWasDone { get; set; }
 
         public WSDLParser mWSDLParser { get; set; }

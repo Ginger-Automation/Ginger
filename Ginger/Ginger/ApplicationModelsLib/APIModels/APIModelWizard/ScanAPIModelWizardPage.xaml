@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ginger="clr-namespace:Ginger"
+    xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
     x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.ScanAPIModelWizardPage"
       mc:Ignorable="d" 
       d:DesignHeight="1555.556" d:DesignWidth="3453.333"
@@ -14,13 +15,45 @@
             <DataTemplate x:Key="IsSelectedTemplate">
                 <CheckBox x:Name="IsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
             </DataTemplate>
+
+            <DataTemplate x:Key="xHandlingOperationTemplate">
+                <ComboBox x:Name="xHandlingOperation_FieldSelection" Style="{StaticResource @ToolBarComboBoxStyle}" ItemsSource="{Binding Path=handlingOperations}" />
+                <!--<DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding }"
+                </DataTemplate.Triggers>-->
+            </DataTemplate>
+
+            <DataTemplate  x:Key="xDeltaStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xDeltaStatusIconImageMakerControl" ImageType="{Binding DeltaStatusIcon}" SetAsFontImageWithSize="16" Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Green"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Orange"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+            
         </Grid.Resources>
         
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
 
-        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed"></ginger:ucGrid>
+        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed" ShowCompare="Visible"></ginger:ucGrid>
         
     </Grid>
 </Page>

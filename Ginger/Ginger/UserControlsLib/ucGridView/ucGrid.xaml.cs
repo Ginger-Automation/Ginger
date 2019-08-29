@@ -70,6 +70,9 @@ namespace Ginger
         public event EventHandler PreviewDragItem;
         public delegate void PreviewDragItemEventHandler(DragInfo DragInfo);
 
+        public event EventHandler ItemComparison;
+        public delegate void ItemComparisonEventHandler(object sender, EventArgs e);
+
         public event MarkUnMarkAll MarkUnMarkAllActive;
         public delegate void MarkUnMarkAll(bool Status);
 
@@ -415,6 +418,12 @@ namespace Ginger
         {
             get { return xSimpleHeaderTitle.Visibility; }
             set { xSimpleHeaderTitle.Visibility = value; }
+        }
+
+        public Visibility ShowCompare
+        {
+            get { return xCompreExistingItemBtn.Visibility; }
+            set { xCompreExistingItemBtn.Visibility = value; }
         }
 
         public Style TitleStyle
@@ -2151,6 +2160,15 @@ public void RemoveCustomView(string viewName)
         public void SetSelectedIndex(int index)
         {
             grdMain.SelectedIndex = index;
+        }
+
+        private void XCompreExistingAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            EventHandler handler = ItemComparison;
+            if (handler != null)
+            {
+                handler(sender, e);
+            }
         }
     }  
 }

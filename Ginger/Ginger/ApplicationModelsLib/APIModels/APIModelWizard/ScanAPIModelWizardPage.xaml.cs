@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
@@ -35,6 +36,40 @@ using static GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.AddAPIModel
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
+    public class APIModelsDelta : GingerCoreNET.Application_Models.DeltaItemBase
+    {
+        public ApplicationAPIModel currentAPIModel;
+        public ApplicationAPIModel matchingAPIModel;
+        public eComparisonOutput comparisonOutput;
+        public eHandlingOperations defaultOperation;
+        public enum eHandlingOperations
+        {
+            [EnumValueDescription("Add New")]
+            Add,
+            [EnumValueDescription("Do Not Add New")]
+            DoNotAdd,
+            [EnumValueDescription("Merge Changes")]
+            MergeChanges,
+            [EnumValueDescription("Replace Existing with New")]
+            ReplaceExisting,
+        };
+
+        public enum eComparisonOutput
+        {
+            New,
+            Modified,
+            Unchanged
+        }
+
+        public string[] HandlingOperation = new string[]
+        {
+            "Add New",
+            "Do Not Add New",
+            "Replace Existing with New",
+            "Merge Changes"
+        };
+
+    }
     /// <summary>
     /// Interaction logic for ScanAPIModelWizardPage.xaml
     /// </summary>
@@ -52,6 +87,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
             xApisSelectionGrid.btnRefresh.Visibility = Visibility.Visible;
             xApisSelectionGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnRefreshClicked));
+            xApisSelectionGrid.xCompreExistingItemBtn.AddHandler(Button.ClickEvent, new RoutedEventHandler(BtnCompareAPIClicked));
+            xApisSelectionGrid.xCompreExistingItemBtn.ToolTip = "Compare with Existing API Models";
+            xApisSelectionGrid.xCompreExistingItemBtn.Content = "Compare APIs";
+
             SetFieldsGrid();
         }
         private void BtnRefreshClicked(object sender, RoutedEventArgs e)
@@ -60,6 +99,36 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             Parse();
         }
 
+        void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
+        {
+            ObservableList<ApplicationAPIModel> existingAPIModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
+            foreach (ApplicationAPIModel apiModel in AddAPIModelWizard.AAMList)
+            {
+                APIModelsDelta apiModelDelta = new APIModelsDelta();
+                apiModelDelta.matchingAPIModel = existingAPIModels.Where(m => m.EndpointURL.Equals(apiModel.EndpointURL, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                if (apiModelDelta.matchingAPIModel != null)
+                {
+                    apiModelDelta.currentAPIModel = apiModel;
+                    apiModelDelta.DeltaStatus = CompareAPIModels(apiModelDelta.matchingAPIModel, apiModelDelta.currentAPIModel);
+                }
+
+                if (AddAPIModelWizard.AAMDeltaList == null)
+                    AddAPIModelWizard.AAMDeltaList = new ObservableList<APIModelsDelta>();
+
+                AddAPIModelWizard.AAMDeltaList.Add(apiModelDelta);
+            }
+
+            xApisSelectionGrid.Grid.Columns[3].Visibility = Visibility.Visible;
+            xApisSelectionGrid.Grid.Columns[4].Visibility = Visibility.Visible;
+            xApisSelectionGrid.Grid.Columns[5].Visibility = Visibility.Visible;
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.AAMDeltaList;
+        }
+
+        GingerCoreNET.Application_Models.eDeltaStatus CompareAPIModels(ApplicationAPIModel existingAPIModel, ApplicationAPIModel newAPIModel)
+        {
+
+            return GingerCoreNET.Application_Models.eDeltaStatus.Added;
+        }
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             if (WizardEventArgs.EventType == EventType.Init)
@@ -260,6 +329,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.IsSelected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "Name", WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelsDelta.matchingAPIModel), Header = "Matching API Model", WidthWeight = 20, Visible = false });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelsDelta.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelsDelta.eHandlingOperations), Header = "Difference's Handling Operation", Visible = false, WidthWeight=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xHandlingOperationTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelsDelta.comparisonOutput), Header = "Compare & Merge", Visible = false });
             xApisSelectionGrid.SetAllColumnsDefaultView(view);
             xApisSelectionGrid.InitViewItems();
         }
