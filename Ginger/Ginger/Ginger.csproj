@@ -715,6 +715,7 @@
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SourceControl\SourceControlUI.cs" />
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>

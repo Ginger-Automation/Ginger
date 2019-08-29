@@ -785,7 +785,7 @@ namespace Ginger.Repository
             if (sol.ExistInLocaly == true)
             {
                 mSourceControl.RepositoryRootFolder = sol.LocalFolder;
-                SourceControlIntegration.GetLatest(sol.LocalFolder, mSourceControl);
+                SourceControlUI.GetLatest(sol.LocalFolder, mSourceControl);
             }
             else
             {

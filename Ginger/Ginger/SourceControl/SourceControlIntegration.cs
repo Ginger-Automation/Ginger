@@ -33,6 +33,8 @@ namespace Ginger.SourceControl
     class SourceControlIntegration
     {
         public static bool BusyInProcessWhileDownloading = false;
+
+
         public static bool conflictFlag =false;
         public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context,  bool ignoreSuccessMessage)
         {
@@ -93,43 +95,6 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        public static bool CommitChanges(SourceControlBase SourceControl, ICollection<string> pathsToCommit, string Comments, bool includeLocks, ref bool conflictHandled)
-        {
-            string error = string.Empty;
-            bool result = true;
-            bool conflict = conflictHandled;
-            List<string> conflictsPaths = new List<string>();
-            if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
-            {
-                App.MainWindow.Dispatcher.Invoke(() => {
-                    foreach (string cPath in conflictsPaths)
-                    {
-                        ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                        if( WorkSpace.Instance.RunningInExecutionMode == true)
-                            SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
-                        else
-                            resConfPage.ShowAsWindow();
-                        result = resConfPage.IsResolved;
-                        conflict = true;
-                        conflictFlag= conflict;
-                    }
-                    if (SourceControl.GetSourceControlmConflict != null)
-                        SourceControl.GetSourceControlmConflict.Clear();
-                });
-                if (!conflict)
-                {
-                    if (error.Contains("too many redirects or authentication replays"))
-                        error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
-                    if (error.Contains("is locked in another working copy"))
-                        error = "This file has been locked by other user. Please remove lock and then try to Check in.";
-                    App.MainWindow.Dispatcher.Invoke(() => {
-                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                    });
-                    return false;
-                }
-            }
-            return result;
-        }
 
 
         public static bool CleanUp(SourceControlBase SourceControl, string folder)
@@ -200,6 +165,8 @@ namespace Ginger.SourceControl
             return true;
         }
 
+        
+#warning UI
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
             string error = string.Empty;
@@ -310,6 +277,8 @@ namespace Ginger.SourceControl
             return sourceControl.GetRepositoryInfo(ref error);
         }
 
+
+#warning UI
         internal static BitmapImage GetItemSourceControlImage(string FileName,ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
         {
 
@@ -374,7 +343,7 @@ namespace Ginger.SourceControl
             }
             return SourceControlBase.eSourceControlType.None;
         }
-
+#warning UI
         internal static eImageType GetFileImage(string path)
         {
             eImageType SCImage = eImageType.Null;
