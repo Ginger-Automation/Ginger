@@ -140,10 +140,10 @@ namespace Ginger.BusinessFlowPages
 
         private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(Activity), true)
-                || DragDrop2.dragInfo.DataIsAssignableToType(typeof(ActivitiesGroup), true))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(Activity), true)
+                || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ActivitiesGroup), true))
             {
-                if (DragDrop2.dragInfo.Data is ObservableList<RepositoryItemBase>)
+                if (DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
                 {
                     DragDrop2.SetDragIcon(true, true);
                 }

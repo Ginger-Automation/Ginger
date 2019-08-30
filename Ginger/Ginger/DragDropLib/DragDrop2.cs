@@ -30,7 +30,7 @@ namespace GingerWPF.DragDropLib
     {
         private static Point _startPoint;
         private static bool IsDragging;
-        public static DragInfo dragInfo;
+        public static DragInfo DrgInfo;
         private static Point _DroppedPoint;
 
         private static DragDropWindow DDW = new DragDropWindow();
@@ -52,16 +52,16 @@ namespace GingerWPF.DragDropLib
             {
                 if (multipleItems)
                 {
-                    dragInfo.DragIcon = DragInfo.eDragIcon.MultiAdd;
+                    DrgInfo.DragIcon = DragInfo.eDragIcon.MultiAdd;
                 }
                 else
                 {
-                    dragInfo.DragIcon = DragInfo.eDragIcon.Add;
+                    DrgInfo.DragIcon = DragInfo.eDragIcon.Add;
                 }
             }
             else
             {
-                dragInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                DrgInfo.DragIcon = DragInfo.eDragIcon.DoNotDrop;
             }
         }
 
@@ -74,11 +74,11 @@ namespace GingerWPF.DragDropLib
                 if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
                     Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    dragInfo = new DragInfo();
-                    dragInfo.OriginalSource = e.OriginalSource;
-                    ((IDragDrop)sender).StartDrag(dragInfo);
+                    DrgInfo = new DragInfo();
+                    DrgInfo.OriginalSource = e.OriginalSource;
+                    ((IDragDrop)sender).StartDrag(DrgInfo);
                     // We start drag only of control put data in the drag data
-                    if (dragInfo.Data != null)
+                    if (DrgInfo.Data != null)
                     {
                         StartDrag(e);
                     }
@@ -89,17 +89,17 @@ namespace GingerWPF.DragDropLib
 
         private static void StartDrag(MouseEventArgs e)
         {
-            if (dragInfo.Header == null) return;
+            if (DrgInfo.Header == null) return;
             IsDragging = true;
-            DataObject data = new DataObject("Header", dragInfo.Header);
+            DataObject data = new DataObject("Header", DrgInfo.Header);
             var v = e.OriginalSource; // The UI element that was clicked can be sub element in grid for example            
 
-            DDW.SetHeader(dragInfo.Header);
+            DDW.SetHeader(DrgInfo.Header);
             DDW.MoveToMousePosition();
             DDW.Show();
 
             //TODO decide effects
-            DragDropEffects de = DragDrop.DoDragDrop(dragInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
+            DragDropEffects de = DragDrop.DoDragDrop(DrgInfo.DragSource, data, DragDropEffects.Move | DragDropEffects.Copy);
 
             ResetDragDrop();
         }
@@ -112,7 +112,7 @@ namespace GingerWPF.DragDropLib
 
         private static void DragSource_Drop(object sender, DragEventArgs e)
         {
-            if (dragInfo.DragIcon == DragInfo.eDragIcon.Add || dragInfo.DragIcon == DragInfo.eDragIcon.Move || dragInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
+            if (DrgInfo.DragIcon == DragInfo.eDragIcon.Add || DrgInfo.DragIcon == DragInfo.eDragIcon.Move || DrgInfo.DragIcon == DragInfo.eDragIcon.MultiAdd)
             {
                 try
                 {
@@ -121,7 +121,7 @@ namespace GingerWPF.DragDropLib
                         _DroppedPoint = e.GetPosition(sender as UcListView);
                     }
 
-                    object droppedItem = dragInfo.Data;
+                    object droppedItem = DrgInfo.Data;
                     if (droppedItem is ObservableList<RepositoryItemBase>)
                     {
                         ObservableList<RepositoryItemBase> repoItemsList = droppedItem as ObservableList<RepositoryItemBase>;
@@ -131,21 +131,21 @@ namespace GingerWPF.DragDropLib
                             {
                                 DragInfo newDragInfo = new DragInfo()
                                 {
-                                    DragIcon = dragInfo.DragIcon,
-                                    DragSource = dragInfo.DragSource,
-                                    DragTarget = dragInfo.DragTarget,
-                                    Header = dragInfo.Header,
-                                    OriginalSource = dragInfo.OriginalSource,
+                                    DragIcon = DrgInfo.DragIcon,
+                                    DragSource = DrgInfo.DragSource,
+                                    DragTarget = DrgInfo.DragTarget,
+                                    Header = DrgInfo.Header,
+                                    OriginalSource = DrgInfo.OriginalSource,
                                     Data = listItem
                                 };
 
-                                ((IDragDrop)dragInfo.DragTarget).Drop(newDragInfo);
+                                ((IDragDrop)DrgInfo.DragTarget).Drop(newDragInfo);
                             }
                         }
                     }
                     else
                     {
-                        ((IDragDrop)dragInfo.DragTarget).Drop(dragInfo);
+                        ((IDragDrop)DrgInfo.DragTarget).Drop(DrgInfo);
                     }
 
                 }
@@ -189,9 +189,9 @@ namespace GingerWPF.DragDropLib
 
         private static void DragTarget_DragEnter(object sender, DragEventArgs e)
         {
-            dragInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;
-            ((IDragDrop)sender).DragEnter(dragInfo);
-            DDW.SetDragIcon(dragInfo.DragIcon);
+            DrgInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;
+            ((IDragDrop)sender).DragEnter(DrgInfo);
+            DDW.SetDragIcon(DrgInfo.DragIcon);
         }
 
 

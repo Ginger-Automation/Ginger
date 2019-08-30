@@ -225,14 +225,14 @@ namespace GingerWPF.BusinessFlowsLib
         // Drag Drop handlers
         private void listActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(Act), true)
-               || DragDrop2.dragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel), true)
-                   || DragDrop2.dragInfo.DataIsAssignableToType(typeof(ElementInfo), true)
-                       || DragDrop2.dragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>), true)
-                           || DragDrop2.dragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel), true))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(Act), true)
+               || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ApplicationPOMModel), true)
+                   || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ElementInfo), true)
+                       || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>), true)
+                           || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ApplicationAPIModel), true))
             {
                 // OK to drop
-                if (DragDrop2.dragInfo.Data is ObservableList<RepositoryItemBase>)
+                if (DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
                 {
                     DragDrop2.SetDragIcon(true, true);
                 }

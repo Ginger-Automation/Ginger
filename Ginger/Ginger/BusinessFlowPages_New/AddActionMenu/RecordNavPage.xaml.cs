@@ -71,7 +71,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (this.IsVisible && MainAddActionsNavigationPage.isPanelExpanded)
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
 
                 if (e != null && e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))

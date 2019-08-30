@@ -149,8 +149,8 @@ namespace Ginger.BusinessFlowFolder
 
         private void grdActivities_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(Activity))
-                 || DragDrop2.dragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(Activity))
+                 || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

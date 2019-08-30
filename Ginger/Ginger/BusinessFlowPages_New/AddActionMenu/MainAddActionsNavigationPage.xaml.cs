@@ -45,9 +45,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ///          No : Do Nothing
         ///          
         /// </summary>
-        bool contextUpdated = false;
+        bool mContextUpdated = false;
 
-        INavPanelPage navPanelPage = null;
+        INavPanelPage mNavPanelPage = null;
         RecordNavPage mRecordPage = null;
         SharedRepositoryNavPage mSharedRepositoryNavPage = null;
         POMNavPage mPOMNavPage = null;
@@ -63,7 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// Update them only when Panel is Expanded.
         /// Auto Update When they are visible and Panel is expanded as well.
         /// </summary>
-        public static bool isPanelExpanded = false;
+        public static bool IsPanelExpanded = false;
 
         public MainAddActionsNavigationPage(Context context)
         {           
@@ -88,9 +88,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (isPanelExpanded == false && contextUpdated == false)
+            if (IsPanelExpanded == false && mContextUpdated == false)
             {
-                contextUpdated = true;
+                mContextUpdated = true;
             }
 
             this.Dispatcher.Invoke(() =>
@@ -321,7 +321,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 xSelectedItemFrame.Content = navigationPage;
 
-                navPanelPage = navigationPage;
+                mNavPanelPage = navigationPage;
 
                 if (navigationPage != null || titleImage is eImageType.ApplicationModel)
                 {
@@ -351,10 +351,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         public void ReloadPagesOnExpand()
         {
-            if(navPanelPage != null && contextUpdated)
+            if(mNavPanelPage != null && mContextUpdated)
             {
-                navPanelPage.ReLoadPageItems();
-                contextUpdated = false;
+                mNavPanelPage.ReLoadPageItems();
+                mContextUpdated = false;
             }
         }
     }

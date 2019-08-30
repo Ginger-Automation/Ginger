@@ -149,7 +149,7 @@ namespace Ginger.Repository
 
         private void grdVariables_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.dragInfo.DataIsAssignableToType(typeof(VariableBase)))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(VariableBase)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

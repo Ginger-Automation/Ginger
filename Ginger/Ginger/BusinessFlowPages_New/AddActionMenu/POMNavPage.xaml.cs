@@ -110,7 +110,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (this.IsVisible && MainAddActionsNavigationPage.isPanelExpanded)
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
                 if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
                 {
