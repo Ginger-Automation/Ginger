@@ -462,11 +462,14 @@ namespace WorkspaceHold
 
 
             // Act            
-            var arguments = CommandLine.Parser.Default.FormatCommandLine(options);
+            var arguments = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 
             // Assert            
-            Assert.AreEqual("run --environment env1 --runset rs1 --analyze", arguments, "arguments");
-
+            Assert.IsTrue(arguments.StartsWith("run"), "arguments Starts With run");
+            Assert.IsTrue(arguments.Contains("--environment env1"), "arguments Contains --environment env1");
+            Assert.IsTrue(arguments.Contains("--runset rs1"), "arguments Contains --runset rs1");
+            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");
+            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");            
         }
 
 
