@@ -20,9 +20,11 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using CommandLine;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -40,26 +42,114 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));                          
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
-            string param;
-            string value = null;
-            //if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("DynamicXML="))  // special case to support backword compatibility of old style ConfigFile=%filename%
-            if (args[0].Contains("="))
+
+            // This is the new style using verb and CommandLine Nuget to parse
+            if (args[0] == "run" || args[0] == "grid")
             {
-                string[] arg1 = args[0].Split(new[]{ '='}, 2);
-                param = arg1[0].Trim();
-                value = arg1[1].Trim();                
+                ParseArgs(args);
             }
             else
-            {                
-                param = args[0].Trim();
-                if (args.Length > 1)
+            {
+                // Support old style
+                string param;
+                string value = null;                
+                if (args[0].Contains("="))
                 {
-                    value = args[1].Trim();
-                }                
+                    string[] arg1 = args[0].Split(new[] { '=' }, 2);
+                    param = arg1[0].Trim();
+                    value = arg1[1].Trim();
+                }
+                else
+                {
+                    param = args[0].Trim();
+                    if (args.Length > 1)
+                    {
+                        value = args[1].Trim();
+                    }
+                }
+                HandleArg(param, value);
             }
-            HandleArg(param, value);           
+
+        }
+
+        private void ParseArgs(string[] args)
+        {            
+            Parser.Default.ParseArguments<RunOptions, GridOptions>(args)
+                   .WithParsed<RunOptions>(runOptions =>
+                   {
+                       // mCLIHelper.CLIType = eCLIType.Arguments;                       
+                       mCLIHandler = new CLIArgs();
+                       ExecRunOptions(runOptions);
+                       // Console.WriteLine($"Solution: {runOptions.Solution}");
+                       // Console.WriteLine($"runset: {runOptions.Runset}");
+                       // opt = runOptions;
+                   }).WithParsed<GridOptions>(gridOptions =>
+                   {
+                       StartGrid(gridOptions);                                
+                   })
+                   .WithNotParsed(errs =>
+                   {
+                       HandleCLIParseError(errs);
+                   });
+        }
+
+        private void StartGrid(GridOptions gridOptions)
+        {
+            Console.WriteLine("Starting Ginger Grid at port: " + gridOptions.Port);
+            GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
+            gingerGrid.Start();
+        }
+
+        private void ExecRunOptions(RunOptions runOptions)
+        {
+            Console.WriteLine($"Solution: {runOptions.Solution}");
+            Console.WriteLine($"Runset: {runOptions.Runset}");
+
+            // Dup Code!!!!!!!!!!!!!!
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
+            // mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+
+            mCLIHelper.Solution = runOptions.Solution;
+            mCLIHelper.Runset = runOptions.Runset;
+            mCLIHelper.Env = runOptions.Environment;
+
+
+                if (!mCLIHelper.LoadSolution())
+                {
+                    return;//failed to load Solution;
+                }
+
+                if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+                {
+                    return;//failed to load Run set
+                }
+
+                if (!mCLIHelper.PrepareRunsetForExecution())
+                {
+                    return; //Failed to perform execution perpetrations
+                }
+
+                mCLIHelper.SetTestArtifactsFolder();
+            
+
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
+            Execute();
+
+            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+            mCLIHelper.CloseSolution();
+        }
+
+        private void HandleCLIParseError(IEnumerable<Error> errs)
+        {
+            //TODO: clean print errs !!!!!!!!!!!!!
+            foreach (Error error in errs)
+            {         
+                //if (error is typeof(BadVerbSelectedError))
+                //Console.WriteLine($"arg error: {error.Token} {error.Tag}");
+            }
+            Console.WriteLine("Please fix arguments and try again");
         }
 
         private void HandleArg(string param, string value)
@@ -95,29 +185,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
                     mCLIHandler = new CLIDynamicXML();
                     PerformLoadAndExecution(ReadFile(value));
-                    break;
+                    break;                                
                 case "--args":
                     mCLIHelper.CLIType = eCLIType.Arguments;
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
                     mCLIHandler = new CLIArgs();
                     PerformLoadAndExecution(value);
                     break;
-                case "--excel":
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
-                    mCLIHandler = new CLIExcel();
-                    PerformLoadAndExecution(value);
-                    break;                
-                case "--servicegrid":
-                    int port = 15555;
-                    Console.WriteLine("Starting Ginger Grid at port: " + port);
-                    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
-                    gingerGrid.Start();
 
-                    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+                    // Removing unpublished options 
+                //case "--excel":
+                //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
+                //    mCLIHandler = new CLIExcel();
+                //    PerformLoadAndExecution(value);
+                //    break;                
+                //case "--servicegrid":
+                //    int port = 15555;
+                //    Console.WriteLine("Starting Ginger Grid at port: " + port);
+                //    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
+                //    gingerGrid.Start();
 
-                    Console.ReadKey();
+                //    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+
+                //    Console.ReadKey();
+                //    break;                
+                default:
+                    Console.WriteLine("Error - Unknown Command Line Argument(s): " + param);
                     break;
-
             }
         }
 

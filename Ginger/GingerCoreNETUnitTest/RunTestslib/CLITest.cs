@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
+using CommandLine;
 using Ginger.Run;
 using GingerCore.Environments;
 using GingerTestHelper;
@@ -15,8 +16,7 @@ using System.Linq;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace WorkspaceHold
-{
-    [Ignore]
+{    
     [Level3]
     [TestClass]
     public class CLITest
@@ -333,7 +333,7 @@ namespace WorkspaceHold
             WorkSpace.Instance.RunsetExecutor.InitRunners();
         }
 
-        
+
 
 
         //[Ignore]
@@ -420,7 +420,55 @@ namespace WorkspaceHold
         //    // Assert.AreEqual("1")
         //    Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
 
-       
+
+        [TestMethod]
+        public void NewCLIArgsRegressionTest()
+        {            
+            //Arrange
+            PrepareForCLICreationAndExecution();
+            // Create args
+            List<string> args = new List<string>();
+
+            args.Add("run");
+
+            args.Add("--solution");
+            args.Add(mSolutionFolder);
+
+            args.Add("--environment");
+            args.Add("Default");
+
+            args.Add("--runset");
+            args.Add("Default Run Set");
+
+            args.Add("--analyze");
+
+            args.Add("--showAutoRunWindow");            
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(args.ToArray());
+
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+            
+        }
+
+
+        [TestMethod]
+        public void NewCreateCLIArgs()
+        {
+            //Arrange
+            RunOptions options = new RunOptions() { Environment = "env1", RunAnalyzer = true, Runset = "rs1" };
+
+
+            // Act            
+            var arguments = CommandLine.Parser.Default.FormatCommandLine(options);
+
+            // Assert            
+            Assert.AreEqual("run --environment env1 --runset rs1 --analyze", arguments, "arguments");
+
+        }
+
 
 
     }

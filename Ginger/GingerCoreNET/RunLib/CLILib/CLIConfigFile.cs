@@ -93,7 +93,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
+            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backward compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;

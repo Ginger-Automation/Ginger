@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eAppReporterLoggingLevel AppLoggingLevel;
         public eCLIType CLIType;
 
-        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
+        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
             get

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -88,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         
 
         public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {
+        {           
             //TODO: make -s --solution  work  but not -solution or -Solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             List<Arg> argsList = SplitArgs(args);
@@ -151,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
             }                
         }
-
+       
         public struct Arg
         {            
             public string ArgName;
