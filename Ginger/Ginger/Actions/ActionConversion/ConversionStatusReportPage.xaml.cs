@@ -91,8 +91,9 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView = new ObservableList<GridColView>();
 
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 20, ReadOnly = true, Header = "Folder" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 15, ReadOnly = true, Header = "Folder" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 20, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Actions Count" });
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.StatusIcon),
@@ -105,7 +106,7 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.SaveStatusIcon),
-                    WidthWeight = 15,
+                    WidthWeight = 10,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestSaveStatusIconTemplate"],
                     ReadOnly = true,
@@ -219,9 +220,16 @@ namespace Ginger.Actions.ActionConversion
                     {
                         if (bf.IsSelected)
                         {
-                            bf.SaveStatus = eConversionSaveStatus.Saving;
-                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                            bf.SaveStatus = eConversionSaveStatus.Saved;
+                            if (bf.ConvertedActionsCount > 0)
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.Saving;
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
+                                bf.SaveStatus = eConversionSaveStatus.Saved; 
+                            }
+                            else
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.NA;
+                            }
                         }
                     }
                     catch (Exception ex)
