@@ -201,6 +201,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         void ShowPlatformSpecificPage()
         {
+            //if widgets then no need to load platform specfic page
+            if (Convert.ToBoolean(mAction.GetInputParamValue(ActUIElement.Fields.WidgetsElement)) && mAction.Platform.Equals(ePlatformType.Java))
+            {
+                PlatformSpecificFrame.Content = null;
+                PlatformSpecificFrame.Visibility = System.Windows.Visibility.Collapsed;
+                return;
+            }
+
             Page platformEditPage = GetPlatformEditPage();
             if (platformEditPage == null)
             {
@@ -480,95 +488,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             };
         }
 
-        //public List<ElementConfigControl> GetRequiredConfigControls()
-        //{
-        //    List<ElementConfigControl> elementList = new List<ElementConfigControl>();
-
-        //    if (new ActUIElement.eElementAction[] {
-        //        ActUIElement.eElementAction.SetValue,
-        //        ActUIElement.eElementAction.MultiSetValue,
-        //        ActUIElement.eElementAction.SendKeys,
-        //        ActUIElement.eElementAction.SetDate,
-        //        ActUIElement.eElementAction.SendKeyPressRelease,
-        //        ActUIElement.eElementAction.SetText,
-        //        ActUIElement.eElementAction.SelectByText,
-        //        ActUIElement.eElementAction.GetAttrValue,
-        //        ActUIElement.eElementAction.RunJavaScript}.Contains(mAction.ElementAction))
-        //    {
-        //        if (mAction.ElementLocateBy == eLocateBy.POMElement && (mAction.ElementAction == ActUIElement.eElementAction.SetValue ||
-        //                                                                mAction.ElementAction == ActUIElement.eElementAction.SetText ||
-        //                                                                mAction.ElementAction == ActUIElement.eElementAction.SelectByText ||
-        //                                                                mAction.ElementAction == ActUIElement.eElementAction.SendKeys))
-        //        {
-        //            elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.Value, ePomElementValuesType.Values));
-        //        }
-        //        else
-        //        {
-        //            var possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.Value)) ? new List<string>() { "" } :
-        //                        new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.Value) };
-
-        //            elementList.Add(GetElementConfigControl("Value", Fields.Value, eElementType.TextBox, possibleValues));
-        //        }
-        //    }
-        //    else if (mAction.ElementAction == ActUIElement.eElementAction.Select)
-        //    {
-        //        if (mAction.ElementType != eElementType.RadioButton)
-        //        {
-        //            if (mAction.ElementLocateBy == eLocateBy.POMElement)
-        //            {
-        //                elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Values));
-        //            }
-        //            else
-        //            {
-        //                var possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-        //                                new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
-        //                elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
-        //            }
-        //        }
-        //    }
-        //    else if ((mAction.ElementAction == ActUIElement.eElementAction.SelectByIndex || mAction.ElementAction == ActUIElement.eElementAction.SetSelectedValueByIndex))
-        //    {
-        //        if (mAction.ElementType != eElementType.RadioButton)
-        //        {
-        //            if (mAction.ElementLocateBy == eLocateBy.POMElement)
-        //            {
-        //                elementList.Add(GetPomOptionalValuesComboBox(ActUIElement.Fields.ValueToSelect, ePomElementValuesType.Indexs));
-        //            }
-        //            else
-        //            {
-        //                var possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" } :
-        //                                       new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
-
-        //                elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
-
-        //            }
-        //        }
-        //    }
-        //    else if ((mAction.ElementAction == ActUIElement.eElementAction.Click))
-        //    {
-        //        if (mAction.ElementType == eElementType.MenuItem || mAction.ElementType.Equals(eElementType.TreeView))
-        //        {
-        //            var possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect)) ? new List<string>() { "" } :
-        //                                   new List<string>() { mAction.GetInputParamValue(ActUIElement.Fields.ValueToSelect) };
-
-        //            elementList.Add(GetElementConfigControl("Value", Fields.ValueToSelect, eElementType.TextBox, possibleValues));
-        //        }
-        //    }
-        //    else if ((mAction.ElementAction == ActUIElement.eElementAction.GetControlProperty))
-        //    {
-        //        //TODO: find a better way to bind list of enum with possible values.
-        //        List<ActUIElement.eElementProperty> propertyList = mPlatform.GetPlatformElementProperties();
-        //        List<string> propertyListString = new List<string>();
-        //        foreach (ActUIElement.eElementProperty property in propertyList)
-        //        {
-        //            propertyListString.Add(property.ToString());
-        //        }
-
-        //        elementList.Add(GetElementConfigControl("Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
-        //    }
-        //    return elementList;
-        //}
-
         private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue)
         {
             return new ElementConfigControl()
@@ -767,6 +686,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 mAction.AddOrUpdateInputParamValue(Fields.WidgetsElement, "false");
             }
+            ShowPlatformSpecificPage();
         }
     }
 }
