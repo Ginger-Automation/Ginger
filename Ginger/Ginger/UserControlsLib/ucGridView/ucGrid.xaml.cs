@@ -87,7 +87,7 @@ namespace Ginger
             }
         }
 
-        private bool ActiveStatus = false;
+        public bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
 
         public ObservableList<Guid> Tags = null;
