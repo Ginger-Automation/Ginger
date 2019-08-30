@@ -725,6 +725,7 @@
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SourceControl\SourceControlUI.cs" />
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -1269,7 +1270,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>
