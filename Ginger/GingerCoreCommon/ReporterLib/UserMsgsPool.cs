@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
-        PluginDownloadInProgress,
+        PluginDownloadInProgress, SaveRunsetChanges
     }
 
     public static class UserMsgsPool
@@ -372,7 +372,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderExistsWithName, new UserMsg(eUserMsgType.WARN, "Folder Creation Failed", "Folder with same name already exists. Please choose a different name for the folder.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateApplicationNameChangeInSolution, new UserMsg(eUserMsgType.WARN, "Target Application Name Change", "Do you want to automatically update the Target Application name in all Solution items?" + Environment.NewLine + Environment.NewLine + "Note: If you choose 'Yes', changes won't be saved, for saving them please click 'SaveAll'", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "There are unsaved changes in runset, Do you want to save it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion Solution Messages
 
             #region Activities
