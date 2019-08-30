@@ -86,7 +86,7 @@ namespace GingerCore
             Selenium,   // From Selenium Import
             Gherkin     // From Gherking Feature file
         }
-
+        
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }

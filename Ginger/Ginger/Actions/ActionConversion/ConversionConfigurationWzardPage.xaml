@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:controls="clr-namespace:Ginger.ApplicationModelsLib.POMModels"
       mc:Ignorable="d" 
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
       d:DesignHeight="450" d:DesignWidth="700"
@@ -18,9 +18,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" x:Name="xControlsViewRow" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" x:Name="xPOMControlsViewRow" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,42 +28,56 @@
             <ColumnDefinition Width="170" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
+        <Label x:Name="xLbl" Grid.Column="0" Grid.Row="0" Content="Add new Action to:" FontSize="12" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
+
+        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" >
+            <RadioButton x:Name="xRadSameActivity" Height="20" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="XRadioBtn_Checked" >
+                <RadioButton.Content>
+                    <GingerCore:ucTextDicResource Text="Same [Activity]"/>
+                </RadioButton.Content>
+            </RadioButton>
+            
+            <RadioButton x:Name="xNewActivityRadioBtn" Height="20"  Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" Checked="XRadioBtn_Checked"  >
+                <RadioButton.Content>
+                    <GingerCore:ucTextDicResource Text="New [Activity]"/>
+                </RadioButton.Content>
+            </RadioButton>
+           
+        </StackPanel>
+
+        <Expander x:Name="xTargetApplicationExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Margin="10,5,10,0"  ExpandDirection="Down" IsExpanded="True" 
+                  Style="{StaticResource $MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" 
+                  Collapsed="ControlsViewsExpander_Collapsed" Visibility="{Binding ElementName=xNewActivityRadioBtn, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
+            <Expander.Header>
+                <Label x:Name="xTargetApplicationExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Margin="0,-2,0,0" Foreground="{StaticResource $Color_DarkBlue}" Content="Override Target Application"/>
+            </Expander.Header>
+            <Expander.Content>
+                <Ginger:ucGrid x:Name="xTargetApplication" Height="190" ShowTagsFilter="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" VerticalAlignment="Top" 
+                            ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed">
+                </Ginger:ucGrid>
+            </Expander.Content>
+        </Expander>
         
-        <Label x:Name="xLbl" Grid.Column="0" Grid.Row="0" Content="Add new action to :" FontSize="12" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
-
-        <RadioButton x:Name="xNewActivityRadioBtn" Height="20"  Grid.Column="0" Grid.Row="1" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="{Binding Path=NewActivityChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
-            <RadioButton.Content>
-                <GingerCore:ucTextDicResource Text="New [Activity]"/>
-            </RadioButton.Content>
-        </RadioButton>
-
-        <Grid Grid.ColumnSpan="3" Grid.Row="2" Height="20" Visibility="{Binding ElementName=xNewActivityRadioBtn, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="320" />
-                <ColumnDefinition Width="170" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <CheckBox x:Name="xChkDefaultTargetApp" Height="20" Grid.Column="0" Grid.Row="0"  Margin="25,5,0,0" HorizontalAlignment="Left" IsChecked="{Binding Path=DefaultTargetAppChecked, Mode=TwoWay}">
-                <CheckBox.Content>
-                    <GingerCore:ucTextDicResource Text="Set default target application to modified [Activities]"/>
-                </CheckBox.Content>
-            </CheckBox>
-            <ComboBox x:Name="xCmbTargetApp" Height="20" Grid.Column="1" Grid.Row="0" Style="{StaticResource $FlatInputComboBoxStyle}" Visibility="{Binding ElementName=xChkDefaultTargetApp, Path=IsChecked, Converter={StaticResource visibilityConverter}}"  HorizontalAlignment="Left" Margin="5,0,0,0"  Width="165" SelectedValue="{Binding Path=SelectedTargetApp, Mode=TwoWay}" />
-            <Button x:Name="xBtnRefresh"  Height="20" Grid.Column="2" Grid.Row="0" Margin="3,0,0,0" Visibility="{Binding ElementName=xChkDefaultTargetApp, Path=IsChecked, Converter={StaticResource visibilityConverter}}"  HorizontalAlignment="Left" usercontrols:ImageMaker.Content="Refresh" ToolTip="Refresh" Click="btnRefresh_Click" Width="22" Style="{StaticResource @InputImageButtonStyle_NoBorder}" RenderTransformOrigin="4.873,0.514"></Button>
-        </Grid>
-
-        <RadioButton x:Name="xRadSameActivity" Height="20" Grid.Column="0" Grid.Row="3" Tag="radDifferentActivity" HorizontalAlignment="Left" Margin="10,5,0,0" IsChecked="{Binding Path=SameActivityChecked, Mode=TwoWay}" >
-            <RadioButton.Content>
-                <GingerCore:ucTextDicResource Text="Same [Activity]"/>
-            </RadioButton.Content>
-        </RadioButton>
-
-        <CheckBox x:Name="xChkPOM"  Grid.Column="0" Height="20" IsChecked="{Binding Path=ConvertToPOMAction, Mode=TwoWay}" Grid.Row="4" HorizontalAlignment="Left"  Margin="10,5,0,0" >
+        <CheckBox x:Name="xChkPOM"  Grid.Column="0" Height="20" IsChecked="{Binding Path=ConvertToPOMAction, Mode=TwoWay}" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,10,0,0" >
             <CheckBox.Content>
                 <GingerCore:ucTextDicResource Text="Converts the action to selected POM elements"/>
             </CheckBox.Content>
         </CheckBox>
 
-        <Frame x:Name="xLocateValueEditFrame" Grid.ColumnSpan="3" Grid.Row="5" Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" Margin="30,5,0,0" Width="750" HorizontalAlignment="Left" BorderBrush="Transparent" />
+        <Expander x:Name="xPOMSelectExpander" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4" Margin="10,3,10,0"  ExpandDirection="Down" IsExpanded="True"                   
+                  Style="{StaticResource $MenuExpanderTransparentStyle}" BorderBrush="Transparent" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed"
+                  Visibility="{Binding ElementName=xChkPOM, Path=IsChecked, Converter={StaticResource visibilityConverter}}" >
+            <Expander.Header>
+                <Label x:Name="xPOMSelectExpanderLable" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" Foreground="{StaticResource $Color_DarkBlue}" Content="POM"/>
+            </Expander.Header>
+            <Expander.Content>
+                <Frame x:Name="xPOMUserControl" Height="250">
+                    <Frame.Content>
+                        <controls:POMsSelectionPage x:Name="xPOMSelectionPage" ShowTitle="True" POMSelectionEvent="POMSelectedEventHandler" />
+                    </Frame.Content>
+                </Frame>
+            </Expander.Content>
+        </Expander>
     </Grid>
 </Page>

@@ -23,11 +23,13 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -58,6 +60,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         [UserConfiguredDefault("22")]
         [UserConfiguredDescription("Port")]
         public int Port { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Maximum time(in seconds) to wait for SSH Client connection")]
+        public int SSHConnectionTimeout { get; set; }
 
         public SshClient UnixClient;
         public SftpClient UnixFTPClient;
@@ -115,7 +122,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 if (string.IsNullOrEmpty(Host) || string.IsNullOrEmpty(Port.ToString()) || string.IsNullOrEmpty(UserName))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "One of Settings of Agent is Empty ");
-                    throw new Exception("One of Settings of Agent is Empty ");    
+                    throw new Exception("One of Settings of Agent is Empty ");
                 }
                 if (Password == null)
                     Password = "";
@@ -145,15 +152,30 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             )
                    );
                 }
-
+                connectionInfo.Timeout = new TimeSpan(0, 0, SSHConnectionTimeout);
                 UnixClient = new SshClient(connectionInfo);
 
-                UnixClient.Connect();
+               Task task = Task.Factory.StartNew(() =>
+                {
+                    UnixClient.Connect();
+
+                    if (UnixClient.IsConnected)
+                    {
+                        UnixClient.SendKeepAlive();
+                        ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                    }
+                });
+
+                Stopwatch st = Stopwatch.StartNew();
+
+                while (!task.IsCompleted && st.ElapsedMilliseconds < SSHConnectionTimeout * 1000)
+                {
+                    task.Wait(500);  // Give user feedback every 500ms
+                    GingerCore.General.DoEvents();
+                }
 
                 if (UnixClient.IsConnected)
                 {
-                    UnixClient.SendKeepAlive();
-                    ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
                     mConsoleDriverWindow.ConsoleWriteText("Connected!");
 
                     s = ss.ReadLine(new TimeSpan(0, 0, 2));
@@ -180,7 +202,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 return false;
             }
         }
-        
+
         public void SSHRunCommand(string command)
         {
             StringBuilder reply = new StringBuilder();
@@ -231,11 +253,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     if (!this.IsDriverRunning)
                         break;
 
-                    if (sreader.EndOfStream)
-                    {
-                        Thread.Sleep(1000);
-                        continue;
-                    }
                     reply.AppendLine(sreader.ReadToEnd());                    
                     Thread.Sleep(1000);
                     if (regExp.Matches(reply.ToString()).Count > 0)
@@ -248,6 +265,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         }
                         else
                             break;
+                    }
+
+                    if (sreader.EndOfStream)
+                    {
+                        Thread.Sleep(1000);
+                        continue;
                     }
                     if ((DateTime.Now - startingTime).TotalSeconds >= mWait)
                     {
