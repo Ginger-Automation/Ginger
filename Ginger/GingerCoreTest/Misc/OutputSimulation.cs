@@ -32,7 +32,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
 
-    [Ignore] //temp
+   // [Ignore] //temp
     [TestClass]
     [Level3]
     public class OutputSimulation
