@@ -58,7 +58,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             {
                 ImageFile = "@Folder2_16x16.png";
             }
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
