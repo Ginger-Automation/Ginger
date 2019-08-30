@@ -315,7 +315,6 @@ namespace Ginger.SourceControl
                 SourceControlBase mSourceControl;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    Reporter.ToConsole(eLogLevel.INFO, "Selecting Git");
 
                     mSourceControl = new GITSourceControl();
                 }
@@ -359,7 +358,7 @@ namespace Ginger.SourceControl
                 {
                     sol.ExistInLocaly = true;
                 }
-                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder +Path.DirectorySeparatorChar + @".git")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -368,7 +367,7 @@ namespace Ginger.SourceControl
                     sol.ExistInLocaly = false;
                 }
 
-                sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf(Path.PathSeparator) + 1);
+                sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 
                 if (sol == null)
                 {
