@@ -251,18 +251,18 @@ namespace Ginger.SourceControl
             while (SourceControlRootFolder != Path.GetPathRoot(SolutionFolder))
             {
                 //Path.get
-                if (Directory.Exists(SourceControlRootFolder + @"\" + ".git"))
+                if (Directory.Exists(SourceControlRootFolder + Path.PathSeparator + ".git"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + @"\" + ".git");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.PathSeparator + ".git");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
                         return SourceControlBase.eSourceControlType.GIT;
                     }
                 }
-                if (Directory.Exists(SourceControlRootFolder + @"\" + ".svn"))
+                if (Directory.Exists(SourceControlRootFolder + Path.PathSeparator + ".svn"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder+ @"\" + ".svn");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder+ Path.PathSeparator + ".svn");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
@@ -311,99 +311,110 @@ namespace Ginger.SourceControl
 
         public static void DownloadSolution(string SolutionFolder)
         {
-            SourceControlBase mSourceControl;
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
-            {
-                mSourceControl = new GITSourceControl();
-            }
-            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-            {
-                mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
-            }
-            else
-            {
-                mSourceControl =  RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
-            }
+            try {
+                SourceControlBase mSourceControl;
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+                {
+                    Reporter.ToConsole(eLogLevel.INFO, "Selecting Git");
 
-            if (mSourceControl != null)
-            {
-                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
-                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
-                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
-                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
-                mSourceControl.SolutionFolder = SolutionFolder;
+                    mSourceControl = new GITSourceControl();
+                }
+                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                {
+                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                }
+                else
+                {
+                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                }
 
-                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
-                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
-                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
-                mSourceControl.supressMessage = true;
-            }
+                if (mSourceControl != null)
+                {
+                    WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                    mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                    mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                    mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                    mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                    mSourceControl.SolutionFolder = SolutionFolder;
 
-            if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
-            {
-                Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
-            }
-            if (SolutionFolder.EndsWith("\\"))
-            {
-                SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
-            }
+                    mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                    mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                    mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                    mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                    mSourceControl.supressMessage = true;
+                }
 
-            SolutionInfo sol = new SolutionInfo();
-            sol.LocalFolder = SolutionFolder;
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
-            {
-                sol.ExistInLocaly = true;
-            }
-            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
-            {
-                sol.ExistInLocaly = true;
-            }
-            else
-            {
-                sol.ExistInLocaly = false;
-            }
+                if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
+                {
+                    Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
+                }
+                if (SolutionFolder.EndsWith("\\"))
+                {
+                    SolutionFolder = SolutionFolder.Substring(0, SolutionFolder.Length - 1);
+                }
 
-            sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf("\\") + 1);
+                SolutionInfo sol = new SolutionInfo();
+                sol.LocalFolder = SolutionFolder;
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+                {
+                    sol.ExistInLocaly = true;
+                }
+                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + @"\.git")))
+                {
+                    sol.ExistInLocaly = true;
+                }
+                else
+                {
+                    sol.ExistInLocaly = false;
+                }
 
-            if (sol == null)
-            {
-                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
-                return;
-            }
+                sol.SourceControlLocation = SolutionFolder.Substring(SolutionFolder.LastIndexOf(Path.PathSeparator) + 1);
 
-            string ProjectURI = string.Empty;
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
-            {
-                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
-            }
-            else
-            {
-                ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
-            }
-            bool getProjectResult = true;
-            getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
-            if (getProjectResult != true)
-            {
-                return;
-            }
+                if (sol == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
+                    return;
+                }
 
-            if (sol.ExistInLocaly == true)
-            {
-                mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+                string ProjectURI = string.Empty;
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                {
+                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
+                    sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                }
+                else
+                {
+                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                }
+                bool getProjectResult = true;
+                getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
+                if (getProjectResult != true)
+                {
+                    return;
+                }
+
+                if (sol.ExistInLocaly == true)
+                {
+                    mSourceControl.RepositoryRootFolder = sol.LocalFolder;
 
 
-                RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
-         
+                    RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+
+                }
+                else
+                {
+                    getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+                }
             }
-            else
+            catch (Exception e)
             {
-                getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
-            }
-        }
+                Reporter.ToConsole(eLogLevel.INFO, "Error Downloading solution ");
+                Reporter.ToConsole(eLogLevel.INFO, e.Message);
+                Reporter.ToConsole(eLogLevel.INFO, e.Source);
+   
 
+            }
+            }
 
     }
 }
