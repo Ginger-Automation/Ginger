@@ -137,8 +137,8 @@ namespace Ginger.Run
                     if (xActivitiesRunnerItemsListView.SelectedItem == null)
                     {
                         xActivitiesRunnerItemsListView.SelectedIndex = 0;
-                    }
-
+                    }    
+                    
                     return (RunnerItemPage)xActivitiesRunnerItemsListView.SelectedItem;
                 }
                 else
@@ -147,7 +147,7 @@ namespace Ginger.Run
                 }
             }
         }
-
+        
         Activity mCurrentActivityRunnerItemObject
         {
             get
@@ -503,6 +503,7 @@ namespace Ginger.Run
                             break;                      
                     }
                     break;
+                
             }
         }
         
@@ -1831,6 +1832,15 @@ namespace Ginger.Run
                 view.ScrollIntoView(view.SelectedItem);
             });
 
+            if (e.RemovedItems != null && e.RemovedItems.Count!=0)
+            {
+                foreach (RunnerItemPage item in ((RunnerItemPage)e.RemovedItems[0]).ItemChilds)
+                {
+                    item.ClearBindings();
+                }
+                GC.Collect();
+            }
+            
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
                 currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
