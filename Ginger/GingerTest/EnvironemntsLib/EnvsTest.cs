@@ -26,7 +26,7 @@ using System.Threading;
 
 namespace GingerTest
 {
-    [Ignore]  // temp
+    
     [TestClass]
     [Level3]
     
@@ -65,8 +65,7 @@ namespace GingerTest
         [TestInitialize]
         public void TestInitialize()
         {
-            mutex.WaitOne();
-            
+            mutex.WaitOne();            
         }
 
         [TestCleanup]
@@ -132,7 +131,7 @@ namespace GingerTest
         }
 
 
-        [Ignore]
+
         [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFromFileSystem()
         {
@@ -177,7 +176,7 @@ namespace GingerTest
             Assert.IsTrue(b);
         }
 
-        [Ignore]
+       
         [Level3]
         [TestMethod]  [Timeout(60000)]
         public void AddEnvFolderShowinTree()
@@ -197,7 +196,7 @@ namespace GingerTest
         }
 
 
-        [Ignore]
+
         [Level3]
         [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFolderRemovedfromTree()
@@ -220,7 +219,7 @@ namespace GingerTest
             Assert.IsFalse(existAfterDelete);
         }
 
-        [Ignore] //TODO: FIXME
+        [Ignore] //TODO: FIXME 2nd assert fail
         [TestMethod]  [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {

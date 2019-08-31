@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -31,8 +29,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
-
-   // [Ignore] //temp
     [TestClass]
     [Level3]
     public class OutputSimulation
