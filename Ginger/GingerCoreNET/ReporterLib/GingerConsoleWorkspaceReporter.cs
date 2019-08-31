@@ -37,8 +37,14 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
                 // Y, N, C
             // }
             Console.WriteLine(txt);
-
-            Console.ReadKey();
+            if (Console.IsInputRedirected)
+            {
+                Console.Read();
+            }
+            else
+            {
+                Console.ReadKey();
+            }
             return defualtResualt; // TEMP !!!!!!!!!            
         }
 
