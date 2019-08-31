@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
@@ -33,7 +34,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for RepositoryPage.xaml
     /// </summary>
-    public partial class SharedRepositoryNavPage : Page
+    public partial class SharedRepositoryNavPage : Page, INavPanelPage
     {
         public ActivitiesGroupsRepositoryPage ActivitiesGroupsRepoPage;
         public ActivitiesRepositoryPage ActivitiesRepoPage;
@@ -126,6 +127,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xTabRepository.SelectedItem = null;
                 xTabRepository.SelectedItem = selected;
             }
+        }
+
+        public void ReLoadPageItems()
+        {
+            //throw new NotImplementedException();
         }
     }
 }

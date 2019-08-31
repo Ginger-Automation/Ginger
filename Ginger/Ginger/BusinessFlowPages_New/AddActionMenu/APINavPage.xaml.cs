@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.Help;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -43,7 +44,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for APINavPage.xaml
     /// </summary>
-    public partial class APINavPage : Page
+    public partial class APINavPage : Page, INavPanelPage
     {
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
@@ -70,9 +71,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                UpdateAPITree();
+                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                {
+                    UpdateAPITree();
+                }
             }
         }
 
@@ -91,6 +95,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             mAPIPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
             mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+        }
+
+        public void ReLoadPageItems()
+        {
+            UpdateAPITree();
         }
     }
 }
