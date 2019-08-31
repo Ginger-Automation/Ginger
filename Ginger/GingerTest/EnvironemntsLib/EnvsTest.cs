@@ -146,15 +146,15 @@ namespace GingerTest
             File.Delete(fileName);
 
             // Verify it is not in treeview - FileWatcher should detect the delete on disk
-            bool b = EnvsPOM.EnvironmentsTree.IsItemExist(envName);
+            bool envNotExist = EnvsPOM.EnvironmentsTree.IsItemNotExist(envName);
 
             //Assert
-            Assert.AreEqual(false, b);
+            Assert.AreEqual(true, envNotExist);
 
 
         }
 
-        [Ignore] // TODO: FIXME not shwoing in tree b is false
+        [Ignore] // TODO: FIXME not showing in tree b is false
         [TestMethod]  [Timeout(60000)]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
@@ -212,11 +212,11 @@ namespace GingerTest
             bool existBeforeDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
             Directory.Delete(subFolder);
             Thread.Sleep(2000);
-            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
+            bool notExistAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
 
             // assert            
             Assert.IsTrue(existBeforeDelete);
-            Assert.IsFalse(existAfterDelete);
+            Assert.IsTrue(notExistAfterDelete);
         }
 
         [Ignore] //TODO: FIXME 2nd assert fail
