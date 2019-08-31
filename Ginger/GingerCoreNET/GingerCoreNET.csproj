@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="Reports\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <None Remove="Reports\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
     <None Remove="Reports\Ginger-Web-Client\assets\images\SVG\action-big.svg" />
@@ -111,6 +112,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="DLLS\LibGit2Sharp.dll" />
     <Content Include="Reports\Ginger-Web-Client\assets\demo\css\codehighlight.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -319,6 +321,8 @@
   <ItemGroup>
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
+  
+    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
 	<PackageReference Include="LiteDB" Version="4.1.4" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
@@ -347,6 +351,9 @@
   <ItemGroup>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
+    </Reference>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
 

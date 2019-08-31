@@ -45,7 +45,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         StackPanel ITreeViewItem.Header()
         {          
             // create binded SP            
-            return TreeViewUtils.CreateItemHeader(HTMLReportTemplate.Name, "@HTMLReport_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));          
+            return TreeViewUtils.CreateItemHeader(HTMLReportTemplate.Name, "@HTMLReport_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));          
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

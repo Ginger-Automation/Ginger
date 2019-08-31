@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
@@ -251,14 +252,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (SourceControlURL.IndexOf(".git") != -1)
                 {
                     // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
+                    SourceControlIntegration.DownloadSolution(Solution);
                 }
                 else
                 {
                     // App.DownloadSolution(value);
                     //RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
 
-                    RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(Solution);
+                    SourceControlIntegration.DownloadSolution(Solution);
                 }
             }
         }
