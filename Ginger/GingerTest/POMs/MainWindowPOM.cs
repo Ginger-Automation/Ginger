@@ -23,10 +23,12 @@ using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -377,6 +379,24 @@ namespace GingerWPFUnitTest.POMs
 
             return GlobalVariables;
 
+        }
+
+
+        internal void TakeScreenShot(string fileName)
+        {
+            Execute(() =>
+            {
+                int width = 1200;
+                int height = 800;
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                renderTargetBitmap.Render(mMainWindow);
+                PngBitmapEncoder pngImage = new PngBitmapEncoder();
+                pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                using (Stream fileStream = File.Create(fileName))
+                {
+                    pngImage.Save(fileStream);
+                }
+            });
         }
 
     }
