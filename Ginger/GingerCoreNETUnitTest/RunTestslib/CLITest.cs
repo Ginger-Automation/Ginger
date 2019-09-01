@@ -468,8 +468,7 @@ namespace WorkspaceHold
             Assert.IsTrue(arguments.StartsWith("run"), "arguments Starts With run");
             Assert.IsTrue(arguments.Contains("--environment env1"), "arguments Contains --environment env1");
             Assert.IsTrue(arguments.Contains("--runset rs1"), "arguments Contains --runset rs1");
-            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");
-            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");            
+            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");                   
         }
 
 
