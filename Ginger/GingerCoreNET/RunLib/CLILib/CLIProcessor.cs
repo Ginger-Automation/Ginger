@@ -45,6 +45,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
 
+
+            // TODO: auto convert old args if detected to new args then run unified processing
+
+
             // This is the new style using verb and CommandLine Nuget to parse
             if (args[0] == "run" || args[0] == "grid")
             {
@@ -55,6 +59,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 // Support old style
                 string param;
                 string value = null;                
+
+                // TODO: remove after auto convert to new is done
                 if (args[0].Contains("="))
                 {
                     string[] arg1 = args[0].Split(new[] { '=' }, 2);
@@ -97,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private void StartGrid(GridOptions gridOptions)
         {
-            Console.WriteLine("Starting Ginger Grid at port: " + gridOptions.Port);
+            Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
         }
@@ -234,7 +240,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
                 if (!mCLIHelper.PrepareRunsetForExecution())
                 {
-                    return; //Failed to perform execution perperations
+                    return; //Failed to perform execution preparations
                 }
 
                 mCLIHelper.SetTestArtifactsFolder();                
@@ -276,6 +282,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
+
+        // TODO: remove after moving to new CLI - use the auto help
         private void ShowCLIHelp()
         {
             // TODO:
