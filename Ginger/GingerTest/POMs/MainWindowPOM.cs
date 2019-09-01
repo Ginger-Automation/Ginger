@@ -381,7 +381,7 @@ namespace GingerWPFUnitTest.POMs
 
         }
 
-
+        // TODO: move to generic UI utils
         internal void TakeScreenShot(string fileName)
         {
             Execute(() =>
