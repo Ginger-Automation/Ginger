@@ -116,6 +116,7 @@ namespace Ginger.Run
                 for (int i = 0; i < mBusinessflowRunnerItems.Count; i++)
                 {
                     RunnerItemPage page = (RunnerItemPage)mBusinessflowRunnerItems[i];
+                    page.ClearBindings();
                     page= null;//to make sure memory gets free
                 }
                 mBusinessflowRunnerItems.Clear();
