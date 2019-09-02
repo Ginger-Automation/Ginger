@@ -1009,7 +1009,7 @@ namespace Ginger.Run
             });
 
             RunnerPage firstRunnerPage = null;
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
             {
                 if (runAsync)
                 {
@@ -1385,6 +1385,17 @@ namespace Ginger.Run
         {           
             try
             {
+                //if (mRunSetConfig.DirtyStatus == eDirtyStatus.Modified)
+                //{
+                //    if (Reporter.ToUser(eUserMsgKey.SaveRunsetChanges) == eUserMsgSelection.Yes)
+                //    {                        
+                //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
+                //    }
+                //    else
+                //    {
+                //        return;
+                //    }                    
+                //}                
                 UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
@@ -1396,6 +1407,7 @@ namespace Ginger.Run
                     if (analyzeRes == 1) return;//cancel run because issues found
                 }
 
+                WorkSpace.Instance.AppSolutionAutoSave.StopSolutionAutoSave();
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
@@ -1410,8 +1422,13 @@ namespace Ginger.Run
                     });
                 }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed: ", ex);
+            }
             finally
-            {                
+            {
+                WorkSpace.Instance.AppSolutionAutoSave.ResumeSolutionAutoSave();                
                 UpdateRunButtonIcon();
             }            
         }
@@ -1736,7 +1753,7 @@ namespace Ginger.Run
             ALMDefectsBorder.BorderBrush = null;
         }
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
-        {                        
+        {            
             SaveRunSetConfig();           
         }
         

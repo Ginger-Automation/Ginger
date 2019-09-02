@@ -24,6 +24,7 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.SourceControl;
 
 namespace Amdocs.Ginger.Common
 {
@@ -69,8 +70,13 @@ namespace Amdocs.Ginger.Common
 
         void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
         bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);
-        void DownloadSolution(string v);
+
+
+
+        bool GetLatest(string path, SourceControlBase SourceControl);
 
         void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
+
+        SourceControlBase GetNewSVnRepo();
     }
 }

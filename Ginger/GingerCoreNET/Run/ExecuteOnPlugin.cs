@@ -200,24 +200,11 @@ namespace Amdocs.Ginger.CoreNET.Run
             
             ParseActionResult(RC, (Act)actPlugin);
 
-            ActWebAPIBase WebAPiAction = null;
-            if (actPlugin is ActWebAPIBase ActWebApi)
-            {
-                WebAPiAction = ActWebApi;
-            }
-            else if (actPlugin is ActWebAPIModel ActWebApiModel)
-            {
-                WebAPiAction = ActWebApiModel.WebApiAction;
-            }
-            if (WebAPiAction != null)
-            {
 
-                string ResponseMessage = string.Empty;
-
-                ResponseMessage = WebAPiAction.ReturnValues.Where(x => x.Param == "Response").FirstOrDefault().Actual;
-                ActWebAPIBase.ParseNodesToReturnParams(WebAPiAction, ResponseMessage);
+            if (actPlugin is IActPluginPostRun ActPluginPostRun)
+            {
+                ActPluginPostRun.ParseOutput();
             }
-
 
             
 

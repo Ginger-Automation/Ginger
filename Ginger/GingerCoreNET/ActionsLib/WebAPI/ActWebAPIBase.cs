@@ -36,7 +36,7 @@ using System.IO;
 
 namespace GingerCore.Actions.WebServices
 {
-    public class ActWebAPIBase : Act
+    public class ActWebAPIBase : Act, IActPluginPostRun
     {
         public override string ActionDescription { get { return "WebAPI Action"; } }
         public override string ActionUserDescription { get { return "Performs REST/SOAP actions"; } }
@@ -350,7 +350,7 @@ namespace GingerCore.Actions.WebServices
 
                     string FileContent = string.Empty;
                     string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
-           
+
                     string TemplateFileNameFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName);
 
                     FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
@@ -365,19 +365,27 @@ namespace GingerCore.Actions.WebServices
 
                 }
                 if (string.IsNullOrEmpty(RequestBody))
-                { 
-                    
+                {
+
                     return null;
                 }
             }
 
-                foreach (ActInputValue AIV in DynamicElements)
-                {
-                    string NewValue = AIV.ValueForDriver;
-                    RequestBody = RequestBody.Replace(AIV.Param, NewValue);
-                }
-                return RequestBody;
+            foreach (ActInputValue AIV in DynamicElements)
+            {
+                string NewValue = AIV.ValueForDriver;
+                RequestBody = RequestBody.Replace(AIV.Param, NewValue);
             }
-
+            return RequestBody;
         }
+
+        public void ParseOutput()
+        {
+
+            string ResponseMessage = ReturnValues.Where(x => x.Param == "Response").FirstOrDefault().Actual;
+            ParseNodesToReturnParams(this, ResponseMessage);
+        }
+
+
     }
+}

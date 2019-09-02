@@ -32,6 +32,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace UnitTests.NonUITests
 {
@@ -42,6 +43,7 @@ namespace UnitTests.NonUITests
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
+        string Separator = Path.DirectorySeparatorChar.ToString();
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -309,7 +311,90 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
             Assert.IsTrue(actAgentManipulation.ExInfo.Contains("Agent is not running"));
         }
-        
 
+        [TestMethod]
+        public void XMLRequestFromFileCheckedTestForPath()
+        {
+            //Arrange
+            ActXMLTagValidation action = new ActXMLTagValidation();
+            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
+            action.ReqisFromFile = true;
+            action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
+            ActInputValue AIV = new ActInputValue();
+            AIV.FilePath = "/catalog/book[2]";
+            AIV.Value = "publisher";
+            AIV.Param= "/catalog/book[2]";
+            action.DynamicElements.Add(AIV);
+            action.Active = true;
+            action.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual("amdocs", action.ReturnValues[1].Actual);
+        }
+
+        [TestMethod]
+        public void XMLRequestFromFileCheckedTestForContent()
+        {
+            //Arrange
+            ActXMLTagValidation action = new ActXMLTagValidation();
+            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
+            action.ReqisFromFile = false;
+            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
+            action.InputFile.Value = xmlFileContent;
+            action.Active = true;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+        }
+
+        [TestMethod]
+        public void XMLRequestFromFileUnCheckedTestForPath()
+        {
+            //Arrange
+            ActXMLTagValidation action = new ActXMLTagValidation();
+            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
+            action.ReqisFromFile = false;
+            action.InputFile.Value = TestResources.GetTestResourcesFile($"XML{Separator}book.xml");
+            ActInputValue AIV = new ActInputValue();
+            AIV.FilePath = "/catalog/book[2]";
+            AIV.Value = "publisher";
+            AIV.Param = "/catalog/book[2]";
+            action.DynamicElements.Add(AIV);
+            action.Active = true;
+            action.AddNewReturnParams = true;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, action.Status, "Action Status");
+            Assert.AreEqual("Please provide a valid file content", action.Error);
+        }
+
+        [TestMethod]
+        public void XMLRequestFromFileUnCheckedTestForContent()
+        {
+            //Arrange
+            ActXMLTagValidation action = new ActXMLTagValidation();
+            action.DocumentType = GingerCore.Actions.XML.ActXMLTagValidation.eDocumentType.XML;
+            action.ReqisFromFile = true;
+            string xmlFileContent = File.ReadAllText(TestResources.GetTestResourcesFile($"XML{Separator}book.xml"));
+            action.InputFile.Value = xmlFileContent;
+            action.Active = true;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, action.Status, "Action Status");
+            Assert.AreEqual("Please provide a valid file path", action.Error);
+        }
     }
 }
