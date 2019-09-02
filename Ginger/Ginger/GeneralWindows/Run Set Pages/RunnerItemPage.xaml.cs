@@ -106,7 +106,7 @@ namespace Ginger.Run
         public Guid ItemGuid { get; set; }
 
         ObservableList<RunnerItemPage> mItemChilds = null;
-        public ObservableList<RunnerItemPage> ItemChilds
+        public ObservableList<RunnerItemPage> ChildItemPages
         {
             get
             {
@@ -144,6 +144,7 @@ namespace Ginger.Run
                 for (int i = 0; i < mItemChilds.Count; i++)
                 {
                     RunnerItemPage page = (RunnerItemPage)mItemChilds[i];
+                    page.ClearBindings();
                     page = null;
                 }
                 //to make sure memory gets free
@@ -452,33 +453,14 @@ namespace Ginger.Run
             this.xBusinessflowActive.Click -= xBusinessflowActive_Click;
 
 
-            //this.xDetailView_Click -= xDetailView_Click;
-           // this.MouseDoubleClick -= UserControl_MouseDoubleClick;
-            //this.xRunnerItemContinue.Click -= xRunnerItemContinue_Click;
             this.DuplicateClick -= xDuplicateBusinessflow_Click;
             this.ClickAutomate -= xautomateBusinessflow_Click;
-            this.ClickGenerateReport -= xGenerateReport_Click;
-            //this.xExportToAlm.Click -= xExportToAlm_Click;
+            this.ClickGenerateReport -= xGenerateReport_Click;          
             this.ResetBusinessFlowStatus -= xResetStatus_Buss_Flow_Actions_Click;
-           // this.xViewRunnerItem.Click -= xViewRunnerItem_Click;
             this.Click -= xconfig_Click;
             this.RemoveClick -= xremoveBusinessflow_Click;
             this.ClickActive -= xBusinessflowActive_Click;
 
-
-            //this.RemoveClick -= xremoveBusinessflow_Click;
-            //this.ClickActive -= xBusinessflowActive_Click;
-            //this.ClickRemove -= xremove_Click;
-            //this.Click -= xconfig_Click;
-            //this.ClickAutomate -= xautomateBusinessflow_Click;
-            //this.DuplicateClick -= xDuplicateBusinessflow_Click;
-            //this.ClickGenerateReport -= xGenerateReport_Click;
-            //this.ResetBusinessFlowStatus -= xResetStatus_Buss_Flow_Actions_Click;
-
-
-            //xStatusIcon
-
-            //xStatusIcon.GetBindingExpression(ImageMakerControl.ImageTypeProperty);
 
             BindingOperations.ClearAllBindings(NormalBorder);
             BindingOperations.ClearAllBindings(xDetailView);
@@ -525,8 +507,8 @@ namespace Ginger.Run
                 ContinueRunRequired,
                 SetAsSelectedRequired,
                 ViewRunnerItemRequired,
-                ViewConfiguration,
-                //ClearBindings,
+                ViewConfiguration
+              
             }
 
             public eEventType EventType;
