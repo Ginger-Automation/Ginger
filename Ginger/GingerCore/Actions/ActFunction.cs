@@ -79,6 +79,8 @@ namespace GingerCore.Actions
             return s;
         }
 
+        public override bool IsSelectableAction { get { return false; } }
+
         internal object[] FuncParamsAsObjectsArray()
         {
 

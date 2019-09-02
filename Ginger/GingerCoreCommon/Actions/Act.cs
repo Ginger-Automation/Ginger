@@ -1774,5 +1774,9 @@ namespace GingerCore.Actions
         /// should be object from type 'Context' which should include in context objects
         /// </summary>
         public object Context { get; set; }
+
+
+
+
     }
 }

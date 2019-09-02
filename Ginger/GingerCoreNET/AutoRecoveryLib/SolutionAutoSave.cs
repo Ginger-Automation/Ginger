@@ -75,11 +75,14 @@ namespace Ginger.Functionalties
             AutoSaveTimer.Start();
         }
 
-        public void SolutionAutoSaveStop()
+        public void StopSolutionAutoSave()
         {
             AutoSaveTimer.Stop();            
         }
-
+        public void ResumeSolutionAutoSave()
+        {
+            AutoSaveTimer.Start();
+        }
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {

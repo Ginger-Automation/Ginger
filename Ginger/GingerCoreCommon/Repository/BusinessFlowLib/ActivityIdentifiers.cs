@@ -42,6 +42,8 @@ namespace GingerCore.Activities
         
         public bool ExistInRepository { get; set; }
 
+        public bool AddDynamicly { get; set; }
+
         private Activity mIdentifiedActivity;
         public Activity IdentifiedActivity
         {

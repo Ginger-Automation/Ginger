@@ -1126,8 +1126,9 @@ namespace Ginger
         }
 
         private void btnActionConversion_Click(object sender, RoutedEventArgs e)
-        {            
-            WizardWindow.ShowWizard(new ActionsConversionWizard(mContext), 900, 700);         
+        {
+            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>() { mBusinessFlow };
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700);         
         }
 
         private void btnResetFlow_Click(object sender, RoutedEventArgs e)
