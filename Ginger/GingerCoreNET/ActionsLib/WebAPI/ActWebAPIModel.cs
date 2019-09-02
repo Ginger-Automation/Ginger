@@ -31,7 +31,7 @@ using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.WebServices.WebAPI
 {
-    public class ActWebAPIModel : Act, IActPluginExecution
+    public class ActWebAPIModel : Act, IActPluginExecution,IActPluginPostRun
     {
         public override String ActionType
         {
@@ -257,6 +257,9 @@ namespace GingerCore.Actions.WebServices.WebAPI
                 p.ExecutionValue = ((GlobalAppModelParameter)p).CurrentValue;
         }
 
-      
+        public void ParseOutput()
+        {
+            WebApiAction.ParseOutput();
+        }
     }
 }
