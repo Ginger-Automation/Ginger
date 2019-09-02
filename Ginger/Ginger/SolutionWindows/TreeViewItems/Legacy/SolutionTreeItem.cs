@@ -67,7 +67,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
              // Source Control Image
              Image SCimage = new Image();
-             SCimage.Source = Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus);
+             SCimage.Source = Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus);
 
             // Labels
             Label lbl1 = new Label();

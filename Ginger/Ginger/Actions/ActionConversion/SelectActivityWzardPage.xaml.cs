@@ -16,19 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Windows.Controls;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -76,6 +71,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+            xGrdGroups.ActiveStatus = true;
         }
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)

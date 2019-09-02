@@ -46,7 +46,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         StackPanel ITreeViewItem.Header()
         {
             string ImageFile = "@Folder2_16x16.png";  //TODO: find icon for Applications
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
