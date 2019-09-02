@@ -169,6 +169,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (businessFlowToConvert.ConvertedActionsCount == 0)
                 {
                     businessFlowToConvert.ConversionStatus = eConversionStatus.NA;
+                    businessFlowToConvert.SaveStatus = eConversionSaveStatus.NA;
                 }
             }
             catch (Exception ex)

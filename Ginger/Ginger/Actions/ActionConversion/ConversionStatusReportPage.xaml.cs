@@ -218,7 +218,7 @@ namespace Ginger.Actions.ActionConversion
                 {
                     try
                     {
-                        if (bf.IsSelected)
+                        if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
                         {
                             if (bf.ConvertedActionsCount > 0)
                             {
