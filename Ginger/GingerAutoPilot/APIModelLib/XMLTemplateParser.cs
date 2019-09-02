@@ -41,8 +41,32 @@ namespace Amdocs.Ginger.Repository
                 XDE.RemoveDuplicatesNodes();
 
             IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
-            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
+            ObservableList<AppModelParameter> AMPList = GetParamList(NodeList);
 
+            AAM.RequestBody = XDE.XMLString;
+            AAM.AppModelParameters = AMPList;
+            AAMSList.Add(AAM);
+            AllPlaceHolders.Clear();
+            return AAMSList;
+        }
+
+        public ObservableList<AppModelParameter> GetAppParameterFromXML(string xml, bool avoidDuplicatesNodes = false)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            XMLDocExtended XDE = new XMLDocExtended(doc);
+
+            if (avoidDuplicatesNodes)
+                XDE.RemoveDuplicatesNodes();
+
+            IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
+            ObservableList<AppModelParameter> AMPList = GetParamList(NodeList);
+            return AMPList;
+        }
+
+        private ObservableList<AppModelParameter> GetParamList(IEnumerable<XMLDocExtended> NodeList)
+        {
+            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
             foreach (XMLDocExtended XDN in NodeList)
             {
 
@@ -51,6 +75,7 @@ namespace Amdocs.Ginger.Repository
                 AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
 
                 if (XDN.Attributes != null && XDN.Attributes.Count > 0)
+                {
                     foreach (XmlAttribute XmlAttribute in XDN.Attributes)
                     {
                         if (!string.IsNullOrEmpty(XmlAttribute.Prefix))
@@ -62,13 +87,9 @@ namespace Amdocs.Ginger.Repository
                         XmlAttribute.Value = UniqAttributePlaceHolder;
                         AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
                     }
+                }
             }
-
-            AAM.RequestBody = XDE.XMLString;
-            AAM.AppModelParameters = AMPList;
-            AAMSList.Add(AAM);
-            AllPlaceHolders.Clear();
-            return AAMSList;
+            return AMPList;
         }
 
         public static ObservableList<ActReturnValue> ParseXMLResponseSampleIntoReturnValues(string fileContent)
