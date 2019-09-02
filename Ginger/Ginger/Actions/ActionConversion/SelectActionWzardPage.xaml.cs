@@ -155,7 +155,7 @@ namespace Ginger.Actions.ActionConversion
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.ActionCount), WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Header = "Actions Count" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.ActionCount), WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Header = "Instances Count" });
             }
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();

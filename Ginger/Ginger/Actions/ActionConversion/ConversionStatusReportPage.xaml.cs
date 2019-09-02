@@ -93,7 +93,7 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 15, ReadOnly = true, Header = "Folder" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 20, ReadOnly = true, Header = "Name" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Actions Count" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Converted Actions" });
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.StatusIcon),

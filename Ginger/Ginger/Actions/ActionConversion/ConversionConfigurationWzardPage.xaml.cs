@@ -85,9 +85,8 @@ namespace Ginger.Actions.ActionConversion
             DataContext = mWizard;
             xRadSameActivity.IsChecked = true;
             SetTargetApplicationGridView();
-
-            bool isPresent = IsPOMSupportedFromSelectedTargetApplications();
-            xChkPOM.Visibility = isPresent ? Visibility.Visible : Visibility.Hidden;
+             
+            xChkPOM.Visibility = IsPOMSupportedFromSelectedTargetApplications() ? Visibility.Visible : Visibility.Hidden;
         }
 
         /// <summary>

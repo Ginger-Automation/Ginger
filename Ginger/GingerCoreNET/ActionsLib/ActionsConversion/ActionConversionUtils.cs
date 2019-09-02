@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET
 
         bool mStopConversion = false;
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlowsToConvert = new ObservableList<BusinessFlowToConvert>();
 
         /// <summary>
         /// This method stops the multiple businessflow action conversion process
@@ -107,18 +107,18 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                foreach (BusinessFlowToConvert bf in ListOfBusinessFlow)
+                foreach (BusinessFlowToConvert bfToConvert in ListOfBusinessFlowsToConvert)
                 {
                     if (!mStopConversion)
                     {
-                        if (bf.ConversionStatus != eConversionStatus.Running && bf.ConversionStatus != eConversionStatus.Finish)
+                        if (bfToConvert.ConversionStatus != eConversionStatus.Running && bfToConvert.ConversionStatus != eConversionStatus.Finish)
                         {
-                            bf.ConversionStatus = eConversionStatus.Running;
-                            Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, bf.BusinessFlow.Name);
-                            ConvertToActions(bf, addNewActivity, actionsToBeConverted, convertableTargetApplications, convertToPOMAction, selectedPOMs);
-                            if (bf.ConversionStatus != eConversionStatus.Stopped && bf.ConversionStatus != eConversionStatus.NA)
+                            bfToConvert.ConversionStatus = eConversionStatus.Running;
+                            Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, bfToConvert.BusinessFlow.Name);
+                            ConvertToActions(bfToConvert, addNewActivity, actionsToBeConverted, convertableTargetApplications, convertToPOMAction, selectedPOMs);
+                            if (bfToConvert.ConversionStatus != eConversionStatus.Stopped && bfToConvert.ConversionStatus != eConversionStatus.NA)
                             {
-                                bf.ConversionStatus = eConversionStatus.Finish;
+                                bfToConvert.ConversionStatus = eConversionStatus.Finish;
                             }
                         }
                     }
@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.CoreNET
         /// This method is used to add the actions
         /// </summary>
         /// <param name="addNewActivity"></param>
-        public void ConvertToActions(BusinessFlowToConvert businessFlowStatus,
+        public void ConvertToActions(BusinessFlowToConvert businessFlowToConvert,
                                      bool addNewActivity, ObservableList<ConvertableActionDetails> actionsToBeConverted,
                                      ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications,
                                      bool convertToPOMAction = false, ObservableList<Guid> selectedPOMObjectName = null)
@@ -146,29 +146,29 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 int activityIndex = 0;
-                businessFlowStatus.ConvertedActionsCount = 0;
-                for (; activityIndex < businessFlowStatus.BusinessFlow.Activities.Count(); activityIndex++)
+                businessFlowToConvert.ConvertedActionsCount = 0;
+                for (; activityIndex < businessFlowToConvert.BusinessFlow.Activities.Count(); activityIndex++)
                 {                    
                     if (!mStopConversion)
                     {
-                        Activity activity = businessFlowStatus.BusinessFlow.Activities[activityIndex];
+                        Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
                         if (activity != null && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
                         {
-                            Activity currentActivity = GetCurrentWorkingActivity(businessFlowStatus.BusinessFlow, addNewActivity, ref activityIndex, activity);
-                            ConvertSelectedActionsFromActivity(businessFlowStatus, actionsToBeConverted, addNewActivity, convertToPOMAction, selectedPOMObjectName, currentActivity);
+                            Activity currentActivity = GetCurrentWorkingActivity(businessFlowToConvert.BusinessFlow, addNewActivity, ref activityIndex, activity);
+                            ConvertSelectedActionsFromActivity(businessFlowToConvert, actionsToBeConverted, addNewActivity, convertToPOMAction, selectedPOMObjectName, currentActivity);
 
                             currentActivity.TargetApplication = convertableTargetApplications.Where(x => x.SourceTargetApplicationName == activity.TargetApplication).Select(x => x.TargetTargetApplicationName).FirstOrDefault();
                         }
                     }
                     else
                     {
-                        businessFlowStatus.ConversionStatus = eConversionStatus.Stopped;
+                        businessFlowToConvert.ConversionStatus = eConversionStatus.Stopped;
                         break;
                     }
                 }
-                if (businessFlowStatus.ConvertedActionsCount == 0)
+                if (businessFlowToConvert.ConvertedActionsCount == 0)
                 {
-                    businessFlowStatus.ConversionStatus = eConversionStatus.NA;
+                    businessFlowToConvert.ConversionStatus = eConversionStatus.NA;
                 }
             }
             catch (Exception ex)
@@ -185,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET
         /// <param name="convertToPOMAction"></param>
         /// <param name="selectedPOMObjectName"></param>
         /// <param name="currentActivity"></param>
-        private void ConvertSelectedActionsFromActivity(BusinessFlowToConvert businessFlowStatus, ObservableList<ConvertableActionDetails> actionsToBeConverted, bool addNewActivity,
+        private void ConvertSelectedActionsFromActivity(BusinessFlowToConvert businessFlowToConvert, ObservableList<ConvertableActionDetails> actionsToBeConverted, bool addNewActivity,
                                                         bool convertToPOMAction, ObservableList<Guid> selectedPOMObjectName, Activity currentActivity)
         {
             int actionIndex = 0;
@@ -233,7 +233,7 @@ namespace Amdocs.Ginger.CoreNET
                                 {
                                     currentActivity.Acts.Remove(act);
                                 }
-                                businessFlowStatus.ConvertedActionsCount++;
+                                businessFlowToConvert.ConvertedActionsCount++;
                             }
                         }
                     }

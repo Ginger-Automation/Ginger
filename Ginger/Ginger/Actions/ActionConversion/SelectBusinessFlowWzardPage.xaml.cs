@@ -156,7 +156,7 @@ namespace Ginger.Actions.ActionConversion
             {                
                 foreach (var bf in selectedBFs)
                 {
-                    if (!IsBusinessFlowAdded(((BusinessFlow)bf).Name))
+                    if (!IsBusinessFlowAdded(((BusinessFlow)bf).Guid))
                     {
                         BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
                         flowToConversion.BusinessFlow = (BusinessFlow)bf;
@@ -171,11 +171,11 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// This method checks the businessFlow already exists
         /// </summary>
-        /// <param name="bfName"></param>
+        /// <param name="bfGuid"></param>
         /// <returns></returns>
-        private bool IsBusinessFlowAdded(string bfName)
+        private bool IsBusinessFlowAdded(Guid bfGuid)
         {
-            bool isExists = ListOfBusinessFlow.Where(x => x.BusinessFlowName == bfName).FirstOrDefault() == null ? false : true;
+            bool isExists = ListOfBusinessFlow.Where(x => x.BusinessFlow.Guid == bfGuid).FirstOrDefault() == null ? false : true;
             return isExists;
         }
 

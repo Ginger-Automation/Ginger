@@ -30,7 +30,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace GingerTest
 {
@@ -222,7 +221,7 @@ namespace GingerTest
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
                                                                  bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
             foreach (var bf in mListBF)
@@ -238,7 +237,7 @@ namespace GingerTest
                 BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                 flowConversion.BusinessFlow = bf;
                 flowConversion.ConversionStatus = eConversionStatus.Pending;
-                ListOfBusinessFlow.Add(flowConversion);
+                ListOfBusinessFlowToConvert.Add(flowConversion);
             }
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
                         
@@ -261,7 +260,7 @@ namespace GingerTest
                 } 
             }
 
-            utils.ListOfBusinessFlow = ListOfBusinessFlow;
+            utils.ListOfBusinessFlowsToConvert = ListOfBusinessFlowToConvert;
             utils.ConvertActionsOfMultipleBusinessFlows(lstCad, addNewActivity, convertableTargetApplications, convertToPOMAction, poms);
         }
         
