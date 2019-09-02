@@ -353,6 +353,8 @@ namespace GingerWPF.BusinessFlowsLib
             xAddActionsBtn.ToolTip = "Collapse Add Actions Section";
             xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
             xAddActionSectionSpliter.IsEnabled = true;
+            MainAddActionsNavigationPage.IsPanelExpanded = true;
+            mAddActionMainPage.ReloadPagesOnExpand();
         }
 
         private void CollapseAddActionsPnl()
@@ -364,6 +366,7 @@ namespace GingerWPF.BusinessFlowsLib
             xAddActionsBtn.ToolTip = "Add Actions";
             xAddActionsBtn.ButtonStyle = (Style)FindResource("$AddActionsMenuBtnStyle");
             xAddActionSectionSpliter.IsEnabled = false;
+            MainAddActionsNavigationPage.IsPanelExpanded = false;
         }
 
         private void InitAutomatePageRunner()

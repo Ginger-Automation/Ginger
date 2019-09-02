@@ -684,9 +684,9 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                string UserFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)/*.Replace("AppData\\Local","")*/;
+                string UserFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)/*.Replace("AppData\\Local","")*/;
                 string ConfigFileContent = string.Empty;
-                string ConfigFilePath = UserFolder.Replace("AppData\\Local", "") + ".gitconfig";
+                string ConfigFilePath = Path.Combine( UserFolder,".gitconfig");
 
                 if (SourceControlConfigureProxy)
                 {

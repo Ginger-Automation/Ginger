@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET;
@@ -30,7 +31,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for LiveSpyNavAction.xaml
     /// </summary>
-    public partial class LiveSpyNavPage : Page
+    public partial class LiveSpyNavPage : Page, INavPanelPage
     {
         Context mContext;
         IWindowExplorer mDriver;
@@ -56,6 +57,21 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             LoadLiveSpyPage(mContext);
         }
 
+        public void ReLoadPageItems()
+        {
+            if (mContext.Agent != null)
+            {
+                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                LoadLiveSpyPage(mContext);
+            }
+            else
+            {
+                mDriver = null;
+            }
+
+            mCurrentLoadedPage.SetDriver(mDriver);
+        }
+
         /// <summary>
         /// Context Property changed event
         /// </summary>
@@ -63,28 +79,30 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (mContext.Agent != null)
+                if (e.PropertyName == nameof(Context.AgentStatus) || e.PropertyName == nameof(Context.Agent))
                 {
-                    mDriver = mContext.Agent.Driver as IWindowExplorer;
-                }
-                else
-                {
-                    mDriver = null;
-                }
+                    if (mContext.Agent != null)
+                    {
+                        mDriver = mContext.Agent.Driver as IWindowExplorer;
+                    }
+                    else
+                    {
+                        mDriver = null;
+                    }
 
-                if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
-                {
-                    LoadLiveSpyPage(mContext);
-                }
-                else
-                {
-                    mCurrentLoadedPage.SetDriver(mDriver);
+                    if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
+                    {
+                        LoadLiveSpyPage(mContext);
+                    }
+                    else
+                    {
+                        mCurrentLoadedPage.SetDriver(mDriver);
+                    }
                 }
             }
         }
-
 
         /// <summary>
         /// This method is used to get the new LiveSpyPage based on Context and Agent

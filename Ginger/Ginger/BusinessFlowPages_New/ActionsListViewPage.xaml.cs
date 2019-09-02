@@ -225,14 +225,21 @@ namespace GingerWPF.BusinessFlowsLib
         // Drag Drop handlers
         private void listActions_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Act))
-                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationPOMModel))
-                    || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ElementInfo))
-                        || DragDrop2.DragInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>))
-                            || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ApplicationAPIModel)))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(Act), true)
+               || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ApplicationPOMModel), true)
+                   || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ElementInfo), true)
+                       || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(RepositoryFolder<ApplicationAPIModel>), true)
+                           || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ApplicationAPIModel), true))
             {
                 // OK to drop
-                DragDrop2.SetDragIcon(true);
+                if (DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
+                {
+                    DragDrop2.SetDragIcon(true, true);
+                }
+                else
+                {
+                    DragDrop2.SetDragIcon(true);
+                }
             }
             else
             {
@@ -248,26 +255,31 @@ namespace GingerWPF.BusinessFlowsLib
             if (droppedItem != null)
             {
                 int mouseIndex = -1;
-                int lastAddedIndex = -1;
                 Act actDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Act;
 
                 if (actDroppedOn != null)
                 {
                     mouseIndex = ListView.DataSourceList.IndexOf(actDroppedOn);
                 }
+                DroppedItemHandler(droppedItem, mouseIndex);
+            }
+        }
 
-                lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
+        private void DroppedItemHandler(object droppedItem, int mouseIndex)
+        {
+            int lastAddedIndex = -1;
 
-                if (lastAddedIndex > mouseIndex)
+            lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
+
+            if (lastAddedIndex > mouseIndex)
+            {
+                ListView.xListView.SelectedItems.Clear();
+                for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
                 {
-                    ListView.xListView.SelectedItems.Clear();
-                    for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
+                    RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
+                    if (repoBaseItem != null)
                     {
-                        RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
-                        if (repoBaseItem != null)
-                        {
-                            ListView.xListView.SelectedItems.Add(repoBaseItem);
-                        }
+                        ListView.xListView.SelectedItems.Add(repoBaseItem);
                     }
                 }
             }
