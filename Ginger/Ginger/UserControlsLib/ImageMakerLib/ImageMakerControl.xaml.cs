@@ -535,6 +535,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.CLI:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
                     break;
+                case eImageType.WindowRestore:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowRestore);
+                    break;
                 #endregion
 
 
