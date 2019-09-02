@@ -130,6 +130,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, childPagesMode);
+                        mActivitiesPage.ListView.ListSelectionMode = SelectionMode.Extended;
                         mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xActivitiesTabFrame.SetContent(mActivitiesPage);
                     }
