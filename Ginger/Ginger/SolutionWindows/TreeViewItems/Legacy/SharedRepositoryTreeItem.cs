@@ -44,7 +44,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         StackPanel ITreeViewItem.Header()
         {
             
-            return TreeViewUtils.CreateItemHeader("Shared Repository", "@SharedRepository_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader("Shared Repository", "@SharedRepository_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
         override public string NodePath()
         {

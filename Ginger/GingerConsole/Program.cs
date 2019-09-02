@@ -44,8 +44,8 @@ namespace Amdocs.Ginger.GingerConsole
         
         static void Main(string[] args)
         {
-
-            // TODO: Console.SetOut
+            Thread.Sleep(10000);               
+            // TODO: Console.SetOut      
             Console.ForegroundColor = ConsoleColor.Yellow;            
             Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
             Console.ResetColor();
