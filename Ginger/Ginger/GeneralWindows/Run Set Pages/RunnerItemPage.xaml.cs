@@ -204,8 +204,8 @@ namespace Ginger.Run
         {
             InitializeComponent();
 
-            ItemsTotalCount++;
-            ItemsCount++;
+            //ItemsTotalCount++;
+            //ItemsCount++;
 
             ItemObject = Runnerobj;
             if (ItemObject != null)
@@ -251,12 +251,12 @@ namespace Ginger.Run
 
         }
 
-        static int ItemsCount = 0;
-        static int ItemsTotalCount = 0;
-        ~RunnerItemPage()
-        {
-            ItemsCount--;
-        }
+        //static int ItemsCount = 0;
+        //static int ItemsTotalCount = 0;
+        //~RunnerItemPage()
+        //{
+        //    ItemsCount--;
+        //}
         private void RunnerItem_ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Act.Status))
@@ -411,20 +411,6 @@ namespace Ginger.Run
                 ResetBusinessFlowStatus(this, e);
             }
         }
-        //private void RunnerItemPage_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    RunnerItemEvent -= RunnerItem_Event;
-        //    RunnerItemEvent += RunnerItem_Event;
-        //}
-        //private void RunnerItem_Event(RunnerItemEventArgs EventArgs)
-        //{
-        //    switch (EventArgs.EventType)
-        //    {
-        //        case RunnerItemEventArgs.eEventType.ClearBindings:
-        //            ClearBindings();
-        //            break;
-        //    }
-        //}
         public void ClearBindings()
         {
             if (ItemObject is BusinessFlow)
@@ -470,11 +456,7 @@ namespace Ginger.Run
             BindingOperations.ClearAllBindings(xItemName);
             BindingOperations.ClearAllBindings(xItemDescription);
             BindingOperations.ClearAllBindings(xItemSeparator);
-
-            foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
-            {
-                BindingOperations.ClearAllBindings(notification);
-            }
+                   
 
             BindingOperations.ClearAllBindings(xRunnerItemContinue);
             BindingOperations.ClearAllBindings(xViewRunnerItem);
