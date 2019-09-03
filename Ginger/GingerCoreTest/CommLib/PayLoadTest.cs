@@ -31,45 +31,7 @@ namespace UnitTests.NonUITests.PayLoadTest
     [Level1]
     public class PayLoadTest 
     {
-
-        //static JavaDriver mDriver = null;
-        //static String AppName="Test App";
-
-        //[ClassInitialize()]
-        //public static void ClassInit(TestContext context)
-        //{
-
-        //    ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
-        //    LJA.LaunchJavaApplication = true;
-        //    LJA.LaunchWithAgent = true;
-        //    LJA.WaitForWindowTitle = AppName;
-        //    LJA.Port = "7575";
-        //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\Test App.jar";
-        //    LJA.Execute();
-
-        //    mDriver = new JavaDriver(null);
-        //    mDriver.JavaAgentHost = "127.0.0.1";
-        //    mDriver.JavaAgentPort = 7575;
-        //    mDriver.CommandTimeout = 120;
-        //    mDriver.cancelAgentLoading = false;
-        //    mDriver.DriverLoadWaitingTime = 30;
-        //    mDriver.ImplicitWait = 30;
-        //    mDriver.StartDriver();
-        //}
-
-        //[ClassCleanup()]
-        //public static void ClassCleanup()
-        //{
-        //    PayLoad PLClose = new PayLoad("WindowAction");
-        //    PLClose.AddValue("CloseWindow");
-        //    // PLClose.AddEnumValue(AJTE.WaitforIdle);
-        //    PLClose.AddValue(eLocateBy.ByTitle.ToString());
-        //    PLClose.AddValue(AppName);
-        //    // PLClose.AddValue(AJTE.ValueForDriver.ToString()); // TODO: remove if not needed
-        //    PLClose.ClosePackage();
-        //   mDriver.Send(PLClose);
-        //}
-
+       
         #region PayLoad on C# Side
         [TestMethod]  [Timeout(60000)]
         public void SimpleString()
@@ -335,59 +297,8 @@ namespace UnitTests.NonUITests.PayLoadTest
            Assert.AreEqual(loc.ToString(), Loc2);
         }
 
-        //[Ignore]
-        //[TestMethod]  [Timeout(60000)]
-        //public void DumpTest()
-        //{
-        //    //Arrange
-        //    ActJavaElement act = new ActJavaElement();
-        //    act.LocateBy = eLocateBy.ByName;
-        //    act.LocateValue = "ABC";
-        //    act.Value = "123";
-        //    act.ControlAction = ActJavaElement.eControlAction.SetValue;            
+      
 
-        //    PayLoad pl = act.Pack();
-        //    byte[] b = pl.GetPackage();
-        //    PayLoad pl2 = new PayLoad(b);            
-
-        //    //Act
-        //    pl2.DumpToConsole();
-
-        //    //Assert
-        //}
-
-        //[Ignore]
-        //[TestMethod]  [Timeout(60000)]
-        //public void ActJavaElementAction()
-        //{
-        //    //Arrange
-        //    ActJavaElement act = new ActJavaElement();
-        //    act.WaitforIdle = ActJavaElement.eWaitForIdle.Medium;
-        //    act.LocateBy = eLocateBy.ByName;
-        //    act.LocateValue = "ABC";
-        //    act.Value = "123";
-        //    act.ControlAction = ActJavaElement.eControlAction.SetValue;
-           
-
-        //    //Act
-        //    PayLoad pl = act.Pack();
-        //    byte[] b = pl.GetPackage();
-
-        //    PayLoad pl2 = new PayLoad(b);            
-        //    pl2.DumpToConsole();
-        //    string WaitForIdle = pl2.GetValueEnum();
-        //    string LocateBy = pl2.GetValueEnum();
-        //    string LocateValue = pl2.GetValueString();
-        //    string Value = pl2.GetValueString();
-        //    string ControlAction = pl2.GetValueEnum();
-
-        //    //Assert
-        //   Assert.AreEqual(act.LocateBy.ToString(), LocateBy);
-        //   Assert.AreEqual(act.LocateValue, LocateValue);
-        //   Assert.AreEqual(act.Value, Value);
-        //   Assert.AreEqual(act.ControlAction.ToString(), ControlAction);
-
-        //}
 
         [TestMethod]  [Timeout(60000)]
         public void SpeedTestSimpleStringX100()
@@ -479,107 +390,8 @@ namespace UnitTests.NonUITests.PayLoadTest
         }
 
         #endregion
+        
 
-        #region Validate Payload Response from Side
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void SimpleInt_ResponseFromJava()
-        //{
-        //    //Arrange
-        //    int val = 123;
-
-        //    PayLoad pl = new PayLoad("UnitTest");
-        //    pl.AddValue("IntegerValueTest");
-        //    pl.AddValue(val);
-        //    pl.ClosePackage();
-
-        //    PayLoad pl2 = mDriver.Send(pl);
-        //    int val2 = pl2.GetValueInt();
-
-        //    //Assert
-        //    Assert.AreEqual(val, val2);
-        //}
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void NegativeInt_ResponseFromJava()
-        //{
-        //    //Arrange
-        //    int val = -123;
-
-        //    PayLoad pl = new PayLoad("UnitTest");
-        //    pl.AddValue("IntegerValueTest");
-        //    pl.AddValue(val);
-        //    pl.ClosePackage();
-
-
-        //    PayLoad pl2 = mDriver.Send(pl);
-        //    int val2 = pl2.GetValueInt();
-
-        //    //Assert
-        //    Assert.AreEqual(val, val2);
-        //}
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void IntMinValue_ResponseFromJava()
-        //{
-        //    //Arrange
-        //    int val = Int16.MinValue;
-
-        //    PayLoad pl = new PayLoad("UnitTest");
-        //    pl.AddValue("IntegerValueTest");
-        //    pl.AddValue(val);
-        //    pl.ClosePackage();
-
-
-        //    PayLoad pl2 = mDriver.Send(pl);
-        //    int val2 = pl2.GetValueInt();
-
-        //    //Assert
-        //    Assert.AreEqual(val, val2);
-        //}
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void IntMaxValue_ResponseFromJava()
-        //{
-        //    //Arrange
-        //    int val = Int16.MaxValue;
-
-        //    PayLoad pl = new PayLoad("UnitTest");
-        //    pl.AddValue("IntegerValueTest");
-        //    pl.AddValue(val);
-        //    pl.ClosePackage();
-
-
-        //    PayLoad pl2 = mDriver.Send(pl);
-        //    int val2 = pl2.GetValueInt();
-
-        //    //Assert
-        //    Assert.AreEqual(val, val2);
-        //}
-
-
-
-        //[TestMethod]  [Timeout(60000)]
-        //public void IntRangeOfNumberTest()
-        //{
-        //    for (int i = -500; i < 500; i++)
-        //    {
-        //        PayLoad pl = new PayLoad("UnitTest");
-        //        pl.AddValue("IntegerValueTest");
-        //        pl.AddValue(i);
-        //        pl.ClosePackage();
-
-
-        //        PayLoad pl2 = mDriver.Send(pl);
-        //        int val2 = pl2.GetValueInt();
-        //        Assert.AreEqual(i, val2);
-        //    }
-        //}
-
-
-        ////TODO: Add more tests to cover validation for other value types
-
-
-        #endregion
+       
     }
 }

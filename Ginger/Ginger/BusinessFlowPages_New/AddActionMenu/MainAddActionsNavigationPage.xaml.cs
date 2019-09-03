@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -35,6 +36,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class MainAddActionsNavigationPage : Page
     {
         Context mContext;
+
+        /// <summary>
+        /// To Track if any of the Context's Property was updated while the Panel was Collapsed
+        /// 
+        ///     Options :-
+        ///         Yes : Update the page
+        ///          No : Do Nothing
+        ///          
+        /// </summary>
+        bool mContextUpdated = false;
+
+        INavPanelPage mNavPanelPage = null;
         RecordNavPage mRecordPage = null;
         SharedRepositoryNavPage mSharedRepositoryNavPage = null;
         POMNavPage mPOMNavPage = null;
@@ -43,6 +56,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         WindowsExplorerNavPage mWindowsExplorerNavPage = null;
         APINavPage mAPINavPage = null;
         private bool applicationModelView;
+
+        /// <summary>
+        /// To keep the Panel Pages in sync with the panel
+        /// Ignore updating them when Panel is Collapsed.
+        /// Update them only when Panel is Expanded.
+        /// Auto Update When they are visible and Panel is expanded as well.
+        /// </summary>
+        public static bool IsPanelExpanded = false;
 
         public MainAddActionsNavigationPage(Context context)
         {           
@@ -67,6 +88,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (IsPanelExpanded == false && mContextUpdated == false)
+            {
+                mContextUpdated = true;
+            }
+
             this.Dispatcher.Invoke(() =>
             {
                 if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus) || e.PropertyName is nameof(mContext.Activity))
@@ -289,14 +315,20 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void LoadActionFrame(Page navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
+        private void LoadActionFrame(INavPanelPage navigationPage, string titleText = "", eImageType titleImage = eImageType.Empty)
         {
             this.Dispatcher.Invoke(() =>
             {
                 xSelectedItemFrame.Content = navigationPage;
 
+                mNavPanelPage = navigationPage;
+
                 if (navigationPage != null || titleImage is eImageType.ApplicationModel)
                 {
+                    if (navigationPage != null)
+                    {
+                        navigationPage.ReLoadPageItems();
+                    }
                     xNavigationBarPnl.Visibility = Visibility.Visible;
                     xSelectedItemTitlePnl.Visibility = Visibility.Visible;
                     xSelectedItemTitleImage.ImageType = titleImage;
@@ -315,6 +347,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
 
             LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
+        }
+
+        public void ReloadPagesOnExpand()
+        {
+            if(mNavPanelPage != null && mContextUpdated)
+            {
+                mNavPanelPage.ReLoadPageItems();
+                mContextUpdated = false;
+            }
         }
     }
 }

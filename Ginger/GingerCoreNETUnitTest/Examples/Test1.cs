@@ -1,9 +1,7 @@
 ﻿using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.Examples
 {
@@ -15,7 +13,7 @@ namespace GingerCoreNETUnitTest.Examples
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }
 
-        [ClassInitialize()]
+        [ClassInitialize]
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
