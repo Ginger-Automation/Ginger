@@ -59,7 +59,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         
         private void ShowContent()
         {
-            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.ConfigFileContent;                    
+            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;                    
         }
 
         private void ShowHelp()

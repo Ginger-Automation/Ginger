@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
@@ -31,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     {
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
-        public string Identifier
+        public string Verb
         {
             get
             {

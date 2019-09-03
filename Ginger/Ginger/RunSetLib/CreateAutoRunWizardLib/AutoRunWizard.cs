@@ -63,7 +63,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             try
             {
                 // Write Configuration file
-                AutoRunConfiguration.CreateConfigFile();
+                AutoRunConfiguration.CreateContentFile();
 
                 // Create windows shortcut
                 if (AutoRunShortcut.CreateShortcut)
@@ -90,12 +90,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (AutoRunShortcut.ExecutorType == RunSetAutoRunShortcut.eExecutorType.GingerConsole)
             {                
                 shortcut.TargetPath = "dotnet";//@"C:\Program Files\dotnet\dotnet.exe"
-                shortcut.Arguments = string.Format("\"{0}\" {1}", AutoRunShortcut.ExecuterFullPath, AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\""); 
+                shortcut.Arguments = string.Format("\"{0}\" {1}", AutoRunShortcut.ExecuterFullPath, AutoRunConfiguration.SelectedCLI.Verb + "=\"" + AutoRunConfiguration.ConfigArgs + "\""); 
             }
             else
             {
                 shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
-                shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Identifier + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
+                shortcut.Arguments = AutoRunConfiguration.SelectedCLI.Verb + "=\"" + AutoRunConfiguration.ConfigArgs + "\"";
             }
             
             string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");

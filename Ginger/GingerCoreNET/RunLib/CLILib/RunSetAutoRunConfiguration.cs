@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public ICLI SelectedCLI;
 
-        public string ConfigFileContent
+        public string CLIContent
         {
             get
             {
@@ -121,11 +121,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public void CreateConfigFile()
+        public void CreateContentFile()
         {
             if (SelectedCLI.IsFileBasedConfig)
             {
-                System.IO.File.WriteAllText(ConfigFileFullPath, ConfigFileContent);
+                System.IO.File.WriteAllText(ConfigFileFullPath, CLIContent);
             }
         }
 
@@ -139,7 +139,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 else
                 {
-                    return ConfigFileContent;
+                    return CLIContent;
                 }
             }
         }

@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         string mScriptFile;
 
-        public string Identifier
+        public string Verb
         {
             get
             {

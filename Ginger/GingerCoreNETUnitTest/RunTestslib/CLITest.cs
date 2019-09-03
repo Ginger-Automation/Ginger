@@ -13,10 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static Amdocs.Ginger.CoreNET.RunLib.CLILib.CLIArgs;
 
 namespace WorkspaceHold
-{    
+{
     [Level3]
     [TestClass]
     public class CLITest
@@ -69,11 +68,11 @@ namespace WorkspaceHold
             RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
             runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
             runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
-            runSetAutoRunConfiguration.CreateConfigFile();
+            runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Verb + "=" + runSetAutoRunConfiguration.ConfigFileFullPath });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
@@ -104,6 +103,23 @@ namespace WorkspaceHold
             
         }
 
+
+        //[TestMethod]
+        //public void CLIVersion()
+        //{
+
+        //    //Arrange                            
+        //    PrepareForCLICreationAndExecution();            
+
+        //    // Act            
+        //    CLIProcessor CLI = new CLIProcessor();
+        //    CLI.ExecuteArgs(new string[] { "-t"});
+
+        //    // Assert            
+        //    Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+
+        //}
+
         [TestMethod]
         public void CLIDynamicTest()
         {
@@ -120,14 +136,14 @@ namespace WorkspaceHold
                 RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
                 runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
                 runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicXML();
-                runSetAutoRunConfiguration.CreateConfigFile();
+                runSetAutoRunConfiguration.CreateContentFile();
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+                CLI.ExecuteArgs(new string[] { "dynamic", "-f" ,runSetAutoRunConfiguration.ConfigFileFullPath });
 
                 // Assert            
-                Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
+                Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "BF RunStatus=Passed");
             //}
         }
 
@@ -156,7 +172,7 @@ namespace WorkspaceHold
 
 
         [TestMethod]
-        public void CLIScriptTest()
+        public void OLDCLIConfigFileTest()
         {
             //lock (WorkSpace.Instance)
             //{
@@ -170,12 +186,12 @@ namespace WorkspaceHold
 
                 RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
                 runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-                runSetAutoRunConfiguration.SelectedCLI = new CLIScriptFile();
-                runSetAutoRunConfiguration.CreateConfigFile();
+                runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
+                runSetAutoRunConfiguration.CreateContentFile();
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+                CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
 
                 // Assert            
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -203,7 +219,7 @@ namespace WorkspaceHold
 
                 // Act
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "Script=" + scriptFile });
+                CLI.ExecuteArgs(new string[] { "script", "-f" , scriptFile });
 
                 // Assert
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -229,7 +245,7 @@ namespace WorkspaceHold
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileContent });
+                CLI.ExecuteArgs(runSetAutoRunConfiguration.CLIContent);
 
                 // Assert            
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -237,89 +253,87 @@ namespace WorkspaceHold
         }
 
         [TestMethod]
-        public void CLIArgsRegressionTest()
+        public void CLIArgsWithAnalyzeTest()
         {
             //lock (WorkSpace.Instance)
             //{
                 //Arrange
                 PrepareForCLICreationAndExecution();
                 // Create args
-                string args = string.Format("--solution {0}", mSolutionFolder);
-                args += string.Format("--environment {0}", "Default");
-                args += string.Format("--runset {0}", "Default Run Set");
-                args += string.Format("--runAnalyzer {0}", "True");
-                args += string.Format("--showAutoRunWindow {0}", "False");
-
+                string[] args = { "run", "--solution", mSolutionFolder, "--environment", "Default", "--runset", "Default Run Set", "--analyze"};
+                
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "--args", args });
+                CLI.ExecuteArgs(args);
 
                 // Assert            
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+
+            // TODO: test analyze was run !!!!
             //}
         }
 
 
-        [TestMethod]
-        public void ArgSplit1()
-        {
-            // Arrange
-            CLIArgs CLIArgs = new CLIArgs();
+        //[TestMethod]
+        //public void ArgSplit1()
+        //{
+        //    // Arrange
+        //    CLIArgs CLIArgs = new CLIArgs();
 
-            // Act
-            List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1");
+        //    // Act
+        //    List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1");
 
-            Assert.AreEqual(args[0].ArgName, "--solution");
-            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
-        }
+        //    Assert.AreEqual(args[0].ArgName, "--solution");
+        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+        //}
 
-        [TestMethod]
-        public void ArgSplit2()
-        {
-            // Arrange
-            CLIArgs CLIArgs = new CLIArgs();
+        //[TestMethod]
+        //public void ArgSplit2()
+        //{
+        //    // Arrange
+        //    CLIArgs CLIArgs = new CLIArgs();
 
-            // Act
-            List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1 --environment Env1");
+        //    // Act
+        //    List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1 --environment Env1");
 
-            Assert.AreEqual(args[0].ArgName, "--solution");
-            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+        //    Assert.AreEqual(args[0].ArgName, "--solution");
+        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
 
-            Assert.AreEqual(args[1].ArgName, "--environment");
-            Assert.AreEqual(args[1].ArgValue, "Env1");
-        }
+        //    Assert.AreEqual(args[1].ArgName, "--environment");
+        //    Assert.AreEqual(args[1].ArgValue, "Env1");
+        //}
 
-        [TestMethod]
-        public void ArgSplit2WithSpaces()
-        {
-            // Arrange
-            CLIArgs CLIArgs = new CLIArgs();
+        //[TestMethod]
+        //public void ArgSplit2WithSpaces()
+        //{
+        //    // Arrange
+        //    CLIArgs CLIArgs = new CLIArgs();
 
-            // Act
-            List<Arg> args = CLIArgs.SplitArgs(@"  --solution  c:\abc\def\sol1    --environment  Env1");
+        //    // Act
+        //    List<Arg> args = CLIArgs.SplitArgs(@"  --solution  c:\abc\def\sol1    --environment  Env1");
 
-            Assert.AreEqual(args[0].ArgName, "--solution");
-            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+        //    Assert.AreEqual(args[0].ArgName, "--solution");
+        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
 
-            Assert.AreEqual(args[1].ArgName, "--environment");
-            Assert.AreEqual(args[1].ArgValue, "Env1");
-        }
+        //    Assert.AreEqual(args[1].ArgName, "--environment");
+        //    Assert.AreEqual(args[1].ArgValue, "Env1");
+        //}
 
-        [TestMethod]
-        public void ArgsMixStyle()
-        {
-            // Arrange
-            CLIArgs CLIArgs = new CLIArgs();
+        //[TestMethod]
+        //public void ArgsMixStyle()
+        //{
+        //    // Arrange
+        //    CLIArgs CLIArgs = new CLIArgs();
 
-            // Act
-            List<Arg> args = CLIArgs.SplitArgs(@"-s c:\abc\def\sol1 --environment Env1");
+        //    // Act
+        //    List<Arg> args = CLIArgs.SplitArgs(@"-s c:\abc\def\sol1 --environment Env1");
 
-            Assert.AreEqual(args[0].ArgName, "-s");
-            Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
+        //    Assert.AreEqual(args[0].ArgName, "-s");
+        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
 
-            Assert.AreEqual(args[1].ArgName, "--environment");
-            Assert.AreEqual(args[1].ArgValue, "Env1");
-        }
+        //    Assert.AreEqual(args[1].ArgName, "--environment");
+        //    Assert.AreEqual(args[1].ArgValue, "Env1");
+        //}
 
 
         private void PrepareForCLICreationAndExecution()
@@ -469,6 +483,24 @@ namespace WorkspaceHold
             Assert.IsTrue(arguments.Contains("--environment env1"), "arguments Contains --environment env1");
             Assert.IsTrue(arguments.Contains("--runset rs1"), "arguments Contains --runset rs1");
             Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");                   
+        }
+
+        [TestMethod]
+        public void ParseStringToArgs()
+        {
+            //Arrange
+            string s = @"run -s c:\123 -e env1";
+
+
+            // Act            
+            var arguments = CLIProcessor.ParseArguments(s);
+
+            // Assert            
+            Assert.IsTrue(arguments.First() == "run");
+            Assert.IsTrue(arguments.Contains("-s"), "arguments Contains -s");
+            Assert.IsTrue(arguments.Contains(@"c:\123"), @"arguments Contains c:\123");
+            Assert.IsTrue(arguments.Contains("-e"), "arguments Contains -e");
+            Assert.IsTrue(arguments.Contains("env1"), "arguments Contains env1");
         }
 
 

@@ -132,13 +132,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
+
+                /// !!!!!! get args for CLI
+
                 if (ExecutorType == eExecutorType.GingerConsole)
                 {
-                    return "dotnet " + ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Identifier + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
+                    // return "dotnet " + ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Verb + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
+                    return "dotnet " + ExecuterFullPath + " " + "ZZZZZ!!! get verb and args !!!" + mAutoRunConfiguration.ConfigArgs + "\"";
                 }
                 else
                 {
-                    return ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Identifier + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
+                    //return ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Verb + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
+                    return ExecuterFullPath + " " + "ZZZZZ!!! get verb and args  !!!" +  mAutoRunConfiguration.ConfigArgs + "\"";
                 }
             }
         }

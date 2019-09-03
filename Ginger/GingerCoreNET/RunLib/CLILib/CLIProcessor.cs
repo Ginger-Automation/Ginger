@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using GingerCore;
@@ -27,6 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -38,82 +40,207 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public void ExecuteArgs(string[] args)
         {
             WorkSpace.Instance.RunningInExecutionMode = true;
-            Reporter.ReportAllAlsoToConsole = true;
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ReportAllAlsoToConsole = true;            
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
 
+            // auto convert old args if detected to new args then run unified processing
+            // Support backward compatibility 
+            if (args[0].StartsWith("ConfigFile=")  || args[0] == "Dynamic=" || args[0] == "Script=")
+            {                                
+                string[] newArgs = ConvertOldArgs(args);
+                ShowOLDCLIArgsWarning(args, newArgs);
+                args = newArgs;
+            }
+            
+            ParseArgs(args);                            
+        }
 
-            // TODO: auto convert old args if detected to new args then run unified processing
+        public void ExecuteArgs(string commandLine)
+        {
+            string[] args = ParseArguments(commandLine).ToArray();
+            ExecuteArgs(args);
+        }
 
 
-            // This is the new style using verb and CommandLine Nuget to parse
-            if (args[0] == "run" || args[0] == "grid")
+        // Parse a command line with multiple switches to string list
+        public static IEnumerable<string> ParseArguments(string commandLine)
+        {
+            if (string.IsNullOrWhiteSpace(commandLine))
+                yield break;
+
+            var sb = new StringBuilder();
+            bool inQuote = false;
+            foreach (char c in commandLine)
             {
-                ParseArgs(args);
+                if (c == '"' && !inQuote)
+                {
+                    inQuote = true;
+                    continue;
+                }
+
+                if (c != '"' && !(char.IsWhiteSpace(c) && !inQuote))
+                {
+                    sb.Append(c);
+                    continue;
+                }
+
+                if (sb.Length > 0)
+                {
+                    var result = sb.ToString();
+                    sb.Clear();
+                    inQuote = false;
+                    yield return result;
+                }
+            }
+
+            if (sb.Length > 0)
+                yield return sb.ToString();
+        }
+
+
+        private string[] ConvertOldArgs(string[] oldArgs)
+        {                        
+            string param;
+            string value = null;            
+            if (oldArgs[0].Contains("="))
+            {
+                string[] arg1 = oldArgs[0].Split(new[] { '=' }, 2);
+                param = arg1[0].Trim();
+                value = arg1[1].Trim();
             }
             else
             {
-                // Support old style
-                string param;
-                string value = null;                
-
-                // TODO: remove after auto convert to new is done
-                if (args[0].Contains("="))
+                param = oldArgs[0].Trim();
+                if (oldArgs.Length > 1)
                 {
-                    string[] arg1 = args[0].Split(new[] { '=' }, 2);
-                    param = arg1[0].Trim();
-                    value = arg1[1].Trim();
+                    value = oldArgs[1].Trim();
                 }
-                else
-                {
-                    param = args[0].Trim();
-                    if (args.Length > 1)
-                    {
-                        value = args[1].Trim();
-                    }
-                }
-                HandleArg(param, value);
+            }            
+            
+            VerbAttribute verb;  // Get the correct verb using reflection
+            switch (param)
+            {                
+                case "ConfigFile":
+                    verb = typeof(ConfigFileOptions).GetCustomAttribute<VerbAttribute>();                    
+                    break;
+                case "Script":
+                    verb = typeof(ScriptOptions).GetCustomAttribute<VerbAttribute>();                    
+                    break;
+                case "Dynamic":
+                    verb = typeof(DynamicOptions).GetCustomAttribute<VerbAttribute>();
+                    break;
+                default:
+                    Reporter.ToConsole(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
+                    return null;
             }
-
+            
+            return new string[] { verb.Name, "-f", value};            
         }
+
+
 
         private void ParseArgs(string[] args)
-        {            
-            Parser.Default.ParseArguments<RunOptions, GridOptions>(args)
-                   .WithParsed<RunOptions>(runOptions =>
-                   {
-                       // mCLIHelper.CLIType = eCLIType.Arguments;                       
-                       mCLIHandler = new CLIArgs();
-                       ExecRunOptions(runOptions);
-                       // Console.WriteLine($"Solution: {runOptions.Solution}");
-                       // Console.WriteLine($"runset: {runOptions.Runset}");
-                       // opt = runOptions;
-                   }).WithParsed<GridOptions>(gridOptions =>
-                   {
-                       StartGrid(gridOptions);                                
-                   })
-                   .WithNotParsed(errs =>
-                   {
-                       HandleCLIParseError(errs);
-                   });
+        {
+            //if (args[0].StartsWith("-"))
+            //{
+            //    Parser.Default.ParseArguments<BasicOptions>(args)
+            //            .WithParsed<BasicOptions>(basicOptions =>
+            //            {
+            //                HandleBasicOptions(basicOptions);
+            //            })                       
+            //           .WithNotParsed(errs =>
+            //           {
+            //               // handle args parsing errors
+            //               HandleCLIParseError(errs);
+            //           });
+            //}
+            //else
+            //{
+                Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions>(args)                        
+                       .WithParsed<RunOptions>(runOptions =>
+                       {
+                           mCLIHandler = new CLIArgs();
+                           HandleRunOptions(runOptions);
+                       })
+                       .WithParsed<GridOptions>(gridOptions =>
+                       {
+                           HanldeGridOption(gridOptions);
+                       })
+                       .WithParsed<ConfigFileOptions>(configFileOptions =>
+                       {
+                           HandleConfigFileOptions(configFileOptions);
+                       })
+                       .WithParsed<DynamicOptions>(dynamicOptions =>
+                       {
+                           HandleDynamicOptions(dynamicOptions);
+                       })
+                       .WithParsed<ScriptOptions>(scriptOptions =>
+                       {
+                           HandleScriptOptions(scriptOptions);
+                       })
+                       
+
+                       .WithNotParsed(errs =>
+                       {
+                            // handle args parsing errors
+                            HandleCLIParseError(errs);
+                       });
+            //}
         }
 
-        private void StartGrid(GridOptions gridOptions)
+        private void HandleScriptOptions(ScriptOptions scriptOptions)
+        {            
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
+            mCLIHandler = new CLIScriptFile();
+            mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
+            CLILoadAndPrepare();
+            ExecuteRunSet();
+        }
+
+        private void HandleBasicOptions(BasicOptions basicOptions)
+        {
+            Console.WriteLine("Basic options !!!!!!!!!!!!");
+            // basicOptions.ShowVersion
+        }
+
+        private void HandleDynamicOptions(DynamicOptions dynamicOptions)
+        {            
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
+            mCLIHandler = new CLIDynamicXML();
+            mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+            CLILoadAndPrepare();
+            ExecuteRunSet();
+        }
+
+        private void HanldeCLIOption(BasicOptions cliOptions)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleConfigFileOptions(ConfigFileOptions configFileOptions)
+        {            
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
+            mCLIHandler = new CLIConfigFile();
+            mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
+            CLILoadAndPrepare();
+            ExecuteRunSet();
+        }
+
+        private void HanldeGridOption(GridOptions gridOptions)
         {
             Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
         }
 
-        private void ExecRunOptions(RunOptions runOptions)
+        private void HandleRunOptions(RunOptions runOptions)
         {
-            Console.WriteLine($"Solution: {runOptions.Solution}");
-            Console.WriteLine($"Runset: {runOptions.Runset}");
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-            // Dup Code!!!!!!!!!!!!!!
+            Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
+            Reporter.ToLog(eLogLevel.INFO, $"Runset: {runOptions.Runset}");
+                        
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             // mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
 
@@ -121,140 +248,133 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
 
+            CLILoadAndPrepare();
+            ExecuteRunSet();
+        }
 
-                if (!mCLIHelper.LoadSolution())
-                {
-                    return;//failed to load Solution;
-                }
+        private void CLILoadAndPrepare()
+        {
+            if (!mCLIHelper.LoadSolution())
+            {
+                return;//failed to load Solution;
+            }
 
-                if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
-                {
-                    return;//failed to load Run set
-                }
+            if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+            {
+                return;//failed to load Run set
+            }
 
-                if (!mCLIHelper.PrepareRunsetForExecution())
-                {
-                    return; //Failed to perform execution perpetrations
-                }
+            if (!mCLIHelper.PrepareRunsetForExecution())
+            {
+                return; //Failed to perform execution perpetrations
+            }
 
-                mCLIHelper.SetTestArtifactsFolder();
-            
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
-            Execute();
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-            mCLIHelper.CloseSolution();
+            mCLIHelper.SetTestArtifactsFolder();
         }
 
         private void HandleCLIParseError(IEnumerable<Error> errs)
-        {
-            //TODO: clean print errs !!!!!!!!!!!!!
-            foreach (Error error in errs)
-            {         
-                //if (error is typeof(BadVerbSelectedError))
-                //Console.WriteLine($"arg error: {error.Token} {error.Tag}");
-            }
-            Console.WriteLine("Please fix arguments and try again");
+        {                        
+            Reporter.ToConsole(eLogLevel.ERROR, "Please fix the arguments and try again");
         }
 
-        private void HandleArg(string param, string value)
+        //private void HandleArg(string param, string value)
+        //{
+        //    // TODO: get all classes impl ICLI and check Identifier then set
+
+        //    switch (param)
+        //    {
+        //        case "--version":
+        //            Console.WriteLine(string.Format("{0} Version: {1}", ApplicationInfo.ApplicationName, ApplicationInfo.ApplicationVersionWithInfo));
+        //            break;
+        //        case "--help":
+        //        case "-h":
+        //            ShowCLIHelp();
+        //            break;
+        //        case "ConfigFile":
+        //        case "--configfile":
+        //            mCLIHelper.CLIType = eCLIType.Config;
+        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", value));
+        //            mCLIHandler = new CLIConfigFile();                   
+        //            PerformLoadAndExecution(ReadFile(value));
+        //            break;
+        //        case "Script":
+        //        case "--scriptfile":
+        //            mCLIHelper.CLIType = eCLIType.Script;
+        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
+        //            mCLIHandler = new CLIScriptFile();
+        //            PerformLoadAndExecution(ReadFile(value));
+        //            break;
+        //        case "--dynamicfile":
+        //        case "Dynamic":
+        //            mCLIHelper.CLIType = eCLIType.Dynamic;
+        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
+        //            mCLIHandler = new CLIDynamicXML();
+        //            PerformLoadAndExecution(ReadFile(value));
+        //            break;                                
+        //        //case "--args":
+        //        //    mCLIHelper.CLIType = eCLIType.Arguments;
+        //        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
+        //        //    mCLIHandler = new CLIArgs();
+        //        //    PerformLoadAndExecution(value);
+        //        //    break;
+
+        //            // Removing unpublished options 
+        //        //case "--excel":
+        //        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
+        //        //    mCLIHandler = new CLIExcel();
+        //        //    PerformLoadAndExecution(value);
+        //        //    break;                
+        //        //case "--servicegrid":
+        //        //    int port = 15555;
+        //        //    Console.WriteLine("Starting Ginger Grid at port: " + port);
+        //        //    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
+        //        //    gingerGrid.Start();
+
+        //        //    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+
+        //        //    Console.ReadKey();
+        //        //    break;                
+        //        default:
+        //            Console.WriteLine("Error - Unknown Command Line Argument(s): " + param);
+        //            break;
+        //    }
+        //}
+
+        //private void PerformLoadAndExecution(string configurations)
+        //{
+        //    Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
+        //    mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+
+        //    if (mCLIHelper.CLIType != eCLIType.Script)
+        //    {
+        //        if (!mCLIHelper.LoadSolution())
+        //        {
+        //            return;//failed to load Solution;
+        //        }
+
+        //        if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+        //        {
+        //            return;//failed to load Run set
+        //        }
+
+        //        if (!mCLIHelper.PrepareRunsetForExecution())
+        //        {
+        //            return; //Failed to perform execution preparations
+        //        }
+
+        //        mCLIHelper.SetTestArtifactsFolder();                
+        //    }
+
+        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
+        //    Execute();
+
+        //    Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+        //    mCLIHelper.CloseSolution();
+        //}
+
+        void ExecuteRunSet()
         {
-            // TODO: get all classes impl ICLI and check Identifier then set
-
-            switch (param)
-            {
-                case "--version":
-                    Console.WriteLine(string.Format("{0} Version: {1}", ApplicationInfo.ApplicationName, ApplicationInfo.ApplicationVersionWithInfo));
-                    break;
-                case "--help":
-                case "-h":
-                    ShowCLIHelp();
-                    break;
-                case "ConfigFile":
-                case "--configfile":
-                    mCLIHelper.CLIType = eCLIType.Config;
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", value));
-                    mCLIHandler = new CLIConfigFile();                   
-                    PerformLoadAndExecution(ReadFile(value));
-                    break;
-                case "Script":
-                case "--scriptfile":
-                    mCLIHelper.CLIType = eCLIType.Script;
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
-                    mCLIHandler = new CLIScriptFile();
-                    PerformLoadAndExecution(ReadFile(value));
-                    break;
-                case "--dynamicfile":
-                case "Dynamic":
-                    mCLIHelper.CLIType = eCLIType.Dynamic;
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
-                    mCLIHandler = new CLIDynamicXML();
-                    PerformLoadAndExecution(ReadFile(value));
-                    break;                                
-                case "--args":
-                    mCLIHelper.CLIType = eCLIType.Arguments;
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
-                    mCLIHandler = new CLIArgs();
-                    PerformLoadAndExecution(value);
-                    break;
-
-                    // Removing unpublished options 
-                //case "--excel":
-                //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
-                //    mCLIHandler = new CLIExcel();
-                //    PerformLoadAndExecution(value);
-                //    break;                
-                //case "--servicegrid":
-                //    int port = 15555;
-                //    Console.WriteLine("Starting Ginger Grid at port: " + port);
-                //    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
-                //    gingerGrid.Start();
-
-                //    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
-
-                //    Console.ReadKey();
-                //    break;                
-                default:
-                    Console.WriteLine("Error - Unknown Command Line Argument(s): " + param);
-                    break;
-            }
-        }
-
-        private void PerformLoadAndExecution(string configurations)
-        {
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
-            mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-
-            if (mCLIHelper.CLIType != eCLIType.Script)
-            {
-                if (!mCLIHelper.LoadSolution())
-                {
-                    return;//failed to load Solution;
-                }
-
-                if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
-                {
-                    return;//failed to load Run set
-                }
-
-                if (!mCLIHelper.PrepareRunsetForExecution())
-                {
-                    return; //Failed to perform execution preparations
-                }
-
-                mCLIHelper.SetTestArtifactsFolder();                
-            }
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
-            Execute();
-
-            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-            mCLIHelper.CloseSolution();
-        }
-
-        void Execute()
-        {
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));            
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
@@ -277,27 +397,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected exception occured during {0} execution, exit code 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected exception occurred during {0} execution, exit code 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 Environment.ExitCode = 1; //failure
             }
+
+            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+            mCLIHelper.CloseSolution();
         }
 
-
-        // TODO: remove after moving to new CLI - use the auto help
-        private void ShowCLIHelp()
+        
+        private void ShowOLDCLIArgsWarning(string[] oldArgs, string[] newArgs)
         {
-            // TODO:
-            Console.WriteLine("Ginger CLI options");
-            Console.WriteLine("Use -- for full argument name or - for short name");
-            Console.WriteLine(@"Use space to seperate arguments and value for example Ginger.exe --solution c:\ginger\solution1 --environment UAT");
-            Console.WriteLine(@"List of available arguments");
-            Console.WriteLine("--version Display ginger version");
-            Console.WriteLine("--help -h Display Ginger help");
-            Console.WriteLine("--configfile %filename% or ConfigFile=%filename% auto run as per detailed in %filename%");
-            Console.WriteLine("--scriptfile %scriptfilename% run GingerScript file");
-            Console.WriteLine("--args GingerScript with args");            
+            // TODO:            
+            Reporter.ToConsole(eLogLevel.WARN, "You are using old style command line arguments which are obsolete!");
 
-            // TODO: add more details....
+            Reporter.ToConsole(eLogLevel.WARN, "Instead of using: " + oldArgs);
+            Reporter.ToConsole(eLogLevel.WARN, "You can use: " + newArgs);
         }
 
         

@@ -44,8 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
-        public eAppReporterLoggingLevel AppLoggingLevel;
-        public eCLIType CLIType;
+        public eAppReporterLoggingLevel AppLoggingLevel;        
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
@@ -114,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
-                // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
+                // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
